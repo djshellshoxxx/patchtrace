@@ -154,7 +154,7 @@ def restore_raw_duplicates(root: Path) -> int:
             continue
         try:
             entry = json.loads(line)
-        except ValueError:
+        except (ValueError, RecursionError):
             entry = None
         shape = _REMOVED.fullmatch(entry.get('removed', '')) if isinstance(entry, dict) and isinstance(
             entry.get('removed'), str) else None

@@ -4,6 +4,22 @@ Generated 2026-10-14 from `argparse` (`patchtrace.cli._parser`) and the `cli_com
 
 ## Conventions
 
+KEV context continuation (2026-11-16): `kb search --kev-dir DIR` selects a local
+catalogue for CVE-level edge/card context and provenance (defaults to the usual
+KEV directory). `pilot leads` binds the current verified local catalogue into
+its result identity; `pilot why/review` compare that snapshot when loading stored
+results. Catalogue context never changes function ranking or makes a request.
+
+KB continuation (2026-11-16): `patchtrace kb index sync --help` shows the exact
+metadata fetch and consent flags; it performs no request. `patchtrace kb products INV`
+lists the product scopes of an investigation. `patchtrace kb products --all [--query TEXT]`
+browses active stored product scopes without creating an investigation, opening a
+project or fetching anything. `INV` and `--all` cannot be combined, and `--query`
+requires `--all`. Results use the existing JSON envelope; matching scopes exit 0,
+an empty catalogue/filter exits 4, and invalid selection exits 2. Catalogue rows
+retain source provenance and truncation metadata. Stored product metadata does
+not establish whether a binary is affected by an advisory.
+
 - Invocation: `PYTHONPATH=src python -m patchtrace <verb> ...` from a checkout (`src/patchtrace/__main__.py`; `cli.py` has no `__main__` guard, so `python -m patchtrace.cli` does nothing), or `patchtrace <verb> ...` from an install (`pyproject.toml` `[project.scripts]` points at `patchtrace.__main__:main`).
 - Output: the `enrichment-cli/1` envelope; `--json` where listed emits one JSON document on stdout.
 - Exit codes (`cli.py` module docstring, SPEC-44 section 4): 0 success; 2 invalid arguments, configuration or environment, including argparse errors; 3 runtime failure; 4 legitimate no result (complete evidence, zero rows); 5 cancelled. A `status: partial` result exits 0 for `rank` and `correlate`, and 3 for `flags`, `series create`, `secondary run`, `unified run`, `intelligence explain` and `intel-tools run`. Some verbs map these differently, see SPEC-44 section 4.

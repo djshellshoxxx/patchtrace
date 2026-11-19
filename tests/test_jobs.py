@@ -8,9 +8,9 @@ import time
 from pathlib import Path
 
 import pytest
-from liveness_support import heartbeat_code, heartbeat_stopped, wait_for
+from liveness_support import cancel_when_started, heartbeat_code, heartbeat_stopped, wait_for
 
-from patchtrace import backend
+from patchtrace import backend, jobs
 from patchtrace.backend import BackendConfig, quarantine_failed_run, run_comparison
 from patchtrace.diagnostics import redact_log
 from patchtrace.jobs import run_process
@@ -672,3 +672,180 @@ def test_nan_timeout_and_non_integer_limits_are_rejected(tmp_path, bound):
     """NaN never compares >= elapsed (no deadline); a float limit kills the reader thread (the pipe stops draining)."""
     with pytest.raises(ValueError, match='PT-BACKEND'):
         execute(tmp_path, 'pass', **bound)
+
+
+# ---- TB-15: the child environment is validated before any spawn, on every platform ----
+
+INVALID_ENVIRONMENTS = {
+    'empty-name': {'': 'secret'},
+    'equals-in-name': {'A=B': 'secret'},
+    'leading-equals-name': {'=A': 'secret'},
+    'nul-in-name': {'A\0B': 'secret'},
+    'nul-in-value': {'A': 'secret\0B=y'},
+    'bytes-name': {b'A': 'secret'},
+    'int-name': {1: 'secret'},
+    'bytes-value': {'A': b'secret'},
+    'none-value': {'A': None},
+    'int-value': {'A': 1},
+}
+
+
+@pytest.mark.parametrize('extra', list(INVALID_ENVIRONMENTS.values()), ids=list(INVALID_ENVIRONMENTS))
+def test_invalid_child_environment_is_refused_before_any_spawn(tmp_path, monkeypatch, extra):
+    """The Windows environment block is NUL-separated: an unchecked NUL would add a variable nobody named."""
+    def spawned(*args, **kwargs):
+        raise AssertionError('a process was spawned for a refused environment')
+
+    monkeypatch.setattr(jobs.subprocess, 'Popen', spawned)
+    monkeypatch.setattr(jobs, '_windows_process', spawned)
+    with pytest.raises(ValueError) as refused:
+        run_process([str(Path(sys.executable).resolve()), '-c', 'pass'], cwd=tmp_path,
+                    env={**os.environ, **extra}, cancel=threading.Event(), timeout_seconds=5)
+    assert str(refused.value) == 'PT-BACKEND: child environment has an invalid variable name or value'
+
+
+def test_valid_child_environment_reaches_the_child_unchanged(tmp_path):
+    values = {'PT_TB15_EQUALS': 'k=v=w', 'PT_TB15_EMPTY': '', 'PT_TB15_TEXT': 'caf\u00e9 \u2713'}
+    code = ('import json,os,sys;'
+            'sys.stdout.write(json.dumps({k: os.environ.get(k) for k in sorted(os.environ) if k.startswith("PT_TB15_")}))')
+    result = run_process([str(Path(sys.executable).resolve()), '-X', 'utf8', '-c', code], cwd=tmp_path,
+                         env={**os.environ, **values}, cancel=threading.Event(), timeout_seconds=30)
+    assert result.returncode == 0
+    assert json.loads(result.log_tail) == values
+
+
+# ---- TB-09 / WP-09: the process group is never signalled once its leader has been reaped ----
+
+needs_exit_peek = pytest.mark.skipif(os.name == 'nt' or not hasattr(os, 'waitid'),
+                                     reason='POSIX process groups; the probe needs os.waitid')
+
+
+@pytest.fixture
+def group_kills(monkeypatch):
+    """One entry per `os.killpg` call: True when the group leader was still unreaped at that moment.
+
+    The probe asks the kernel and reaps nothing (WNOWAIT). Once the leader is reaped it is no longer our child
+    (ECHILD) and its pid may belong to an unrelated process, which is exactly when a group kill is unsafe.
+    """
+    calls = []
+    real_killpg = os.killpg
+
+    def probing_killpg(pgid, sig):
+        try:
+            os.waitid(os.P_PID, pgid, os.WEXITED | os.WNOHANG | os.WNOWAIT)
+            calls.append(True)
+        except ChildProcessError:
+            calls.append(False)
+            return  # A recycled PID must never be signalled by the regression probe.
+        real_killpg(pgid, sig)
+
+    monkeypatch.setattr(os, 'killpg', probing_killpg)
+    return calls
+
+
+def _spawn_beating_descendant(beat):
+    """Parent code: start a descendant that inherits the output pipe and return only once it provably beats,
+    so that neither an early exit nor an early stop can kill it before there is anything to observe."""
+    return ('import os,subprocess,sys,time\n'
+            f'subprocess.Popen([sys.executable,"-c",{heartbeat_code(beat)!r}])\n'
+            f'while not (os.path.exists({str(beat)!r}) and os.path.getsize({str(beat)!r})):\n    time.sleep(0.01)\n')
+
+
+def _assert_only_unreaped_leaders_were_signalled(calls):
+    assert calls, 'the process group was never signalled, so the check would pass vacuously'
+    assert all(calls), f'os.killpg was called after the group leader was reaped: {calls}'
+
+
+@needs_exit_peek
+@pytest.mark.parametrize(('code', 'returncode'), [('pass', 0), ('raise SystemExit(7)', 7),
+                                                  ('import os,signal;os.kill(os.getpid(),signal.SIGTERM)', -15)],
+                         ids=['exit-0', 'exit-7', 'killed-by-signal'])
+def test_group_is_signalled_only_before_the_leader_is_reaped_on_exit(tmp_path, group_kills, code, returncode):
+    result = execute(tmp_path, code, timeout=30)
+    assert (result.returncode, result.reason) == (returncode, None)  # the peeked exit status is the one reported
+    _assert_only_unreaped_leaders_were_signalled(group_kills)
+
+
+@needs_exit_peek
+def test_descendant_holding_the_pipe_is_killed_while_the_exited_leader_is_unreaped(tmp_path, group_kills):
+    beat = tmp_path / 'descendant-beat'
+    code = _spawn_beating_descendant(beat) + 'print("spawned",flush=True)\n'
+    started = time.monotonic()
+    result = execute(tmp_path, code, timeout=30)
+    assert (result.returncode, result.reason, result.log_tail.strip()) == (0, None, 'spawned')
+    assert heartbeat_stopped(beat), 'the descendant never ran, or survived its parent'
+    assert time.monotonic() - started < 15  # the readers saw EOF: nothing kept the pipe open until the join timeout
+    _assert_only_unreaped_leaders_were_signalled(group_kills)
+
+
+@needs_exit_peek
+@pytest.mark.parametrize('cancelled', [False, True], ids=['timeout', 'cancelled'])
+def test_group_is_signalled_only_before_the_leader_is_reaped_on_stop(tmp_path, group_kills, cancelled):
+    beat, started = tmp_path / 'descendant-beat', tmp_path / 'started'
+    code = (_spawn_beating_descendant(beat)
+            + f'import pathlib\npathlib.Path({str(started)!r}).write_text("x")\ntime.sleep(60)\n')
+    cancel = cancel_when_started(started) if cancelled else threading.Event()
+    result = execute(tmp_path, code, cancel=cancel, timeout=30 if cancelled else 3)
+    assert (result.returncode, result.reason) == (-9, 'cancelled' if cancelled else 'timeout')
+    assert started.exists() and heartbeat_stopped(beat), 'the descendant never ran, or survived the stop'
+    _assert_only_unreaped_leaders_were_signalled(group_kills)
+
+
+@needs_exit_peek
+def test_group_is_not_signalled_again_after_a_failed_memory_cap_reaped_the_leader(tmp_path, monkeypatch, group_kills):
+    import resource
+
+    def refuse(*args):
+        raise PermissionError('prlimit refused')
+
+    monkeypatch.setattr(resource, 'prlimit', refuse)
+    with pytest.raises(PermissionError, match='prlimit refused'):
+        execute(tmp_path, 'import time;time.sleep(60)', timeout=30, memory_limit_bytes=1 << 30)
+    _assert_only_unreaped_leaders_were_signalled(group_kills)
+
+
+@needs_exit_peek
+def test_group_is_not_signalled_again_when_the_final_wait_times_out(tmp_path, monkeypatch, group_kills):
+    import subprocess
+    real_wait = subprocess.Popen.wait
+
+    def stuck(self, timeout=None):
+        real_wait(self)  # reaps, then reports the timeout the supervisor turns into PT-BACKEND
+        raise subprocess.TimeoutExpired(self.args, timeout)
+
+    monkeypatch.setattr(subprocess.Popen, 'wait', stuck)
+    with pytest.raises(RuntimeError, match='PT-BACKEND: terminated child did not exit'):
+        execute(tmp_path, 'pass', timeout=30)
+    _assert_only_unreaped_leaders_were_signalled(group_kills)
+
+
+@pytest.mark.skipif(os.name == 'nt', reason='POSIX process groups')
+def test_without_waitid_process_is_refused_before_spawning(tmp_path, monkeypatch):
+    monkeypatch.delattr(os, 'waitid', raising=False)
+    def forbidden(*args, **kwargs):
+        pytest.fail('unsupported supervision must not spawn a process')
+    monkeypatch.setattr(jobs.subprocess, 'Popen', forbidden)
+    with pytest.raises(OSError, match='PT-BACKEND: safe process supervision requires'):
+        execute(tmp_path, 'pass', timeout=30)
+
+
+@needs_exit_peek
+def test_external_reaper_disables_group_signalling(tmp_path, monkeypatch):
+    def externally_reaped(_kind, pid, _flags):
+        os.waitpid(pid, 0)
+        raise ChildProcessError('reaped elsewhere')
+    def forbidden(*_args):
+        pytest.fail('an externally released process group must not be signalled')
+    monkeypatch.setattr(os, 'waitid', externally_reaped)
+    monkeypatch.setattr(os, 'killpg', forbidden)
+    with pytest.raises(RuntimeError, match='child was reaped outside its supervisor'):
+        execute(tmp_path, 'pass', timeout=30)
+
+
+@needs_exit_peek
+def test_waitid_error_is_not_reported_as_success(tmp_path, monkeypatch):
+    def refused(*_args):
+        raise PermissionError('waitid refused')
+    monkeypatch.setattr(os, 'waitid', refused)
+    with pytest.raises(PermissionError, match='waitid refused'):
+        execute(tmp_path, 'import time; time.sleep(60)', timeout=30)

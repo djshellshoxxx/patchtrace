@@ -10,7 +10,7 @@ from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
-from patchtrace.artifact_bytes import ArtifactBytesError, VerifiedArtifactReader
+from patchtrace.artifact_bytes import MAX_READ_BYTES, ArtifactBytesError, VerifiedArtifactReader
 from patchtrace.pe_overview.inspect import inspect_pe
 from patchtrace.pe_overview.models import PeOverview
 
@@ -51,6 +51,7 @@ class PeView:
             raise PeTableError(f'{Path(path).name} is not a parsable PE image ({self.overview.status})')
         self.smap = self.overview.section_map()
         self.warnings: list[str] = [w.code for w in self.overview.warnings]
+        self._unknown_relocs: set[int] = set()  # types already warned about: one warning per type, not per entry
 
     def __enter__(self):
         return self
@@ -85,6 +86,12 @@ class PeView:
         """Bytes at [rva, rva+length); RVA space the file does not back (BSS, gaps) reads as zero."""
         if length < 0 or rva < 0 or rva + length > 2**32:
             raise PeTableError('RVA range out of 32-bit space')
+        try:
+            return self._read_rva(rva, length)
+        except ArtifactBytesError as exc:
+            raise PeTableError(f'cannot read image bytes: {exc}') from exc
+
+    def _read_rva(self, rva: int, length: int) -> bytes:
         out = bytearray()
         cursor, end = rva, rva + length
         regions = sorted(self.smap.regions, key=lambda r: r.start)
@@ -100,9 +107,11 @@ class PeView:
             backed_end = region.start + region.backed
             if cursor < backed_end:
                 take = min(stop, backed_end)
-                data = self.reader.read(region.file_offset + cursor - region.start, take - cursor)
-                out += data.ljust(take - cursor, b'\0')
-                cursor = take
+                while cursor < take:  # one reader call is capped, a directory may be larger
+                    piece = min(take, cursor + MAX_READ_BYTES)
+                    data = self.reader.read(region.file_offset + cursor - region.start, piece - cursor)
+                    out += data.ljust(piece - cursor, b'\0')
+                    cursor = piece
             if cursor < stop:
                 out += bytes(stop - cursor)
                 cursor = stop
@@ -140,7 +149,8 @@ class PeView:
         return out
 
     def relocations(self) -> tuple[list[int], list[int]]:
-        """Sorted base-relocation RVAs and their widths (bytes to mask). Unknown types mask 8 bytes."""
+        """Sorted base-relocation RVAs and their widths (bytes to mask). Unknown types mask 8 bytes and are
+        reported once per type."""
         found = self._directory('BaseReloc')
         if found is None:
             return [], []
@@ -157,7 +167,8 @@ class PeView:
                 (entry,) = struct.unpack_from('<H', data, pos + 8 + 2 * i)
                 kind, offset = entry >> 12, entry & 0xFFF
                 width = RELOC_WIDTH.get(kind, 8)
-                if kind not in RELOC_WIDTH:
+                if kind not in RELOC_WIDTH and kind not in self._unknown_relocs:
+                    self._unknown_relocs.add(kind)
                     self.warnings.append(f'relocation type {kind} masked as 8 bytes')
                 if width:
                     entries.append((page + offset, width))

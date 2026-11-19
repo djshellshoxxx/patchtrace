@@ -1,0 +1,31 @@
+{
+  "source": "d8c02caea407f6d323eecd636735849c1eb31a2d",
+  "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+  "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "fixture_sha256": "7f6164e5f45fbe51fd7f3abe973334fbc24934e3a56c0f855abd76f4434891b4",
+  "cases": [
+    {
+      "zoned": false,
+      "positive_control_edges": 43,
+      "unscoped_edges": 0,
+      "unscoped_disputed": 43,
+      "selected_edges": 43,
+      "selected_disputed": 0,
+      "selected_conflict_warning": false,
+      "both_active": true,
+      "passed": false
+    },
+    {
+      "zoned": true,
+      "positive_control_edges": 43,
+      "unscoped_edges": 0,
+      "unscoped_disputed": 43,
+      "selected_edges": 43,
+      "selected_disputed": 0,
+      "selected_conflict_warning": false,
+      "both_active": true,
+      "passed": false
+    }
+  ],
+  "passed": false
+}

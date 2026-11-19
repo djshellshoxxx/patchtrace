@@ -1,5 +1,116 @@
 # QA and audit record
 
+## 2026-11-18 advisory anchor compatibility and final frozen L1 evidence
+
+The current successor preserves actual #305/#306 heads and repairs the reproduced
+long-anchor budget regression and default stored-advisory CLI owner mismatch.
+Seven new controls failed before repair; the broader frozen-source selection at
+`b9fac06b` passed **942 tests**. Independent 85-test and three-head boundary/digest/
+cursor checks passed; these overlapping invocations are not summed. Whole Ruff
+and whitespace passed. The preserved source-specific L1 replay at `f69614fa` is
+**73 PASS, 6 FAIL, 8 excluded**, exit 1; the six expected failures and all frozen
+inputs remain intact. Final-head hosted full/Windows/Qt/package/native gates are
+still mandatory. See [the integration and evidence record](qa/search-anchor-integration-20261118.md).
+
+
+## 2026-11-18 CVE consolidation successor and real L1 replay
+
+The second independent review repaired Windows ZIP path identity, uncertain
+chronology/fix boundaries, rejected advisory source scoring and pair-output
+ownership. A real source replay exposed mixed-architecture predecessor selection,
+now repaired, and supported `.tsp` inputs were added. Combined local verification:
+**2,089 passed, 3 skipped** at `06c8ca0c`. Frozen source-backed L1 expected-file
+replay: **73 PASS, 6 FAIL, 8 excluded**; no percentage/bound and no L2/L3 claim.
+Four Server coverage cases and two unchanged-preview cases remain failures.
+Exact-head hosted Windows/full/package gates remain mandatory. See the
+[source, repair and continuation record](qa/cve-consolidation-20261118.md).
+
+
+## 2026-11-18 current consolidation correctness follow-up
+
+The #302 continuation selectively incorporates six independently reviewed
+correctness fixes from concurrent #304, then repairs ZIP separator handling,
+ambiguous chronology/change provenance and unbounded variant evaluation.
+Independent final core review at `bce67e93`: **239 passed** (225 project cases
+plus 14 independent controls). Separate verifier/L1/schema selection: **242
+passed**. Whole Ruff, schema regeneration and whitespace checks pass. A broader
+combined local process ended 137 without a summary and is not a passing run.
+Exact source/continuation trees, old-head hosted counts and remaining gates are
+in [the follow-up record](qa/consolidation-correctness-20261118.md). Existing
+automatic prerelease policy is unchanged; fresh published-head CI remains the
+merge gate. PRs #304, #305 and #306 retain their separate remaining scope.
+
+## 2026-11-18 independently reviewed consolidation successor
+
+`codex/consolidation-reviewed-20261118` directly continues #301, preserving #297
+and its source ancestry. The corrected full-clone inventory contains **300 topic
+branches**, of which **113** are ancestors of starting main; all 300 have a merge
+base. All remote branches remain intact. Independent core and security review
+reproduced and repaired zero-address normalization, L-39 cap asymmetry,
+recent-query JSON ingress, and release archive type/link validation. The unsafe
+archive/delete helper is excluded. See the exact references, scope, focused test
+counts and deferred work in the [decision log](qa/branch-consolidation-20261118.md).
+Current-successor full QA and hosted gates remain pending until recorded against
+their exact commit; the historical section below is not current qualification.
+
+## 2026-11-18 full branch consolidation (PR #301)
+
+Historical author report (branch-count claims corrected by the decision log):
+carried #297 and ported eight initially listed never-merged
+items (release verifier, parser fuzz harness, KB scope retention #118 P1a, R8
+typed-literal canon/2 with EH-EQ, Windows batch-launch hardening, saved
+searches, RD-F03 alignment core, A-32 Ghidriff one-to-many abstention).
+Local Linux, Python 3.13, pytest-xdist `-n 3 --dist loadfile`, CI extras
+installed: `main` + #297 baseline **21,692 passed, 7 failed** (6 need the
+`rapidfuzz` extra, 1 xdist ordering; all 7 pass with extras installed); head
+`a59891cf` (before A-32) **22,348 passed, 48 skipped, 5 xfailed, 0 failed**;
+A-32 affected selection **2,918 passed** plus UI and seam tests; final code
+head `4534b763` (all ports, including A-32, rz-diff flood stop and
+bundle-acceptance fixes) **22,477 passed, 48 skipped, 5 xfailed, 0 failed**.
+Whole Ruff passed. Exact-head #301 hosted results were subsequently refreshed in
+the decision log; they do not qualify the successor. Targeted native RB-01,
+Windows desktop and release acceptance remain open. See
+[consolidation record](qa/branch-consolidation-20261118.md).
+
+## 2026-11-16 local KEV CLI context completion
+
+Completed the remaining K4 context wiring through verified local catalogs,
+including snapshot staleness and provenance without function-ranking changes.
+Final combined affected selection: **1,224 passed**. Broader local acceptance
+still encounters the documented AF_UNIX runner restriction and grouped process
+terminations; hosted Windows/full-suite/release gates remain open. See
+[KEV continuation evidence](qa/kev-cli-continuation-20261116.md).
+
+## 2026-11-16 path, KB CLI and historical research continuation
+
+Repaired both observed Windows CLI path failures, completed metadata-sync help
+and stored-product catalogue CLI access, and recovered the isolated R7 research
+slice from #282. Combined affected verification: **724 passed**; whole Ruff,
+dependency and whitespace checks passed. The full single-process attempt was
+killed (137); hosted/current Windows and release gates remain open. See
+[source-pinned evidence and limits](qa/continuation-paths-kb-r7-20261116.md).
+
+## 2026-11-16 research integrity recovery
+
+See [research recovery evidence](qa/research-integrity-followup-20261116.md):
+Tier R provenance/labels/immutable receipts (155 passed, 8 native skips), native
+IO research validator (136 passed), and independent scoped reviews. Fresh pinned
+Linux API controls matched all six expected stock/corrected/negative outcomes;
+prior failures and worker-count diagnosis are preserved with raw receipts.
+Final-head hosted/platform gates remain separate; no real-binary accuracy claim is made.
+
+## 2026-11-16 consolidation follow-up
+
+See [follow-up evidence](qa/consolidation-followup-20261116.md): timeout entry
+controls, benchmark/parity and release repairs, independent review, 480 combined
+passes/3 expected failures plus 13 backup checks, and ten redundant PR closures.
+Hosted final-head qualification remains pending.
+
+## 2026-11-16 continuation
+
+See [continuation evidence](qa/continuation-20261116.md), including independent
+review findings, branch dispositions and explicit native/release blockers.
+
 ## 2026-11-11 SPEC-31 unified-engine soundness follow-up (PR #259 open defects) — Linux, synthetic only
 
 Branch `claude/funny-feynman-d2m0b5` (`main` `882d1ca0` + #259's five commits merged cleanly + four fixes). Plan and worker briefs: [unified-soundness-swarm-prompt-20261111](plans/unified-soundness-swarm-prompt-20261111.md); spec amendments A-28..A-31 in `docs/specs/unified-engine/10-amendments.md`. Each defect had a red test before its fix (counts in the commit messages `78c0c544`, `3bf12d61`, `c0bf3d05`, `a28676c8`).
@@ -1712,3 +1823,18 @@ At 09:29:12 UTC, #246 merged normally into main as `dc53b529560453e84cf45e356a40
 ## [CONTINUATION-WINDOWS-20261106:product-start-build]
 
 Frozen #247 Windows QA passed **20,331 tests, 94 skipped, 5 xfailed, 19 warnings in 2675.35s**, plus standalone/frozen/portable/installer checks. Artifact `13492805458`, source `37b77130`, contains the stored-product starting route. API/upload digest and tested/source tree identity agree. The 09:43–09:44 snapshot still has Linux packaging/smokes outstanding; original local failures and release/live/manual gates remain preserved. [Windows candidate and evidence](qa/continuation-windows-20261106.md).
+
+
+## [WINPAIRS-WINDOWS-NATIVE-20261118]
+
+PR #304 at `bb4277ae` failed the hosted Windows publication boundary: **15 failed, 61 passed, 3 skipped**; full Windows QA and packaging were not reached. The original raw failure is retained. Native information-call repair at local `1c49199e` preserves held-handle ownership/no replacement and fixes independently reproduced primary-error masking during cleanup. Twenty portable controls failed against the old implementation; the focused final result is **101 passed, 2 actual-Windows skips**. Whole Ruff and whitespace checks pass. Exact-head hosted acceptance and merge remain open; no native success or precise old Win32 error-87 cause is inferred from portable checks. [Evidence and limits](qa/winpairs-windows-native-20261118.md).
+
+
+## [CURRENT302-INTEGRATION-20261118]
+
+Fresh REST inspection found eleven new #302 commits at `121ffb0b`; six repairs match earlier #304 patch IDs, while four behavior commits repair additional ZIP/lineage/selection/budget defects. Actual merge parents preserve both that head and #304 `6cc6b6b7`. Independent review verified all forty #304-only paths remain unchanged. A copied-target chronology-cache regression was reproduced and fixed; four stale test-double failures were preserved and repaired through fixture flags only. Disjoint affected selections total **1,650 passed, 2 native Windows skips**, with separate independent controls, whole Ruff and schema checks passing. Final code/tree is local `3693ca3b` / published `34c06d9e`, tree `42327753`. Hosted exact-head acceptance and guarded merge remain pending; no PR closure or accuracy promotion follows from local checks. [Evidence and limits](qa/current302-integration-20261118.md).
+
+
+## [FOUNDATION-SAVED-SCOPE-20261119]
+
+Independent controls blocked intact #304: scoped native revision conflicts could resurrect 43 positive edges. A narrow provenance-preserving port from #316 restores global admission and finite saved-scope validation. Dedicated regressions changed from **73 failed, 7 passed** to **80 passed**; both independent date variants now pass. Initial broader commands ran zero tests because a later-only path was included; corrected broad, Qt, hosted and independent review remain pending. Raw failures and limits are preserved in [the repair receipt](qa/foundation-saved-scope-20261119.md). No release or native qualification is claimed.

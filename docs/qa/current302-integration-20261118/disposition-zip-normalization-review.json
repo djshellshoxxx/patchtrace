@@ -1,0 +1,92 @@
+{
+  "checked_at": "2026-11-18T09:19:50.690363+00:00",
+  "commits": {
+    "current304": "6cc6b6b77564e12eaec2917877d94525a69c7102",
+    "new302": "121ffb0bcdd6af4f24e5035389d4709dffddf263"
+  },
+  "scope": "six authored ZIP cases across two source versions on Linux; simulated reader separators, not native Windows qualification",
+  "target_acquisition": false,
+  "target_execution": false,
+  "cases": [
+    {
+      "input": "backslash",
+      "reader_separator": "/",
+      "authored_zip_sha256": "277b97f2a73dc154788f53e1ceccea1dc5a8f2e91c8227339d86de834c8fcc9e",
+      "expected_accept": true,
+      "problems": {
+        "current304": [],
+        "new302": []
+      }
+    },
+    {
+      "input": "backslash",
+      "reader_separator": "\\",
+      "authored_zip_sha256": "277b97f2a73dc154788f53e1ceccea1dc5a8f2e91c8227339d86de834c8fcc9e",
+      "expected_accept": true,
+      "problems": {
+        "current304": [
+          "truncated member name \"PatchTrace/optional\\\\notes.txt\""
+        ],
+        "new302": []
+      }
+    },
+    {
+      "input": "nul",
+      "reader_separator": "/",
+      "authored_zip_sha256": "a047ec8c9c99ee843fbc2817e3028fe548b817728fe96534c891406d518d3cea",
+      "expected_accept": false,
+      "problems": {
+        "current304": [
+          "truncated member name \"PatchTrace/optional\\u0000notes.txt\""
+        ],
+        "new302": [
+          "truncated member name \"PatchTrace/optional\\u0000notes.txt\""
+        ]
+      }
+    },
+    {
+      "input": "nul",
+      "reader_separator": "\\",
+      "authored_zip_sha256": "a047ec8c9c99ee843fbc2817e3028fe548b817728fe96534c891406d518d3cea",
+      "expected_accept": false,
+      "problems": {
+        "current304": [
+          "truncated member name \"PatchTrace/optional\\u0000notes.txt\""
+        ],
+        "new302": [
+          "truncated member name \"PatchTrace/optional\\u0000notes.txt\""
+        ]
+      }
+    },
+    {
+      "input": "case-alias",
+      "reader_separator": "/",
+      "authored_zip_sha256": "54c7be0ad542ef972d30cfcc285c7476b0813af47391338e4625bdb05c33d0c7",
+      "expected_accept": false,
+      "problems": {
+        "current304": [
+          "duplicate member \"patchtrace/note.txt\""
+        ],
+        "new302": [
+          "duplicate member \"patchtrace/note.txt\""
+        ]
+      }
+    },
+    {
+      "input": "case-alias",
+      "reader_separator": "\\",
+      "authored_zip_sha256": "54c7be0ad542ef972d30cfcc285c7476b0813af47391338e4625bdb05c33d0c7",
+      "expected_accept": false,
+      "problems": {
+        "current304": [
+          "duplicate member \"patchtrace/note.txt\""
+        ],
+        "new302": [
+          "duplicate member \"patchtrace/note.txt\""
+        ]
+      }
+    }
+  ],
+  "source_version_case_evaluations": 12,
+  "finding": "Current304 falsely labels benign backslash normalization as NUL truncation with the Windows separator. New302 accepts that case; both retain NUL and case-alias rejection."
+}

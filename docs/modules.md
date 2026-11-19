@@ -1,5 +1,35 @@
 # Module index
 
+| Module | Responsibility | Verification seam |
+|---|---|---|
+| `tools/branch_inventory.py` | Read-only full-history branch ancestry, patch evidence and exact-tip inventory replay; no ref mutation or deletion authorization | Real authored Git graphs and atomic report preservation in `tests/test_branch_inventory.py` |
+
+### November 2026 continuation interfaces
+
+KEV CLI context continuation (2026-11-16): `pilot/collect.py:local_kev` reads the
+existing verified snapshot store into `pilot/sources/kev.py:CatalogKev`.
+`pilot/cli.py` compares the current snapshot id when reading stored results;
+`kbcorrelation/service.py` accepts the existing exploitation lookup for search
+edge/card context. No new stored schema or ranking algorithm is introduced.
+Verification: `test_pilot_cli.py`, `test_kbc_cli.py`, KEV and pilot suites.
+
+Historical R7 research recovery (2026-11-16): `tools/research/r7/{slicer,patterns,bench}.py`
+contains bounded synthetic dependency slicing, conservative guard-delta motifs and
+an optional benchmark. These development tools do not modify production analysis,
+ranking, schemas or Qt. Source: `1f4a0784` / `abadcb36` on
+`consolidate/research-r7-20261104` (PR #282; original PR #134).
+Verification seams: `tests/test_r7_slicing.py`, `tests/test_r7_patterns.py`.
+
+| Module | Responsibility | Verification seam |
+|---|---|---|
+| `project_cli.py`, `cli_commands/project.py` | Headless project creation, inspection, imports, backups and orientation swap through existing services | `test_project_cli.py`; refusal, cancellation and read-only invariants |
+| `compare_cli.py`, `cli_commands/compare.py` | Supervised primary comparison and transactional result application | `test_compare_cli.py`; fake backend, retained results and cancellation |
+| `doctor_cli.py`, `cli_commands/doctor.py` | Local health report without network or subprocess execution | `test_doctor_cli.py` |
+| `enrichment/profile_cli.py`, `cli_commands/profile.py` | Shared profile repository operations and validation | `test_profile_cli.py` |
+| `tools/research_qualification/l1_run.py` | Frozen-manifest offline advisory-join receipts, excluding unverified cases | `test_research_qualification_l1_run.py`; synthetic mechanics, not real accuracy |
+| `report2/kb_context.py` | Inert advisory records from the project's captured KB context | KB report regression tests |
+| `kbcorrelation/cli_leads.py`, `wiring.py`, `panel_qt.py` | Owner-thread snapshots for worker-side lead calculation without reopening the held project | Default-loader lifecycle regression tests |
+
 2026-11-05 investigation extension: the existing `kbcorrelation/investigation_service.py`
 facade also builds the existing monthly IndexPlan, strictly checks captured plan and
 consent, and orchestrates existing CVRF transport/per-document WorkspaceStore commits.
@@ -18,7 +48,7 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 | contracts | models.py | Versioned validated artifact/project/run/function/match/evidence/context/finding/job/export records | pydantic | Pure data; schema and invariant tests |
 | ingestion | ingestion.py | inspect_artifact and immutable copies; PE AMD64 validation | contracts | Disk staging; synthetic PE fixtures |
 | persistence | persistence.py | create/load/save project, lock, backups, revision history | contracts | SQLite connection confined to its creating thread; temp roots |
-| normalization | normalization.py | normalize_ghidriff, preserve unavailable fields | contracts | Pure conversion; upstream JSON fixtures |
+| normalization | normalization.py | normalize_ghidriff, preserve unavailable fields; A-32 (2026-11-18): two-pass validate-then-emit, a function repeated with identical content across distinct `modified` pairs abstains per connected 1:N/N:1/N:M group (one-sided non-manual `ambiguous` rows with `upstream_one_to_many`, `is_abstention`) instead of rejecting the document; exact pair repeats, conflicting content, one-sided-plus-paired and planted reserved keys still reject | contracts, enrichment.identity | Pure conversion; upstream JSON fixtures; `tests/test_normalization_one_to_many.py`, `test_unified_ghidriff_one_to_many.py`, `test_evalcore_ghidriff_one_to_many.py` |
 | alignment | alignment.py | Bounded line alignment and hunks; large-input fallback | contracts | Pure lines; unequal/empty fixtures |
 | offline bundle | offline_bundle.py | Strict inventory verifier, checksum-bounded ZIP inspection, transactional per-user extraction and deterministic producer | stdlib | Synthetic ZIP, traversal, tampering, cancel, rollback, Qt import tests |
 | runtime discovery | runtime_discovery.py | Bounded read-only local Python/Ghidra path candidate discovery (no execution or network) | stdlib | Injected filesystem/env and Qt setup prefill tests |
@@ -60,6 +90,7 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 | artifact bytes | artifact_bytes.py | SPEC-26 shared seam: `VerifiedArtifactReader.open_artifact/open_path`, bounded `read(offset,length,clip)` on a SHA-256-verified handle; change detection; `ArtifactBytesError.code` | ingestion/contracts | Pure IO, no Qt; tmp-file tests |
 | pe overview (alpha) | pe_overview/*.py | SPEC-26 D: bounded stdlib PE header/section/directory/import/export/entropy/overlay/certificate-table parsing, field-level old/new comparison; `inspect(reader) -> PeOverview`; Authenticode trust isolated in Windows-only `authenticode.py` | artifact bytes | Pure; synthetic/hostile PE fixtures; native Windows trust tests skip elsewhere |
 | byte representations (alpha) | representations/*.py | SPEC-26 B: paged Hex/Binary/Base64 rendering of exact verified bytes; whole-file/file-range/function-RVA scopes via injected section map | artifact bytes | Pure; boundary fixtures |
+| raw offset alignment (RD-F03) | representations/alignment.py, raw_alignment_view.py | SPEC-26 extension (A-09): opt-in `align_bytes`/`align_pages` (`raw-offset-align/1`) describes two bounded verified windows as exact equal/replace/insert/delete/unresolved spans with independent physical offsets; resynchronizes only on unique, consistent anchors, otherwise `ambiguous`/`unaligned`/`limited`/`cancelled`; work, span and shift caps. `raw_alignment_view` builds the Qt-free paired rows (display-only gaps, exact original-window copy). Desktop controls not wired yet. Ported 2026-11-18 from `repair/rzdiff-native-red-control-20261103` | representations.{paging,scope}, artifact bytes | `tests/test_representation_alignment.py`, `tests/test_raw_alignment_view.py` |
 | tooltip registry (alpha) | tooltips.py | SPEC-26 A: semantic-ID tooltip registry, safe templates, `apply_tooltips`; New/Open exempt | Qt (apply only) | Registry tests + widget enumeration test |
 | artifact inspection (alpha) | artifact_inspection.py | SPEC-26 D orchestration: `inspect_project_artifacts(project_id, artifacts, root, cancel) -> ProjectInspection` (per-side verified reader + `PeOverview` + `compare_overviews`); per-side failure codes never hide the other side; owner closes readers | artifact bytes/pe overview | Pure; tampered/missing/cancel tests |
 | raw view (alpha) | raw_view.py | SPEC-26 B composition: whole-file and from-function-entry scopes (entry RVA via section map, extent never claimed), `build_side`, `differing_lines` | pe overview/representations | Pure; mapping and diff tests |
@@ -442,6 +473,7 @@ Status column: each row is built by the slice named in `docs/specs/program-e/CAP
 K3 notes: `workflow.py` now also allows `pair_proposed` from the searched states (a manual pair after a KB search skips the product steps); `recovery.repair` gained `only=` so `kb attach --repair` touches one project. Plan 10.1 step 1 "4 edges" is reconciled as 4 vendor-remediation edges + 1 mention-only = 5 rows. `kb plan` and `kb pairs` need the file index (K5): `plan` is unsupported (exit 2) and `pairs` is unavailable (exit 4) offline. `kb attach` to a project this workspace did not create is unsupported (W3, later). CSAF applicability reports are not built (`IntelligenceAdvisory.report_for` is unsupported); a CSAF document still yields `vendor-association` edges. `ContextBundle` is not yet in `docs/schemas/kbcorrelation/` (the generator is K0's).
 ### [WB1:S4:service-rank]
 | search service + ranking | search/{service,rank,expand,fuzzy}.py | WB1 S4: `SearchService` (build, coverage, `search`, `check_locator`, `counterpart_hints`) reads candidates from finished segments with `parse_query` output only, groups them into leads by the live pairing, orders them by the explained lexicographic key (`rank.py`: tier, change class, distinct origins, attention ordinal, table id, native bm25, name; no score), expands pages live (`expand.py`: counterparts, attention, locator validation) and offers RapidFuzz name suggestions and mutual-nearest rename hints (`fuzzy.py`, guarded by `optional_deps`; absent = reported unavailable). Hooks: `attention` (`load_default` shape), `comparable(engine)`, `extra_specs` (tool, advisory, IR groups). | search.{contracts,build,segment,query}, optional_deps | tests/test_search_{rank,expand,fuzzy,synergy}.py |
+| search saved + recent | search/saved.py | WB1 S7 pure part (ported from `claude/instance-b-features` commit 06b26d83): `SavedSearchStore` protocol with `MemorySavedStore` and `EnrichmentSavedStore` over append-only `search-saved/1` rows (`create`/`delete` tombstones; the only model is `search.contracts.SavedSearch`; rows of another project, another contract, another id shape or a self-delete are counted in `SavedList.skipped`); names NFC, 1-64 characters, deduped by folded name, count bounded by `saved_searches`; a stored plan is never trusted: `rerun_plan` re-parses its text. Recent queries (`search-recent/1`, at most 20, newest first, lenient reader) over a `RecentStore` (QSettings in the GUI). No GUI or CLI hook yet | search.{contracts,query,normalize,limits}, enrichment.storage | tests/test_search_saved.py |
 ### [D4:buildenv-store-cli-report] Build-environment store, CLI and report (2026-10-14)
 | Module | Files | Responsibility | Depends on | Tests |
 |---|---|---|---|---|
@@ -477,6 +509,14 @@ K5 notes: grade B needs verified bytes in the K0 contract, so a wider window sta
 K4a notes: `kbcorrelation/cli.py` gained `engine=` and `kev=` ports on `main`/`Context` (additive). Attention order is the only number shown and is labelled "the engine's own order, not a measure of risk" (the plan's word "likelihood" is on the banned list). Run id is shown but not part of the stale test yet (the context row does not record the run it was prepared for).
 ### [K5w:pairs-plan-glue]
 `kb pairs` and `kb plan` resolve candidates with `resolver.resolve` over Winbindex records saved in the offline workspace as `winbindex/<name>@YYYY-MM-DD.json[.gz]` (`wiring.WorkspaceFileIndex`: `rows_for` = `parse_rows(...).rows` -> `as_mapping()`; `rows` = `lineage.index_rows`, skipped entries become `skipped_rows`). Read-only; `kb plan` previews one pair and plans no request (network plan and consent stay with E1).
+
+2026-11-18 certainty update: selected-machine timelines use valid UTC chronology;
+equal instants require stated builds from the same numeric family. Unordered
+observations at either endpoint remain in the confounding window. Resolutions
+expose `ambiguous` before filtering or truncation, and plan/acquire require an
+explicit pair when either ambiguity or truncation remains. Regression coverage:
+`test_kbc_lineage_ambiguity.py`, `test_kbc_lineage_certainty.py`,
+`test_kbc_resolver_architecture.py`, `test_kbc_pairs_index.py`.
 
 ### [CAP-7:capa-hints]
 | capa hints | src/patchtrace/intelligence/tools/capa_hints.py, tools/capa_rules_inventory.py | `capability_context(HypothesisSet, PairChange rows, lineage=)` returns `MechanismContext(support='context')` per hypothesis and matched pair: exact API-hint join (`api_key`), else namespace tag via `FAMILY_TAGS` (only `path` and `search-path` today). Only clean gained/lost rows join (not moved, not-compared, noise, library). No score, no contradiction. `capa_rules_inventory.py --rules-dir DIR` builds a complete inventory (names, namespaces, scopes, lib, file sha256; no rule text) without PyYAML; `--from-results` builds a `derived-unverified` subset from capa results. |
@@ -535,6 +575,7 @@ S8 notes: integrator wires `SearchService(extra_specs=lambda req: tool_specs(Too
 | Module | Files | Responsibility | Depends on | Tests |
 |---|---|---|---|---|
 | release gate | tools/release_gate.py; the `release-gate` job and the changed `release` job of .github/workflows/qa-windows.yml | Pure rule (`skips_ci`, `counted_merges`, `reaches`, `decide`, `ref_decision`, `latest_beta_prerelease`, `parse_git_log`) plus a `Tools` seam for git and `gh api`; prints `publish`, `milestones`, `reason` for `$GITHUB_OUTPUT`. Publishes at the third counted first-parent merge since the latest published `v0.1.0-beta.*` prerelease, for `[release]` in the head message, a tag, no earlier prerelease, or any gate failure (fail open). A commit whose whole message holds a GitHub skip marker is not counted, the head always is. Stdlib only | git, gh | `tests/test_release_gate.py` (fake tools, a throwaway git repository, text checks of the job graph; no network) |
+| release verifier | tools/verify_release.py | Offline verification of a published prerelease (A-I-2, ported from `claude/autonomous-finish-20261104`, PR #289): tag name, Pre-release and not draft, `targetCommitish`, peeled tag and the Windows ZIP `dependency-versions.json` commit equal the intended SHA; the eight assets and `.sha256` sidecars (exact `<hex>  <name>` + LF), per-asset SHA-256 against sidecar, listed digest and notes; Portable.zip byte-identical to the Windows ZIP; archive members (required files, no absolute, `..`, duplicate or escaping-link member). Never uses the network, never extracts or runs a downloaded file. Codes `PT-REL-*`; exit 0 pass, 2 usage/unreadable input, 3 a check failed; `--json`, `--record` | stdlib | `tests/test_verify_release.py` (synthetic archives, hostile ZIP/tar members, corrupt LZMA, exit-code contract; no network) |
 ### [F1b:cli-registry] GUI slice F1b: CLI-extension registry (2026-10-14; plan `docs/specs/program-e/GUI-integration-plan.md` 8.12 and 9)
 | Module | Files | Responsibility | Depends on | Tests |
 |---|---|---|---|---|
@@ -1198,6 +1239,8 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 | Module | Files | Responsibility |
 |---|---|---|
 | suite runner | tools/run_test_suite.py | Runs pytest the way CI does (`QT_QPA_PLATFORM=offscreen`, `-p no:cacheprovider`, `-n N --dist loadfile` when the local-only `pytest-xdist` is installed). Before the run it reports missing Qt system libraries and missing CI extras (rapidfuzz, yara_x, iced_x86). It writes the full log to a file and prints only the summary and the failing node ids. `--base REF` re-runs each failure on a temporary detached worktree of REF and labels it `also fails on base` or `new`. |
+| branch archiver | tools/archive_branches.sh | Owner-run: reads a `docs/qa/branch-disposition-YYYYMMDD.tsv`, and only for rows with `delete_safe` exactly `yes` checks the remote tip still equals the recorded SHA (moved branches are skipped), pushes `archive/<date>/<branch>` at that SHA, then deletes the branch. Dry run unless `--apply`; refuses `main`, invalid names and SHAs; stops on the first git failure | git | manual dry run against `branch-disposition-20261118.tsv` (no automated test) |
+| parser fuzz harness | tools/fuzz_parsers.py; `parsers` job of .github/workflows/nightly-fuzz.yml | Seeded, hermetic mutation fuzz (RB-06, ported from `claude/autonomous-finish-20261104`, PR #289) of every untrusted-input parser: strict JSON, Ghidriff normalization, CSAF, KB import, KEV, Winbindex rows/parse/gzip, capa, FLOSS, DiE. Seeds come from `tests/fixtures`; only the documented typed errors (`ToolError`, `IntelError`, `KevError`, `SourceError`, `AcquisitionError`, strict-JSON rejections) count as rejections, anything else is a finding saved under `--crash-dir`. Nightly job is non-gating, day-of-year seed, integer-validated duration input | patchtrace parsers | `tests/test_hostile_fuzz_parsers.py` (fixed seeds, bounded iterations; no network) |
 | KEV fixture | tools/make_kev_catalog.py | Writes a synthetic CISA-format KEV catalog (`--cve CVE[@dateAdded]`, `--released`, `--version`, `--ransomware`). The production parser checks it before writing, so `patchtrace kev import` always accepts it. Used for manual `kb leads --kev-dir` checks. |
 | tests | tests/test_dev_test_tools.py (3) | catalog round trip through `parse_catalog`, malformed CVE refused, failure and summary parsing of the runner |
 
@@ -1258,7 +1301,7 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 
 | desktop project adoption | gui/qt/project_adoption.py | GUI-thread transaction for MainWindow.set_service: retain the previous service until incoming rendering and recent-project preferences succeed; rollback pointer/preferences and close rejected incoming service on failure. No project/backend logic. | MainWindow view/settings hooks | tests/test_gui_project_adoption.py; real ProjectService ownership and QSettings rollback |
 
-| rz-diff producer research controls | tools/rzdiff/{patch_producer.py,singleton-ownership.patch,boundary_control.c,native_control.c,native_evidence.py} | Exact-blob-only Rizin v0.9.1 ownership correction; compiled wrapper double; pinned-native API oracle and strict red/green matrix evidence runner. Research only, no runtime acceptance or quarantine change. | stdlib; external pinned Rizin for live API checks | tests/test_rzdiff_producer_patch.py; tests/test_rzdiff_native_evidence.py; synthetic/compiled-double evidence separate from native acceptance |
+| rz-diff producer research controls | tools/rzdiff/{patch_producer.py,singleton-ownership.patch,boundary_control.c,native_control.c,native_evidence.py} | Exact-blob-only Rizin v0.9.1 ownership correction; compiled wrapper double; pinned-native API oracle and strict red/green matrix plus distinct-IO/negative-control evidence runner with independently verified native worker counts. Research only, no runtime acceptance or quarantine change. | stdlib; external pinned Rizin for live API checks | tests/test_rzdiff_producer_patch.py; tests/test_rzdiff_native_evidence.py; tests/test_rzdiff_io_evidence.py; synthetic/compiled-double evidence separate from native acceptance |
 
 ### [UE-AUD-20261104:diaphora-source] Diaphora as a unified fusion source (06 s5, 2026-11-04, PR #180)
 
@@ -1335,3 +1378,12 @@ binds pending repair to its exact original scope/source subset. New-reader
 repair is required for those journals; public schemas and SQL version stay
 unchanged. Tests: `test_kb_product_start_20261106.py`,
 `test_kb_product_acceptance_20261106.py`, plus existing service/recovery journeys.
+
+| offline runtime CLI | runtime_cli.py; cli_commands/runtime.py | Headless bounded archive inspection and confirmed installation through offline_bundle services; ownership-checked empty ancestor cleanup | offline_bundle, backend_bundle | tests/test_runtime_cli.py; synthetic archives, no runtime execution |
+| secondary CLI dispatch | secondary/cli_import.py | Qt-free secondary command orchestration: input preflight, reconciliation and import/run dispatch; cli.py is a lazy delegate | secondary services, CLI presentation helpers imported at dispatch | CLI import/reconcile/run and no-Qt module import regression tests |
+
+| manual corrections exchange and review CLI | corrections_exchange.py; corrections_cli.py; review_cli.py; cli_commands/corrections.py; cli_commands/review.py | Bound transactional correction exchange, immutable export, headless reviews through ProjectService | persistence, models, service | tests/test_corrections_cli.py; tests/test_review_cli.py; synthetic fixtures |
+
+| timeout setup UI | src/patchtrace/ui_timeout.py | Preserved-text 10..86400-second validation, explicit 1h/2h/4h presets and inline errors for Setup; no backend execution or settings writes | PySide6, tooltip registry | tests/test_ui_timeout.py; SPEC-01a docs/specs/ghidriff-timeout-progress.md |
+
+| saved advisory scope | src/patchtrace/kbcorrelation/saved_scope.py | Pure validation of one KB/CVE search coverage identity, coherent finite selection and detectable current coverage drift; shared service/context boundary. Full-index admission remains in `index.py`; cached coverage bookkeeping does not determine claims. No storage, schema, Qt or network ownership. | contracts, sources.scope, index | tests/test_kbc_saved_scope_validation.py, test_kbc_saved_scope_flow.py, test_kbc_saved_scope_revision_identity.py |

@@ -7,6 +7,8 @@ import pytest
 from kbc_k5_support import SHA, record, rows_of, scope
 
 from patchtrace.kbcorrelation.resolver import propose_index_pair, resolve
+from patchtrace.kbcorrelation.service import KbService
+from patchtrace.kbcorrelation.store import KbcStoreError
 
 
 def candidates():
@@ -65,7 +67,22 @@ def test_same_update_variants_are_retained_without_invented_chronology_and_order
                               skipped_rows=skipped)
     assert result == reversed_result
     assert result.changed_in_kb == 'unknown' and len(result.pairs) == 2
-    tied = [p for p in result.pairs if p.older.build_ubr == p.newer.build_ubr]
-    assert len(tied) == 1
-    assert tied[0].grade == 'X' and 'ORDER_UNVERIFIED' in tied[0].reason_codes
-    assert result.pairs[0].grade == 'A'  # the earlier dated/build row still ranks before the blocked variant
+    assert result.ambiguous and not result.truncated
+    assert {pair.newer.sha256 for pair in result.pairs} == {SHA['Z'], SHA['V']}
+    # Preserve both target variants against the established earlier observation;
+    # a display tie-breaker must not substitute a peer for that predecessor.
+    assert all(pair.older.sha256 == SHA['Y'] and pair.older.build_ubr == '26100.110'
+               and pair.newer.build_ubr == '26200.120' and pair.grade == 'A'
+               and pair.fix_boundary == 'unverified' and 'WINDOW_CONFOUNDED' in pair.reason_codes
+               for pair in result.pairs)
+    with pytest.raises(KbcStoreError, match='--pair') as caught:
+        KbService._pick_pair([result], None)
+    assert caught.value.code == 'PT-KBC-INPUT'
+    # The original unordered-comparison safety assertion still applies to any
+    # direct proposal between the peers, in both orientations.
+    peers = [row for row in rows if row.build.version_key == '11-24H2' and row.kb == 'KB5099001']
+    assert len(peers) == 2
+    for older, newer in (peers, tuple(reversed(peers))):
+        tied = propose_index_pair(older, newer, scope_id=scope().scope_id)
+        assert tied.grade == 'X' and 'ORDER_UNVERIFIED' in tied.reason_codes
+        assert tied.fix_boundary == 'unverified'

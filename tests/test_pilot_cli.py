@@ -206,6 +206,67 @@ def test_leads_json_names_the_fit_and_what_it_is_not(advised, capsys):
     assert not [w for w in BANNED_IN_OUTPUT if w in json.dumps(result).lower().replace(why.FOOTER.lower(), '')]
 
 
+def test_local_catalog_changes_context_and_identity_without_reordering_functions(advised, capsys, tmp_path,
+                                                                                monkeypatch):
+    from kev_helpers import document, entry, parse_bytes, render
+
+    from patchtrace.kev import store as kev_store
+
+    folder = tmp_path / 'kev'
+    monkeypatch.setattr(kev_store, 'default_kev_dir', lambda: folder)
+    before = leads_json(advised, capsys, '--limit', '0')['result']
+    candidate = before['leads'][0]['candidate_key']
+    raw = render(document([entry(cveID=CVE)]))
+    catalog = parse_bytes(raw)
+    kev_store.KevStore(folder).install(raw, catalog, now='2099-03-02T00:00:00Z')
+    code, out, _ = call(['pilot', 'why', advised, '--candidate', candidate, '--json'], capsys)
+    assert code == 0 and doc(out)['result']['stale']
+    assert 'kev_snapshot_id' in doc(out)['result']['changed']
+    after = leads_json(advised, capsys, '--limit', '0')['result']
+    assert after['cves'][0]['kev'] == {'state': 'listed', 'date_added': '2098-01-10',
+                                      'snapshot_id': catalog.meta.snapshot_id}
+    assert after['result_id'] != before['result_id']
+    assert [(r['candidate_key'], r['rank']) for r in after['leads']] == [
+        (r['candidate_key'], r['rank']) for r in before['leads']]
+    raw = render(document([entry(cveID='CVE-2099-99999')], catalogVersion='2099.03.03',
+                          dateReleased='2099-03-03T00:00:00Z'))
+    kev_store.KevStore(folder).install(raw, parse_bytes(raw), now='2099-03-03T00:00:00Z')
+    absent = leads_json(advised, capsys)['result']
+    assert absent['cves'][0]['kev']['state'] == 'not-in-snapshot'
+    assert absent['result_id'] != after['result_id']
+    # With no catalogue, the store may reuse the older matching unknown-context result.
+    for path in folder.rglob('*'):
+        if path.is_file():
+            path.unlink()
+    code, out, _ = call(['pilot', 'why', advised, '--candidate', candidate, '--json'], capsys)
+    assert code == 0 and not doc(out)['result']['stale']
+    assert doc(out)['result']['result_id'] == before['result_id']
+
+
+@pytest.mark.parametrize('condition', ['absent', 'damaged', 'read-error'])
+def test_unavailable_local_kev_remains_unknown_and_readonly(tmp_path, monkeypatch, condition):
+    from kev_helpers import document, entry, parse_bytes, render
+
+    from patchtrace.kev import store as kev_store
+
+    folder = tmp_path / 'kev'
+    monkeypatch.setattr(kev_store, 'default_kev_dir', lambda: folder)
+    if condition == 'damaged':
+        raw = render(document([entry(cveID=CVE)]))
+        catalog = parse_bytes(raw)
+        kev_store.KevStore(folder).install(raw, catalog, now='2099-03-02T00:00:00Z')
+        next((folder / 'snapshots').iterdir()).write_bytes(b'damaged catalog')
+    elif condition == 'read-error':
+        def refused(self):
+            raise OSError('read denied')
+        monkeypatch.setattr(kev_store.KevStore, 'load_current', refused)
+    before = {p.relative_to(folder): p.read_bytes() for p in folder.rglob('*') if p.is_file()}
+    source, notes = collect.local_kev()
+    assert source.snapshot_id() is None and source.lookup(CVE).state == 'unknown'
+    assert {p.relative_to(folder): p.read_bytes() for p in folder.rglob('*') if p.is_file()} == before
+    assert bool(notes) is (condition == 'read-error')
+
+
 def test_leads_text_is_a_plain_listing_with_the_standing_caption(advised, capsys):
     code, out, _ = call(['pilot', 'leads', advised], capsys)
     assert code == 0 and CVE in out and 'FITS ADVISORY' in out and 'read_item' in out and out.endswith(why.FOOTER + '\n')

@@ -13,8 +13,9 @@ import json
 import os
 import re
 import shutil
+import stat
 import tempfile
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -49,6 +50,58 @@ RUNTIME_MEMBERS = {
 
 class BuildError(RuntimeError):
     pass
+
+
+def persist_build_record(debug_dir: Path, record: Mapping) -> Path:
+    """Retain each complete observed receipt before atomically updating the compatibility view.
+
+    Equal image bytes can arise from different recipes. Existing receipts are
+    reused only after a bounded byte comparison; publication never replaces one.
+    This local-store writer does not anchor parents against hostile replacement.
+    """
+    data = json.dumps(dict(record), sort_keys=True, indent=1, allow_nan=False).encode('utf-8') + b'\n'
+    folder = Path(debug_dir) / 'builds'
+    folder.mkdir(parents=True, exist_ok=True)
+    if folder.is_symlink():
+        raise BuildError('build receipt directory must not be a symlink')
+    target = folder / f'{hashlib.sha256(data).hexdigest()}.json'
+    try:
+        with tempfile.TemporaryDirectory(prefix='.receipt-', dir=folder) as private:
+            staged = Path(private) / 'record.json'
+            with staged.open('xb') as stream:
+                stream.write(data)
+                stream.flush()
+                os.fsync(stream.fileno())
+            try:
+                os.link(staged, target)
+            except FileExistsError:
+                if not _same_build_record(target, data):
+                    raise BuildError(f'build receipt integrity mismatch: {target.name}') from None
+            except (OSError, NotImplementedError) as exc:
+                raise BuildError('atomic build receipt publication requires a store that permits hard links: '
+                                 f'{exc}') from exc
+            # Never reuse the linked staging inode for the mutable view: writing
+            # through it would also mutate the content-addressed receipt.
+            view = Path(private) / 'view.json'
+            with view.open('xb') as stream:
+                stream.write(data)
+                stream.flush()
+                os.fsync(stream.fileno())
+            os.replace(view, Path(debug_dir) / 'build.json')
+    except OSError as exc:
+        raise BuildError(f'build receipt persistence failed: {exc}') from exc
+    return target
+
+
+def _same_build_record(path: Path, expected: bytes) -> bool:
+    """No unbounded read or blocking FIFO open when a receipt path collides."""
+    if not stat.S_ISREG(path.lstat().st_mode):
+        return False
+    flags = os.O_RDONLY | getattr(os, 'O_BINARY', 0) | getattr(os, 'O_NONBLOCK', 0) | getattr(os, 'O_NOFOLLOW', 0)
+    with os.fdopen(os.open(path, flags), 'rb') as stream:
+        if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
+            return False
+        return stream.read(len(expected) + 1) == expected
 
 
 NUISANCES = ('icf', 'timestamp', 'guid', 'path')    # P1 of SPEC-31 08 s1 beside link order
@@ -136,6 +189,7 @@ class BuildResult:
     compiler_version: str
     source_digest: str
     input_files: dict[str, str] = field(default_factory=dict)
+    source_dirs: tuple[str, ...] = ()    # the scratch source directory the compiler may have recorded unmapped
 
 
 def _check_rel(rel: str) -> None:
@@ -280,6 +334,12 @@ def build(spec: BuildSpec, tools: Toolchain, store: Path, *, scratch_parent: Pat
             shutil.rmtree(scratch, ignore_errors=True)
 
 
+def source_dirs(src_dir: Path) -> tuple[str, ...]:
+    """Every spelling of the scratch source directory a compiler may record: as passed, and resolved (symlinked temp
+    parents such as /var -> /private/var; on Windows the long form of an 8.3 RUNNER~1 component)."""
+    return tuple(dict.fromkeys((str(src_dir), str(src_dir.resolve()))))
+
+
 def _build_in(spec: BuildSpec, tools: Toolchain, store: Path, root: Path, scratch: Path) -> BuildResult:
     src_dir, obj_dir, out_dir, tmp = (scratch / n for n in ('src', 'obj', 'out', 'tmp'))
     for d in (src_dir, obj_dir, out_dir, tmp):
@@ -376,10 +436,10 @@ def _build_in(spec: BuildSpec, tools: Toolchain, store: Path, root: Path, scratc
     record = {'contract': 'tier-r-build/1', 'project': spec.project, 'recipe': recipe, 'recipe_digest': recipe_digest,
               'source_digest': source_digest, 'inputs': inputs, 'debug_sha256': debug_sha, 'sha256': engine_sha,
               'pdb_sha256': pdb_sha, 'output': spec.output}
-    (debug_dir / 'build.json').write_bytes(json.dumps(record, sort_keys=True, indent=1).encode('utf-8') + b'\n')
+    persist_build_record(debug_dir, record)
     return BuildResult(spec, recipe_digest, debug_dir / spec.output, engine_dir / spec.output, pdb_target,
                        engine_sha, debug_sha, pdb_sha, len(engine_img.data), engine_img.image_base, compiler,
-                       tools.get(compiler).version or 'unknown', source_digest, inputs)
+                       tools.get(compiler).version or 'unknown', source_digest, inputs, source_dirs(src_dir))
 
 
 def _runtime_archive(tools: Toolchain, spec: BuildSpec, scratch: Path, env: dict) -> str:

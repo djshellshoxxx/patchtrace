@@ -1,0 +1,30 @@
+{
+  "started_at": "2026-11-18T09:25:05.860597+00:00",
+  "finished_at": "2026-11-18T09:25:06.549439+00:00",
+  "source_head": "237d216f0784d429bfc5c61103100346576e0831",
+  "argv": [
+    "/workspace/scratch/3a6632a6e5ff/venv/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "-c",
+    "/workspace/scratch/e83fbf4505c3/lineage302-review-20261118/pytest.ini",
+    "--junitxml=/workspace/scratch/e83fbf4505c3/lineage302-review-20261118/237d-corrected-fixtures-green.xml",
+    "fixture-correction-proof/test_kbc_bugfixes_20261029.py::test_kbc9_pair_prefixes_must_be_unique_and_long_enough",
+    "fixture-correction-proof/test_kbc_selection_guard.py::test_ambiguous_viable_pairs_require_explicit_selection",
+    "fixture-correction-proof/test_kbc_selection_guard.py::test_duplicate_observations_and_blocked_pairs_do_not_create_false_ambiguity"
+  ],
+  "cwd": "/workspace/scratch/e83fbf4505c3/lineage302-review-20261118",
+  "environment_overrides": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONPATH": "/workspace/scratch/e83fbf4505c3/review-integrated-237d216f/src:/workspace/scratch/e83fbf4505c3/review-integrated-237d216f:/workspace/scratch/e83fbf4505c3/review-integrated-237d216f/tests",
+    "QT_QPA_PLATFORM": "offscreen"
+  },
+  "timeout_seconds": 60,
+  "returncode": 0,
+  "stdout_file": "237d-corrected-fixtures-green.log",
+  "stdout_sha256": "698857960888a8b7dfacbbedaa34caceac2111f4575220562fe736c8ada79c50",
+  "source_changes": false
+}

@@ -1,0 +1,13 @@
+{
+  "archive": "evidence.zip",
+  "bytes": 180615,
+  "sha256": "cf98f02a65dc89ae754dc03400ba8ba933b3aa25a298a0ada29e7bcb2c2a4f52",
+  "payload_files": 122,
+  "archive_entries": 123,
+  "manifest_paths": "All paths in manifest.json refer to members inside evidence.zip.",
+  "readable_copies": "The four adjacent Markdown summaries remove trailing whitespace only. Original bytes and original signed-off manifests remain in evidence.zip.",
+  "raw_copy_whitespace_check": {
+    "returncode": 2,
+    "resolution": "Archive raw receipts verbatim; no source or test assertion change. The initial check is retained inside the archive."
+  }
+}

@@ -261,3 +261,15 @@ def test_cli_report_writes_deterministic_lf_json(tmp_path, capsys):
     assert report['contract'] == 'parity-report/1'
     assert report['oracles']['ghidriff']['steps']['P04-bytes-exact']['agree'] == 1
     assert capsys.readouterr().out.split()[0] == report['report_sha256']
+
+
+@pytest.mark.parametrize('reason', ['timeout', 'cancelled', 'output-limit'])
+def test_md_dump_cli_fails_when_the_run_was_cut_short_even_with_exit_zero(tmp_path, monkeypatch, reason, capsys):
+    """UE-B-03: a killed run can report returncode 0; a partial dump must never exit 0."""
+    monkeypatch.setattr(parity, 'run_md_dump', lambda *a, **k: {'stdout': 'partial', 'exit': 0, 'reason': reason,
+                                                                'input_sha256': 'a' * 64})
+    out = tmp_path / 'dump.txt'
+    argv = ['md-dump', '--bindiff-exe', str(tmp_path / 'bindiff'), '--binexport', str(tmp_path / 'x.BinExport'),
+            '--out', str(out)]
+    assert parity.main(argv) == 1
+    assert json.loads(capsys.readouterr().out)['reason'] == reason

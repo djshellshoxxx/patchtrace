@@ -155,7 +155,10 @@ def test_changed_rule_per_engine(tmp_path, engine, sim, rz_type, flag):
     from patchtrace.secondary import rzdiff
     from patchtrace.secondary.bindiff import import_bindiff
     if engine == 'rz-diff':
-        ms = rzdiff.parse_output(_rz_json([(sim, rz_type, 0x180001000, 0x180001000)]), '0.9.1', 'a' * 64, 'b' * 64)
+        # A second newer-side function (one-sided, so the matched predictions asserted below are unchanged):
+        # a single newer function is refused as ambiguous (SPEC-11 section 9).
+        ms = rzdiff.parse_output(_rz_json([(sim, rz_type, 0x180001000, 0x180001000),
+                                           (0.0, 'UNLIKE', None, 0x180001080)]), '0.9.1', 'a' * 64, 'b' * 64)
     else:
         path = build(tmp_path / 'x.BinDiff', functions=[(1, 0x180001000, 'f', 0x180001000, 'f', sim, 1.0, 0, 7)])
         ms = import_bindiff(path, 'a' * 64, 'b' * 64)
@@ -171,7 +174,9 @@ def test_address_basis(address, base, expected):
 
 def test_one_sided_rzdiff_entries_become_unmatched_sets():
     from patchtrace.secondary import rzdiff
-    ms = rzdiff.parse_output(_rz_json([(0.0, 'UNLIKE', 0x180001060, None), (0.0, 'UNLIKE', None, 0x180001070)]),
-                             '0.9.1', 'a' * 64, 'b' * 64)
+    # Two newer-side functions: one is refused as ambiguous (SPEC-11 section 9), so the fixture adds a second.
+    ms = rzdiff.parse_output(_rz_json([(0.0, 'UNLIKE', 0x180001060, None), (0.0, 'UNLIKE', None, 0x180001070),
+                                       (0.0, 'UNLIKE', None, 0x180001080)]), '0.9.1', 'a' * 64, 'b' * 64)
     result = E.from_match_set('rz-diff', ms, 0x180000000)
-    assert (result.predictions, result.old_only, result.new_only) == ((), frozenset({0x1060}), frozenset({0x1070}))
+    assert (result.predictions, result.old_only, result.new_only) == (
+        (), frozenset({0x1060}), frozenset({0x1070, 0x1080}))

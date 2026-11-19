@@ -147,7 +147,7 @@ Negative controls: swap orientation -> every lead stale, navigation off; add a c
 | stale after swap orientation or new run | fingerprint holds ordered SHAs, project revision, run id; stale banner, navigation off | `test_leads_stale_on_swap` |
 | backup misses KB or CSAF sidecars | amend `backup()`; verified round trip | `test_backup_includes_kb_sidecars` |
 | UI deception: colour-only badges, tooltip-only limits, auto-run, auto-selected top pair, silent empty table | text+glyph badges; limits in body text; no auto-start; explicit selection; coverage line always | `test_ui_kb_no_color_only_state` |
-| huge or hostile input: gzip bomb, depth, bidi, a 10-digit "KB" | caps (7.4), `strict_json`, `sanitize_text`, `PlainLabel`, escaped exports | `test_hostile_advisory_text_plain` |
+| huge or hostile input: gzip bomb, depth, bidi, a 10-digit "KB" | caps (7.4), `strict_json`, `sanitize_text`, `PlainLabel`, escaped exports. Amended 2026-11-11 (SEC-B, WP-03): the parsers' text gate `products.clean_text` applies the one rule of `patchtrace.hostile_text` (categories `Cc`, `Cf`, `Cs`, `Zl`, `Zp`); the only change is that U+2028 and U+2029 no longer survive: they become a space like the other line breaks. The gate runs again whenever a stored document is parsed (`WorkspaceStore.load_index`, `kb index verify`), so it must move no identity: scope keys and status classes already read both characters as whitespace and one character still becomes one character, hence scope, edge and document ids and row counts are unchanged; only shown text (product display name, title, subtype, status name) differs. One consequence: repairing a product-only attach that was interrupted before the change compares the journalled product snapshot with the re-derived one, so a product whose name holds one of the two characters is refused as `PT-KBC-STALE` (project retained, select the product again) | `test_hostile_advisory_text_plain`, `test_a_workspace_written_before_the_shared_rule_still_opens_and_verifies`, `test_the_shared_rule_moves_no_scope_identity` |
 | CLI and GUI write the workspace together | `BEGIN IMMEDIATE`, `busy_timeout=5000`, typed busy error | `test_two_writers_one_wins` |
 
 ## 7. Contracts
@@ -184,6 +184,7 @@ Name map: EvidenceOrigin / SourceDocument / SourceSnapshot / SourceReference -> 
 - `ComponentHint`: deduplicated title D plus analyst E uses tier E and retains both reasons/source refs; D alone never selects. Selectable A/B/C/E precede D at the hint cap. This is selection origin, never file-to-CVE proof. hint_id, basename (via `acquisition.contracts.validate_file_name`), scope_id, tier A-E, reasons, claim_refs, changed_in_kb yes/no/unknown. `BuildRow`: file_name, sha256 (dict key), version_key, kb, release_date, release_version, heading_class standard/preview/out-of-band/expired/none, shared_with, variant full/delta+/delta/raw, download, record_sha256, data_date.
 - `BinaryRef`: sha256, size, basename, machine, file_version?, build_ubr?, origin index-row/local-file/download, availability local/direct/candidates/delta-only/unavailable, authenticity (5 states, row 16). `PairProposal`: pair_id=domain_id('kbc.pair',1,{older,newer,scope_id,window_id}), older, newer, bytes_state verified/pending/mismatch/incompatible, lineage_state index-adjacent/compatible-branch/user-asserted/unverified/incompatible, fix_boundary source-supported/unverified/contradicted, window[kb], window_complete bool?, reason_codes, grade A/B/X, tier.
 - Pair rules. Grade A: no hard block, `lineage_state=index-adjacent` (the older row is the immediately preceding distinct-SHA row of the same version key), bytes verified or pending from an index row. Grade B: bytes verified and lineage asserted, branch-compatible or window confounded. Grade X: any hard block. `fix_boundary=source-supported` only if the newer row's build.UBR equals the edge's `fixed_build` and the older side is that immediate predecessor; `contradicted` if the older build is not before `fixed_build`. Reason codes: IDENTICAL_CONTENT, DELTA_ONLY, ARCH, CROSS_PRODUCT, ORDER_UNVERIFIED, DIGEST_MISMATCH, NO_OLDER, NO_NEWER, WINDOW_CONFOUNDED, SERVER_NOT_COVERED, NAME_MISMATCH, INDEX_GAP.
+- Partial-order clarification (2026-11-18; records the existing `fbc164d4` correction): same-time/build variants are not each other's established predecessors. When an earlier distinct-SHA observation exists, retain a proposal from that predecessor to each target variant within the unchanged enumeration budget. Keep unordered peers as `WINDOW_CONFOUNDED`, `fix_boundary=unverified`, `changed_in_kb=unknown`, and an explicit ambiguous resolution that refuses automatic selection. A direct comparison between tied peers remains grade X with `ORDER_UNVERIFIED` in either orientation. KB/hash display order cannot remove a viable target, establish chronology, or choose a pair. The older regression that expected one target variant to replace the other as a predecessor must test this full set of invariants instead; its direct unordered-pair rejection remains mandatory.
 - `PairPlan`: plan_sha, pair_id, requests[(method,url,bytes?,why)], hosts, expected{sha,size}, destination policy; wraps acquisition `DownloadPlan`; absent for local files. `Attempt`: op, plan_sha?, stage, result ok/partial/cancelled/error, code?, created_at (the consent record and the recovery journal). `AnalystDecision`: op, prior, next, reason<=500, created_at, refs (append-only; product choice, pair approval, orientation override, name-mismatch confirmation).
 - `InvestigationRevision`: investigation_id (UUID), revision, parent, lead{kind kb/cve/file/pair, value, raw<=200}, state, scope_ids, coverage_ids, selected_scope_id?, selected_pair_id?, plan_sha?, warnings. `ProjectLink`: project_id, project_revision, older_sha, newer_sha, investigation_id, revision, pair_id, state attached/context-pending/stale, stale_reasons. Attaching to an existing project (W3) records `lineage_state=unverified` and never reorients.
 - `ContextReport`: per CVE a `CveCard` (source_kind cvrf/csaf, title?, stated CWE?, severity context?, kev, applicability?), embedded `intelligence` JSON (CweProfile, HypothesisSet, AnchorSet, ApplicabilityReport) where CSAF exists, coverage, unknowns, limitations, hooks. The reused classifier names any vendor-stated CWE `explicit-csaf-cwe`; KB shows it as "stated by vendor (CVRF)" from `source_kind`, without changing `intelligence/1`. `LeadRow`: lead_id, level component/function, group (cve / 'unattributed' / 'not-applicable'), subject, chips[(channel documentary/applicability/exploitation/hypothesis/binary-identity/code-change/anchor, state supports/neutral/contradicts/unknown/not-run, text, ref)], rank_basis, nav{match_id?, project_revision, run_id}, stale, hooks. `OperationResult[T]`: status ok/partial/unknown/unsupported/cancelled/error, value, issues[`KbcIssue`(code, message<=500, recoverable, source_id?)], warnings.
@@ -395,3 +396,60 @@ E0 = K0, K0f, K1, K2, K3, K4a, K4b (K1 and K2 in parallel, K4a and K4b in parall
 CVRF release timestamps must be representable UTC instants, including after applying their stated offset. Out-of-range UTC conversion is a `DATE_INVALID` row problem. The reverse index treats such legacy stored dates as unknown, never an uncaught exception.
 
 A GUI local-pair approval supplies `expected_pair_id` from its dry-run preview to `KbService.import_pair`. A new hash/product-scope identity is refused with `PT-KBC-STALE` before approval, journal or project creation. The creation path retains its own ingestion identity checks after this preview guard.
+
+### Saved advisory search scope (2026-11-18)
+
+An investigation whose lead is a KB or CVE has exactly one saved search coverage
+reference. Before deriving products, components, pair candidates, plans or a new
+attachment, validate the reference against the coverage row's body identity and
+recomputed `kbc.coverage/1` identity. Reject missing, malformed or contradictory
+coverage with `PT-KBC-SCOPE` and repeat-search guidance. Check coherent scope fields,
+requested/inspected membership, the cached corpus digest and source readability.
+Validation precedes product decisions, component decisions, pair approval, journal
+writes and project creation. `attach --repair` preflights both the current advisory
+revision and every selected journal revision before generic recovery may mark an
+attempt interrupted. Refusal leaves workspace revisions, decisions, attempts,
+journals, project rows and sidecars unchanged. The recovery module's general policy
+is not changed by this boundary.
+
+`cached_corpus.doc_ids` is a finite selection, including the empty tuple. Reopening
+the service or importing another document cannot expand that selection. Provided
+files and the document part of mixed scopes are finite too; the month part remains
+the recorded month selector. Detectable changes to requested/inspected coverage or
+its revision watermark require a repeat search before deriving new results. Time
+passing alone does not rewrite saved coverage. Month-only coverage does not record
+each historical document digest, so this is not an immutable historical-snapshot
+claim. An explicit new search may widen or refresh the scope.
+
+For cached coverage accounting, reconstruct logical revision heads within the saved
+document population, preserving the existing month/tracking-group counting rules.
+For example, an existing CSAF receipt may name two retained snapshot IDs and count
+only one inspected logical revision. An unchanged valid receipt remains usable.
+This reconstruction only describes inspected bytes; it is never an admission index.
+
+All advisory admission still uses the full loaded index. A selected old source
+remains superseded when a newer source withdraws or contradicts its claim. Native
+unknown/tied revision conflicts are evaluated across the current source group before
+projecting selected documents. A subset index must not make an older or ambiguous
+claim current. Unreadable stored sources prevent a new saved-scope derivation when
+the full current admission set cannot be established; restoring the bytes and
+repeating the operation is permitted. No refresh, fetch or target execution occurs.
+
+The pure context builder enforces the same coverage boundary for KB/CVE leads,
+including a caller-supplied scope that contradicts saved coverage. Its edge digest
+retains `kbc.edgeset/1` and canonical sorted edge IDs, projected to selected documents
+intersected with the full index's active set. That single digest feeds both the
+bundle and its context key; an unrelated cached document cannot change the key.
+The digest uses each selected active edge's admitted identity. A native edge made
+disputed by a current global tied/unknown counterexample uses its existing derived
+disputed edge ID. Both lookup and digest use the same global conflict calculation,
+so changed admission cannot leave a different context under the same context key.
+Persisted context bundles remain readable as recorded without revalidation or a
+schema migration. File/pair-only flows keep their existing product/provenance
+contracts and do not need a fictional KB/CVE search.
+
+Acceptance uses authored offline documents and synthetic PE bytes through real
+workspace/project stores, export and a source-pinned headless CLI. It covers cached
+growth/empty selection, coherent and damaged coverage, pre-mutation repair checks,
+explicit refresh, global supersession/ambiguity and unrelated-document key stability.
+These checks provide no native, vendor-format or frozen-corpus qualification credit.

@@ -675,7 +675,18 @@ def test_the_release_job_needs_the_gate_and_runs_for_a_tag_or_a_gate_yes_only():
     block = BLOCKS['release']
     assert needs_of(block) == ['qa', 'qt-gate', 'linux-smoke', 'release-gate']
     assert job_key(block, 'if') == (
-        "startsWith(github.ref, 'refs/tags/v') || needs.release-gate.outputs.publish == 'true'")
+        "(startsWith(github.ref, 'refs/tags/v') || needs.release-gate.outputs.publish == 'true') "
+        "&& !contains(github.event.head_commit.message, '[no release]')")
+
+
+def test_publication_hold_keeps_all_acceptance_jobs_and_artifact_uploads_enabled():
+    """A publishing hold must never turn into a QA skip or remove downloadable build artifacts."""
+    assert '[no release]' in (job_key(BLOCKS['release'], 'if') or '')
+    for job in ('qa', 'qt-gate', 'linux-package', 'linux-smoke', 'release-gate'):
+        assert '[no release]' not in BLOCKS[job]
+        assert 'head_commit.message' not in (job_key(BLOCKS[job], 'if') or '')
+    assert 'actions/upload-artifact@v4' in BLOCKS['qa']
+    assert 'actions/upload-artifact@v4' in BLOCKS['linux-package']
 
 
 def test_gui_gate_blocks_packaging_and_publication_even_when_the_cadence_gate_says_yes():
@@ -733,3 +744,22 @@ def test_the_workflow_command_line_is_accepted_by_the_tool():
     assert gate.main(argv, tools=FakeTools(), environ={}, out=out, err=io.StringIO()) == 0
     reason = gate.ref_decision('push', 'refs/tags/v9.9.9').reason
     assert out.getvalue() == f'publish=true\nmilestones=0\nreason={reason}\n'
+
+
+def test_third_party_actions_in_the_release_job_are_pinned_to_a_commit():
+    """The release job holds contents: write and the release bytes: a moved upstream tag must not change it."""
+    used = re.findall(r'^\s*(?:- )?uses: (\S+)', BLOCKS['release'], re.M)
+    third_party = [action for action in used if not action.startswith('actions/')]
+    assert third_party, 'expected the release action'
+    assert all(re.fullmatch(r'[\w.-]+/[\w.-]+@[0-9a-f]{40}', action) for action in third_party), third_party
+
+
+def test_a_tag_names_its_own_release_and_main_builds_keep_the_beta_name():
+    """Acceptance spec 1.2: an alpha tag must not publish under the automatic beta name."""
+    step = next(step for step in steps_of(BLOCKS['release']) if 'action-gh-release' in step)
+    name = re.search(r'^          name: (.+)$', step, re.M).group(1)
+    tag_name = re.search(r'^          tag_name: (.+)$', step, re.M).group(1)
+    is_tag = "startsWith(github.ref, 'refs/tags/')"
+    assert tag_name.startswith('${{ ' + is_tag + ' && github.ref_name || ')
+    assert name == ('${{ ' + is_tag + " && format('PatchTrace {0} (Windows x64, Linux x86-64)', github.ref_name)"
+                    " || format('PatchTrace beta {0} (Windows x64, Linux x86-64)', github.run_number) }}")

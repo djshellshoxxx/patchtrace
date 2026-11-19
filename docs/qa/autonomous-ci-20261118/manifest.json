@@ -1,0 +1,79 @@
+{
+  "schema": "patchtrace-ci-evidence/1",
+  "observed_at": "2026-11-18T13:52:03.321Z",
+  "baseline_head": "1418617a80d6057de11f985488cfe6043a7787a2",
+  "repair_commit": "e250f683c9f1770639772e33142978f4c3bd0575",
+  "archive": {
+    "path": "evidence.zip",
+    "bytes": 154635,
+    "sha256": "9c5bf9b641b81c8ca3d64edd57d836dd2496d8c7332595fe6588a5fcd199edb9"
+  },
+  "files": [
+    {
+      "path": "github-initial.json",
+      "bytes": 441953,
+      "sha256": "1505aae140df303db90dd95b6aa0540ff01371d3c97e208a79565210e83ed441"
+    },
+    {
+      "path": "job-134726176812.log",
+      "bytes": 137181,
+      "sha256": "f045a36d98eb4aecb503719e31d125ec62c679a5316d7591d7506adae78b3f69"
+    },
+    {
+      "path": "job-134726180099.log",
+      "bytes": 92621,
+      "sha256": "419925111892a7cbd740942d11bca435e57c876a8cee47718412db7d5299aefd"
+    },
+    {
+      "path": "job-134726180447.log",
+      "bytes": 86357,
+      "sha256": "ee239337cba9ba9a5927c846a085086ca8eb0719a016e79031a9f470cd6e2dc3"
+    },
+    {
+      "path": "job-134726182325.log",
+      "bytes": 89543,
+      "sha256": "66c301433bb9abf75485e84d0a2cc20b1b4197905a6cc345399c917baf102609"
+    },
+    {
+      "path": "job-134726186816.log",
+      "bytes": 43550,
+      "sha256": "d06b8aa997f678b13a91b640c8c231f9d4dbc8b943640c4b36a5acdddbc61cfa"
+    },
+    {
+      "path": "job-134763759100.log",
+      "bytes": 164592,
+      "sha256": "c2388032970f11ab614531d24bfa40445e9fc03110f6e86637772aac9a730202"
+    },
+    {
+      "path": "job-134763761753.log",
+      "bytes": 99478,
+      "sha256": "8077d919b13f15d8353c22a220d2bec39bc2c9d89432a47832c5dcc8155d6da0"
+    },
+    {
+      "path": "job-134763762162.log",
+      "bytes": 92621,
+      "sha256": "281c1878174a274620aac0bed3029b6838cd08e46b47754dfe310d104df95e75"
+    },
+    {
+      "path": "sharing-green.log",
+      "bytes": 191,
+      "sha256": "667efda95537e8ad6d6c56e6a048d6534e13caf4cb1c28a331643337413c29ee"
+    },
+    {
+      "path": "sharing-green.xml",
+      "bytes": 18111,
+      "sha256": "267b279cb0f9bc3ef16d7995446adc2c20431ca5f5af30798e616716015c1d9b"
+    },
+    {
+      "path": "sharing-red.log",
+      "bytes": 3807,
+      "sha256": "44a3f5c0625bf1798692678bc4efba36cefca8f831e3e83db834c132f13f0aa7"
+    },
+    {
+      "path": "sharing-red.xml",
+      "bytes": 4640,
+      "sha256": "58b03deca43a8dc9cee78aacc4c4bd3e82e9edfe05823a39c7329417814b6b99"
+    }
+  ],
+  "qualification": "Portable contract and Linux publication tests only; Windows-hosted rerun required."
+}

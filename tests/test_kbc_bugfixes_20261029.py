@@ -169,7 +169,8 @@ def test_kbc8_a_long_root_attribute_is_not_read_as_an_empty_document():
 
 def test_kbc9_pair_prefixes_must_be_unique_and_long_enough():
     found = [SimpleNamespace(pairs=tuple(SimpleNamespace(pair_id=pid, grade='A')
-                                         for pid in ('ab' + '1' * 62, 'ab' + '2' * 62, 'cd' + '3' * 62)))]
+                                         for pid in ('ab' + '1' * 62, 'ab' + '2' * 62, 'cd' + '3' * 62)),
+                             ambiguous=False, truncated=False)]
     for prefix in ('', 'a', 'ab', 'ab111'):
         with pytest.raises(KbcStoreError):
             KbService._pick_pair(found, prefix)

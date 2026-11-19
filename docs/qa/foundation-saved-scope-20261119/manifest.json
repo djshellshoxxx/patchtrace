@@ -1,0 +1,69 @@
+{
+  "base_commit": "d8c02caea407f6d323eecd636735849c1eb31a2d",
+  "selected_from_commit": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+  "scope_green_source": "Uncommitted foundation worktree with production files matching source_sha256 below; HEAD in early probe remains the base commit. The existing context fixture correction followed this 80-test selection.",
+  "source_sha256": {
+    "src/patchtrace/kbcorrelation/index.py": "e9124296bd888ab3b2145ecc4ecaff0c4bb33a214040889a1262dd9f973e526a",
+    "src/patchtrace/kbcorrelation/context.py": "54636276ab677919f1d0e7fa6ce997c21ff39d219343a9f48ef211a81415d338",
+    "src/patchtrace/kbcorrelation/saved_scope.py": "7a5e325b27eddb6226b971d6f7374651c983ba3cdf0d7ea725de9968b48b28a1",
+    "src/patchtrace/kbcorrelation/service.py": "8fe0e1571acbe68a925724efa51cb1a295c89181a048137ac1d380351f900917",
+    "tests/test_kbc_card_context_sources.py": "f66244fd99a58d2be3fb45ba28b9de3bdb5850712d8ea05c403bf5e60e89326f"
+  },
+  "files": [
+    {
+      "path": "foundation-scope-red.log.gz",
+      "original_sha256": "2203d6476e2135f5cafc8f8967020d786923262a0f1edece53d9a61679484491",
+      "stored_sha256": "cfc4bef94d444af52a70abab78c0241d00748640618a49e545489875102f6ac3"
+    },
+    {
+      "path": "foundation-scope-red.xml.gz",
+      "original_sha256": "f3d30cd2897147ad8cb636ab98ae64420a2fa647a36ea3e731be4e166e7ea965",
+      "stored_sha256": "0f4ca6dd63dadd284f8ef304c64fe0abcc4720362968cc73d2de4c6dc5cc5b72"
+    },
+    {
+      "path": "foundation-scope-green.log",
+      "original_sha256": "b4ad83dd813c10d55e76480f1dab5b81604df27ba7eb50ac88ac812bc7995957",
+      "stored_sha256": "b4ad83dd813c10d55e76480f1dab5b81604df27ba7eb50ac88ac812bc7995957"
+    },
+    {
+      "path": "foundation-scope-green.xml",
+      "original_sha256": "73a1728a87f050181b51397e889606226d34afbb5c4ec72609104e5e9058221e",
+      "stored_sha256": "73a1728a87f050181b51397e889606226d34afbb5c4ec72609104e5e9058221e"
+    },
+    {
+      "path": "foundation-affected-first.log",
+      "original_sha256": "9fb3abd2c3028bcc8c2a3cee47566a3c215fc7dbea31f14dddfb72d1a5c9bb8e",
+      "stored_sha256": "9fb3abd2c3028bcc8c2a3cee47566a3c215fc7dbea31f14dddfb72d1a5c9bb8e"
+    },
+    {
+      "path": "foundation-affected-first.xml",
+      "original_sha256": "599ab7e1f6211536907f99fafa3be7d87738c240274ed57f9675da770b228013",
+      "stored_sha256": "599ab7e1f6211536907f99fafa3be7d87738c240274ed57f9675da770b228013"
+    },
+    {
+      "path": "foundation-affected.log",
+      "original_sha256": "b203a96aac174f51786126440b07ed10dc5f47e33995168a36bec0ddc2d1cb99",
+      "stored_sha256": "b203a96aac174f51786126440b07ed10dc5f47e33995168a36bec0ddc2d1cb99"
+    },
+    {
+      "path": "foundation-affected.xml",
+      "original_sha256": "5581964c6b07d65ed5a08cff17a8d5eb33574f5f74bfec502100d69e572e38e9",
+      "stored_sha256": "5581964c6b07d65ed5a08cff17a8d5eb33574f5f74bfec502100d69e572e38e9"
+    },
+    {
+      "path": "foundation-native-scope-red.json",
+      "original_sha256": "1b8a4e046c015788af2310e88823ccc58a0999b4506405f61f3fa2da59044675",
+      "stored_sha256": "1b8a4e046c015788af2310e88823ccc58a0999b4506405f61f3fa2da59044675"
+    },
+    {
+      "path": "foundation-native-scope-repaired.json",
+      "original_sha256": "4185fb433e7e2410dc1edc5f6dd3afb28b225288bfccc4f7e1ba265c9a9d3bfc",
+      "stored_sha256": "4185fb433e7e2410dc1edc5f6dd3afb28b225288bfccc4f7e1ba265c9a9d3bfc"
+    },
+    {
+      "path": "native_scope_probe.py",
+      "original_sha256": "58ba8b31f63563838a229c94fba7e549cb9806c2b56b3a4e458bbb92982b41c5",
+      "stored_sha256": "58ba8b31f63563838a229c94fba7e549cb9806c2b56b3a4e458bbb92982b41c5"
+    }
+  ]
+}

@@ -76,6 +76,7 @@ from .ui_job_events import JobEventRelay
 from .ui_persistence import commit_and_report
 from .ui_profiles import PROFILE_SETTING, profiles_dir, selected_profile
 from .ui_symbols import SymbolChoice, config_kwargs, configured_symbol_mode, effective_profile_symbol_mode
+from .ui_timeout import TimeoutChoice
 
 REVIEWS = ['unreviewed', 'accepted', 'rejected', 'needs-review']
 CATEGORIES = ['modified', 'added', 'removed', 'ambiguous', 'split', 'merged', 'unmatched', 'unchanged']
@@ -1002,10 +1003,8 @@ class SetupDialog(QDialog):
         self.env_passthrough = QLineEdit(str(settings.value('backend/env_passthrough', '')))
         self.env_passthrough.setPlaceholderText('Extra variable names kept when restricted, comma-separated')
         form.addRow('Environment passthrough', self.env_passthrough)
-        self.timeout = QSpinBox()
-        self.timeout.setRange(10, 86400)
-        self.timeout.setValue(setting_int(settings, 'backend/timeout', 3600, 10, 86400))
-        form.addRow('Comparison timeout (seconds)', self.timeout)
+        self.timeout_choice = TimeoutChoice(form, setting_int(settings, 'backend/timeout', 3600, 10, 86400))
+        self.timeout = self.timeout_choice.edit
         self.font_size = QSpinBox()
         self.font_size.setRange(8, 28)
         self.font_size.setValue(setting_int(settings, 'desktop/font_size', 11, 8, 28))
@@ -1120,6 +1119,10 @@ class SetupDialog(QDialog):
 
     def check_dependencies(self):
         if self.worker and self.worker.isRunning():
+            return
+        if not self.timeout_choice.validate():
+            self.tabs.setCurrentIndex(0)
+            self.timeout.setFocus()
             return
         config = self.config()
         self._busy_kind = 'diagnosis'
@@ -1242,6 +1245,10 @@ class SetupDialog(QDialog):
 
     def accept(self):
         if self.worker and self.worker.isRunning():
+            return
+        if not self.timeout_choice.validate():
+            self.tabs.setCurrentIndex(0)
+            self.timeout.setFocus()
             return
         if self.profiles.is_dirty():
             self.tabs.setCurrentWidget(self.profiles)
@@ -2319,8 +2326,8 @@ class MainWindow(QMainWindow):
             return
         notes = [a for a in self.project.annotations if a.target_id == match.id]
         text = f'Match {match.id}\nCategory: {match.category}\nReview: {match.review}\n'
-        if match.reason:
-            text += f'\nAnalyst correction reason: {match.reason}\n'
+        if match.reason:  # an import's abstention note (A-32) is not an analyst's correction reason
+            text += f"\n{'Analyst correction reason' if match.manual else 'Import note'}: {match.reason}\n"
         text += '\nAnalyst annotations:\n' + ('\n\n'.join(
             f'{a.kind}{" [stale]" if a.stale else ""}: {a.text}' for a in notes) or 'No annotations yet.')
         self.finding_detail.setPlainText(text)

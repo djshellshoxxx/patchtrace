@@ -12,7 +12,7 @@ from pathlib import Path
 
 from .bodyhash import Disassembly, body_fact, disassemble, hash_functions
 from .build import BuildResult
-from .contracts import masked_body_must_match
+from .contracts import ContractError, masked_body_must_match
 from .csrc import FunctionDef, Source, compare_spans
 from .debuginfo import ImageFunction, Inventory, inventory
 from .pe import read_pe
@@ -60,7 +60,7 @@ class SideData:
 
 def analyze(build: BuildResult, tools: Toolchain, source_root: Path) -> SideData:
     image = read_pe(build.debug_image)
-    inv = inventory(image, tools, pdb=build.pdb)
+    inv = inventory(image, tools, pdb=build.pdb, roots=build.source_dirs)
     disasm = disassemble(image, tools)
     spans = [(f.rva, f.size) for f in inv.functions if f.origin == 'project']
     return SideData(build, inv, hash_functions(image, disasm, spans), Path(source_root), disasm)
@@ -179,7 +179,7 @@ def label_diff(old: SideData, new: SideData, *, label_source: str,
             elif check == 'unchecked':
                 note = (note + '; ' if note else '') + 'card declares a change, evidence is ambiguous: not verified'
         elif name in declared_unchanged:
-            check = 'ok' if label != 'changed' else 'disagree'
+            check = {'unchanged': 'ok', 'cosmetic': 'ok', 'ambiguous': 'unchecked'}.get(label, 'disagree')
             if check == 'disagree':
                 note = (note + '; ' if note else '') + 'card lists it as an unchanged control'
         out.append(_record(j, identity='same', label=label, kind=kind, body=body, source=label_source, check=check,
@@ -195,6 +195,10 @@ def label_construction(old: SideData, new: SideData, *, label_source: str, seman
     masked body changed becomes ambiguous (induced by the target)."""
     declared = dict(declared or {})
     targets = ', '.join(sorted(declared)) or 'none'
+    if label_source == 'same-source' and (not old.functions or not new.functions):
+        # Missing project functions are no truth oracle: asymmetric emptiness invents no-counterpart labels,
+        # while two empty inventories could make an unrelated runtime-only result appear fully covered.
+        raise ContractError('same-source pair: at least one image has no project function in its debug info')
     out = []
     for j in join(old.functions, new.functions, renames):
         body = _body(old, new, j)

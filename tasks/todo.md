@@ -1,12 +1,125 @@
 # PatchTrace delivery tracker
 
+## 2026-11-18 advisory anchor integration
+
+- [x] Independently review #305/#306 and preserve both actual heads in successor history.
+- [x] Reproduce advisory/note circularity, long valid anchor rejection, and default stored-source CLI failure; amend the narrow compatibility contract first.
+- [x] Preserve the original query budget with validated closed typed kinds, and read stored anchors through the existing project owner.
+- [x] Pass 942 affected tests, independent real-service/default-CLI/boundary/digest/cursor controls, whole Ruff and whitespace; retain all red and harness-failure evidence.
+- [x] Preserve the final `f69614fa` L1 FAIL receipt: 73 PASS, 6 FAIL, 8 excluded; record the extra ambiguous winspool candidate without changing expectations.
+- [ ] Qualify the final published successor on all exact-head hosted gates, then REST SHA-guard merge with `[no release]`.
+- [ ] Verify main and fresh PR heads before any superseded closure; keep every remote branch and partial/unresolved scope.
+
+[Search integration and source-specific L1 evidence](../docs/qa/search-anchor-integration-20261118.md).
+
+
+## 2026-11-18 refreshed #302 integration
+
+- [x] Refresh thirteen candidate PRs/main/settings; detect #302's eleven new commits and preserve all other current heads.
+- [x] Verify six duplicate patch IDs and independently reproduce four unique ZIP/lineage/selection/budget corrections; merge actual #302 `121ffb0b` and #304 `6cc6b6b7` parents.
+- [x] Preserve all forty #304-only paths and repair the reproduced copied-target chronology-cache regression without weakening evidence checks.
+- [x] Pass disjoint local selections totaling 1,650 tests with two native Windows skips; retain original red/failed receipts, independent controls, Ruff and schema verification.
+- [ ] Qualify final published head on hosted full/Qt/Windows/package/native gates before SHA-guarded REST merge with `[no release]`.
+- [ ] Recheck all current heads after main integration before accounting for any superseded PR; preserve every remote branch.
+
+[Current-head integration record](../docs/qa/current302-integration-20261118.md).
+
+## 2026-11-18 Windows publication acceptance blocker
+
+- [x] Preserve #304 `bb4277ae` Windows failure: 15 failed/61 passed/3 skipped; full suite and package did not start.
+- [x] Amend the publication contract and reproduce native-dispatch/status and primary-error masking controls before repair.
+- [x] Implement native held-handle information calls and preserve primary failures/cancellation through cleanup; 101 focused passes, 2 native Windows skips, whole Ruff and whitespace checks pass.
+- [x] Independently review the exact repair: no blocking findings; 15 additional adversarial controls pass.
+- [ ] Pass new-head hosted Windows publication, full/package/Qt and all other required gates before merging.
+- [ ] Preserve all remote branches, use SHA-guarded REST merge with `[no release]`, then verify replacement ancestry before PR closures.
+
+[Failure, repair and qualification evidence](../docs/qa/winpairs-windows-native-20261118.md).
+
+## 2026-11-18 CVE consolidation qualification
+
+- [x] Independently review #302 and repair reproduced archive, chronology, source-rejection and pair-evidence defects.
+- [x] Capture 37 real MSRC months and 45 Winbindex metadata records with exact raw hashes; preserve original failure receipts and frozen facts.
+- [x] Repair mixed-architecture timelines and support validated `.tsp` names; replay frozen L1 through actual service APIs: 73 PASS/6 FAIL/8 excluded.
+- [x] Pass combined local 2089-test selection with 3 platform/native skips; retain incomplete full-suite exit 137 separately.
+- [ ] Publish and qualify successor on exact-head Linux/Windows/full/package/native gates; SHA-guard merge with `[no release]`.
+- [ ] Verify main ancestry, then account for/close only fully replaced PRs, preserving source branches.
+- [ ] Resolve Server file-source coverage and version the preview-versus-first-change expectation separately; do not rewrite frozen failures.
+- [ ] Finish recovered PW01 real-CSV usability, production fetch and native UI gates; follow with separate PW02.
+- [ ] Make generic research receipt Git identity worktree-aware; retain current exact run-context sidecars.
+- [ ] Establish independent L2 projects and verified L3 function labels/pairs before scored accuracy claims.
+
+[Evidence and handoff](../docs/qa/cve-consolidation-20261118.md).
+
+
+## 2026-11-18 branch consolidation and PW-01 continuation
+
+- [x] Refresh full branch history and all REST PR pages; correct the 300-topic inventory, ancestry counts and unsupported supersession/deletion claims.
+- [x] Independently review #301's full consolidation; repair reproduced normalization, mirror-cap, JSON-ingress and release-verifier defects; exclude unsafe archive/delete tooling.
+- [x] Preserve every remote branch and separately track unresolved or deferred UI, research, matching and environment work.
+- [x] Independently review six narrow correctness ports from concurrent #304 and repair ZIP normalization, ambiguous change provenance and bounded pair enumeration; preserve its separate remaining scope and existing release policy.
+- [ ] Keep concurrent #305/#306 and the pre-existing mixed Windows 10 source-key issue separately tracked; do not turn their remaining scope into a completed-consolidation claim.
+- [ ] Qualify and merge `codex/consolidation-reviewed-20261118` on current-head/base hosted gates; then close only exactly accounted-for PRs with replacement references.
+- [ ] Implement and independently verify PW-01 bounded CSV parsing, support links/retrieval, provenance/store, CLI and KB panel; keep its registered spec and schemas current.
+- [ ] Follow PW-01 with the separate bounded local MSU/CAB PW-02 slice; native Windows extraction remains a distinct acceptance gate.
+- [ ] Keep manual desktop/accessibility, RB-01 targeted live, original timeout-pair, clean-machine release and L1/L2/L3 acceptance open until evidenced.
+- [ ] Separate strings-export follow-ups: race-safe no-clobber publication and compatible document-level extraction/truncation/redaction metadata, including empty exports.
+
+[Current decision log](../docs/qa/branch-consolidation-20261118.md).
+
+## 2026-11-16 local KEV continuation
+
+- [x] Complete K4 item 3: local KEV context in pilot leads and KB search.
+- [x] Bind catalogue snapshot changes to stored-result identity/staleness.
+- [x] Preserve provenance, unknown states and function order; 1,224 affected tests pass.
+- [ ] Complete hosted current-head QA/Windows/package gates and remaining historical review.
+- [ ] Resolve native/timeout-pair/clean-machine/manual acceptance with real evidence.
+
+[KEV continuation evidence](../docs/qa/kev-cli-continuation-20261116.md).
+
+## 2026-11-16 paths, KB parity and R7 continuation
+
+- [x] Repair both Windows QA path-classification failures without weakening assertions.
+- [x] Complete sync help and active stored-product catalogue CLI access (K4 items 1–2).
+- [x] Review/recover unique isolated #282 R7 research tooling and its tests/docs.
+- [x] Inventory 300 fetched branch refs; distinguish ancestry from semantic integration.
+- [x] Pass 724 affected tests, whole Ruff, dependency and whitespace checks.
+- [ ] Obtain passing current-head hosted full QA, Qt and platform packages before merging #297.
+- [ ] Finish remaining historical semantic review and release/native/manual gates.
+
+[Continuation evidence](../docs/qa/continuation-paths-kb-r7-20261116.md).
+
+## 2026-11-16 research integrity recovery
+
+Recovered the missing #164 Tier R provenance/label/receipt slice and #222 native
+research IO controls with reusable exact validation. See
+[scoped evidence](../docs/qa/research-integrity-followup-20261116.md).
+Implementation and independent reviews pass; hosted/native acceptance remains
+open. Twelve redundant PR records are now closed; original branches remain.
+
+## 2026-11-16 consolidation follow-up
+
+Timeout validation/presets and recovered benchmark/parity/release repairs are
+implemented on the separate follow-up branch; see
+[evidence and disposition](../docs/qa/consolidation-followup-20261116.md).
+Ten already-integrated PR records are closed, with source branches preserved.
+Merge the integration and follow-up only after their respective hosted gates pass.
+The remaining Tier R provenance/label/receipt recovery is a separate slice.
+
+## 2026-11-16 continuation
+
+Current integration: `codex/release-integration-20261116`; see
+[checkpoint](../docs/qa/continuation-20261116.md). Core historical ports, review repairs and the remaining core CLI verbs are implemented
+on the integration branch. Hosted CI, further historical semantic review and
+native/release acceptance remain open; full local verification hit environment
+and worker-termination blockers documented in the checkpoint.
+
 ## P1 — Recurring Windows comparison timeout (reported 2026-11-06)
 
 **OPEN / high priority.** The owner's usual two-file test failed with `PT-BACKEND: analysis timed out`. Both Ghidra analyses completed; `StructuralGraphHash` then reported **2,161,955 entries**, followed by a **28m 41.755s** quiet interval after "Sorting functions". Later `72/72` progress was only an enhanced-symbol (`esym`) substage. The configured timeout and actual termination time are absent from the supplied logs; the source default of 3,600 seconds is not proof of the value used in this run.
 
 Incident evidence, source references, attachment hashes, implementation options and closure criteria: **[P1 timeout investigation](../docs/qa/ghidriff-timeout-20261106.md)**. Preserve the original tracker history below.
 
-- [ ] **PT-TIMEOUT-1 — partially implemented:** Live elapsed/budget status, last observed stage/output age, actionable timeout text and bounded `backend-execution.json` receipts are implemented in [SPEC-01a](../docs/specs/ghidriff-timeout-progress.md). The elapsed timer and late worker events also preserve terminal/cancel messages. Timeout-entry validation/presets and original-pair Windows acceptance remain open. Existing interim option: **Setup → Backend and desktop → Comparison timeout (seconds) → 7200 (2h) or 14400 (4h) → Save setup**, then start a new run. The current GUI range is 10–86,400 seconds. A longer budget is not a verified performance fix.
+- [ ] **PT-TIMEOUT-1 — original-pair acceptance open:** Live elapsed/budget status, last observed stage/output age, actionable timeout text, bounded `backend-execution.json` receipts, explicit timeout-entry validation and Custom/1h/2h/4h presets are implemented in [SPEC-01a](../docs/specs/ghidriff-timeout-progress.md). The elapsed timer and late worker events preserve terminal/cancel messages. Original-pair Windows acceptance remains open. **Setup → Backend and desktop → Comparison timeout (seconds) → 7200 (2h) or 14400 (4h) → Save setup**, then start a new run. The GUI range remains 10–86,400 seconds. A longer budget is not a verified performance fix.
 - [ ] **PT-TIMEOUT-2:** Profile the structural-candidate expansion and downstream conversion/filtering/deduplication/JSON work; implement a measured, semantics-preserving repair through the supported external-engine boundary. Preserve ambiguity and disclose any incomplete result caused by resource limits.
 - [ ] **PT-TIMEOUT-3:** Diagnose the separate `FUN_100ca86c` decompiler timeout, missing PDB metadata and nonfatal resource-parser warnings. An outer timeout extension does not automatically fix the per-function timeout. Capture actual runtime versions; this log uses Ghidra 12.1.4.
 - [ ] **PT-TIMEOUT-4:** Verify successful-cache reuse and evaluate separately specified failed-run checkpoints. Keep `--no-threaded`, workspace isolation, failure logs and prior results; do not remove the Windows lock safeguard as an untested speed fix.
@@ -832,6 +945,7 @@ Plan and worker briefs: [unified-soundness-swarm-prompt-20261111](../docs/plans/
 ### [WB1-S7:search-panel]
 - [x] Search dock on the panel framework (states Q0-Q12, paged rows, navigation, cancel, shutdown).
 - [ ] Kinds menu, saved searches, suggestion popup, hit-span delegate, F3/Shift+F3, feature-owned paged model (see commit notes).
+- [x] Saved searches and recent queries, pure part: `search/saved.py` stores and tests (ported 2026-11-18 from `claude/instance-b-features`); the dock menu and CLI hook are still open.
 
 ### [WB2-G5G6:calls-panel]
 - [ ] Calls panel follow-ups: graph.export_dot, graph.callsite, graph/* settings, Tree as a lazy model, entry paths.
@@ -1175,7 +1289,8 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 
 - [x] Review/integrate #220 reserved derived metadata boundary and #221 explicit binary-only local-pair desktop start;339 combined passes.
 - [ ] Product-only desktop/domain starting path and single-binary patch discovery remain separate accepted work.
-- [ ] Complete remaining #174 one-to-many normalization/GT-01 controls; narrow reserved-key integration alone is not full native acceptance.
+- [x] #174/#289 one-to-many normalization ported as SPEC-31 **A-32** (2026-11-18, PR #301): per-group abstention, unified adapter count `ghidriff-one-to-many-abstained:<n>`, reconcile/features/leads/evalcore consumers, "Import note" label; 45 ported tests red-then-green.
+- [ ] A-32 live acceptance: rerun RB-01 `lua-v5.4.6-to-v5.4.7-O2` (both orientations, Linux and Windows) through `unified-live-gates.yml` and record that it normalizes with the abstention instead of `PT-SCHEMA`; the remaining GT-01 native controls stay open.
 
 - [x] Account #222 finite pinned-native provisioning evidence and #223 canonical function identity; verify14 complete raw-log receipts and357 combined focused passes.
 - [ ] Finish actual native API linkage/stock-red-corrected-green and distinct-byte/IO controls; optional control tooling remains separate pending verified source.
@@ -1255,3 +1370,13 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 ## Accuracy validation (opened 2026-11-06)
 - [ ] Follow [accuracy validation plan](../docs/plans/accuracy-validation-plan-20261106.md): per-layer claims (L1 advisory join, L2 open-source pair diff, L3 real Windows pairs), manifests frozen before engine runs. AV-0 and AV-1 done, AV-2 next; no accuracy result exists yet.
 - [ ] 2026-11-07 status and findings: see [accuracy program findings](../docs/qa/accuracy-program-findings-20261107.md) (PR triage, CI observations, Windows candidate research, open gates).
+
+
+### [FOUNDATION-SAVED-SCOPE-20261119]
+
+- [x] Independently reproduce #304 scoped counterevidence loss with zoned and unzoned native revision controls.
+- [x] Recover the narrow #316 saved-scope/global-admission implementation with source provenance, specification amendments and unchanged safety assertions; dedicated suite: 80 passed after 73 failed and 7 passed on old source.
+- [x] Preserve raw red/green and zero-test missing-path harness failures with exact production-file hashes.
+- [ ] Complete corrected affected and Qt checks, independent review, and exact-head hosted qualification before guarded merge; preserve separate native, release and accuracy gates.
+
+[Repair evidence and limits](../docs/qa/foundation-saved-scope-20261119.md).

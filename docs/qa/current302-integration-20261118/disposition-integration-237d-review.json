@@ -1,0 +1,202 @@
+{
+  "checked_at": "2026-11-18T09:24:21.010975+00:00",
+  "scope": "read-only integration identity/overlap check and bounded authored ZIP controls; no native Windows qualification or whole-suite rerun",
+  "integration_commit": "237d216f0784d429bfc5c61103100346576e0831",
+  "integration_tree": "e5b934d1438d9298a1695645e48b9e46c02ee0af",
+  "merge_commit": "22aa4e8f58f69b7d8c90c15b263c732c8c6bdeac",
+  "merge_actual_parents": [
+    "6cc6b6b77564e12eaec2917877d94525a69c7102",
+    "121ffb0bcdd6af4f24e5035389d4709dffddf263"
+  ],
+  "current304_only_paths_preserved_exact": [
+    ".github/workflows/qa-windows.yml",
+    "docs/plans/accuracy-validation-plan-20261106.md",
+    "docs/qa/cve-consolidation-20261118.md",
+    "docs/qa/cve-consolidation-20261118/SHA256SUMS.json",
+    "docs/qa/cve-consolidation-20261118/advisory-receipt.json",
+    "docs/qa/cve-consolidation-20261118/branches-start.tsv",
+    "docs/qa/cve-consolidation-20261118/corrected-file-receipt.json",
+    "docs/qa/cve-consolidation-20261118/corrected-file-run-context.json",
+    "docs/qa/cve-consolidation-20261118/file-receipt.json",
+    "docs/qa/cve-consolidation-20261118/file-run-context.json",
+    "docs/qa/cve-consolidation-20261118/frozen-manifest.json",
+    "docs/qa/cve-consolidation-20261118/index-source-receipts.json",
+    "docs/qa/cve-consolidation-20261118/open-prs-start.json",
+    "docs/qa/cve-consolidation-20261118/run-context.json",
+    "docs/qa/cve-consolidation-20261118/source-receipts.json",
+    "docs/qa/cve-consolidation-publication-20261118.md",
+    "docs/qa/cve-pr-disposition-20261118.md",
+    "docs/qa/cve-winpairs-integrity-20261118.md",
+    "docs/qa/winpairs-windows-native-20261118.md",
+    "docs/qa/winpairs-windows-native-20261118/hosted-bb4277-windows-publication.log",
+    "docs/qa/winpairs-windows-native-20261118/independent-api-contract-review.md",
+    "docs/qa/winpairs-windows-native-20261118/independent-review.log",
+    "docs/qa/winpairs-windows-native-20261118/independent-review.xml",
+    "docs/qa/winpairs-windows-native-20261118/independent-test_review.py",
+    "docs/qa/winpairs-windows-native-20261118/manifest.json",
+    "docs/qa/winpairs-windows-native-20261118/portable-green-1c49199e.log",
+    "docs/qa/winpairs-windows-native-20261118/portable-red-bb4277.log",
+    "docs/release-process.md",
+    "docs/research/winpairs.md",
+    "docs/specs/acquisition.md",
+    "docs/specs/kb-cve/31-G-components-discovery.md",
+    "docs/specs/windows-release-signing-policy.md",
+    "src/patchtrace/acquisition/contracts.py",
+    "src/patchtrace/kbcorrelation/components.py",
+    "tests/test_kbc_tsp_components.py",
+    "tests/test_release_gate.py",
+    "tests/test_research_qualification_winpairs.py",
+    "tests/test_research_qualification_winpairs_integrity.py",
+    "tests/test_research_qualification_winpairs_publication.py",
+    "tools/research_qualification/winpairs.py"
+  ],
+  "current304_only_paths_count": 40,
+  "l1_tsp_tests_preserved_exact": "tests/test_research_qualification_l1_run.py",
+  "incoming_behavior_and_test_blobs_equal": [
+    "src/patchtrace/kbcorrelation/resolver.py",
+    "src/patchtrace/kbcorrelation/service.py",
+    "tools/verify_release.py",
+    "tests/test_verify_release.py",
+    "tests/test_kbc_pairs_index.py",
+    "tests/test_kbc_resolver_architecture.py",
+    "tests/test_kbc_resolver_bounds.py"
+  ],
+  "windows_spec_union_verified": true,
+  "fresh_ancestor_designated_heads": [
+    {
+      "pr": 302,
+      "fresh_head": "121ffb0bcdd6af4f24e5035389d4709dffddf263",
+      "contained": true
+    },
+    {
+      "pr": 301,
+      "fresh_head": "faddea300daf4058d38d24ff04a270be6f3d832b",
+      "contained": true
+    },
+    {
+      "pr": 297,
+      "fresh_head": "95db052a11cce162d2d633cae805f28119f783a1",
+      "contained": true
+    },
+    {
+      "pr": 290,
+      "fresh_head": "1d5a022d2840c5c071ccece503664c8c961d63f1",
+      "contained": true
+    },
+    {
+      "pr": 291,
+      "fresh_head": "53f5dd2611b38e3f69f8d72c3ca7cf73e9e896ab",
+      "contained": true
+    },
+    {
+      "pr": 292,
+      "fresh_head": "cf50b4e8725cb1291ac6150667f2e136f023aff3",
+      "contained": true
+    },
+    {
+      "pr": 293,
+      "fresh_head": "aacb984e9d627be051ca8c8c3b88d5ceca0ff505",
+      "contained": true
+    },
+    {
+      "pr": 294,
+      "fresh_head": "e88d748cf9846e04c0c81449976f530519da83a9",
+      "contained": true
+    },
+    {
+      "pr": 295,
+      "fresh_head": "37d9e47ca202b33f737b15f7af724649db8c3e15",
+      "contained": true
+    }
+  ],
+  "selective_port_scope": "No whole-branch ancestry equivalence asserted for PR268,281,282,283; prior semantic conditions remain.",
+  "postmerge_followup_paths": [
+    "docs/specs/kb-cve/31-C-product-build-pairs.md",
+    "src/patchtrace/kbcorrelation/lineage.py",
+    "tests/test_kbc_lineage_ambiguity.py"
+  ],
+  "postmerge_followup_scope": "value-based copied predecessor target compatibility; separate lineage reviewer owns behavioral approval",
+  "zip_control_cases": [
+    {
+      "input": "backslash",
+      "reader_separator": "/",
+      "sha256": "277b97f2a73dc154788f53e1ceccea1dc5a8f2e91c8227339d86de834c8fcc9e",
+      "expected_accept": true,
+      "problems": {
+        "new302": [],
+        "integrated237d": []
+      }
+    },
+    {
+      "input": "backslash",
+      "reader_separator": "\\",
+      "sha256": "277b97f2a73dc154788f53e1ceccea1dc5a8f2e91c8227339d86de834c8fcc9e",
+      "expected_accept": true,
+      "problems": {
+        "new302": [],
+        "integrated237d": []
+      }
+    },
+    {
+      "input": "nul",
+      "reader_separator": "/",
+      "sha256": "a047ec8c9c99ee843fbc2817e3028fe548b817728fe96534c891406d518d3cea",
+      "expected_accept": false,
+      "problems": {
+        "new302": [
+          "truncated member name \"PatchTrace/optional\\u0000notes.txt\""
+        ],
+        "integrated237d": [
+          "truncated member name \"PatchTrace/optional\\u0000notes.txt\""
+        ]
+      }
+    },
+    {
+      "input": "nul",
+      "reader_separator": "\\",
+      "sha256": "a047ec8c9c99ee843fbc2817e3028fe548b817728fe96534c891406d518d3cea",
+      "expected_accept": false,
+      "problems": {
+        "new302": [
+          "truncated member name \"PatchTrace/optional\\u0000notes.txt\""
+        ],
+        "integrated237d": [
+          "truncated member name \"PatchTrace/optional\\u0000notes.txt\""
+        ]
+      }
+    },
+    {
+      "input": "case-alias",
+      "reader_separator": "/",
+      "sha256": "54c7be0ad542ef972d30cfcc285c7476b0813af47391338e4625bdb05c33d0c7",
+      "expected_accept": false,
+      "problems": {
+        "new302": [
+          "duplicate member \"patchtrace/note.txt\""
+        ],
+        "integrated237d": [
+          "duplicate member \"patchtrace/note.txt\""
+        ]
+      }
+    },
+    {
+      "input": "case-alias",
+      "reader_separator": "\\",
+      "sha256": "54c7be0ad542ef972d30cfcc285c7476b0813af47391338e4625bdb05c33d0c7",
+      "expected_accept": false,
+      "problems": {
+        "new302": [
+          "duplicate member \"patchtrace/note.txt\""
+        ],
+        "integrated237d": [
+          "duplicate member \"patchtrace/note.txt\""
+        ]
+      }
+    }
+  ],
+  "zip_source_version_evaluations": 12,
+  "disposition": "No ZIP/overlap preservation blocker found at237d. Current fresh302 tip is now contained locally, but no PR closure or remote merge is qualified by this receipt. Required current-head gates, qualified304merge, main verification and fresh-head checks remain.",
+  "remote_writes": 0,
+  "target_acquisition": false,
+  "target_execution": false
+}

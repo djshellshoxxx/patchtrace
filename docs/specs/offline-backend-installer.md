@@ -1,5 +1,5 @@
 # SPEC-06: Verified offline backend bundle and installer
-Status: implementation contract, 2026-10-11. Scope: PatchTrace Windows x64 beta.
+Status: implementation contract, 2026-10-11. Scope: PatchTrace Windows x64 beta. Amendment 2026-11-11: inspecting and installing the archive from the command line (`patchtrace runtime inspect-zip|install-zip`, over the same `inspect_offline_bundle` and `install_offline_bundle`) is specified in `docs/specs/cli-profile-doctor-runtime.md` section 4 and is NOT yet built.
 
 ## 1. Outcome and exclusions
 
@@ -95,3 +95,17 @@ M1 detailed contract, schema example, threat model and builder spec checked into
 ## Amendment 2026-10-14 (BUNDLE slice B3): Linux platform, public validator
 
 Section 3 manifest is unchanged (same key set, `schema_version` 1, four `versions` keys). Additively, `platform` may be `linux` (`architecture` `amd64`, `python` `python/bin/python3`, `java` `jdk`, required files `python/bin/python3`, `ghidra/Ghidra/application.properties`, `jdk/bin/java`, `LICENSES/NOTICE.txt`, matched case-sensitively; Windows markers stay case-insensitive). `validate_manifest(data, *, platforms=('windows',))` is public; a Linux manifest is rejected unless the caller passes `platforms=('linux',)`, so the Windows importer UI still refuses non-Windows ZIPs. Portable path rules (reserved names, `:`, trailing dot/space, casefold collisions) apply to all platforms. `OfflineBundlePlan.platform` records the accepted platform and `python_relative` follows the manifest.
+
+## Amendment 2026-11-11 (audit TB-10, TB-12): entry count before the archive is opened; shared component rule
+
+The member cap of section 3 (at most 60,000 file members plus `manifest.json`) is now also enforced before `zipfile` reads the central directory. `inspect_offline_bundle` reads the end-of-central-directory record from the tail of the file itself (fixed 22-byte record, an archive comment of up to 65,535 bytes, and the ZIP64 locator and record, found at the locator's offset or directly before the locator) and refuses with the existing `PT-OFFLINE: ZIP contains too many entries` when the declared total exceeds the cap. A saturated 16-bit count (65,535) without a ZIP64 locator is taken literally. When no record can be read, or a ZIP64 locator has no record, nothing is refused at this point and `zipfile` reports the archive as before. The declared total is untrusted: `zipfile` ignores it and reads the directory by its declared size, so the existing check on the entries actually read stays and still refuses an archive that under-declares. The archive SHA-256 comparison still comes first. Accepted bundles, the manifest and every other message are unchanged.
+
+The Windows device-name and trailing dot/space component rule is exposed as the pure predicate `windows_unsafe_component(part)`, shared with `ingestion.safe_path` (SPEC-01 amendment of the same date). The archive path rule itself is unchanged.
+
+### TB-10 independent directory preflight (2026-11-16)
+
+The declared count alone is not a resource boundary. Before constructing `ZipFile`, a bounded EOCD read locates the central directory and refuses a declared directory size above 128 MiB (`PT-OFFLINE: ZIP central directory exceeds size limit`). A streaming structural walk reads one fixed 46-byte header at a time, skips the bounded variable fields, checks span bounds, polls cancellation, and refuses after more than 60,001 actual entries regardless of declared count. Malformed directories fail as `BadZipFile`; there is no unchecked fallback. Post-open validation remains defense in depth. ZIP64 and prepended archives use the same end-record semantics as the runtime's standard library. This cap is separate from compressed payload and extracted-file size limits.
+
+### 2026-11-16 CLI ownership and Linux mode amendment
+`install_offline_bundle` optionally records newly created ancestor directories with filesystem identities in a caller-owned ledger. Callers may remove only matching empty directories on failure. Installed runtime directories and foreign replacements are never rollback targets.
+Linux producers preserve only executable bits in ZIP metadata over regular-file mode 0644. Linux installation restores only those executable bits; special and group/world-write bits are never adopted. Python and Java launchers require owner-executable UNIX metadata, otherwise installation refuses with a rebuild remedy before creating directories. Older archives missing this metadata can still be inspected, but cannot be installed as Linux runtimes. No executable is run by this validation.

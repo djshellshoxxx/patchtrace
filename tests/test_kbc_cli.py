@@ -46,6 +46,64 @@ def test_help_is_exit_0_and_lists_the_verbs(kb, capsys):
     assert all(verb in text for verb in ('search', 'import-pair', 'attach', 'explain', 'export', 'index'))
 
 
+@pytest.mark.parametrize('help_flag', ['--help', '-h'])
+def test_sync_help_shows_consent_without_initializing_services(capsys, monkeypatch, help_flag):
+    def forbidden(*args, **kwargs):
+        raise AssertionError('help must not initialize service ports')
+
+    monkeypatch.setattr(cli.Context, '_env', forbidden)
+    assert cli.main(['index', 'sync', help_flag]) == 0
+    text = capsys.readouterr().out
+    assert '--consent-hosts' in text and '--consent-plan' in text
+    assert cli.main(['index', help_flag]) == 0
+    assert 'sync' in capsys.readouterr().out
+
+
+def test_products_all_reads_catalogue_without_creating_investigations(kb):
+    kb.loaded()
+    before = {p.relative_to(kb.workspace): p.read_bytes() for p in kb.workspace.rglob('*') if p.is_file()}
+    code, doc, err = kb('products', '--all')
+    assert code == 0 and err == '' and doc['command'] == 'kb products'
+    assert doc['result']['products'] and 'investigation_id' not in doc['result']
+    scope_id = doc['result']['products'][0]['scope_id']
+    code, filtered, _ = kb('products', '--all', '--query', scope_id)
+    assert code == 0 and [p['scope_id'] for p in filtered['result']['products']] == [scope_id]
+    code, missing, _ = kb('products', '--all', '--query', 'no matching authored product')
+    assert code == 4 and missing['result']['products'] == []
+    assert {p.relative_to(kb.workspace): p.read_bytes() for p in kb.workspace.rglob('*') if p.is_file()} == before
+
+
+@pytest.mark.parametrize('args', [[], ['INV', '--all'], ['INV', '--query', 'text'], ['--query', 'text']])
+def test_products_catalogue_rejects_ambiguous_selection_without_writes(kb, args):
+    code, doc, err = kb('products', *args)
+    assert code == 2 and doc['status'] == 'failed' and 'Traceback' not in err
+    assert not kb.workspace.exists()
+
+
+def test_search_uses_local_kev_without_changing_edges_or_coverage(kb, tmp_path):
+    from kev_helpers import document, entry, parse_bytes, render
+
+    from patchtrace.kev.store import KevStore
+
+    kb.loaded()
+    before = kb.search()[1]['result']
+    folder = tmp_path / 'kev'
+    raw = render(document([entry(cveID='CVE-2099-20001')]))
+    catalog = parse_bytes(raw)
+    KevStore(folder).install(raw, catalog, now='2099-03-02T00:00:00Z')
+    code, doc, err = kb('search', 'KB5099001', '--kev-dir', str(folder))
+    assert code == 0 and err == ''
+    result = doc['result']
+    assert result['coverage'] == before['coverage']
+    assert [(e['cve'], e['kb'], e['scope_id']) for e in result['edges']] == [
+        (e['cve'], e['kb'], e['scope_id']) for e in before['edges']]
+    for edge in result['edges']:
+        assert edge['kev'] == ('listed' if edge['cve'] == 'CVE-2099-20001' else 'not-in-snapshot')
+        assert edge['kev_snapshot_id'] == catalog.meta.snapshot_id
+    assert result['kev_source']['snapshot_id'] == catalog.meta.snapshot_id
+    assert {c['cve']: c['kev'] for c in result['cards']}['CVE-2099-20001'] == 'listed'
+
+
 def test_search_exit_codes_found_not_observed_partial_and_empty(kb, tmp_path):
     empty, doc = kb.search()
     assert empty == 3 and doc['result']['coverage']['state'] == 'not_searched'  # nothing loaded is never "no result"

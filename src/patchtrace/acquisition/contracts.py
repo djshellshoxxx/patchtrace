@@ -17,7 +17,7 @@ AUTHENTICITY_NOTE = ('SHA-256 matches the Winbindex record (identity only); '
                      'Authenticode signature verification is out of scope for acquisition/1')
 X64_MACHINE = 34404
 UINT32_MAX = 4_294_967_295
-PE_EXTENSIONS = frozenset({'exe', 'dll', 'sys', 'efi', 'drv', 'ocx', 'cpl', 'scr'})
+PE_EXTENSIONS = frozenset({'exe', 'dll', 'sys', 'efi', 'drv', 'ocx', 'cpl', 'scr', 'tsp'})
 SYMBOL_SERVER = 'https://msdl.microsoft.com/download/symbols'
 _NAME = re.compile(r'[a-z0-9._-]{1,128}')
 _DEVICE_NAMES = frozenset({'con', 'prn', 'aux', 'nul', *(f'com{i}' for i in range(1, 10)),

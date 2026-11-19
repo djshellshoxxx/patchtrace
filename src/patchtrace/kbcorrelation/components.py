@@ -19,7 +19,7 @@ from .contracts import ComponentHint, CveCard, SourceRef, domain_id, validate_fi
 from .limits import DEFAULT_LIMITS
 
 # Names the title literally contains; the suffix list is the one acquisition accepts for PE files.
-_MODULE = re.compile(r'(?<![A-Za-z0-9_.-])([A-Za-z0-9_][A-Za-z0-9_.-]{0,59}\.(?:sys|dll|exe|ocx|cpl|drv))(?![A-Za-z0-9_-])',
+_MODULE = re.compile(r'(?<![A-Za-z0-9_.-])([A-Za-z0-9_][A-Za-z0-9_.-]{0,59}\.(?:sys|dll|exe|ocx|cpl|drv|tsp))(?![A-Za-z0-9_-])',
                      re.IGNORECASE)
 SELECTING_TIERS = ('A', 'B', 'C', 'E')  # tier D never selects a file
 
@@ -35,7 +35,7 @@ def normalise_name(raw: str) -> str:
     try:
         return validate_file_name(raw.strip().lower())
     except Exception:
-        raise ValueError('a file name is a lowercase basename of [a-z0-9._-] ending in .sys, .dll or .exe') from None
+        raise ValueError('a file name is a lowercase basename of [a-z0-9._-] with a supported PE suffix') from None
 
 
 def _hint(basename: str, scope_id: str, tier: str, reasons: Sequence[str],

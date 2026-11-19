@@ -1,4 +1,4 @@
-name: Nightly BinExport2 fuzz (non-gating)
+name: Nightly fuzz (non-gating)
 on:
   schedule:
     - cron: '17 3 * * *'
@@ -32,4 +32,30 @@ jobs:
         with:
           name: binexport-fuzz-crashes
           path: build/fuzz-crashes
+          if-no-files-found: ignore
+  parsers:
+    # Every untrusted-input parser (tools/fuzz_parsers.py): Ghidriff JSON, CSAF/CVRF/KB import, KEV, Winbindex,
+    # capa, FLOSS, DiE and the strict JSON loader. Seeds are hermetic test fixtures; the day-of-year seed varies
+    # the corpus between nights while each night stays reproducible from its seed.
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: "python -m pip install --only-binary=:all: -e '.[dev]'"
+      - name: Fuzz every untrusted-input parser (findings saved under build/parser-fuzz-crashes)
+        env:
+          FUZZ_SECONDS: ${{ github.event.inputs.seconds || '900' }}
+        run: |
+          case "$FUZZ_SECONDS" in ''|*[!0-9]*) echo "seconds must be an integer"; exit 2;; esac
+          python tools/fuzz_parsers.py --target all --iterations 1000000 --seed "$(date +%j)" --time-budget "$FUZZ_SECONDS" --crash-dir build/parser-fuzz-crashes
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: parser-fuzz-crashes
+          path: build/parser-fuzz-crashes
           if-no-files-found: ignore

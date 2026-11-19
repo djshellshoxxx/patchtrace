@@ -14,6 +14,8 @@ Compatibility: immutable stored contexts, pair records, decisions and investigat
 
 Product listing must also refuse a stale investigation with that refresh instruction when any stored scope no longer exists in the rebuilt index, including a mixed list with surviving server scopes. It must not claim that a legacy mapping loss means the lead has no products or that a partial surviving list is complete.
 
+Implied-release amendment (2026-11-11, audit KBA-08, alias catalog version 2): a client product name without a release token names the first release of its generation only in the exact vendor form `Windows 10|11 for x64-based|32-bit|ARM64-based Systems` (the whole normalised name): Windows 10 gets release `1507` and key `10-1507`, Windows 11 gets release `21H2` and key `11-21H2`, so the release-less Windows 11 name shares the scope of the later spelling `Windows 11 version 21H2 for ...` of the same architecture. `Version 2004` is a release token like `1507` to `1909` (client key `10-2004`; `Windows Server, version 2004` gains release `2004` and stays without a key, as the 1903 and 1909 server names do). Any other wording without a release token (LTSC/LTSB, IoT or another edition, extra words, a family hint that contradicts the client family) keeps an unknown release and gets no key. `winbindex_key` is the scope-identity key, not the file index's spelling: the resolver asks the index for `10-<release>` and for the bare `<release>` that Winbindex uses for Windows 10 (audit KBA-01). Compatibility: scope ids change only for names that carry the token `Version 2004` or have the exact release-less client form (version 1 name-keyed to keyed for the client names); every other name derives the attributes and the id it had under catalog version 1. An investigation stored on a changed name follows the refusal rule above (repeat the search and select the product again) and its stored records keep their identifiers; a pending product-start selection recorded under catalog version 1 is refused by full scope equality. The mapping stays `candidate`. Evidence: the Windows 10 form occurs in the committed MSRC factual projection (`tests/fixtures/kbcve/msrc`); MSRC use of the `Version 2004` and release-less Windows 11 forms is unverified offline.
+
 Local product-start amendment (2026-11-06): a product catalogue may be built
 without a KB/CVE lead from the active documents of a captured local reverse
 index. Merge their source product references with the existing scope rules;
@@ -55,6 +57,20 @@ Phase 1 hard filters for AUTO_VERIFIED pairs:
 
 Failing a hard filter emits reason codes instead of dropping row. USER_ASSERTED is allowed as separate lower-assurance mode for offline investigations: record full reason and never call it AUTO_VERIFIED. No auto-pick with more than one equally valid top pair. A SHA match against Winbindex record is a metadata consistency check only.
 
+Architecture-separated timeline amendment (2026-11-18): a Winbindex record can
+contain both native AMD64 and WoW64/x86 files under the same version key and KB.
+The selected product's supported machine partitions the timeline before change
+detection, variant detection and predecessor selection. An x86, ARM64 or unknown
+machine row must never interrupt an AMD64 SHA run, become its predecessor, or
+make distinct machine rows look like ambiguous variants of the selected file.
+All raw source records and parsed rows remain intact. A target KB listed only
+under other or unknown machines returns explicit `ARCH`; an AMD64 target with
+no earlier AMD64 observation returns `NO_OLDER`. Directly proposed mismatched
+pairs still carry grade X and `ARCH`. Multiple SHA variants within the selected
+machine remain ambiguous, and unchanged bytes already shipped in a preview
+remain unchanged in a later cumulative update. This does not widen supported
+architectures or establish a vulnerability fix boundary.
+
 Phase 2 stable preference tuple for compatible candidates:
 1. directly bracket target patch release with no known intervening updates;
 2. source-backed narrower build window;
@@ -66,6 +82,92 @@ Phase 2 stable preference tuple for compatible candidates:
 This ordering must not be exposed as a vulnerability probability. If a newer version is shared across multiple KBs, attribution window is ambiguous even if the pair is otherwise compatible.
 
 The existing index-row proposal seam must enforce the component and orientation checks even when called directly, outside the filename-filtered resolver. Distinct normalized basenames carry the existing NAME_MISMATCH hard block. The timeline's KB identifier, SHA-256 and BASE-row ordering are deterministic display tie-breakers only; they cannot establish temporal order when both rows have equal release date and numeric build/UBR. Such proposals retain their rows with ORDER_UNVERIFIED, incompatible lineage and grade X. This does not change manual pair selection or imply verified product mapping, complete update coverage or a vulnerability probability.
+
+Chronology certainty amendment (2026-11-18): index-row orientation requires an
+explicit release date on both rows. Distinct dates establish the order; equal
+dates additionally require both stated numeric release builds and a strictly
+increasing build/UBR. Missing dates and builds remain unknown, never artificial
+earliest values. Dates must be real calendar days, including leap-year rules;
+an impossible date in a raw index mapping becomes missing date evidence. Direct
+typed rows also require valid timestamp values; source timezone offsets are
+compared as UTC instants with all nine fractional digits retained, and equal
+instants cannot be separated by their textual spelling. Display ordering may
+still use the existing stable keys, but an unestablished proposal order carries
+`ORDER_UNVERIFIED`, incompatible lineage,
+grade X and an unverified fix boundary. The `changed_in_kb` assessment also stays
+unknown when its predecessor is not demonstrably earlier, different bytes share
+the target's chronological position, or the claimed unchanged run lacks an
+ordered provenance path. Existing local/manual assertion workflows are unchanged.
+
+At the direct typed-row boundary, a missing or malformed numeric release build
+has no build-ordering value. It must never become an artificial `(0, 0)` for
+chronology. Distinct valid UTC release instants still establish order when either
+build is unknown. A derived binary reference carries `build_ubr=None` for a
+malformed release build while the original row and its identities remain intact.
+Malformed release-build or heading-build claims also leave the fix boundary
+unverified, including a mix of malformed and otherwise valid matching claims.
+
+Partial-order and explicit-choice follow-up (2026-11-18): equal UTC instants
+permit numeric build ordering only when both rows state the same build-family
+prefix. A missing build, a different family, or equal builds remain unordered;
+an intervening sortable row cannot hide such an observation. The change claim
+stays unknown when another observation cannot be ordered against the target.
+For each target variant, search demonstrably earlier rows for the predecessor.
+Retain observations unordered against either endpoint in the confounding window,
+regardless of where KB or hash display tie-breakers place them, so they cannot
+support a fix boundary. Unordered predecessor alternatives also require an
+explicit choice, even when every possible older byte identity differs from the
+target and the target's change claim is therefore still `yes`.
+When unordered observations at the asserted change or unchanged-run frontier
+disagree about whether they already contain the target bytes, both
+`changed_in_kb` and the claimed first-change KB remain unknown. A hash tie-breaker
+must not switch the answer between `yes` and `no` or invent `last_changed_in`.
+If no ordered predecessor exists, an otherwise eligible displayed predecessor
+may remain as a diagnostic proposal with `ORDER_UNVERIFIED` and grade X.
+Same-time variants must never become each other's asserted older version.
+
+The derived resolution carries an `ambiguous` flag before candidate filtering
+or truncation. Multiple target byte identities and unresolved endpoint chronology
+set it, including when another variant is unavailable. A truncated resolution
+also requires an explicit choice. Planning and acquisition without `--pair`
+must refuse any remaining viable automatic choice when either condition holds;
+an explicit unique pair prefix may still select an otherwise valid alternative.
+The JSON resolution exposes `ambiguous` alongside `truncated`, and the human
+listing explains the need for an explicit choice. Neither an explicit choice
+nor a candidate's availability upgrades the evidence or removes hard blocks.
+
+The pair limit is an enumeration limit, not only an output slice: it must be an
+integer from 1 through 1,000. Precompute chronology facts for repeated scans once
+per resolution, retain their local cache only for that calculation, and cap the product of the selected
+timeline's row count and enumerated target count at 1,000,000. Before evaluating
+pairs, visit target identities in stable availability/display order within those
+budgets. Rank the evaluated proposals normally. A truncated result does not
+promise the globally best pair; preserve the full-source ambiguity flag and
+explain incomplete enumeration even if no evaluated target has a predecessor.
+In that case report `INDEX_GAP`, not a false `NO_OLDER` conclusion.
+
+The pure predecessor helper preserves its value-based target contract when
+chronology facts are cached: a target equal to an input row resolves to that
+row's local identity before cached lookups. A target absent from the supplied
+timeline raises `ValueError`, as before; it must not expose a cache `KeyError`.
+
+Direct index mappings may omit `other_versions`; a present value must be a list
+or tuple of nonempty string keys. A malformed collection or member rejects that
+entire mapping once, without raising, discarding bad members silently, or
+interpreting scalar text as a sequence of sibling keys. Other valid mappings
+still produce their rows, and source mappings and raw record identities remain
+unchanged.
+
+Fix-boundary certainty amendment (2026-11-18): a newer row naming the advisory's
+fixed build does not override contradictory older-row evidence. If all older
+stated builds in that same numeric build family are already at or beyond the
+fixed build, the boundary is `contradicted`. If older claims straddle that
+boundary, or the newer row carries conflicting builds within the fixed build's
+family, it is `unverified`. Different build-family prefixes in an explicitly
+shared update heading remain separate; a sibling prefix alone cannot contradict
+the selected fixed build. An unconfounded newer match with no such contradiction
+remains `source-supported`, an index/advisory relationship rather than proof of
+vulnerability repair in the binary or any function.
 
 ## C4. Formal interval algorithm
 
@@ -97,6 +199,8 @@ def classify_pair(target, older, newer, graph):
 ~~~
 
 A valid 'no change for file' assessment may use an equal-hash pair for metadata inspection but cannot be sent to the modified-function correlation engine. A pair from before and after many cumulative updates remains eligible for manual analysis with 'wide-window' warning. Metadata missing on either side returns needs_older or needs_newer; it is not evidence of absence of a security fix.
+
+Reverted-content amendment (2026-11-11, audit KBA-06): the older side of a resolver proposal never carries the target build's SHA-256. When a file's bytes return to an earlier value across a row of another update class (timeline Z, A, B(preview), A with target the last A), the backward search passes over every row holding the target's own bytes as well as the rows of the other class, and takes the nearest earlier admissible row with different bytes (Z). Every row passed over stays in the window, so the proposal is named WINDOW_CONFOUNDED. Nearest wins: for Z, A, Y, B(preview), A the older side is Y, not Z. When no such row exists the answer is NO_OLDER, never an equal-hash pair. Proposal identifiers of timelines without such a reversion are unchanged. The equal-hash 'no change for file' assessment above remains available to a direct caller of the proposal seam (grade X, IDENTICAL_CONTENT); the resolver does not offer it as a candidate pair.
 
 ## C5. Identity fusion: evidence examples
 
