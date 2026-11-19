@@ -15,6 +15,8 @@ from .models import CertificateSummary, SignatureInfo, SignerInfo, TimestampClai
 TITLE = 'Version and signing'
 LOADING = 'Reading version, manifest and signature (read-only)...'
 EMPTY = 'This file has no version resource.'
+PARTIAL = ('Some version, manifest or signing facts could not be read. '
+           'Available facts are shown below.')
 NO_MANIFEST = 'No embedded manifest was found. Sidecar .manifest files are not read.'
 BLOCKED = ('Certificate chain trust is only evaluated on Windows. This platform reports the signature structure and '
            'whether the file digest matches the signature.')

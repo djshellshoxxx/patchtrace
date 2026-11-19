@@ -24,7 +24,7 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from .. import verified_backup
-from ..persistence import ProjectStore, safe_path
+from ..persistence import ProjectStore, safe_path, strict_json
 from .contracts import EnrichmentError
 
 # Highest extension version this client understands. New stores are stamped BASE_EXTENSION_VERSION and
@@ -59,7 +59,9 @@ KINDS = frozenset({'signals', 'ranking', 'wil', 'cve-snapshot', 'contextual', 'p
                    'anchor-pin',
                    # SPEC-DA-01 Mode A: an imported Diaphora result (diaphora/1). Imported evidence, never derived,
                    # so retention never deletes it; no extension_version bump, as `anchor-batch`.
-                   'diaphora-matches'})
+                   'diaphora-matches',
+                   # SPEC-51: bounded artifact metadata cache, separate from pipeline retention.
+                   'pe-metadata'})
 
 # Retention (SPEC-07h H1). Only recomputable derived kinds are ever deleted; imported evidence
 # (`secondary-matches`), `cve-snapshot` and unknown kinds are never evicted.
@@ -286,6 +288,41 @@ class EnrichmentStore:
             stale = bool(row[8]) or (current is not None and guard != current)
             out.append(Entry(row[0], row[1], guard, row[3], row[7], stale, row[9], json.loads(row[10]), row[10], row[11]))
         return out
+
+    def entry(self, kind: str, entry_id: str, *, max_bytes: int = MAX_ROW) -> Entry | None:
+        """Read one exact row with size, integrity and strict-JSON checks.
+
+        Unlike entries(), this never materializes unrelated rows in Python. The
+        predicate bounds returned bodies, not SQLite's internal read/cast costs.
+        An existing id owned by another kind is an error, not an absent row safe
+        to overwrite.
+        """
+        if type(max_bytes) is not int or not 0 < max_bytes <= MAX_ROW:
+            raise ValueError('invalid enrichment row read limit')
+        if 'enrichment_entries' not in self._tables():
+            return None
+        size = self._db.execute('SELECT LENGTH(CAST(body AS BLOB)) FROM enrichment_entries WHERE id=?',
+                                (entry_id,)).fetchone()
+        if size is None:
+            return None
+        if type(size[0]) is not int or not 0 <= size[0] <= max_bytes:
+            raise EnrichmentError('PT-ENRICH-LIMIT', 'stored enrichment row exceeds its byte limit')
+        row = self._db.execute(
+            'SELECT id,kind,project_id,project_revision,run_id,raw_sha256,input_digest,status,stale,created,body,'
+            'body_sha256 FROM enrichment_entries WHERE id=? AND LENGTH(CAST(body AS BLOB)) <= ?',
+            (entry_id, max_bytes)).fetchone()
+        if row is None:
+            raise EnrichmentError('PT-ENRICH-INPUT', 'stored enrichment row changed during bounded read')
+        if (row[1] != kind or type(row[10]) is not str or type(row[11]) is not str
+                or len(row[10].encode('utf-8')) > max_bytes
+                or hashlib.sha256(row[10].encode()).hexdigest() != row[11]):
+            raise EnrichmentError('PT-ENRICH-INPUT', 'stored enrichment row identity or integrity is invalid')
+        try:
+            body = strict_json(row[10])
+        except ValueError as exc:
+            raise EnrichmentError('PT-ENRICH-INPUT', 'stored enrichment row is not strict JSON') from exc
+        guard = Guard(row[2], row[4], row[5], row[6])
+        return Entry(row[0], row[1], guard, row[3], row[7], bool(row[8]), row[9], body, row[10], row[11])
 
     def current(self, kind: str, guard: Guard) -> Entry | None:
         return next((e for e in self.entries(kind, guard) if not e.stale), None)

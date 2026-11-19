@@ -69,8 +69,9 @@ def test_deterministic_across_runs():
 
 
 def test_output_feeds_score_run():
-    manifest = {'cases': [{'id': 'a', 'expected': {'function': 'Parser::parse_header'}},
-                          {'id': 'b', 'expected': {'function': 'x'}}]}
+    # These authored expected names verify adapter/scorer plumbing, not real accuracy.
+    manifest = {'cases': [{'id': 'a', 'facts': 'verified', 'expected': {'function': 'Parser::parse_header'}},
+                          {'id': 'b', 'facts': 'verified', 'expected': {'function': 'x'}}]}
     res = SC.score_run(manifest, {'a': AD.ghidriff.parse(FX / 'ghidriff_report.json'), 'b': None})
     assert (res['hits'], res['top1'], res['blocked']) == (1, 1, 1)
 

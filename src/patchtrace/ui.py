@@ -71,7 +71,7 @@ from .service import ProjectService
 from .tooltips import apply_tooltip, apply_tooltips
 from .ui_bundle_setup import BundleSetup
 from .ui_help import WORKFLOW_HELP_TEXT
-from .ui_inspection import InspectionThread, side_summary
+from .ui_inspection import make_inspection_thread, publish_metadata_cache, side_summary
 from .ui_job_events import JobEventRelay
 from .ui_persistence import commit_and_report
 from .ui_profiles import PROFILE_SETTING, profiles_dir, selected_profile
@@ -2700,7 +2700,7 @@ class MainWindow(QMainWindow):
             if thread.key == key:
                 return
             thread.cancel.set()
-        thread = InspectionThread(self.project.id, self.project.artifacts, self.service.root, self, key)
+        thread = make_inspection_thread(self.service, self, key)
         queued = Qt.ConnectionType.QueuedConnection  # bound-method slots, always delivered on the GUI thread
         thread.inspection_ready.connect(self._inspection_ready, queued)
         thread.inspection_failed.connect(self._inspection_failed, queued)
@@ -2715,6 +2715,7 @@ class MainWindow(QMainWindow):
             return
         self._clear_inspection()
         self._inspection, self._inspection_key = result, key
+        publish_metadata_cache(self.service, result)
         self.inspection_status.emit('File inspection complete · ' + side_summary(result))
         if self._raw_mode():
             self.render_match()

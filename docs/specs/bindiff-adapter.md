@@ -15,6 +15,30 @@ Tool facts that constrain the design: the latest BinExport release (v12-20240417
 - `.BinExport` validator (pure; protobuf bindings generated from pinned `binexport2.proto`, Apache-2.0 notice added): parse succeeds; `meta_information.executable_id`, `executable_name`, `architecture_name` non-empty; `call_graph.vertex` non-empty and address-sorted; every `*_index` within bounds; each flow graph's entry block in its block list; size ≤ 512 MiB. `executable_id` must equal the project artifact's SHA-256 (the Ghidra exporter writes it) — otherwise reject as wrong pair.
 - `.BinDiff` validator: first 16 bytes `SQLite format 3\0`; opened read-only (`file:…?mode=ro` URI, immutable); required tables/columns per research §schema via `PRAGMA table_info`; exactly one `metadata` row with `version LIKE 'BinDiff %'`; `file` ids {1,2} with `metadata.file1=1, file2=2`; `file.hash` of 1 and 2 equal the project's older/newer SHA-256 in that order (reversed → reject as orientation mismatch); every `function.algorithm` present in `functionalgorithm`; `0 ≤ similarity, confidence ≤ 1`; addresses masked `& 0xFFFF_FFFF_FFFF_FFFF`; image-base subtraction recorded if detectable from BinExport metadata, else `unknown`.
 
+### Imported identity and algorithm keys
+
+SQLite column declarations and constraints are untrusted. Validate the values
+actually read: `metadata.file1`, `metadata.file2`, `file.id`,
+`functionalgorithm.id`, and `function.algorithm` must be integer storage values.
+`functionalgorithm.id` must be unique, including when repeated rows carry the
+same name. A duplicate or noninteger key returns `PT-SECONDARY-INPUT` before a
+match set is accepted. Never select an algorithm name by last-row-wins behavior
+or permit a REAL/TEXT key to alias an integer key. Unknown integer algorithm IDs
+remain eligible when they have exactly one valid named row; no version-specific
+numeric catalogue is imposed.
+
+Ordinary tables must also have an integer, positive `sqlite_master.rootpage`.
+This is only a consistency check: both the root page and stored CREATE text can
+be forged. Before reading result rows, use bounded `PRAGMA main.table_list`
+classification to require ordinary tables and reject virtual or shadow tables,
+then reconcile its names with the admitted `sqlite_master` table inventory.
+Comments, tabs, line breaks, long spacing and a forged positive root page must
+not bypass refusal. Do not infer table type from stored SQL or root-page values.
+The classifier requires SQLite 3.37 or later; an unavailable or incomplete
+classification is refused rather than falling back to the SQL-prefix heuristic.
+The [SQLite PRAGMA documentation](https://www.sqlite.org/pragma.html#pragma_table_list)
+defines the table, view, virtual and shadow classifications.
+
 ## 3. Records and storage
 
 > SPEC-31 amendment A-16 (2026-10-14): BinDiff writes imports and stubs like any match with `function.basicblocks = 0` (similarity 1.0 by shortcut), so such rows are import/stub matches, not code matches (R02 s15); the SPEC-31 unified engine tiers them as tier A only when both ends are imports in its ProgramIR, else tier C. The importer and `SecondaryMatch` are UNCHANGED and do not store `basicblocks`, so the unified engine cannot recognise stub rows today and records the limitation `bindiff-stub-rows-not-identified`; an additive `secondary/2` field would close that gap. The unified address basis is auto-detected per set (`va`, `rva` or not comparable) with the same rule as `detect_address_basis` (SPEC-31 06 s1, s10).

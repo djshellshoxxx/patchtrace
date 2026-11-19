@@ -63,7 +63,7 @@ _FUNCTIONS = frozenset({'count'})
 
 
 def _authorizer(action: int, arg1, arg2, dbname, source) -> int:
-    """Fail-closed whitelist: SELECT, reads of the fixed tables, `PRAGMA table_info` on them, COUNT()."""
+    """SELECT, fixed-table reads/info, main-schema table classification and COUNT(); deny everything else."""
     if action == sqlite3.SQLITE_SELECT:
         return sqlite3.SQLITE_OK
     if action == sqlite3.SQLITE_READ and isinstance(arg1, str) and arg1.lower() in _READABLE:
@@ -71,6 +71,8 @@ def _authorizer(action: int, arg1, arg2, dbname, source) -> int:
     if action == sqlite3.SQLITE_FUNCTION and isinstance(arg2, str) and arg2.lower() in _FUNCTIONS:
         return sqlite3.SQLITE_OK
     if action == sqlite3.SQLITE_PRAGMA and arg1 == 'table_info' and isinstance(arg2, str) and arg2 in REQUIRED:
+        return sqlite3.SQLITE_OK
+    if action == sqlite3.SQLITE_PRAGMA and arg1 == 'table_list' and arg2 is None and dbname == 'main':
         return sqlite3.SQLITE_OK
     return sqlite3.SQLITE_DENY
 
@@ -190,22 +192,46 @@ def _preserve(source: Path, directory: Path) -> Path:
 def _check_schema_objects(db: sqlite3.Connection) -> set[str]:
     """Only plain tables and their indexes are acceptable; anything executable or indirect is refused."""
     tables: set[str] = set()
-    entries = db.execute('SELECT type, name, tbl_name, sql FROM sqlite_master LIMIT ?',
+    entries = db.execute('SELECT type, name, tbl_name, sql, rootpage FROM sqlite_master LIMIT ?',
                          (MAX_SCHEMA_OBJECTS + 1,)).fetchall()
     if len(entries) > MAX_SCHEMA_OBJECTS:
         raise SecondaryError('PT-SECONDARY-LIMIT', 'BinDiff schema object count exceeds the safety limit')
-    for kind, name, _table, sql in entries:
+    for kind, name, _table, sql, rootpage in entries:
         if kind in ('trigger', 'view'):
             raise _fail(f'BinDiff database contains a {kind}; refusing to read it')
         if kind == 'table':
+            # Stored SQL and root pages are attacker-controlled. This consistency
+            # guard supplements, but never substitutes for, SQLite's classifier below.
+            if type(rootpage) is not int or rootpage <= 0:
+                raise _fail('BinDiff database contains a virtual table or a table without a valid root page')
             if isinstance(sql, str) and sql.lstrip()[:20].upper().replace(' ', '').startswith('CREATEVIRTUAL'):
                 raise _fail('BinDiff database contains a virtual table; refusing to read it')
             tables.add(name)
         elif kind != 'index':
             raise _fail(f'BinDiff database contains an unexpected schema object type {str(kind)[:20]!r}')
-    for kind, _name, table, _sql in entries:
+    for kind, _name, table, _sql, _rootpage in entries:
         if kind == 'index' and table not in tables:
             raise _fail('BinDiff database index refers to a non-table object')
+    # table_list uses SQLite's parsed object type, not the forgeable root-page
+    # value or a fixed spelling of CREATE. Its inventory is bounded after the
+    # schema-object budget above; include one row for SQLite's own schema table.
+    classified = db.execute('PRAGMA main.table_list').fetchmany(MAX_SCHEMA_OBJECTS + 2)
+    if not classified:
+        raise SecondaryError('PT-SECONDARY-UNSUPPORTED',
+                             'BinDiff import requires SQLite table_list schema classification (SQLite 3.37+)')
+    if len(classified) > MAX_SCHEMA_OBJECTS + 1:
+        raise SecondaryError('PT-SECONDARY-LIMIT', 'BinDiff schema classification exceeds the safety limit')
+    names = set()
+    for row in classified:
+        if len(row) < 3 or row[0] != 'main' or not isinstance(row[1], str):
+            raise _fail('BinDiff schema classification is invalid')
+        if row[2] in ('virtual', 'shadow'):
+            raise _fail('BinDiff database contains a virtual table or its shadow tables; refusing to read it')
+        if row[2] != 'table':
+            raise _fail('BinDiff database contains a non-table schema object')
+        names.add(row[1])
+    if names - {'sqlite_schema'} != tables:
+        raise _fail('BinDiff schema classification is incomplete')
     return tables
 
 
@@ -228,11 +254,11 @@ def _read(db: sqlite3.Connection, older_sha256: str, newer_sha256: str, file_sha
         raise _fail('metadata.version is not a BinDiff version')
     if len(version) > LABEL_LIMIT:
         raise SecondaryError('PT-SECONDARY-LIMIT', 'BinDiff version text exceeds the safety limit')
-    if (file1, file2) != (1, 2):
+    if type(file1) is not int or type(file2) is not int or (file1, file2) != (1, 2):
         raise _fail('metadata must reference file ids 1 and 2')
     file_rows = db.execute('SELECT id, hash FROM file LIMIT 3').fetchall()
     files = dict(file_rows)
-    if len(file_rows) != 2 or set(files) != {1, 2}:
+    if len(file_rows) != 2 or any(type(ident) is not int for ident, _ in file_rows) or set(files) != {1, 2}:
         raise _fail('file table must contain exactly ids 1 and 2')
     if not all(isinstance(files[i], str) for i in (1, 2)):
         raise _fail('file.hash must be text')
@@ -243,6 +269,10 @@ def _read(db: sqlite3.Connection, older_sha256: str, newer_sha256: str, file_sha
                                                     (MAX_ALGORITHMS + 1,))):
         if index >= MAX_ALGORITHMS:
             raise SecondaryError('PT-SECONDARY-LIMIT', 'BinDiff algorithm count exceeds the safety limit')
+        if type(ident) is not int:
+            raise _fail('functionalgorithm id must be an integer')
+        if ident in algorithms:
+            raise _fail('duplicate functionalgorithm id')
         if not isinstance(name, str) or not name.strip():
             raise _fail('functionalgorithm row without a name')
         if len(name) > LABEL_LIMIT:
@@ -258,6 +288,8 @@ def _read(db: sqlite3.Connection, older_sha256: str, newer_sha256: str, file_sha
     for row in db.execute('SELECT address1, name1, address2, name2, similarity, confidence, flags, algorithm, basicblocks '
                           'FROM function ORDER BY address1, address2'):
         address1, name1, address2, name2, similarity, confidence, flags, algorithm, basicblocks = row
+        if type(algorithm) is not int:
+            raise _fail('function.algorithm must be an integer')
         if algorithm not in algorithms:
             raise _fail(f'function.algorithm {algorithm!r} has no functionalgorithm row')
         sim_milli, sim_text = to_milli(similarity, 'function.similarity')

@@ -371,6 +371,16 @@ def check_message(msg, L, B):
 ```
 Rules that apply to every pass: no recursion; no `list(...)` copy of a whole table (iterate the protobuf container); `HasField` for every optional index whose absence is semantically distinct from 0 (vertex/edge/flow-graph indexes use "required-present"; instruction/reference defaults are applied explicitly as above); warnings never alter validity; the first violation raises (no error accumulation, bounded error text <= 200 chars, contains labels and numbers only, never file strings).
 
+**Text-field coverage (2026-11-19):** the UTF-8 and per-string byte checks also apply to
+`expression.symbol`, `mnemonic.name`, `library.name` and `module.name`. Each present value
+must be a UTF-8 string no larger than `max_string_bytes`; invalid proto2 string bytes are
+`utf8_invalid`, and excess encoded length is `string_too_long`. Absent optional values
+remain valid. Unicode, empty strings and control characters retain their existing text
+semantics; the NUL restrictions on metadata and vertex names are unchanged. These checks
+run within the existing expression pass and bounded mnemonic/library/module walks, with
+budget ticks. `max_string_total` continues to limit the string table, not these other
+tables. A successful pre-scan or protobuf parse alone does not validate any text field.
+
 ### 6.6 Identity, orientation, address basis (binexport_identity.py)
 
 ```

@@ -38,6 +38,13 @@ keys, non-finite values, unpaired surrogate escapes and excessive nesting are
 The recorded output digest remains the SHA-256 of the original UTF-8 stdout bytes;
 valid Unicode names and escaped surrogate pairs retain their exact text.
 
+The same typed-error rule applies to the process interpreter's legacy string fallback
+(2026-11-19): a lone surrogate in successful stdout is `PT-SECONDARY-INPUT`, including
+when it is encountered during the UTF-8 size check. On a nonzero exit, malformed text in
+the diagnostic tail is replaced only for display and the result remains
+`PT-SECONDARY-RUN`. This diagnostic conversion never makes stdout eligible for parsing
+or changes the bytes used to identify a successful result.
+
 Version components use one to nine ASCII decimal digits each. Malformed or oversized
 versions make the capability probe unsupported, without integer-conversion errors.
 This bounds parsing only; versions accepted by the existing ≥ 0.9.0 policy keep

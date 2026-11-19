@@ -14,6 +14,25 @@ Ghidra, BinDiff or Rizin run has happened yet; every accuracy number below is a 
 | L3 Windows reality | same, on Microsoft-shipped stripped PE | published patch analyses | 15 first, grow to 29 | >= 82% at 15/0 errors, >= 90% at 29/0 |
 
 Bounds are one-sided exact (Clopper-Pearson, alpha 0.05): `python -m tools.research_qualification samplesize`.
+
+### Scoring admission correction (2026-11-19)
+
+The shared `scoring.score_case` boundary accepts a case for ranking only when
+`facts` is exactly `verified`. Unverified, missing or unsupported facts produce
+`BLOCKED`, a null rank and `reason: facts_not_verified`, even if a reported name
+matches the expected function, an accepted alternative, or an empty no-change
+result. Existing malformed-result validation remains in force. The `score`
+aggregate excludes these rows from scored counts, hits, misses, false positives,
+top-one counts and the confidence denominator. The `parity` aggregate excludes
+them from comparisons, disagreements and overlap/Jaccard averages. Public CLI
+commands must not report success when only blocked cases are supplied.
+
+This enforces the existing prohibition on scoring unverified facts at every
+public scorer entry point. It does not verify source claims, alter real case
+manifests or promote their facts. Unit fixtures marked verified are authored
+mechanical controls with explicit synthetic byte hashes, never real accuracy
+evidence. L1/L2/L3 and native acceptance remain separate.
+
 Cases from one project or release are not independent; count distinct projects. Report per stratum
 (compiler family, release-vs-own-build), never pooled.
 

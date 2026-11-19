@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -12,9 +13,11 @@ from tools.research_qualification.__main__ import main  # noqa: E402
 
 
 def c(i, fn="f", **exp):
+    # Authored scoring mechanics: these fixture identities are not real accuracy evidence.
     return {"id": i, "layer": "L2", "stratum": "s", "project": "p" + i, "source_url": "https://x.org/a",
-            "licence": "MIT", "older": {"ref": "a"}, "newer": {"ref": "b"},
-            "expected": exp or {"function": fn}, "facts": "unverified", "holdout": False}
+            "licence": "MIT", "older": {"ref": "a", "sha256": hashlib.sha256(b'authored older').hexdigest()},
+            "newer": {"ref": "b", "sha256": hashlib.sha256(b'authored newer').hexdigest()},
+            "expected": exp or {"function": fn}, "facts": "verified", "holdout": False}
 
 
 M = {"schema": "rq-case-manifest/1", "cases": [c("a"), c("b"), c("n", no_change=True), c("z")]}
@@ -61,7 +64,7 @@ def test_cli(tmp_path):
 
 
 def test_accept_list_counts_alternate_function_and_renames():
-    case = {'id': 'c', 'expected': {'function': 'FindObject', 'accept': ['FindStreamObject']}}
+    case = {'id': 'c', 'facts': 'verified', 'expected': {'function': 'FindObject', 'accept': ['FindStreamObject']}}
     assert SC.score_case(case, ['Other', 'FindStreamObject'])['rank'] == 2
     assert SC.score_case(case, ['FindStreamObject', 'FindObject'])['rank'] == 1
     assert SC.score_case(case, ['Other'])['outcome'] == 'MISS'

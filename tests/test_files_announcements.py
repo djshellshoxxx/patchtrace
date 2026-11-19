@@ -9,9 +9,13 @@ from qt_support import RecordingAnnouncer
 
 from patchtrace.artifact_inspection import ProjectInspection, SideInspection
 from patchtrace.gui.registry import PanelContext
+from patchtrace.pe_overview import signing_view as sv
 from patchtrace.pe_overview.panel import PANEL
 from patchtrace.sample import create_sample
 from patchtrace.ui_inspection import RUNNING_STATUS, FilesController
+
+# Metadata now runs in the same inspection worker, so both read states precede completion.
+LOADING_ANNOUNCEMENTS = [(RUNNING_STATUS, False), (sv.LOADING, False)]
 
 
 class InspectionWindow(QObject):
@@ -69,10 +73,10 @@ def test_loading_failure_are_announced_once_and_keep_focus(files, qtbot):
     controller, window, announcer = files
     controller.refresh()
     controller.refresh()
-    assert announcer.messages == [(RUNNING_STATUS, False)]
+    assert announcer.messages == LOADING_ANNOUNCEMENTS
     window.inspection_status.emit('File inspection failed: ValueError')
     window.inspection_status.emit('File inspection failed: ValueError')
-    assert len(announcer.messages) == 2
+    assert len(announcer.messages) == 3
     text, assertive = announcer.messages[-1]
     assert text == 'File inspection failed. Review Logs, then choose File overview to retry.'
     assert assertive
@@ -93,7 +97,7 @@ def test_project_refresh_retains_current_failure_until_explicit_retry(files):
     controller.refresh()  # the File overview action's existing explicit retry route
     assert window.started == 1
     assert controller.status.full_text() == RUNNING_STATUS
-    assert announcer.messages[-1] == (RUNNING_STATUS, False)
+    assert announcer.messages[-2:] == LOADING_ANNOUNCEMENTS
 
 
 def test_previous_project_failure_does_not_block_loading(files):
@@ -101,7 +105,7 @@ def test_previous_project_failure_does_not_block_loading(files):
     window._inspection_error = (('other', 'project'), 'ValueError')
     controller.project_changed(window.key)
     assert window.started == 1
-    assert announcer.messages == [(RUNNING_STATUS, False)]
+    assert announcer.messages == LOADING_ANNOUNCEMENTS
 
 
 def test_retry_stays_loading_when_project_updates_before_it_finishes(files):
@@ -112,12 +116,12 @@ def test_retry_stays_loading_when_project_updates_before_it_finishes(files):
     window._inspection_thread = RunningInspection(window.key)
     controller.project_changed(window.key)
     assert controller.status.full_text() == RUNNING_STATUS
-    assert len(announcer.messages) == 2
+    assert len(announcer.messages) == 3
     window._inspection_thread = None
     window.inspection_status.emit('File inspection failed: OSError')
     assert 'OSError' in controller.status.full_text()
     assert announcer.messages[-1][1]
-    assert len(announcer.messages) == 3
+    assert len(announcer.messages) == 4
 
 
 def test_opening_same_project_from_a_different_root_announces_new_load(files):
@@ -125,12 +129,13 @@ def test_opening_same_project_from_a_different_root_announces_new_load(files):
     controller.project_changed(window.key)
     window.key = ('copied-sample', 'project')
     controller.project_changed(window.key)
-    assert announcer.messages == [(RUNNING_STATUS, False), (RUNNING_STATUS, False)]
+    assert announcer.messages == LOADING_ANNOUNCEMENTS * 2
 
 
 def test_completion_and_metadata_failure_are_announced_without_focus_change(files, qtbot):
     controller, window, announcer = files
     controller.refresh()
+    assert announcer.messages == LOADING_ANNOUNCEMENTS  # both stages are announced before any result
     window.inspection = ProjectInspection('project', {
         side: SideInspection(side, 'a' * 64, error_code='unavailable') for side in ('older', 'newer')})
     window.inspection_status.emit('File inspection complete · OLDER: unavailable · NEWER: unavailable')

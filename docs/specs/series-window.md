@@ -47,6 +47,14 @@ class PairReader(Protocol):
              wanted_match_ids: frozenset[str]) -> PairSnapshot: ...
 ```
 `DiskPairReader.read` pseudocode (never raises for per-pair problems; raises only `PT-NWAY-CANCEL` via the thread's cancel event):
+
+Path resolution and the project-file stat belong to this per-pair failure boundary.
+An inaccessible path, embedded invalid path character, or symlink loop returns
+`unreadable` with the fixed reason `pair project path cannot be read`, without
+forwarding operating-system error text or an absolute path. The staleness pass
+records the same pair as unreadable and continues checking the remaining pairs.
+Missing paths and paths outside the resolved series root remain `missing`.
+
 ```
 target = (root / ref.path).resolve()
 if not target.is_relative_to(root) or not (target/PROJECT_FILE).is_file(): return Snapshot('missing', ...)

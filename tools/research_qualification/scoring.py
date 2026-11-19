@@ -1,8 +1,9 @@
 """AV-4: rank scoring of an engine's changed-function candidates against a frozen case manifest.
 
 Per case: is the expected function in the top k candidates, and at what rank? A `no_change` case is correct only
-when the engine reports no candidates (anything listed is a false positive). Cases the engine did not run are
-BLOCKED and excluded from the accuracy count but reported; they are never counted as hits. Aggregates use the
+when the engine reports no candidates (anything listed is a false positive). Cases without verified facts or
+an engine result are BLOCKED and excluded from the accuracy count but reported; they are never counted as hits.
+Aggregates use the
 exact lower bound over distinct projects' cases as supplied (the caller decides independence; see cases.summary).
 """
 from __future__ import annotations
@@ -15,11 +16,14 @@ from .sample_size import lower_bound
 def score_case(case: dict[str, Any], candidates: list[str] | None, k: int = 5) -> dict[str, Any]:
     if k < 1:
         raise ValueError('k must be >= 1')
-    exp = case['expected']
+    if candidates is not None and (not isinstance(candidates, list)
+                                   or not all(isinstance(c, str) for c in candidates)):
+        raise ValueError(f'candidates for {case["id"]} must be a list of function names or null')
+    if case.get('facts') != 'verified':
+        return {'id': case['id'], 'outcome': 'BLOCKED', 'rank': None, 'reason': 'facts_not_verified'}
     if candidates is None:
         return {'id': case['id'], 'outcome': 'BLOCKED', 'rank': None}
-    if not isinstance(candidates, list) or not all(isinstance(c, str) for c in candidates):
-        raise ValueError(f'candidates for {case["id"]} must be a list of function names or null')
+    exp = case['expected']
     if exp.get('no_change') is True:
         return {'id': case['id'], 'outcome': 'HIT' if not candidates else 'FALSE_POSITIVE', 'rank': None,
                 'reported': len(candidates)}
