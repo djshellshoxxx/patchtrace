@@ -1,0 +1,268 @@
+{
+  "cases": {
+    "bounded_enumeration": {
+      "ambiguous": true,
+      "blockers": [],
+      "changed_in_kb": "unknown",
+      "default_choice": {
+        "error_code": "PT-KBC-INPUT",
+        "message": "the candidate evidence is ambiguous or truncated; list pairs with \"kb pairs\" and select one with --pair"
+      },
+      "elapsed_seconds": 0.003274023998528719,
+      "last_changed_in": null,
+      "note": "Variants, unresolved chronology or a truncated list remain; select an explicit pair with --pair.",
+      "pairs": [
+        {
+          "fix_boundary": "unverified",
+          "grade": "A",
+          "id": "ee7a450096b40242fde31a09c5aad9b06269dc91733199fafc7719b8ab93b4ce",
+          "newer": "0",
+          "older": "a",
+          "reason_codes": [
+            "WINDOW_CONFOUNDED"
+          ]
+        },
+        {
+          "fix_boundary": "unverified",
+          "grade": "A",
+          "id": "f245b5944c4930475d3314b651eec620d3e8e4420196da2fcfcf44a1cb189d84",
+          "newer": "0",
+          "older": "a",
+          "reason_codes": [
+            "WINDOW_CONFOUNDED"
+          ]
+        },
+        {
+          "fix_boundary": "unverified",
+          "grade": "A",
+          "id": "f6a8de4ee16775040304b19db30ec2cfa8e4c5d29c1932e1b37711d68d369aed",
+          "newer": "0",
+          "older": "a",
+          "reason_codes": [
+            "WINDOW_CONFOUNDED"
+          ]
+        },
+        {
+          "fix_boundary": "unverified",
+          "grade": "A",
+          "id": "0e43544544819ebb644675cb5cd24997a2721023744f26eea1e8466fe8a1af11",
+          "newer": "0",
+          "older": "a",
+          "reason_codes": [
+            "WINDOW_CONFOUNDED"
+          ]
+        },
+        {
+          "fix_boundary": "unverified",
+          "grade": "A",
+          "id": "672394c9718b381f8acbaa53eaf3383dfed6279a682caf13e48d36412906d25f",
+          "newer": "0",
+          "older": "a",
+          "reason_codes": [
+            "WINDOW_CONFOUNDED"
+          ]
+        },
+        {
+          "fix_boundary": "unverified",
+          "grade": "A",
+          "id": "0ba744af85c23681d25b1e08070488a6c1ace93d65d5a6fe931facc154c8670e",
+          "newer": "0",
+          "older": "a",
+          "reason_codes": [
+            "WINDOW_CONFOUNDED"
+          ]
+        },
+        {
+          "fix_boundary": "unverified",
+          "grade": "A",
+          "id": "7b4702bba5e094c349362c626c8dda0246ca748d4d00e69e1a7b61927c17c7ff",
+          "newer": "0",
+          "older": "a",
+          "reason_codes": [
+            "WINDOW_CONFOUNDED"
+          ]
+        }
+      ],
+      "proposals_evaluated": 7,
+      "truncated": true
+    },
+    "different_build_families_equal_time": {
+      "ambiguous": true,
+      "blockers": [],
+      "changed_in_kb": "unknown",
+      "default_choice": null,
+      "last_changed_in": null,
+      "note": "Variants, unresolved chronology or a truncated list remain; select an explicit pair with --pair.",
+      "pairs": [
+        {
+          "fix_boundary": "unverified",
+          "grade": "X",
+          "id": "3a501436e021796703c8d4c248766c914acf68eac1bb1cfcf93b0fa1dd41d31a",
+          "newer": "b",
+          "older": "a",
+          "reason_codes": [
+            "ORDER_UNVERIFIED"
+          ]
+        }
+      ],
+      "truncated": false
+    },
+    "hidden_missing_build_same_time": {
+      "ambiguous": true,
+      "blockers": [],
+      "changed_in_kb": "unknown",
+      "default_choice": {
+        "error_code": "PT-KBC-INPUT",
+        "message": "the candidate evidence is ambiguous or truncated; list pairs with \"kb pairs\" and select one with --pair"
+      },
+      "last_changed_in": null,
+      "note": "Variants, unresolved chronology or a truncated list remain; select an explicit pair with --pair.",
+      "pairs": [
+        {
+          "fix_boundary": "unverified",
+          "grade": "A",
+          "id": "3a501436e021796703c8d4c248766c914acf68eac1bb1cfcf93b0fa1dd41d31a",
+          "newer": "b",
+          "older": "a",
+          "reason_codes": [
+            "WINDOW_CONFOUNDED"
+          ]
+        }
+      ],
+      "truncated": false
+    },
+    "one_target_variant_unavailable": {
+      "ambiguous": true,
+      "blockers": [],
+      "changed_in_kb": "unknown",
+      "default_choice": {
+        "error_code": "PT-KBC-INPUT",
+        "message": "the candidate evidence is ambiguous or truncated; list pairs with \"kb pairs\" and select one with --pair"
+      },
+      "last_changed_in": null,
+      "note": "Variants, unresolved chronology or a truncated list remain; select an explicit pair with --pair.",
+      "pairs": [
+        {
+          "fix_boundary": "unverified",
+          "grade": "A",
+          "id": "3a501436e021796703c8d4c248766c914acf68eac1bb1cfcf93b0fa1dd41d31a",
+          "newer": "b",
+          "older": "a",
+          "reason_codes": [
+            "WINDOW_CONFOUNDED"
+          ]
+        },
+        {
+          "fix_boundary": "unverified",
+          "grade": "X",
+          "id": "699a7687d899cca7414d05876fd02ed199ae5d21c5e732b3b0ef30cb9da5e6e1",
+          "newer": "c",
+          "older": "a",
+          "reason_codes": [
+            "DELTA_ONLY",
+            "WINDOW_CONFOUNDED"
+          ]
+        }
+      ],
+      "truncated": false
+    },
+    "prior_variant_sorts_after": {
+      "ambiguous": true,
+      "blockers": [],
+      "changed_in_kb": "unknown",
+      "default_choice": {
+        "error_code": "PT-KBC-INPUT",
+        "message": "the candidate evidence is ambiguous or truncated; list pairs with \"kb pairs\" and select one with --pair"
+      },
+      "last_changed_in": null,
+      "note": "Variants, unresolved chronology or a truncated list remain; select an explicit pair with --pair.",
+      "pairs": [
+        {
+          "fix_boundary": "unverified",
+          "grade": "A",
+          "id": "108ca0864805d6bba4fd56e72d1b7f01537bf67789d586b1fd1a1f45ecc42bca",
+          "newer": "b",
+          "older": "c",
+          "reason_codes": [
+            "WINDOW_CONFOUNDED"
+          ]
+        }
+      ],
+      "truncated": false
+    },
+    "prior_variant_sorts_before": {
+      "ambiguous": true,
+      "blockers": [],
+      "changed_in_kb": "unknown",
+      "default_choice": {
+        "error_code": "PT-KBC-INPUT",
+        "message": "the candidate evidence is ambiguous or truncated; list pairs with \"kb pairs\" and select one with --pair"
+      },
+      "last_changed_in": null,
+      "note": "Variants, unresolved chronology or a truncated list remain; select an explicit pair with --pair.",
+      "pairs": [
+        {
+          "fix_boundary": "unverified",
+          "grade": "A",
+          "id": "3a501436e021796703c8d4c248766c914acf68eac1bb1cfcf93b0fa1dd41d31a",
+          "newer": "b",
+          "older": "a",
+          "reason_codes": [
+            "WINDOW_CONFOUNDED"
+          ]
+        }
+      ],
+      "truncated": false
+    },
+    "truncated_choices": {
+      "ambiguous": true,
+      "blockers": [],
+      "changed_in_kb": "unknown",
+      "default_choice": {
+        "error_code": "PT-KBC-INPUT",
+        "message": "the candidate evidence is ambiguous or truncated; list pairs with \"kb pairs\" and select one with --pair"
+      },
+      "last_changed_in": null,
+      "note": "Variants, unresolved chronology or a truncated list remain; select an explicit pair with --pair.",
+      "pairs": [
+        {
+          "fix_boundary": "unverified",
+          "grade": "A",
+          "id": "3a501436e021796703c8d4c248766c914acf68eac1bb1cfcf93b0fa1dd41d31a",
+          "newer": "b",
+          "older": "a",
+          "reason_codes": [
+            "WINDOW_CONFOUNDED"
+          ]
+        }
+      ],
+      "truncated": true
+    },
+    "unambiguous_control": {
+      "ambiguous": false,
+      "blockers": [],
+      "changed_in_kb": "yes",
+      "default_choice": {
+        "grade": "A",
+        "newer": "b",
+        "older": "a"
+      },
+      "last_changed_in": null,
+      "note": "",
+      "pairs": [
+        {
+          "fix_boundary": "source-supported",
+          "grade": "A",
+          "id": "3a501436e021796703c8d4c248766c914acf68eac1bb1cfcf93b0fa1dd41d31a",
+          "newer": "b",
+          "older": "a",
+          "reason_codes": []
+        }
+      ],
+      "truncated": false
+    }
+  },
+  "resolver_module": "/workspace/scratch/e83fbf4505c3/review-integrated-237d216f/src/patchtrace/kbcorrelation/resolver.py",
+  "source_module": "/workspace/scratch/e83fbf4505c3/review-integrated-237d216f/src/patchtrace/kbcorrelation/lineage.py",
+  "target_bytes": false
+}

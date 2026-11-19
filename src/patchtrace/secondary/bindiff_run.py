@@ -251,12 +251,18 @@ def execute(cap: Capability, pair: BoundPair, raw_dir: Path, *, cancel: threadin
         if entries != [expected] or expected.is_symlink() or not expected.is_file():
             raise _err('PT-SECONDARY-RUN', 'output-ambiguous', 'BinDiff produced an unexpected set of output '
                        'files; the result was discarded.')
-        if expected.stat().st_size == 0:
+        size = expected.stat().st_size
+        if size > output_limit:
+            raise _err('PT-SECONDARY-LIMIT', 'output-limit', 'BinDiff output exceeded the safety limit.')
+        if size == 0:
             raise _err('PT-SECONDARY-INPUT', 'output-invalid', 'BinDiff wrote a database that failed validation: '
                        'the file is empty.')
         out_sha = sha256_file(expected)
         kept = preserve(expected, raw_dir, out_sha)  # preserved BEFORE parsing (AGENTS.md)
         return BindiffRaw(0, stdout, stderr, None, kept, out_sha, (h_old, h_new), parse_summary(stdout))
+    except OSError as exc:
+        raise _err('PT-SECONDARY-RUN', 'output-invalid',
+                   f'BinDiff output could not be inspected ({type(exc).__name__}); the result was discarded.') from None
     finally:
         _remove_tree(workdir)
 

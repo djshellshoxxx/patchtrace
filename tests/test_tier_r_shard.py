@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -433,7 +434,7 @@ def test_workflow_structure_and_pins():
             if action.startswith('ilammy/msvc-dev-cmd@'):
                 assert action == 'ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756'
             else:
-                assert '@v' in action, line
+                assert re.fullmatch(r'[\w./-]+@[0-9a-f]{40}', action), line
     yaml = pytest.importorskip('yaml')
     doc = yaml.safe_load(text)
     assert set(doc['jobs']) == {'plan', 'shard', 'merge', 'windows-advisory', 'msvc-advisory'}

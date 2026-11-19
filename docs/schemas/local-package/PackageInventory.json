@@ -1,0 +1,625 @@
+{
+  "$defs": {
+    "PackageContainer": {
+      "additionalProperties": false,
+      "properties": {
+        "ancestors": {
+          "default": [],
+          "items": {
+            "maxLength": 64,
+            "minLength": 64,
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "maxItems": 4,
+          "title": "Ancestors",
+          "type": "array"
+        },
+        "complete": {
+          "title": "Complete",
+          "type": "boolean"
+        },
+        "container_sha256": {
+          "maxLength": 64,
+          "minLength": 64,
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Container Sha256",
+          "type": "string"
+        },
+        "entry_count": {
+          "maximum": 50000,
+          "minimum": 0,
+          "title": "Entry Count",
+          "type": "integer"
+        },
+        "size": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "container_sha256",
+        "size",
+        "entry_count",
+        "complete"
+      ],
+      "title": "PackageContainer",
+      "type": "object"
+    },
+    "PackageDecoder": {
+      "additionalProperties": false,
+      "properties": {
+        "abi": {
+          "const": "win64-fdi-v1",
+          "default": "win64-fdi-v1",
+          "title": "Abi",
+          "type": "string"
+        },
+        "digest_scope": {
+          "const": "on-disk-system-component",
+          "default": "on-disk-system-component",
+          "title": "Digest Scope",
+          "type": "string"
+        },
+        "dll_sha256": {
+          "maxLength": 64,
+          "minLength": 64,
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Dll Sha256",
+          "type": "string"
+        },
+        "dll_version": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Dll Version",
+          "type": "string"
+        },
+        "name": {
+          "const": "windows-cabinet-fdi",
+          "default": "windows-cabinet-fdi",
+          "title": "Name",
+          "type": "string"
+        },
+        "os_version": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Os Version",
+          "type": "string"
+        },
+        "probe_state": {
+          "enum": [
+            "not-run",
+            "passed"
+          ],
+          "title": "Probe State",
+          "type": "string"
+        },
+        "qualification": {
+          "const": "pending",
+          "default": "pending",
+          "title": "Qualification",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dll_sha256",
+        "dll_version",
+        "os_version",
+        "probe_state"
+      ],
+      "title": "PackageDecoder",
+      "type": "object"
+    },
+    "PackageDiagnostic": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Z][A-Z0-9_]*$",
+          "title": "Code",
+          "type": "string"
+        },
+        "member_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 64,
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Member Id"
+        },
+        "message": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "PackageDiagnostic",
+      "type": "object"
+    },
+    "PackageFileIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "file_id": {
+          "maxLength": 32,
+          "minLength": 32,
+          "pattern": "^[0-9a-f]{32}$",
+          "title": "File Id",
+          "type": "string"
+        },
+        "last_write_ticks": {
+          "maximum": 18446744073709551615,
+          "minimum": 0,
+          "title": "Last Write Ticks",
+          "type": "integer"
+        },
+        "size": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "volume_serial": {
+          "maximum": 18446744073709551615,
+          "minimum": 0,
+          "title": "Volume Serial",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "volume_serial",
+        "file_id",
+        "size",
+        "last_write_ticks"
+      ],
+      "title": "PackageFileIdentity",
+      "type": "object"
+    },
+    "PackageLimits": {
+      "additionalProperties": false,
+      "properties": {
+        "max_callbacks": {
+          "default": 2000000,
+          "maximum": 2000000,
+          "minimum": 1,
+          "title": "Max Callbacks",
+          "type": "integer"
+        },
+        "max_containers": {
+          "default": 256,
+          "maximum": 256,
+          "minimum": 1,
+          "title": "Max Containers",
+          "type": "integer"
+        },
+        "max_depth": {
+          "default": 4,
+          "maximum": 4,
+          "minimum": 0,
+          "title": "Max Depth",
+          "type": "integer"
+        },
+        "max_diagnostics": {
+          "default": 1000,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Max Diagnostics",
+          "type": "integer"
+        },
+        "max_entries": {
+          "default": 50000,
+          "maximum": 50000,
+          "minimum": 1,
+          "title": "Max Entries",
+          "type": "integer"
+        },
+        "max_entry_bytes": {
+          "default": 1073741824,
+          "maximum": 1073741824,
+          "minimum": 1,
+          "title": "Max Entry Bytes",
+          "type": "integer"
+        },
+        "max_expanded_bytes": {
+          "default": 8589934592,
+          "maximum": 8589934592,
+          "minimum": 1,
+          "title": "Max Expanded Bytes",
+          "type": "integer"
+        },
+        "max_json_bytes": {
+          "default": 67108864,
+          "maximum": 67108864,
+          "minimum": 1,
+          "title": "Max Json Bytes",
+          "type": "integer"
+        },
+        "max_live_allocation_bytes": {
+          "default": 536870912,
+          "maximum": 536870912,
+          "minimum": 1,
+          "title": "Max Live Allocation Bytes",
+          "type": "integer"
+        },
+        "max_metadata_bytes": {
+          "default": 33554432,
+          "maximum": 33554432,
+          "minimum": 1,
+          "title": "Max Metadata Bytes",
+          "type": "integer"
+        },
+        "max_name_bytes": {
+          "default": 1024,
+          "maximum": 1024,
+          "minimum": 1,
+          "title": "Max Name Bytes",
+          "type": "integer"
+        },
+        "max_process_bytes": {
+          "default": 1073741824,
+          "maximum": 1073741824,
+          "minimum": 1,
+          "title": "Max Process Bytes",
+          "type": "integer"
+        },
+        "max_seconds": {
+          "default": 1800,
+          "maximum": 1800,
+          "minimum": 1,
+          "title": "Max Seconds",
+          "type": "integer"
+        },
+        "max_source_bytes": {
+          "default": 2147483647,
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Max Source Bytes",
+          "type": "integer"
+        },
+        "max_xml_bytes": {
+          "default": 2097152,
+          "maximum": 2097152,
+          "minimum": 1,
+          "title": "Max Xml Bytes",
+          "type": "integer"
+        }
+      },
+      "title": "PackageLimits",
+      "type": "object"
+    },
+    "PackagePart": {
+      "additionalProperties": false,
+      "properties": {
+        "ancestors": {
+          "default": [],
+          "items": {
+            "maxLength": 64,
+            "minLength": 64,
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "maxItems": 4,
+          "title": "Ancestors",
+          "type": "array"
+        },
+        "compressed_size": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Compressed Size"
+        },
+        "container_sha256": {
+          "maxLength": 64,
+          "minLength": 64,
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Container Sha256",
+          "type": "string"
+        },
+        "content_state": {
+          "default": "header-only",
+          "enum": [
+            "header-only",
+            "decoded",
+            "reverified"
+          ],
+          "title": "Content State",
+          "type": "string"
+        },
+        "declared_size": {
+          "maximum": 1073741824,
+          "minimum": 0,
+          "title": "Declared Size",
+          "type": "integer"
+        },
+        "kind": {
+          "default": "unknown",
+          "enum": [
+            "cab",
+            "msu",
+            "cat",
+            "mum",
+            "manifest",
+            "delta",
+            "psfx",
+            "fullfile",
+            "unknown"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "kind_basis": {
+          "default": "unknown",
+          "enum": [
+            "unknown",
+            "filename-hint",
+            "content"
+          ],
+          "title": "Kind Basis",
+          "type": "string"
+        },
+        "logical_path": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Logical Path",
+          "type": "string"
+        },
+        "machine": {
+          "anyOf": [
+            {
+              "maximum": 65535,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Machine"
+        },
+        "member_id": {
+          "maxLength": 64,
+          "minLength": 64,
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Member Id",
+          "type": "string"
+        },
+        "name_utf8": {
+          "title": "Name Utf8",
+          "type": "boolean"
+        },
+        "observed_sha256": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 64,
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Observed Sha256"
+        },
+        "observed_size": {
+          "anyOf": [
+            {
+              "maximum": 1073741824,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Observed Size"
+        },
+        "ordinal": {
+          "maximum": 50000,
+          "minimum": 1,
+          "title": "Ordinal",
+          "type": "integer"
+        },
+        "raw_name_hex": {
+          "maxLength": 2048,
+          "minLength": 2,
+          "pattern": "^[0-9a-f]+$",
+          "title": "Raw Name Hex",
+          "type": "string"
+        },
+        "rehash_sha256": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 64,
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rehash Sha256"
+        },
+        "signature_state": {
+          "const": "signature-unknown",
+          "default": "signature-unknown",
+          "title": "Signature State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "member_id",
+        "container_sha256",
+        "ordinal",
+        "raw_name_hex",
+        "name_utf8",
+        "logical_path",
+        "declared_size"
+      ],
+      "title": "PackagePart",
+      "type": "object"
+    },
+    "PackageSource": {
+      "additionalProperties": false,
+      "properties": {
+        "display_name": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Display Name",
+          "type": "string"
+        },
+        "file_identity": {
+          "$ref": "#/$defs/PackageFileIdentity"
+        },
+        "sha256": {
+          "maxLength": 64,
+          "minLength": 64,
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "signature_state": {
+          "const": "signature-unknown",
+          "default": "signature-unknown",
+          "title": "Signature State",
+          "type": "string"
+        },
+        "size": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "source_claims": {
+          "default": [],
+          "items": {
+            "maxLength": 1024,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Source Claims",
+          "type": "array"
+        }
+      },
+      "required": [
+        "sha256",
+        "size",
+        "file_identity",
+        "display_name"
+      ],
+      "title": "PackageSource",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/local-package/1/PackageInventory.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "complete": {
+      "title": "Complete",
+      "type": "boolean"
+    },
+    "containers": {
+      "items": {
+        "$ref": "#/$defs/PackageContainer"
+      },
+      "maxItems": 256,
+      "minItems": 1,
+      "title": "Containers",
+      "type": "array"
+    },
+    "contract": {
+      "const": "local-package/1",
+      "default": "local-package/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "decoder": {
+      "$ref": "#/$defs/PackageDecoder"
+    },
+    "diagnostics": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/PackageDiagnostic"
+      },
+      "maxItems": 1000,
+      "title": "Diagnostics",
+      "type": "array"
+    },
+    "inventory_id": {
+      "maxLength": 64,
+      "minLength": 64,
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Inventory Id",
+      "type": "string"
+    },
+    "limits": {
+      "$ref": "#/$defs/PackageLimits"
+    },
+    "mode": {
+      "enum": [
+        "headers",
+        "recursive"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "parser_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Parser Version",
+      "type": "integer"
+    },
+    "parts": {
+      "items": {
+        "$ref": "#/$defs/PackagePart"
+      },
+      "maxItems": 50000,
+      "title": "Parts",
+      "type": "array"
+    },
+    "source": {
+      "$ref": "#/$defs/PackageSource"
+    }
+  },
+  "required": [
+    "inventory_id",
+    "source",
+    "decoder",
+    "mode",
+    "limits",
+    "parts",
+    "containers",
+    "complete"
+  ],
+  "title": "PackageInventory",
+  "type": "object"
+}

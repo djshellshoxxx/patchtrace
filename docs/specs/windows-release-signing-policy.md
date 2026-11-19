@@ -6,6 +6,26 @@ Source-access note: `learn.microsoft.com`, `docs.github.com`, `signpath.org`, `a
 
 ## 1. Verdict and scope
 
+### Per-push publication hold (2026-11-18)
+
+When the owner authorizes integration without a release, put `[no release]` in
+the merge commit message. The `release` job in `qa-windows.yml` must refuse
+publication when the push event's head-commit message contains that marker,
+case-insensitively. Check it at the publishing job, after grouping the existing
+tag-or-cadence condition, so neither a positive cadence decision nor its fail-open
+fallback can override the hold. Do not interpolate the message into a shell.
+
+This is a per-push hold, not a change to the normal release cadence. The marker
+does not skip QA, repeated Qt tests, native checks, package creation, smoke tests,
+or Actions artifact uploads. Their required dependency gates stay in place.
+The marker on an older commit does not hold a later unmarked push. Tag pushes
+without a head-commit message retain the explicit-tag policy. This task creates
+no tags and uses the hold on every integration merge it performs.
+
+Expression semantics follow GitHub's documented case-insensitive `contains`
+function and implicit success gate:
+https://docs.github.com/en/actions/reference/workflows-and-actions/expressions
+
 Decisions:
 
 1. **Alpha and beta prereleases stay unsigned**, and every release note, README line and the Setup help say so in plain words, including that Windows SmartScreen and antivirus may warn. No wording implies a publisher identity.
@@ -20,7 +40,7 @@ Not built here: purchase of a certificate or enrolment (owner action), SmartScre
 | claim | source | retrieved | confidence |
 |---|---|---|---|
 | Windows build is `--onedir --console --hide-console hide-early`, no `--icon`, no `--version-file`, no `--manifest`; archive `PatchTrace-0.1.0-windows-x64.zip` plus `.zip.sha256` (`<sha256>  <name>\n`); `file-inventory.json` and `dependency-versions.json` inside | `tools/build_windows.py` (this repo) | 2026-10-14 | high |
-| Release job: `permissions: contents: write`, `softprops/action-gh-release@v2`, `prerelease: true`, tag `v0.1.0-beta.<run_number>` or the pushed `v*` tag, name hard-coded "PatchTrace beta N" | `.github/workflows/qa-windows.yml` (this repo) | 2026-10-14 | high |
+| Release job: `permissions: contents: write`, `softprops/action-gh-release` pinned to commit `3bb12739c298aeb8a4eeaf626c5b8d85266b0e65` (v2.6.2), `prerelease: true`, tag `v0.1.0-beta.<run_number>` or the pushed `v*` tag, name "PatchTrace beta N" for main builds and "PatchTrace <tag>" for a tag | `.github/workflows/qa-windows.yml` (this repo); upstream `git/ref/tags/v2.6.2` verified via GitHub REST | 2026-11-16 | high |
 | Publishing returned HTTP 403 "Resource not accessible by integration" when a commit changes `.github/workflows/*`; the zip then exists only as an Actions artifact | `docs/plans/claude-autonomous-alpha-handoff-20261013.md` B1; `windows-acceptance-and-milestone-builds.md` 1.1 | 2026-10-14 | high |
 | Repo licence MIT, copyright "Circuit Drift Labs" | `LICENSE` (this repo) | 2026-10-14 | high |
 | PyInstaller 6.22.3 pinned; bootloader is an executable inside the folder that is the only PatchTrace-built PE | `pyproject.toml` dev extra, `build_windows.py` | 2026-10-14 | high |

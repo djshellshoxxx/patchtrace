@@ -102,7 +102,7 @@ def test_invalid_stale_or_unconsented_plan_cannot_request_or_write(tmp_path, cha
 
 
 @pytest.mark.parametrize('body', [b'{"bad":true}', b'{"x":1,"x":2}', b'<html>unavailable</html>',
-                                  b'{}', gzip.compress(b'{}')])
+                                  b'{}', gzip.compress(b'{}', mtime=0)])
 def test_invalid_response_preserves_saved_record_and_creates_no_private_workspace_files(tmp_path, body):
     asked = request(tmp_path)
     saved = refresh(asked, threading.Event(), transport=transport(Opener(Resp(200, GZIP))))

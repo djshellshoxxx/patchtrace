@@ -17,7 +17,7 @@ def pair(key, grade='A'):
 
 
 def candidates(*pairs):
-    return [SimpleNamespace(pairs=pairs)]
+    return [SimpleNamespace(pairs=pairs, ambiguous=False, truncated=False)]
 
 
 @pytest.mark.parametrize('reverse', [False, True])

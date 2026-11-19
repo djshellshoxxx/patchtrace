@@ -7,6 +7,10 @@ the Protocol ports of ``ports.py`` and ``context.py`` and builds the :class:`~.s
 returns the *existing* project when the directory already holds one (the attachment then compares the bytes), and a
 project id resolves to its directory through a registry (in memory, backed by the workspace journal) so a repair in a
 new process can still write rows.
+
+``RealProjectPort`` opens the project for every call, so it only works while nothing else holds the project. Rows of
+a project that its owner keeps open (the desktop) are read by that owner on its own thread and served from there on
+by ``SnapshotProjectPort`` (store-threading-spec section 4a).
 """
 from __future__ import annotations
 
@@ -14,17 +18,26 @@ import hashlib
 import json
 import re
 import struct
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
+from ..input_readers import HeldInput, PairInputReaders
 from .card_provenance import FIELDS, CardFactRef
 from .components import normalise_name
 from .contracts import Arch, CveCard
 from .lineage import IndexRow, index_rows
 from .pairs import LocalFile
 from .service import Env, KbService
-from .store import Fault, KbcStoreError, SystemClock, WorkspaceStore, atomic_write
+from .store import (
+    Fault,
+    KbcStoreError,
+    SystemClock,
+    WorkspaceStore,
+    _check_input_readers,
+    _input_block,
+    atomic_write,
+)
 
 INDEX_DIR = 'winbindex'
 INDEX_RECORD = re.compile(r'(?P<name>[a-z0-9._-]+)@(?P<date>\d{4}-\d{2}-\d{2})\.json(?P<gz>\.gz)?')
@@ -207,7 +220,7 @@ def _merge_profiles(profiles):
         'limitations': tuple(sorted({d for p in profiles for d in p.limitations}))})
 
 
-def inspect_local_file(path: str, *, basename: str | None = None) -> LocalFile:
+def inspect_local_file(path: str, *, basename: str | None = None, reader: HeldInput | None = None) -> LocalFile:
     """Inspect bytes, using an explicit captured Artifact name only as a manual basename hint.
 
     The optional name is not PE OriginalFilename authority; ordinary local/CLI callers use the path name.
@@ -217,12 +230,16 @@ def inspect_local_file(path: str, *, basename: str | None = None) -> LocalFile:
     head = b''
     size = 0
     try:
-        with open(target, 'rb') as handle:
-            for block in iter(lambda: handle.read(1 << 20), b''):
-                if not head:
-                    head = block[:HEADER_BYTES]
+        if reader is not None:
+            reader.check(target)
+        with (open(target, 'rb') if reader is None else reader.open_reader(target)) as handle:
+            for block in iter(lambda: _input_block(handle, held=reader is not None), b''):
+                if len(head) < HEADER_BYTES:
+                    head += block[:HEADER_BYTES - len(head)]
                 digest.update(block)
                 size += len(block)
+        if reader is not None:
+            reader.check(target)
     except OSError:
         raise KbcStoreError('PT-KBC-INPUT', 'an input file cannot be read') from None
     return LocalFile(sha256=digest.hexdigest(), size=size, basename=normalise_file(target.name if basename is None else basename),
@@ -250,9 +267,10 @@ class RealProjectPort:
     call opens, uses and closes it)."""
 
     def __init__(self, workspace: WorkspaceStore | None = None, name: str = 'KB comparison', *,
-                 reuse_existing: bool = True):
+                 reuse_existing: bool = True, input_readers: PairInputReaders | None = None):
         self.name = name
         self.reuse_existing = reuse_existing
+        self._input_readers = input_readers
         self._dirs: dict[str, Path] = {}
         self._workspace = workspace
 
@@ -267,11 +285,13 @@ class RealProjectPort:
 
     def create_project(self, older_path: str, newer_path: str, *, directory: str) -> Mapping[str, Any]:
         from ..service import ProjectService
+        _check_input_readers(self._input_readers, older_path, newer_path)
         root = Path(directory)
         if self.reuse_existing and (root / 'project.sqlite3').is_file():
             service = ProjectService.open(root, maintenance=False)
         else:
-            service = ProjectService.create(Path(older_path), Path(newer_path), self.name, root)
+            options = {'input_readers': self._input_readers} if self._input_readers is not None else {}
+            service = ProjectService.create(Path(older_path), Path(newer_path), self.name, root, **options)
         try:
             side = {a.side: a.sha256 for a in service.project.artifacts}
             project_id = service.store.project_id
@@ -310,9 +330,7 @@ class RealProjectPort:
         from ..service import ProjectService
         service = ProjectService.open(self._directory(project_id), maintenance=False)
         try:
-            prefix = f'{kind}:'
-            return {e.id[len(prefix):]: json.dumps(e.body, sort_keys=True).encode()
-                    for e in EnrichmentStore(service.store).entries(kind) if e.id.startswith(prefix)}
+            return encode_rows(EnrichmentStore(service.store).entries(kind), kind)
         finally:
             service.close()
 
@@ -320,21 +338,57 @@ class RealProjectPort:
         return self.list_rows(project_id, kind).get(key)
 
 
+def encode_rows(entries, kind: str) -> dict[str, bytes]:
+    """Stored enrichment entries of ``kind`` as the ``{key: body}`` rows of ``ProjectAccess.list_rows``."""
+    prefix = f'{kind}:'
+    return {e.id[len(prefix):]: json.dumps(e.body, sort_keys=True).encode() for e in entries if e.id.startswith(prefix)}
+
+
+class SnapshotProjectPort:
+    """Read-only ``ProjectAccess`` over enrichment entries that the owner of an open project read on its own thread
+    (``entries`` maps a kind to them). It opens no project and reaches no store, so any thread may use it. A kind that
+    was not taken is refused instead of read as empty (unknown is not "no rows"), and so is every write."""
+
+    def __init__(self, project_id: str, entries: Mapping[str, Sequence]):
+        self.project_id = project_id
+        self._entries = {kind: tuple(found) for kind, found in entries.items()}
+
+    def open_project(self, directory: str) -> str:
+        return self.project_id
+
+    def list_rows(self, project_id: str, kind: str) -> dict[str, bytes]:
+        if project_id != self.project_id or kind not in self._entries:
+            raise KbcStoreError('PT-KBC-STATE', 'the project snapshot does not hold these rows')
+        return encode_rows(self._entries[kind], kind)
+
+    def get_row(self, project_id: str, kind: str, key: str) -> bytes | None:
+        return self.list_rows(project_id, kind).get(key)
+
+    def create_project(self, older_path: str, newer_path: str, *, directory: str) -> Mapping[str, Any]:
+        raise KbcStoreError('PT-KBC-UNSUPPORTED', 'a project snapshot is read-only')
+
+    def put_row(self, project_id: str, kind: str, key: str, body: bytes) -> None:
+        raise KbcStoreError('PT-KBC-UNSUPPORTED', 'a project snapshot is read-only')
+
+
 def escape_markdown(text: str) -> str:
     from ..intelligence.reports import escape_md
     return escape_md(text)
 
 
-def _project_factory(workspace: WorkspaceStore | None, name: str) -> RealProjectPort:
-    return RealProjectPort(workspace, name)
+def _project_factory(workspace: WorkspaceStore | None, name: str, *,
+                     input_readers: PairInputReaders | None = None) -> RealProjectPort:
+    return RealProjectPort(workspace, name, **({'input_readers': input_readers} if input_readers is not None else {}))
 
 
-def new_project_factory(workspace: WorkspaceStore | None, name: str) -> RealProjectPort:
+def new_project_factory(workspace: WorkspaceStore | None, name: str, *,
+                        input_readers: PairInputReaders | None = None) -> RealProjectPort:
     """Desktop create-only route; ProjectService.create refuses a concurrently existing database.
 
     The normal CLI factory retains its journal-resume behavior.
     """
-    return RealProjectPort(workspace, name, reuse_existing=False)
+    return RealProjectPort(workspace, name, reuse_existing=False,
+                           **({'input_readers': input_readers} if input_readers is not None else {}))
 
 
 def build_env(*, clock=None, fault: Fault | None = None, advisory=None, acquirer=None) -> Env:

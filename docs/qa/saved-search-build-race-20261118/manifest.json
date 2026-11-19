@@ -1,0 +1,75 @@
+{
+  "original_implementation_commit": "e705974b0c8a13be0942a172b93bb1cdfa74895f",
+  "regression_base_commit": "b846944d4052e6276deae62f3b80824c6fe3b0ca",
+  "repair_source_commit": "c30c791190abed20ec1424478c13add8133e5929",
+  "raw_receipts": {
+    "affected-green.log": {
+      "sha256": "cb4d28723b12093343cd1c6c68633e528e3652f9ac7a1eb58b39e06f285ea180",
+      "bytes": 501
+    },
+    "affected-green.xml": {
+      "sha256": "a35a1e4eb69e057be485862875b0a39268d74cfc8692c9dab16f4148a461a266",
+      "bytes": 43049
+    },
+    "independent-red.log": {
+      "sha256": "fb60084bdb408805fd4f8c1f667fa96a6e7f85394b598097d33e364645505fe0",
+      "bytes": 1340
+    },
+    "independent-red.xml": {
+      "sha256": "7ec79b1f642dc1515f274193f28e759dd1e1120ab7521f9645ee64d17b1d0372",
+      "bytes": 1757
+    },
+    "independent-replay.log": {
+      "sha256": "f110ea65f6d33cdc6322b155f056abd01a7abd63e18b0f61e05569402024ad9d",
+      "bytes": 98
+    },
+    "independent-replay.xml": {
+      "sha256": "7870c179b256658c2339100aeb113e07f2cd051de5a656fad9817dff02d05b4d",
+      "bytes": 402
+    },
+    "independent-test_saved_review.py": {
+      "sha256": "aa61a3a10fa0f590943afe52242c746636f03897bac88ccd7ab5a4ea6d9feb0c",
+      "bytes": 948
+    },
+    "regression-red.log": {
+      "sha256": "23efeb4987374a52cbc72a5af0261320ae19a57a8c1197fa88afdf8d4bd22c28",
+      "bytes": 2801
+    },
+    "regression-red.xml": {
+      "sha256": "54bc09a7221a4857da588899380dea31e051d5c8f02b0883340b580c29cde242",
+      "bytes": 3346
+    },
+    "ruff.log": {
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "bytes": 19
+    }
+  },
+  "archive": {
+    "path": "raw-evidence.zip",
+    "sha256": "e2618eea14e5b8d61ca610a9827e7950e72d9abe8ae766a89a2270f5a1cd70fc",
+    "bytes": 11224
+  },
+  "source_sha256": {
+    "src/patchtrace/search/qt_panel.py": "19641eed39b116ee00169cef1f28b0d58ca4b51a73a61cd06473b2780d7b4fdd",
+    "tests/test_ui_search_saved.py": "d01c2add72d575ccebe7f412c2352a405fa7da34ebc10aafd7276bf4f41c0ffd",
+    "docs/specs/program-e/WB1-integration-plan.md": "22a9a3ede885cd85f40d13147a7d3f686ee8131f86b8ff3ab0aaaa3111813976"
+  },
+  "results": {
+    "independent_original": "1 failed in 0.92 s",
+    "authored_regression_before_repair": "1 failed, 1 passed in 1.53 s",
+    "affected_selection": "376 passed in 16.97 s",
+    "independent_reproducer_replay": "1 passed in 0.82 s",
+    "ruff": "passed",
+    "diff_check": "passed"
+  },
+  "qualification": {
+    "independent_recheck": "root pending; author replay is not independent review",
+    "full_suite": "not rerun for this bounded repair",
+    "native_manual_windows": "not performed"
+  },
+  "commands": {
+    "affected": "QT_QPA_PLATFORM=offscreen PYTHONPATH=/workspace/scratch/c7a9e8d98848/saved-search/src /workspace/scratch/3a6632a6e5ff/venv/bin/python -m pytest -q tests/test_search_saved_workflow.py tests/test_ui_search_saved.py tests/test_search_saved.py tests/test_search_cli.py tests/test_ui_search_panel.py tests/test_tooltips.py tests/test_gui_host_seam.py tests/test_search_query.py tests/test_search_pilot_buildenv_bugfixes_20261111.py",
+    "independent_replay": "QT_QPA_PLATFORM=offscreen PYTHONPATH=/workspace/scratch/c7a9e8d98848/saved-search/src:/workspace/scratch/c7a9e8d98848/saved-search/tests /workspace/scratch/3a6632a6e5ff/venv/bin/python -m pytest -q /workspace/scratch/c7a9e8d98848/saved-independent/test_saved_review.py",
+    "ruff": "/workspace/scratch/3a6632a6e5ff/venv/bin/python -m ruff check src tests tools"
+  }
+}

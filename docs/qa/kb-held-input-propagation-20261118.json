@@ -1,0 +1,13 @@
+{
+  "baseline": "9ad2ec5cdbde85155fdca3cdd88804fd8b2e1a53",
+  "source": "d9a939911f39f3641bd5eed97a2ce067d618856b",
+  "tree": "2277f61c82eb8115344c1edaa287b9d60d1733ed",
+  "archive": "kb-held-input-propagation-20261118.zip",
+  "members": 147,
+  "bytes": 884214,
+  "sha256": "3371fd77e415259e04ebbd22674280d31fa9443784b70e627dbdd2cbab73de8f",
+  "git_snapshots": 81,
+  "unchanged_symbol_proofs": 150,
+  "original_preserved_files": 9,
+  "source_commits": 5
+}

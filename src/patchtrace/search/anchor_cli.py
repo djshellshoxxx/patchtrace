@@ -10,7 +10,7 @@ from collections.abc import Callable
 
 from patchtrace.search.errors import SearchError
 
-AnchorSource = Callable[[object, str], tuple[object | None, list[str]]]  # (service, cve) -> (AnchorSet|None, warnings)
+AnchorSource = Callable[[object, str], tuple[object | None, list[str]]]  # (SearchService, cve) -> (AnchorSet|None, warnings)
 CVE_HINT = 'the CVE must look like CVE-YYYY-NNNN'
 
 
@@ -36,7 +36,8 @@ def run(args, out, service, source: AnchorSource | None, emit, clean) -> int:
         raise SearchError('PT-SEARCH-QUERY', CVE_HINT)
     if args.query or args.kind or args.status:
         raise SearchError('PT-SEARCH-QUERY', '--anchors-from takes no --query, --kind or --status')
-    anchor_set, warnings = (source or stored_anchors)(service, cve)
+    anchor_set, warnings = (source(service, cve) if source is not None
+                           else stored_anchors(service.service, cve))
     anchors = tuple(anchor_set.anchors) if anchor_set is not None else ()
     if not anchors:
         why = ('no stored advisory lists this CVE; run `intelligence import` or `intelligence fetch` first'

@@ -7,7 +7,7 @@ ABSENCE IS CONTEXT, NOT A VOTE. A CVE that is not in the loaded snapshot is `not
 snapshot, with its id, that ranks exactly like having no catalog at all (`unknown`). Neither says anything about
 exploitation, and a malformed CVE id is `unknown`, never "not in the snapshot".
 
-The KEV track (not built yet) either implements `ports.KevSource` itself or fills `CatalogKev` from its parsed catalog:
+The local collection adapter fills `CatalogKev` from the verified snapshot store:
 PIL needs only the snapshot id and the date each listed CVE was added.
 """
 from __future__ import annotations

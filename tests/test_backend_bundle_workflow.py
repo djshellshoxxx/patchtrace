@@ -12,8 +12,14 @@ yaml = pytest.importorskip('yaml')
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = ROOT / '.github' / 'workflows' / 'backend-bundle.yml'
-ALLOWED_ACTIONS = {'actions/checkout@v4', 'actions/setup-python@v5', 'actions/upload-artifact@v4',
-                   'actions/download-artifact@v4', 'actions/cache@v4', 'ilammy/msvc-dev-cmd@v1'}
+ALLOWED_ACTIONS = {
+    'actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830',
+    'actions/checkout@11d5960a326750d5838078e36cf38b85af677262',
+    'actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093',
+    'actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065',
+    'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02',
+    'ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756',
+}
 JOB_IDS = {'pin', 'vrfy', 'bld-win', 'acc-win', 'bld-lin', 'acc-lin', 'pub'}
 
 
@@ -55,13 +61,13 @@ def test_least_privilege_permissions(doc):
     assert doc['permissions'] == {'contents': 'read'}
     writers = [j for j, job in doc['jobs'].items() if 'permissions' in job]
     assert writers == ['pub']
-    assert doc['jobs']['pub']['permissions'] == {'contents': 'write'}
+    assert doc['jobs']['pub']['permissions'] == {'contents': 'write', 'actions': 'read'}
 
 
 def test_actions_pinned_like_other_workflows(doc):
     used = {s['uses'] for job in doc['jobs'].values() for s in steps(job) if 'uses' in s}
     assert used <= ALLOWED_ACTIONS, used - ALLOWED_ACTIONS
-    assert all(re.fullmatch(r'[\w./-]+@v\d+', u) for u in used)
+    assert all(re.fullmatch(r'[\w./-]+@[0-9a-f]{40}', u) for u in used)
     assert not any('softprops' in u for u in used)  # release uses the gh CLI so failures are explicit
 
 
@@ -151,9 +157,13 @@ def test_publish_is_prerelease_only_and_fails_loudly(doc):
     assert "needs.acc-win.result == 'success'" in condition and "needs.acc-lin.result == 'success'" in condition
     assert '!cancelled()' in condition
     text = all_run_text(pub)
-    assert '--prerelease' in text and 'isPrerelease' in text
+    assert '--prerelease' in text and 'release_qualification.py' in text
     assert 'refusing to touch it' in text  # an existing final release is never modified
-    assert '--clobber' in text and 'Nothing' in text
+    assert '--clobber' not in text and 'publication completion is unverified' in text
+    publisher = next(s for s in steps(pub) if 'gh release create' in s.get('run', ''))
+    assert publisher['env']['RELEASE_EXISTS'] == '${{ steps.qualification.outputs.release_exists }}'
+    assert 'if [ "$RELEASE_EXISTS" = false ]' in publisher['run']
+    assert 'elif [ "$RELEASE_EXISTS" != true ]' in publisher['run']
     assert 'secrets.GITHUB_TOKEN' in WORKFLOW.read_text(encoding='utf-8')
     assert 'gh release create' in text and 'make_latest' not in text and '--latest' not in text
     assert 'echo "$GH_TOKEN' not in text

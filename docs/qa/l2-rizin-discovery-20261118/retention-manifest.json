@@ -1,0 +1,51 @@
+{
+  "schema": "patchtrace-qa-evidence/1",
+  "scope": "post-measurement authored controls; no new candidate score",
+  "artifacts": [
+    {
+      "path": "README.md",
+      "sha256": "4b2490f7adaf7eff6ea10716e10ad58e56f83ff4107947fa1a558a11274f6b95",
+      "bytes": 8258
+    },
+    {
+      "path": "diagnosis-conclusion.json",
+      "sha256": "459e3da17fdc3a37b9723990f0b8a8f4bd7e9097723770e054e4af7f7339c1de",
+      "bytes": 2021
+    },
+    {
+      "path": "control-plan.json",
+      "sha256": "51b132d76f0f82edb45c2ba4f82f0f637c63f76f0b43941a13d41739ddba2169",
+      "bytes": 2205
+    },
+    {
+      "path": "control-comparison.json",
+      "sha256": "c4722f2fce98fc059244aa85416c4d0639111505956712951c1a44c65fa5f704",
+      "bytes": 2680
+    },
+    {
+      "path": "control-results.json",
+      "sha256": "6e35fa45f82752d9a3de73343310b0e7a3b47fca7b988eb3d2c6433dfd969875",
+      "bytes": 12763
+    },
+    {
+      "path": "harness-correction.json",
+      "sha256": "8f109e08826602178a911c5fb32af30b665832b2f800eda296f314790394f381",
+      "bytes": 634
+    },
+    {
+      "path": "run_controls_v2.py",
+      "sha256": "08fdbb0ebb2016a9effbc90114b51506f7709bc6c18ef067b97fa9c6424b17d0",
+      "bytes": 9157
+    },
+    {
+      "path": "supported-options-addendum.md",
+      "sha256": "04357546afdcda807f6b1f0d916f4d5b1a113b8888c4bbb5ab78ae9208e35da4",
+      "bytes": 5812
+    },
+    {
+      "path": "original-evidence-manifest.json",
+      "bytes": 15806,
+      "sha256": "510129465efc0e766564246c81996905acb1c76267b3f638e62282f98fe50265"
+    }
+  ]
+}

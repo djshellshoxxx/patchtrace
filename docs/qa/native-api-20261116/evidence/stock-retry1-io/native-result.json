@@ -1,0 +1,19 @@
+{
+  "variant": "stock",
+  "mode": "io",
+  "arguments": [
+    "--io-context"
+  ],
+  "accepted": false,
+  "scope": "native public API only; not CLI JSON or application acceptance",
+  "source_head": "5dc4e6988aacaf6afc537eca03cf98b150d597e4",
+  "workflow_sha": null,
+  "run_id": null,
+  "run_attempt": null,
+  "executable": "/workspace/scratch/ce0115371bb9/rizin-api-20261116/native-control",
+  "returncode": 1,
+  "executable_sha256": "3b4b3fd4d76f88b8e304b38e6eba87dc9b49e44a50b09446299bae2516510b6f",
+  "error": "native IO inventory, errors or reads differ from the pinned oracle",
+  "stdout_sha256": "e504e72dee4fddecdc7a6f5042c355872a3b808ac9b280bf500243996ee1f921",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

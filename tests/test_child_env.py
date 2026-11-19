@@ -69,11 +69,11 @@ def test_env_passthrough_adds_names_and_denylist_rejected(tmp_path):
                         for_tool='ghidra', windows=False)
 
 
-def test_restrict_env_off_by_default_keeps_inherit(tmp_path, monkeypatch):
+def test_explicit_external_inheritance_and_override_remain_compatible(tmp_path, monkeypatch):
     from patchtrace.backend import _environment
     monkeypatch.setenv('CUSTOM_MARKER', '1')
     monkeypatch.delenv('PATCHTRACE_CHILD_ENV', raising=False)
-    assert _environment(_cfg(tmp_path))['CUSTOM_MARKER'] == '1'
+    assert _environment(_cfg(tmp_path, restrict_env=False))['CUSTOM_MARKER'] == '1'
     restricted = _environment(_cfg(tmp_path, restrict_env=True))
     assert 'CUSTOM_MARKER' not in restricted and restricted['GHIDRA_INSTALL_DIR']
     monkeypatch.setenv('PATCHTRACE_CHILD_ENV', 'inherit')

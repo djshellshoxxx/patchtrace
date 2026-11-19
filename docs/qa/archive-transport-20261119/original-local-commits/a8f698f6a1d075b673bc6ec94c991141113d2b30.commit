@@ -1,0 +1,8 @@
+tree c7eb0bc6da8644667d7a877e98bc3a2656cf7380
+parent d015784846e63f52eda56355e698f51aac91e4a3
+author Codex <codex@openai.com> 1795040955 -0800
+committer Codex <codex@openai.com> 1795041047 -0800
+
+Preserve constructor failures through owned cleanup [no release]
+
+(cherry picked from commit 63ebc42746fbfbded311084288a339f26ed08d8c)

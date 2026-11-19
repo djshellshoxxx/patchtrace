@@ -68,7 +68,10 @@ class IdentityTerm(_Strict):
 
 
 class QueryPlan(_Strict):
-    """Built only by `query.parse_query`; `canonical()` is the sorted-key NFC JSON that `digest()` hashes."""
+    """Parsed by `query.parse_query`; trusted adapters may narrow kinds through validated construction.
+
+    `canonical()` includes display text; `digest()` hashes the typed fields with that text excluded.
+    """
     contract: Literal['search-query/1'] = 'search-query/1'
     text: str = Field(max_length=_L.query_chars)
     terms: tuple[Term, ...] = Field(default=(), max_length=_L.query_terms)

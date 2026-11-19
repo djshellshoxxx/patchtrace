@@ -27,6 +27,7 @@ from .contracts import (
     CveCard,
     Lead,
     Record,
+    SearchScope,
     Sha256,
     Short,
     Uuid,
@@ -34,6 +35,7 @@ from .contracts import (
 )
 from .index import ReverseIndex
 from .products import clean_text
+from .saved_scope import resolve as saved_scope
 
 BUNDLE_VERSION = 1
 CONTEXT_KEY_VERSION = 3  # New field attribution; old bundles remain readable as recorded.
@@ -141,7 +143,8 @@ def vulnerability_pointer(pointer: str) -> str:
 def build_bundle(*, investigation_id: str, base_revision: int, lead: Lead, cves: Iterable[str], index: ReverseIndex,
                  rules: RulesPort, now: str, coverage: Sequence[Coverage], scope_id: str | None,
                  pair_id: str | None, older_sha: str | None, newer_sha: str | None,
-                 mention_only: Iterable[str] = ()) -> ContextBundle:
+                 mention_only: Iterable[str] = (), scope: SearchScope | None = None) -> ContextBundle:
+    scope = saved_scope(lead, coverage, index=index, scope=scope)
     cards: list[CveCard] = []
     profiles: list[CweProfile] = []
     hypotheses: list[HypothesisSet] = []
@@ -157,7 +160,7 @@ def build_bundle(*, investigation_id: str, base_revision: int, lead: Lead, cves:
                                                    release_id=source.release_id)
         unknowns.append('No KB/CVE was selected; product choice alone does not establish vulnerability attribution.')
     for cve in sorted(set(cves)):
-        lookup = index.lookup_cve(cve, scope_id=scope_id, now=now)
+        lookup = index.lookup_cve(cve, scope=scope, scope_id=scope_id, now=now)
         unknowns.extend(w for w in lookup.warnings if w.startswith('CARD_FACT_CONFLICT:'))
         for doc_id in lookup.card_doc_ids:
             source = index.get(doc_id).source
@@ -200,15 +203,16 @@ def build_bundle(*, investigation_id: str, base_revision: int, lead: Lead, cves:
                     'The product was chosen by you; no document verifies that these two files belong to it.')
     report = ContextReport(cards=tuple(cards), coverage=tuple(coverage), unknowns=tuple(unknowns),
                            limitations=(LIMITATION,), hooks=HOOKS)
+    edge_digest = index.edge_set_digest(scope)
     key = context_key(investigation_id=investigation_id, base_revision=base_revision,
-                      edge_set_digest=index.edge_set_digest(),
+                      edge_set_digest=edge_digest,
                       sources=tuple(docs.values()),
                       rules_digest=rules.rules_digest, lexicon_digest=rules.lexicon_digest, older_sha=older_sha,
                       newer_sha=newer_sha, scope_id=scope_id)
     return ContextBundle(
         context_key=key, investigation_id=investigation_id, base_revision=base_revision, lead=lead,
         scope_id=scope_id, pair_id=pair_id, older_sha=older_sha, newer_sha=newer_sha,
-        edge_set_digest=index.edge_set_digest(), rules_digest=rules.rules_digest,
+        edge_set_digest=edge_digest, rules_digest=rules.rules_digest,
         lexicon_digest=rules.lexicon_digest, sources=tuple(sorted(docs.values(), key=lambda d: d.doc_id)),
         context=report, cwe_profiles=tuple(profiles), hypotheses=tuple(hypotheses),
         card_facts=tuple(sorted(facts, key=fact_key)))

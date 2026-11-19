@@ -1,0 +1,118 @@
+{
+  "$defs": {
+    "PackageDecoder": {
+      "additionalProperties": false,
+      "properties": {
+        "abi": {
+          "const": "win64-fdi-v1",
+          "default": "win64-fdi-v1",
+          "title": "Abi",
+          "type": "string"
+        },
+        "digest_scope": {
+          "const": "on-disk-system-component",
+          "default": "on-disk-system-component",
+          "title": "Digest Scope",
+          "type": "string"
+        },
+        "dll_sha256": {
+          "maxLength": 64,
+          "minLength": 64,
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Dll Sha256",
+          "type": "string"
+        },
+        "dll_version": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Dll Version",
+          "type": "string"
+        },
+        "name": {
+          "const": "windows-cabinet-fdi",
+          "default": "windows-cabinet-fdi",
+          "title": "Name",
+          "type": "string"
+        },
+        "os_version": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Os Version",
+          "type": "string"
+        },
+        "probe_state": {
+          "enum": [
+            "not-run",
+            "passed"
+          ],
+          "title": "Probe State",
+          "type": "string"
+        },
+        "qualification": {
+          "const": "pending",
+          "default": "pending",
+          "title": "Qualification",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dll_sha256",
+        "dll_version",
+        "os_version",
+        "probe_state"
+      ],
+      "title": "PackageDecoder",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/local-package/1/PackageCapability.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "architecture": {
+      "enum": [
+        "amd64",
+        "other"
+      ],
+      "title": "Architecture",
+      "type": "string"
+    },
+    "decoder": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PackageDecoder"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "platform": {
+      "enum": [
+        "windows",
+        "linux",
+        "other"
+      ],
+      "title": "Platform",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "unsupported-platform",
+        "unsupported-architecture",
+        "unavailable-decoder",
+        "available"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "platform",
+    "architecture",
+    "status"
+  ],
+  "title": "PackageCapability",
+  "type": "object"
+}

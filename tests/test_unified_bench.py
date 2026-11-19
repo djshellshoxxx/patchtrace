@@ -5,6 +5,7 @@ cost of the algorithms, not Ghidra or real binaries. Sizes here are tiny; the re
 `unified-corpus.yml` workflow and their numbers are recorded in docs/qa.md, never asserted here."""
 from __future__ import annotations
 
+import copy
 import json
 import sys
 from pathlib import Path
@@ -84,6 +85,19 @@ def test_work_per_function_is_bounded_and_does_not_grow_with_n():
     assert checks(evaluated(row(n=60_000, ticks=360_000)), 'work-linear') == {}      # no 10k row to compare with
 
 
+def test_a_missing_ticks_count_fails_the_work_checks_and_is_never_read_as_zero():
+    """UE-B-07: counts without `ticks` used to satisfy `0 <= limit` and the linearity ratio."""
+    broken = copy.deepcopy(row(n=10_000))
+    del broken['counts']['ticks']
+    assert checks(evaluated(broken), 'ticks-per-function') == {('ladder', 10_000): False}
+    both = []
+    for n in (10_000, 60_000):
+        r = copy.deepcopy(row(n=n))
+        del r['counts']['ticks']
+        both.append(r)
+    assert checks(bench.evaluate(both), 'work-linear') == {('ladder', 60_000): False}
+
+
 def test_the_ingest_row_must_have_read_back_every_generated_function_and_instruction():
     sound = evaluated(row('ingest', 500, functions=500, instructions=5000, generated_functions=500,
                           generated_instructions=5000))
@@ -91,6 +105,32 @@ def test_the_ingest_row_must_have_read_back_every_generated_function_and_instruc
     short = evaluated(row('ingest', 500, functions=499, instructions=5000, generated_functions=500,
                           generated_instructions=5000))
     assert checks(short, 'ingest-complete') == {('ingest', 500): False}
+
+
+@pytest.mark.parametrize('ticks', [None, True, False, -1, 1.5, '10'])
+@pytest.mark.parametrize('n', [10_000, 60_000])
+def test_invalid_work_counts_fail_without_becoming_success_or_raising(ticks, n):
+    small, large = row(n=10_000, ticks=60_000), row(n=60_000, ticks=360_000)
+    target = small if n == 10_000 else large
+    target['counts']['ticks'] = ticks
+    measured = evaluated(small, large)
+    assert checks(measured, 'ticks-per-function')[('ladder', n)] is False
+    assert checks(measured, 'work-linear') == {('ladder', 60_000): False}
+
+
+def test_zero_work_is_valid_but_cannot_supply_a_linearity_denominator():
+    measured = evaluated(row(n=10_000, ticks=0), row(n=60_000, ticks=0))
+    assert all(checks(measured, 'ticks-per-function').values())
+    assert checks(measured, 'work-linear') == {('ladder', 60_000): False}
+
+
+@pytest.mark.parametrize(('small', 'large', 'linear'), [
+    (1, 10**400, False), (10**400, 7 * 10**400, False),
+    (10**400, 7 * 10**400 - 1, True),
+], ids=['overflow', 'exact-limit', 'below-limit'])
+def test_linearity_comparison_uses_exact_counts_without_float_overflow(small, large, linear):
+    measured = evaluated(row(n=10_000, ticks=small), row(n=60_000, ticks=large))
+    assert checks(measured, 'work-linear') == {('ladder', 60_000): linear}
 
 
 def test_a_stage_that_waits_is_listed_with_its_limit_and_never_silently_absent(monkeypatch):

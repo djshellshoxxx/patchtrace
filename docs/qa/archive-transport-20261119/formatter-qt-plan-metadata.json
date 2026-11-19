@@ -1,0 +1,17 @@
+{
+  "path": "/workspace/scratch/c7a9e8d98848/ops/core-admission-integration-publication-reviewed-formatter-qt.json",
+  "commits": 37,
+  "bytes": 10808853,
+  "sha256": "164aac19aaacb91cb1440250150318060ac9f42ad333da22d7845cfda3ef744a",
+  "previous_33_unchanged": true,
+  "last": {
+    "local_sha": "b2b170e343ab4da680b3629b3ab2e89ce6f42774",
+    "parents": [
+      "16c35e1fb1a4dd54b2c2c0cb2033c8160ee99347"
+    ],
+    "tree": "4dd32b0cd6f8957f4c065b4bd1cf5cfe13513628",
+    "parent_tree": "4486ee96d36b844c4cfa819a7743f17a9347ae10",
+    "message": "Preserve formatter review and final cancelled Qt evidence [no release]"
+  },
+  "binary_blobs": 13
+}

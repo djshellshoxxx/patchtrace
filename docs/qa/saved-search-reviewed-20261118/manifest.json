@@ -1,0 +1,75 @@
+{
+  "baseline_published_pr307": "58fc130631f602b6e907bb054d30c21d810551d4",
+  "combined_tested_source": "f021f2d0770be8b5ffca9b56ac290e2ff677ce98",
+  "combined_tested_tree": "7570cde1243d3ef464a671949b9a08cb2306e409",
+  "author_implementation": "e705974b0c8a13be0942a172b93bb1cdfa74895f",
+  "review_race_repair": "c30c791190abed20ec1424478c13add8133e5929",
+  "independent_reviewer": "root",
+  "author_receipts_verified": {
+    "saved-search-workflow-20261118": {
+      "archive_sha256": "c4e9db1065d280cd345c35dff1bcbfe6e169026fdc2aa13471d0d497ef9e718b",
+      "receipt_count": 9,
+      "source_hash_count": 9
+    },
+    "saved-search-build-race-20261118": {
+      "archive_sha256": "e2618eea14e5b8d61ca610a9827e7950e72d9abe8ae766a89a2270f5a1cd70fc",
+      "receipt_count": 10,
+      "source_hash_count": 3
+    }
+  },
+  "source_hashes": {
+    "src/patchtrace/search/cli.py": "9401e3ee48b4a279dd074439999b86c8f0ad0b764582885626de6f07aacec252",
+    "src/patchtrace/search/qt_panel.py": "19641eed39b116ee00169cef1f28b0d58ca4b51a73a61cd06473b2780d7b4fdd",
+    "src/patchtrace/search/qt_saved.py": "2ebe256b90074a59c4a2cff2d282e7b359118376cf668e49805bb74b80afd36f",
+    "src/patchtrace/search/saved.py": "a2c526ecb5872bade06da380747ed5a8a2ee5bcf76496554a92fd70994f0aeab",
+    "src/patchtrace/search/saved_actions.py": "5a8aa3f5e4ad797c15b638a09a0b49bb149219832b06e605708ded5616ae2bd6",
+    "src/patchtrace/search/tooltip_entries.py": "1450cde4e442bf65e519b577952ec88d34fd1ed0cad29d43280d84ac16666ca8",
+    "tests/test_search_saved_workflow.py": "d84a390753b5e35ddb479bd40bc69ec7afdc08ab2d635afa777a6fd3fb2decb9",
+    "tests/test_tooltips.py": "366784dd613517fa8c50418d7950e6f4085d26a618a94e8eeecd788edecefdb6",
+    "tests/test_ui_search_saved.py": "d01c2add72d575ccebe7f412c2352a405fa7da34ebc10aafd7276bf4f41c0ffd"
+  },
+  "python": "/workspace/scratch/3a6632a6e5ff/venv/bin/python",
+  "environment": {
+    "PYTHONPATH": "/workspace/scratch/c7a9e8d98848/saved-integration/src",
+    "QT_QPA_PLATFORM": "offscreen"
+  },
+  "receipts": {
+    "independent/green.log": {
+      "bytes": 98,
+      "sha256": "0fc44b226b21cdd63f1f4daf26c2593d72af191b3b773e774dd40f1980fb3cc2"
+    },
+    "independent/green.xml": {
+      "bytes": 402,
+      "sha256": "d5e7abe8fe7d03ceefe288d15a8f4eba3504389e0bc1c973b100a91632802552"
+    },
+    "independent/red.log": {
+      "bytes": 1340,
+      "sha256": "fb60084bdb408805fd4f8c1f667fa96a6e7f85394b598097d33e364645505fe0"
+    },
+    "independent/red.xml": {
+      "bytes": 1757,
+      "sha256": "7ec79b1f642dc1515f274193f28e759dd1e1120ab7521f9645ee64d17b1d0372"
+    },
+    "independent/test_saved_review.py": {
+      "bytes": 948,
+      "sha256": "aa61a3a10fa0f590943afe52242c746636f03897bac88ccd7ab5a4ea6d9feb0c"
+    },
+    "combined/affected.log": {
+      "bytes": 501,
+      "sha256": "ba97126d4a0c186a9e7abd889130456adb581973c5c5acae920d77efb913ae6c"
+    },
+    "combined/affected.xml": {
+      "bytes": 43049,
+      "sha256": "68db76df10e76fb8425ca6b4b0467616c1639b070b9e9d3bad508fd8266a8338"
+    },
+    "combined/ruff.log": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    }
+  },
+  "archive": {
+    "bytes": 8665,
+    "sha256": "cb5ba2f9e5e8db214089b62981a11b9ffac4cd17ae50f4c689d74a088a5c557c"
+  },
+  "status": "Independent defect fixed; combined local scope passed. Hosted/full/native/manual gates open."
+}

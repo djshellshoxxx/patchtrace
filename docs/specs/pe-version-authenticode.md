@@ -68,8 +68,8 @@ Expected: version channel `1.0.0.0 -> 1.0.1.0` changed; manifest channel `asInvo
 |---|---|
 | "Signed" read as "safe" | Closed label set (7.4); no label contains "valid", "verified" or "trusted" except the existing Windows text suffixed "(no revocation check)" |
 | Digest match mistaken for trust | Separate rows Structure, Digest, Chain, Revocation, Timestamp; each defaults to `not_evaluated` off Windows |
-| Hostile strings (bidi override, control characters, huge values) | UTF-16 decode with `errors='replace'`; drop C0/C1 and bidi controls U+202A-U+202E, U+2066-U+2069; 1024 chars per value, 64 keys per table, `truncated` flag |
-| Manifest XML bombs, XXE | Reject any manifest containing `<!DOCTYPE` or `<!ENTITY` before parsing; 256 KiB cap; `xml.etree.ElementTree` only after that check; no URL resolution; `schemaLocation` shown as inert text |
+| Hostile strings (bidi override, control characters, huge values) | UTF-16 decode with `errors='replace'`; drop C0/C1 and bidi controls U+202A-U+202E, U+2066-U+2069 (amended 2026-11-11, SEC-B: drop every character `patchtrace.hostile_text.is_hostile` rejects, that is categories `Cc`, `Cf`, `Cs`, `Zl`, `Zp`; the list before kept the soft hyphen, zero-width and tag characters); 1024 chars per value, 64 keys per table, `truncated` flag |
+| Manifest XML bombs, XXE | Keep the conservative `<!DOCTYPE`/`<!ENTITY` text screen and refuse every parser-recognized doctype through a parser callback before DTD processing; retain existing resource byte/count limits; no URL resolution; `schemaLocation` stays inert text |
 | Resource tree cycles and fan-out | Depth exactly 3, visited set of directory offsets, 512 entries per directory, 4096 nodes, data reads capped (version 64 KiB, manifest 256 KiB) |
 | Timestamp shown as signing or file date | Show "claimed signing time (not verified)" from timestamp or counter-signature attributes only; never a file date; expired-at-signing not evaluated |
 | CRL/OCSP/AIA URLs inside certificates are attacker data | Inert text only; revocation solely through OS APIs and consent (7.5) |
@@ -77,6 +77,35 @@ Expected: version channel `1.0.0.0 -> 1.0.1.0` changed; manifest channel `asInvo
 | Hostile PKCS#7 (deep nesting, indefinite length, giant lengths) | DER reader: definite length only, depth 12, 20000 nodes, 256 KiB per signature, 64 certificates, 4 signers; failures become warning codes, never exceptions |
 | Catalog-signed file shown as unsigned | Wording "No embedded signature (catalog signature: present / absent / not checked)" |
 | False precision | No numbers or scores produced |
+
+### 6.1 Parser-level manifest DTD refusal (2026-11-18)
+
+The decoded-text screen is an early refusal, not the security boundary. A
+BOM-less UTF-16BE manifest with leading whitespace can reach the UTF-8 fallback
+with interleaved NUL characters. ElementTree/Expat can then reinterpret that text
+and recognize a doctype that the string screen did not see. A bounded authored
+internal entity reproduced this behavior through the actual PE metadata reader.
+No external-entity file or network access is established by that control.
+
+`manifest.py` must also refuse every doctype recognized by the parser and return
+the existing `manifest_dtd_rejected` warning without manifest facts. The stdlib
+`XMLParser` target may supply a custom `TreeBuilder.doctype` callback; Python's
+[ElementTree documentation](https://docs.python.org/3.12/library/xml.etree.elementtree.html#xml.etree.ElementTree.TreeBuilder.doctype)
+documents this interface. CPython's pure-Python fallback only forwards external
+doctype identifiers through that target callback, so when its underlying Expat
+parser is exposed, install the same refusal on `StartDoctypeDeclHandler` as well.
+The [Expat callback documentation](https://docs.python.org/3.12/library/pyexpat.html#xml.parsers.expat.xmlparser.StartDoctypeDeclHandler)
+defines that parser-level declaration event. Both implementations must refuse
+internal-only and empty doctypes before entity use.
+
+Keep the current strict decoding policy, ordinary UTF-8/UTF-16 LE/BE manifests,
+BOM handling, accepted leading whitespace, trailing NUL padding and conservative
+comment/CDATA screen. Do not add encoding-prefix guesses, parser dependencies,
+scanner suppressions, schema changes or URL/file resolution. This amendment does
+not change the current `ResourceLimits` budgets. Tests cover both parser
+implementations, the original harmless marker regression, normal encodings and
+the production metadata path over an authored RT_MANIFEST resource. No target is
+executed and no native-platform acceptance is claimed by these parser controls.
 
 ## 7. Contracts
 

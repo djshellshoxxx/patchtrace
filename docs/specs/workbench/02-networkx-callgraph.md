@@ -165,3 +165,88 @@ Test fixtures:
 15. Distinguish a missing edge (no observation) from contradictory evidence.
 
 Acceptance gate: users can select any changed function, immediately inspect source-backed nearby call relationships and open a valid linked function without running a new analysis; both side graphs remain separately identifiable; missing source data is visible; full existing project/CLI tests green.
+
+## 9. Capped-view truth amendment (2026-11-18)
+
+This amendment describes the existing `callgraph/` implementation's query,
+export and desktop boundary. It uses the current `GraphView.truncated`,
+`MoreMarker` and `GraphExport` fields; it adds no persisted schema.
+
+- Resolve and deduplicate focus node IDs in first-occurrence order before
+  applying the visible-root budget. Duplicate inputs must not hide a distinct
+  root, consume multiple root slots or alone imply truncation. Invalid IDs are
+  still refused.
+- Any omitted traversal caused by the per-node neighbour cap, visible node cap,
+  visible edge cap, or already truncated source makes the returned view
+  `truncated=True`. A `MoreMarker.count` remains a per-origin count of distinct
+  neighbours omitted from that origin's expansion. Counts from overlapping
+  frontiers must not be summed into an asserted global number of missing nodes.
+- Capped views carry the fixed limitation: `The view is capped; some nodes or
+  edges may be omitted.` This conservative wording also applies where another
+  frontier may have exposed an omitted neighbour. An uncapped requested view
+  keeps its existing completeness/provenance semantics; absence of a cap never
+  implies a complete program graph.
+- `graph neighbours` reports capped results as `partial`/exit 3 using its existing
+  result envelope. Paired exports retain the per-side flags and a top-level
+  truncated flag. Their limitations are the stable, deduplicated union of the
+  source and both side views, so JSON includes the reason for partial output.
+- DOT includes a fixed partial-result comment and a visible graph label when
+  the export is truncated. Uncapped DOT remains byte-stable, including existing
+  golden output. The label is fixed application text; untrusted labels retain
+  existing sanitation, escaping, size bounds and non-execution behavior.
+- The Calls panel combines Changes-row limits with current neighbourhood limits.
+  A later Changes-row delivery cannot clear a current query cap. A new uncapped
+  query clears an earlier query cap when no Changes-row limit remains. A query
+  cap uses the fixed conservative limitation and a narrowing suggestion instead
+  of claiming that the displayed table's known count is the total graph count.
+
+Acceptance uses actual normalized cycle/hub data, overlapping and duplicate
+claims, repeated focus IDs, below-cap controls, real CLI neighbours and JSON/DOT
+export, and offscreen Calls-controller delivery/narrowing. It preserves current
+source identities, navigation, worker epochs, cancellation and tooltips. Path
+traversal budgets, lazy CSR iteration and native/manual qualification are separate
+slices and are not changed by this amendment.
+
+## 10. Shared path-work budget amendment (2026-11-18)
+
+This separate amendment applies to `callgraph/algo.py`, `csr.py` and `paths.py`.
+The existing `ObservedPaths` result and CLI exit mapping remain unchanged.
+
+- One path query shares its `PATH_VISIT_BUDGET` (200,000 by default) across
+  shortest-path discovery, reverse reachability and simple-path enumeration.
+  Charge each forward or reverse adjacency before fetching it, including
+  revisits, cycles and neighbours rejected by the allowed-node filter. A caller's
+  smaller budget must constrain those prepasses as well as enumeration.
+- Traverse existing CSR rows lazily. `find_paths` must not scan all graph edges,
+  rebuild a filtered CSR, copy adjacency rows or materialize the whole-program
+  node set before a bounded query. For partial stored-call sources, reuse the
+  existing listed-node membership set; requested source/destination nodes stay
+  eligible even when not listed. Whole-program sources impose no membership
+  filter. Node identity and the existing numeric/lexical tie order are retained.
+- Check cancellation before the first adjacency read and at the existing
+  `CANCEL_POP_INTERVAL` during charged scans, including rejected neighbours.
+  A zero-edge source-equals-destination query still honors an already-set cancel
+  request. Cancellation raises the existing `PT-GRAPH-CANCEL`; it does not
+  silently publish a completed result.
+- Preserve shortest-first, ascending-node-order ties, simple paths without
+  repeated nodes, the existing five-path/twelve-edge defaults, and caller-supplied
+  valid limits. A completed shortest search may retain one fully reconstructed
+  shortest witness within the requested length. If a later phase exhausts the
+  budget before enumeration emits a path, return that witness with
+  `truncated=True`. If enumeration already emitted paths, retain its ordered
+  prefix. Never retain an incomplete candidate or a path beyond the length cap.
+- `truncated` continues to mean work-budget exhaustion; satisfying the requested
+  result-count limit is not itself an incomplete computation. A query that can
+  prove no eligible path without exceeding the budget returns its existing
+  complete empty result. A zero-edge identity path needs no adjacency budget.
+- A truncated `ObservedPaths.note` appends `Path search reached its work limit;
+  more paths may exist.` The CLI keeps `partial`/exit 3 and any retained valid
+  path. An empty partial result is not proof that no path exists.
+
+Acceptance counts actual adjacency reads/copies rather than relying on timing:
+the normalized hub fixture, exact small budgets, rejected memberships, cancellation
+before/during work, no whole-graph reconstruction, both search orientations,
+retained-shortest-witness ties and brute-force simple-path oracles. Existing
+standalone shortest-distance, SCC/reach, hash-seed, large synthetic graph,
+CLI and desktop regression gates remain required. No new native execution,
+runtime dependency, persisted contract or source-acquisition behavior is added.

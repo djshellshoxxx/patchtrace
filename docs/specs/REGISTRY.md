@@ -1,5 +1,10 @@
 # Spec registry
 
+2026-11-18 CI input-integrity amendment: `docs/specs/ci-workflow-integrity.md`
+(`CI-INT`, approved repair; hosted qualification remains separate) owns immutable
+remote action references, corpus archive checks, Linux frozen CLI smoke wiring,
+and the separately scoped dependency-hash design.
+
 Canonical alias for every spec file under `docs/specs/`: the number each file's own text declares, its canonical alias, its status, and the code that owns it. Read this before you cite a spec number. Source files are not edited here. Where a title or prose uses another number, the alias in this file wins.
 
 **Status refresh, 2026-10-14 (branch `work/a`, 430d690).** Statuses and basis columns of Tables A and B were re-checked against code for SPEC-07h, 10, 10b, 11, 30, 31 (README and parts 02 to 08), 34, 35, 36 and the Table B rows (ledger findings F2 to F5 and F10 in `docs/specs/program-e/OUTSTANDING-specs-ledger.md`); SPEC-37 is not started. File lists and PR numbers in the snapshot below are historical.
@@ -81,6 +86,9 @@ Cite a spec as **repository path plus canonical alias**, for example `docs/specs
 | `docs/specs/app-settings.md` | none (SPEC-43 requested) | SPEC-43 | draft | ui.py, ui_evidence.py, ui_series.py, ui_engine_setup.py, enrichment/profiles.py | 27 QSettings keys and profile fields inventoried (Haiku draft, code-checked); section 8 proposals pending owner approval |
 | `docs/specs/accessibility-baseline.md` | none (SPEC-45 proposed) | SPEC-45 | draft | ui.py, ui_evidence.py, ui_series.py, ui_engine_setup.py, tooltips.py | Application-wide accessibility, keyboard, DPI and English-only localization baseline; 54 controls without accessible names inventoried; AX-M1..M6 are owner/Windows gates (Haiku draft) |
 | `docs/specs/cli-umbrella.md` | none (SPEC-44 proposed) | SPEC-44 | draft | cli.py, backend_cli.py, secondary/cli_*.py, intelligence/cli.py, intelligence/tools/cli.py, unified/cli.py | Umbrella CLI rules, per-verb flag tables and flag registry; doctor, export, import, show, project proposed not in the alpha (Haiku draft, flags checked against --help) |
+| `docs/specs/cli-project-compare.md` | none | none assigned (cite by path) | partial | project_cli.py, compare_cli.py, cli_commands/project.py, cli_commands/compare.py | Headless project lifecycle (`patchtrace project`: create, info, runs, import-json, backup, swap, sample) and single-pair primary analysis (`patchtrace compare`). Integrated and independently reviewed 2026-11-16; `compare` verified with a hermetic fake backend; exact-head native/Windows acceptance remains separate |
+| `docs/specs/cli-profile-doctor-runtime.md` | none | none assigned (cite by path) | partial | enrichment/profile_cli.py, doctor_cli.py, runtime_cli.py and cli_commands adapters | Profile, doctor and runtime implemented and independently reviewed; synthetic archive tests do not qualify a real installed backend |
+| `docs/specs/manual-corrections-exchange.md` | none | none assigned (cite by path) | implemented | corrections_exchange.py, corrections_cli.py, review_cli.py and cli_commands adapters | Bounded transactional imports, exclusive exports and headless review; independently reviewed 2026-11-16, exact-head release gates remain separate |
 | `docs/specs/anchor-fabric.md` | none (SPEC-48 assigned) | SPEC-48 | partial | fabric/ (contracts, ids, origins, ports, memory, store, pins, convert, cli, related); ui_related.py | FAB-0, FAB-1, FAB-2, FAB-4 built; FAB-3 adoption built (pilot/origins.py and pilot/ports.py rebound to the fabric; no PIL publisher yet); FAB-5 read-only CLI built (fabric/cli.py, tests/test_fabric_cli.py); FAB-6 table-only related panel built (fabric/related.py, ui_related.py, tests/test_ui_related_panel.py). Open: CLI pin/unpin verbs, `--offset` paging, Windows CI. |
 | `docs/specs/report-export-contract-v2.md` | none (SPEC-50 assigned; was RPT2) | SPEC-50 | draft | reports.py (v1 only); v2 not built | Promoted from program-e; draft for build, v2 opt-in |
 | `docs/specs/unified-engine/12-features2-proposal.md` | SPEC-31 / 12 | SPEC-31/12 | proposal | none (text for the C9 owner, amendment A-07) | Proposal only; nothing built |
@@ -178,3 +186,27 @@ This later draft registration does not refresh the historical tables or approve 
 | File | Proposed canonical alias | Status | Basis |
 |---|---|---|---|
 | `docs/specs/DOCKABLE-WORKSPACE-SPEC.md` | SPEC-DW-01 (proposed; cite by path) | draft | Compact adaptation of #183 at `ed70e6ddac449a42f843f1c60aa878416ab31727`; source baseline rechecked at candidate #235 `ccfe175d44a70947203c75bbd033a9a9e2633f0f`. Existing feature docks are present; independently dockable core sections, presets and durable workspace migration remain proposed. No runtime or release acceptance. |
+
+## PW-01 KB inventory extension
+
+| Path | Canonical alias | Status | Owner |
+|---|---|---|---|
+| `docs/specs/kb-file-inventory-csv.md` | PW-01 | implemented and independently reviewed; hosted/live acceptance tracked in QA | kbcorrelation inventory modules |
+
+## PW-02 local package extension
+
+| Path | Canonical alias | Status | Owner |
+|---|---|---|---|
+| `docs/specs/local-package-intake.md` | PW-02 | implementation candidate; native Windows and frozen journey pending | acquisition package modules and KB package facade |
+
+## Supporting qualification and publication contracts, 2026-11-18
+
+These supporting contracts are cited by path; no numeric SPEC alias is allocated.
+
+| Path | Scope | Status | Owner |
+|---|---|---|---|
+| `docs/specs/dependency-security-qualification.md` | Exact-source dependency and security qualification | Implemented; external scanner and hosted acceptance remain separate gates | Dependency/security qualification tooling |
+| `docs/specs/directory-publication.md` | Atomic no-replacement publication of complete private directories | Implemented and independently reviewed; native Windows acceptance pending | Shared directory publisher, project backup and offline runtime installer |
+| `docs/specs/core-held-inputs.md` | Optional operation-held input readers and precommit read checkpoints | Neutral core candidate; KB/native/package composition and Windows qualification remain separate | Input reader protocols, ingestion and project creation/verification |
+| `docs/specs/kb-held-inputs.md` | Internal propagation of held readers through existing KB admission | Candidate independently reviewed; durable held-origin recovery, postcommit read checkpoints and exposed package routes remain separate gates | Existing KB service, wiring and project attachment |
+| `docs/specs/windows-bindiff-network-acceptance.md` | Source-bound native BinDiff network-denial and process-ownership evidence | Portable validation independently reviewed; Windows build, containment and actual BinDiff acceptance pending | Windows native acceptance tooling and live BinDiff workflow |

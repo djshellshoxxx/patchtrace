@@ -57,3 +57,54 @@ Cases from one project or release are not independent; count distinct projects. 
 
 Each layer's claim is stated as "at least X% (95% one-sided), n independent cases, k errors" with the case manifest
 hash and receipts attached. A layer with fewer cases than its table row says so and claims less.
+
+## Receipt source identity in linked worktrees (2026-11-18)
+
+The shared research receipt helper must identify the requested checkout's HEAD
+without invoking Git, loading configuration or running hooks. Support ordinary
+`.git` directories and the documented `gitdir:` pointer used by linked worktrees
+and submodule checkouts. Read worktree-local HEAD; read shared branch refs and
+packed refs from the declared `commondir`, retaining per-worktree ref exceptions.
+Relative pointer paths resolve against the containing Git metadata location.
+See the [Git repository layout](https://git-scm.com/docs/gitrepository-layout)
+and [worktree details](https://git-scm.com/docs/git-worktree).
+
+Return only a validated lowercase 40-character commit identity. Missing, invalid,
+ambiguous, oversized or nonregular metadata yields unknown (`None`), never an
+arbitrary text value presented as a commit. Bound individual metadata files to
+64 KiB and packed refs to 8 MiB. Ref names must remain relative inside their Git
+metadata namespace; reject traversal and absolute paths. Do not substitute the
+main checkout's HEAD for a linked worktree's detached or branch HEAD.
+
+This metadata observation does not independently verify clean source content or
+authenticity. Exact-tree/dirty-state evidence and input hashes remain separate.
+Old receipts remain immutable; new execution produces new receipts with the
+resolved identity. No accuracy claim follows from source identification.
+
+## Windows pair-publication contract (2026-11-18)
+
+Publication uses the exclusively held staging file and its held destination parent. Native
+`NtSetInformationFile` uses `FileRenameInformation` (10), a simple UTF-16LE leaf name,
+`ReplaceIfExists=False`, and the exact parent handle; its zeroed buffer is at least
+`sizeof(FILE_RENAME_INFORMATION)` plus the encoded name length. Owned failure cleanup uses
+`FileDispositionInformation` (13) on the same source handle, followed only by closing it.
+Source handles retain DELETE access and synchronous, nonalert operation. Each information call
+has its own zeroed `IO_STATUS_BLOCK`; negative signed NTSTATUS values are converted through
+`RtlNtStatusToDosError`. A pending or other nonzero success status is not completed publication
+and must block credit. No path-based rename, replacement, or cleanup fallback is permitted.
+
+The primary publication exception, including `FileExistsError` and cancellation, survives any
+secondary discard or close failure. Bounded secondary diagnostics remain attached to that
+exception, and the exact owned handle is always given its close attempt. A close failure after
+otherwise successful publication also prevents a success claim. These rules preserve prior
+evidence and do not promise removal of an already published but uncredited destination.
+
+Portable ABI/dispatch and injected cleanup controls are regression evidence only. Acceptance
+requires actual Windows publication, one-character and non-BMP target names, concurrent-target
+preservation, owned-stage cleanup, held-ancestor/stage protection, and reparse mutation controls
+on the exact candidate head. The error-87 failure on PR #304 at `bb4277ae` remains recorded;
+the available log does not establish which original Win32 parameter or call caused that error.
+
+Primary API contracts: [NtSetInformationFile](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-ntsetinformationfile),
+[FILE_RENAME_INFORMATION](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/ns-ntifs-_file_rename_information),
+and [FILE_DISPOSITION_INFORMATION](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/ns-ntddk-_file_disposition_information).

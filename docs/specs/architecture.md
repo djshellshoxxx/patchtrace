@@ -1,5 +1,19 @@
 # PatchTrace beta architecture (SPEC-01, schema v1)
 
+Backup directory publication amendment (2026-11-18): complete project backups
+use the shared [exclusive directory-publication contract](directory-publication.md).
+Publication atomically refuses an existing destination leaf, including a newly
+created empty directory; there is no public placeholder or destination cleanup.
+Unsupported platform/filesystem primitives refuse rather than fall back to an
+overwriting rename. Existing private-stage cleanup, project layout, verified
+sidecars and controlled parent/source ownership assumptions remain unchanged.
+
+Normalization review amendment (2026-11-18 UTC): address zero is a known numeric
+address, distinct from an unavailable address. Within a one-to-many conflict
+group, ordering compares known addresses numerically, then unavailable addresses.
+Same-named functions at zero, nonzero and unavailable addresses must not cause
+mixed-type comparisons. Reversing input entries preserves the group identity.
+
 > **SPEC-31 status amendments (2026-11-04, documentation only; rows A-01 and A-01b of `unified-engine/10-amendments.md`):**
 > - **A-01** (section "Objective and decisions", DEC-02) reads: "Never fork or patch Ghidriff; an in-house DERIVED engine (SPEC-31) may match independently; Ghidriff stays primary and its results are never overwritten." This line is the reworded DEC-02 for SPEC-31.
 > - **A-01b** (section "Interfaces and ownership"): "one active analysis job per window" covers the unified run (extraction and worker); the project directory adds `runs/<run_id>/unified/` (IR, results, transient GZFs).
@@ -39,9 +53,13 @@ Project writer-lock admission requires the opened `.patchtrace.lock` handle and 
 
 `normalize_ghidriff(raw, project, run_id) -> list[FunctionMatch]`: handle modified/added/deleted functions from pinned known output; require recognizable function structure; reject unknown schema rather than silently empty. Missing code/address/assembly is represented explicitly. Raw source hashes and backend metadata accompany run. Upstream percentages are uncalibrated match metrics, never vulnerability probability. Manual split/merge/ambiguous relations use multiple function IDs. Equality of addresses never establishes a match.
 
+**Repeated upstream functions (SPEC-31 A-32, status 2026-11-18: APPLIED, slice `ghidriff-1toN`).** Each upstream record has the identity (side, `fullname` or `name`, parsed address): the address is read with `enrichment.identity.parse_address`, as every consumer reads it, so `0x180001000` and `180001000` are one address and an empty or unparsable address is address-less (follow-up 2026-11-04). The normalizer validates and indexes the whole document before it emits a row. It rejects the document with `PT-SCHEMA` when (a) the same (old identity, new identity) pair appears in two `modified` entries (CORE-2, a copied entry: `upstream pair is repeated`); (b) one identity appears with different record content, compared as canonical JSON (`upstream function is repeated with conflicting content`; an address-less record cannot be told apart from another one of the same name, so it rejects too); (c) an identity repeats inside `added`/`deleted`, or is both one-sided and paired (`upstream function is repeated`: "no counterpart" and "matched" at once); (d) (new with A-28, for every document, not only those with repeats) an upstream record carries a PatchTrace-owned metadata key: `upstream_similarity`, `diff_types`, `upstream_name`, `instructions_hash`, `assembly_unavailable` or `upstream_one_to_many` (`carries the PatchTrace-reserved metadata key`). Rule (d) rejects rather than strips: these keys state what PatchTrace derived from the entry (calibration, the unified engine and the tier-R scorer read `upstream_similarity`), so a planted value is either hostile or from another producer; silently dropping it would make the normalized record disagree with the preserved raw file without telling the analyst, and rejecting keeps the "reject unknown schema" rule. The one accepted repeat is an identity with identical content on one side of two or more distinct `modified` pairs: pinned Ghidriff 4f5d895 memoises `enhance_sym` per (symbol, program), so its real one-to-many matches repeat one record (a pin bump must re-run a live one-to-many fixture; a Ghidriff that enhanced each pair separately would turn real one-to-many back into rule (b)). The connected components of the `modified` pair graph that contain such a repeat (1:N, N:1, or an N:M chain such as A1-B1-A2-B2) are conflict groups, and no pairing inside a group becomes a match: not the first seen (Ghidriff's order is correlator and bucket order, not a ranking) and not the highest ratio (PatchTrace would take a side). Each distinct function of a group becomes exactly one `FunctionRecord` in its own one-sided, non-manual `ambiguous` match (`review` `needs-review`, `quality` `unknown`, no `match_types`, a reason naming the group and "Correct match"); these rows follow the `modified` rows, groups in order of their first entry, older records before newer, each by (name, address). Such a record carries no `upstream_similarity` and no `diff_types` (both belong to a pair) and instead the side-relative key `upstream_one_to_many` = `{group, pairings: [{entry, pointer, counterpart: {name, fullname, address}, match_types, diff_types, ratio}]}`, sorted by `entry` (the index into `functions.modified` of the preserved raw file, `run.raw_sha256`); `pointer` is the RFC 6901 pointer `/functions/modified/<entry>`; `group` is `g1n-` plus the first 16 hex digits of the SHA-256 of the canonical JSON of the group's sorted identities, so it does not depend on input order. Conflicting claims are kept per pairing, never averaged. Each claim is referenced from both of its endpoints, so any aggregator deduplicates claims on (run id, entry). A document without repeats and without reserved keys normalizes exactly as before (golden test); before A-28 a planted reserved key in such a document was silently kept, now it is rejected by rule (d). One document that spells one address two ways is rejected by rule (b). The analyst resolves a group with the existing manual correction, which already accepts functions from several rows of one run. The unified engine builds the group from `matches.address_matches` (SPEC-31 06 s10 item 3); the tier-R and attention evaluators do not score such a pair (`tier-r-engine-output/1` has no field for an abstention next to `implicit_unchanged`) and report it `failed` with a `one-to-many` reason.
+
 `diff_hunks(older, newer, match_id)` aligns original text using half-open line ranges. Up to 2000 lines per side, use exact SequenceMatcher alignment with popularity filtering disabled. From 2001 through 10000 lines, enable popularity filtering to bound repeated-line matching work; alignment is a display aid, never binary correspondence evidence. Above 10000 lines on either side, use a linear common-prefix/common-suffix scan and represent the remaining middle as one replace/insert/delete region. Equality regions must always contain identical original lines. `alignment_strategy` exposes the selected strategy so the desktop can disclose coarse large-region alignment; no assembly or missing code is invented.
 
 `run_comparison(config, project, cancel_event, on_event) -> AnalysisResult`: shell=False, absolute executable path and argv; Python `-m ghidriff` only for configured external interpreter. Timeout 3600 seconds default. Output bounded to 100 MiB JSON and 2 MiB log tail. New unique run directory, no cache use until keyed by hashes/version/settings. On failure raw output quarantined, prior results preserved. Working and normalization-failure directories use `runs/quarantine-<canonical-UUID>` without dot-prefixed elements; older existing `.quarantine-*` directories are left untouched for backward compatibility. Before invoking Ghidriff, validate every component in the resolved `--output-path` (including project ancestors) because Ghidra refuses components whose names start with `.`. Reject an unsafe path with a specific PT-BACKEND error, rather than silently renaming or moving the analyst's project. On Windows, reject output paths 240 characters or longer with guidance to relocate the project under a shorter path; nested Ghidra project paths may impose stricter practical limits. Spaces and OneDrive directories without a dot-prefixed component remain permitted; pass paths as individual argv elements and do not rely on shell quoting. Use Ghidriff's separately supported `--project-location` and `--gzfs-path` options for a fresh private temporary workspace outside the case directory; Python's TemporaryDirectory lifecycle must remove this scratch after the contained process exits, both on success and error. Only raw comparison output (JSON/Markdown), analysis.log, and failure metadata belong under the case. Never delete previously completed case outputs. Default Ghidriff symbols remain under raw/symbols until a separately reviewed versioned cache is designed. `BackendConfig.allow_symbol_downloads` is a backwards-compatible opt-in bool (default false). When false, pass pinned Ghidriff's supported `--no-symbols` CLI flag; when true, leave upstream symbol behavior available. UI labels must communicate that this flag disables Ghidriff symbol processing, potentially affecting function naming and match quality. Record the choice in per-run provenance as `allow_symbol_downloads` plus `symbol_policy` (`disabled` or `online`) and `ghidra_settings` (`isolated-per-run`). Every Ghidriff child runs with `XDG_CONFIG_HOME` pointing at a fresh directory inside the private scratch workspace. Ghidra resolves its user settings directory from the `application.settingsdir` property, then `XDG_CONFIG_HOME` on every platform, then %APPDATA%/~/.config (ApplicationUtilities.getDefaultUserSettingsDir). Isolation prevents a symbol-server configuration persisted by an earlier manual or symbol-enabled Ghidriff run (PdbPlugin preferences) from being consulted: Ghidriff `setup_project()` (PyPI 1.0.0 and pinned commit 4f5d895) calls `get_pdb(allow_remote=False)` under `--no-symbols` and raises `FileExistsError` ("Symbols are disabled, but the symbol is already downloaded") whenever that persisted local store already holds a matching PDB. Isolation also stops symbol-enabled runs from writing symbol-server configuration into the analyst's global Ghidra preferences. The analyst's PDB caches and global settings are never read, modified or deleted. Ghidriff's `--jvm-args` is not used because PyPI ghidriff 1.0.0 declares it `nargs='?'` and iterates the string character by character (later upstream commits use `append`); the environment variable works with both. SPEC-53 now offers a PatchTrace-owned launcher for local PDB mode: it forces an empty Ghidra symbol-server list, stages only identity-matched PDBs per run, and keys the raw cache by staged-PDB digest. This is configuration evidence, not an OS-level air-gap guarantee; GHR-5 remains unverified. If the FileExistsError still occurs (for example a PDB beside the analysed copy), diagnostics classify it as a cached-symbol conflict without echoing the path. This is not a guarantee of whole-system network isolation because Ghidra extensions and other processes are outside this flag's control. Offline mode performs no intentional dependency downloads by PatchTrace; air-gapped users still require local compatible tools. Reject nonboolean flag values to avoid unintended network behavior. A crash may leave an abandoned OS temp directory to be handled by system cleanup. Scratch removal after a run is retried a bounded number of times; if it still fails (for example antivirus or a lingering Java child holding a file), the run keeps its real status and a warning names the leftover path — cleanup failure never turns a completed analysis into a failed one. User binaries and prior run files are preserved if preflight rejects a path. On Windows create subprocess suspended, attach to kill-on-close Job Object, then resume; fail if containment unavailable. POSIX process group kill. Never claim process isolation is a sandbox. Default memory/thread settings are forwarded only if verified supported. No invented hard memory cap.
+
+**Launch argument rules (process-supervision audit items 2, 3 and 5, status 2026-11-04: APPLIED in `jobs.run_process`; the Windows-only behaviour is evidenced only by the `qa-windows` cases of `tests/test_jobs_windows_launch.py`).** `run_process` refuses an argv before anything is spawned, with a `ValueError('PT-BACKEND: ...')` that never echoes the refused text, when (a) any element contains NUL, on every OS (Windows would otherwise truncate the command line silently); or (b) on Windows argv[0] is a batch file (its name, case-folded and without trailing dots and spaces, ends in `.bat` or `.cmd`) and any element, argv[0] included, contains `&`, `|`, `<`, `>`, `^`, `%`, `!`, CR or LF. `CreateProcessW` runs a batch file through `cmd.exe`, which still parses these characters after `list2cmdline` quoting, so a hostile artifact file name passed to, for example, a pyenv-win `python.bat` shim could start a command; the message asks the analyst to configure the program `.exe`. Quotes, spaces, `=` and parentheses stay allowed (the dependency probe code contains quotes). The Windows environment block is sorted case-insensitively (upper-case order, as `CreateProcessW` documents) and refuses an empty name, NUL in a name or value and `=` in a name after its first character. The earlier TB-15 check in `run_process` (`_valid_environment`) is stricter and runs first: it refuses `=` anywhere in a name, so PatchTrace never passes the `=C:` drive entries; the block builder's own check is a second line of defence. The Job Object limit flags are `KILL_ON_JOB_CLOSE` and `DIE_ON_UNHANDLED_EXCEPTION` (a crashed tool exits instead of waiting in an error-report dialog until the timeout; that every such dialog is suppressed is unverified), plus `PROCESS_MEMORY` only when a cap is given, and never a breakaway flag. The Job, process and pipe handles are released even when the final kill raises. Callers already turn a runner `ValueError` into a failed outcome.
 
 `BackendConfig.retain_gzf: bool = False` (SPEC-31 A-01c, D-05; a non-bool is a configuration error). When true AND the Ghidriff process exited 0 without a stop reason AND the run was not cancelled, `run_comparison` calls `unified.extract.retain.retain_run_gzfs` BEFORE the private scratch is removed: exactly two regular, non-symlink `*.gzf` files whose names equal `<artifact file name>-<sha1[:6] of the artifact>.gzf` and whose total size is within L-36 (4 GiB) are moved into `quarantine/unified/gzf/{older,newer}.gzf` (renamed with the run directory by `publish()`) and `settings["gzf"]` records `{name, sha256, bytes}` per side. Any other layout, any I/O error or the flag off retains nothing; a warning event is emitted and the run is never failed or altered. argv, the raw-cache fingerprint and the settings of a run with the flag off are unchanged (regression test). A raw-cache hit runs no Ghidriff and therefore retains nothing.
 
@@ -70,12 +88,85 @@ Project-backed report writes use `ProjectService.export_report` and pass `projec
 
 Committed report reads are non-mutating: `ProjectStore.load(*, recover_interrupted=True)` retains existing default startup recovery, while service export uses `recover_interrupted=False`. Export must neither mark queued/running records failed nor publish recovery/history changes, including when a destination is refused; normal reopen recovery remains unchanged.
 
+The optional core admission identity/checkpoint extension is specified in
+`core-held-inputs.md`. A supplied `ProjectService.create(..., project_id=...)`
+uses the existing strict bounded ID field and first-save transaction, with
+validation before store/source I/O and no additional reuse/deletion authority.
+`ProjectService.open` can explicitly forward `recover_interrupted=False` and the
+original read checkpoint; callers requiring a non-mutating read also select
+`maintenance=False`. Defaults preserve current startup behavior. Failed owned
+opens close their resources and preserve the primary failure if close also fails;
+committed or uncertain project data is never creation-rolled-back by this path.
+
 
 ## Failed initial project creation ownership (2026-11-05)
 
 Before a first snapshot commits, `ProjectService.create` rolls back only files positively recorded as published by that attempt, while retaining the exclusive project lock until cleanup finishes. Ingestion has an optional Python-only `created` ledger of `(Path, os.stat_result)` values for newly created artifact directories and published files; it never records a reused content-addressed file. Publication links the validated same-directory stage exclusively into the content-addressed destination, never overwriting a concurrent destination. An existing destination must still match exact bytes before reuse. New artifact publication requires a hardlink-capable project filesystem (for example NTFS); unsupported filesystems fail closed with PT-INPUT rather than fall back to a non-atomic overwrite. Native Windows/filesystem compatibility remains a separate acceptance gate. The ledger records the staged inode before read-only chmod so a failure after publication remains recoverable.
 
 Cleanup verifies the recorded file identity, size and modification time and refuses observed symlinks/replacements; it may clear read-only only on those owned files. It removes recorded directories only when empty. It never recursively walks or deletes unfamiliar paths. The SQLite connection closes before deleting this attempt's matching database, with the project lock held; already committed first snapshots are retained even if the caller receives a later failure. Uncertain ownership or cleanup errors retain files and preserve the original exception. The persistent `.patchtrace.lock` file is deliberately retained: kernel lock release permits retry, and unlinking a lock inode can split ownership between concurrent writers. Existing/prior files, reused artifacts and foreign paths observed before the final ownership check retain their bytes and permissions. This follows the existing cooperative project kernel-lock model, not an OS filesystem sandbox: metadata checks are not an atomically conditional unlink. A noncooperating process can replace an owned pathname between its last check and unlink/chmod; that residual race is explicitly outside this bounded guarantee. A quarantine or native handle-based hardening design remains open. No wire/schema changes.
+
+### Admission of an incomplete database for creation retry (2026-11-18)
+
+`ProjectStore(create=True)` may recycle an existing database only after a bounded,
+read-only check under the existing exclusive project lock. A nonempty file must
+be a regular, singly linked file no larger than 1 MiB, have the current
+`user_version`, and contain exactly the canonical `current_snapshot`, `history`
+and SQLite `sqlite_sequence` table definitions produced by current initialization.
+All three tables must be empty and the SQLite integrity check must succeed.
+Additional views, triggers, indexes, tables, columns or altered constraints are
+unrecognized schema and refuse reuse, even when both project tables have no rows.
+Nonempty databases with no schema, a changed version, retained sequence metadata,
+unreadable or damaged content, or exceeded validation budgets also refuse reuse.
+
+Retain the existing zero-byte regular-file retry when there are no SQLite
+companions. Any `-journal`, `-wal` or `-shm` entry refuses reuse before opening the
+database: an immutable read must not overlook data in a companion or cause
+recovery to mutate it. Validation opens only a read-only immutable connection,
+disables trusted schema, limits SQLite values to 1 MiB and SQL to 4 KiB, and bounds
+VM execution to 100,000 instructions with a 1,000-instruction callback interval.
+These are admission bounds, not a schema migration or a generic database repair.
+
+Refusal uses the existing `PT-STORAGE: project database already exists` result,
+releases the held lock, and preserves the original database, companion files and
+other project entries byte-for-byte. The lock holder record may change through
+ordinary lock acquisition, but its persistent inode remains. Positive checks
+must create and reopen a project through the real service using an exact current
+empty database and a zero-byte leftover. The current desktop and CLI destination
+preflights retain their existing stricter behavior; this amendment changes only
+the store's authoritative retry decision. The established cooperative-lock and
+noncooperating pathname-race limits above remain in force.
+
+Follow-up ownership requirement (2026-11-18): a successful read-only admission
+does not authorize unlinking whatever later occupies `project.sqlite3` or its
+companion names. If the candidate is replaced after admission, during connection
+opening or before initialization, creation must refuse and preserve the
+replacement database and any companion evidence. Initialization failure must
+not delete a preexisting file reached through a reused pathname. The implementation
+must bind mutation to a validated owned database, or conservatively retain an
+uncertain captured file; a final pathname-stat check followed by unlink is not
+an ownership mechanism. Healthy empty-current and zero-byte retries remain
+required. The earlier schema-only QA checkpoint does not establish this guarantee.
+
+The retry strategy reuses the admitted file in place. Recheck candidate identity,
+metadata and companion absence before and immediately after opening the writable
+connection, then validate schema/emptiness on that actual connection within the
+initial transaction. Existing empty tables are not recreated. For a preexisting
+zero-byte file, schema creation remains uncommitted until the first snapshot
+succeeds; cancellation, ingestion/save failure or close rolls it back. Retry
+rollback must retain the original database bytes and inode and remove only
+artifacts positively published by the failed attempt.
+
+New database creation reserves its file exclusively and records that owned file
+separately from reused candidates. Only that ownership record can authorize
+initialization/service rollback cleanup; observing a pathname later does not
+create ownership. Refuse an observed replacement before accessing schema or
+initializing the database, preserving it and any newly observed companions.
+These checks and the SQLite transaction address the reproduced admission/open/
+initialization seams. They do not make arbitrary noncooperating filesystem
+renames or journal creation between checks race-free: SQLite recovery on first
+database access and final owned-file cleanup retain the established cooperative
+filesystem assumption. No namespace-race immunity or native filesystem
+qualification is claimed.
 
 ### Normalizer derived metadata boundary (2026-11-05)
 
@@ -84,3 +175,15 @@ Enhanced upstream function records may not supply PatchTrace-reserved derived me
 ### Normalizer canonical address identity (2026-11-05)
 
 The normalizer identifies a function by side, qualified name (`fullname` or fallback `name`), and the address parsed by `enrichment.identity.parse_address`. Equivalent address spellings therefore cannot bypass the existing repeated-function rejection (`PT-SCHEMA`). Empty, unparseable and overflowing addresses occupy one address-less bucket for a given side and qualified name; different qualified names or distinct parsed addresses remain distinct. Stored address text and raw source bytes remain unchanged. The normalizer continues to reject all repeated identities; one-to-many abstention and its coordinated consumer changes remain deferred. No schema change.
+
+## Path and child-process boundary hardening (2026-11-11; audit TB-09, TB-12, TB-15)
+
+Source: `docs/qa/audit-trust-boundaries-20261107.md`. No persisted or CLI contract changes. Built: the TB-12 and TB-15 guards below, and the TB-09 guard on POSIX systems supporting `waitid` with `WNOWAIT` (2026-11-16). POSIX runtimes lacking these primitives are refused before spawning with a typed backend diagnostic.
+
+`ingestion.safe_path` (TB-12) also refuses, with the existing `PT-STORAGE: project path has an invalid or over-long component` error, any component that Windows would not store under the name given: a reserved device name with or without an extension, in any letter case (`CON`, `PRN`, `AUX`, `NUL`, `COM1`-`COM9`, `LPT1`-`LPT9`, their superscript-digit forms, `CONIN$`, `CONOUT$`), and a component that ends in a dot or a space. The rule is on the string and applies on every platform, because a project written on Linux is opened on Windows later. It is the one predicate the offline-bundle path rule already uses (`offline_bundle.windows_unsafe_component`); there is no second copy of the name list. Project-owned paths (`artifacts/<sha>.bin`, `runs/<id>/raw/json/result.ghidriff.json`, dot-prefixed names such as `.patchtrace.lock`) stay accepted.
+
+`jobs.run_process` (TB-15) validates the child environment before any spawn, on every platform: every name and value is a `str`, a name is not empty and contains neither `=` nor NUL, and a value contains no NUL. A violation raises `ValueError('PT-BACKEND: child environment has an invalid variable name or value')`; the text never echoes the name or the value. The Windows environment block is NUL-separated, so an unchecked NUL would add a variable the caller did not name.
+
+`jobs.run_process` (TB-09, POSIX only; the Windows Job Object path is unchanged): the process group is to be signalled only while its leader has not been reaped. The supervisor observes the leader's exit with `waitid(P_PID, pid, WEXITED | WNOHANG | WNOWAIT)`, which leaves it a zombie, sends the group `SIGKILL` (descendants that still hold the output pipe are terminated as before), and only then reaps the leader. Once the leader is reaped its pid can be recycled, so no later `killpg` is sent, including on the cleanup path. Where `os.waitid` or its required constants do not exist (including older macOS Python runtimes), spawning fails with `OSError('PT-BACKEND: safe process supervision requires POSIX waitid with WNOWAIT')`; upgrade to a runtime exposing these primitives. A cancelled request still returns without spawning.
+
+TB-09 supervision errors are not converted to a successful exit: an externally reaped child raises `PT-BACKEND` and disables further group signals; other `waitid` errors propagate after cleanup. The Windows Job Object path is unchanged.

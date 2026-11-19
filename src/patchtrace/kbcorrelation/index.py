@@ -151,6 +151,20 @@ def _native_revision_ambiguous(docs: list[ImportedDocument]) -> bool:
     return sum(_instant(d.source.current_release_date) == newest for d in docs) > 1
 
 
+def _revision_heads(documents: Iterable[ImportedDocument]) -> frozenset[str]:
+    """Logical revision heads within a population; only full-index heads admit current claims."""
+    groups: dict[tuple, list[ImportedDocument]] = {}
+    for doc in documents:
+        groups.setdefault(_group_key(doc), []).append(doc)
+    heads = set()
+    for docs in groups.values():
+        if _native_revision_ambiguous(docs):
+            heads.update(d.doc_id for d in docs)
+        else:
+            heads.add(max(docs, key=_revision_key).doc_id)
+    return frozenset(heads)
+
+
 def _card_consensus(docs: Iterable[ImportedDocument], active: frozenset[str], cves: set[str]
                     ) -> tuple[tuple[CveCard, ...], tuple[str, ...], tuple[str, ...]]:
     """Keep agreeing vendor facts by CVE/source kind; never pick a conflicting active snapshot's metadata."""
@@ -222,16 +236,24 @@ class ReverseIndex:
 
     def active_ids(self) -> frozenset[str]:
         """Newest comparable vendor instant; native unknown/tied revisions remain active, never hash-ordered."""
-        groups: dict[tuple, list[ImportedDocument]] = {}
+        return _revision_heads(self._docs.values())
+
+    def _revision_conflicts(self, active: frozenset[str]) -> tuple[set[tuple], set[str]]:
+        """Disputed edge keys and ambiguous months across ALL current source inputs."""
+        groups: dict[str, list[ImportedDocument]] = {}
         for doc in self._docs.values():
-            groups.setdefault(_group_key(doc), []).append(doc)
-        active = set()
-        for docs in groups.values():
-            if _native_revision_ambiguous(docs):
-                active.update(d.doc_id for d in docs)
-            else:
-                active.add(max(docs, key=_revision_key).doc_id)
-        return frozenset(active)
+            if doc.doc_id in active and doc.source.release_id:
+                groups.setdefault(doc.source.release_id, []).append(doc)
+        conflicted, ambiguous = set(), set()
+        for month, docs in groups.items():
+            if not _native_revision_ambiguous(docs):
+                continue
+            ambiguous.add(month)
+            per_doc = [{(edge.kb, edge.cve, edge.scope_id, edge.relation) for edge in doc.edges
+                        if edge.relation in REMEDIATION_RELATIONS} for doc in docs]
+            all_keys = set.union(*per_doc) if per_doc else set()
+            conflicted.update((month, *key) for key in all_keys if any(key not in rows for rows in per_doc))
+        return conflicted, ambiguous
 
     def corpus_digest(self) -> str:
         return corpus_digest(self._docs)
@@ -266,11 +288,15 @@ class ReverseIndex:
             requested = set(scope.months) | set(scope.doc_ids)
             picked = [d for d in docs if d.source.release_id in requested or d.doc_id in requested]
         else:  # cached_corpus
-            picked = docs
-            requested = {_label(d) for d in docs if d.doc_id in active}
+            named = set(scope.doc_ids)
+            picked = [d for d in docs if d.doc_id in named]
+            # Reproduce the saved population's logical-document accounting, not
+            # claim admission. active_ids() and revision conflicts remain global.
+            inspected_heads = _revision_heads(picked)
+            requested = {_label(d) for d in picked if d.doc_id in inspected_heads} | (named - self._docs.keys())
         inspected = set()
         for d in picked:
-            if d.doc_id in active or scope.kind in ('provided_files', 'mixed'):
+            if d.doc_id in active or scope.kind in ('provided_files', 'mixed', 'cached_corpus'):
                 inspected.add(d.doc_id if d.doc_id in requested else _label(d))
         return requested, inspected & requested, picked, scope.kind == 'cached_corpus'
 
@@ -313,25 +339,11 @@ class ReverseIndex:
         active = self.active_ids()
         chosen: list[KbCveEdge] = []
         old: list[KbCveEdge] = []
-        revision_conflicts: list[tuple[str, str, str, str]] = []
-        conflict_docs: dict[str, list[ImportedDocument]] = {}
-        for doc in picked:
-            if doc.doc_id in active and doc.source.release_id:
-                conflict_docs.setdefault(doc.source.release_id, []).append(doc)
-        conflicted_keys: set[tuple[str, str, str, str, str]] = set()
-        for month, docs in conflict_docs.items():
-            if not any(doc.source.dialect == DIALECT_MSRC for doc in docs) or not _native_revision_ambiguous(docs):
-                continue
-            per_doc = [{(edge.kb, edge.cve, edge.scope_id, edge.relation) for edge in doc.edges
-                        if edge.relation in REMEDIATION_RELATIONS} for doc in docs]
-            all_keys = set.union(*per_doc) if per_doc else set()
-            for edge_key in all_keys:
-                if any(edge_key not in rows for rows in per_doc):
-                    conflicted_keys.add((month, *edge_key))
-                    if ((query_kind == 'cve' and edge_key[1] == query)
-                            or (query_kind == 'kb' and edge_key[0] == query)) \
-                            and (scope_id is None or edge_key[2] == scope_id):
-                        revision_conflicts.append((month, edge_key[1], edge_key[0], edge_key[2]))
+        selected_months = {doc.source.release_id for doc in picked if doc.source.release_id}
+        conflicted_keys, ambiguous = self._revision_conflicts(active)
+        revision_conflicts = {(month, cve, kb, product) for month, kb, cve, product, _relation in conflicted_keys
+                              if month in selected_months and (scope_id is None or product == scope_id)
+                              and ((query_kind == 'cve' and cve == query) or (query_kind == 'kb' and kb == query))}
         for doc in picked:
             rows = [e for e in doc.edges if match(e)]
             rows = [self._as_revision_disputed(edge) if (doc.source.release_id or '', edge.kb, edge.cve,
@@ -350,6 +362,8 @@ class ReverseIndex:
         mention = tuple(sorted((e for e in chosen if e.relation == 'mention-only'), key=key))
         disputed = tuple(sorted((e for e in chosen if e.relation == 'disputed'), key=key))
         superseded = tuple(sorted(old, key=key))
+        named_old = (sorted({e.ref.doc_id for e in superseded} & set(scope.doc_ids))
+                     if scope.kind in ('provided_files', 'mixed') else [])
         status = self._status(coverage, edges)
         used = {e.scope_id for e in (*edges, *mention, *disputed, *superseded)}
         scopes = tuple(s for s in self.scopes() if s.scope_id in used)
@@ -359,10 +373,11 @@ class ReverseIndex:
                       groups=distinct_groups(edges), mention_only=mention, disputed=disputed,
                       superseded=superseded, scopes=scopes, excluded=tuple(sorted(excluded.items())),
                       cards=cards if query_kind == 'cve' else (), card_doc_ids=card_doc_ids,
-                      warnings=self._warnings(coverage, picked, edges, mention, disputed, superseded, status)
+                      warnings=self._warnings(coverage, picked, edges, mention, disputed, superseded, status, named_old,
+                                              bool(ambiguous & selected_months))
                       + tuple(f'REVISION_EDGE_CONFLICT: {month} has competing snapshots for {cve} {kb}; '
                               'the applicability is disputed and is not presented as current'
-                              for month, cve, kb, _scope in sorted(set(revision_conflicts)))
+                              for month, cve, kb, _scope in sorted(revision_conflicts))
                       + card_warnings)
 
     @staticmethod
@@ -383,7 +398,8 @@ class ReverseIndex:
         return 'found' if edges else 'not_observed'
 
     @staticmethod
-    def _warnings(coverage, picked, edges, mention, disputed, superseded, status) -> tuple[str, ...]:
+    def _warnings(coverage, picked, edges, mention, disputed, superseded, status, named_old=(),
+                  revision_unknown=False) -> tuple[str, ...]:
         out = []
         if status == 'partial':
             out.append('PARTIAL: some requested documents are not loaded or unreadable; absence proves nothing')
@@ -402,10 +418,12 @@ class ReverseIndex:
             out.append('DISPUTED: a negative product status contradicts the fix; the row is left out of leads')
         if superseded:
             out.append('SUPERSEDED: older revisions of a loaded document are retained and listed apart')
-        groups: dict[tuple, list[ImportedDocument]] = {}
-        for doc in picked:
-            groups.setdefault(_group_key(doc), []).append(doc)
-        if any(_native_revision_ambiguous(docs) for docs in groups.values()):
+        if named_old:
+            # Validated SHA-256 IDs are 64 characters; five plus the count/wording stay below 500.
+            names = ', '.join(named_old[:5]) + (f' and {len(named_old) - 5} more' if len(named_old) > 5 else '')
+            out.append(f'NAMED_SUPERSEDED: {names}. Matching rows in these selected sources are superseded in '
+                       'the loaded index and excluded from active results.')
+        if revision_unknown:
             out.append('REVISION_ORDER_UNKNOWN: native revision instants are missing or tied; snapshots remain '
                        'active without a newest-revision claim')
         out.append(REVISION_LAG_NOTE[0].upper() + REVISION_LAG_NOTE[1:])
@@ -435,11 +453,15 @@ class ReverseIndex:
         return tuple(sorted((s for d in self.documents if d.doc_id in active for s in d.statuses if s.cve == cve),
                             key=lambda s: (s.scope_id, s.value, s.pointer)))
 
-    def edge_set_digest(self) -> str:
-        """Digest of the edge identities of the active documents (a context key input, plan 7.4)."""
+    def edge_set_digest(self, scope: SearchScope | None = None) -> str:
+        """Admitted edge identities within an optional finite selector (a context key input, plan 7.4)."""
         active = self.active_ids()
-        return domain_id('kbc.edgeset', 1, sorted(e.edge_id for d in self._docs.values() if d.doc_id in active
-                                                  for e in d.edges))
+        conflicted, _ = self._revision_conflicts(active)
+        picked = self._docs.values() if scope is None else self._select(scope)[2]
+        ids = [self._as_revision_disputed(e).edge_id if (d.source.release_id or '', e.kb, e.cve,
+                                                          e.scope_id, e.relation) in conflicted else e.edge_id
+               for d in picked if d.doc_id in active for e in d.edges]
+        return domain_id('kbc.edgeset', 1, sorted(ids))
 
 
 def _older_than(stamp: str | None, now: str) -> bool:

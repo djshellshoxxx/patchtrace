@@ -430,7 +430,7 @@ def main(argv: list[str] | None = None) -> None:
                     shutil.copy2(source, target)
     shutil.copy2(python_license(), notices / 'Python-LICENSE.txt')
     (package / 'dependency-versions.json').write_text(json.dumps(versions, indent=2), encoding='utf-8')
-    inventory = sorted(str(p.relative_to(package)) for p in package.rglob('*') if p.is_file())
+    inventory = sorted(p.relative_to(package).as_posix() for p in package.rglob('*') if p.is_file())
     unexpected = [item for item in inventory if Path(item).name.lower().startswith(
         ('libqt6webengine', 'libqt6pdf', 'libqt6quick', 'libqt6qml'))]
     if unexpected:
@@ -451,10 +451,8 @@ def main(argv: list[str] | None = None) -> None:
     if not os.access(executable, os.X_OK):
         raise RuntimeError('Frozen executable is not executable')
     env = {**os.environ, 'QT_QPA_PLATFORM': os.environ.get('QT_QPA_PLATFORM', 'offscreen')}
-    subprocess.run([str(executable), '--self-test'], timeout=120, check=True, env=env)
-    cli = subprocess.run([str(executable), 'rank', '--help'], timeout=120, capture_output=True, text=True, env=env)
-    if cli.returncode != 0 or 'usage:' not in cli.stdout:
-        raise RuntimeError(f'Frozen CLI smoke failed ({cli.returncode}): {cli.stderr[-500:]}')
+    subprocess.run([sys.executable, str(root / 'tools' / 'frozen_smoke.py'), str(executable)],
+                   cwd=root, timeout=900, check=True, env=env)
     archive = root / 'dist' / f'PatchTrace-{args.version}-linux-x86_64.tar.gz'
     write_tar_gz(package, archive)  # tar keeps executable bits; ZIP from shutil may not
     Path(f'{archive}.sha256').write_text(f'{sha256_file(archive)}  {archive.name}\n', encoding='ascii')

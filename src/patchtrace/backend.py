@@ -61,10 +61,9 @@ class BackendConfig:
     cache_dir: str = ''
     no_cache: bool = False
     refresh: bool = False
-    # H7: child processes inherit the full environment unless restrict_env is set (default OFF until
-    # the allowlist is validated by a native Windows run; see docs/qa.md). env_passthrough lists
-    # extra names kept when restricted (proxies, custom JDK helpers).
-    restrict_env: bool = False
+    # H7: default to the existing allowlist. Explicit external compatibility opt-outs remain;
+    # bundle mode always restricts. env_passthrough lists extra validated names to keep.
+    restrict_env: bool = True
     env_passthrough: tuple[str, ...] = ()
     # BUNDLE B6: private payload next to the app. Isolated argv (-I), forced restricted env,
     # JAVA_HOME_OVERRIDE, scratch-directed TEMP/XDG_CACHE_HOME, never inside the install tree.

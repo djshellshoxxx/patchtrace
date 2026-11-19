@@ -1,0 +1,40 @@
+{
+  "$id": "https://patchtrace.local/schemas/kbcorrelation/1/InventorySelection.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "asserted_scope": {
+      "title": "Asserted Scope",
+      "type": "boolean"
+    },
+    "coverage_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Coverage Sha256",
+      "type": "string"
+    },
+    "entry_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Entry Id",
+      "type": "string"
+    },
+    "import_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Import Id",
+      "type": "string"
+    },
+    "scope_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Scope Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "import_id",
+    "entry_id",
+    "scope_id",
+    "coverage_sha256",
+    "asserted_scope"
+  ],
+  "title": "InventorySelection",
+  "type": "object"
+}

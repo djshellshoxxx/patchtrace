@@ -1,0 +1,114 @@
+{
+  "$id": "https://patchtrace.local/schemas/local-package/1/PackageLimits.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "max_callbacks": {
+      "default": 2000000,
+      "maximum": 2000000,
+      "minimum": 1,
+      "title": "Max Callbacks",
+      "type": "integer"
+    },
+    "max_containers": {
+      "default": 256,
+      "maximum": 256,
+      "minimum": 1,
+      "title": "Max Containers",
+      "type": "integer"
+    },
+    "max_depth": {
+      "default": 4,
+      "maximum": 4,
+      "minimum": 0,
+      "title": "Max Depth",
+      "type": "integer"
+    },
+    "max_diagnostics": {
+      "default": 1000,
+      "maximum": 1000,
+      "minimum": 1,
+      "title": "Max Diagnostics",
+      "type": "integer"
+    },
+    "max_entries": {
+      "default": 50000,
+      "maximum": 50000,
+      "minimum": 1,
+      "title": "Max Entries",
+      "type": "integer"
+    },
+    "max_entry_bytes": {
+      "default": 1073741824,
+      "maximum": 1073741824,
+      "minimum": 1,
+      "title": "Max Entry Bytes",
+      "type": "integer"
+    },
+    "max_expanded_bytes": {
+      "default": 8589934592,
+      "maximum": 8589934592,
+      "minimum": 1,
+      "title": "Max Expanded Bytes",
+      "type": "integer"
+    },
+    "max_json_bytes": {
+      "default": 67108864,
+      "maximum": 67108864,
+      "minimum": 1,
+      "title": "Max Json Bytes",
+      "type": "integer"
+    },
+    "max_live_allocation_bytes": {
+      "default": 536870912,
+      "maximum": 536870912,
+      "minimum": 1,
+      "title": "Max Live Allocation Bytes",
+      "type": "integer"
+    },
+    "max_metadata_bytes": {
+      "default": 33554432,
+      "maximum": 33554432,
+      "minimum": 1,
+      "title": "Max Metadata Bytes",
+      "type": "integer"
+    },
+    "max_name_bytes": {
+      "default": 1024,
+      "maximum": 1024,
+      "minimum": 1,
+      "title": "Max Name Bytes",
+      "type": "integer"
+    },
+    "max_process_bytes": {
+      "default": 1073741824,
+      "maximum": 1073741824,
+      "minimum": 1,
+      "title": "Max Process Bytes",
+      "type": "integer"
+    },
+    "max_seconds": {
+      "default": 1800,
+      "maximum": 1800,
+      "minimum": 1,
+      "title": "Max Seconds",
+      "type": "integer"
+    },
+    "max_source_bytes": {
+      "default": 2147483647,
+      "maximum": 2147483647,
+      "minimum": 1,
+      "title": "Max Source Bytes",
+      "type": "integer"
+    },
+    "max_xml_bytes": {
+      "default": 2097152,
+      "maximum": 2097152,
+      "minimum": 1,
+      "title": "Max Xml Bytes",
+      "type": "integer"
+    }
+  },
+  "title": "PackageLimits",
+  "type": "object"
+}

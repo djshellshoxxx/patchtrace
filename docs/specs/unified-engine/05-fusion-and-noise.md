@@ -79,6 +79,48 @@ def base_decision(edge_atoms, registry):
 `row()` sets `decision='contested'` when `against` is non-empty (SPEC-27: any source pairing an endpoint differently), keeps the uncontested decision in `hints` (`uncontested:matched`), and sets `Contest.strength = 'strong'` iff any against-atom has tier M, A or B, else `'weak'` (D-12). Contested rows are never auto-anything; a manual row stays `matched` with its contest shown. One-sided observations (Ghidriff `added`/`deleted`, unmatched lists) are absence of evidence (D-14): they never contest a pairing; the row carries hint `one-sided-by:<source>` instead. **A-29 (2026-11-11, p7):** the ladder's leftovers are one-sided observations too: `ladder_output` emits one tier-W atom (source `pt-ladder`, step `leftover`, class E-UNKNOWN, the leftover reason as `native` text) and a `NodeRecord` per leftover function of kind `function` or `thunk`, so an IR-only result (no `ghidriff` source) shows `older-only`/`newer-only` rows exactly as a Ghidriff `added`/`deleted` list does; imports and externals are never rows (`ladder-leftovers-not-shown:<kind>`). `LADDER_VERSION` moves with this change. This deliberately differs from the C6 reconcile verdict for "removed(A) vs engine A->B" (R01 s3): A-08 records it and the Unified tab shows both texts (R-19).
 
 ### 1.4 Invariants and what fusion never does
+
+L-39 orientation amendment (2026-11-18 UTC, recovery of UE-R7 commit
+`7237c55cba6e134c58df7936f273fd269aa864c5`): the atom cap must preserve the
+same evidence when older and newer sides are exchanged. Rank cuts by an
+orientation-independent key including native evidence, keep mirror twins
+together, and reserve two opposing atoms when the strongest opposing claim is a
+twin pair. A capped row can consequently contain one fewer atom than the cap.
+Persisted row ordering remains unchanged. Register `arbiter=2` to invalidate
+cached results without rolling back newer channel or proof versions. The
+selected support atom can name either member of an indistinguishable mirror
+twin pair; support component and strength are invariant. Regression coverage
+includes the real 64-atom cap and bounded dense mirror properties.
+
+L-39 acceptance-evidence amendment (2026-11-18 UTC, R2 recovery): after the
+existing admission and greedy choice, the cap must retain the evidence required
+by the chosen decision. A 1:1 `matched` row without chosen tier M/A evidence
+reserves one deterministic pair of chosen tier B atoms with different
+independence components and different non-unknown classes. A `contested` row
+with `uncontested:matched` needs the same witness in addition to its opposing
+evidence. Tentative/candidate rows (including their contested forms), one-sided
+rows and inferred or analyst groups do not depend on this B+B acceptance rule.
+M/A acceptance retains the existing strongest-component reservation.
+
+Select the witness in orientation-independent atom order; retain every member
+of each selected mirror-key group. Union it with the strongest-per-component
+groups, then reserve the strongest opposing group, before filling the remaining
+space by the existing prefix policy. `Support` remains the max-pool inventory
+of s1.1: its indices may both name E-BODY atoms while the retained atom list
+contains the cross-class witness. No native confidence value affects admission
+or that inventory. If a custom L-39 cap cannot hold all mandatory groups, refuse
+with `PT-UNIFIED-LIMIT` / `atoms-cap` in both orientations, before writing a
+result; never exceed the cap or erase the witness or contest. Custom limits are
+the pure/in-process API seam, not a new CLI option. The default cap remains 64.
+
+Register `arbiter=3`; only that channel version changes. Orientation version 2,
+other current channel/proof policies and `ude/2` remain intact. A version-2
+result receives a different current key but stays verifiable and readable as
+historical evidence, including rows whose stored atoms reflect the old
+omission. Authored atom, strict store, shared desktop-detail and headless CLI
+controls establish these mechanics; they do not establish native accuracy or
+change frozen qualification outcomes.
+
 Never averages, sums or ranks native scores across sources; never treats a missing atom as a vote (absent sources leave `support` shorter, nothing else); never converts counts of agreeing sources into a number shown to users; never lets a model override `contested` (SPEC-28 calibration s9.5). Display level is read from `calibration.policy.display_level()` and is `'ordinal'` today; a future validated artifact for a unified profile may add bands through the read model only (C-09). Tests: `test_fusion_never_emits_numbers`, `test_absent_source_is_not_a_vote`, `test_weak_contest_still_contested`, `test_two_ghidra_derived_sources_are_one_component`, `test_same_class_never_corroborates_across_components` (Ghidriff ExactMnemonics + `pt-bytes` P08 -> `tentative`), `test_manual_row_accepted_with_contest_shown`, `test_greedy_matching_keeps_every_against_atom`, `test_one_sided_observation_never_contests`.
 
 ### 1.5 How the L1 false-positive rate is bounded
@@ -138,8 +180,8 @@ def operand_deltas(a_ins, b_ins, align, rows, dmap, pe) -> tuple[list[Delta], Co
 ### 2.3 Alignment (`facts/align.py`)
 Pairs with equal `h1` are aligned positionally (instruction k <-> k). Otherwise block level first: blocks paired by unique block body key (block `h1` without its terminating branch) inside the pair, then by CFG position (entry, then successors of paired blocks, unique only); instruction level inside paired blocks: patience diff on L2 tokens, Hirschberg LCS fallback (linear space) when patience leaves gaps; whole-function cap L-27 (beyond: prefix/suffix only, verdict at most `review`, `limits_hit: align-cap`). Tie-breaks (block pairing order, patience anchors, the LCS fill) are deterministic **and orientation-symmetric** (A-31, 2026-11-11, p17): `align(newer, older)` is the mirror of `align(older, newer)`, so no verdict, proof or delta depends on which side is older; a side-dependent RVA tie-break is withdrawn. Property test required (04 s9 style). `align` version 2.
 
-### 2.4 Canonical pseudo-code C6 (`facts/pseudo.py`, version `canon/1`)
-Input: Ghidriff `code` of both functions (bounded L-29) or S3b output. Rules (R05 R7): strip comments and whitespace; alpha-rename locals, parameters and decompiler temporaries per function in order of first definition (`uVar1`, `local_18`, `param_3`, `in_RAX` -> `v1`, `v2` ...); replace `FUN_<hex>`/`DAT_<hex>`/`LAB_<hex>`/`PTR_<hex>`/`switchD_`/`caseD_` labels by the counterpart's row id (functions) or DATA-MAP pair id (data) when mapped, else by `U<k>` numbered in order of first use per function and count the unmapped label pairs; keep literal values, operators, casts and call names. C6 `equal` = token sequences identical; `unmapped_labels` > 0 forbids COS-PSEUDO (an alpha-renamed unmapped label could hide a swapped global, R-02). Literals are normalised for comparison only (hex/decimal/char spelling, sign extension to the operand width) so value-anchored corroboration (2.5) can match `0x200` with `512`.
+### 2.4 Canonical pseudo-code C6 (`facts/pseudo.py`, version `canon/2`)
+Input: Ghidriff `code` of both functions (bounded L-29) or S3b output. Rules (R05 R7): strip comments and whitespace; alpha-rename locals, parameters and decompiler temporaries per function in order of first definition (`uVar1`, `local_18`, `param_3`, `in_RAX` -> `v1`, `v2` ...); replace `FUN_<hex>`/`DAT_<hex>`/`LAB_<hex>`/`PTR_<hex>`/`switchD_`/`caseD_` labels by the counterpart's row id (functions) or DATA-MAP pair id (data) when mapped, else by `U<k>` numbered in order of first use per function and count the unmapped label pairs; keep literal values with type-relevant suffix/radix hints, operators, casts and call names. C6 `equal` = token sequences identical; `unmapped_labels` > 0 forbids COS-PSEUDO (an alpha-renamed unmapped label could hide a swapped global, R-02). Literals are normalised for comparison only (hex/decimal/char spelling, sign extension to the operand width) so value-anchored corroboration (2.5) can match `0x200` with `512`.
 
 ### 2.5 Verdicts and proofs (`facts/verdict.py`; first match wins)
 ```python
@@ -153,7 +195,7 @@ def judge(ch: Channels, deltas, cons, row, eh) -> ChangeFacts:
     if not semantic and ch.C4 == ch.C5 == 'equal':
         if structural_ok and ch.C1 == 'equal' and cfg_positional_equal(row): return facts('cosmetic', proof='COS-ADDR/1')
         if structural_ok and layout_bijection(row): return facts('cosmetic', proof='COS-LAYOUT/1')   # polarity-preserving (R-04)
-        if targets_ok and eh != 'differs' and ch.C6 == 'equal' and ch.unmapped_labels == 0:
+        if targets_ok and ((ir_available and eh in ('equal', 'absent')) or (not ir_available and eh != 'differs')) and ch.C6 == 'equal' and ch.unmapped_labels == 0:
             return facts('cosmetic', proof='COS-PSEUDO/1')    # decompiler-relative: never hidden by default (R-04, U-03)
     for d in semantic:                                         # value-anchored second channel (MAT-ANCHOR, R-08)
         second = anchored_second_channel(d, ch, row)           # table below; None if no OTHER data group shows THIS change
@@ -170,6 +212,8 @@ def judge(ch: Channels, deltas, cons, row, eh) -> ChangeFacts:
 | COS-LAYOUT/1 | bijection of blocks by unique body key (h1 without terminator) covering all blocks; every edge maps to an edge with the same polarity (jcc inverted only by the closed table JZ/JNZ, JB/JAE, JBE/JA, JL/JGE, JLE/JG, JS/JNS, JO/JNO, JP/JNP with swapped successors); terminators otherwise equal or an added/removed unconditional JMP to the fall-through block; all address operands `mapped`; C4, C5 equal; EH-EQ | equal counts/MD/multisets do NOT prove isomorphism (a then/else swap passes them); the polarity-preserving bijection does |
 | COS-PSEUDO/1 | C6 equal with zero unmapped labels; C4, C5 equal; no semantic delta in IR channels when IR exists; EH-EQ when IR exists | relative to Ghidra's decompiler only (it can drop arguments beyond an inferred prototype or flag-only effects), so its rows are listed, never hidden |
 | EH-EQ | both sides without unwind data, or equal normalised UNWIND_INFO (version, flags, prolog size, frame register/offset, unwind codes), same handler (mapped or equal import key) and equal handler-data length; `__C_specific_handler` scope records equal after subtracting the function start and mapping filters | SEH scopes are invisible to bytes and decompiler (R-16); otherwise class `eh` -> `review` |
+
+In the pseudocode above, `ir_available` means a complete IR pair was loaded (not merely a planned extraction). **R3-PC01 clarification:** EH-`unavailable` blocks the IR-backed `COS-PSEUDO/1` rule; S0 decompiler-relative results without IR retain the historical `eh != 'differs'` gate. This is a narrowing of an existing proof's implementation, not a new cosmetic class. **R3-PC08:** even with equal C6, a real IR `register-only` delta blocks `COS-PSEUDO/1`; the decompiler can hide ABI-visible register changes. Both adjustments are tracked under proof implementation version 2. The internal `COS-PSEUDO/1` proof implementation version advances to 2 in the registry so cached results are not silently reused.
 
 MAT-ANCHOR (second channel must observe the SAME change, from another data group; any other difference does not count):
 
@@ -265,3 +309,27 @@ Verdict deltas: `_ir_proof` order is UNCH/1 (C0 equal, targets_ok, EH-EQ, no del
 Registry: `CHANNEL_VERSIONS` gained C0-C5, `align`, `datamap`, `eh-eq`; `PROOF_VERSIONS` gained UNCH/1, COS-ADDR/1, COS-LAYOUT/1 (all version 1); they enter `config_digest`, so results computed before S3 are recomputed once.
 Open limits (reported, not hidden): (1) a switch table whose targets are permuted among the cases is invisible to the IR (the set of targets is equal); (2) block pairing has no similarity fallback, so a guard added at the function entry leaves most blocks unpaired and the pair yields many `unknown` deltas, still `review`/`material`, never a proof; (3) a single-use datum with no confirmed neighbour in its section, a data reference into a code section (ctor lists) and a function with unmapped targets stay `unmapped`: `review`, class `address-only`, never material (the real MinGW pair of docs/qa.md [S3:ir-facts] shows 7 of 61 CRT functions in that state; large images have more confirmed neighbours); (4) instructions are decoded per pair (about 8 microseconds per instruction), equal-`h1` pairs are not fast-pathed on the `ref` rows; (5) MSVC output (RVA-form switches, CFG dispatch, /GS cookies) and Windows were not seen by S3, only clang and MinGW code.
 Integration asks (S3 does not edit `compute.py`, `worker.py` or `fusion/arbiter.py`): (a) `compute.py` builds `IrSides` from the two placed sidecars, passes `ir_sides=` and `budget=` and fills the `ir_older`/`ir_newer` references and drops the `ir-not-extracted` limitation; (b) `worker.MODULES` (the frozen self-check list) may list the new `facts.*` modules; (c) `arbiter.to_match(..., flags=judged.flags)` stores the row flags; (d) `IrSides.identical` is `older_sha256 == newer_sha256`; (e) the `IrReader -> IrSide` adapter for the ladder (S2 seam) is still missing; (f) the `refacts` stage (S3b, 2.8): `select_for_decompile` over the judged rows, `decompile_side` for the older and the newer side with the chosen RVAs (the GZFs retained by the run), `FactsContext.build(..., decompiled=)` again, judge those rows only, publish them. As built, a text only ever becomes the SECOND channel: a decompiled difference without a bytes delta cannot make a row `material`, and a text that does not show the edited literal leaves the row in `review`.
+
+
+## R8 adversarial correction proposal: typed numeric literals (2026-10-30)
+
+**R8-LIT-01 (source-observed, compiler corroborated; no end-to-end Ghidriff accuracy claim).** The earlier `canon/1` value-only numeric rule may not erase type-relevant C literal syntax. For instance, on common 32-bit-`int` Windows x64 C targets, the expressions `x < 2147483648` and `x < 2147483648U` are not interchangeable. Likewise, `0.1` and `0.1f` are double and float literals respectively. Equal normalized tokens from these pairs could incorrectly satisfy the weak `COS-PSEUDO/1` conditions when the decompiler actually emits both forms.
+
+**Conservative `canon/2` amendment (R8):** preserve unsigned and long/long-long suffix type hints in canonical integer tokens; parse leading-zero integer literals as octal per ISO C; retain explicit `f/F` floating suffix while leaving unsuffixed literals distinct; for unsuffixed integer constants above `INT32_MAX` preserve decimal vs hexadecimal vs octal radix as a type-relevant distinction. Normalize same-type small decimal/hex values by mathematical value (e.g. `256` == `0x100`) and equivalent suffix orderings (e.g. `16uL` == `16Lu`). Parse a malformed token conservatively and retain its spelling rather than interpreting it as a valid numeric constant. No signedness or width probability is inferred from missing compiler-specific type information. This is a *false-benign reduction* and may conservatively increase review outcomes.
+
+**Integration requirements:** bump `registry.CHANNEL_VERSIONS['canon']` from 1 to 2 so the result `config_digest` changes; do not modify persisted wire schemas; the `PROOF_VERSIONS` bump belongs to the R3-PC01 EH-EQ narrowing; write failing focused tests before the implementation; preserve existing `0x100`/256 normalization; run native Ghidriff sample to determine whether its real decompiler output exhibits the hostile spellings. This correction must not turn a decompiler-relative canonical proof into a claim of binary behavioral equivalence.
+
+**Reproducibility and constraints:** source fixtures, exact compiler versions and independent `.text` digests are in `docs/research/deep-uncertainty-r8/01-typed-literal-counterexamples.md`; no compiled artifact is committed, and no target binary is executed. Acceptance is *source-unit verified* first, *native integration pending* until CI runs with real Ghidra/Ghidriff.
+
+
+### Reconciled literal contract clarification
+
+On the Windows x64 LLP64 target, a signed `L` suffix does not remove radix-dependent type selection above `INT32_MAX`: `2147483648L` and `0x80000000L` must remain distinct. Preserve radix for signed long literals above that bound (and signed long-long above `INT64_MAX`), while keeping small same-type spellings equivalent. Both `canon` channel version 2 and `COS-PSEUDO/1` proof implementation version 3 participate in the configuration digest (implementation version 2 was already taken by the FCT-03 register-only blocker, so the R3-PC01 EH-EQ narrowing ported on 2026-11-18 from PR #144 is version 3). This is a conservative proof correction, not native acceptance.
+
+Exponent-form floating constants with no decimal point (such as `010e1`) must be scanned as one float token before octal integer normalization. Otherwise `010e1` (100.0) can collide with `8e1` (80.0) in both C5 and C6. Preserve exponent and suffix spelling conservatively.
+
+Typed integer keys must remain usable by downstream facts: sort by numeric value with type/radix as a deterministic tie-break, render the retained type/radix as C literal syntax, and compare numeric value forms only for MAT-ANCHOR corroboration of an independently observed machine constant delta. Keep full typed keys for C5/C6 equality; a type-only edit cannot fabricate a machine delta.
+
+For machine-value corroboration, project typed numeric tokens to value keys before multiset subtraction. Type-only suffix exchanges between two unchanged values must not manufacture a removed/added value pair. Preserve the original typed counters for C5/C6 equality and display.
+
+For structure offsets, the secondary text fallback recognizes only removed/added field identifiers carrying actual offset syntax (such as `field_0x100`), not raw numeric tokens whose values have already cancelled. Both constant and structure-offset anchors must reject suffix-only exchanges.

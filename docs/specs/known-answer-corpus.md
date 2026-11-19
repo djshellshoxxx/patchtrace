@@ -129,6 +129,26 @@ writing a volatile sink so it works in freestanding code. Determinism: candidate
 seed, target (file, function), site (line, column, before/after text), attempts and rejections, so it is reproducible
 byte for byte. A mutant that does not compile is rejected and the next site is tried (bounded attempts).
 
+### Optional source-checker COFF compatibility (2026-11-18)
+
+`mutations.engine.make_masked_body_check` is the optional source-layer form of
+the section 7 rule, passed explicitly as `apply_case(extra_check=...)`. Its
+RIP-relative address normalization accepts quoted names and unquoted COFF-style
+names containing `?`, including the complete literal-dependent `??_C@...` name.
+The existing optional signed decimal addend and immediate `(%rip)` anchoring
+remain unchanged. A symbol spelling or address addend alone must not make the
+normalized bodies differ. Opcode, register, ordinary immediate, non-RIP memory
+offset and base-register differences remain observable. Existing local-label,
+branch/call-target and function/body-boundary handling remains unchanged; in
+particular `jmp emit` normalizes to `jmp T`.
+
+The semantic branch rejects equal bodies; the cosmetic branch requires equal
+bodies; an unavailable body remains rejected. Tests use authored assembly and
+the real optional checker/apply-case path without executing a compiler or
+target. Unquoted names are compatibility inputs, not evidence that the exact
+configured Clang emits that spelling. This does not wire the optional checker
+into the factory, alter image-level body hashing or relabel any frozen corpus.
+
 ## 9. A/A and toolchain noise (M4)
 (a) Rebuild the same source twice in two different scratch directories with the same flags: the pair must be byte-identical
 (reproducibility check lists differing sections otherwise) and labels are all `unchanged`. (b) Same source at O0/O1/O2/O3/Os
@@ -323,6 +343,58 @@ reproducibility; label round trip (schema, annotation log, calibration-labels); 
 reports and label files only (never images). Windows leg (advisory, `continue-on-error`): the runner's LLVM clang/lld-link
 builds the freestanding suites and checks reproducibility; missing tools are recorded as BLOCKED.
 
+### A/A failure propagation (2026-11-18)
+
+A command summary with `command: aa` and a nonempty `not_byte_identical` list
+fails the byte-reproducibility requirement in section 9. For exit 0 or 1, the
+shard records that case as `failed`, retains a bounded A/A byte-identity reason,
+and stops the remaining steps of that case. Persisting/reloading the shard,
+merge provenance, Markdown and both shard/merge CLI exit decisions must retain
+the failure. Generic `findings` is not a successful A/A reproducibility result.
+
+Timeout, blocked and other failed exits retain their existing precedence and
+diagnostics. An empty A/A difference list keeps the existing exit classification;
+non-A/A noise, mutation and evaluation findings keep their current semantics.
+This change applies only to newly produced reports. It adds no card/recipe case
+grammar, changes no frozen receipt or expected corpus outcome, and establishes
+no native/compiler reproducibility result from the authored runner controls.
+
+### Exit-1 summary recognition and diagnostics (2026-11-18)
+
+Exit 1 without a recognized command summary is a failed command, rather than
+declared findings. This applies equally to case steps and the separate engine
+evaluation lane. The existing bounded failure reason and stderr-tail logging
+must run for absent, malformed or unrecognized exit-1 summaries. A failed case
+step stops that case's remaining steps; independent evaluation keeps its
+existing scheduling. Raw stderr stays in the job log, with only the existing
+bounded one-line reason retained in the aggregate shard result.
+
+JSON extraction and command recognition are separate. `_summary` continues to
+parse a whole JSON object or its existing trailing-object forms; a parsed object
+alone is insufficient to recognize an exit-1 command result. The recognized
+command names are exactly the current shard step/evaluation names `fetch`,
+`build-suite`, `build-card`, `aa`, `noise`, `mutate`, `evaluate`, plus the existing
+legacy `suite` summary spelling. Recognition requires an exact string command
+and a string `status` equal to `ok`, `findings` or `failed`. If status is absent,
+only legacy `suite` with an integer `disagreements >= 0` is recognized; booleans,
+negative counts, non-integers and present-but-invalid status values are refused.
+The existing `{"command":"suite","disagreements":1}` positive remains valid.
+
+This is a narrow recognition rule, not a complete summary schema or a new
+command-argv binding. Recognized fetch/evaluate `status: failed` summaries keep
+their established exit-1 `findings` classification in this slice. Other parsed
+summary fields, result sanitization/absorption, and report validation keep their
+current contracts. The A/A non-byte-identical override above retains precedence.
+Exit 0/skipped, blocked, timeout and other exit codes keep their existing
+classification. No missing diagnostic, parser fallback or timeout can become
+positive native evidence through this rule.
+
+Authored injected-runner tests cover both lanes, genuine declared findings,
+legacy suite counts, failed-status fetch/evaluation summaries, A/A precedence,
+bounded reasons/log tails and shard/merge propagation. They execute no compiler,
+engine, target or network. Frozen receipts and their unknown native failure
+causes are unchanged; this repair only improves newly observed failure reporting.
+
 ## 14. Tests (`tests/test_tier_r_*.py`; synthetic C compiled inside the tests; BLOCKED, never silently skipped, without a compiler)
 Contracts and schema drift; examples valid/invalid; locator on hostile C (comments, strings, K&R, macros, `#if`);
 every mutation operator (applies, compiles, deterministic, records); identity join and decision table; PDB and DWARF
@@ -357,3 +429,35 @@ no-recipe; evaluation metrics on hand-computed match sets; report determinism; a
 4. New contract `tier-r-engine-output/1` (`EngineOutputDoc`, in `report_schemas.py`): the normalised per-pair engine answer whose canonical SHA-256 is `output_sha256` of a report pair row. Schema in `docs/schemas/corpus/EngineOutputDoc.json`; examples (including a report produced by the real evaluator from SYNTHETIC output) in `docs/schemas/corpus/report-examples/`. The `tier-r-report/1` model itself stays in `contracts.py` / `schemas.py`.
 5. Manifest: suite sources become `git = "suite:<suite>"` with a derived 40-hex commit; images are recorded by identity only (they live in `<store>/images/`, so `corpus verify` reports them missing until linked into `binaries/<sha>/`). `created` defaults to a fixed placeholder so manifests are reproducible. Annotation: answers are constructed from the truth (`same`, `different`, `no-counterpart`, `indeterminate`); candidates with an unlabelled side are skipped and counted; timestamps are a fixed placeholder; the log is written in bulk in the `label.AnnotationLog` chain format.
 6. `mutate` is a stub: delegates to `tools.calibration.mutations.main(argv)` when importable, otherwise exits 3 (BLOCKED, owned by another worker). No `shard` helper was added (owned by another worker). Not verifiable here: live rz-diff, BinDiff and Ghidriff scoring (no rizin, BinDiff or Ghidra installed; the rz-diff test drives a synthetic fake script through the production adapter).
+
+### [R1-data-integrity] 2026-11-16 recovered bounded provenance and evidence repair
+
+Every newly observed full `tier-r-build/1` record is retained under the debug
+image's `builds/<sha256-of-exact-receipt-bytes>.json`. The complete sorted,
+indented UTF-8 JSON plus LF is staged privately and published atomically without
+replacement using a hard link. An existing receipt must be a regular non-symlink
+file with exactly equal bytes; mismatch or unsupported hard-link publication
+fails before updating `build.json`. That existing filename remains the mutable
+last-observed compatibility view, updated through a separately staged atomic replacement.
+Both staged files are flushed and fsynced before publication; failure preserves
+earlier complete files, and a compatibility-view failure retains the new receipt. Equal receipts are reused without rewriting;
+different provenance for equal image bytes remains separately discoverable.
+No receipt is inferred from preexisting `build.json` history. This bounded local
+writer does not claim retained-parent anchoring, hostile concurrent-filesystem
+protection, or power-loss durability; the separate research CLI publisher is not
+installed by this amendment.
+
+Within a factory session, `SideData` reuse requires equal build specification,
+debug-image hash, recipe digest, source digest, recorded compiler source-directory
+spellings, and resolved source root. An
+equal debug hash alone cannot substitute another build's provenance or source
+lookup context. This is an in-session cache key, not verification that mutable
+source files still match the build inputs.
+
+For declared unchanged controls in s7, decisive `unchanged` or `cosmetic`
+evidence sets `check=ok`, decisive `changed` evidence sets `check=disagree`, and
+ambiguous source/body evidence remains `check=unchecked`. Existing identity
+ambiguity and missing-counterpart rules remain; no matching or label derivation
+algorithm changes. These changes preserve the existing public wire contracts
+and require no generated schema change. Synthetic record regressions establish
+these invariants, without native-tool, corpus, or evaluation acceptance claims.

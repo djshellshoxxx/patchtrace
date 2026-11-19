@@ -1,0 +1,94 @@
+{
+  "artifacts": [
+    {
+      "bytes": 0,
+      "path": "raw/00-probe.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 78,
+      "path": "raw/00-probe.stdout",
+      "sha256": "58bc26af2200fd35b39248f09ffa655df0b50a3ccb3219cdb91696b72516efa2"
+    },
+    {
+      "bytes": 108,
+      "path": "raw/01-analysis.stderr",
+      "sha256": "545d5ce5a474fbd397e64832256bccdea1e1e7d238fc68def7e2d4720788c0fc"
+    },
+    {
+      "bytes": 834,
+      "path": "raw/01-analysis.stdout",
+      "sha256": "52a42e2045d1c4d3368ed319eaf8be4ad40b5c1087806ed643a3be1e4ae7dbb2"
+    }
+  ],
+  "experiment_id": "rq-l2-native-pilot",
+  "fixture": {
+    "license": "MIT",
+    "publication_permitted": true,
+    "source": "open-source-compiled-elf"
+  },
+  "inputs": {
+    "env_fingerprint": "fa5f627ecdef37be0c292950c5af63043495448346e869c1a56d1892ca6e0359",
+    "network_policy": "none requested during analysis",
+    "newer_sha256": "96bcb8a0b8f9201d12c81e30090d933e13e7679125c26d5d604ebb0f02028df0",
+    "older_sha256": "c3914b7f5f70b88dbfc25677211347ffa86ab38a833e065a5e51a0445c26133b",
+    "options_sha256": "16c5d57eb1924b5c717dca33b7e3c76107706060c42bb2abf2fcaa52c87a6984"
+  },
+  "observed": {
+    "duration_s": 2.12,
+    "ended_utc": "2026-11-18T08:29:54.820941Z",
+    "started_utc": "2026-11-18T08:29:52.699329Z"
+  },
+  "patchtrace": {
+    "ref": null,
+    "repo": "djshellshoxxx/patchtrace",
+    "sha": "9ac9cbeb8ba1947b5e0889e03dccad769a6d155b"
+  },
+  "result": {
+    "blocked_reasons": [],
+    "counters": {
+      "cases": 1,
+      "native_matches": 5,
+      "projects": 1
+    },
+    "exit_code": 1,
+    "result_hashes": {
+      "oracle": "bbd619b791a64d39ec48740eebe8aeed84b0bff3dbd561b61bc0ce9aaed941d1",
+      "pilot_result": "6d95d0b857d2a2cdb61ceecf6a69d05133dd852677aa6889b10fbd4544de339e",
+      "plan": "d6a2dc2b5a1dc59304fc2a8279b6c186537be267448cf9bd0d700e6617e6dbef"
+    },
+    "status": "FAIL",
+    "stop_reason": "Existing exact-name per-case comparison: MISS",
+    "unverified": [
+      "Windows_MSVC_L2_acceptance",
+      "desktop_acquisition",
+      "vulnerability_attribution_accuracy",
+      "L3",
+      "corpus_accuracy"
+    ],
+    "validations_run": [
+      "frozen_oracle",
+      "input_hashes",
+      "tool_hash_version",
+      "production_scheduler_adapter",
+      "existing_ranking_exact_name_comparison"
+    ]
+  },
+  "review": null,
+  "runtime": {
+    "implementation": "CPython",
+    "machine": "x86_64",
+    "python": "3.12.14",
+    "release": "6.18.57",
+    "system": "Linux"
+  },
+  "scenario_id": "http-parser-cve-2020-8287-elf-gcc",
+  "schema_version": 1,
+  "tool": {
+    "executable_sha256": "536987d5d0e5d2a35689f653502dc10f8be8751a46ef2ffd888e8d514ed9712e",
+    "name": "rz-diff-production-adapter",
+    "upstream_ref": "c3a90e9226d977f58f4e9c75f78fa6b07afe13c7",
+    "upstream_url": "https://github.com/rizinorg/rizin",
+    "version": "0.9.1"
+  }
+}

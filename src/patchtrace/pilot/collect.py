@@ -3,9 +3,10 @@
 `collect` is the one place that knows where each channel comes from: Ghidriff rows with the PE image layouts, B1 signals
 (the stored default profile when current, else computed in memory), the current unified result (unless switched off) or
 the secondary engines' verdicts for the pairing, call labels with the PE import delta, and the stored CSAF advisories with
-their CVE contexts. A source that is missing becomes a channel that is not run (or failed), never a negative vote.
-Stored capa/FLOSS/DiE results, CISA KEV and the KB window are not read yet: their channels say so, and the CSAF-derived
-count feeds the confounded window. Owner thread only (it reads the project database); nothing is run, sent or executed.
+their CVE contexts, plus source-bound retained CVRF cards for CVEs outside the CSAF universe. A source that is missing
+becomes a channel that is not run (or failed), never a negative vote. Stored capa/FLOSS/DiE results and a complete KB
+window are not read yet: their channels say so. Owner thread only (it reads the project database); nothing is run,
+sent or executed. Retained CVRF context never establishes file applicability or upstream freshness.
 
 `universe` decides which stored CVEs a run computes: `--cve` chooses what is shown and never what is computed, so a result
 does not depend on the question asked of it.
@@ -58,6 +59,23 @@ class _NoCatalog:
 
     def snapshot_id(self) -> None:
         return None
+
+
+def local_kev():
+    """One verified local snapshot and recovery notes; an unavailable catalog never becomes a negative vote."""
+    from ..kev.contracts import KevError
+    from ..kev.store import KevStore, default_kev_dir
+    from .sources.kev import CatalogKev
+
+    try:
+        loaded = KevStore(default_kev_dir()).load_current()
+        if loaded is not None:
+            catalog = loaded.catalog
+            return CatalogKev(catalog.meta.snapshot_id,
+                              {entry.cve_id: entry.date_added for entry in catalog.entries}), loaded.notes
+    except (KevError, OSError, ValueError):
+        return _NoCatalog(), ('The local KEV catalog could not be read; KEV context is unknown.',)
+    return _NoCatalog(), ()
 
 
 def universe(stored: Sequence[str], named: Sequence[str], *, cap: int = DEFAULT_LIMITS.p03_cves
@@ -161,18 +179,18 @@ def _unified(service, enrichment: EnrichmentStore, older: str, newer: str, budge
     return UnifiedPairing(view), UnifiedFacts(view), None
 
 
-def _contexts(source, computed: Sequence[str], assume: Sequence[str]):
-    from .sources.advisory import context_from_report, cve_context
-    from .sources.kev import NO_CATALOG
+def _contexts(source, computed: Sequence[str], assume: Sequence[str], kev):
+    from .sources.advisory import cve_context
+    from .sources.kev import kev_context
     from .sources.window import confounding
     unknown = [cve for cve in assume if cve not in computed]
     if unknown:
         raise PilotError('PT-PILOT-INPUT', f'--assume-applies names {unknown[0]}, which no stored advisory of this run '
                          'lists', reason='assume-unknown-cve')
-    found = [context_from_report(source.report(cve), assume_applies=cve in assume) for cve in computed]
+    found = [source.context(cve, assume_applies=cve in assume) for cve in computed]
     window = confounding({c.cve: c.gate for c in found}, min_cves=CONFIG.confounded_min_cves)
     zero = LeadCounts(fit=0, review=0, partial=0, code=0, queue=0)
-    return (tuple(cve_context(c, kev=NO_CATALOG, confounding=window, counts=zero) for c in found),
+    return (tuple(cve_context(c, kev=kev_context(kev, c.cve), confounding=window, counts=zero) for c in found),
             {c.cve: c.observations for c in found})
 
 
@@ -187,6 +205,7 @@ def collect(service, enrichment: EnrichmentStore, *, named: Sequence[str] = (), 
     from .sources.advisory import StoredAdvisorySource
     from .sources.calls import GhidriffCalls
     from .sources.code import B1Evidence, CodeEvidence, GhidriffPairing, GhidriffRows
+    from .sources.kb_context import ProjectAdvisorySource, available_cves, capture
     project = service.project
     run = store.completed_run(project)
     if run is None:
@@ -204,15 +223,26 @@ def collect(service, enrichment: EnrichmentStore, *, named: Sequence[str] = (), 
     pairing, typed, note = _unified(service, enrichment, older_sha, newer_sha, budget) if unified else (None, None, None)
     advisories, warnings = AdvisoryStore(service.root, enrichment, project.id, project.revision).advisories()
     older_id, newer_id = project_identities(project.artifacts, service.root, {}, cancel)
-    computed, _shown = universe(sorted({cve for a in advisories for cve in a.facts.cves()}), named)
-    source = StoredAdvisorySource(advisories, older_id, newer_id, cves=computed, warnings=warnings, cancel=cancel)
-    contexts, entries = _contexts(source, computed, assume)
+    csaf_cves = {cve for a in advisories for cve in a.facts.cves()}
+    retained = capture(service, enrichment, budget=budget)
+    if (retained.unavailable or warnings) and set(named) - csaf_cves:
+        raise PilotError('PT-PILOT-STALE', 'Current advisory context is unavailable; CVRF fallback is unknown',
+                         reason='advisory-context-unavailable')
+    if set(named) & set(retained.withdrawn) - csaf_cves:
+        raise PilotError('PT-PILOT-NOTFOUND', 'A newer retained context withdrew a named CVE; '
+                         'older cards remain historical', reason='kb-context-withdrawn')
+    computed, _shown = universe(available_cves(retained, csaf_cves, csaf_readable=not warnings), named)
+    source = ProjectAdvisorySource(
+        StoredAdvisorySource(advisories, older_id, newer_id, cves=computed, warnings=warnings, cancel=cancel),
+        retained, computed, budget=budget)
+    kev, kev_notes = local_kev()
+    contexts, entries = _contexts(source, computed, assume, kev)
     tools = _Down(*(ChannelStatus(channel=c, state='not-run', reason=TOOLS_NOT_READ)
                     for c in ('strings', 'capa', 'build')))
     return Collected(
         project_id=project.id, revision=project.revision, older_sha256=older_sha, newer_sha256=newer_sha,
         ghidriff_run_id=run.id, raw_sha256=run.raw_sha256, advisory=source, changes=CodeEvidence(lexical, typed),
-        tools=tools, kev=_NoCatalog(),
+        tools=tools, kev=kev,
         calls=GhidriffCalls(rows, pe.import_delta(older, newer) if both else None, budget=budget),
         pairing=pairing or GhidriffPairing(rows, _secondary_sets(enrichment)), contexts=contexts,
-        advisory_observations=entries, notes=(note,) if note else ())
+        advisory_observations=entries, notes=((note,) if note else ()) + kev_notes + retained.warnings)

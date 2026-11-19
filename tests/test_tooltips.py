@@ -196,19 +196,26 @@ def test_main_window_every_action_and_control_has_a_registry_tooltip(window):
 
 PANEL_BATCH_PENDING_TIPS = {
     'capabilities.retry', 'capabilities.tabs', 'graph.diagram',
-    'graph.status', 'graph.tabs', 'kb.footer', 'rules.tabs', 'search.kinds', 'search.save', 'search.saved',
+    'graph.status', 'graph.tabs', 'kb.footer', 'rules.tabs', 'search.kinds',
 }
 
 
 def test_every_registry_id_is_applied_somewhere(window, qtbot, tmp_path, settings, monkeypatch):
     monkeypatch.setattr(ui_module, 'discover_local_runtimes',
                         lambda: SimpleNamespace(python_executables=[], ghidra_roots=[]))
+    from patchtrace.kbcorrelation.inventory_qt import InventoryDialog
     from patchtrace.kbcorrelation.investigation_qt import InvestigationDialog
 
     investigation = InvestigationDialog(window, workspace=tmp_path / 'kb-workspace', tasks=window.panels.tasks)
+    inventory = InventoryDialog(window, workspace=tmp_path / 'kb-workspace', tasks=window.panels.tasks)
     qtbot.addWidget(investigation)
+    # Inventory tips are registered by the shipped KB panel. Inspect their actual
+    # dialog controls, including its status label and tab container, in this sweep.
     names = {investigation.status.objectName()}
-    roots = [window, investigation]
+    for widget in (inventory.status, inventory.tabs):
+        check_text(widget.objectName(), widget.toolTip())
+        names.add(widget.objectName())
+    roots = [window, investigation, inventory]
     context = build_context(window.project, [window.current_match().id])
     roots += [NewProjectDialog(), AcquisitionDialog(), SetupDialog(settings, None, tmp_path / 'p2'),
               ContextDialog(context, settings, window),

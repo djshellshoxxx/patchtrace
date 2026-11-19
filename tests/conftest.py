@@ -99,4 +99,6 @@ def _no_real_kev_catalog(monkeypatch, tmp_path_factory):
     """``kb leads`` reads the KEV catalog in use from the user's data folder by default; point that at an empty
     folder so no test depends on a catalog installed on the machine that runs it."""
     from patchtrace.kbcorrelation.adapters import kev as kev_adapter
+    from patchtrace.kev import store as kev_store
     monkeypatch.setattr(kev_adapter, 'default_kev_dir', lambda: tmp_path_factory.getbasetemp() / 'no-kev-catalog')
+    monkeypatch.setattr(kev_store, 'default_kev_dir', lambda: tmp_path_factory.getbasetemp() / 'no-kev-catalog')

@@ -1,0 +1,6 @@
+tree 07155a516db4bbf063079ae396aeb9ec2414086c
+parent 42958dfee9d2dc075a7a2c0a835d2134c772ef20
+author Codex <codex@openai.com> 1795043650 -0800
+committer Codex <codex@openai.com> 1795044708 -0800
+
+Admit existing workspaces without application initialization [no release]

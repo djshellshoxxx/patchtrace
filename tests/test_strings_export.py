@@ -72,14 +72,15 @@ def test_never_overwrites_without_force(delta, tmp_path):
     assert json.loads(read(target))['contract'] == 'strings-export/1'
 
 
-def test_failed_write_leaves_no_partial_file(delta, tmp_path, monkeypatch):
+@pytest.mark.parametrize('force', [False, True])
+def test_failed_write_leaves_no_partial_file(delta, tmp_path, monkeypatch, force):
     target = tmp_path / 'out.json'
 
-    def broken(src, dst):
+    def broken(src, dst, **kwargs):
         raise OSError(13, 'denied')
-    monkeypatch.setattr(export.os, 'replace', broken)
+    monkeypatch.setattr(export.os, 'replace' if force else 'link', broken)
     with pytest.raises(StringsError) as raised:
-        export.export_delta(delta, target, fmt='json')
+        export.export_delta(delta, target, fmt='json', force=force)
     assert raised.value.code == 'PT-STR-EXPORT' and list(tmp_path.iterdir()) == []
 
 

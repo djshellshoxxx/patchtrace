@@ -497,8 +497,8 @@ REGISTRY: dict[str, TooltipEntry] = {
     'setup.restrict_env': _e(
         'Run Ghidra and Java with only an allowlisted set of environment variables.',
         'Keeps credentials and JVM or Python injection variables away from the process that loads binaries.',
-        'Saved with Save setup. Off by default until validated on your machine.',
-        availability='Experimental. Set PATCHTRACE_CHILD_ENV=inherit to override.'),
+        'Enabled by default. Saved with Save setup; existing explicit choices are retained.',
+        availability='Always enforced for bundles. External compatibility opt-out: PATCHTRACE_CHILD_ENV=inherit.'),
     'setup.env_passthrough': _e(
         'Extra environment variable names to keep when the allowlist is on, separated by commas.',
         'Corporate proxy or custom JDK setups may need extra variables.', 'Saved with Save setup.',
@@ -526,6 +526,10 @@ REGISTRY: dict[str, TooltipEntry] = {
     'setup.timeout': _e(
         'Seconds a comparison may run before it is stopped, a whole number from 10 to 86400.',
         'Prevents a stuck backend from running forever.', 'Saved with Save setup.'),
+    'setup.timeout_preset': _e(
+        'Choose a whole-comparison budget of 1, 2 or 4 hours, or enter custom seconds.',
+        'A longer budget allows more time but does not repair a performance problem.',
+        'Changes the entry only; Save setup applies it to future comparisons. Custom retains the entry.'),
     'setup.font_size': _e(
         'Code font size in points, a whole number from 8 to 28.', 'Adjusts readability of the code panes.',
         'Applied when you save setup.'),

@@ -1,0 +1,6 @@
+tree 47dcf42ca1257202a75d98a9f6d39cd90ff27522
+parent 758b078f8eedc19fe0c1037819e7311e1f2db92e
+author Codex <codex@openai.com> 1795045272 -0800
+committer Codex <codex@openai.com> 1795045491 -0800
+
+Retain Tier R exit-one diagnostics without a recognized summary [no release]

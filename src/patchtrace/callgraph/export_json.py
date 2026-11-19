@@ -67,7 +67,9 @@ def build_export(snap: CallSnapshot, match_id: str, depth: int = 1, cancel: Canc
         newer_sha256=data.newer_sha256, older=older, newer=newer,
         correspondence=_correspondence(snap, older, newer) if older and newer else (),
         # A neighbour cap ('+N more' in the view) leaves edges out too: the export is not complete (issue #105 CG-3).
-        truncated=any(v.truncated or bool(v.more) for v in views.values() if v), limitations=snap.limitations)
+        truncated=any(v.truncated or bool(v.more) for v in views.values() if v),
+        limitations=tuple(dict.fromkeys((*snap.limitations,
+                                        *(note for view in views.values() if view for note in view.limitations)))))
 
 
 def check_size(text: str) -> str:

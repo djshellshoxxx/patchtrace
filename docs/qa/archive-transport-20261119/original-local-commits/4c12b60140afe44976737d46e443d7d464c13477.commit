@@ -1,0 +1,8 @@
+tree 7fbb04f0ef74caabe97650b2ddbed6262f2f3551
+parent 2c557b67b3a37cab986bcc28c9097d663c374d33
+author Codex <codex@openai.com> 1795043170 -0800
+committer Codex <codex@openai.com> 1795044125 -0800
+
+Enforce the reviewed per-file held reader import boundary [no release]
+
+(cherry picked from commit 52a562b6f4c8063b7cb47b31c3942f55db7fa5f5)

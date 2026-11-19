@@ -1,0 +1,48 @@
+{
+  "scope": "Linux pinned-native public API over authored buffers only; not target/CLI/Windows/product qualification",
+  "patchtrace_source_head": "387e429f8121d7b01c03c4dd90d48907f48caea7",
+  "rizin_commit": "c3a90e9226d977f58f4e9c75f78fa6b07afe13c7",
+  "host": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "cpu_count": 9,
+  "control_source_sha256": "1de48cd2f4b43d0228157b15ff76b1d8ec85a54ccac2cbc7f161f58a02d93a74",
+  "validator_source_sha256": "19bdfb95b9ffd74a6ba5bfe942fb0b8e62f83c2ea0f45cd1be021e4a35981336",
+  "executable_sha256": "fb5323c006401906ffc468efb7298dae661702ae94497eb6093350b4a54911fe",
+  "results": {
+    "stock-matrix": {
+      "runner_exit": 0,
+      "child_exit": 1,
+      "accepted": true,
+      "worker_count": null
+    },
+    "stock-io": {
+      "runner_exit": 0,
+      "child_exit": 1,
+      "accepted": true,
+      "worker_count": 9
+    },
+    "corrected-matrix": {
+      "runner_exit": 0,
+      "child_exit": 0,
+      "accepted": true,
+      "worker_count": null
+    },
+    "corrected-io": {
+      "runner_exit": 0,
+      "child_exit": 0,
+      "accepted": true,
+      "worker_count": 9
+    },
+    "corrected-io-wrong-bytes": {
+      "runner_exit": 0,
+      "child_exit": 1,
+      "accepted": true,
+      "worker_count": 9
+    },
+    "corrected-io-wrong-io": {
+      "runner_exit": 0,
+      "child_exit": 1,
+      "accepted": true,
+      "worker_count": 9
+    }
+  }
+}

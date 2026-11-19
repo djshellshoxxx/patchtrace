@@ -1,0 +1,6 @@
+tree defbdfa98a6f61c1a355ad2a57b62dfe34994fc8
+parent f24158ba40766e41ddf4c28d64b752dd36ee3633
+author Codex <codex@openai.com> 1795045199 -0800
+committer Codex <codex@openai.com> 1795045652 -0800
+
+Preserve fresh interrupts outside caller exception shields [no release]

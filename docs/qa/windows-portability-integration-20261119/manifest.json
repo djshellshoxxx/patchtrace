@@ -1,0 +1,122 @@
+{
+  "schema": "patchtrace-windows-portability-integration/1",
+  "source": "11c3ffabf25d8527732b45bc2d949565d91debc5",
+  "payloads": [
+    {
+      "path": "helpers/ops/continuation_offline_pytest.py",
+      "bytes": 2498,
+      "sha256": "f9af28fd4acb9a0e8ae0c70b9ad9a4b6e8df02cfb461820ce4c6e91c00e41aed"
+    },
+    {
+      "path": "helpers/ops/project_and_tools_receipt.py",
+      "bytes": 1664,
+      "sha256": "c964bbd0aa75d2bb365287313eb9aecf19b6d0d21983ce7159f8edd127674a9a"
+    },
+    {
+      "path": "helpers/ops/run_fixture_formatter_integration_gate.py",
+      "bytes": 6414,
+      "sha256": "814b2fdf9a5917b3f2e753f6d6ce66641f6ed363cde84f5cb9099eeaf05259e9"
+    },
+    {
+      "path": "helpers/ops/seal_windows_portability_integration.py",
+      "bytes": 13003,
+      "sha256": "666bf154133f70b260cdf8bcfcac8bb61bd50adefd942b80e9fc4f43e0f23584"
+    },
+    {
+      "path": "helpers/ops/verify_windows_fixture_handoff.py",
+      "bytes": 5379,
+      "sha256": "4c2bbdadc243cd03eedabc5cc91dd430709132f184a9dd012cc11825aa5b1a12"
+    },
+    {
+      "path": "helpers/qa/full-batch-path-recheck/offline_replay.py",
+      "bytes": 15802,
+      "sha256": "381298968b20c80f76e210ffeb98f33769ec2d14580c56a7934ff9cef7c71744"
+    },
+    {
+      "path": "history/11c3ffabf25d8527732b45bc2d949565d91debc5.commit",
+      "bytes": 352,
+      "sha256": "ca71b735dd335e6dae87e183a812ace5552d5753983dd535cf59e324a84c6f70"
+    },
+    {
+      "path": "history/24651bf5d85c42c65cf207991258ce5d3fe4825e.commit",
+      "bytes": 275,
+      "sha256": "e4f5eca1332e17e6d6182b4a48549a2d9402cf0d245de511509c5d508b105f57"
+    },
+    {
+      "path": "history/49369f41185c8ce4c3ddc75df70bec244160a7a6.commit",
+      "bytes": 348,
+      "sha256": "0776b2c097cf4de677c779d3bf69ff144acd31148e5287708b25922e83004685"
+    },
+    {
+      "path": "history/81590f936b3f01555720221e55f99ec0611ec4a1.commit",
+      "bytes": 278,
+      "sha256": "7af2c1e2cf5798c0036fc0351bd40fa31a8957db65a83b28edfa86c4ac2fdaaa"
+    },
+    {
+      "path": "history/9e228d8448da14726ce5334b8d1f8e7a6eb7941c.commit",
+      "bytes": 282,
+      "sha256": "22b0ca91e0d28f1eac124be2c8d2b6cc573dcdc736a1e4889c2fab2f14242a18"
+    },
+    {
+      "path": "history/ce98e621d2d88a9be34c9ac5fe68f3a38e7db12d.commit",
+      "bytes": 345,
+      "sha256": "cc362a7fcc4d95a58d9adc48423a09b029af8635bcc3a6ad6696c45c791b540e"
+    },
+    {
+      "path": "independent-review/source-boundary-replay.log",
+      "bytes": 143,
+      "sha256": "5b5283fbe3a89f1c25909f9e879c4e6157aafdadc44ea9a090166e0a0bb58857"
+    },
+    {
+      "path": "independent-review/verification.json",
+      "bytes": 2327,
+      "sha256": "7e302782f643c0553d4e2b759289138e4e1a5d199c1c2167ad924083b4154392"
+    },
+    {
+      "path": "integration-gate/collection.json",
+      "bytes": 26677,
+      "sha256": "48cae50aa809229d0c63e5b583fa23cbd8dcac479b6aadda50ac534db2ca56c3"
+    },
+    {
+      "path": "integration-gate/command.json",
+      "bytes": 2193,
+      "sha256": "8d6635a2dd640bbe616e4cbae4e832664e5b77eeca57883bb8f654b88f0c63c5"
+    },
+    {
+      "path": "integration-gate/exit.json",
+      "bytes": 598,
+      "sha256": "80b6004731a63431dcc89e0714c558a032ea9dce1d5a2f38cbe61be58b20788d"
+    },
+    {
+      "path": "integration-gate/lint.json",
+      "bytes": 285,
+      "sha256": "6b037b2870bacdb24409d1be2928b8741208db6f8acefbe7f3ecc837980aff91"
+    },
+    {
+      "path": "integration-gate/offline-guard.json",
+      "bytes": 1956,
+      "sha256": "4d9af8e8d38e7add7fa93123ae4cc565282cca4ecbeb58fb5493811a32f0b3a3"
+    },
+    {
+      "path": "integration-gate/result.log",
+      "bytes": 180,
+      "sha256": "e4631cd2a7850bb519d76356784b42d3294e74209c73a72529322a7b990e82b3"
+    },
+    {
+      "path": "integration-gate/result.xml",
+      "bytes": 21124,
+      "sha256": "799024941e27fc6c1b719d8a76dd766261e865fe22641d7fbdcc381647a99a15"
+    },
+    {
+      "path": "source-proof.json",
+      "bytes": 798,
+      "sha256": "f2007e2fa7510a5f36da70005605aef36a4ae7c98576bb8b9f81cec118875755"
+    }
+  ],
+  "archive": {
+    "bytes": 33904,
+    "sha256": "e33225b90bf5c1efa2d1ce3a8877b5ec3eb05c78e02a797783587534b23f788b",
+    "members": 23
+  },
+  "readme_sha256": "866b91556aff6429374e5e4678b9205b45b54ad6adb257de0eb4f94809ffa326"
+}

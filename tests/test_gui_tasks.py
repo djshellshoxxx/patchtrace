@@ -513,6 +513,7 @@ def test_qt_gate_environment_enables_faulthandler_and_offscreen():
 def test_qt_gate_default_files_cover_the_gui_tests_and_this_file():
     files = _qt_gate().default_files()
     assert 'tests/test_gui_tasks.py' in files and 'tests/test_evidence_ui.py' in files
+    assert 'tests/test_ui_kb_inventory.py' in files
     assert 'tests/qt_support.py' not in files and files == sorted(files)
 
 

@@ -28,7 +28,7 @@ from ..enrichment.contracts import EnrichmentError
 from ..enrichment.storage import EnrichmentStore
 from ..intelligence.contracts import IntelError
 from ..intelligence.reports import plain_text
-from . import report, review, store
+from . import current_inputs, report, review, store
 from .collect import CONFIG, NO_RUN, collect
 from .contracts import LEAD_CLASSES, CveContext, Lead, PilotAssessment, ReviewAction
 from .limits import PilotError
@@ -41,7 +41,9 @@ NO_STORED = 'No stored leads for this project. Run `patchtrace pilot leads` firs
 _CVE = re.compile(r'CVE-[0-9]{4}-[0-9]{4,19}')
 _KEY = re.compile(r'[0-9a-f]{64}')
 _INPUT_WORDS = {'older_sha256': 'the older build', 'newer_sha256': 'the newer build',
-                'ghidriff_run_id': 'the analysis run', 'raw_sha256': 'the analysis output'}
+                'ghidriff_run_id': 'the analysis run', 'raw_sha256': 'the analysis output',
+                'project_revision': 'the project revision', 'advisory_facts_ids': 'the advisories',
+                'kev_snapshot_id': 'the CISA KEV snapshot'}
 
 
 def _cve(value: str) -> str:
@@ -175,15 +177,6 @@ def _export_target(path: Path | None):
     return path, fmt
 
 
-def _known(project) -> dict[str, object]:
-    """What a stored result's identity can be compared with without recomputing it: the pair and its orientation, the
-    analysis run and its output."""
-    sides = {a.side: a.sha256 for a in project.artifacts}
-    run = store.completed_run(project)
-    return {'older_sha256': sides.get('older'), 'newer_sha256': sides.get('newer'),
-            'ghidriff_run_id': run.id if run else None, 'raw_sha256': run.raw_sha256 if run else None}
-
-
 def _terminal_line(line: str) -> str:
     """One explanation line for a terminal: controls and bidi marks as `\\uXXXX`, its indentation kept."""
     return ' ' * (len(line) - len(line.lstrip(' '))) + plain_text(line, 300)
@@ -283,7 +276,8 @@ def _result(a: PilotAssessment, shown, reviews: Mapping, hidden: int, stored: bo
 def _persist(enrichment: EnrichmentStore, service, assessment: PilotAssessment, warnings: list[str]):
     try:
         published = store.publish(enrichment, assessment, CONFIG,
-                                  current=store.current_guard(service.project, assessment.result_id))
+                                  current=store.current_guard(service.project, assessment.result_id),
+                                  check_current=current_inputs.capture(service, enrichment).changed)
     except PilotError as exc:
         warnings.append(f'results not persisted: {exc.message}')
         return None
@@ -339,7 +333,7 @@ def _run_leads(args, cancel: threading.Event) -> int:
 
 def _stored(service, enrichment: EnrichmentStore) -> store.Loaded:
     """The stored result: nothing stored has no assessment (exit 4), one that does not verify is exit 3."""
-    loaded = store.load(enrichment, _known(service.project))
+    loaded = store.load(enrichment, check_current=current_inputs.capture(service, enrichment).changed)
     if loaded.state == 'invalid':
         raise PilotError('PT-PILOT-INTEGRITY', 'The stored result does not verify; run `patchtrace pilot leads` again',
                          reason=loaded.reason)
@@ -385,7 +379,9 @@ def _run_review(args, cancel: threading.Event) -> int:
     command = 'pilot review'
     with _project(args.project) as (service, enrichment):
         loaded = _stored(service, enrichment)
-        base = {'candidate_key': args.candidate, 'cve': args.cve, 'event': None}
+        stale = loaded.state == 'stale'
+        base = {'candidate_key': args.candidate, 'cve': args.cve, 'event': None,
+                'stale': stale, 'changed': list(loaded.changed)}
         if loaded.assessment is None:
             return _none(args, command, base, NO_STORED)
         if not any(x.candidate_key == args.candidate and x.cve == args.cve for x in loaded.assessment.leads):
@@ -394,7 +390,7 @@ def _run_review(args, cancel: threading.Event) -> int:
                               candidate_key=args.candidate, cve=args.cve, action=args.action, text=args.text)
         state = review.fold(review.read(enrichment).events)[(args.candidate, args.cve)]
     result = base | {'event': event.model_dump(mode='json'), 'pinned': state.pinned, 'dismissed': state.dismissed}
-    _say(args, command, 'complete', result, [],
+    _say(args, command, 'complete', result, [_stale_line(loaded.changed)] if stale else [],
          f'recorded {args.action} for the lead of {args.cve or "the code-only list"}')
     return OK
 

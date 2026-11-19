@@ -1,0 +1,843 @@
+﻿2026-11-18T08:44:06.6389281Z Current runner version: '2.338.2'
+2026-11-18T08:44:06.6414765Z ##[group]Runner Image Provisioner
+2026-11-18T08:44:06.6415546Z Hosted Compute Agent
+2026-11-18T08:44:06.6416108Z Version: 20261103.629
+2026-11-18T08:44:06.6416668Z Commit: 15dbd9ccb5dbf34fae002b6ed1a2670f52df37bc
+2026-11-18T08:44:06.6417328Z Build Date: 2026-11-03T17:26:59Z
+2026-11-18T08:44:06.6417944Z Worker ID: {98b13c75-4ef7-4e77-93ee-a6f02b26405d}
+2026-11-18T08:44:06.6418576Z Region: westus2
+2026-11-18T08:44:06.6419102Z Cloud: Azure
+2026-11-18T08:44:06.6419572Z ##[endgroup]
+2026-11-18T08:44:06.6420930Z ##[group]Operating System
+2026-11-18T08:44:06.6421526Z Microsoft Windows Server 2025
+2026-11-18T08:44:06.6422071Z 10.0.26100
+2026-11-18T08:44:06.6422539Z Datacenter
+2026-11-18T08:44:06.6423003Z ##[endgroup]
+2026-11-18T08:44:06.6423469Z ##[group]Runner Image
+2026-11-18T08:44:06.6424460Z Image: windows-2025-vs2026
+2026-11-18T08:44:06.6425029Z Version: 20261103.298.1
+2026-11-18T08:44:06.6426531Z Included Software: https://github.com/actions/runner-images/blob/win25-vs2026/20261103.298/images/windows/Windows2025-VS2026-Readme.md
+2026-11-18T08:44:06.6428025Z Image Release: https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20261103.298
+2026-11-18T08:44:06.6428938Z ##[endgroup]
+2026-11-18T08:44:06.6429932Z ##[group]GITHUB_TOKEN Permissions
+2026-11-18T08:44:06.6431850Z Contents: read
+2026-11-18T08:44:06.6432358Z Metadata: read
+2026-11-18T08:44:06.6432868Z ##[endgroup]
+2026-11-18T08:44:06.6434845Z Secret source: Actions
+2026-11-18T08:44:06.6435630Z Cache mode: write
+2026-11-18T08:44:06.6436281Z Prepare workflow directory
+2026-11-18T08:44:06.6851422Z Prepare all required actions
+2026-11-18T08:44:06.6912372Z Getting action download info
+2026-11-18T08:44:07.0444568Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-11-18T08:44:07.1782038Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-11-18T08:44:07.3171567Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-11-18T08:44:07.6373799Z Complete job name: qa (windows-latest)
+2026-11-18T08:44:07.8158357Z ##[group]Run actions/checkout@v4
+2026-11-18T08:44:07.8159420Z with:
+2026-11-18T08:44:07.8159838Z   repository: djshellshoxxx/patchtrace
+2026-11-18T08:44:07.8164403Z   token: ***
+2026-11-18T08:44:07.8164785Z   ssh-strict: true
+2026-11-18T08:44:07.8165155Z   ssh-user: git
+2026-11-18T08:44:07.8165537Z   persist-credentials: true
+2026-11-18T08:44:07.8165950Z   clean: true
+2026-11-18T08:44:07.8166340Z   sparse-checkout-cone-mode: true
+2026-11-18T08:44:07.8166785Z   fetch-depth: 1
+2026-11-18T08:44:07.8167160Z   fetch-tags: false
+2026-11-18T08:44:07.8167541Z   show-progress: true
+2026-11-18T08:44:07.8167908Z   lfs: false
+2026-11-18T08:44:07.8168250Z   submodules: false
+2026-11-18T08:44:07.8168626Z   set-safe-directory: true
+2026-11-18T08:44:07.8169069Z   allow-unsafe-pr-checkout: false
+2026-11-18T08:44:07.8169879Z env:
+2026-11-18T08:44:07.8170239Z   QT_QPA_PLATFORM: offscreen
+2026-11-18T08:44:07.8170669Z ##[endgroup]
+2026-11-18T08:44:07.9635899Z Syncing repository: djshellshoxxx/patchtrace
+2026-11-18T08:44:07.9637630Z ##[group]Getting Git version info
+2026-11-18T08:44:07.9638211Z Working directory is 'D:\a\patchtrace\patchtrace'
+2026-11-18T08:44:08.0430246Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-11-18T08:44:08.4688703Z git version 2.56.0.windows.4
+2026-11-18T08:44:08.4736356Z ##[endgroup]
+2026-11-18T08:44:08.4754572Z Temporarily overriding HOME='D:\a\_temp\51086e51-06d0-4acb-bab8-106554a44d9b' before making global git config changes
+2026-11-18T08:44:08.4757311Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-18T08:44:08.4765140Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\patchtrace\patchtrace
+2026-11-18T08:44:08.5482518Z Deleting the contents of 'D:\a\patchtrace\patchtrace'
+2026-11-18T08:44:08.5489130Z ##[group]Initializing the repository
+2026-11-18T08:44:08.5497484Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\patchtrace\patchtrace
+2026-11-18T08:44:08.6450981Z Initialized empty Git repository in D:/a/patchtrace/patchtrace/.git/
+2026-11-18T08:44:08.6501633Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/djshellshoxxx/patchtrace
+2026-11-18T08:44:08.7313593Z ##[endgroup]
+2026-11-18T08:44:08.7317473Z ##[group]Disabling automatic garbage collection
+2026-11-18T08:44:08.7320375Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+2026-11-18T08:44:08.7719867Z ##[endgroup]
+2026-11-18T08:44:08.7721581Z ##[group]Setting up auth
+2026-11-18T08:44:08.7732209Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-11-18T08:44:08.8172032Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-11-18T08:44:10.4302552Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-18T08:44:10.4715029Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-11-18T08:44:11.0116248Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-18T08:44:11.0510405Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-11-18T08:44:11.6157562Z [command]"C:\Program Files\Git\bin\git.exe" config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+2026-11-18T08:44:11.6549494Z ##[endgroup]
+2026-11-18T08:44:11.6550089Z ##[group]Fetching the repository
+2026-11-18T08:44:11.6571657Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +6cb49511aa2fe046cf20e1b2300a671ec2677083:refs/remotes/pull/304/merge
+2026-11-18T08:44:14.3043809Z From https://github.com/djshellshoxxx/patchtrace
+2026-11-18T08:44:14.3044390Z  * [new ref]         6cb49511aa2fe046cf20e1b2300a671ec2677083 -> pull/304/merge
+2026-11-18T08:44:14.3086108Z ##[endgroup]
+2026-11-18T08:44:14.3086527Z ##[group]Determining the checkout info
+2026-11-18T08:44:14.3089134Z ##[endgroup]
+2026-11-18T08:44:14.3102843Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+2026-11-18T08:44:14.3695489Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+2026-11-18T08:44:14.4087528Z ##[group]Checking out the ref
+2026-11-18T08:44:14.4100565Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force refs/remotes/pull/304/merge
+2026-11-18T08:44:15.4700297Z Updating files:  90% (3466/3827)
+2026-11-18T08:44:15.4802687Z Updating files:  91% (3483/3827)
+2026-11-18T08:44:15.4904563Z Updating files:  92% (3521/3827)
+2026-11-18T08:44:15.4988425Z Updating files:  93% (3560/3827)
+2026-11-18T08:44:15.5070883Z Updating files:  94% (3598/3827)
+2026-11-18T08:44:15.5164105Z Updating files:  95% (3636/3827)
+2026-11-18T08:44:15.5263266Z Updating files:  96% (3674/3827)
+2026-11-18T08:44:15.5352073Z Updating files:  97% (3713/3827)
+2026-11-18T08:44:15.5438649Z Updating files:  98% (3751/3827)
+2026-11-18T08:44:15.5538694Z Updating files:  99% (3789/3827)
+2026-11-18T08:44:15.5541513Z Updating files: 100% (3827/3827)
+2026-11-18T08:44:15.5541980Z Updating files: 100% (3827/3827), done.
+2026-11-18T08:44:15.5670586Z Note: switching to 'refs/remotes/pull/304/merge'.
+2026-11-18T08:44:15.5672101Z 
+2026-11-18T08:44:15.5672639Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-18T08:44:15.5673432Z changes and commit them, and you can discard any commits you make in this
+2026-11-18T08:44:15.5675353Z state without impacting any branches by switching back to a branch.
+2026-11-18T08:44:15.5675819Z 
+2026-11-18T08:44:15.5676133Z If you want to create a new branch to retain commits you create, you may
+2026-11-18T08:44:15.5676826Z do so (now or later) by using -c with the switch command. Example:
+2026-11-18T08:44:15.5677202Z 
+2026-11-18T08:44:15.5677395Z   git switch -c <new-branch-name>
+2026-11-18T08:44:15.5677653Z 
+2026-11-18T08:44:15.5677822Z Or undo this operation with:
+2026-11-18T08:44:15.5678092Z 
+2026-11-18T08:44:15.5678218Z   git switch -
+2026-11-18T08:44:15.5678405Z 
+2026-11-18T08:44:15.5678736Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-18T08:44:15.5679234Z 
+2026-11-18T08:44:15.5679819Z HEAD is now at 6cb4951 Merge bb4277aed685d485b57ffe7a718e70bab3e34467 into 9c411ca3d7b47f950be5f0c6f01b3c54184554c6
+2026-11-18T08:44:15.5757175Z ##[endgroup]
+2026-11-18T08:44:15.6155850Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+2026-11-18T08:44:15.6497478Z 6cb49511aa2fe046cf20e1b2300a671ec2677083
+2026-11-18T08:44:15.6986473Z ##[group]Run actions/setup-python@v5
+2026-11-18T08:44:15.6986885Z with:
+2026-11-18T08:44:15.6987096Z   python-version: 3.12
+2026-11-18T08:44:15.6987326Z   check-latest: false
+2026-11-18T08:44:15.6990026Z   token: ***
+2026-11-18T08:44:15.6990223Z   update-environment: true
+2026-11-18T08:44:15.6990459Z   allow-prereleases: false
+2026-11-18T08:44:15.6990753Z   freethreaded: false
+2026-11-18T08:44:15.6990980Z env:
+2026-11-18T08:44:15.6991172Z   QT_QPA_PLATFORM: offscreen
+2026-11-18T08:44:15.6991394Z ##[endgroup]
+2026-11-18T08:44:15.8634400Z ##[group]Installed versions
+2026-11-18T08:44:15.8843505Z (node:2952) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-11-18T08:44:15.8844159Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-18T08:44:15.8845407Z Successfully set up CPython (3.12.10)
+2026-11-18T08:44:15.8846079Z ##[endgroup]
+2026-11-18T08:44:15.9144142Z ##[group]Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'
+2026-11-18T08:44:15.9144915Z [36;1mpython -m pip install --only-binary=:all: -e '.[dev,search,rules]'[0m
+2026-11-18T08:44:15.9961164Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-18T08:44:15.9961507Z env:
+2026-11-18T08:44:15.9961714Z   QT_QPA_PLATFORM: offscreen
+2026-11-18T08:44:15.9962023Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-18T08:44:15.9962492Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-11-18T08:44:15.9962917Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-18T08:44:15.9963303Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-18T08:44:15.9963689Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-18T08:44:15.9964049Z ##[endgroup]
+2026-11-18T08:44:21.5930829Z Obtaining file:///D:/a/patchtrace/patchtrace
+2026-11-18T08:44:21.5962929Z   Installing build dependencies: started
+2026-11-18T08:44:24.1526291Z   Installing build dependencies: finished with status 'done'
+2026-11-18T08:44:24.1544008Z   Checking if build backend supports build_editable: started
+2026-11-18T08:44:24.7116082Z   Checking if build backend supports build_editable: finished with status 'done'
+2026-11-18T08:44:24.7140583Z   Getting requirements to build editable: started
+2026-11-18T08:44:25.3886942Z   Getting requirements to build editable: finished with status 'done'
+2026-11-18T08:44:25.3919844Z   Preparing editable metadata (pyproject.toml): started
+2026-11-18T08:44:25.7735255Z   Preparing editable metadata (pyproject.toml): finished with status 'done'
+2026-11-18T08:44:26.0322705Z Collecting PySide6==6.12.0 (from patchtrace==0.1.0)
+2026-11-18T08:44:26.2335616Z   Downloading pyside6-6.12.0-cp310-abi3-win_amd64.whl.metadata (5.7 kB)
+2026-11-18T08:44:26.3052202Z Collecting shiboken6==6.12.0 (from patchtrace==0.1.0)
+2026-11-18T08:44:26.3147575Z   Downloading shiboken6-6.12.0-cp310-abi3-win_amd64.whl.metadata (2.6 kB)
+2026-11-18T08:44:26.4755183Z Collecting pydantic==2.13.5 (from patchtrace==0.1.0)
+2026-11-18T08:44:26.4844842Z   Downloading pydantic-2.13.5-py3-none-any.whl.metadata (110 kB)
+2026-11-18T08:44:26.7536131Z Collecting protobuf==7.36.2 (from patchtrace==0.1.0)
+2026-11-18T08:44:26.7616340Z   Downloading protobuf-7.36.2-cp310-abi3-win_amd64.whl.metadata (595 bytes)
+2026-11-18T08:44:26.8236869Z Collecting pytest<10,>=8 (from patchtrace==0.1.0)
+2026-11-18T08:44:26.8341537Z   Downloading pytest-9.2.0-py3-none-any.whl.metadata (7.9 kB)
+2026-11-18T08:44:26.8885063Z Collecting pytest-qt<5,>=4 (from patchtrace==0.1.0)
+2026-11-18T08:44:26.8968289Z   Downloading pytest_qt-4.5.0-py3-none-any.whl.metadata (7.9 kB)
+2026-11-18T08:44:27.2754573Z Collecting ruff<1,>=0.12 (from patchtrace==0.1.0)
+2026-11-18T08:44:27.2835963Z   Downloading ruff-0.17.5-py3-none-win_amd64.whl.metadata (21 kB)
+2026-11-18T08:44:27.3630175Z Collecting pyinstaller==6.22.3 (from patchtrace==0.1.0)
+2026-11-18T08:44:27.3708612Z   Downloading pyinstaller-6.22.3-py3-none-win_amd64.whl.metadata (8.5 kB)
+2026-11-18T08:44:27.7802355Z Collecting hypothesis<7,>=6.100 (from patchtrace==0.1.0)
+2026-11-18T08:44:27.7902254Z   Downloading hypothesis-6.170.15-cp312-cp312-win_amd64.whl.metadata (5.6 kB)
+2026-11-18T08:44:27.8477718Z Collecting networkx<4,>=3.3 (from patchtrace==0.1.0)
+2026-11-18T08:44:27.8563526Z   Downloading networkx-3.7-py3-none-any.whl.metadata (6.7 kB)
+2026-11-18T08:44:27.9333220Z Collecting pefile<2030,>=2024.8.26 (from patchtrace==0.1.0)
+2026-11-18T08:44:27.9432310Z   Downloading pefile-2024.8.26-py3-none-any.whl.metadata (1.4 kB)
+2026-11-18T08:44:27.9981077Z Collecting pygments<3,>=2.18 (from patchtrace==0.1.0)
+2026-11-18T08:44:28.0062153Z   Downloading pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+2026-11-18T08:44:28.0782989Z Collecting pyyaml<7,>=6 (from patchtrace==0.1.0)
+2026-11-18T08:44:28.0866639Z   Downloading pyyaml-6.0.3-cp312-cp312-win_amd64.whl.metadata (2.4 kB)
+2026-11-18T08:44:28.6093201Z Collecting rapidfuzz==3.14.6 (from patchtrace==0.1.0)
+2026-11-18T08:44:28.6188304Z   Downloading rapidfuzz-3.14.6-cp312-cp312-win_amd64.whl.metadata (12 kB)
+2026-11-18T08:44:28.6855065Z Collecting yara-x==1.21.0 (from patchtrace==0.1.0)
+2026-11-18T08:44:28.6977410Z   Downloading yara_x-1.21.0-cp38-abi3-win_amd64.whl.metadata (1.8 kB)
+2026-11-18T08:44:28.8186416Z Collecting iced-x86==1.21.0 (from patchtrace==0.1.0)
+2026-11-18T08:44:28.8301567Z   Downloading iced_x86-1.21.0-cp38-abi3-win_amd64.whl.metadata (37 kB)
+2026-11-18T08:44:28.8815952Z Collecting annotated-types>=0.6.0 (from pydantic==2.13.5->patchtrace==0.1.0)
+2026-11-18T08:44:28.8902071Z   Downloading annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+2026-11-18T08:44:29.6092601Z Collecting pydantic-core==2.46.5 (from pydantic==2.13.5->patchtrace==0.1.0)
+2026-11-18T08:44:29.6192192Z   Downloading pydantic_core-2.46.5-cp312-cp312-win_amd64.whl.metadata (6.7 kB)
+2026-11-18T08:44:29.6734393Z Collecting typing-extensions>=4.14.1 (from pydantic==2.13.5->patchtrace==0.1.0)
+2026-11-18T08:44:29.6812044Z   Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+2026-11-18T08:44:29.7339322Z Collecting typing-inspection>=0.4.2 (from pydantic==2.13.5->patchtrace==0.1.0)
+2026-11-18T08:44:29.7417591Z   Downloading typing_inspection-0.4.5-py3-none-any.whl.metadata (2.6 kB)
+2026-11-18T08:44:29.7887967Z Collecting altgraph (from pyinstaller==6.22.3->patchtrace==0.1.0)
+2026-11-18T08:44:29.7971959Z   Downloading altgraph-0.17.5-py2.py3-none-any.whl.metadata (7.5 kB)
+2026-11-18T08:44:29.8210495Z Requirement already satisfied: packaging>=22.0 in C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\site-packages (from pyinstaller==6.22.3->patchtrace==0.1.0) (26.3)
+2026-11-18T08:44:29.8563806Z Collecting pyinstaller-hooks-contrib>=2026.7 (from pyinstaller==6.22.3->patchtrace==0.1.0)
+2026-11-18T08:44:29.8644847Z   Downloading pyinstaller_hooks_contrib-2026.10-py3-none-any.whl.metadata (16 kB)
+2026-11-18T08:44:29.9103633Z Collecting pywin32-ctypes>=0.2.1 (from pyinstaller==6.22.3->patchtrace==0.1.0)
+2026-11-18T08:44:29.9186637Z   Downloading pywin32_ctypes-0.2.3-py3-none-any.whl.metadata (3.9 kB)
+2026-11-18T08:44:29.9951095Z Collecting setuptools>=42.0.0 (from pyinstaller==6.22.3->patchtrace==0.1.0)
+2026-11-18T08:44:30.0008118Z   Using cached setuptools-84.2.1-py3-none-any.whl.metadata (6.6 kB)
+2026-11-18T08:44:30.0445854Z Collecting PySide6_Essentials==6.12.0 (from PySide6==6.12.0->patchtrace==0.1.0)
+2026-11-18T08:44:30.0528503Z   Downloading pyside6_essentials-6.12.0-cp310-abi3-win_amd64.whl.metadata (3.9 kB)
+2026-11-18T08:44:30.1115209Z Collecting PySide6_Addons==6.12.0 (from PySide6==6.12.0->patchtrace==0.1.0)
+2026-11-18T08:44:30.1195303Z   Downloading pyside6_addons-6.12.0-cp310-abi3-win_amd64.whl.metadata (4.4 kB)
+2026-11-18T08:44:30.1652804Z Collecting PySide6_WebEngine==6.12.0.140 (from PySide6==6.12.0->patchtrace==0.1.0)
+2026-11-18T08:44:30.1729904Z   Downloading pyside6_webengine-6.12.0.140-cp310-abi3-win_amd64.whl.metadata (3.7 kB)
+2026-11-18T08:44:30.2223636Z Collecting PySide6_Pdf==6.12.0.140 (from PySide6==6.12.0->patchtrace==0.1.0)
+2026-11-18T08:44:30.2298756Z   Downloading pyside6_pdf-6.12.0.140-cp310-abi3-win_amd64.whl.metadata (3.6 kB)
+2026-11-18T08:44:30.2841587Z Collecting sortedcontainers<3.0.0,>=2.1.0 (from hypothesis<7,>=6.100->patchtrace==0.1.0)
+2026-11-18T08:44:30.2920197Z   Downloading sortedcontainers-2.4.0-py2.py3-none-any.whl.metadata (10 kB)
+2026-11-18T08:44:30.3140216Z Requirement already satisfied: colorama>=0.4 in C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\site-packages (from pytest<10,>=8->patchtrace==0.1.0) (0.4.6)
+2026-11-18T08:44:30.3435842Z Collecting iniconfig>=2 (from pytest<10,>=8->patchtrace==0.1.0)
+2026-11-18T08:44:30.3520641Z   Downloading iniconfig-2.3.1-py3-none-any.whl.metadata (2.8 kB)
+2026-11-18T08:44:30.3974568Z Collecting pluggy<2,>=1.6 (from pytest<10,>=8->patchtrace==0.1.0)
+2026-11-18T08:44:30.4094084Z   Downloading pluggy-1.7.0-py3-none-any.whl.metadata (5.0 kB)
+2026-11-18T08:44:30.4516107Z Downloading iced_x86-1.21.0-cp38-abi3-win_amd64.whl (886 kB)
+2026-11-18T08:44:30.5386168Z    ---------------------------------------- 886.0/886.0 kB 9.9 MB/s  0:00:00
+2026-11-18T08:44:30.5497749Z Downloading protobuf-7.36.2-cp310-abi3-win_amd64.whl (456 kB)
+2026-11-18T08:44:30.6028534Z Downloading pydantic-2.13.5-py3-none-any.whl (472 kB)
+2026-11-18T08:44:30.6512468Z Downloading pydantic_core-2.46.5-cp312-cp312-win_amd64.whl (2.0 MB)
+2026-11-18T08:44:30.7633054Z    ---------------------------------------- 2.0/2.0 MB 19.2 MB/s  0:00:00
+2026-11-18T08:44:30.7724316Z Downloading pyinstaller-6.22.3-py3-none-win_amd64.whl (1.5 MB)
+2026-11-18T08:44:30.8213937Z    ---------------------------------------- 1.5/1.5 MB 25.4 MB/s  0:00:00
+2026-11-18T08:44:30.8310978Z Downloading pyside6-6.12.0-cp310-abi3-win_amd64.whl (578 kB)
+2026-11-18T08:44:30.8702488Z    ---------------------------------------- 579.0/579.0 kB 10.2 MB/s  0:00:00
+2026-11-18T08:44:30.8823753Z Downloading pyside6_addons-6.12.0-cp310-abi3-win_amd64.whl (40.5 MB)
+2026-11-18T08:44:31.4857293Z    ---------------------------------------- 40.5/40.5 MB 66.0 MB/s  0:00:00
+2026-11-18T08:44:31.4960040Z Downloading pyside6_essentials-6.12.0-cp310-abi3-win_amd64.whl (82.2 MB)
+2026-11-18T08:44:32.7732073Z    ---------------------------------------- 82.2/82.2 MB 64.7 MB/s  0:00:01
+2026-11-18T08:44:32.7852430Z Downloading pyside6_pdf-6.12.0.140-cp310-abi3-win_amd64.whl (3.0 MB)
+2026-11-18T08:44:32.8349546Z    ---------------------------------------- 3.0/3.0 MB 57.9 MB/s  0:00:00
+2026-11-18T08:44:32.8459071Z Downloading pyside6_webengine-6.12.0.140-cp310-abi3-win_amd64.whl (131.7 MB)
+2026-11-18T08:44:35.3286210Z    ---------------------------------------- 131.7/131.7 MB 52.9 MB/s  0:00:02
+2026-11-18T08:44:35.3388259Z Downloading rapidfuzz-3.14.6-cp312-cp312-win_amd64.whl (1.7 MB)
+2026-11-18T08:44:35.3814561Z    ---------------------------------------- 1.7/1.7 MB 32.0 MB/s  0:00:00
+2026-11-18T08:44:35.3902323Z Downloading shiboken6-6.12.0-cp310-abi3-win_amd64.whl (1.3 MB)
+2026-11-18T08:44:35.4225412Z    ---------------------------------------- 1.3/1.3 MB 32.4 MB/s  0:00:00
+2026-11-18T08:44:35.4323029Z Downloading yara_x-1.21.0-cp38-abi3-win_amd64.whl (8.3 MB)
+2026-11-18T08:44:35.7410607Z    ---------------------------------------- 8.3/8.3 MB 25.8 MB/s  0:00:00
+2026-11-18T08:44:35.7499083Z Downloading hypothesis-6.170.15-cp312-cp312-win_amd64.whl (691 kB)
+2026-11-18T08:44:35.7740366Z    ---------------------------------------- 691.4/691.4 kB 26.8 MB/s  0:00:00
+2026-11-18T08:44:35.7840374Z Downloading networkx-3.7-py3-none-any.whl (2.1 MB)
+2026-11-18T08:44:35.8249271Z    ---------------------------------------- 2.1/2.1 MB 60.6 MB/s  0:00:00
+2026-11-18T08:44:35.8333291Z Downloading pefile-2024.8.26-py3-none-any.whl (74 kB)
+2026-11-18T08:44:35.8581942Z Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
+2026-11-18T08:44:35.9042078Z    ---------------------------------------- 1.3/1.3 MB 31.9 MB/s  0:00:00
+2026-11-18T08:44:35.9120435Z Downloading pytest-9.2.0-py3-none-any.whl (411 kB)
+2026-11-18T08:44:35.9404740Z Downloading pluggy-1.7.0-py3-none-any.whl (27 kB)
+2026-11-18T08:44:35.9655696Z Downloading pytest_qt-4.5.0-py3-none-any.whl (37 kB)
+2026-11-18T08:44:35.9894688Z Downloading pyyaml-6.0.3-cp312-cp312-win_amd64.whl (154 kB)
+2026-11-18T08:44:36.0524778Z Downloading ruff-0.17.5-py3-none-win_amd64.whl (10.3 MB)
+2026-11-18T08:44:36.1292871Z    ---------------------------------------- 10.3/10.3 MB 128.4 MB/s  0:00:00
+2026-11-18T08:44:36.1378455Z Downloading sortedcontainers-2.4.0-py2.py3-none-any.whl (29 kB)
+2026-11-18T08:44:36.1630686Z Downloading annotated_types-0.8.0-py3-none-any.whl (13 kB)
+2026-11-18T08:44:36.1901410Z Downloading iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
+2026-11-18T08:44:36.2149163Z Downloading pyinstaller_hooks_contrib-2026.10-py3-none-any.whl (463 kB)
+2026-11-18T08:44:36.2498760Z Downloading pywin32_ctypes-0.2.3-py3-none-any.whl (30 kB)
+2026-11-18T08:44:36.2686258Z Using cached setuptools-84.2.1-py3-none-any.whl (876 kB)
+2026-11-18T08:44:36.2851739Z Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+2026-11-18T08:44:36.3045959Z Downloading typing_inspection-0.4.5-py3-none-any.whl (14 kB)
+2026-11-18T08:44:36.3341141Z Downloading altgraph-0.17.5-py2.py3-none-any.whl (21 kB)
+2026-11-18T08:44:36.8948006Z Building wheels for collected packages: patchtrace
+2026-11-18T08:44:36.9020586Z   Building editable for patchtrace (pyproject.toml): started
+2026-11-18T08:44:37.4041102Z   Building editable for patchtrace (pyproject.toml): finished with status 'done'
+2026-11-18T08:44:37.4087660Z   Created wheel for patchtrace: filename=patchtrace-0.1.0-0.editable-py3-none-any.whl size=2698 sha256=8934cd36d7687af9b557d40566a7784a7e531d7c5b63f714920d8aa87caf7a0a
+2026-11-18T08:44:37.4089441Z   Stored in directory: C:\Users\runneradmin\AppData\Local\Temp\pip-ephem-wheel-cache-03ict5c5\wheels\f0\26\8f\b311293e0d165fbb41ccd3192380692d529a0e50278206532f
+2026-11-18T08:44:37.4114864Z Successfully built patchtrace
+2026-11-18T08:44:37.5124031Z Installing collected packages: sortedcontainers, altgraph, yara-x, typing-extensions, shiboken6, setuptools, ruff, rapidfuzz, pyyaml, pywin32-ctypes, pyinstaller-hooks-contrib, pygments, protobuf, pluggy, pefile, networkx, iniconfig, iced-x86, hypothesis, annotated-types, typing-inspection, pytest, PySide6_Essentials, pyinstaller, pydantic-core, pytest-qt, PySide6_Pdf, PySide6_Addons, pydantic, PySide6_WebEngine, PySide6, patchtrace
+2026-11-18T08:44:59.9169090Z 
+2026-11-18T08:44:59.9207414Z Successfully installed PySide6-6.12.0 PySide6_Addons-6.12.0 PySide6_Essentials-6.12.0 PySide6_Pdf-6.12.0.140 PySide6_WebEngine-6.12.0.140 altgraph-0.17.5 annotated-types-0.8.0 hypothesis-6.170.15 iced-x86-1.21.0 iniconfig-2.3.1 networkx-3.7 patchtrace-0.1.0 pefile-2024.8.26 pluggy-1.7.0 protobuf-7.36.2 pydantic-2.13.5 pydantic-core-2.46.5 pygments-2.21.0 pyinstaller-6.22.3 pyinstaller-hooks-contrib-2026.10 pytest-9.2.0 pytest-qt-4.5.0 pywin32-ctypes-0.2.3 pyyaml-6.0.3 rapidfuzz-3.14.6 ruff-0.17.5 setuptools-84.2.1 shiboken6-6.12.0 sortedcontainers-2.4.0 typing-extensions-4.16.0 typing-inspection-0.4.5 yara-x-1.21.0
+2026-11-18T08:45:00.3676840Z ##[group]Run python -m pip check
+2026-11-18T08:45:00.3677260Z [36;1mpython -m pip check[0m
+2026-11-18T08:45:00.3769659Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-18T08:45:00.3770023Z env:
+2026-11-18T08:45:00.3770254Z   QT_QPA_PLATFORM: offscreen
+2026-11-18T08:45:00.3770581Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-18T08:45:00.3771038Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-11-18T08:45:00.3771502Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-18T08:45:00.3771914Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-18T08:45:00.3772341Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-18T08:45:00.3773037Z ##[endgroup]
+2026-11-18T08:45:01.0458606Z No broken requirements found.
+2026-11-18T08:45:01.2131710Z ##[group]Run python tools/check_protobuf_runtime.py
+2026-11-18T08:45:01.2132176Z [36;1mpython tools/check_protobuf_runtime.py[0m
+2026-11-18T08:45:01.2206371Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-18T08:45:01.2206722Z env:
+2026-11-18T08:45:01.2206935Z   QT_QPA_PLATFORM: offscreen
+2026-11-18T08:45:01.2207251Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-18T08:45:01.2207704Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-11-18T08:45:01.2208142Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-18T08:45:01.2208555Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-18T08:45:01.2208944Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-18T08:45:01.2209277Z ##[endgroup]
+2026-11-18T08:45:01.5721276Z protobuf pin=7.36.2 installed=7.36.2 backend=upb
+2026-11-18T08:45:01.7020103Z ##[group]Run python -m pytest -q tests/test_research_qualification_winpairs.py tests/test_research_qualification_winpairs_integrity.py tests/test_research_qualification_winpairs_publication.py --junitxml=pair-publication-results.xml
+2026-11-18T08:45:01.7021730Z [36;1mpython -m pytest -q tests/test_research_qualification_winpairs.py tests/test_research_qualification_winpairs_integrity.py tests/test_research_qualification_winpairs_publication.py --junitxml=pair-publication-results.xml[0m
+2026-11-18T08:45:01.7109262Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-18T08:45:01.7109629Z env:
+2026-11-18T08:45:01.7109848Z   QT_QPA_PLATFORM: offscreen
+2026-11-18T08:45:01.7110629Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-18T08:45:01.7111097Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-11-18T08:45:01.7111587Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-18T08:45:01.7112052Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-18T08:45:01.7112471Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-18T08:45:01.7112793Z ##[endgroup]
+2026-11-18T08:45:05.8061815Z .......................F.F..FFFF.F....................F...F.....FF..sF.. [ 91%]
+2026-11-18T08:45:05.9581066Z FFss.F.                                                                  [100%]
+2026-11-18T08:45:05.9581525Z ================================== FAILURES ===================================
+2026-11-18T08:45:05.9581956Z ____________________ test_run_found_downloads_and_verifies ____________________
+2026-11-18T08:45:05.9582378Z 
+2026-11-18T08:45:05.9582903Z tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_run_found_downloads_and_v0')
+2026-11-18T08:45:05.9583445Z 
+2026-11-18T08:45:05.9584039Z     def test_run_found_downloads_and_verifies(tmp_path):
+2026-11-18T08:45:05.9584670Z         m = wp.run([case()], Fake(routes(index(A, B))), tmp_path)
+2026-11-18T08:45:05.9585158Z         c = m['cases'][0]
+2026-11-18T08:45:05.9585468Z >       assert c['status'] == 'found' and m['schema'] == wp.OUT_SCHEMA
+2026-11-18T08:45:05.9585843Z E       AssertionError: assert ('missing' == 'found'
+2026-11-18T08:45:05.9586138Z E         
+2026-11-18T08:45:05.9586351Z E         - found
+2026-11-18T08:45:05.9586554Z E         + missing)
+2026-11-18T08:45:05.9586691Z 
+2026-11-18T08:45:05.9586888Z tests\test_research_qualification_winpairs.py:153: AssertionError
+2026-11-18T08:45:05.9587341Z __________ test_missing_binary_or_index_is_status_missing_not_error ___________
+2026-11-18T08:45:05.9587622Z 
+2026-11-18T08:45:05.9588009Z tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_missing_binary_or_index_i0')
+2026-11-18T08:45:05.9588460Z 
+2026-11-18T08:45:05.9588666Z     def test_missing_binary_or_index_is_status_missing_not_error(tmp_path):
+2026-11-18T08:45:05.9589121Z         m = wp.run([case(), case('c2', 'nope.sys 1.2.3.4', 'nope.sys 1.2.3.5')],
+2026-11-18T08:45:05.9589553Z                    Fake(routes(index(A, B), {URL_B: wp.Response(404)})), tmp_path)
+2026-11-18T08:45:05.9589976Z         assert [c['status'] for c in m['cases']] == ['missing', 'missing']
+2026-11-18T08:45:05.9590484Z >       assert m['cases'][0]['newer']['status'] == 'missing' and m['cases'][0]['older']['status'] == 'found'
+2026-11-18T08:45:05.9590941Z E       AssertionError: assert ('missing' == 'missing'
+2026-11-18T08:45:05.9591536Z E         
+2026-11-18T08:45:05.9591823Z E           missing and 'missing' == 'found'
+2026-11-18T08:45:05.9592084Z E         
+2026-11-18T08:45:05.9592265Z E         - found
+2026-11-18T08:45:05.9592467Z E         + missing)
+2026-11-18T08:45:05.9592596Z 
+2026-11-18T08:45:05.9592763Z tests\test_research_qualification_winpairs.py:170: AssertionError
+2026-11-18T08:45:05.9593202Z _________________ test_manifest_has_no_redirect_url_or_query __________________
+2026-11-18T08:45:05.9595717Z 
+2026-11-18T08:45:05.9596589Z tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_manifest_has_no_redirect_0')
+2026-11-18T08:45:05.9597485Z 
+2026-11-18T08:45:05.9597727Z     def test_manifest_has_no_redirect_url_or_query(tmp_path):
+2026-11-18T08:45:05.9598369Z         blob = 'https://s.blob.core.windows.net/b/x?sig=SECRET'
+2026-11-18T08:45:05.9599161Z         m = wp.run([case()], Fake(routes(index(A, B), {URL_A: wp.Response(302, location=blob), blob: BIN_A})), tmp_path)
+2026-11-18T08:45:05.9599891Z >       assert m['cases'][0]['status'] == 'found'
+2026-11-18T08:45:05.9600380Z E       AssertionError: assert 'missing' == 'found'
+2026-11-18T08:45:05.9600847Z E         
+2026-11-18T08:45:05.9601118Z E         - found
+2026-11-18T08:45:05.9601408Z E         + missing
+2026-11-18T08:45:05.9601592Z 
+2026-11-18T08:45:05.9601849Z tests\test_research_qualification_winpairs.py:189: AssertionError
+2026-11-18T08:45:05.9602533Z _________________ test_exit_0_when_found_and_manifest_written _________________
+2026-11-18T08:45:05.9602959Z 
+2026-11-18T08:45:05.9603404Z tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_exit_0_when_found_and_man0')
+2026-11-18T08:45:05.9604061Z monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000021720E770B0>
+2026-11-18T08:45:05.9604343Z 
+2026-11-18T08:45:05.9604548Z     def test_exit_0_when_found_and_manifest_written(tmp_path, monkeypatch):
+2026-11-18T08:45:05.9604923Z         monkeypatch.chdir(tmp_path)
+2026-11-18T08:45:05.9605228Z >       assert cli(tmp_path, Fake(routes(index(A, B)))) == 0
+2026-11-18T08:45:05.9605544Z E       AssertionError: assert 2 == 0
+2026-11-18T08:45:05.9606328Z E        +  where 2 = cli(WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_exit_0_when_found_and_man0'), <test_research_qualification_winpairs.Fake object at 0x0000021720E76CF0>)
+2026-11-18T08:45:05.9608698Z E        +    where <test_research_qualification_winpairs.Fake object at 0x0000021720E76CF0> = Fake({'https://winbindex.m417z.com/data/by_filename_compressed/tcpip.sys.json.gz': b'\x1f\x8b\x08\x00\x91e\xfdj\x02\xff\xa5...': b'MZ-old-binary', 'https://msdl.microsoft.com/download/symbols/tcpip.sys/6320C3D450000/tcpip.sys': b'MZ-new-binary'})
+2026-11-18T08:45:05.9611912Z E        +      where {'https://winbindex.m417z.com/data/by_filename_compressed/tcpip.sys.json.gz': b'\x1f\x8b\x08\x00\x91e\xfdj\x02\xff\xa5...': b'MZ-old-binary', 'https://msdl.microsoft.com/download/symbols/tcpip.sys/6320C3D450000/tcpip.sys': b'MZ-new-binary'} = routes({'5a3f674b0c38ae775ffac4d38bf013aaabeb6974176f8301d1aa6f1f145b9b70': {'fileInfo': {'size': 13, 'sha256': '5a3f674b0c38...mestamp': 1663091668, ...}, 'windowsVersions': {'21H2': {'KB1000002': {'updateInfo': {'releaseDate': '2022-09-13'}}}}}})
+2026-11-18T08:45:05.9615525Z E        +        where {'5a3f674b0c38ae775ffac4d38bf013aaabeb6974176f8301d1aa6f1f145b9b70': {'fileInfo': {'size': 13, 'sha256': '5a3f674b0c38...mestamp': 1663091668, ...}, 'windowsVersions': {'21H2': {'KB1000002': {'updateInfo': {'releaseDate': '2022-09-13'}}}}}} = index({'fileInfo': {'size': 13, 'sha256': '5a3f674b0c38ae775ffac4d38bf013aaabeb6974176f8301d1aa6f1f145b9b70', 'machineType':...imestamp': 1660068272, ...}, 'windowsVersions': {'21H2': {'KB1000001': {'updateInfo': {'releaseDate': '2022-08-09'}}}}}, {'fileInfo': {'size': 13, 'sha256': '611b786135207248dde103e56d3a8d5bdbfed470b17493c1b859df14e3b41dda', 'machineType':...imestamp': 1663091668, ...}, 'windowsVersions': {'21H2': {'KB1000002': {'updateInfo': {'releaseDate': '2022-09-13'}}}}})
+2026-11-18T08:45:05.9617581Z 
+2026-11-18T08:45:05.9617848Z D:\a\patchtrace\patchtrace\tests\test_research_qualification_winpairs.py:207: AssertionError
+2026-11-18T08:45:05.9618377Z ---------------------------- Captured stderr call -----------------------------
+2026-11-18T08:45:05.9618826Z winpairs: blocked: safe publication unavailable: OSError (OS error 87)
+2026-11-18T08:45:05.9619910Z _____________________ test_exit_0_when_only_some_missing ______________________
+2026-11-18T08:45:05.9620190Z 
+2026-11-18T08:45:05.9620577Z tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_exit_0_when_only_some_mis0')
+2026-11-18T08:45:05.9621251Z monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002171F0210D0>
+2026-11-18T08:45:05.9621537Z 
+2026-11-18T08:45:05.9621725Z     def test_exit_0_when_only_some_missing(tmp_path, monkeypatch):
+2026-11-18T08:45:05.9622085Z         monkeypatch.chdir(tmp_path)
+2026-11-18T08:45:05.9622475Z         mp = write_manifest(tmp_path, [case(), case('c2', 'zz.sys 1.0.0.1', 'zz.sys 1.0.0.2')])
+2026-11-18T08:45:05.9622946Z >       assert cli(tmp_path, Fake(routes(index(A, B))), manifest=mp) == 0
+2026-11-18T08:45:05.9623292Z E       AssertionError: assert 2 == 0
+2026-11-18T08:45:05.9624480Z E        +  where 2 = cli(WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_exit_0_when_only_some_mis0'), <test_research_qualification_winpairs.Fake object at 0x000002171F020CE0>, manifest=WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_exit_0_when_only_some_mis0/m.json'))
+2026-11-18T08:45:05.9626534Z E        +    where <test_research_qualification_winpairs.Fake object at 0x000002171F020CE0> = Fake({'https://winbindex.m417z.com/data/by_filename_compressed/tcpip.sys.json.gz': b'\x1f\x8b\x08\x00\x91e\xfdj\x02\xff\xa5...': b'MZ-old-binary', 'https://msdl.microsoft.com/download/symbols/tcpip.sys/6320C3D450000/tcpip.sys': b'MZ-new-binary'})
+2026-11-18T08:45:05.9628942Z E        +      where {'https://winbindex.m417z.com/data/by_filename_compressed/tcpip.sys.json.gz': b'\x1f\x8b\x08\x00\x91e\xfdj\x02\xff\xa5...': b'MZ-old-binary', 'https://msdl.microsoft.com/download/symbols/tcpip.sys/6320C3D450000/tcpip.sys': b'MZ-new-binary'} = routes({'5a3f674b0c38ae775ffac4d38bf013aaabeb6974176f8301d1aa6f1f145b9b70': {'fileInfo': {'size': 13, 'sha256': '5a3f674b0c38...mestamp': 1663091668, ...}, 'windowsVersions': {'21H2': {'KB1000002': {'updateInfo': {'releaseDate': '2022-09-13'}}}}}})
+2026-11-18T08:45:05.9633417Z E        +        where {'5a3f674b0c38ae775ffac4d38bf013aaabeb6974176f8301d1aa6f1f145b9b70': {'fileInfo': {'size': 13, 'sha256': '5a3f674b0c38...mestamp': 1663091668, ...}, 'windowsVersions': {'21H2': {'KB1000002': {'updateInfo': {'releaseDate': '2022-09-13'}}}}}} = index({'fileInfo': {'size': 13, 'sha256': '5a3f674b0c38ae775ffac4d38bf013aaabeb6974176f8301d1aa6f1f145b9b70', 'machineType':...imestamp': 1660068272, ...}, 'windowsVersions': {'21H2': {'KB1000001': {'updateInfo': {'releaseDate': '2022-08-09'}}}}}, {'fileInfo': {'size': 13, 'sha256': '611b786135207248dde103e56d3a8d5bdbfed470b17493c1b859df14e3b41dda', 'machineType':...imestamp': 1663091668, ...}, 'windowsVersions': {'21H2': {'KB1000002': {'updateInfo': {'releaseDate': '2022-09-13'}}}}})
+2026-11-18T08:45:05.9635556Z 
+2026-11-18T08:45:05.9635814Z D:\a\patchtrace\patchtrace\tests\test_research_qualification_winpairs.py:214: AssertionError
+2026-11-18T08:45:05.9636430Z ---------------------------- Captured stderr call -----------------------------
+2026-11-18T08:45:05.9636873Z winpairs: blocked: safe publication unavailable: OSError (OS error 87)
+2026-11-18T08:45:05.9637298Z ________________________ test_exit_1_when_all_missing _________________________
+2026-11-18T08:45:05.9637563Z 
+2026-11-18T08:45:05.9637920Z tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_exit_1_when_all_missing0')
+2026-11-18T08:45:05.9638557Z monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002171F01F6B0>
+2026-11-18T08:45:05.9638843Z 
+2026-11-18T08:45:05.9638996Z     def test_exit_1_when_all_missing(tmp_path, monkeypatch):
+2026-11-18T08:45:05.9639315Z         monkeypatch.chdir(tmp_path)
+2026-11-18T08:45:05.9639581Z >       assert cli(tmp_path, Fake({})) == 1
+2026-11-18T08:45:05.9639857Z E       AssertionError: assert 2 == 1
+2026-11-18T08:45:05.9640779Z E        +  where 2 = cli(WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_exit_1_when_all_missing0'), <test_research_qualification_winpairs.Fake object at 0x000002171F01F680>)
+2026-11-18T08:45:05.9641706Z E        +    where <test_research_qualification_winpairs.Fake object at 0x000002171F01F680> = Fake({})
+2026-11-18T08:45:05.9642063Z 
+2026-11-18T08:45:05.9642307Z D:\a\patchtrace\patchtrace\tests\test_research_qualification_winpairs.py:219: AssertionError
+2026-11-18T08:45:05.9642807Z ---------------------------- Captured stderr call -----------------------------
+2026-11-18T08:45:05.9643229Z winpairs: blocked: safe publication unavailable: OSError (OS error 87)
+2026-11-18T08:45:05.9643649Z _______________________ test_case_filter_selects_subset _______________________
+2026-11-18T08:45:05.9643892Z 
+2026-11-18T08:45:05.9644250Z tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_case_filter_selects_subse0')
+2026-11-18T08:45:05.9644900Z monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002171F01DEB0>
+2026-11-18T08:45:05.9645183Z 
+2026-11-18T08:45:05.9645332Z     def test_case_filter_selects_subset(tmp_path, monkeypatch):
+2026-11-18T08:45:05.9645662Z         monkeypatch.chdir(tmp_path)
+2026-11-18T08:45:05.9645956Z         mp = write_manifest(tmp_path, [case('a'), case('b')])
+2026-11-18T08:45:05.9646414Z >       assert cli(tmp_path, Fake(routes(index(A, B))), '--case', 'b', '--resolve-only', manifest=mp) == 0
+2026-11-18T08:45:05.9646876Z E       AssertionError: assert 2 == 0
+2026-11-18T08:45:05.9648170Z E        +  where 2 = cli(WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_case_filter_selects_subse0'), <test_research_qualification_winpairs.Fake object at 0x000002171EF92570>, '--case', 'b', '--resolve-only', manifest=WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_case_filter_selects_subse0/m.json'))
+2026-11-18T08:45:05.9650439Z E        +    where <test_research_qualification_winpairs.Fake object at 0x000002171EF92570> = Fake({'https://winbindex.m417z.com/data/by_filename_compressed/tcpip.sys.json.gz': b'\x1f\x8b\x08\x00\x91e\xfdj\x02\xff\xa5...': b'MZ-old-binary', 'https://msdl.microsoft.com/download/symbols/tcpip.sys/6320C3D450000/tcpip.sys': b'MZ-new-binary'})
+2026-11-18T08:45:05.9653200Z E        +      where {'https://winbindex.m417z.com/data/by_filename_compressed/tcpip.sys.json.gz': b'\x1f\x8b\x08\x00\x91e\xfdj\x02\xff\xa5...': b'MZ-old-binary', 'https://msdl.microsoft.com/download/symbols/tcpip.sys/6320C3D450000/tcpip.sys': b'MZ-new-binary'} = routes({'5a3f674b0c38ae775ffac4d38bf013aaabeb6974176f8301d1aa6f1f145b9b70': {'fileInfo': {'size': 13, 'sha256': '5a3f674b0c38...mestamp': 1663091668, ...}, 'windowsVersions': {'21H2': {'KB1000002': {'updateInfo': {'releaseDate': '2022-09-13'}}}}}})
+2026-11-18T08:45:05.9656775Z E        +        where {'5a3f674b0c38ae775ffac4d38bf013aaabeb6974176f8301d1aa6f1f145b9b70': {'fileInfo': {'size': 13, 'sha256': '5a3f674b0c38...mestamp': 1663091668, ...}, 'windowsVersions': {'21H2': {'KB1000002': {'updateInfo': {'releaseDate': '2022-09-13'}}}}}} = index({'fileInfo': {'size': 13, 'sha256': '5a3f674b0c38ae775ffac4d38bf013aaabeb6974176f8301d1aa6f1f145b9b70', 'machineType':...imestamp': 1660068272, ...}, 'windowsVersions': {'21H2': {'KB1000001': {'updateInfo': {'releaseDate': '2022-08-09'}}}}}, {'fileInfo': {'size': 13, 'sha256': '611b786135207248dde103e56d3a8d5bdbfed470b17493c1b859df14e3b41dda', 'machineType':...imestamp': 1663091668, ...}, 'windowsVersions': {'21H2': {'KB1000002': {'updateInfo': {'releaseDate': '2022-09-13'}}}}})
+2026-11-18T08:45:05.9658879Z 
+2026-11-18T08:45:05.9659158Z D:\a\patchtrace\patchtrace\tests\test_research_qualification_winpairs.py:237: AssertionError
+2026-11-18T08:45:05.9659684Z ---------------------------- Captured stderr call -----------------------------
+2026-11-18T08:45:05.9660127Z winpairs: blocked: safe publication unavailable: OSError (OS error 87)
+2026-11-18T08:45:05.9660703Z ____________ test_binary_is_complete_before_exclusive_publication _____________
+2026-11-18T08:45:05.9660989Z 
+2026-11-18T08:45:05.9661354Z tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_binary_is_complete_before0')
+2026-11-18T08:45:05.9662051Z monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002171F013770>
+2026-11-18T08:45:05.9662337Z 
+2026-11-18T08:45:05.9662567Z     def test_binary_is_complete_before_exclusive_publication(tmp_path, monkeypatch):
+2026-11-18T08:45:05.9662989Z         destination = tmp_path / 'tcpip.sys'
+2026-11-18T08:45:05.9663273Z         real_fsync = os.fsync
+2026-11-18T08:45:05.9663510Z         complete = []
+2026-11-18T08:45:05.9663715Z     
+2026-11-18T08:45:05.9663902Z         def observe(fd):
+2026-11-18T08:45:05.9664151Z             assert not destination.exists()
+2026-11-18T08:45:05.9664460Z             position = os.lseek(fd, 0, os.SEEK_CUR)
+2026-11-18T08:45:05.9664756Z             os.lseek(fd, 0, os.SEEK_SET)
+2026-11-18T08:45:05.9665043Z             assert os.read(fd, len(BIN_A) + 1) == BIN_A
+2026-11-18T08:45:05.9665355Z             os.lseek(fd, position, os.SEEK_SET)
+2026-11-18T08:45:05.9665628Z             real_fsync(fd)
+2026-11-18T08:45:05.9665872Z             complete.append(destination)
+2026-11-18T08:45:05.9666119Z     
+2026-11-18T08:45:05.9666334Z         monkeypatch.setattr(os, 'fsync', observe)
+2026-11-18T08:45:05.9666613Z         result = record()
+2026-11-18T08:45:05.9666981Z         wp.download_side(Fake({URL_A: BIN_A}), result, destination, 'case/older/tcpip.sys')
+2026-11-18T08:45:05.9667395Z         assert complete == [destination]
+2026-11-18T08:45:05.9667725Z >       assert result['status'] == 'found' and result['sha256_verified']
+2026-11-18T08:45:05.9668101Z E       AssertionError: assert ('missing' == 'found'
+2026-11-18T08:45:05.9668395Z E         
+2026-11-18T08:45:05.9668849Z E         - found
+2026-11-18T08:45:05.9669187Z E         + missing)
+2026-11-18T08:45:05.9669859Z 
+2026-11-18T08:45:05.9670064Z tests\test_research_qualification_winpairs_integrity.py:143: AssertionError
+2026-11-18T08:45:05.9670562Z _____ test_concurrent_manifest_wins_and_downloaded_sides_remain_available _____
+2026-11-18T08:45:05.9670862Z 
+2026-11-18T08:45:05.9671247Z tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_concurrent_manifest_wins_0')
+2026-11-18T08:45:05.9671911Z monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002171F32DA30>
+2026-11-18T08:45:05.9672192Z 
+2026-11-18T08:45:05.9672466Z     def test_concurrent_manifest_wins_and_downloaded_sides_remain_available(tmp_path, monkeypatch):
+2026-11-18T08:45:05.9672927Z         monkeypatch.chdir(tmp_path)
+2026-11-18T08:45:05.9673197Z         prior = tmp_path / 'pm.json'
+2026-11-18T08:45:05.9673462Z         base = Fake(routes(index(A, B)))
+2026-11-18T08:45:05.9673704Z     
+2026-11-18T08:45:05.9673897Z         def fetch(*args):
+2026-11-18T08:45:05.9674128Z             if args[0] == IDX_URL:
+2026-11-18T08:45:05.9674428Z                 prior.write_bytes(b'concurrent receipt')
+2026-11-18T08:45:05.9674724Z             return base(*args)
+2026-11-18T08:45:05.9674952Z     
+2026-11-18T08:45:05.9675146Z         assert cli(tmp_path, fetch) == 2
+2026-11-18T08:45:05.9675450Z         assert prior.read_bytes() == b'concurrent receipt'
+2026-11-18T08:45:05.9675827Z >       assert (tmp_path / 'o/c1/older/tcpip.sys').read_bytes() == BIN_A
+2026-11-18T08:45:05.9676197Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-18T08:45:05.9676403Z 
+2026-11-18T08:45:05.9676631Z D:\a\patchtrace\patchtrace\tests\test_research_qualification_winpairs_integrity.py:193: 
+2026-11-18T08:45:05.9677093Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+2026-11-18T08:45:05.9677534Z C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\pathlib.py:1019: in read_bytes
+2026-11-18T08:45:05.9677935Z     with self.open(mode='rb') as f:
+2026-11-18T08:45:05.9678868Z          ^^^^^^^^^^^^^^^^^^^^
+2026-11-18T08:45:05.9679167Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+2026-11-18T08:45:05.9679389Z 
+2026-11-18T08:45:05.9679819Z self = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_concurrent_manifest_wins_0/o/c1/older/tcpip.sys')
+2026-11-18T08:45:05.9680533Z mode = 'rb', buffering = -1, encoding = None, errors = None, newline = None
+2026-11-18T08:45:05.9680809Z 
+2026-11-18T08:45:05.9680944Z     def open(self, mode='r', buffering=-1, encoding=None,
+2026-11-18T08:45:05.9681265Z              errors=None, newline=None):
+2026-11-18T08:45:05.9681513Z         """
+2026-11-18T08:45:05.9681792Z         Open the file pointed to by this path and return a file object, as
+2026-11-18T08:45:05.9682154Z         the built-in open() function does.
+2026-11-18T08:45:05.9682404Z         """
+2026-11-18T08:45:05.9682614Z         if "b" not in mode:
+2026-11-18T08:45:05.9682869Z             encoding = io.text_encoding(encoding)
+2026-11-18T08:45:05.9683218Z >       return io.open(self, mode, buffering, encoding, errors, newline)
+2026-11-18T08:45:05.9683575Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-18T08:45:05.9684333Z E       FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pytest-of-runneradmin\\pytest-0\\test_concurrent_manifest_wins_0\\o\\c1\\older\\tcpip.sys'
+2026-11-18T08:45:05.9684960Z 
+2026-11-18T08:45:05.9685193Z C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\pathlib.py:1013: FileNotFoundError
+2026-11-18T08:45:05.9685670Z ---------------------------- Captured stderr call -----------------------------
+2026-11-18T08:45:05.9686114Z winpairs: blocked: destination already exists; prior evidence is preserved
+2026-11-18T08:45:05.9686586Z __________ test_successful_resolve_only_receipt_remains_strict_json ___________
+2026-11-18T08:45:05.9686969Z 
+2026-11-18T08:45:05.9687336Z tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_successful_resolve_only_r0')
+2026-11-18T08:45:05.9688010Z monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002171F32C080>
+2026-11-18T08:45:05.9688294Z 
+2026-11-18T08:45:05.9688539Z     def test_successful_resolve_only_receipt_remains_strict_json(tmp_path, monkeypatch):
+2026-11-18T08:45:05.9688960Z         monkeypatch.chdir(tmp_path)
+2026-11-18T08:45:05.9689323Z >       assert cli(tmp_path, Fake(routes(index(A, B))), '--resolve-only') == 0
+2026-11-18T08:45:05.9690042Z E       AssertionError: assert 2 == 0
+2026-11-18T08:45:05.9690905Z E        +  where 2 = cli(WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_successful_resolve_only_r0'), <test_research_qualification_winpairs.Fake object at 0x000002171F32FBF0>, '--resolve-only')
+2026-11-18T08:45:05.9692665Z E        +    where <test_research_qualification_winpairs.Fake object at 0x000002171F32FBF0> = Fake({'https://winbindex.m417z.com/data/by_filename_compressed/tcpip.sys.json.gz': b'\x1f\x8b\x08\x00\x91e\xfdj\x02\xff\xa5...': b'MZ-old-binary', 'https://msdl.microsoft.com/download/symbols/tcpip.sys/6320C3D450000/tcpip.sys': b'MZ-new-binary'})
+2026-11-18T08:45:05.9695207Z E        +      where {'https://winbindex.m417z.com/data/by_filename_compressed/tcpip.sys.json.gz': b'\x1f\x8b\x08\x00\x91e\xfdj\x02\xff\xa5...': b'MZ-old-binary', 'https://msdl.microsoft.com/download/symbols/tcpip.sys/6320C3D450000/tcpip.sys': b'MZ-new-binary'} = routes({'5a3f674b0c38ae775ffac4d38bf013aaabeb6974176f8301d1aa6f1f145b9b70': {'fileInfo': {'size': 13, 'sha256': '5a3f674b0c38...mestamp': 1663091668, ...}, 'windowsVersions': {'21H2': {'KB1000002': {'updateInfo': {'releaseDate': '2022-09-13'}}}}}})
+2026-11-18T08:45:05.9698849Z E        +        where {'5a3f674b0c38ae775ffac4d38bf013aaabeb6974176f8301d1aa6f1f145b9b70': {'fileInfo': {'size': 13, 'sha256': '5a3f674b0c38...mestamp': 1663091668, ...}, 'windowsVersions': {'21H2': {'KB1000002': {'updateInfo': {'releaseDate': '2022-09-13'}}}}}} = index({'fileInfo': {'size': 13, 'sha256': '5a3f674b0c38ae775ffac4d38bf013aaabeb6974176f8301d1aa6f1f145b9b70', 'machineType':...imestamp': 1660068272, ...}, 'windowsVersions': {'21H2': {'KB1000001': {'updateInfo': {'releaseDate': '2022-08-09'}}}}}, {'fileInfo': {'size': 13, 'sha256': '611b786135207248dde103e56d3a8d5bdbfed470b17493c1b859df14e3b41dda', 'machineType':...imestamp': 1663091668, ...}, 'windowsVersions': {'21H2': {'KB1000002': {'updateInfo': {'releaseDate': '2022-09-13'}}}}})
+2026-11-18T08:45:05.9700919Z 
+2026-11-18T08:45:05.9701204Z D:\a\patchtrace\patchtrace\tests\test_research_qualification_winpairs_integrity.py:260: AssertionError
+2026-11-18T08:45:05.9701778Z ---------------------------- Captured stderr call -----------------------------
+2026-11-18T08:45:05.9702222Z winpairs: blocked: safe publication unavailable: OSError (OS error 87)
+2026-11-18T08:45:05.9702703Z ____ test_parent_replacement_cannot_redirect_publication_or_cleanup[None] _____
+2026-11-18T08:45:05.9702991Z 
+2026-11-18T08:45:05.9703370Z tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_parent_replacement_cannot0')
+2026-11-18T08:45:05.9704039Z monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002171F01CFE0>
+2026-11-18T08:45:05.9704417Z failure = None
+2026-11-18T08:45:05.9704544Z 
+2026-11-18T08:45:05.9704797Z     @pytest.mark.parametrize('failure', [None, OSError('injected failure'), KeyboardInterrupt()])
+2026-11-18T08:45:05.9705430Z     def test_parent_replacement_cannot_redirect_publication_or_cleanup(tmp_path, monkeypatch, failure):
+2026-11-18T08:45:05.9705891Z         parent = tmp_path / 'owned'
+2026-11-18T08:45:05.9706145Z         parent.mkdir()
+2026-11-18T08:45:05.9706393Z         moved = tmp_path / 'original-parent'
+2026-11-18T08:45:05.9706684Z         destination = parent / 'tcpip.sys'
+2026-11-18T08:45:05.9706941Z         foreign = []
+2026-11-18T08:45:05.9707256Z         real_fsync = os.fsync
+2026-11-18T08:45:05.9707492Z         replaced = False
+2026-11-18T08:45:05.9707702Z     
+2026-11-18T08:45:05.9707898Z         def replace_parent(fd):
+2026-11-18T08:45:05.9708164Z             nonlocal replaced
+2026-11-18T08:45:05.9708408Z             real_fsync(fd)
+2026-11-18T08:45:05.9708770Z             names = [p.name for p in parent.glob('.winpairs-*')] or ['.winpairs-unowned.tmp']
+2026-11-18T08:45:05.9709151Z             try:
+2026-11-18T08:45:05.9709405Z                 parent.rename(moved)
+2026-11-18T08:45:05.9709957Z             except PermissionError:
+2026-11-18T08:45:05.9710368Z                 assert os.name == 'nt', 'only native Windows sharing locks may prevent this rename'
+2026-11-18T08:45:05.9710742Z             else:
+2026-11-18T08:45:05.9710957Z                 replaced = True
+2026-11-18T08:45:05.9711195Z                 parent.mkdir()
+2026-11-18T08:45:05.9711432Z                 for name in names:
+2026-11-18T08:45:05.9711690Z                     path = parent / name
+2026-11-18T08:45:05.9712031Z                     path.write_bytes(b'foreign file in replacement parent')
+2026-11-18T08:45:05.9712374Z                     foreign.append(path)
+2026-11-18T08:45:05.9712648Z             if failure is not None:
+2026-11-18T08:45:05.9712892Z                 raise failure
+2026-11-18T08:45:05.9713110Z     
+2026-11-18T08:45:05.9713347Z         monkeypatch.setattr(os, 'fsync', replace_parent)
+2026-11-18T08:45:05.9713654Z         result = record()
+2026-11-18T08:45:05.9713916Z         if isinstance(failure, KeyboardInterrupt):
+2026-11-18T08:45:05.9714232Z             with pytest.raises(KeyboardInterrupt):
+2026-11-18T08:45:05.9714655Z                 wp.download_side(Fake({URL_A: BIN_A}), result, destination, 'case/older/tcpip.sys')
+2026-11-18T08:45:05.9715043Z         else:
+2026-11-18T08:45:05.9715376Z             wp.download_side(Fake({URL_A: BIN_A}), result, destination, 'case/older/tcpip.sys')
+2026-11-18T08:45:05.9715813Z             if replaced or failure is not None:
+2026-11-18T08:45:05.9716268Z                 assert result['status'] == 'missing'
+2026-11-18T08:45:05.9716592Z                 assert not result.get('sha256_verified')
+2026-11-18T08:45:05.9716866Z             else:
+2026-11-18T08:45:05.9717084Z >               assert result['status'] == 'found'
+2026-11-18T08:45:05.9717415Z E               AssertionError: assert 'missing' == 'found'
+2026-11-18T08:45:05.9717709Z E                 
+2026-11-18T08:45:05.9717915Z E                 - found
+2026-11-18T08:45:05.9718147Z E                 + missing
+2026-11-18T08:45:05.9718297Z 
+2026-11-18T08:45:05.9718510Z tests\test_research_qualification_winpairs_publication.py:55: AssertionError
+2026-11-18T08:45:05.9719001Z ____ test_named_stage_replacement_never_publishes_or_deletes_foreign_bytes ____
+2026-11-18T08:45:05.9719293Z 
+2026-11-18T08:45:05.9719674Z tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_named_stage_replacement_n0')
+2026-11-18T08:45:05.9720336Z monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002171F47D610>
+2026-11-18T08:45:05.9720626Z 
+2026-11-18T08:45:05.9720892Z     def test_named_stage_replacement_never_publishes_or_deletes_foreign_bytes(tmp_path, monkeypatch):
+2026-11-18T08:45:05.9721358Z         destination = tmp_path / 'tcpip.sys'
+2026-11-18T08:45:05.9721625Z         foreign = []
+2026-11-18T08:45:05.9721851Z         real_fsync = os.fsync
+2026-11-18T08:45:05.9722073Z     
+2026-11-18T08:45:05.9722261Z         def replace_stage(fd):
+2026-11-18T08:45:05.9722493Z             real_fsync(fd)
+2026-11-18T08:45:05.9722752Z             for source in tmp_path.glob('.winpairs-*'):
+2026-11-18T08:45:05.9723028Z                 try:
+2026-11-18T08:45:05.9723289Z                     source.rename(tmp_path / 'displaced-owned-stage')
+2026-11-18T08:45:05.9723618Z                 except PermissionError:
+2026-11-18T08:45:05.9724009Z                     assert os.name == 'nt', 'only native Windows sharing locks may prevent this rename'
+2026-11-18T08:45:05.9724493Z                 else:
+2026-11-18T08:45:05.9724772Z                     source.write_bytes(b'foreign replacement stage')
+2026-11-18T08:45:05.9725099Z                     foreign.append(source)
+2026-11-18T08:45:05.9725356Z     
+2026-11-18T08:45:05.9725594Z         monkeypatch.setattr(os, 'fsync', replace_stage)
+2026-11-18T08:45:05.9725889Z         result = record()
+2026-11-18T08:45:05.9726250Z         wp.download_side(Fake({URL_A: BIN_A}), result, destination, 'case/older/tcpip.sys')
+2026-11-18T08:45:05.9726724Z >       assert result['status'] == 'found' and result['sha256_verified']
+2026-11-18T08:45:05.9727092Z E       AssertionError: assert ('missing' == 'found'
+2026-11-18T08:45:05.9727367Z E         
+2026-11-18T08:45:05.9727571Z E         - found
+2026-11-18T08:45:05.9727769Z E         + missing)
+2026-11-18T08:45:05.9727886Z 
+2026-11-18T08:45:05.9728105Z tests\test_research_qualification_winpairs_publication.py:112: AssertionError
+2026-11-18T08:45:05.9728603Z ___________ test_publication_supports_unicode_parent_and_file_names ___________
+2026-11-18T08:45:05.9728876Z 
+2026-11-18T08:45:05.9729267Z tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_publication_supports_unic0')
+2026-11-18T08:45:05.9729728Z 
+2026-11-18T08:45:05.9730242Z     def test_publication_supports_unicode_parent_and_file_names(tmp_path):
+2026-11-18T08:45:05.9730709Z         destination = tmp_path / 'owned-\U0001f9ea' / 'receipt-\u0394.json'
+2026-11-18T08:45:05.9731130Z >       wp._publish_bytes(destination, b'{"authored":true}')
+2026-11-18T08:45:05.9731350Z 
+2026-11-18T08:45:05.9731530Z tests\test_research_qualification_winpairs_publication.py:153: 
+2026-11-18T08:45:05.9731914Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+2026-11-18T08:45:05.9732134Z 
+2026-11-18T08:45:05.9732630Z target = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_publication_supports_unic0/owned-\U0001f9ea/receipt-\u0394.json')
+2026-11-18T08:45:05.9733432Z data = b'{"authored":true}'
+2026-11-18T08:45:05.9733588Z 
+2026-11-18T08:45:05.9733737Z     def _publish_bytes(target: Path, data: bytes) -> None:
+2026-11-18T08:45:05.9734187Z         """Publish the exact owned source into its held parent, with no replacing fallback."""
+2026-11-18T08:45:05.9734591Z         _check_destination(target)
+2026-11-18T08:45:05.9734865Z         target = Path(os.path.abspath(target))
+2026-11-18T08:45:05.9735129Z         try:
+2026-11-18T08:45:05.9735333Z             if sys.platform.startswith('linux'):
+2026-11-18T08:45:05.9735613Z                 _publish_linux(target, data)
+2026-11-18T08:45:05.9735870Z             elif os.name == 'nt':
+2026-11-18T08:45:05.9736118Z                 _publish_windows(target, data)
+2026-11-18T08:45:05.9736359Z             else:
+2026-11-18T08:45:05.9736685Z                 raise PublicationBlocked('safe publication is unsupported on this platform')
+2026-11-18T08:45:05.9737098Z         except FileExistsError:
+2026-11-18T08:45:05.9737324Z             raise
+2026-11-18T08:45:05.9737586Z         except (OSError, NotImplementedError, AttributeError) as e:
+2026-11-18T08:45:05.9737979Z             code = getattr(e, 'winerror', None) or getattr(e, 'errno', None)
+2026-11-18T08:45:05.9738369Z             detail = f' (OS error {code})' if code is not None else ''
+2026-11-18T08:45:05.9738850Z >           raise PublicationBlocked(f'safe publication unavailable: {type(e).__name__}{detail}') from None
+2026-11-18T08:45:05.9739540Z E           tools.research_qualification.winpairs.PublicationBlocked: safe publication unavailable: OSError (OS error 87)
+2026-11-18T08:45:05.9739967Z 
+2026-11-18T08:45:05.9740129Z tools\research_qualification\winpairs.py:510: PublicationBlocked
+2026-11-18T08:45:05.9740582Z _____ test_windows_held_ancestors_and_stage_block_replacement_and_writes ______
+2026-11-18T08:45:05.9740866Z 
+2026-11-18T08:45:05.9741241Z tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_windows_held_ancestors_an0')
+2026-11-18T08:45:05.9741976Z monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000021720E700B0>
+2026-11-18T08:45:05.9742249Z 
+2026-11-18T08:45:05.9742466Z     @pytest.mark.skipif(os.name != 'nt', reason='native Windows sharing/handle acceptance')
+2026-11-18T08:45:05.9743014Z     def test_windows_held_ancestors_and_stage_block_replacement_and_writes(tmp_path, monkeypatch):
+2026-11-18T08:45:05.9743493Z         parent = tmp_path / 'owned-ancestor' / 'owned-parent'
+2026-11-18T08:45:05.9743804Z         parent.mkdir(parents=True)
+2026-11-18T08:45:05.9744074Z         destination = parent / 'tcpip.sys'
+2026-11-18T08:45:05.9744324Z         real_fsync = os.fsync
+2026-11-18T08:45:05.9744552Z         attempted = []
+2026-11-18T08:45:05.9744738Z     
+2026-11-18T08:45:05.9744916Z         def attempt_replacement(fd):
+2026-11-18T08:45:05.9745151Z             real_fsync(fd)
+2026-11-18T08:45:05.9745394Z             assert not destination.exists()
+2026-11-18T08:45:05.9745687Z             for ancestor in (parent, parent.parent):
+2026-11-18T08:45:05.9745988Z                 with pytest.raises(PermissionError):
+2026-11-18T08:45:05.9746320Z                     ancestor.rename(tmp_path / ('moved-' + ancestor.name))
+2026-11-18T08:45:05.9746722Z             stages = list(parent.glob('.winpairs-*'))
+2026-11-18T08:45:05.9747006Z             assert len(stages) == 1
+2026-11-18T08:45:05.9747269Z             with pytest.raises(PermissionError):
+2026-11-18T08:45:05.9747594Z                 stages[0].rename(parent / 'substituted-stage')
+2026-11-18T08:45:05.9747916Z             with pytest.raises(PermissionError):
+2026-11-18T08:45:05.9748216Z                 stages[0].write_bytes(b'foreign mutation')
+2026-11-18T08:45:05.9748499Z             attempted.append(True)
+2026-11-18T08:45:05.9748729Z     
+2026-11-18T08:45:05.9748963Z         monkeypatch.setattr(os, 'fsync', attempt_replacement)
+2026-11-18T08:45:05.9749263Z         result = record()
+2026-11-18T08:45:06.9190161Z         wp.download_side(Fake({URL_A: BIN_A}), result, destination, 'case/older/tcpip.sys')
+2026-11-18T08:45:06.9191145Z         assert attempted == [True], result
+2026-11-18T08:45:06.9191668Z >       assert result['status'] == 'found' and result['sha256_verified']
+2026-11-18T08:45:06.9192117Z E       AssertionError: assert ('missing' == 'found'
+2026-11-18T08:45:06.9192392Z E         
+2026-11-18T08:45:06.9192580Z E         - found
+2026-11-18T08:45:06.9192769Z E         + missing)
+2026-11-18T08:45:06.9192886Z 
+2026-11-18T08:45:06.9193105Z tests\test_research_qualification_winpairs_publication.py:184: AssertionError
+2026-11-18T08:45:06.9194264Z ______ test_blocked_binary_publication_is_recorded_and_returns_exit_two _______
+2026-11-18T08:45:06.9194551Z 
+2026-11-18T08:45:06.9194946Z tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_blocked_binary_publicatio0')
+2026-11-18T08:45:06.9195626Z monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000021720F9D100>
+2026-11-18T08:45:06.9195932Z 
+2026-11-18T08:45:06.9196182Z     def test_blocked_binary_publication_is_recorded_and_returns_exit_two(tmp_path, monkeypatch):
+2026-11-18T08:45:06.9196617Z         monkeypatch.chdir(tmp_path)
+2026-11-18T08:45:06.9196874Z         real_publish = wp._publish_bytes
+2026-11-18T08:45:06.9197113Z     
+2026-11-18T08:45:06.9197320Z         def unavailable_binary(target, data):
+2026-11-18T08:45:06.9197595Z             if target.suffix == '.sys':
+2026-11-18T08:45:06.9197981Z                 raise wp.PublicationBlocked('safe publication unsupported in authored test')
+2026-11-18T08:45:06.9198381Z             real_publish(target, data)
+2026-11-18T08:45:06.9198612Z     
+2026-11-18T08:45:06.9198866Z         monkeypatch.setattr(wp, '_publish_bytes', unavailable_binary)
+2026-11-18T08:45:06.9199253Z         assert cli(tmp_path, Fake(routes(index(A, B)))) == 2
+2026-11-18T08:45:06.9199631Z >       document = json.loads((tmp_path / 'pm.json').read_bytes())
+2026-11-18T08:45:06.9200216Z                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-18T08:45:06.9200402Z 
+2026-11-18T08:45:06.9200659Z D:\a\patchtrace\patchtrace\tests\test_research_qualification_winpairs_publication.py:229: 
+2026-11-18T08:45:06.9201123Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+2026-11-18T08:45:06.9201563Z C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\pathlib.py:1019: in read_bytes
+2026-11-18T08:45:06.9201948Z     with self.open(mode='rb') as f:
+2026-11-18T08:45:06.9202196Z          ^^^^^^^^^^^^^^^^^^^^
+2026-11-18T08:45:06.9202464Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+2026-11-18T08:45:06.9202682Z 
+2026-11-18T08:45:06.9203077Z self = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_blocked_binary_publicatio0/pm.json')
+2026-11-18T08:45:06.9203730Z mode = 'rb', buffering = -1, encoding = None, errors = None, newline = None
+2026-11-18T08:45:06.9203994Z 
+2026-11-18T08:45:06.9204137Z     def open(self, mode='r', buffering=-1, encoding=None,
+2026-11-18T08:45:06.9204449Z              errors=None, newline=None):
+2026-11-18T08:45:06.9204682Z         """
+2026-11-18T08:45:06.9204943Z         Open the file pointed to by this path and return a file object, as
+2026-11-18T08:45:06.9205293Z         the built-in open() function does.
+2026-11-18T08:45:06.9205538Z         """
+2026-11-18T08:45:06.9205717Z         if "b" not in mode:
+2026-11-18T08:45:06.9205990Z             encoding = io.text_encoding(encoding)
+2026-11-18T08:45:06.9206331Z >       return io.open(self, mode, buffering, encoding, errors, newline)
+2026-11-18T08:45:06.9206678Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-18T08:45:06.9207910Z E       FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pytest-of-runneradmin\\pytest-0\\test_blocked_binary_publicatio0\\pm.json'
+2026-11-18T08:45:06.9208518Z 
+2026-11-18T08:45:06.9208901Z C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\pathlib.py:1013: FileNotFoundError
+2026-11-18T08:45:06.9209386Z ---------------------------- Captured stderr call -----------------------------
+2026-11-18T08:45:06.9209824Z winpairs: blocked: safe publication unavailable: OSError (OS error 87)
+2026-11-18T08:45:06.9210220Z =========================== short test summary info ===========================
+2026-11-18T08:45:06.9210873Z FAILED tests/test_research_qualification_winpairs.py::test_run_found_downloads_and_verifies - AssertionError: assert ('missing' == 'found'
+2026-11-18T08:45:06.9211417Z   
+2026-11-18T08:45:06.9211586Z   - found
+2026-11-18T08:45:06.9211756Z   + missing)
+2026-11-18T08:45:06.9212305Z FAILED tests/test_research_qualification_winpairs.py::test_missing_binary_or_index_is_status_missing_not_error - AssertionError: assert ('missing' == 'missing'
+2026-11-18T08:45:06.9212916Z   
+2026-11-18T08:45:06.9213105Z     missing and 'missing' == 'found'
+2026-11-18T08:45:06.9213334Z   
+2026-11-18T08:45:06.9213492Z   - found
+2026-11-18T08:45:06.9213656Z   + missing)
+2026-11-18T08:45:06.9214150Z FAILED tests/test_research_qualification_winpairs.py::test_manifest_has_no_redirect_url_or_query - AssertionError: assert 'missing' == 'found'
+2026-11-18T08:45:06.9214689Z   
+2026-11-18T08:45:06.9214849Z   - found
+2026-11-18T08:45:06.9215015Z   + missing
+2026-11-18T08:45:06.9215462Z FAILED tests/test_research_qualification_winpairs.py::test_exit_0_when_found_and_manifest_written - AssertionError: assert 2 == 0
+2026-11-18T08:45:06.9216496Z  +  where 2 = cli(WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_exit_0_when_found_and_man0'), <test_research_qualification_winpairs.Fake object at 0x0000021720E76CF0>)
+2026-11-18T08:45:06.9218182Z  +    where <test_research_qualification_winpairs.Fake object at 0x0000021720E76CF0> = Fake({'https://winbindex.m417z.com/data/by_filename_compressed/tcpip.sys.json.gz': b'\x1f\x8b\x08\x00\x91e\xfdj\x02\xff\xa5...': b'MZ-old-binary', 'https://msdl.microsoft.com/download/symbols/tcpip.sys/6320C3D450000/tcpip.sys': b'MZ-new-binary'})
+2026-11-18T08:45:06.9221533Z  +      where {'https://winbindex.m417z.com/data/by_filename_compressed/tcpip.sys.json.gz': b'\x1f\x8b\x08\x00\x91e\xfdj\x02\xff\xa5...': b'MZ-old-binary', 'https://msdl.microsoft.com/download/symbols/tcpip.sys/6320C3D450000/tcpip.sys': b'MZ-new-binary'} = routes({'5a3f674b0c38ae775ffac4d38bf013aaabeb6974176f8301d1aa6f1f145b9b70': {'fileInfo': {'size': 13, 'sha256': '5a3f674b0c38...mestamp': 1663091668, ...}, 'windowsVersions': {'21H2': {'KB1000002': {'updateInfo': {'releaseDate': '2022-09-13'}}}}}})
+2026-11-18T08:45:06.9225056Z  +        where {'5a3f674b0c38ae775ffac4d38bf013aaabeb6974176f8301d1aa6f1f145b9b70': {'fileInfo': {'size': 13, 'sha256': '5a3f674b0c38...mestamp': 1663091668, ...}, 'windowsVersions': {'21H2': {'KB1000002': {'updateInfo': {'releaseDate': '2022-09-13'}}}}}} = index({'fileInfo': {'size': 13, 'sha256': '5a3f674b0c38ae775ffac4d38bf013aaabeb6974176f8301d1aa6f1f145b9b70', 'machineType':...imestamp': 1660068272, ...}, 'windowsVersions': {'21H2': {'KB1000001': {'updateInfo': {'releaseDate': '2022-08-09'}}}}}, {'fileInfo': {'size': 13, 'sha256': '611b786135207248dde103e56d3a8d5bdbfed470b17493c1b859df14e3b41dda', 'machineType':...imestamp': 1663091668, ...}, 'windowsVersions': {'21H2': {'KB1000002': {'updateInfo': {'releaseDate': '2022-09-13'}}}}})
+2026-11-18T08:45:06.9229794Z FAILED tests/test_research_qualification_winpairs.py::test_exit_0_when_only_some_missing - AssertionError: assert 2 == 0
+2026-11-18T08:45:06.9232204Z  +  where 2 = cli(WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_exit_0_when_only_some_mis0'), <test_research_qualification_winpairs.Fake object at 0x000002171F020CE0>, manifest=WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_exit_0_when_only_some_mis0/m.json'))
+2026-11-18T08:45:06.9234575Z  +    where <test_research_qualification_winpairs.Fake object at 0x000002171F020CE0> = Fake({'https://winbindex.m417z.com/data/by_filename_compressed/tcpip.sys.json.gz': b'\x1f\x8b\x08\x00\x91e\xfdj\x02\xff\xa5...': b'MZ-old-binary', 'https://msdl.microsoft.com/download/symbols/tcpip.sys/6320C3D450000/tcpip.sys': b'MZ-new-binary'})
+2026-11-18T08:45:06.9236970Z  +      where {'https://winbindex.m417z.com/data/by_filename_compressed/tcpip.sys.json.gz': b'\x1f\x8b\x08\x00\x91e\xfdj\x02\xff\xa5...': b'MZ-old-binary', 'https://msdl.microsoft.com/download/symbols/tcpip.sys/6320C3D450000/tcpip.sys': b'MZ-new-binary'} = routes({'5a3f674b0c38ae775ffac4d38bf013aaabeb6974176f8301d1aa6f1f145b9b70': {'fileInfo': {'size': 13, 'sha256': '5a3f674b0c38...mestamp': 1663091668, ...}, 'windowsVersions': {'21H2': {'KB1000002': {'updateInfo': {'releaseDate': '2022-09-13'}}}}}})
+2026-11-18T08:45:06.9240421Z  +        where {'5a3f674b0c38ae775ffac4d38bf013aaabeb6974176f8301d1aa6f1f145b9b70': {'fileInfo': {'size': 13, 'sha256': '5a3f674b0c38...mestamp': 1663091668, ...}, 'windowsVersions': {'21H2': {'KB1000002': {'updateInfo': {'releaseDate': '2022-09-13'}}}}}} = index({'fileInfo': {'size': 13, 'sha256': '5a3f674b0c38ae775ffac4d38bf013aaabeb6974176f8301d1aa6f1f145b9b70', 'machineType':...imestamp': 1660068272, ...}, 'windowsVersions': {'21H2': {'KB1000001': {'updateInfo': {'releaseDate': '2022-08-09'}}}}}, {'fileInfo': {'size': 13, 'sha256': '611b786135207248dde103e56d3a8d5bdbfed470b17493c1b859df14e3b41dda', 'machineType':...imestamp': 1663091668, ...}, 'windowsVersions': {'21H2': {'KB1000002': {'updateInfo': {'releaseDate': '2022-09-13'}}}}})
+2026-11-18T08:45:06.9242807Z FAILED tests/test_research_qualification_winpairs.py::test_exit_1_when_all_missing - AssertionError: assert 2 == 1
+2026-11-18T08:45:06.9244192Z  +  where 2 = cli(WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_exit_1_when_all_missing0'), <test_research_qualification_winpairs.Fake object at 0x000002171F01F680>)
+2026-11-18T08:45:06.9245878Z  +    where <test_research_qualification_winpairs.Fake object at 0x000002171F01F680> = Fake({})
+2026-11-18T08:45:06.9246537Z FAILED tests/test_research_qualification_winpairs.py::test_case_filter_selects_subset - AssertionError: assert 2 == 0
+2026-11-18T08:45:06.9248276Z  +  where 2 = cli(WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_case_filter_selects_subse0'), <test_research_qualification_winpairs.Fake object at 0x000002171EF92570>, '--case', 'b', '--resolve-only', manifest=WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_case_filter_selects_subse0/m.json'))
+2026-11-18T08:45:06.9250852Z  +    where <test_research_qualification_winpairs.Fake object at 0x000002171EF92570> = Fake({'https://winbindex.m417z.com/data/by_filename_compressed/tcpip.sys.json.gz': b'\x1f\x8b\x08\x00\x91e\xfdj\x02\xff\xa5...': b'MZ-old-binary', 'https://msdl.microsoft.com/download/symbols/tcpip.sys/6320C3D450000/tcpip.sys': b'MZ-new-binary'})
+2026-11-18T08:45:06.9253248Z  +      where {'https://winbindex.m417z.com/data/by_filename_compressed/tcpip.sys.json.gz': b'\x1f\x8b\x08\x00\x91e\xfdj\x02\xff\xa5...': b'MZ-old-binary', 'https://msdl.microsoft.com/download/symbols/tcpip.sys/6320C3D450000/tcpip.sys': b'MZ-new-binary'} = routes({'5a3f674b0c38ae775ffac4d38bf013aaabeb6974176f8301d1aa6f1f145b9b70': {'fileInfo': {'size': 13, 'sha256': '5a3f674b0c38...mestamp': 1663091668, ...}, 'windowsVersions': {'21H2': {'KB1000002': {'updateInfo': {'releaseDate': '2022-09-13'}}}}}})
+2026-11-18T08:45:06.9671855Z  +        where {'5a3f674b0c38ae775ffac4d38bf013aaabeb6974176f8301d1aa6f1f145b9b70': {'fileInfo': {'size': 13, 'sha256': '5a3f674b0c38...mestamp': 1663091668, ...}, 'windowsVersions': {'21H2': {'KB1000002': {'updateInfo': {'releaseDate': '2022-09-13'}}}}}} = index({'fileInfo': {'size': 13, 'sha256': '5a3f674b0c38ae775ffac4d38bf013aaabeb6974176f8301d1aa6f1f145b9b70', 'machineType':...imestamp': 1660068272, ...}, 'windowsVersions': {'21H2': {'KB1000001': {'updateInfo': {'releaseDate': '2022-08-09'}}}}}, {'fileInfo': {'size': 13, 'sha256': '611b786135207248dde103e56d3a8d5bdbfed470b17493c1b859df14e3b41dda', 'machineType':...imestamp': 1663091668, ...}, 'windowsVersions': {'21H2': {'KB1000002': {'updateInfo': {'releaseDate': '2022-09-13'}}}}})
+2026-11-18T08:45:06.9680619Z FAILED tests/test_research_qualification_winpairs_integrity.py::test_binary_is_complete_before_exclusive_publication - AssertionError: assert ('missing' == 'found'
+2026-11-18T08:45:06.9682561Z   
+2026-11-18T08:45:06.9683055Z   - found
+2026-11-18T08:45:06.9683321Z   + missing)
+2026-11-18T08:45:06.9685168Z FAILED tests/test_research_qualification_winpairs_integrity.py::test_concurrent_manifest_wins_and_downloaded_sides_remain_available - FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pytest-of-runneradmin\\pytest-0\\test_concurrent_manifest_wins_0\\o\\c1\\older\\tcpip.sys'
+2026-11-18T08:45:06.9687673Z FAILED tests/test_research_qualification_winpairs_integrity.py::test_successful_resolve_only_receipt_remains_strict_json - AssertionError: assert 2 == 0
+2026-11-18T08:45:06.9690418Z  +  where 2 = cli(WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_successful_resolve_only_r0'), <test_research_qualification_winpairs.Fake object at 0x000002171F32FBF0>, '--resolve-only')
+2026-11-18T08:45:06.9694242Z  +    where <test_research_qualification_winpairs.Fake object at 0x000002171F32FBF0> = Fake({'https://winbindex.m417z.com/data/by_filename_compressed/tcpip.sys.json.gz': b'\x1f\x8b\x08\x00\x91e\xfdj\x02\xff\xa5...': b'MZ-old-binary', 'https://msdl.microsoft.com/download/symbols/tcpip.sys/6320C3D450000/tcpip.sys': b'MZ-new-binary'})
+2026-11-18T08:45:06.9698993Z  +      where {'https://winbindex.m417z.com/data/by_filename_compressed/tcpip.sys.json.gz': b'\x1f\x8b\x08\x00\x91e\xfdj\x02\xff\xa5...': b'MZ-old-binary', 'https://msdl.microsoft.com/download/symbols/tcpip.sys/6320C3D450000/tcpip.sys': b'MZ-new-binary'} = routes({'5a3f674b0c38ae775ffac4d38bf013aaabeb6974176f8301d1aa6f1f145b9b70': {'fileInfo': {'size': 13, 'sha256': '5a3f674b0c38...mestamp': 1663091668, ...}, 'windowsVersions': {'21H2': {'KB1000002': {'updateInfo': {'releaseDate': '2022-09-13'}}}}}})
+2026-11-18T08:45:06.9706635Z  +        where {'5a3f674b0c38ae775ffac4d38bf013aaabeb6974176f8301d1aa6f1f145b9b70': {'fileInfo': {'size': 13, 'sha256': '5a3f674b0c38...mestamp': 1663091668, ...}, 'windowsVersions': {'21H2': {'KB1000002': {'updateInfo': {'releaseDate': '2022-09-13'}}}}}} = index({'fileInfo': {'size': 13, 'sha256': '5a3f674b0c38ae775ffac4d38bf013aaabeb6974176f8301d1aa6f1f145b9b70', 'machineType':...imestamp': 1660068272, ...}, 'windowsVersions': {'21H2': {'KB1000001': {'updateInfo': {'releaseDate': '2022-08-09'}}}}}, {'fileInfo': {'size': 13, 'sha256': '611b786135207248dde103e56d3a8d5bdbfed470b17493c1b859df14e3b41dda', 'machineType':...imestamp': 1663091668, ...}, 'windowsVersions': {'21H2': {'KB1000002': {'updateInfo': {'releaseDate': '2022-09-13'}}}}})
+2026-11-18T08:45:06.9711725Z FAILED tests/test_research_qualification_winpairs_publication.py::test_parent_replacement_cannot_redirect_publication_or_cleanup[None] - AssertionError: assert 'missing' == 'found'
+2026-11-18T08:45:06.9712868Z   
+2026-11-18T08:45:06.9713128Z   - found
+2026-11-18T08:45:06.9713380Z   + missing
+2026-11-18T08:45:06.9714767Z FAILED tests/test_research_qualification_winpairs_publication.py::test_named_stage_replacement_never_publishes_or_deletes_foreign_bytes - AssertionError: assert ('missing' == 'found'
+2026-11-18T08:45:06.9716141Z   
+2026-11-18T08:45:06.9716393Z   - found
+2026-11-18T08:45:06.9716642Z   + missing)
+2026-11-18T08:45:06.9717981Z FAILED tests/test_research_qualification_winpairs_publication.py::test_publication_supports_unicode_parent_and_file_names - tools.research_qualification.winpairs.PublicationBlocked: safe publication unavailable: OSError (OS error 87)
+2026-11-18T08:45:06.9720793Z FAILED tests/test_research_qualification_winpairs_publication.py::test_windows_held_ancestors_and_stage_block_replacement_and_writes - AssertionError: assert ('missing' == 'found'
+2026-11-18T08:45:06.9721935Z   
+2026-11-18T08:45:06.9722696Z   - found
+2026-11-18T08:45:06.9722971Z   + missing)
+2026-11-18T08:45:06.9724984Z FAILED tests/test_research_qualification_winpairs_publication.py::test_blocked_binary_publication_is_recorded_and_returns_exit_two - FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pytest-of-runneradmin\\pytest-0\\test_blocked_binary_publicatio0\\pm.json'
+2026-11-18T08:45:06.9727141Z 15 failed, 61 passed, 3 skipped in 3.68s
+2026-11-18T08:45:07.1738693Z ##[error]Process completed with exit code 1.
+2026-11-18T08:45:07.1960138Z ##[group]Run echo "failure" > qa-leg-result.txt
+2026-11-18T08:45:07.1960567Z [36;1mecho "failure" > qa-leg-result.txt[0m
+2026-11-18T08:45:07.1977125Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-11-18T08:45:07.1977517Z env:
+2026-11-18T08:45:07.1977702Z   QT_QPA_PLATFORM: offscreen
+2026-11-18T08:45:07.1998540Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-18T08:45:07.1999175Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-11-18T08:45:07.1999671Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-18T08:45:07.2000117Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-18T08:45:07.2000529Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-18T08:45:07.2000852Z ##[endgroup]
+2026-11-18T08:45:07.4258881Z ##[group]Run actions/upload-artifact@v4
+2026-11-18T08:45:07.4259241Z with:
+2026-11-18T08:45:07.4259433Z   name: qa-Windows
+2026-11-18T08:45:07.4259779Z   path: pair-publication-results.xml
+qa-results.xml
+qa-leg-result.txt
+
+2026-11-18T08:45:07.4260150Z   if-no-files-found: warn
+2026-11-18T08:45:07.4260371Z   compression-level: 6
+2026-11-18T08:45:07.4260575Z   overwrite: false
+2026-11-18T08:45:07.4260970Z   include-hidden-files: false
+2026-11-18T08:45:07.4261194Z env:
+2026-11-18T08:45:07.4261394Z   QT_QPA_PLATFORM: offscreen
+2026-11-18T08:45:07.4261696Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-18T08:45:07.4262134Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-11-18T08:45:07.4262698Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-18T08:45:07.4263155Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-18T08:45:07.4263582Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-18T08:45:07.4263887Z ##[endgroup]
+2026-11-18T08:45:07.6343098Z (node:8244) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-11-18T08:45:07.6343774Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-18T08:45:07.6388323Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-11-18T08:45:07.6391060Z The least common ancestor is D:\a\patchtrace\patchtrace. This will be the root directory of the artifact
+2026-11-18T08:45:07.6392326Z With the provided path, there will be 2 files uploaded
+2026-11-18T08:45:07.6397020Z Artifact name is valid!
+2026-11-18T08:45:07.6398854Z Root directory input is valid!
+2026-11-18T08:45:08.0547555Z Beginning upload of artifact content to blob storage
+2026-11-18T08:45:08.0795478Z (node:8244) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-11-18T08:45:08.3689541Z Uploaded bytes 6236
+2026-11-18T08:45:08.4474716Z Finished uploading artifact content to blob storage!
+2026-11-18T08:45:08.4475365Z SHA256 digest of uploaded artifact zip is bf5b3f2dd298483d1fb06de0893f307d0f74e8f5f295073793417b50b02c29a1
+2026-11-18T08:45:08.4477365Z Finalizing artifact upload
+2026-11-18T08:45:08.8727329Z Artifact qa-Windows.zip successfully finalized. Artifact ID 14412230905
+2026-11-18T08:45:08.8728333Z Artifact qa-Windows has been successfully uploaded! Final size is 6236 bytes. Artifact ID is 14412230905
+2026-11-18T08:45:08.8740238Z Artifact download URL: https://github.com/djshellshoxxx/patchtrace/actions/runs/44263225792/artifacts/14412230905
+2026-11-18T08:45:08.9180963Z Post job cleanup.
+2026-11-18T08:45:09.0946720Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-11-18T08:45:09.1396078Z git version 2.56.0.windows.4
+2026-11-18T08:45:09.1481629Z Temporarily overriding HOME='D:\a\_temp\d275f731-80f4-4a57-b9c5-77edf55c89e4' before making global git config changes
+2026-11-18T08:45:09.1482889Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-18T08:45:09.1494483Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\patchtrace\patchtrace
+2026-11-18T08:45:09.1923091Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-11-18T08:45:09.2332149Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-11-18T08:45:09.7957173Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-18T08:45:09.8327985Z http.https://github.com/.extraheader
+2026-11-18T08:45:09.8382772Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all http.https://github.com/.extraheader
+2026-11-18T08:45:09.8801072Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-11-18T08:45:10.6145338Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-18T08:45:10.6534828Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-11-18T08:45:11.2530800Z Cleaning up orphan processes
+2026-11-18T08:45:11.2856862Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+

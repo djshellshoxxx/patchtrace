@@ -23,6 +23,7 @@ from .components import components_for
 MAX_HINTS = 32
 ONE_SIDED_SORT = 2**33
 STRONG_TIERS = ('M', 'A', 'B')
+FLIP_CARD = {'1:N': 'N:1', 'N:1': '1:N'}
 
 
 @dataclass(frozen=True)
@@ -84,6 +85,17 @@ def decide(atoms: Sequence[Atom], groups: Sequence[SourceGroup], nodes: Mapping 
         return (int(component(a)[1:]), -TIER_RANK[a.tier], a.source, a.step,
                 -1 if a.older_rva is None else a.older_rva, -1 if a.newer_rva is None else a.newer_rva, a.cls,
                 a.cardinality, a.ref or '', a.native)  # `native` last: atoms equal in all else must still sort alike
+
+    def mirror_key(a: Atom) -> tuple:
+        """The orientation-free order of the L-39 cut (`key` with the endpoints read as the lower and the higher of
+        the two orientations): an atom and its mirror image (sides and 1:N/N:1 swapped) get the same key, any other
+        two atoms get different keys, and two atoms are in the order of their mirror images."""
+        older = -1 if a.older_rva is None else a.older_rva
+        newer = -1 if a.newer_rva is None else a.newer_rva
+        low, high, card = min((older, newer, a.cardinality),
+                              (newer, older, FLIP_CARD.get(a.cardinality, a.cardinality)))
+        return (int(component(a)[1:]), -TIER_RANK[a.tier], a.source, a.step, low, high, a.cls, card, a.ref or '',
+                a.native)
 
     for group in groups:  # an unregistered source is a bug, found before anything is decided
         for a in group.atoms:
@@ -191,7 +203,7 @@ def decide(atoms: Sequence[Atom], groups: Sequence[SourceGroup], nodes: Mapping 
     def assemble(older, newer, decision, chosen_atoms, against_atoms, extra_atoms, hints, *, pair=None,
                  supported=True) -> Decided:
         return _assemble(older, newer, decision, chosen_atoms, against_atoms, extra_atoms, hints, pair, key,
-                         component, limits, supported)
+                         mirror_key, component, limits, supported)
 
     def observations(older: Iterable[int], newer: Iterable[int]) -> list[Atom]:
         return [a for o in older for a in one_old.get(o, ())] + [a for n in newer for a in one_new.get(n, ())]
@@ -275,29 +287,69 @@ def _merge_pools(pools: list[tuple[set[int], set[int], list[Atom], str]]):
     return [(o, n, a, k) for o, n, a, k in sorted(merged.values(), key=lambda b: (min(b[0]), min(b[1])))]
 
 
+def _prefix(ranked: Sequence[Atom], room: int, rank: Callable) -> list[Atom]:
+    """The longest head of `ranked` with at most `room` atoms that ends where `rank` changes, so two atoms of one rank
+    (an atom and its mirror twin) are kept or dropped together."""
+    end = max(0, min(room, len(ranked)))
+    while 0 < end < len(ranked) and rank(ranked[end - 1]) == rank(ranked[end]):
+        end -= 1
+    return list(ranked[:end])
+
+
+def _acceptance_witness(chosen: Sequence[Atom], component: Callable) -> tuple[Atom, ...]:
+    """First B+B witness in the caller's mirror order. Repeated observations of one component/class cannot
+    change its representative or make the pair search quadratic in the number of observations."""
+    representatives: dict[tuple[str, str], Atom] = {}
+    for a in chosen:
+        if a.tier == 'B' and a.cls != 'E-UNKNOWN':
+            representatives.setdefault((component(a), a.cls), a)
+    for (left, x), (right, y) in combinations(representatives.items(), 2):
+        if left[0] != right[0] and left[1] != right[1]:
+            return x, y
+    return ()
+
+
 def _assemble(older, newer, decision, chosen_atoms, against_atoms, extra_atoms, hints, pair, key: Callable,
-              component: Callable, limits: UnifiedLimits, supported: bool = True) -> Decided:
+              mirror_key: Callable, component: Callable, limits: UnifiedLimits, supported: bool = True) -> Decided:
+    """Beyond L-39 the chosen atoms keep priority (the strongest of each component always), the strongest against-atom
+    keeps its slot, and a matched base decision keeps its B+B witness when needed. Other atoms fill what is left.
+    Support remains the component max-pool inventory. Every cut ranks by
+    `mirror_key` and never separates two atoms of one rank, so the swapped input keeps the mirror image of what the
+    forward input keeps (audit U7-08); the row stays sorted by `key`."""
     cap = limits.l39_atoms_per_row
-    chosen = sorted(set(chosen_atoms), key=key)
-    against = sorted(set(against_atoms) - set(chosen), key=lambda a: (-TIER_RANK[a.tier], key(a)))
-    extra = sorted(set(extra_atoms) - set(chosen) - set(against), key=key)
-    reserve = 1 if against else 0
-    strongest: dict[str, Atom] = {}
+
+    def ranked(a: Atom) -> tuple:
+        return (-TIER_RANK[a.tier], mirror_key(a))
+    chosen = sorted(set(chosen_atoms), key=mirror_key)
+    against = sorted(set(against_atoms) - set(chosen), key=ranked)
+    extra = sorted(set(extra_atoms) - set(chosen) - set(against), key=mirror_key)
+    reserve = min(len(against), 1 + (len(against) > 1 and ranked(against[0]) == ranked(against[1])))  # 2: a twin
+    strongest: dict[str, tuple] = {}
     for a in chosen:  # `chosen` is sorted by (component, tier desc), so the first per component is the strongest
-        strongest.setdefault(component(a), a)
-    must = list(strongest.values())
-    rest = sorted((a for a in chosen if a not in must), key=lambda a: (-TIER_RANK[a.tier], key(a)))
-    keep_chosen = must + rest[:max(0, cap - reserve - len(must))]
-    room = cap - len(keep_chosen)
-    keep_against = against[:room]
-    keep_extra = extra[:max(0, room - len(keep_against))]
+        strongest.setdefault(component(a), mirror_key(a))
+    required = set(strongest.values())
+    matched_base = decision == 'matched' or (decision == 'contested' and 'uncontested:matched' in hints)
+    if supported and pair is not None and matched_base and not any(a.tier in ('M', 'A') for a in chosen):
+        required.update(mirror_key(a) for a in _acceptance_witness(chosen, component))
+    must = [a for a in chosen if mirror_key(a) in required]  # whole mirror groups, including witness twins
+    if len(must) + reserve > cap:
+        raise UnifiedError('PT-UNIFIED-LIMIT', 'L-39 cannot retain the required pairing and contest evidence',
+                           reason='atoms-cap')
+    rest = sorted((a for a in chosen if a not in must), key=ranked)
+    keep_rest = _prefix(rest, cap - reserve - len(must), ranked)
+    keep_chosen = must + keep_rest
+    room = max(0, cap - len(keep_chosen))
+    whole = len(keep_rest) == len(rest)     # a cut chosen-atom leaves the against-atoms their reserve and nothing more
+    keep_against = _prefix(against, max(reserve, room if whole else 0), ranked)
+    whole = whole and len(keep_against) == len(against)
+    keep_extra = _prefix(extra, room - len(keep_against), mirror_key) if whole else []
     omitted = len(chosen) + len(against) + len(extra) - len(keep_chosen) - len(keep_against) - len(keep_extra)
     final = sorted([*keep_chosen, *keep_against, *keep_extra], key=key)
     chosen_set, against_set = set(keep_chosen), set(keep_against)
     support: dict[str, Support] = {}
-    for index, a in enumerate(final):
-        if supported and a in chosen_set and a.older_rva is not None and a.newer_rva is not None:
-            support.setdefault(component(a), Support(component=component(a), tier=a.tier, atom_index=index))
+    for a in sorted(keep_chosen, key=lambda a: (mirror_key(a), key(a))) if supported else ():
+        if a.older_rva is not None and a.newer_rva is not None:  # the strongest chosen-edge atom of the component
+            support.setdefault(component(a), Support(component=component(a), tier=a.tier, atom_index=final.index(a)))
     against_index = tuple(i for i, a in enumerate(final) if a in against_set)
     contest = None
     if against_index:

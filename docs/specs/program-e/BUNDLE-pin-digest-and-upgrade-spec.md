@@ -131,6 +131,19 @@ Pin file under 64 KiB; `check_backend_pin.py` under 1 s; `pin_verify` job under 
 Existing (VERIFIED names): `tests/test_backend_pin.py` (valid pin, LF, known values, digest sources traceable, no http, closure pinned, policy structure, release gate), `tests/test_verify_backend_pins.py`, `tests/test_build_backend_bundle.py::test_digest_mismatch_is_a_hard_failure`, `::test_cached_download_is_reverified`, `::test_unresolved_pin_placeholders_are_refused_before_any_download`.
 To add: `test_content_and_tar_digest_fields_are_hex`, `test_strip_protected_is_a_list_of_safe_globs`, `test_bump_tool_prints_patch_without_writing`, `test_bump_tool_refuses_unsourced_digest`, `test_live_backend_ghidra_digest_equals_the_pin` (workflow text vs pin).
 
+### No-input verification fixture (2026-11-18)
+
+`test_verify_without_inputs_records_nothing` must supply both its offline fetch
+stub and the existing `verify_all(..., run=...)` process seam. The injected
+runner records version, repository initialization and fetch requests, returns
+only authored outcomes, and starts no process. The test refuses any fallback to
+the real subprocess runner. Preserve its failed-result/no-pin-record assertions;
+also check both component failures, exact requested fetch identity, unavailable
+tool evidence, unchanged pin bytes and absence of rebuilt/downloaded files.
+These synthetic failures establish fixture isolation, not vendor signature or
+live repository verification. Production verification and separate authored
+local-repository rebuild tests retain their existing behavior.
+
 ## 11. Open questions
 
 1. Should `verified_on` be mandatory and expire after N days (a stale-verification warning in `--release`)? Default: warning at 90 days.

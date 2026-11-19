@@ -1,0 +1,6 @@
+tree f3c71e109c2bce7a4ed881a30f520fbb9c9489b4
+parent cf5f7301c735c6b6ca1c0d64242804bfb432dfa1
+author Codex <codex@openai.com> 1795042904 -0800
+committer Codex <codex@openai.com> 1795042904 -0800
+
+Verify core admission and preserve actual Windows evidence [no release]

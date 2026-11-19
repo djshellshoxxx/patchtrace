@@ -10,7 +10,15 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from .ingestion import display_text, inspect_artifact, safe_path
-from .models import AnalysisRun, AnalystAnnotation, ComparisonProject, FunctionMatch, InterpretationRun
+from .input_readers import PairInputReaders, ReadCheckpoint
+from .models import (
+    AnalysisRun,
+    AnalystAnnotation,
+    ComparisonProject,
+    FunctionMatch,
+    InterpretationRun,
+    Record,
+)
 from .normalization import normalize_ghidriff, verify_diff_identity
 from .persistence import ProjectStore, strict_json
 
@@ -52,8 +60,13 @@ def _remove_owned(path: Path, recorded: os.stat_result, *, database: bool = Fals
 def _rollback_creation(store: ProjectStore, database: os.stat_result | None,
                        created: list[tuple[Path, os.stat_result]]) -> None:
     try:
+        # A reused zero-byte database keeps schema initialization in the first-save
+        # transaction. Roll it back before deciding whether a snapshot committed.
+        store.connection.rollback()
         # save() can raise after its transaction committed. Preserve a usable first snapshot.
-        if store.connection.execute('SELECT COUNT(*) FROM current_snapshot').fetchone()[0]:
+        has_snapshot = store.connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' "
+                                                "AND name='current_snapshot'").fetchone()
+        if has_snapshot and store.connection.execute('SELECT COUNT(*) FROM current_snapshot').fetchone()[0]:
             return
         store.connection.close()
         store.connection = None
@@ -75,37 +88,61 @@ class ProjectService:
         self.root = Path(root).resolve()
         self.project = project
         self.store = store
-        self._prepared: dict[str, tuple[PreparedImport, AnalysisRun, tuple[FunctionMatch, ...]]] = {}
+        self._prepared: dict[str, tuple[PreparedImport, AnalysisRun, tuple[FunctionMatch, ...],
+                                        tuple[tuple[Path, os.stat_result], ...]]] = {}
 
     @classmethod
-    def create(cls, older: Path, newer: Path, name: str, root: Path) -> ProjectService:
+    def create(cls, older: Path, newer: Path, name: str, root: Path, *,
+               input_readers: PairInputReaders | None = None, project_id: str | None = None) -> ProjectService:
+        identity = {'id': Record(id=project_id).id} if project_id is not None else {}
         root = Path(root).resolve()
+        options = ({}, {})
+        save_options = {}
+        if input_readers is not None:
+            input_readers.checkpoint(0)
+            input_readers.older.check(Path(older))
+            input_readers.newer.check(Path(newer))
+            options = tuple({'reader': reader, 'checkpoint': input_readers.checkpoint}
+                            for reader in (input_readers.older, input_readers.newer))
+            save_options = {'checkpoint': input_readers.checkpoint}
         store = ProjectStore(root, create=True)
         database = None
         created: list[tuple[Path, os.stat_result]] = []
         try:
-            database = (root / 'project.sqlite3').stat()
-            artifacts = [inspect_artifact(older, 'older', root, created=created),
-                         inspect_artifact(newer, 'newer', root, created=created)]
+            database = store.created_database
+            artifacts = [inspect_artifact(older, 'older', root, created=created, **options[0]),
+                         inspect_artifact(newer, 'newer', root, created=created, **options[1])]
             project = ComparisonProject(name=display_text(name.strip()) or 'Untitled comparison',
-                                        artifacts=artifacts)
+                                        artifacts=artifacts, **identity)
             if artifacts[0].sha256 == artifacts[1].sha256:
                 project.runs.append(AnalysisRun(status='identical', backend='none', backend_version='none',
                                                 settings={'reason': 'Input SHA-256 hashes are identical'}))
-            project = store.save(project)
+            if input_readers is not None:
+                input_readers.older.check(Path(older))
+                input_readers.newer.check(Path(newer))
+            project = store.save(project, **save_options)
+            # The snapshot is committed. No operation checkpoint may enter rollback from here.
             return cls(root, project, store)
         except BaseException:  # Ctrl+C and SystemExit must not leave a snapshot-less database behind either
             _rollback_creation(store, database, created)
             raise
 
     @classmethod
-    def open(cls, root: Path, *, maintenance: bool = True) -> ProjectService:
-        """`maintenance=False` for read-only readers (series): skips the H8 legacy raw cleanup."""
+    def open(cls, root: Path, *, maintenance: bool = True, recover_interrupted: bool = True,
+             checkpoint: ReadCheckpoint | None = None) -> ProjectService:
+        """Disable both maintenance and recovery for committed reads without application mutations."""
+        options = {} if recover_interrupted else {'recover_interrupted': False}
+        if checkpoint is not None:
+            checkpoint(0)
+            options['checkpoint'] = checkpoint
         store = ProjectStore(root)
         try:
-            service = cls(store.root, store.load(), store)
-        except Exception:
-            store.close()
+            service = cls(store.root, store.load(**options), store)
+        except BaseException as exc:
+            try:
+                store.close()
+            except BaseException:
+                exc.add_note('PT-STORAGE: project close failed; resources may remain open')
             raise
         if maintenance:  # SPEC-07h H8: journalled, verified, best effort; never raises
             from .raw_cleanup import cleanup_legacy_raw_duplicates
@@ -132,7 +169,8 @@ class ProjectService:
         return export_project(committed, format, destination, project_root=self.root, **options)
 
     def close(self) -> None:
-        self._prepared.clear()
+        for owned in tuple(self._prepared.values()):
+            self.discard_import(owned[0])
         self.store.close()
 
     def backup(self, destination: Path) -> Path:
@@ -210,43 +248,61 @@ class ProjectService:
         run_dir = (self.root / 'runs' / run.id).resolve()
         in_place = (not source.is_symlink() and source.resolve().is_relative_to(run_dir)
                     and run.raw_path is not None and safe_path(self.root, run.raw_path) == source.resolve())
-        staged: Path | None = None
-        if in_place:
-            # H8: the backend already published the bytes inside this run's directory; keep one copy.
-            relative = run.raw_path
-            destination = source.resolve()
-            try:
-                destination.chmod(0o444)
-            except OSError:
+        created: list[tuple[Path, os.stat_result]] = []
+        try:
+            if in_place:
+                # H8: the backend already published the bytes inside this run's directory; keep one copy.
+                relative = run.raw_path
+                destination = source.resolve()
+                try:
+                    destination.chmod(0o444)
+                except OSError:
+                    pass
+            else:
+                relative = f'runs/{run.id}/raw/result.ghidriff.json'
+                destination = safe_path(self.root, relative)
+                for directory in (self.root / 'runs', destination.parent.parent, destination.parent):
+                    try:
+                        directory.mkdir()
+                    except FileExistsError:
+                        if not directory.is_dir():
+                            raise
+                    else:
+                        created.append((directory, directory.stat()))
+            if in_place:
                 pass
-        else:
-            relative = f'runs/{run.id}/raw/result.ghidriff.json'
-            destination = safe_path(self.root, relative)
-            destination.parent.mkdir(parents=True, exist_ok=True)
-        if in_place:
-            pass
-        elif destination.exists():
-            if destination.read_bytes() != raw_bytes:
-                raise ValueError('PT-STORAGE: preserved raw output cannot be replaced')
-        else:
-            staged = destination
-            fd, temporary = tempfile.mkstemp(prefix='.raw-', dir=destination.parent)
-            stage = Path(temporary)
-            try:
-                with os.fdopen(fd, 'wb') as stream:
-                    stream.write(raw_bytes)
-                    stream.flush()
-                    os.fsync(stream.fileno())
-                os.replace(stage, destination)
+            elif destination.exists():
+                if destination.read_bytes() != raw_bytes:
+                    raise ValueError('PT-STORAGE: preserved raw output cannot be replaced')
+            else:
+                fd, temporary = tempfile.mkstemp(prefix='.raw-', dir=destination.parent)
+                stage = Path(temporary)
+                try:
+                    with os.fdopen(fd, 'wb') as stream:
+                        stream.write(raw_bytes)
+                        stream.flush()
+                        os.fsync(stream.fileno())
+                    # Record before exclusive publication: an interrupt can land after linking succeeds.
+                    created.append((destination, stage.stat()))
+                    os.link(stage, destination)  # never overwrite a foreign file published concurrently
+                finally:
+                    stage.unlink(missing_ok=True)
+                # Hard links share the Windows read-only attribute. Remove the
+                # staging name before protecting the published inode.
                 destination.chmod(0o444)
-            finally:
-                stage.unlink(missing_ok=True)
-        owned_run.raw_path, owned_run.raw_sha256 = relative, digest
-        prepared = PreparedImport(candidate.id, candidate.revision, owned_run, tuple(normalized),
-                                  self.store.file_fingerprint(destination))
-        self._prepared[run.id] = (prepared, owned_run.model_copy(deep=True),
-                                  tuple(match.model_copy(deep=True) for match in normalized), staged)
-        return prepared
+            owned_run.raw_path, owned_run.raw_sha256 = relative, digest
+            prepared = PreparedImport(candidate.id, candidate.revision, owned_run, tuple(normalized),
+                                      self.store.file_fingerprint(destination))
+            self._prepared[run.id] = (prepared, owned_run.model_copy(deep=True),
+                                      tuple(match.model_copy(deep=True) for match in normalized), tuple(created))
+            return prepared
+        except BaseException:
+            # No snapshot is committed during preparation. Remove only this attempt's unchanged publications;
+            # backend-owned in-place output and pre-existing directories have no ledger entry and are retained.
+            self._prepared.pop(run.id, None)
+            for path, recorded in reversed(created):
+                _remove_owned(path, recorded)
+            raise
 
     def apply_import(self, prepared: PreparedImport) -> None:
         self.store._check_open()
@@ -272,17 +328,18 @@ class ProjectService:
         owned = self._prepared.get(prepared.run.id)
         if owned is not None and owned[0] is prepared:
             self._prepared.pop(prepared.run.id, None)
-            staged = owned[3]
             committed = any(item.id == prepared.run.id for item in self.project.runs)
-            if staged is not None and not committed:
-                # H8: a staged copy that never became part of the project snapshot is removed.
+            if not committed:
+                # save() can commit and then be interrupted before _commit assigns self.project. The database
+                # is authoritative; uncertain state must retain evidence rather than guess it is abandoned.
                 try:
-                    staged.chmod(0o644)
-                    staged.unlink(missing_ok=True)
-                    for parent in (staged.parent, staged.parent.parent):
-                        parent.rmdir()
-                except OSError:
-                    pass
+                    persisted = self.store.load(recover_interrupted=False)
+                except Exception:
+                    return
+                committed = any(item.id == prepared.run.id for item in persisted.runs)
+            if not committed:
+                for path, recorded in reversed(owned[3]):
+                    _remove_owned(path, recorded)
 
     def record_terminal_run(self, run: AnalysisRun) -> None:
         if run.status not in {'failed', 'cancelled', 'identical'}:

@@ -1,0 +1,162 @@
+{
+  "schema": "patchtrace-formatter-qt-evidence/1",
+  "source": "16c35e1fb1a4dd54b2c2c0cb2033c8160ee99347",
+  "payloads": [
+    {
+      "path": "formatter/collection.json",
+      "bytes": 11070,
+      "sha256": "f731e74977a6d6b316f544052461078bf92fbef1f9e82d3328161785010e59a1"
+    },
+    {
+      "path": "formatter/command.json",
+      "bytes": 1850,
+      "sha256": "e075bbd1832f86449ff2049ffc0c672c4bcfe4d9e9f5e2cae368715f8cb75f83"
+    },
+    {
+      "path": "formatter/exit.json",
+      "bytes": 399,
+      "sha256": "cfbf59af2e1ed97fc60a36e818955ab0b255d0232e2661f5c31545ee35e21579"
+    },
+    {
+      "path": "formatter/independent-review.md",
+      "bytes": 2569,
+      "sha256": "c9fdbbbb7a8e6569ccd07006cc41140504263486066b9a84c7fe0aa17d8b0b86"
+    },
+    {
+      "path": "formatter/lint.json",
+      "bytes": 297,
+      "sha256": "69cd463a6e80be65d0fb814d3a3ec051644d6b24a92c383a2c1103bd75a56e2c"
+    },
+    {
+      "path": "formatter/offline-guard.json",
+      "bytes": 1954,
+      "sha256": "5da1dfecb2865306c7a43aa57770d535b3848c25159dbbb4afc662d1b1edafb8"
+    },
+    {
+      "path": "formatter/result.log",
+      "bytes": 98,
+      "sha256": "4271b0d70d2afe45004c9a7514ebfc72f7f68dde0ab2ec96b5f19bb8243c6454"
+    },
+    {
+      "path": "formatter/result.xml",
+      "bytes": 1588,
+      "sha256": "25e37f74c320dc7d9d7490e3da776db106ff98851e6401fc125d3eff134d6cdf"
+    },
+    {
+      "path": "helpers/ops/analyze_771e_qt_termination.py",
+      "bytes": 6028,
+      "sha256": "9a41bd44e4ec316592af6e1bf883c17232bc51eb386c73dc39be36c50b38aac7"
+    },
+    {
+      "path": "helpers/ops/continuation_offline_pytest.py",
+      "bytes": 2498,
+      "sha256": "f9af28fd4acb9a0e8ae0c70b9ad9a4b6e8df02cfb461820ce4c6e91c00e41aed"
+    },
+    {
+      "path": "helpers/ops/project_and_tools_receipt.py",
+      "bytes": 1664,
+      "sha256": "c964bbd0aa75d2bb365287313eb9aecf19b6d0d21983ce7159f8edd127674a9a"
+    },
+    {
+      "path": "helpers/ops/run_formatter_predicate_observation_gate.py",
+      "bytes": 6065,
+      "sha256": "725389c09971be3149353c8c51709a895b8de3682559564d3934a38dff72dc5f"
+    },
+    {
+      "path": "helpers/ops/seal_formatter_qt_checkpoint.py",
+      "bytes": 14868,
+      "sha256": "9bfc6765a67a7433e0ddcdeeefd96f9e7ae0eb751cbc4b148e3cc37541639e67"
+    },
+    {
+      "path": "helpers/qa/full-batch-path-recheck/offline_replay.py",
+      "bytes": 15802,
+      "sha256": "381298968b20c80f76e210ffeb98f33769ec2d14580c56a7934ff9cef7c71744"
+    },
+    {
+      "path": "history/16c35e1fb1a4dd54b2c2c0cb2033c8160ee99347.commit",
+      "bytes": 269,
+      "sha256": "c6290ea7dfd72350716df4976fd0fe67f78034adaaf3f98f38f00a173ea031db"
+    },
+    {
+      "path": "history/29192f7837ebdb268d5c47e0a2536c67148cbe9f.commit",
+      "bytes": 292,
+      "sha256": "f4b40230ca90e3497ddb88213e0e9dab110b48a7dd95f3e60bd307c2f6b1a03a"
+    },
+    {
+      "path": "history/fdc1f606dd0b8a3ce94ae2db94f4fb6984a02b69.commit",
+      "bytes": 269,
+      "sha256": "5632ff6112cdf9f4090f25fdaa844a4f6b2cef358db1a0ab7424179b950e8c55"
+    },
+    {
+      "path": "qt-final/analysis.json",
+      "bytes": 153155,
+      "sha256": "6eba9f35a319785d79c253863503698848783d6f83826a2bb952e8f83f56559d"
+    },
+    {
+      "path": "qt-final/annotation-lookup-errors.json",
+      "bytes": 1269,
+      "sha256": "4b835e46a8fc0626b58d9003dd003c617a5c2f82382b50d7776afaa136571997"
+    },
+    {
+      "path": "qt-final/api-projection.json",
+      "bytes": 72218,
+      "sha256": "2f30c12b3e8473a0549a24875f6ef174833939024c926e26291a3d18ead67316"
+    },
+    {
+      "path": "qt-final/job-135175350753.log",
+      "bytes": 57085,
+      "sha256": "667454ddb667025e19e3afaffe61875e42d14e2b67a4095574f2ed423ddea220"
+    },
+    {
+      "path": "qt-final/job-135175350919.log",
+      "bytes": 48185,
+      "sha256": "89f7c1aebfbc31a1ca1ff1bb8e5770f8f7d692272eecf471c319870bcae000d8"
+    },
+    {
+      "path": "qt-final/source/.github/workflows/qa-windows.yml",
+      "bytes": 14726,
+      "sha256": "4498649fdb080ed47588c4a64d68553e31186004a834c0536d393f6074e274d3"
+    },
+    {
+      "path": "qt-final/source/tools/qt_gate.py",
+      "bytes": 3437,
+      "sha256": "db4e953be9eb51154b202baf5643dbafd291c3a3afbef6e053edc90ffe55775e"
+    },
+    {
+      "path": "source/after/docs/specs/windows-bindiff-network-acceptance.md",
+      "bytes": 22107,
+      "sha256": "fd06323685b223417754f5c417d35d59037018a0cc6cd5efb3e63dada2be5312"
+    },
+    {
+      "path": "source/after/tests/test_windows_network_diagnostics.py",
+      "bytes": 9027,
+      "sha256": "26a03cd64f139dec29f24d4f15cbaa463d2a9bf99e1036938351b3e5ba3b45db"
+    },
+    {
+      "path": "source/after/tools/windows_network/common.h",
+      "bytes": 27318,
+      "sha256": "46cb3176fdfe4006c43ed762ab6248f467a432e1cdf4d110c0e454645279b493"
+    },
+    {
+      "path": "source/before/tests/test_windows_network_diagnostics.py",
+      "bytes": 8647,
+      "sha256": "369baf557f934fe35eb510f86f9d7eb894d1837cc32e7e92245f37fc8dc69b9a"
+    },
+    {
+      "path": "source/formatter.patch",
+      "bytes": 1571,
+      "sha256": "52b1bd93a2651ce9cafcf82fee1df7787e1d9721650c393dc1094727e0a5c3ad"
+    },
+    {
+      "path": "verification.json",
+      "bytes": 763,
+      "sha256": "15ab05ea35a852b81b3d9e46eaa6f2c8ee20262914a37f1cf1e3d0752e2b930f"
+    }
+  ],
+  "archive": {
+    "bytes": 110138,
+    "sha256": "c0114cbe0d060d293f9237009594e1b4a757e51a9eedd9c0d706a65e61bd5092",
+    "members": 31
+  },
+  "readme_sha256": "b6ee1d11dbe526b4e318b4bc90defdb4931b4b2fd9f8ce8162d1291d4adcffc1"
+}

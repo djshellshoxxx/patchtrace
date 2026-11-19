@@ -1,0 +1,23 @@
+--- original/tests/test_kbc_selection_guard.py
++++ fixture-only/tests/test_kbc_selection_guard.py
+@@ -17,7 +17,7 @@
+ 
+ 
+ def candidates(*pairs):
+-    return [SimpleNamespace(pairs=pairs)]
++    return [SimpleNamespace(pairs=pairs, ambiguous=False, truncated=False)]
+ 
+ 
+ @pytest.mark.parametrize('reverse', [False, True])
+--- original/tests/test_kbc_bugfixes_20261029.py
++++ fixture-only/tests/test_kbc_bugfixes_20261029.py
+@@ -169,7 +169,8 @@
+ 
+ def test_kbc9_pair_prefixes_must_be_unique_and_long_enough():
+     found = [SimpleNamespace(pairs=tuple(SimpleNamespace(pair_id=pid, grade='A')
+-                                         for pid in ('ab' + '1' * 62, 'ab' + '2' * 62, 'cd' + '3' * 62)))]
++                                         for pid in ('ab' + '1' * 62, 'ab' + '2' * 62, 'cd' + '3' * 62)),
++                             ambiguous=False, truncated=False)]
+     for prefix in ('', 'a', 'ab', 'ab111'):
+         with pytest.raises(KbcStoreError):
+             KbService._pick_pair(found, prefix)

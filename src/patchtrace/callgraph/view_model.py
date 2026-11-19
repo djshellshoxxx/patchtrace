@@ -10,7 +10,7 @@ from typing import Literal
 
 from .contracts import GraphNode, GraphView, Pairing
 from .contracts_delta import CallDelta, CalleeChange, ChangeClass, EntryDistance, GraphLead
-from .query import MAX_DEPTH, NEIGHBOURS_PER_NODE
+from .query import CAPPED_VIEW_NOTE, MAX_DEPTH, NEIGHBOURS_PER_NODE
 from .text import one_line, sanitize
 
 ROW_CAP = 100_000  # E7
@@ -69,6 +69,7 @@ class PanelState:
     message: str = ''
     reason: str = ''
     nodes: int = 0
+    query_capped: bool = False
 
 
 # First flag present wins as the headline; the rest are appended as notes in this order.
@@ -79,6 +80,8 @@ _NOTES: tuple[tuple[PanelFlag, str], ...] = (('raw-missing', 'E6'), ('no-instruc
 
 
 def _word(key: str, state: PanelState) -> str:
+    if key == 'E7' and state.query_capped:
+        return CAPPED_VIEW_NOTE + ' Narrow the depth or choose another focus.'
     return STATE_TEXT[key].format(
         n=f'{state.nodes:,}' if key == 'E11' else f'{state.shown:,}', m=f'{state.total:,}',
         code=sanitize(state.code, 40), message=one_line(state.message, 300), reason=one_line(state.reason, 200))

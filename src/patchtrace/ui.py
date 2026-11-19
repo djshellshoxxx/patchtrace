@@ -75,7 +75,9 @@ from .ui_inspection import InspectionThread, side_summary
 from .ui_job_events import JobEventRelay
 from .ui_persistence import commit_and_report
 from .ui_profiles import PROFILE_SETTING, profiles_dir, selected_profile
+from .ui_raw_alignment import RawAlignmentController, build_raw_navigation
 from .ui_symbols import SymbolChoice, config_kwargs, configured_symbol_mode, effective_profile_symbol_mode
+from .ui_timeout import TimeoutChoice
 
 REVIEWS = ['unreviewed', 'accepted', 'rejected', 'needs-review']
 CATEGORIES = ['modified', 'added', 'removed', 'ambiguous', 'split', 'merged', 'unmatched', 'unchanged']
@@ -996,16 +998,14 @@ class SetupDialog(QDialog):
         self.allow_symbol_downloads = QRadioButton('Allow Ghidriff symbol-server lookups (may access the Internet)')
         self.allow_symbol_downloads.setChecked(settings.value('backend/allow_symbol_downloads', False, type=bool))
         self.symbols = SymbolChoice(form, settings, self.allow_symbol_downloads)  # SPEC-53 local PDB mode
-        self.restrict_env = QCheckBox('Restrict backend environment to an allowlist (experimental)')
-        self.restrict_env.setChecked(settings.value('backend/restrict_env', False, type=bool))
+        self.restrict_env = QCheckBox('Restrict backend environment to an allowlist')
+        self.restrict_env.setChecked(settings.value('backend/restrict_env', True, type=bool))
         form.addRow(self.restrict_env)
         self.env_passthrough = QLineEdit(str(settings.value('backend/env_passthrough', '')))
         self.env_passthrough.setPlaceholderText('Extra variable names kept when restricted, comma-separated')
         form.addRow('Environment passthrough', self.env_passthrough)
-        self.timeout = QSpinBox()
-        self.timeout.setRange(10, 86400)
-        self.timeout.setValue(setting_int(settings, 'backend/timeout', 3600, 10, 86400))
-        form.addRow('Comparison timeout (seconds)', self.timeout)
+        self.timeout_choice = TimeoutChoice(form, setting_int(settings, 'backend/timeout', 3600, 10, 86400))
+        self.timeout = self.timeout_choice.edit
         self.font_size = QSpinBox()
         self.font_size.setRange(8, 28)
         self.font_size.setValue(setting_int(settings, 'desktop/font_size', 11, 8, 28))
@@ -1120,6 +1120,10 @@ class SetupDialog(QDialog):
 
     def check_dependencies(self):
         if self.worker and self.worker.isRunning():
+            return
+        if not self.timeout_choice.validate():
+            self.tabs.setCurrentIndex(0)
+            self.timeout.setFocus()
             return
         config = self.config()
         self._busy_kind = 'diagnosis'
@@ -1242,6 +1246,10 @@ class SetupDialog(QDialog):
 
     def accept(self):
         if self.worker and self.worker.isRunning():
+            return
+        if not self.timeout_choice.validate():
+            self.tabs.setCurrentIndex(0)
+            self.timeout.setFocus()
             return
         if self.profiles.is_dirty():
             self.tabs.setCurrentWidget(self.profiles)
@@ -1691,22 +1699,7 @@ class MainWindow(QMainWindow):
                             'Base64 (raw bytes)'])
         self.mode.currentTextChanged.connect(self._mode_changed)
         row.addWidget(self.mode)
-        self.raw_scope = QComboBox()
-        self.raw_scope.addItems(['Whole file', 'From function entry'])
-        self.raw_scope.currentIndexChanged.connect(self._raw_scope_changed)
-        row.addWidget(self.raw_scope)
-        self.raw_page = QSpinBox()
-        self.raw_page.setRange(1, 1)
-        self.raw_page.setPrefix('Page ')
-        self.raw_page.valueChanged.connect(lambda *_: self.render_match())
-        row.addWidget(self.raw_page)
-        self.raw_goto = QLineEdit()
-        self.raw_goto.setPlaceholderText('Go to file offset (hex)')
-        self.raw_goto.setMaximumWidth(170)
-        self.raw_goto.returnPressed.connect(self.raw_goto_offset)
-        row.addWidget(self.raw_goto)
-        for widget in (self.raw_scope, self.raw_page, self.raw_goto):
-            widget.setVisible(False)
+        build_raw_navigation(self, row)
         self.sync_scroll = QCheckBox('Sync scroll')
         self.sync_scroll.setChecked(True)
         row.addWidget(self.sync_scroll)
@@ -1757,6 +1750,7 @@ class MainWindow(QMainWindow):
         apply_tooltips(self, {'mode': 'viewer.mode', 'sync_scroll': 'viewer.sync_scroll',
                               'previous_diff': 'nav.previous_hunk', 'next_diff': 'nav.next_hunk',
                               'hunk_list': 'nav.hunk_list'})
+        self.raw_alignment = RawAlignmentController(self, pane, layout)
         self.workspace.addWidget(pane)
 
     def _build_findings(self):
@@ -2048,6 +2042,7 @@ class MainWindow(QMainWindow):
             self.panels.selection_changed(self.current_match())
 
     def render_match(self, *_):
+        self.raw_alignment.sync()
         match = self.current_match()
         self._render_signals(match)
         self._function_offsets = {}
@@ -2186,6 +2181,9 @@ class MainWindow(QMainWindow):
             return
         artifact = next(a for a in self.project.artifacts if a.side == side)
         text = f'PatchTrace project {self.project.id} / revision {self.project.revision}\n'
+        if self.raw_alignment.active():
+            self.raw_alignment.copy(side, text, artifact)
+            return
         if self._raw_mode():
             raw = self._raw_sides.get(side) if self._current_inspection() is not None else None
             if raw is None or raw.rendered is None:
@@ -2319,8 +2317,8 @@ class MainWindow(QMainWindow):
             return
         notes = [a for a in self.project.annotations if a.target_id == match.id]
         text = f'Match {match.id}\nCategory: {match.category}\nReview: {match.review}\n'
-        if match.reason:
-            text += f'\nAnalyst correction reason: {match.reason}\n'
+        if match.reason:  # an import's abstention note (A-32) is not an analyst's correction reason
+            text += f"\n{'Analyst correction reason' if match.manual else 'Import note'}: {match.reason}\n"
         text += '\nAnalyst annotations:\n' + ('\n\n'.join(
             f'{a.kind}{" [stale]" if a.stale else ""}: {a.text}' for a in notes) or 'No annotations yet.')
         self.finding_detail.setPlainText(text)
@@ -2358,10 +2356,8 @@ class MainWindow(QMainWindow):
                        if s.signal_id == current.data(Qt.ItemDataRole.UserRole)), None)
         if signal is None:
             return
-        location = signal.locations[0]
-        if self.mode.currentIndex() != 0:
-            self.mode.setCurrentIndex(0)  # rebuilds the text-mode offsets that raw modes empty
-        self.reveal_lines(location.function_id, location.start_line, location.end_line)
+        from .ui_signal_navigation import reveal_signal_location
+        reveal_signal_location(self, signal.locations[0])
 
     def reveal_lines(self, function_id, start_line, end_line):
         """Select original lines of a function in its pane (the function id fixes the side); the pane, or None."""
@@ -2550,7 +2546,7 @@ class MainWindow(QMainWindow):
                              allow_symbol_downloads=effective == 'online',
                              java_home=str(self.settings.value('backend/java_home', '')),
                              **config_kwargs(effective == 'local', symbol_dirs),
-                             restrict_env=self.settings.value('backend/restrict_env', False, type=bool),
+                             restrict_env=self.settings.value('backend/restrict_env', True, type=bool),
                              env_passthrough=parse_env_passthrough(str(self.settings.value('backend/env_passthrough', ''))),
                              # Raw-output reuse (SPEC-07 §13) is opt-in via the selected profile's cache_dir.
                              cache_dir=str(profile.cache_dir or ''))
@@ -2582,6 +2578,9 @@ class MainWindow(QMainWindow):
         return None
 
     def _render_raw(self, match, clamped_from: int | None = None):
+        if self.raw_alignment.active():
+            self.raw_alignment.render()
+            return
         self._hunks = []
         self._hunk_index = -1
         inspection = self._current_inspection()
@@ -2667,6 +2666,7 @@ class MainWindow(QMainWindow):
         if not sizes or offset < 0 or offset >= max(sizes):
             self.statusBar().showMessage('Offset is outside the verified artifact bytes.')
             return
+        self.raw_alignment.toggle.setChecked(False)
         self.raw_scope.blockSignals(True)
         self.raw_scope.setCurrentIndex(SCOPES.index('whole'))
         self.raw_scope.blockSignals(False)
@@ -2720,6 +2720,7 @@ class MainWindow(QMainWindow):
         self.logs.appendPlainText('File inspection failed: ' + message)
 
     def _clear_inspection(self):
+        self.raw_alignment.invalidate()
         if self._inspection is not None:
             self._inspection.close()
         self._inspection, self._inspection_key, self._raw_sides = None, None, {}
@@ -3058,6 +3059,7 @@ class MainWindow(QMainWindow):
         for name, splitter in [('workspace', self.workspace), ('vertical', self.vertical), ('code', self.code_split)]:
             self.settings.setValue('desktop/' + name, splitter.saveState())
         self.settings.setValue('desktop/sync', self.sync_scroll.isChecked())
+        self.raw_alignment.shutdown()
         self.panels.shutdown()
         self.settings.sync()
         self._stop_inspection()

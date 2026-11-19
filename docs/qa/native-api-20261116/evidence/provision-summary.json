@@ -1,0 +1,72 @@
+{
+  "scope": "Linux pinned native API over authored objects/buffers only; no target execution; not CLI/Windows/product qualification",
+  "source_head": "5dc4e6988aacaf6afc537eca03cf98b150d597e4",
+  "rizin_commit": "c3a90e9226d977f58f4e9c75f78fa6b07afe13c7",
+  "host": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "online_processors": 9,
+  "compiler": "cc (Debian 14.2.0-19) 14.2.0",
+  "meson": "1.12.1",
+  "ninja": "1.13.2.git.kitware.jobserver-pipe-1",
+  "pcre2": "10.46",
+  "build_options": [
+    "buildtype=plain",
+    "use_sys_pcre2=enabled",
+    "enable_tests=false",
+    "enable_rz_test=false",
+    "regenerate_cmds=disabled"
+  ],
+  "scheduling": "nice15,j2, API dependency closure only",
+  "stock_similarity_sha256": "a0b196dbc39e4fb3df4f850e156482ba9668838ccf5bb99a25563fd7a8c7ee5a",
+  "corrected_similarity_sha256": "5b11e8ce3cce7ca30c59472b3a0e2ade876ef120ba0f767253840c26b5c4078f",
+  "control_source_sha256": "9b2d3cf29dbf932730c8ff56e936fe9027766b81230a9513d8238dc2cb7dbba7",
+  "changed_rizin_libraries": [
+    "librz_arch.so.0.9.1"
+  ],
+  "results": {
+    "corrected-matrix": {
+      "accepted": true,
+      "returncode": 0,
+      "error": null
+    },
+    "corrected-io-wrong-bytes": {
+      "accepted": false,
+      "returncode": 1,
+      "error": "native IO inventory, errors or reads differ from the pinned oracle"
+    },
+    "stock-retry1-io": {
+      "accepted": false,
+      "returncode": 1,
+      "error": "native IO inventory, errors or reads differ from the pinned oracle"
+    },
+    "stock-matrix": {
+      "accepted": false,
+      "returncode": 127,
+      "error": "incomplete or duplicated native matrix"
+    },
+    "corrected-io": {
+      "accepted": false,
+      "returncode": 0,
+      "error": "native IO inventory, errors or reads differ from the pinned oracle"
+    },
+    "stock-retry1-matrix": {
+      "accepted": true,
+      "returncode": 1,
+      "error": null
+    },
+    "corrected-io-wrong-io": {
+      "accepted": false,
+      "returncode": 1,
+      "error": "native IO inventory, errors or reads differ from the pinned oracle"
+    }
+  },
+  "first_attempt": "stock-matrix failed loader exit127 from missing SONAME snapshot links; retained untouched. stock-retry1 uses fresh snapshot/directory.",
+  "subproject_git_heads": {
+    "rizin-grammar-c": "6a9d542145c2c783230ee4f9006bb81e3fbea635",
+    "blake3": "2de3cb1a21d09cdee4c8b6b14513063198cf1b82",
+    "libmspack": "305907723a4e7ab2018e58040059ffb5e77db837",
+    "blake2": "ed1974ea83433eba7b2d95c5dcd9ac33cb847913",
+    "libdemangle": "e633061e901208a20ed90f8aaf0b64f25caf73eb",
+    "softfloat": "537d18e71a51aea70f6b54334854f7014c6458c7",
+    "capstone-next": "3df6ff015fb6afd81307e325fdd9c82dbf184b28"
+  }
+}

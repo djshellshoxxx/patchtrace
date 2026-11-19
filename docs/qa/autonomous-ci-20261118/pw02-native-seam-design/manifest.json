@@ -1,0 +1,144 @@
+{
+  "status": "design-only; no native execution or test qualification",
+  "source_sha": "27e4318b87e0af3be0fc11a1906b86d95c44f46b",
+  "contracts_source_sha": "645839646a68815ee1822ee61039af42d583903a",
+  "archive": {
+    "path": "evidence.zip",
+    "bytes": 267262,
+    "sha256": "7015cbfe58cda8a885d48bb1d25946169bbca4e031350c7eb27920a75fcce94d",
+    "members": 26,
+    "uncompressed_bytes": 764589
+  },
+  "members": [
+    {
+      "path": "README.md",
+      "bytes": 11318,
+      "sha256": "0fa94930febb0cc6d617f320df4522f20cc3edf7a61d9ca8c28f83eef6ff577a"
+    },
+    {
+      "path": "capture_sources.py",
+      "bytes": 4527,
+      "sha256": "8b14234916f238da459849b830a96d39d60c6128bf01a31ef22f6979c7310aba"
+    },
+    {
+      "path": "current-source-provenance.json",
+      "bytes": 6150,
+      "sha256": "7418427f967242bdb4be5d53f9e3fad6b1a0751b0d972476c4d1c496d95f5bd5"
+    },
+    {
+      "path": "initial-README.md",
+      "bytes": 10772,
+      "sha256": "e860a7d7019d391ca21b3157514a613a98f54e4e881d262d59373471cfba2db1"
+    },
+    {
+      "path": "initial-source-provenance.json",
+      "bytes": 2527,
+      "sha256": "88209eb4b72cd9992d0ccba4194bcfc51a92f47207ca0105abffa84382320d92"
+    },
+    {
+      "path": "interface-map.md",
+      "bytes": 11125,
+      "sha256": "8f6a0435cd55b0fd0f1ebc64844ef80241e29f35ca8d0aa6e5381e2fe321fd27"
+    },
+    {
+      "path": "native-handoff.md",
+      "bytes": 28804,
+      "sha256": "447f8ff448089b6ead2b75240e18d09dd1d8f0e01d9c8aa705f013e560a5725a"
+    },
+    {
+      "path": "seal_design.py",
+      "bytes": 2341,
+      "sha256": "e4d8f66416b3c8251d1f4d5a5b53b5d8753d9d719d1f4eedb3f81c51fefee127"
+    },
+    {
+      "path": "source/docs/modules.md",
+      "bytes": 366588,
+      "sha256": "41b00d3c47afbd2b44dd6c9cc31c7808129f18fdceee9fad680ea625d6e47982"
+    },
+    {
+      "path": "source/docs/specs/architecture.md",
+      "bytes": 37683,
+      "sha256": "090ca228fa7c4cb44c1b529b21ac161cd32205f34f4c86095fe1f63c69b8f8e5"
+    },
+    {
+      "path": "source/docs/specs/local-package-intake.md",
+      "bytes": 11914,
+      "sha256": "d35c89f22c41c841547745787a747a06f6253d295a2151ef38fb3a0ca388163e"
+    },
+    {
+      "path": "source/src/patchtrace/__main__.py",
+      "bytes": 1925,
+      "sha256": "49067d51c47b106ee3b6206d00ba08c1c7d5257390a3de226e33d9e6cecdb49e"
+    },
+    {
+      "path": "source/src/patchtrace/acquisition/package_budget.py",
+      "bytes": 9487,
+      "sha256": "0369bb41cdfa00cfece023f4f2587446e71381f5bc2bbafee5fe574b0293878d"
+    },
+    {
+      "path": "source/src/patchtrace/acquisition/package_contracts.py",
+      "bytes": 20995,
+      "sha256": "b30dd22621a0d9b66a9f003ae3137a9c9d7ac1139774be144531011b67e55da0"
+    },
+    {
+      "path": "source/src/patchtrace/acquisition/package_platform.py",
+      "bytes": 988,
+      "sha256": "29c14a6555f27b2e83ca3cb7fd93bbcaacd5d1de042cd6838dfc20356464d3ab"
+    },
+    {
+      "path": "source/src/patchtrace/ingestion.py",
+      "bytes": 11882,
+      "sha256": "b5e677f3c803e6e0e35481ccfe8fb65ede75e61b94872b6e40cdfb75efc33ef4"
+    },
+    {
+      "path": "source/src/patchtrace/jobs.py",
+      "bytes": 25232,
+      "sha256": "807abdfb8d22016eecb5d37bff802b233a2c1bb340e82abc14f11f87c8de7821"
+    },
+    {
+      "path": "source/src/patchtrace/kbcorrelation/ports.py",
+      "bytes": 2250,
+      "sha256": "b04845aceebda644557844b7c5a37d17d3ec1027619a8aca70d57b284dd6922d"
+    },
+    {
+      "path": "source/src/patchtrace/kbcorrelation/service.py",
+      "bytes": 64763,
+      "sha256": "5b3332f7d72d1808cbb61109e3570ee41fa248b1f58784cf86f06345bba1cb7a"
+    },
+    {
+      "path": "source/src/patchtrace/kbcorrelation/store.py",
+      "bytes": 40513,
+      "sha256": "df07391848ebaafd6a175888877f89de2f09bf506760f2e19f1eba1c5e3d93da"
+    },
+    {
+      "path": "source/src/patchtrace/kbcorrelation/wiring.py",
+      "bytes": 19912,
+      "sha256": "f38103aa9d8edd824bc15d3d9f74536078f20e5208ab7b5ee5bb945da8afb851"
+    },
+    {
+      "path": "source/src/patchtrace/owned_publication.py",
+      "bytes": 24797,
+      "sha256": "5903c6b9b568e20267880ffdf1ab47f02c35590b6ead6cddb3f5bfaf9b546e7b"
+    },
+    {
+      "path": "source/src/patchtrace/secondary/binexport_run.py",
+      "bytes": 9358,
+      "sha256": "a1aefb60c32b29fa13bb34e4214493e0712181181fce2a3c95f405ea2ee9fe59"
+    },
+    {
+      "path": "source/src/patchtrace/service.py",
+      "bytes": 25674,
+      "sha256": "4833ea5b9a3e876081e04b86dbd89b2828ecccd6bc8c80f7e2192b65b180d550"
+    },
+    {
+      "path": "source/tools/build_windows.py",
+      "bytes": 10537,
+      "sha256": "68aae2ca253d5246261464ab356708d49d8e7b2181099cea902b7f939ca7577d"
+    },
+    {
+      "path": "source-provenance.json",
+      "bytes": 2527,
+      "sha256": "88209eb4b72cd9992d0ccba4194bcfc51a92f47207ca0105abffa84382320d92"
+    }
+  ]
+}

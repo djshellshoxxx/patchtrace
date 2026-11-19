@@ -1,0 +1,61 @@
+{
+  "candidate_reruns": 0,
+  "changed_control_function": "diag_changed",
+  "compiler": "/usr/bin/cc",
+  "compiler_flags_common": [
+    "-O2",
+    "-DNDEBUG",
+    "-Wl,--build-id=none"
+  ],
+  "compiler_flags_executable": [
+    "-Wl,--export-dynamic"
+  ],
+  "compiler_flags_shared": [
+    "-fPIC",
+    "-shared",
+    "-Wl,-soname,libdiag.so"
+  ],
+  "expected_control_functions": [
+    "diag_stable_add",
+    "diag_stable_xor",
+    "diag_changed",
+    "diag_dispatch"
+  ],
+  "extra_B_experiment": "Not run: pinned source already shows functions branch ignores analyze_all distinction",
+  "fixtures": [
+    "New independently authored ELF shared libraries",
+    "New independently authored ELF executables using the same library control source",
+    "Existing independently authored Tier-W PE pair, already hashed during tool smoke"
+  ],
+  "frozen_utc": "2026-11-18T08:44:07.810194+00:00",
+  "inventory_not_product_adapter": "Independent native static inventory to locate a discrepancy; no producer result or production parser is replaced",
+  "kind": "authored-discovery-controls-plan/1",
+  "native_default_flags": [
+    "-C",
+    "-j",
+    "-t",
+    "functions"
+  ],
+  "native_inventory_command": [
+    "rizin",
+    "-N",
+    "-A",
+    "-q",
+    "-c",
+    "aflj",
+    "AUTHORED_OLDER_INPUT"
+  ],
+  "per_run_timeout_seconds": 30,
+  "phase": "post-measurement diagnosis only",
+  "product_code_edits": false,
+  "source_observation": "functions branch unconditionally calls rz_core_analysis_everything for both cores; -B controls different branches and is not a justified missing-analysis fix",
+  "source_rz_diff_git_blob": "3be455f898e91b906ed2d2307060f41c0833450e",
+  "source_rz_diff_sha256": "d44bfe9d05da81ace0ce46eae8e69555c080719cebac3cb72d6686917ab1ea5b",
+  "source_sha256": {
+    "controls/newer/control.c": "a4620ea7ca958a067437e17243e7f9a4c0ceab7ce1b84661aa66c87696135017",
+    "controls/newer/main.c": "a9dd69b6df2cd1819db430b16f5316d67dcae70ce51c5be950240d885e96973d",
+    "controls/older/control.c": "8affac4b9d48a1d1c0cb1cabbd086b6d9a4ca9ff5e56200e3b849e1a45760846",
+    "controls/older/main.c": "a9dd69b6df2cd1819db430b16f5316d67dcae70ce51c5be950240d885e96973d"
+  },
+  "target_execution": false
+}

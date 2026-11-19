@@ -1,0 +1,77 @@
+{
+  "source_commit": "06f5b210e5c6daffaae2b4d51fd8950c28be25c3",
+  "source_tree": "564ce17da6e8d6fd9e15ad3b3fde16cd91f825bd",
+  "review_type": "independent Linux read-budget review",
+  "archive": {
+    "path": "raw-evidence.zip",
+    "bytes": 18672,
+    "sha256": "361bc6154240dd9969ffdf803f09d6f565794dfd4dd6b262d19b03bfd1f89339"
+  },
+  "members": [
+    {
+      "path": "affected.log",
+      "bytes": 181,
+      "sha256": "3cc431aebdfab860685dc5f111056d8d7cea7c08907834b94aeefedffdcb21c3"
+    },
+    {
+      "path": "affected.xml",
+      "bytes": 17612,
+      "sha256": "c951d433def595c3003d09c32013fc79fab5bc44d0011e3c25f2d3334d36f43a"
+    },
+    {
+      "path": "author-affected.log",
+      "bytes": 181,
+      "sha256": "8c794eaf357d5c2948b559625c97effd86465fcdf2346b8f077dc1461cbaf56a"
+    },
+    {
+      "path": "author-affected.xml",
+      "bytes": 17612,
+      "sha256": "d15b59076fbe411520bbcb13d226d8c9c889d7807ebe989c56203cf19a7f1e13"
+    },
+    {
+      "path": "author-red.log",
+      "bytes": 6505,
+      "sha256": "1842130a4d64e33e3593cd53122912b881fd0185e923d8bdc4262d8891ce21ad"
+    },
+    {
+      "path": "author-red.xml",
+      "bytes": 7229,
+      "sha256": "ccbc6e94aee08466ad753516ecaeae651f48cb64e2b9aa04469501c1b6dfcc99"
+    },
+    {
+      "path": "author-ruff-initial.log",
+      "bytes": 1906,
+      "sha256": "edaee98f5d4fa760bbe6652738f92cedf08bb94e8b1eacebeffcc2740ed73612"
+    },
+    {
+      "path": "author-ruff.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "external.log",
+      "bytes": 99,
+      "sha256": "1e2833223fc520eece5b1ff7f1c588c9ae96418f401c7d988bf4f45f7e74f9ef"
+    },
+    {
+      "path": "external.xml",
+      "bytes": 2064,
+      "sha256": "4ca6c4e1b0b5180f6e917616d027cca6cf1e412e46018aff9925d420117641e0"
+    },
+    {
+      "path": "provenance.json",
+      "bytes": 5849,
+      "sha256": "c77fb4a933a9ead4cf060c1da94c52105e71f0506b9409f0abe8e56a296a18b8"
+    },
+    {
+      "path": "retain_review.py",
+      "bytes": 6219,
+      "sha256": "7d11b8e31b54485b68c865d46691f7fc0ca40087224eb27db6c5f68392604ff2"
+    },
+    {
+      "path": "test_advisory_bounds_review.py",
+      "bytes": 8250,
+      "sha256": "5585f7a337a3ba9e6100cb930920dbbf40f3617a0b06909cb345f351e7e16e97"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________________ test_every_registry_id_is_applied_somewhere __________________
+tests/test_tooltips.py:272: in test_every_registry_id_is_applied_somewhere
+    assert not missing, sorted(missing)
+E   AssertionError: ['kb.inventory.architecture', 'kb.inventory.assert_scope', 'kb.inventory.asserted_source', 'kb.inventory.browse_csv', 'kb.inventory.browse_html', 'kb.inventory.browse_workspace', ...]
+E   assert not {'kb.inventory.architecture', 'kb.inventory.assert_scope', 'kb.inventory.asserted_source', 'kb.inventory.browse_csv', 'kb.inventory.browse_html', 'kb.inventory.browse_workspace', ...}
+=========================== short test summary info ============================
+FAILED tests/test_tooltips.py::test_every_registry_id_is_applied_somewhere - ...
+1 failed in 1.39s

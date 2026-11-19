@@ -116,6 +116,30 @@
         "tests/test_kbc_fixtures.py (every row against patchtrace.kbcorrelation.ids)"
       ]
     },
+    "inventory-capacity-compat.json": {
+      "bytes": 17851,
+      "created": "2026-11-18T00:00:00Z",
+      "licence": "MIT (repository LICENSE); synthetic test data, no third-party content",
+      "origin": "synthetic, authored PatchTrace fixture; not Microsoft-derived or copied. Frozen serialized v1 capacity and v2 retained-page records from their original writers; preserves exact limits, record hashes, conflict witnesses and import identities.",
+      "path": "inventory-capacity-compat.json",
+      "sha256": "f058c9f01bfde1c9baecc7de73b424e826745ea50eb2f93cf154bbd60ad8f829",
+      "used_by": [
+        "tests/test_kbc_inventory_capacity_compat.py",
+        "tests/test_kbc_fixtures.py (manifest integrity)"
+      ]
+    },
+    "inventory-legacy-tsp.json": {
+      "bytes": 2891,
+      "created": "2026-11-18T00:00:00Z",
+      "licence": "MIT (repository LICENSE); synthetic test data, no third-party content",
+      "origin": "synthetic, authored PatchTrace fixture; not Microsoft-derived or copied. Frozen v1 TSP classification record from source commit 66de75b56d372784fcadc95388d41cdcbfd7f975; preserves the original descriptive-only state and identities.",
+      "path": "inventory-legacy-tsp.json",
+      "sha256": "4fcccd81ece234abb01e5ab5fb934271eb76e3ba6fa4fcbab2cd06b296f67434",
+      "used_by": [
+        "tests/test_kbc_inventory_pages.py",
+        "tests/test_kbc_fixtures.py (manifest integrity)"
+      ]
+    },
     "kev-synthetic.json": {
       "bytes": 546,
       "created": "2026-10-14T12:20:00Z",

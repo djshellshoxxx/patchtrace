@@ -1,0 +1,134 @@
+{
+  "code_commit": "319e4b15a6315b805fc77162fa6f8fda2845bdca",
+  "mode": "Serial pytest processes, eight disjoint batches of affected test files plus registry/help contracts",
+  "passed": 2442,
+  "skipped": 6,
+  "full_suite": "NOT PASSED: AF_UNIX restriction reproduced on baseline; separate worker-termination/incomplete runs",
+  "batches": [
+    {
+      "batch": 0,
+      "files": [
+        "tests/test_bindiff_resource_bounds.py",
+        "tests/test_cli_registry.py",
+        "tests/test_cli_secondary_run.py",
+        "tests/test_codetext_marks.py",
+        "tests/test_compare_cli.py",
+        "tests/test_corrections_cli.py",
+        "tests/test_diaphora_import.py",
+        "tests/test_doctor_cli.py"
+      ],
+      "summary": "602 passed, 1 skipped in 22.57s",
+      "passed": 602,
+      "skipped": 1
+    },
+    {
+      "batch": 1,
+      "files": [
+        "tests/test_evidence_panel_service.py",
+        "tests/test_files_announcements.py",
+        "tests/test_help_docs.py",
+        "tests/test_hostile_text.py",
+        "tests/test_jobs.py",
+        "tests/test_json_recursion_boundaries.py",
+        "tests/test_kb_winbindex_refresh_20261105.py",
+        "tests/test_kbc_audit_20261107.py"
+      ],
+      "summary": "429 passed, 3 skipped in 17.62s",
+      "passed": 429,
+      "skipped": 3
+    },
+    {
+      "batch": 2,
+      "files": [
+        "tests/test_kbc_contracts.py",
+        "tests/test_kbc_leads.py",
+        "tests/test_kbc_lineage.py",
+        "tests/test_kbc_pairs_index.py",
+        "tests/test_kbc_products.py",
+        "tests/test_kbc_resolver.py",
+        "tests/test_kbc_snapshot.py",
+        "tests/test_offline_bundle.py"
+      ],
+      "summary": "386 passed, 1 warning in 4.94s",
+      "passed": 386,
+      "skipped": 0
+    },
+    {
+      "batch": 3,
+      "files": [
+        "tests/test_offline_bundle_linux.py",
+        "tests/test_pe_overview_export_names.py",
+        "tests/test_pe_overview_import_caps.py",
+        "tests/test_pe_overview_name_truncation.py",
+        "tests/test_profile_cli.py",
+        "tests/test_project_cli.py",
+        "tests/test_report2_adapters.py",
+        "tests/test_report2_contracts.py"
+      ],
+      "summary": "279 passed in 13.77s",
+      "passed": 279,
+      "skipped": 0
+    },
+    {
+      "batch": 4,
+      "files": [
+        "tests/test_report2_sections.py",
+        "tests/test_research_qualification_cli.py",
+        "tests/test_research_qualification_l1.py",
+        "tests/test_research_qualification_l1_run.py",
+        "tests/test_review_cli.py",
+        "tests/test_runtime_cli.py",
+        "tests/test_rzdiff_legacy_quarantine.py",
+        "tests/test_safe_path_reserved_names.py"
+      ],
+      "summary": "189 passed in 5.81s",
+      "passed": 189,
+      "skipped": 0
+    },
+    {
+      "batch": 5,
+      "files": [
+        "tests/test_secondary_cli_imports.py",
+        "tests/test_secondary_runs.py",
+        "tests/test_secondary_rzdiff.py",
+        "tests/test_secondary_scheduler.py",
+        "tests/test_secondary_store.py",
+        "tests/test_security_archive_members.py",
+        "tests/test_security_atomic_writes.py",
+        "tests/test_security_static_guards.py"
+      ],
+      "summary": "191 passed in 26.27s",
+      "passed": 191,
+      "skipped": 0
+    },
+    {
+      "batch": 6,
+      "files": [
+        "tests/test_security_subprocess.py",
+        "tests/test_spec_registry.py",
+        "tests/test_tier_r_eval_engines.py",
+        "tests/test_tier_r_eval_metrics.py",
+        "tests/test_tier_w_pe.py",
+        "tests/test_ui_export_accessibility.py",
+        "tests/test_ui_export_v2.py",
+        "tests/test_ui_kb_panel.py"
+      ],
+      "summary": "227 passed, 2 warnings in 23.04s",
+      "passed": 227,
+      "skipped": 0
+    },
+    {
+      "batch": 7,
+      "files": [
+        "tests/test_unified_gate_eval.py",
+        "tests/test_unified_pipeline.py",
+        "tests/test_unified_rb01_harness.py",
+        "tests/test_unified_sources.py",
+        "tests/test_workflow_contract_dependencies.py"
+      ],
+      "summary": "139 passed, 2 skipped in 7.71s",
+      "passed": 139,
+      "skipped": 2
+    }
+  ]
+}

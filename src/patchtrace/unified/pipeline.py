@@ -52,7 +52,7 @@ from ..secondary.binexport_run import (  # C3's OOM rule and spawn recipe
     worker_argv,
     worker_env,
 )
-from ..secondary.store import current_sets
+from ..secondary.store import analysis_sets
 from . import keys, store
 from .addressing import AddressMap, PeLayout, layout_from_reader
 from .compute import Identity, plan_identity, run_request
@@ -326,7 +326,7 @@ def _stored_sets(service, sources: tuple[str, ...], pair: tuple[str, str] | None
     if not wanted:
         return ()
     try:
-        rows = current_sets(EnrichmentStore(service.store), pair=pair)
+        rows = analysis_sets(EnrichmentStore(service.store), pair=pair)
     except (EnrichmentError, sqlite3.Error, ValueError):
         raise fail('PT-UNIFIED-STORE', 'secondary-unreadable') from None
     return tuple(LoadedSecondary.from_verified_body(entry.id, match_set, entry.body_json, entry.body_sha256)

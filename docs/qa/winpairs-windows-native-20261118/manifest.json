@@ -1,0 +1,69 @@
+{
+  "schema": "patchtrace-qa-evidence/1",
+  "base_commit": "bb4277aed685d485b57ffe7a718e70bab3e34467",
+  "candidate_local_commit": "1c49199e9333e955e2bd947fda2824d68b7da65d",
+  "candidate_tree": "aa7749a9a1c2abe7c3a4bde2473e717411f7ac9e",
+  "hosted_failure": {
+    "run_id": 44263225792,
+    "job_id": 134661411666,
+    "failed": 15,
+    "passed": 61,
+    "skipped": 3,
+    "full_suite_and_package": "not_started"
+  },
+  "portable_regression": {
+    "red_failed": 20,
+    "green_passed": 101,
+    "green_skipped": 2,
+    "skip_reason": "native Windows sharing and reparse controls unavailable on Linux"
+  },
+  "artifacts": [
+    {
+      "path": "hosted-bb4277-windows-publication.log",
+      "bytes": 85864,
+      "sha256": "a3c06a20a70fc31af0ef6c63515289b4e22026afeef2229701df7fe1a7893a04"
+    },
+    {
+      "path": "portable-red-bb4277.log",
+      "bytes": 46269,
+      "sha256": "459d5b1c4eb26450430cf5716d55830b2f2c2741e83c9591c25b9927aaa99811"
+    },
+    {
+      "path": "portable-green-1c49199e.log",
+      "bytes": 191,
+      "sha256": "7f729b284747771b71c38d57f20f5d5c27cd076cc9e41093fa2c30c02e18c0ba"
+    },
+    {
+      "path": "independent-api-contract-review.md",
+      "bytes": 5077,
+      "sha256": "148fa779c61f48d76997a90f6d40dc075099fbedc474c758ca3c667989f7fd75"
+    },
+    {
+      "path": "independent-test_review.py",
+      "bytes": 9228,
+      "sha256": "b0daa5539913dab891f4d86f7e707a62d9c251afb9b5590222beb58018d9ea0c"
+    },
+    {
+      "path": "independent-review.log",
+      "bytes": 99,
+      "sha256": "f6b63ab48fd291f4dd9170b2691fcc402cf5b4a7400c78b64b7e38af65a4a50b"
+    },
+    {
+      "path": "independent-review.xml",
+      "bytes": 3053,
+      "sha256": "94da751845cfeb45a071c23c4a884b53083f06bd6088cf35f0e78b1a82599307"
+    }
+  ],
+  "candidate_published_commit": "540c7df771e721148fba94a0ec707fe591aba875",
+  "independent_review": {
+    "commit": "1c49199e9333e955e2bd947fda2824d68b7da65d",
+    "tree": "aa7749a9a1c2abe7c3a4bde2473e717411f7ac9e",
+    "publication_modules": {
+      "passed": 101,
+      "skipped": 2
+    },
+    "additional_external_controls_passed": 15,
+    "source_findings": [],
+    "native_windows": "unverified; exact-head hosted gate required"
+  }
+}

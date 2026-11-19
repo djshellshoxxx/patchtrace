@@ -76,11 +76,12 @@ def test_parse_ref_mines_version_kb_month():
     assert wp.parse_ref({'file': 'x.dll', 'ref': 'ignored', 'version': '1.2.3.4'})['file'] == 'x.dll'
 
 
-def test_select_prefers_highest_version_when_pinned_multi_match():
+def test_exact_hash_pin_disambiguates_same_version():
     old = entry(b'1', 1, 0x1000, '10.0.22000.100 (a)')
     new = entry(b'2', 2, 0x1000, '10.0.22000.100 (b)')
     new['fileInfo']['timestamp'] = 5
-    fi, _ = wp.select_entry(index(old, new), wp.parse_ref({'ref': 'f.sys 10.0.22000.100'}))
+    fi, _ = wp.select_entry(index(old, new), wp.parse_ref({'ref': 'f.sys 10.0.22000.100',
+                                                        'sha256': new['fileInfo']['sha256']}))
     assert fi['timestamp'] == 5
 
 

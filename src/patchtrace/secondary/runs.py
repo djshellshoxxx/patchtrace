@@ -13,6 +13,7 @@ from typing import Literal
 from pydantic import Field, field_validator, model_serializer
 
 from ..enrichment.identity import canonical_json, domain_id
+from ..hostile_text import replace_hostile
 from .contracts import SecondaryError, SecondaryMatchSet, Sha256, _Strict
 
 RUN_KIND = 'engine-run'
@@ -106,13 +107,10 @@ def new_run_id(key: str, started_utc: str) -> str:
     return domain_id('engine-run', 1, {'cache_key': key, 'started_utc': started_utc})
 
 
-_BIDI = frozenset('\u200e\u200f\u2028\u2029\u202a\u202b\u202c\u202d\u202e\u2066\u2067\u2068\u2069')
-
-
 def sanitize_stderr(text: str, limit: int = STDERR_STORED) -> str:
-    """Control characters other than newline/tab become '?'; stored copy is size-capped."""
-    clean = ''.join(c if c in '\n\t' or ord(c) >= 32 and ord(c) != 127 and c not in _BIDI else '?' for c in text)
-    return clean[-limit:]
+    """Every hostile character (`hostile_text`: C0, DEL and C1 controls, bidirectional and other format characters,
+    surrogates, U+2028 and U+2029) other than newline/tab becomes '?'; the stored copy is the size-capped tail."""
+    return replace_hostile(text[-limit:], '?', keep='\n\t')
 
 
 def as_v2(match_set: SecondaryMatchSet, run_id: str | None = None) -> SecondaryMatchSet:

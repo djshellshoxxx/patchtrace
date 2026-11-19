@@ -19,7 +19,7 @@ from .contracts import ComponentHint, CveCard, SourceRef, domain_id, validate_fi
 from .limits import DEFAULT_LIMITS
 
 # Names the title literally contains; the suffix list is the one acquisition accepts for PE files.
-_MODULE = re.compile(r'(?<![A-Za-z0-9_.-])([A-Za-z0-9_][A-Za-z0-9_.-]{0,59}\.(?:sys|dll|exe|ocx|cpl|drv))(?![A-Za-z0-9_-])',
+_MODULE = re.compile(r'(?<![A-Za-z0-9_.-])([A-Za-z0-9_][A-Za-z0-9_.-]{0,59}\.(?:sys|dll|exe|ocx|cpl|drv|tsp))(?![A-Za-z0-9_-])',
                      re.IGNORECASE)
 SELECTING_TIERS = ('A', 'B', 'C', 'E')  # tier D never selects a file
 
@@ -35,7 +35,7 @@ def normalise_name(raw: str) -> str:
     try:
         return validate_file_name(raw.strip().lower())
     except Exception:
-        raise ValueError('a file name is a lowercase basename of [a-z0-9._-] ending in .sys, .dll or .exe') from None
+        raise ValueError('a file name is a lowercase basename of [a-z0-9._-] with a supported PE suffix') from None
 
 
 def _hint(basename: str, scope_id: str, tier: str, reasons: Sequence[str],
@@ -81,3 +81,24 @@ def hints_for(cards: Iterable[CveCard], refs_by_cve: dict[str, SourceRef], names
 def selectable(hints: Iterable[ComponentHint]) -> bool:
     """True when at least one hint may select a file (tier D alone never does)."""
     return any(h.tier in SELECTING_TIERS for h in hints)
+
+
+def with_inventory(hints: Iterable[ComponentHint], selected: Iterable[ComponentHint], *,
+                   limit: int = DEFAULT_LIMITS.hints) -> tuple[tuple[ComponentHint, ...], bool]:
+    """Group explicitly selected names for display while retaining every CSV claim."""
+    found = {}
+    for hint in (*hints, *selected):
+        key = (hint.scope_id, hint.basename)
+        prior = found.get(key)
+        if prior is None:
+            found[key] = hint
+            continue
+        tier = min((prior.tier, hint.tier), key=_tier_priority)
+        found[key] = prior.model_copy(update={
+            'tier': tier, 'reasons': tuple(sorted(set((*prior.reasons, *hint.reasons)))),
+            'claim_refs': tuple(sorted(set((*prior.claim_refs, *hint.claim_refs)), key=lambda r: (r.doc_id, r.pointer))),
+            'inventory_refs': tuple(sorted(set((*prior.inventory_refs, *hint.inventory_refs)),
+                                           key=lambda r: (r.import_id, r.entry_id))),
+        })
+    ordered = sorted(found.values(), key=lambda h: (_tier_priority(h.tier), h.basename, h.scope_id))
+    return tuple(ordered[:limit]), len(ordered) > limit

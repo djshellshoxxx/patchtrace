@@ -1,0 +1,18 @@
+{
+  "source": "010b9e6170b9a882556d11aed0a3186873cd216f",
+  "controls": [
+    {
+      "control": "status",
+      "exit": 1,
+      "expected_failure": "kb.inventory.status: empty tooltip",
+      "detected": true
+    },
+    {
+      "control": "tabs",
+      "exit": 1,
+      "expected_failure": "kb.inventory.tabs: empty tooltip",
+      "detected": true
+    }
+  ],
+  "scope": "Two intentional tooltip-removal mutations; no production source edits."
+}

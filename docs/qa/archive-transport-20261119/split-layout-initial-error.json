@@ -1,0 +1,8 @@
+{
+  "operation": "prepare split publication",
+  "source": "ops/prepare_split_evidence_publication.py",
+  "source_sha256": "4b593924810654fd33eacff5ee027ec38ccaa784af93bcb715148832c1b8b409",
+  "exit": 1,
+  "error": "AssertionError at line33: assumed421 ZIP members before branch mutation",
+  "effect": "No new branch or repository mutation; original archive remains unchanged"
+}

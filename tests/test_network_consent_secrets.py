@@ -141,7 +141,8 @@ def job(tmp_path, monkeypatch, network_guard):
         (ghidra / 'ghidriff' / '__main__.py').write_text(
             CHILD.format(names=list(ENV_SECRETS), lines=lines, raw=str(raw), fail=fail), encoding='utf-8', newline='\n')
         events = []
-        config = BackendConfig(str(Path(sys.executable).resolve()), str(ghidra))
+        # Exercise redaction after an explicitly unrestricted external child prints authored secrets.
+        config = BackendConfig(str(Path(sys.executable).resolve()), str(ghidra), restrict_env=False)
         _path, result = run_comparison(config, project, root, threading.Event(), events.append)
         assert result.status == ('failed' if fail else 'completed'), result.error
         return result, events, root, raw.read_text(encoding='utf-8')

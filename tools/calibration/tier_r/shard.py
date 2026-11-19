@@ -244,6 +244,8 @@ def failure_reason(rc: int | None, reason: str | None, summary: dict | None, std
     """One-line, bounded reason for a failed or BLOCKED step: runner reason, the command's own error, or stderr."""
     if reason:
         text = reason
+    elif rc in (0, 1) and summary and summary.get('command') == 'aa' and summary.get('not_byte_identical'):
+        text = f'exit {rc}: A/A rebuild is not byte-identical'
     else:
         text = ''
         for key in ('error', 'reason'):
@@ -349,10 +351,29 @@ def _absorb(summary: dict, labels: list, features: list, reports: list) -> None:
         reports.append(summary['report'])
 
 
+def _recognized_summary(summary: dict | None) -> bool:
+    """Recognize current command summaries without treating arbitrary JSON as declared findings."""
+    if not isinstance(summary, dict):
+        return False
+    command = summary.get('command')
+    if not isinstance(command, str) or command not in (
+            'fetch', 'build-suite', 'build-card', 'aa', 'noise', 'mutate', 'evaluate', 'suite'):
+        return False
+    if 'status' in summary:
+        status = summary['status']
+        return isinstance(status, str) and status in ('ok', 'findings', 'failed')
+    disagreements = summary.get('disagreements')
+    return command == 'suite' and type(disagreements) is int and disagreements >= 0
+
+
 def _classify(rc: int | None, reason: str | None, summary: dict | None = None) -> str:
     if rc is None:
         return 'timeout'
     status = {0: 'ok', 1: 'findings', 3: 'blocked'}.get(rc, 'failed')
+    if status in ('ok', 'findings') and summary and summary.get('command') == 'aa' and summary.get('not_byte_identical'):
+        return 'failed'
+    if status == 'findings' and not _recognized_summary(summary):
+        return 'failed'
     if status == 'ok' and summary and summary.get('status') == 'skipped':
         return 'skipped'
     return status

@@ -1,0 +1,143 @@
+{
+  "contract": "patchtrace-evidence-manifest/1",
+  "source_commit": "939d4a9051ecbd6ebc0cc97e20756c1a881ee070",
+  "published_source": "5eee139279e77c25c5fb292caa11a165af696059",
+  "tree": "11358e92063107e484dc30906f55ddeb8a61dd4f",
+  "files": [
+    {
+      "path": "combined/combined.log",
+      "bytes": 2443,
+      "sha256": "a7f6cb9f955c890b49115218eb7abde998ec9e1fd8b09e500c860b17b3598212"
+    },
+    {
+      "path": "combined/combined.xml",
+      "bytes": 282564,
+      "sha256": "f601d29330168a7220da342f067a9deb8e1c889f034608022c8aa346275ab029"
+    },
+    {
+      "path": "combined/commands.json",
+      "bytes": 4810,
+      "sha256": "67833037ddc286e14c5624d4817db90612556954276a6a316e443fd36f05b805"
+    },
+    {
+      "path": "combined/ruff.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "combined/schema.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "hosted-75-checkpoint/REPORT.md",
+      "bytes": 2698,
+      "sha256": "d3303059f3c7dbca5f5045156661b79639a1130e78835abb1df29048532371a0"
+    },
+    {
+      "path": "hosted-75-checkpoint/bindiff-ubuntu-completed-log-response.json",
+      "bytes": 49776,
+      "sha256": "f9646224a95a89dd57e802029119b0d6a28d3e7e67c30d0c97d27d7bf583c86b"
+    },
+    {
+      "path": "hosted-75-checkpoint/bindiff-ubuntu-completed.log",
+      "bytes": 48892,
+      "sha256": "041f1ea5d00781ee6257259f1565811346cdc894ff9224d41cac9a85a098928b"
+    },
+    {
+      "path": "hosted-75-checkpoint/context.json",
+      "bytes": 410,
+      "sha256": "8ae2aa5efe8f89fb21c6f2c25ebfd3eb45f67d44c783086de3391cd99ab6396d"
+    },
+    {
+      "path": "hosted-75-checkpoint/final-snapshot.json",
+      "bytes": 151958,
+      "sha256": "b8c225a76fdca24b07ab67263e26d21ca5455b761d7fe7e03041a45b02a847e9"
+    },
+    {
+      "path": "hosted-75-checkpoint/initial-metadata.json",
+      "bytes": 30540,
+      "sha256": "d38f74623d5c3231e6305d2cdb3e09bf4831fba326684c4e5e6985d07cedddd5"
+    },
+    {
+      "path": "hosted-75-checkpoint/initial-runs-jobs.json",
+      "bytes": 117391,
+      "sha256": "2a6a08ae0f18fa9432ef9ef177ec99dba183c2cc53b0da858eb53cb6e286ed8f"
+    },
+    {
+      "path": "hosted-75-checkpoint/manifest.json",
+      "bytes": 2060,
+      "sha256": "700f4fedfcfbf9e2e2d02b504d9018e9a256e3882da543587e25349625c9ee9c"
+    },
+    {
+      "path": "hosted-75-checkpoint/poll-001.json",
+      "bytes": 4959,
+      "sha256": "88536a2f32f7500a9a30e7ff9fa874a7cd765d84ab235a8fd9b33d4e3396eb7d"
+    },
+    {
+      "path": "hosted-75-checkpoint/poll-002.json",
+      "bytes": 5375,
+      "sha256": "a6b87ed5ba68f44bc0af36d9ef5861a6fe18c019d63e16fcc646ab88f26a8a3a"
+    },
+    {
+      "path": "hosted-75-checkpoint/poll-003.json",
+      "bytes": 4959,
+      "sha256": "069ab840fcedeae0964f00c97491b5044614c573862a400ca05c144a7ee1ed51"
+    },
+    {
+      "path": "hosted-75-checkpoint/poll-004.json",
+      "bytes": 7834,
+      "sha256": "aaa7c6e60d741a924a7f0cf3cdd14b9d8edf32cd7227bd297d5518bf4e6eeac9"
+    },
+    {
+      "path": "hosted-75-checkpoint/poll-005.json",
+      "bytes": 4959,
+      "sha256": "1d603a48cdab4ebd88760b5520a6ef03691867d396e7461e2c125de8066a709a"
+    },
+    {
+      "path": "hosted-75-checkpoint/summary.json",
+      "bytes": 12124,
+      "sha256": "e1e051cc294ef1af015dd82d43690f1b96092b0f5e583aae3d0ebfa9a7d25e71"
+    },
+    {
+      "path": "independent-merge/REVIEW.md",
+      "bytes": 3959,
+      "sha256": "8e10bd84d58ce04b7900ac7e07ea4dd186475394e403154cbd15c6a1c26bb9ff"
+    },
+    {
+      "path": "independent-merge/archive-and-links.json",
+      "bytes": 26643,
+      "sha256": "fa5ddce6a1f3cf3735ffa046a12828dbf5344ad4d7c14914a83cc9e202fd2f0a"
+    },
+    {
+      "path": "independent-merge/manifest.json",
+      "bytes": 883,
+      "sha256": "f7032f2637eada50a65fccd651789a5aa98d914e7f25bfe16bafe8f9c286215d"
+    },
+    {
+      "path": "independent-merge/merge-preservation.json",
+      "bytes": 3639,
+      "sha256": "ce4b4f37917b80cdcc450c16f5f93e666d9317e20ae4c733637b08f8d2723598"
+    },
+    {
+      "path": "independent-merge/residual-provenance.json",
+      "bytes": 4192,
+      "sha256": "a0874831ed07bc80cb029b0fb027d06a4415ae2a0aa7f6c7e637b62a1de5fde7"
+    },
+    {
+      "path": "independent-merge/summary.json",
+      "bytes": 663,
+      "sha256": "2e72a3919544d193722dd27f1c474898b7ad36c7f97da51104832760368c20ed"
+    },
+    {
+      "path": "merge-review.json",
+      "bytes": 3029,
+      "sha256": "157a8704e84de14ff4b62d16cc76bdf83285d905884c4ec74aa626ba5f16610b"
+    },
+    {
+      "path": "publication-code-mappings.json",
+      "bytes": 3568,
+      "sha256": "eb736babba78580c1c2cc6f16a6f08fa1ef8b7b4315bc95f83b94ff5f92310a4"
+    }
+  ]
+}

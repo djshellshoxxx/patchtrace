@@ -180,6 +180,17 @@ patchtrace strings export  PROJECT --out FILE --format json|csv [--scope changed
 ```
 Export is atomic, redacted by default, never overwrites without `--force`, and records basis and lineage.
 
+Publication clarification (2026-11-18): `--force` is the only authorization to
+replace a destination. A destination created after initial validation, including
+a dangling symlink, must remain unchanged without that flag. Stage each export
+in an exclusively created, unpredictable file beside the destination; a
+pre-existing temporary filename or symlink must never receive export bytes.
+Flush and sync the stage before atomic publication. If the filesystem cannot
+provide an atomic exclusive publication primitive, fail with `PT-STR-EXPORT`
+instead of falling back to replacement. Failure or cancellation cleans up this
+operation's stage without removing an existing destination. Preserve JSON/CSV
+bytes, redaction defaults, digest results and CLI exit conventions.
+
 GUI (`ui_strings.py`, Qt only; logic in `strings/view_model.py`). **Where**: dock `strings.dock` (objectName), tabified with the Evidence dock on the right (`tabifyDockWidget`), action in the Analysis menu, `Ctrl+Shift+T` (free: used are Ctrl+N O I E S R, Ctrl+Shift+E, planned Ctrl+Shift+F/G); uses the E-2 panel registry when merged, else the `EvidenceController` pattern (own controller, generation counters, unparented registered threads, `WindowPort` for project and `select_match`).
 **Widgets**: source bar (source combo Built-in scan/FLOSS, Scan, FLOSS path + Browse + Probe + pin status, "Run with emulation..." opening a consent dialog that defaults to Cancel, Cancel, elapsed indicator); basis banner (PlainLabel with harmonizations or the block reason and "Re-scan older with newer's settings"); filter bar (change, type buttons, side, cue, min length, text filter, function chip set from the navigator, scope Differences (diff view, default) / All strings (inventory), "Hide noise-like strings (N hidden)"); `QTableView` with columns Change, String, Type, Older, Newer, Function, Cues, Source; detail tabs Summary / Links / Provenance in read-only `QPlainTextEdit` (an Edited row shows both values with plain markers `[-old-]` and `{+new+}`, a look-alike row lists the differing code points with their Unicode names); buttons Open function (needs `match_id`), Open in hex (older/newer), Copy safe, Copy exact...; status line with coverage. The navigator gets a context action "Strings in this function" (A5) that sets the function chip (W4).
 **Model/view**: `StringsTableModel(QAbstractTableModel)` over immutable view-model rows plus a Python index list for filter and sort (no `QSortFilterProxyModel`, as `EvidenceTableModel`); `data()` returns precomputed strings; one regular grid with header items (an Edited pair is one row, no merged cells; F16); the Change column carries a glyph and a word (`+ Only in newer`, `- Only in older`, `~ Edited`, `= In both`, `? Not compared`), never colour alone; AccessibleTextRole = row sentence ("Only in newer. Static string, 26 characters. Function ParseHeader, modified. Message with format specifier."), AccessibleDescriptionRole = reasons and link tier; ToolTipRole through `tooltips.template` (escaped, <= 300 chars). The default scope shows only changed strings (hundreds); All strings is a virtualized inventory (200k rows) with `resizeContentsPrecision(0)`, fixed header sections and font-metric row height (F16). Selection survives reloads by (value hash, side).

@@ -1,0 +1,6 @@
+tree 4dd32b0cd6f8957f4c065b4bd1cf5cfe13513628
+parent 16c35e1fb1a4dd54b2c2c0cb2033c8160ee99347
+author Codex <codex@openai.com> 1795048989 -0800
+committer Codex <codex@openai.com> 1795048989 -0800
+
+Preserve formatter review and final cancelled Qt evidence [no release]

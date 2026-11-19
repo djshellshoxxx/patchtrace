@@ -2,6 +2,8 @@
 (KB-integration-plan 7.2 pair rules, 8.1). Synthetic records; sockets denied; nothing is fetched."""
 from __future__ import annotations
 
+import copy
+import dataclasses
 import gzip
 import json
 
@@ -74,6 +76,25 @@ def test_changed_in_kb_gives_a_grade_a_pending_pair_and_skipped_entries_make_it_
     assert 'INDEX_GAP' in pair['reason_codes'] and doc['warnings']
 
 
+def test_mixed_native_wow64_rows_keep_native_pair_and_raw_record(ready):
+    kb, inv, scopes = ready
+    document = record(DRV)
+    for native, wow in [('c' * 64, '0' * 64), ('d' * 64, '1' * 64)]:
+        document[wow] = copy.deepcopy(document[native])
+        document[wow]['fileInfo'].update(sha256=wow, machineType=0x14C)
+    save_record(kb, DRV, doc=document)
+    source = kb.workspace / wiring.INDEX_DIR / f'{DRV}@2099-02-12.json'
+    before = source.read_bytes()
+    code, out, _ = kb('pairs', inv, '--product', scopes['client'], '--file', DRV)
+    (pair,) = out['result']['pairs']
+    assert code == 3 and out['result']['skipped_rows'] == 2
+    assert pair['grade'] == 'A' and pair['changed_in_kb'] == 'yes'
+    assert (pair['older_sha256'], pair['newer_sha256']) == ('c' * 64, 'd' * 64)
+    assert source.read_bytes() == before
+    rows, _ = wiring.WorkspaceFileIndex(kb.workspace).rows(DRV, '11-24H2')
+    assert any(row.sha256 == '1' * 64 and row.machine == 'x86' for row in rows)
+
+
 def test_a_clean_record_is_complete_and_names_the_confounding_window(ready):
     kb, inv, scopes = ready
     save_record(kb, NET)
@@ -82,6 +103,32 @@ def test_a_clean_record_is_complete_and_names_the_confounding_window(ready):
     assert (code, doc['status'], doc['result']['skipped_rows']) == (0, 'complete', 0)
     assert pair['changed_in_kb'] == 'no' and pair['window'] == ['KB5097000', 'KB5098000']
     assert 'WINDOW_CONFOUNDED' in pair['reason_codes']
+
+
+@pytest.mark.parametrize('unavailable_variant', [False, True])
+def test_variants_are_visible_and_require_explicit_cli_plan_and_acquisition_choice(ready, unavailable_variant):
+    kb, inv, scopes = ready
+    document = record(DRV)
+    document['f' * 64] = copy.deepcopy(document['d' * 64])
+    document['f' * 64]['fileInfo']['sha256'] = 'f' * 64
+    if unavailable_variant:
+        del document['f' * 64]['fileInfo']['lastSectionVirtualAddress']
+    save_record(kb, DRV, doc=document)
+    flags = ('--product', scopes['client'], '--file', DRV)
+    code, out, _ = kb('pairs', inv, *flags)
+    assert code == 3  # the authored fixture also retains its two original rejected index entries
+    (resolution,) = out['result']['resolutions']
+    assert resolution['ambiguous'] and not resolution['truncated']
+    assert resolution['changed_in_kb'] == 'unknown' and '--pair' in resolution['note']
+    viable = [pair for pair in out['result']['pairs'] if pair['grade'] != 'X']
+    assert len(viable) == (1 if unavailable_variant else 2)
+    assert '--pair' in kb('pairs', inv, *flags, as_json=False)[1]
+    for verb, extra in [('plan', ()), ('acquire', ('--project', str(kb.workspace.parent / 'ambiguous-project')))]:
+        code, refused, _ = kb(verb, inv, *flags, *extra)
+        assert code == 2 and 'PT-KBC-INPUT' in refused['error'] and '--pair' in refused['error']
+    assert not (kb.workspace.parent / 'ambiguous-project').exists()
+    code, planned, _ = kb('plan', inv, *flags, '--pair', viable[0]['pair_id'][:12])
+    assert code == 0 and planned['result']['pair']['pair_id'] == viable[0]['pair_id']
 
 
 def test_the_selected_product_and_entered_names_come_from_earlier_steps(ready):
@@ -132,6 +179,47 @@ def test_legacy_product_identity_is_retained_but_cannot_resolve_current_pairs(kb
     fresh, current = investigation(kb)
     assert current['client'] != scopes['client']
     code, doc, _ = kb('pairs', fresh, '--product', current['client'], '--file', NET)
+    assert code == 0 and doc['result']['pairs']
+
+
+RTM = 'Windows 10 for x64-based Systems'
+# The scope id origin/main 882d1ca0 (alias catalog 1) derived for RTM: no release, no key, so the name is in the id.
+RTM_CATALOG_1_SCOPE_ID = '7e6607cf3e2b0f5589edb1f90b1c4404bcc9ffc276974f557571dec6fdb389a3'
+
+
+def test_kba08_stored_investigation_on_a_rekeyed_product_must_repeat_the_search(kb, monkeypatch):
+    """Alias catalog 2 keys the release-less Windows 10 name (audit KBA-08). An investigation stored under catalog 1
+    keeps its name-keyed scope id, is refused with the refresh instruction and is never rebound; a new search gets
+    the keyed scope and resolves against the bare ``1507`` key Winbindex uses."""
+    from patchtrace.kbcorrelation import alias_catalog, products
+
+    current = products.derive
+
+    def catalog_1(name, **hints):
+        facts = current(name, **hints)
+        rekeyed = facts.name_key == RTM.lower()
+        return dataclasses.replace(facts, release=None, winbindex_key=None) if rekeyed else facts
+
+    raw = h.read_fixture_bytes('cvrf-2099-Feb.json').replace(b'Example OS 24H2 x64', RTM.encode('ascii'))
+    with monkeypatch.context() as previous:
+        previous.setattr(products, 'derive', catalog_1)
+        previous.setattr(alias_catalog, 'ALIAS_CATALOG_VERSION', 1)
+        with WorkspaceStore(kb.workspace) as ws:
+            ws.add_document(import_bytes(raw, now=NOW), raw)
+        inv, scopes = investigation(kb)
+    assert scopes['client'] == RTM_CATALOG_1_SCOPE_ID
+    save_record(kb, NET, doc=json.loads(json.dumps(record(NET)).replace('"11-24H2"', '"1507"')))
+    with WorkspaceStore(kb.workspace) as ws:
+        before = ws.current_revision(inv).model_dump_json()
+    code, doc, _ = kb('products', inv)
+    assert code == 2 and 'repeat the search' in doc['error'] and 'no product' not in doc['error']
+    code, doc, _ = kb('pairs', inv, '--product', scopes['client'], '--file', NET)
+    assert code != 0 and 'repeat the search' in str(doc)
+    with WorkspaceStore(kb.workspace) as ws:
+        assert ws.current_revision(inv).model_dump_json() == before
+    fresh, rekeyed = investigation(kb)
+    assert rekeyed['client'] != scopes['client'] and rekeyed['server'] == scopes['server']
+    code, doc, _ = kb('pairs', fresh, '--product', rekeyed['client'], '--file', NET)
     assert code == 0 and doc['result']['pairs']
 
 
@@ -230,14 +318,29 @@ def test_plan_accepts_a_pair_id_prefix_and_rejects_an_unknown_one(ready):
 def test_plan_of_a_blocked_pair_is_exit_2_with_the_reason_text(ready):
     kb, inv, scopes = ready
     doc = record(DRV)
-    for entry in doc.values():
-        entry['fileInfo']['machineType'] = ARM64
+    del doc['d' * 64]['fileInfo']['lastSectionVirtualAddress']
     save_record(kb, DRV, doc=doc)
     flags = ('--product', scopes['client'], '--file', DRV)
     pair_id = kb('pairs', inv, *flags)[1]['result']['pairs'][0]['pair_id']
     code, out, _ = kb('plan', inv, '--pair', pair_id, *flags)
     assert code == 2 and out['result']['pair']['grade'] == 'X' and out['result']['plan'] is None
-    assert 'compares AMD64 PE files' in out['error']
+    assert 'Only a delta payload' in out['error']
+
+
+def test_only_other_machine_rows_report_arch_and_cannot_be_planned(ready):
+    kb, inv, scopes = ready
+    document = record(DRV)
+    for entry in document.values():
+        entry['fileInfo']['machineType'] = ARM64
+    save_record(kb, DRV, doc=document)
+    flags = ('--product', scopes['client'], '--file', DRV)
+    _, out, _ = kb('pairs', inv, *flags)
+    assert out['result']['pairs'] == []
+    (resolution,) = out['result']['resolutions']
+    assert resolution['blockers'] == ['ARCH'] and resolution['changed_in_kb'] == 'unknown'
+    assert 'arm64' in resolution['note']
+    code, out, _ = kb('plan', inv, *flags)
+    assert code == 4 and out['result']['plan'] is None
 
 
 def test_plan_without_candidates_is_unavailable(ready):

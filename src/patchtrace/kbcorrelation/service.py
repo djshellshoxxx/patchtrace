@@ -21,6 +21,7 @@ from typing import Any, Protocol
 
 from pydantic import ValidationError
 
+from ..input_readers import HeldInput, PairInputReaders
 from . import components as comp
 from . import pairs as pr
 from . import resolver
@@ -51,8 +52,19 @@ from .plan import index_plan, local_plan
 from .ports import AdvisoryPort, ClockPort, ProjectPort
 from .products import clean_text, find_scopes
 from .recovery import repair
+from .saved_scope import SavedScopeError
+from .saved_scope import resolve as saved_scope
 from .sources.cvrf import SourceError, load_json
-from .store import AttachRequest, Fault, KbcStoreError, ProjectAttachment, WorkspaceStore, atomic_write
+from .store import (
+    AttachRequest,
+    Fault,
+    KbcStoreError,
+    ProjectAttachment,
+    WorkspaceStore,
+    _check_input_readers,
+    _reader_options,
+    atomic_write,
+)
 from .workflow import Event
 
 RELATION_LABEL = {
@@ -100,14 +112,23 @@ class ProjectAccess(ProjectPort, Protocol):
     def list_rows(self, project_id: str, kind: str) -> Mapping[str, bytes]: ...
 
 
+class FileInspector(Protocol):
+    def __call__(self, path: str, *, reader: HeldInput | None = None) -> LocalFile: ...
+
+
+class ProjectFactory(Protocol):
+    def __call__(self, workspace: WorkspaceStore | None, name: str, *,
+                 input_readers: PairInputReaders | None = None) -> ProjectAccess: ...
+
+
 @dataclass(frozen=True)
 class Env:
     advisory: AdvisoryPort
     clock: ClockPort
     rules: RulesPort
-    inspect: Callable[[str], LocalFile]
+    inspect: FileInspector
     escape: Callable[[str], str]
-    project: Callable[[WorkspaceStore | None, str], ProjectAccess]
+    project: ProjectFactory
     fault: Fault | None = None
     file_index: Callable[[Path], FileIndex] | None = None
     acquirer: AcquirePort | None = None
@@ -144,11 +165,16 @@ def _scope_dict(scope) -> dict:
             'architecture': scope.architecture, 'release': scope.release, 'mapping': scope.mapping}
 
 
-def _edge_dict(group, names: Mapping[str, str]) -> dict:
+def _edge_dict(group, names: Mapping[str, str], kev: ExploitationLookup | None = None) -> dict:
+    context = {}
+    if kev is not None:
+        fact = kev.status(group.cve)
+        context = {'kev': CARD_KEV[fact.state], 'kev_date_added': fact.date_added,
+                   'kev_snapshot_id': fact.snapshot_sha256}
     return {'kb': group.kb, 'cve': group.cve, 'scope_id': group.scope_id, 'product': names.get(group.scope_id, ''),
             'relation': group.relation, 'label': RELATION_LABEL.get(group.relation, group.relation),
             'fixed_builds': list(group.fixed_builds), 'releases': list(group.release_ids), 'kev': 'not-loaded',
-            'refs': [{'doc_id': r.doc_id, 'pointer': r.pointer} for r in group.refs]}
+            'refs': [{'doc_id': r.doc_id, 'pointer': r.pointer} for r in group.refs], **context}
 
 
 def _plain_edge(edge, names: Mapping[str, str]) -> dict:
@@ -168,6 +194,44 @@ class KbService:
         self.root = Path(root).expanduser()
         self.env = env
         self.ports = IndexPorts(advisory=env.advisory, clock=env.clock)
+
+    # PW-01 delegates keep file parsing, persistence and network policy outside
+    # this existing orchestration module and outside Qt.
+    def import_inventory(self, path, context, **kwargs) -> Outcome:
+        from .inventory_service import import_inventory
+        return import_inventory(self, path, context, **kwargs)
+
+    def retain_inventory(self, import_id, *, architecture='amd64', page=1, cancel=None) -> Outcome:
+        from .inventory_service import retain_inventory
+        return retain_inventory(self, import_id, architecture=architecture, page=page, cancel=cancel)
+
+    def inventories(self, **kwargs) -> Outcome:
+        from .inventory_service import inventories
+        return inventories(self, **kwargs)
+
+    def inventory_details(self, import_id, **kwargs) -> Outcome:
+        from .inventory_service import inventory_details
+        return inventory_details(self, import_id, **kwargs)
+
+    def support_links(self, path, **kwargs) -> Outcome:
+        from .inventory_service import support_links
+        return support_links(self, path, **kwargs)
+
+    def inventory_plan(self, url, **kwargs) -> Outcome:
+        from .inventory_service import inventory_plan
+        return inventory_plan(self, url, **kwargs)
+
+    def fetch_inventory(self, plan, **kwargs) -> Outcome:
+        from .inventory_service import fetch_inventory
+        return fetch_inventory(self, plan, **kwargs)
+
+    def select_inventory(self, investigation, import_id, entry_id, **kwargs) -> Outcome:
+        from .inventory_service import select_inventory
+        return select_inventory(self, investigation, import_id, entry_id, **kwargs)
+
+    def _inventory_hints(self, ws, rev, scope_id):
+        from .inventory_selection import selected_hints
+        return selected_hints(self, ws, rev, scope_id)
 
     # ------------------------------------------------------------------------------------------ plumbing
 
@@ -248,7 +312,8 @@ class KbService:
     # ------------------------------------------------------------------------------------------ search
 
     def search(self, lead: str, *, months: str | None = None, scope_file: Path | None = None,
-               product: str | None = None, investigation: str | None = None) -> Outcome:
+               product: str | None = None, investigation: str | None = None,
+               kev: ExploitationLookup | None = None) -> Outcome:
         kind, value = parse_lead(lead)
         with self._open() as ws:
             index, unreadable = load_index(ws, self.ports)
@@ -264,7 +329,7 @@ class KbService:
             rev = self._record_search(ws, rev, Lead(kind=kind, value=value, raw=lead.strip()[:200]), full, product)
             cves = sorted({e.cve for e in shown.edges}) if kind == 'kb' else [value]
             cards = [_card_dict(c) for cve in cves for c in self._lookup(index, 'cve', cve, scope, None, now).cards]
-        return self._search_outcome(rev, kind, value, full, shown, product, cards, names, unreadable)
+        return self._search_outcome(rev, kind, value, full, shown, product, cards, names, unreadable, kev)
 
     def _record_search(self, ws: WorkspaceStore, rev: InvestigationRevision | None, lead: Lead, full: Lookup,
                        product: str | None) -> InvestigationRevision:
@@ -280,24 +345,29 @@ class KbService:
             rev = self._step(ws, rev, 'product_selected', scope_id=product)
         return rev
 
-    def _search_outcome(self, rev, kind, value, full, shown, product, cards, names, unreadable) -> Outcome:
+    def _search_outcome(self, rev, kind, value, full, shown, product, cards, names, unreadable, kev=None) -> Outcome:
         scopes = [_scope_dict(s) for s in full.scopes]
         kept = {(e.cve, e.kb, e.scope_id) for e in shown.edges}
         elsewhere = [_plain_edge(e, names) for e in full.edges if (e.cve, e.kb, e.scope_id) not in kept]
-        warnings = list(full.warnings)
+        named_warnings = [w for w in shown.warnings if w.startswith('NAMED_SUPERSEDED:')]
+        warnings = [w for w in full.warnings if not w.startswith('NAMED_SUPERSEDED:')] + named_warnings
         if unreadable:
             warnings.append(f'{len(unreadable)} stored document(s) could not be read and were not searched')
         status = 'partial' if full.status in ('partial', 'not_searched') or (
             unreadable and full.status == 'not_observed') else full.status
         result = {'contract': 'kbcorrelation/1', 'investigation_id': rev.investigation_id, 'state': rev.state,
+                  'revision': rev.revision,
                   'lead': {'kind': kind, 'value': value}, 'coverage': {'state': full.coverage.state,
                                                                        'text': full.text, 'detail': full.coverage
                                                                        .model_dump(mode='json')},
-                  'scopes': scopes, 'edges': [_edge_dict(g, names) for g in shown.groups], 'cards': cards,
+                  'scopes': scopes, 'edges': [_edge_dict(g, names, kev) for g in shown.groups], 'cards': cards,
                   'mention_only': [_plain_edge(e, names) for e in shown.mention_only],
                   'not_applicable': elsewhere, 'disputed': [_plain_edge(e, names) for e in shown.disputed],
                   'warnings': warnings, 'next': 'kb.next.choose_product' if len(scopes) > 1 and not product else None}
         lines = [full.text]
+        if kev is not None:
+            result['kev_source'] = kev_source_of(kev).model_dump(mode='json')
+            result['cards'] = [{**card, 'kev': CARD_KEV[kev.status(card['cve']).state]} for card in cards]
         lines += [f'{e["kb"]}  {e["cve"]}  {e["product"]}  {e["label"]}' for e in result['edges']]
         lines += [f'Mentioned only: {e["cve"]} (advisory text, not a remediation)' for e in result['mention_only']]
         if len(scopes) > 1 and not product:
@@ -306,7 +376,8 @@ class KbService:
             lines.append(TEXT_KB8.format(product=names.get(product, product)))
         exit_code = {'found': 0, 'not_observed': 4}.get(status, 3)
         public = {'found': 'complete', 'not_observed': 'unavailable'}.get(status, 'partial')
-        if status == 'not_observed':
+        lines.extend(named_warnings)
+        if status == 'not_observed' and not named_warnings:
             lines.append(f'{value} was not found in the documents checked. That does not mean it has no security '
                          'updates; these documents do not list it.')
         return Outcome(exit_code, public, result, '\n'.join(lines), warnings)
@@ -353,17 +424,18 @@ class KbService:
     def products(self, investigation: str) -> Outcome:
         with self._open() as ws:
             rev = self._get(ws, investigation)
-            index, _ = load_index(ws, self.ports)
+            index = self._checked_index(ws, rev)
         wanted = set(rev.scope_ids)
         scopes = [_scope_dict(s) for s in index.scopes() if s.scope_id in wanted]
         if wanted - {s['scope_id'] for s in scopes}:
             raise _fail('PT-KBC-INPUT', 'the product mapping is no longer current; repeat the search '
                         'and select the product again before listing products')
         result = {'contract': 'kbcorrelation/1', 'investigation_id': rev.investigation_id,
-                  'selected_scope_id': rev.selected_scope_id, 'products': scopes}
+                  'revision': rev.revision, 'selected_scope_id': rev.selected_scope_id, 'products': scopes}
         if not scopes:
             return Outcome(4, 'unavailable', result, 'The search found no product for this lead.')
-        lines = [f'{s["scope_id"][:12]}  {s["display_name"]}  {s["architecture"]}  ({s["mapping"]} mapping)'
+        lines = [f'Investigation revision: {rev.revision}']
+        lines += [f'{s["scope_id"]}  {s["display_name"]}  {s["architecture"]}  ({s["mapping"]} mapping)'
                  for s in scopes]
         if len(scopes) > 1 and rev.selected_scope_id is None:
             lines.append(TEXT_KB6)
@@ -376,11 +448,16 @@ class KbService:
             raise _fail('PT-KBC-INPUT', str(exc)) from None
         with self._open() as ws:
             rev = self._get(ws, investigation)
+            index = self._checked_index(ws, rev)
             scope_id = product or rev.selected_scope_id
             if scope_id is None:
                 raise _fail('PT-KBC-INPUT', TEXT_KB6)
             if scope_id not in rev.scope_ids:
                 raise _fail('PT-KBC-INPUT', 'that product is not one of the products listed for the lead')
+            # Replay retained inventory evidence before publishing a product
+            # change or newly entered filenames. A corrupt source must leave
+            # the caller's previous decisions and revision unchanged.
+            inventory_hints = self._inventory_hints(ws, rev, scope_id)
             if rev.selected_scope_id != scope_id:
                 rev = self._step(ws, rev, 'product_selected', scope_id=scope_id)
             for name in names:
@@ -388,11 +465,13 @@ class KbService:
                              'File name entered by the analyst; a user assertion, not evidence.')
             entered = sorted({*names, *(d.next for d in ws.decisions(rev.investigation_id)
                                         if d.op == 'component-name')})
-            index, _ = load_index(ws, self.ports)
             cards, refs = self._lead_cards(index, rev, ws)
             hints, truncated = comp.hints_for(cards, refs, entered, scope_id)
+            hints, inventory_cut = comp.with_inventory(hints, inventory_hints)
+            truncated = truncated or inventory_cut
             rev = self._step(ws, rev, 'components_ready' if comp.selectable(hints) else 'needs_filename')
         result = {'contract': 'kbcorrelation/1', 'investigation_id': rev.investigation_id, 'state': rev.state,
+                  'revision': rev.revision,
                   'scope_id': scope_id, 'truncated': truncated,
                   'hints': [h.model_dump(mode='json', exclude={'contract'}) for h in hints]}
         lines = [f'{h.tier}  {h.basename}  ({"; ".join(h.reasons)}); changed in this KB: {h.changed_in_kb}'
@@ -402,13 +481,47 @@ class KbService:
         return Outcome(0 if comp.selectable(hints) else 4, 'complete' if comp.selectable(hints) else 'unavailable',
                        result, '\n'.join(lines))
 
+    @staticmethod
+    def _saved_search(ws: WorkspaceStore, rev: InvestigationRevision, index: ReverseIndex | None = None,
+                      *, unreadable=()) -> tuple[tuple[Coverage, ...], SearchScope | None]:
+        try:
+            if rev.lead.kind in {'kb', 'cve'} and unreadable:
+                raise SavedScopeError('cannot establish current admission while a stored source is unreadable')
+            coverage = tuple(ws.get_coverage(key) for key in rev.coverage_ids)
+            scope = saved_scope(rev.lead, coverage, keys=rev.coverage_ids, index=index)
+            if rev.lead.kind not in {'kb', 'cve'}:
+                coverage = tuple(item for item in coverage if item is not None)
+                scope = coverage[-1].scope if coverage and coverage[-1].scope.kind != 'cached_corpus' else None
+            return coverage, scope
+        except (ValueError, TypeError) as exc:
+            message = str(exc) if isinstance(exc, SavedScopeError) else str(SavedScopeError('is malformed'))
+            raise _fail('PT-KBC-SCOPE', message) from None
+
+    def _checked_index(self, ws: WorkspaceStore, rev: InvestigationRevision, *,
+                       captured: Sequence[InvestigationRevision] = ()) -> ReverseIndex:
+        try:
+            index, unreadable = load_index(ws, self.ports)
+        except ValidationError:
+            raise _fail('PT-KBC-SCOPE', str(SavedScopeError('has an unreadable source record'))) from None
+        for revision in (rev, *captured):
+            self._saved_search(ws, revision, index, unreadable=unreadable)
+        return index
+
+    @staticmethod
+    def _stored_scope(ws: WorkspaceStore, rev: InvestigationRevision,
+                      index: ReverseIndex | None = None, *, unreadable=()) -> SearchScope | None:
+        """Finite recorded selector; advisory coverage is never replaced with the current cache."""
+        return KbService._saved_search(ws, rev, index, unreadable=unreadable)[1]
+
     def _lead_cards(self, index: ReverseIndex, rev: InvestigationRevision,
                     ws: WorkspaceStore) -> tuple[list[CveCard], dict[str, SourceRef]]:
-        cves, _, _ = self._lead_cves(index, rev, ws)
+        saved = self._saved_search(ws, rev, index)
+        cves, _, _ = self._lead_cves(index, rev, ws, saved=saved)
+        scope = saved[1]
         cards: list[CveCard] = []
         refs: dict[str, SourceRef] = {}
         for cve in cves:
-            look = index.lookup_cve(cve, scope_id=rev.selected_scope_id, now=self._now())
+            look = index.lookup_cve(cve, scope=scope, scope_id=rev.selected_scope_id, now=self._now())
             cards += look.cards[:1]
             if look.edges:
                 edge = look.edges[0]
@@ -417,27 +530,28 @@ class KbService:
         return cards, refs
 
     def _lead_cves(self, index: ReverseIndex, rev: InvestigationRevision,
-                   ws: WorkspaceStore) -> tuple[tuple[str, ...], tuple[str, ...], tuple[Coverage, ...]]:
+                   ws: WorkspaceStore, *, saved=None) -> tuple[tuple[str, ...], tuple[str, ...], tuple[Coverage, ...]]:
         """CVEs the lead names under the selected product, CVEs mentioned only, and the stored search coverage."""
-        coverage = tuple(c for c in (ws.get_coverage(i) for i in rev.coverage_ids) if c is not None)
+        coverage, scope = saved if saved is not None else self._saved_search(ws, rev, index)
         now, scope_id, lead = self._now(), rev.selected_scope_id, rev.lead
         if lead.kind == 'kb':
-            look = index.lookup_kb(lead.value, scope_id=scope_id, now=now)
+            look = index.lookup_kb(lead.value, scope=scope, scope_id=scope_id, now=now)
             return (tuple(sorted({e.cve for e in look.edges})), tuple(sorted({e.cve for e in look.mention_only})),
-                    coverage or (look.coverage,))
+                    coverage)
         if lead.kind == 'cve':
             return (lead.value,), (), coverage
         return (), (), coverage
 
-    def _lead_kbs(self, index: ReverseIndex, rev: InvestigationRevision) -> dict[str, str | None]:
+    def _lead_kbs(self, index: ReverseIndex, rev: InvestigationRevision,
+                  scope: SearchScope | None = None) -> dict[str, str | None]:
         """KB ids the lead leads to under the selected product, each with its one vendor-stated fixed build (or None
         when the documents state none or disagree)."""
         lead, scope_id, now = rev.lead, rev.selected_scope_id, self._now()
         if lead.kind == 'kb':
-            look = index.lookup_kb(lead.value, scope_id=scope_id, now=now)
+            look = index.lookup_kb(lead.value, scope=scope, scope_id=scope_id, now=now)
             kbs = {lead.value}
         elif lead.kind == 'cve':
-            look = index.lookup_cve(lead.value, scope_id=scope_id, now=now)
+            look = index.lookup_cve(lead.value, scope=scope, scope_id=scope_id, now=now)
             kbs = {e.kb for e in look.edges}
         else:
             raise _fail('PT-KBC-INPUT', 'this investigation started from two files and has no KB to look up')
@@ -459,6 +573,7 @@ class KbService:
         file_index = self.env.file_index(self.root) if self.env.file_index else None
         with self._open() as ws:
             rev = self._get(ws, investigation)
+            index = self._checked_index(ws, rev)
             if file_index is None or not file_index.available():
                 return rev, self._unanswered(rev, 'file index not available offline', TEXT_PAIRS_E0)
             scope_id = product or rev.selected_scope_id
@@ -467,7 +582,6 @@ class KbService:
             if scope_id not in rev.scope_ids:
                 raise _fail('PT-KBC-INPUT', 'that product is not one of the products listed for the lead')
             rev = rev.model_copy(update={'selected_scope_id': scope_id})
-            index, _ = load_index(ws, self.ports)
             scope = next((s for s in index.scopes() if s.scope_id == scope_id), None)
             if scope is None:
                 raise _fail('PT-KBC-INPUT', 'the selected product mapping is no longer current; repeat the search '
@@ -476,8 +590,9 @@ class KbService:
                                         if d.op == 'component-name')})
             cards, refs = self._lead_cards(index, rev, ws)
             hints, _ = comp.hints_for(cards, refs, entered, scope_id)
+            hints, _ = comp.with_inventory(hints, self._inventory_hints(ws, rev, scope_id))
             chosen = sorted({h.basename for h in hints if h.tier in comp.SELECTING_TIERS})
-            kbs = self._lead_kbs(index, rev)
+            kbs = self._lead_kbs(index, rev, self._stored_scope(ws, rev, index))
         if not chosen:
             return rev, self._unanswered(rev, 'no file name', TEXT_KB7)
         covered = scope.family != 'windows-server' and scope.winbindex_key is not None
@@ -503,7 +618,7 @@ class KbService:
         return {'kb': res.kb, 'file_name': res.file_name, 'version_key': res.version_key,
                 'changed_in_kb': res.changed_in_kb, 'last_changed_in': res.last_changed_in,
                 'blockers': list(res.blockers), 'note': res.note, 'skipped_rows': res.skipped_rows,
-                'truncated': res.truncated}
+                'truncated': res.truncated, 'ambiguous': res.ambiguous}
 
     def pairs(self, investigation: str, *, product: str | None = None, files: Iterable[str] = ()) -> Outcome:
         got = self._resolve_pairs(investigation, product, files)
@@ -518,7 +633,7 @@ class KbService:
         lines = [f'{c["grade"]}/{c["tier"]}  {c["file_name"]}  {c["kb"]}  older {c["older_sha256"][:12]} -> newer '
                  f'{c["newer_sha256"][:12]}  [{", ".join(c["reason_codes"]) or "no flags"}]  {c["pair_id"][:12]}'
                  for c in candidates]
-        lines += [f'{r.file_name}  {r.kb}: {r.note}' for r in found if not r.pairs and r.note]
+        lines += [f'{r.file_name}  {r.kb}: {r.note}' for r in found if r.note]
         lines += [f'{name}: no Winbindex record is saved in this workspace.' for name in missing]
         text = '\n'.join(lines)
         if skipped:  # an index with unreadable entries cannot say the newest builds are absent
@@ -538,6 +653,9 @@ class KbService:
         every = [pair for res in found for pair in res.pairs]
         if pair_id is None:
             viable = {p.pair_id: p for p in every if p.grade != 'X'}
+            if viable and any(res.ambiguous or res.truncated for res in found):
+                raise _fail('PT-KBC-INPUT', 'the candidate evidence is ambiguous or truncated; list pairs with '
+                            '"kb pairs" and select one with --pair')
             if len(viable) > 1:
                 raise _fail('PT-KBC-INPUT', f'{len(viable)} viable pairs remain; list them with \"kb pairs\" '
                             'and select one with --pair')
@@ -644,16 +762,21 @@ class KbService:
                     confirm_same_component: bool = False, dry_run: bool = False,
                     expected_pair_id: str | None = None, expected_revision: int | None = None,
                     expected_source_snapshot: tuple[str, ...] | None = None,
-                    selected_product: ProductScope | None = None) -> Outcome:
+                    selected_product: ProductScope | None = None,
+                    input_readers: PairInputReaders | None = None) -> Outcome:
         if selected_product is not None and (investigation != 'new' or expected_revision is not None
                                              or expected_source_snapshot is None):
             raise _fail('PT-KBC-INPUT', 'A product-only pair needs a new investigation and captured source records.')
-        older_f, newer_f = self.env.inspect(older), self.env.inspect(newer)
+        _check_input_readers(input_readers, older, newer)
+        older_options, newer_options = _reader_options(input_readers)
+        older_f, newer_f = self.env.inspect(older, **older_options), self.env.inspect(newer, **newer_options)
         with self._open() as ws:
             rev = None if investigation == 'new' else self._get(ws, investigation)
             if expected_revision is not None and (rev is None or rev.revision != expected_revision):
                 raise _fail('PT-KBC-STALE', 'the investigation changed after preview; review the pair again')
             admitted_index = None
+            admitted_search = None
+            unreadable = ()
             if expected_source_snapshot is not None:
                 admitted_index, unreadable = load_index(ws, self.ports)
                 # Sources are append-only: check after the read, then retain this index for the whole import.
@@ -661,6 +784,10 @@ class KbService:
                     raise _fail('PT-KBC-STALE', 'the advisory sources changed after preview; review the pair again')
                 if selected_product is not None and unreadable:
                     raise _fail('PT-KBC-STALE', 'a stored source can no longer be read; restore it and list products again')
+            if rev is not None and rev.lead.kind in {'kb', 'cve'}:
+                if admitted_index is None:
+                    admitted_index = self._checked_index(ws, rev)
+                admitted_search = self._saved_search(ws, rev, admitted_index, unreadable=unreadable)
             scope_id = (selected_product.scope_id if selected_product is not None else
                         rev.selected_scope_id if rev and rev.selected_scope_id else UNSELECTED_SCOPE)
             if scope_id != UNSELECTED_SCOPE:
@@ -680,6 +807,7 @@ class KbService:
             if expected_pair_id is not None and pair.pair_id != expected_pair_id:
                 raise _fail('PT-KBC-STALE', 'the binary pair or product changed after preview; review the pair again')
             plan = local_plan(pair)
+            _check_input_readers(input_readers, older, newer)
             if pair.grade == 'X':
                 return self._blocked(pair)
             if dry_run:
@@ -696,14 +824,15 @@ class KbService:
             if index is None:
                 index, _ = load_index(ws, self.ports)
             bundle = self._bundle(index, ws, rev, base=rev.revision, pair_id=pair.pair_id, older=pair.older.sha256,
-                                  newer=pair.newer.sha256)
+                                  newer=pair.newer.sha256, saved=admitted_search)
             request = AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer,
                                     older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory,
                                     source_shas=tuple(d.sha256 for d in bundle.sources), plan_sha=plan.plan_sha,
                                     selected_product=selected_product)
-            port = self.env.project(ws, clean_text(name or '', 200) or 'KB comparison')
-            outcome = ProjectAttachment(ws, port).attach(request, ((bundle.context_key,
-                                                                    bundle.model_dump_json().encode()),))
+            options = {'input_readers': input_readers} if input_readers is not None else {}
+            port = self.env.project(ws, clean_text(name or '', 200) or 'KB comparison', **options)
+            outcome = ProjectAttachment(ws, port, **options).attach(
+                request, ((bundle.context_key, bundle.model_dump_json().encode()),))
         return self._attach_outcome(outcome, rev.investigation_id, pair, plan.plan_sha, bundle.context_key)
 
     @staticmethod
@@ -764,12 +893,13 @@ class KbService:
         return self._step(ws, rev, 'bytes_verified', parsed=True, both_sides=True)
 
     def _bundle(self, index: ReverseIndex, ws: WorkspaceStore, rev: InvestigationRevision, *, base: int,
-                pair_id: str | None, older: str | None, newer: str | None) -> ContextBundle:
-        cves, mention, coverage = self._lead_cves(index, rev, ws)
+                pair_id: str | None, older: str | None, newer: str | None, saved=None) -> ContextBundle:
+        saved = saved if saved is not None else self._saved_search(ws, rev, index)
+        cves, mention, coverage = self._lead_cves(index, rev, ws, saved=saved)
         return build_bundle(investigation_id=rev.investigation_id, base_revision=base, lead=rev.lead, cves=cves,
                             index=index, rules=self.env.rules, now=self._now(), coverage=coverage,
                             scope_id=rev.selected_scope_id, pair_id=pair_id, older_sha=older, newer_sha=newer,
-                            mention_only=mention)
+                            mention_only=mention, scope=saved[1])
 
     def _attach_outcome(self, outcome, investigation_id: str, pair, plan_sha: str, context_key: str) -> Outcome:
         link = outcome.value
@@ -791,16 +921,26 @@ class KbService:
     def attach(self, project_dir: str, investigation: str, *, repair_it: bool) -> Outcome:
         directory = Path(project_dir).resolve().as_posix()
         with self._open(create=False) as ws:
-            self._get(ws, investigation)
+            current = self._get(ws, investigation)
             ours = self._ops_for(ws, directory, investigation)
             if not ours:
                 raise _fail('PT-KBC-UNSUPPORTED', 'this workspace did not create that project, and attaching '
                             'context to a foreign project arrives with a later slice')
             if not repair_it:
                 return self._link_outcome(ours, None, 'Context is not attached yet. Run "kb attach --repair".')
-            index, _ = load_index(ws, self.ports)
+            captured = []
+            for _, _, body in ours:
+                try:
+                    captured.append(InvestigationRevision.model_validate_json(json.dumps(body['revision'])))
+                except (ValueError, TypeError):
+                    raise _fail('PT-KBC-SCOPE', str(SavedScopeError('has a malformed captured revision'))) from None
+            index = self._checked_index(ws, current, captured=captured)
+            prepared = {}
+            for op, state, body in ours:
+                if state != 'done' or body.get('link_state') == 'context-pending':
+                    prepared[op] = self._rebuilt_rows(index, ws, body)
             port = self.env.project(ws, 'KB comparison')
-            result = repair(ws, port, context_for=lambda op, body: self._rebuilt_rows(index, ws, body),
+            result = repair(ws, port, context_for=lambda op, body: prepared[op],
                             only=lambda body: body['directory'] == directory
                             and body['revision']['investigation_id'] == investigation)
             return self._link_outcome(self._ops_for(ws, directory, investigation), result,

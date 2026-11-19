@@ -1,5 +1,218 @@
 # QA and audit record
 
+## 2026-11-18 autonomous repair and exact-source checkpoint
+
+The combined retained-inventory/report-integrity source `9002a1f4` preserves current
+#304 ancestry and passes **2,866 affected tests, 4 explicitly unverified skips**.
+Independent reviews cover immutable object ownership, chronology/fixture/tooltip
+repairs and research Ghidriff ambiguity refusal. Native #304 Rizin Linux/Windows,
+BinDiff Linux and the clean Windows Ghidriff fixture have fresh retained receipts;
+full/Qt/package/security gates remain incomplete. No main merge, closure, tag or
+release is claimed. See the [complete checkpoint and hashed evidence](qa/autonomous-consolidation-20261118/checkpoint/README.md).
+
+## 2026-11-18 native research ranking identity guard
+
+The research Rizin adapter now refuses conflicting native endpoint/name ownership
+before reducing reports to a ranked name list, including conflicts on unchanged
+rows. Independent review also closed an orphan-native recognition gap. Final
+source `61b7cfb4` / identical-tree REST counterpart `2b4fbd50` passes 202 focused
+tests and 114 plus 18 independent controls; whole Ruff and whitespace checks pass.
+Six retained authored shared/executable outputs remain accepted; three PE outputs
+are conservatively refused for conflicting endpoint matches. No original pilot
+was rerun or rescored, and production matching/tool selection is unchanged.
+Legacy compatibility and source-to-binary identity remain explicit limitations.
+See [the exact contract, original failures and evidence](qa/rq-rizin-identity-20261118.md).
+
+## 2026-11-18 isolated native Rizin discovery experiment
+
+A narrow CLI correction against pinned Rizin 0.9.1 seeds function analysis before
+the existing deeper pass. An unchanged rebuild reproduces official-tool stdout
+and stderr on three authored controls. The patched shared/executable controls
+emit all four authored exports; nine raw outputs pass the existing normalizer.
+The integration reviewer independently repeats the shared comparison and source
+review. Production tools, the original CVE pilot MISS, oracles and scoring remain
+unchanged. This is native discovery evidence, with Windows and broader producer
+qualification still open. See [exact sources, tools, raw results and limits](qa/l2-rizin-discovery-patch-20261118.md).
+
+
+## 2026-11-18 current PW-01 and search integration
+
+The actual-parent merge `939d4a90` / REST-published `5eee1392` combines the
+reviewed PW continuation with current consolidation `75ffee38`. Independent
+review confirms 38 PW and 11 search source/test/tool paths retain their exact
+parent blobs; only two additive document conflicts were resolved. The 63-file
+combined selection passed **2,121 tests, with 2 native Windows skips**; whole
+Ruff and KBC schema checks passed. These focused results do not replace hosted
+full/Qt/native/package acceptance. See the [continuation and feature matrix](qa/pw01-current-integration-20261118.md).
+
+
+## 2026-11-18 PW-01 capacity and retained-page compatibility
+
+Frozen source `0be3b9eb` preserves current #303 `2b697222` as an actual parent,
+including its source-admission repair. V1 keeps its published 50,000-entry
+default; v2 pages retain an independent strict 5,000 ceiling. Captured v1/v2
+records replay without rebinding identities. Local inventory/service/CLI/Qt/schema
+verification passes **581 tests**; independent read-only review passes **44**
+overlapping focused/adversarial controls. Ruff, schema and whitespace checks pass.
+Nine sequential offline CLI operations on the existing real CSV preserve the
+37,595-entry v1 source, bounded AMD64 pages, exact conflict witnesses and prior
+IDs. An earlier external-launcher failure is retained separately. Peak child RSS
+was observed at 459,328 KiB, not an enforced ceiling. Hosted/full/Windows/package
+and production-fetch acceptance remain separate. See the
+[exact source and archived evidence](qa/pw01-capacity-compat-20261118.md).
+
+## 2026-11-18 PW-01 KB file inventories
+
+Implemented the registered bounded CSV/support-link contract, immutable source
+store, atomic scoped selection, seven CLI verbs and a separate KB inventory
+dialog. Independent parser/source, selection and interface reviews reproduced
+and verified repairs for input grouping, HTTP framing, product/build scope,
+failure preservation and keyboard deselection. The combined focused selection
+passes **816 tests**, including a later-architecture capacity regression.
+After normally merging repaired consolidation `121ffb0b`, the combined selection
+passes **1,016 tests**; fresh independent review repeats those tests and passes
+four additional socket-denied integration controls. The feature still supplies
+metadata-only selection and retains exact acquisition consent.
+A final independent source-admission review reproduced five races before the
+repair at `433440a3`. The repaired combined gate passes **1,023 tests**, and the
+independent reviewer passes all seven admission controls. Selection now checks
+the evaluated advisory snapshot inside admission, including repeated no-op
+selection; stale source or revision changes preserve prior decisions.
+Schemas, whole-tree Ruff, dependency compatibility and protobuf runtime checks
+pass. Full local and hosted runs are tracked against
+their own exact trees in [PW-01 evidence](qa/pw01-20261118.md).
+
+The original 5,000-entry budget truncated the real saved KB5036893 capture before
+its x64 section. The independently checked 50,000-entry correction scans all
+42,845 records and retains 37,595 rows across ARM64 and AMD64, including 2,020
+AMD64 metadata-only claims. Rejections and conflicts remain explicit; the CLI
+still returns partial / exit 3. Old captured budgets replay unchanged, and all
+other limits remain in force. Both production support/CSV fetch attempts
+failed with PT-KBC-ACQUIRE because this runner cannot resolve the approved hosts.
+No proxy or injected transport substituted for that live gate. PW-02 and native
+Windows/manual/release/accuracy acceptance remain separate.
+
+## 2026-11-18 advisory anchor compatibility and final frozen L1 evidence
+
+The current successor preserves actual #305/#306 heads and repairs the reproduced
+long-anchor budget regression and default stored-advisory CLI owner mismatch.
+Seven new controls failed before repair; the broader frozen-source selection at
+`b9fac06b` passed **942 tests**. Independent 85-test and three-head boundary/digest/
+cursor checks passed; these overlapping invocations are not summed. Whole Ruff
+and whitespace passed. The preserved source-specific L1 replay at `f69614fa` is
+**73 PASS, 6 FAIL, 8 excluded**, exit 1; the six expected failures and all frozen
+inputs remain intact. Final-head hosted full/Windows/Qt/package/native gates are
+still mandatory. See [the integration and evidence record](qa/search-anchor-integration-20261118.md).
+
+## 2026-11-18 CVE consolidation successor and real L1 replay
+
+The second independent review repaired Windows ZIP path identity, uncertain
+chronology/fix boundaries, rejected advisory source scoring and pair-output
+ownership. A real source replay exposed mixed-architecture predecessor selection,
+now repaired, and supported `.tsp` inputs were added. Combined local verification:
+**2,089 passed, 3 skipped** at `06c8ca0c`. Frozen source-backed L1 expected-file
+replay: **73 PASS, 6 FAIL, 8 excluded**; no percentage/bound and no L2/L3 claim.
+Four Server coverage cases and two unchanged-preview cases remain failures.
+Exact-head hosted Windows/full/package gates remain mandatory. See the
+[source, repair and continuation record](qa/cve-consolidation-20261118.md).
+
+
+## 2026-11-18 current consolidation correctness follow-up
+
+The #302 continuation selectively incorporates six independently reviewed
+correctness fixes from concurrent #304, then repairs ZIP separator handling,
+ambiguous chronology/change provenance and unbounded variant evaluation.
+Independent final core review at `bce67e93`: **239 passed** (225 project cases
+plus 14 independent controls). Separate verifier/L1/schema selection: **242
+passed**. Whole Ruff, schema regeneration and whitespace checks pass. A broader
+combined local process ended 137 without a summary and is not a passing run.
+Exact source/continuation trees, old-head hosted counts and remaining gates are
+in [the follow-up record](qa/consolidation-correctness-20261118.md). Existing
+automatic prerelease policy is unchanged; fresh published-head CI remains the
+merge gate. PRs #304, #305 and #306 retain their separate remaining scope.
+
+## 2026-11-18 independently reviewed consolidation successor
+
+`codex/consolidation-reviewed-20261118` directly continues #301, preserving #297
+and its source ancestry. The corrected full-clone inventory contains **300 topic
+branches**, of which **113** are ancestors of starting main; all 300 have a merge
+base. All remote branches remain intact. Independent core and security review
+reproduced and repaired zero-address normalization, L-39 cap asymmetry,
+recent-query JSON ingress, and release archive type/link validation. The unsafe
+archive/delete helper is excluded. See the exact references, scope, focused test
+counts and deferred work in the [decision log](qa/branch-consolidation-20261118.md).
+The successor full local run finished with **22,461 passed, 137 skipped,
+6 xfailed and 1 failed** in 1,794.23 seconds. The existing Unix-socket test fails
+because this executor denies AF_UNIX creation; no test was weakened or skipped.
+Exact-head hosted gates remain pending until their own results are recorded;
+the historical section below is not current qualification.
+
+## 2026-11-18 full branch consolidation (PR #301)
+
+Historical author report (branch-count claims corrected by the decision log):
+carried #297 and ported eight initially listed never-merged
+items (release verifier, parser fuzz harness, KB scope retention #118 P1a, R8
+typed-literal canon/2 with EH-EQ, Windows batch-launch hardening, saved
+searches, RD-F03 alignment core, A-32 Ghidriff one-to-many abstention).
+Local Linux, Python 3.13, pytest-xdist `-n 3 --dist loadfile`, CI extras
+installed: `main` + #297 baseline **21,692 passed, 7 failed** (6 need the
+`rapidfuzz` extra, 1 xdist ordering; all 7 pass with extras installed); head
+`a59891cf` (before A-32) **22,348 passed, 48 skipped, 5 xfailed, 0 failed**;
+A-32 affected selection **2,918 passed** plus UI and seam tests; final code
+head `4534b763` (all ports, including A-32, rz-diff flood stop and
+bundle-acceptance fixes) **22,477 passed, 48 skipped, 5 xfailed, 0 failed**.
+Whole Ruff passed. Exact-head #301 hosted results were subsequently refreshed in
+the decision log; they do not qualify the successor. Targeted native RB-01,
+Windows desktop and release acceptance remain open. See
+[consolidation record](qa/branch-consolidation-20261118.md).
+
+## 2026-11-16 local KEV CLI context completion
+
+Completed the remaining K4 context wiring through verified local catalogs,
+including snapshot staleness and provenance without function-ranking changes.
+Final combined affected selection: **1,224 passed**. Broader local acceptance
+still encounters the documented AF_UNIX runner restriction and grouped process
+terminations; hosted Windows/full-suite/release gates remain open. See
+[KEV continuation evidence](qa/kev-cli-continuation-20261116.md).
+
+## 2026-11-16 path, KB CLI and historical research continuation
+
+Repaired both observed Windows CLI path failures, completed metadata-sync help
+and stored-product catalogue CLI access, and recovered the isolated R7 research
+slice from #282. Combined affected verification: **724 passed**; whole Ruff,
+dependency and whitespace checks passed. The full single-process attempt was
+killed (137); hosted/current Windows and release gates remain open. See
+[source-pinned evidence and limits](qa/continuation-paths-kb-r7-20261116.md).
+
+## 2026-11-16 research integrity recovery
+
+See [research recovery evidence](qa/research-integrity-followup-20261116.md):
+Tier R provenance/labels/immutable receipts (155 passed, 8 native skips), native
+IO research validator (136 passed), and independent scoped reviews. Fresh pinned
+Linux API controls matched all six expected stock/corrected/negative outcomes;
+prior failures and worker-count diagnosis are preserved with raw receipts.
+Final-head hosted/platform gates remain separate; no real-binary accuracy claim is made.
+
+## 2026-11-16 consolidation follow-up
+
+See [follow-up evidence](qa/consolidation-followup-20261116.md): timeout entry
+controls, benchmark/parity and release repairs, independent review, 480 combined
+passes/3 expected failures plus 13 backup checks, and ten redundant PR closures.
+Hosted final-head qualification remains pending.
+
+## 2026-11-16 continuation
+
+See [continuation evidence](qa/continuation-20261116.md), including independent
+review findings, branch dispositions and explicit native/release blockers.
+
+## 2026-11-18 strings export publication
+
+The focused publication repair at `922af3b8` preserves concurrent destinations,
+uses exclusive unpredictable staging and retains interruption cleanup. Five
+baseline failures became 34 passing exporter/CLI checks; nine independent
+controls also passed. Native Windows and full-head qualification remain open.
+See [source, failures, review and scope](qa/strings-export-publication-20261118.md).
+
 ## 2026-11-11 SPEC-31 unified-engine soundness follow-up (PR #259 open defects) — Linux, synthetic only
 
 Branch `claude/funny-feynman-d2m0b5` (`main` `882d1ca0` + #259's five commits merged cleanly + four fixes). Plan and worker briefs: [unified-soundness-swarm-prompt-20261111](plans/unified-soundness-swarm-prompt-20261111.md); spec amendments A-28..A-31 in `docs/specs/unified-engine/10-amendments.md`. Each defect had a red test before its fix (counts in the commit messages `78c0c544`, `3bf12d61`, `c0bf3d05`, `a28676c8`).
@@ -1712,3 +1925,660 @@ At 09:29:12 UTC, #246 merged normally into main as `dc53b529560453e84cf45e356a40
 ## [CONTINUATION-WINDOWS-20261106:product-start-build]
 
 Frozen #247 Windows QA passed **20,331 tests, 94 skipped, 5 xfailed, 19 warnings in 2675.35s**, plus standalone/frozen/portable/installer checks. Artifact `13492805458`, source `37b77130`, contains the stored-product starting route. API/upload digest and tested/source tree identity agree. The 09:43–09:44 snapshot still has Linux packaging/smokes outstanding; original local failures and release/live/manual gates remain preserved. [Windows candidate and evidence](qa/continuation-windows-20261106.md).
+
+## 2026-11-18 retained source pages and first native L2 pilot
+
+Reviewed combined source `c023dec36a464c3e7e1a8689f52a22263f0c24c5` is published
+as `be9b168cf24620ad86d04be474660b5d31f655b9`, preserving PR303 and PR304 ancestry.
+Independent combined gate: 1076 passed, 2 native Windows skips; 10 independent
+service/CLI/Qt probes and a real 13-operation CLI journey passed. The saved
+KB5036893 CSV exposes all 18761 accepted AMD64 claims across four bounded pages
+with full-source conflict witnesses and unchanged original evidence. V1 replay
+compatibility and Qt witness truncation defects were reproduced and repaired.
+The whole-process local suite ended137 without a summary. Sequential full-file
+qualification also remains INCOMPLETE: four completed batches report 5308pass,
+1fail and31skip; eight other batches were killed without completed JUnit.
+Hosted exact-head acceptance remains separate. Production direct
+CSV fetching remains DNS-blocked here; proxy capture is offline evidence only.
+See [retained-page qualification](qa/pw01-retained-pages-20261118.md).
+
+The first independent source-backed ELF/GCC native pilot produced a preserved
+MISS/FAIL: Rizin emitted five unchanged matches and omitted the frozen expected
+http_parser_execute function. No target binary was executed, no expectation
+changed, and no aggregate bound claimed. See [first native pilot](qa/l2-native-pilot-20261118.md).
+
+
+## 2026-11-18 Rizin discovery diagnosis and pending native publication
+
+The sealed L2 MISS was followed by independently authored shared-library, executable and PE controls, without rerunning the candidate. Pinned Rizin source and retained native output show that the functions-mode diff path omits the symbol/entry seed pass used by ordinary automatic analysis. Operational success does not establish exhaustive discovery. A native repair and a separate source-oracle naming contract remain unqualified; no measured label or accuracy result changed. [Diagnosis and controls](qa/l2-rizin-discovery-20261118.md).
+
+PR304 now includes independently reviewed Windows publication repair at `6cc6b6b77564e12eaec2917877d94525a69c7102` (code540c7df, exact reviewed treeaa7749). The former bb4277 Windows failure remains retained; fresh hosted gates are pending. The continuation must integrate that exact ancestor before promotion.
+
+
+## [WINPAIRS-WINDOWS-NATIVE-20261118]
+
+PR #304 at `bb4277ae` failed the hosted Windows publication boundary: **15 failed, 61 passed, 3 skipped**; full Windows QA and packaging were not reached. The original raw failure is retained. Native information-call repair at local `1c49199e` preserves held-handle ownership/no replacement and fixes independently reproduced primary-error masking during cleanup. Twenty portable controls failed against the old implementation; the focused final result is **101 passed, 2 actual-Windows skips**. Whole Ruff and whitespace checks pass. Exact-head hosted acceptance and merge remain open; no native success or precise old Win32 error-87 cause is inferred from portable checks. [Evidence and limits](qa/winpairs-windows-native-20261118.md).
+
+
+## [CURRENT302-INTEGRATION-20261118]
+
+Fresh REST inspection found eleven new #302 commits at `121ffb0b`; six repairs match earlier #304 patch IDs, while four behavior commits repair additional ZIP/lineage/selection/budget defects. Actual merge parents preserve both that head and #304 `6cc6b6b7`. Independent review verified all forty #304-only paths remain unchanged. A copied-target chronology-cache regression was reproduced and fixed; four stale test-double failures were preserved and repaired through fixture flags only. Disjoint affected selections total **1,650 passed, 2 native Windows skips**, with separate independent controls, whole Ruff and schema checks passing. Final code/tree is local `3693ca3b` / published `34c06d9e`, tree `42327753`. Hosted exact-head acceptance and guarded merge remain pending; no PR closure or accuracy promotion follows from local checks. [Evidence and limits](qa/current302-integration-20261118.md).
+
+### 2026-11-18 retained CVRF context fallback
+
+Source `35390267` admits bounded project-retained CVRF fields with CSAF precedence,
+unknown applicability, native pointers and existing context/source identity fields.
+Exact-source affected qualification: 1,533 passed in 35.49 s; whole Ruff/diff passed.
+Original red runs, corrected negative controls and a guarded real CLI journey are
+retained in [the QA receipt](qa/pilot-retained-cvrf-context-20261118.md). Separate
+current-input hook, combined independent review and native/manual gates remain open.
+
+
+## [ADVISORY-READ-BOUNDS-20261118]
+
+Seven unbounded-read/byte-limit failures reproduced and repaired; exact source independently passes 140 affected plus 16 filesystem/backup controls. Native Windows and cumulative store budgets remain unverified. [Evidence](qa/advisory-read-bounds-20261118.md).
+
+
+## [PILOT-CVRF-COMBINED-20261118]
+
+Retained-context bridge, current-input/report hook and independent SQLite repairs pass 1,924 checks on combined source `ac789497`. No skips. The six root reproducers pass unchanged, with six additional corruption/history/export controls. Full/native/platform gates and real CVE attribution remain open. [Receipt](qa/pilot-cvrf-reviewed-20261118/README.md).
+
+## [RAW-ALIGNMENT-DESKTOP-20261118]
+
+Selective #168 recovery adds the bounded paired physical-offset desktop workflow
+at source `e4506666`, following spec/test-first `640baa22` on integration baseline
+`ed455725`. The original missing-controller red and subsequent subprocess
+import-path failure are preserved. Final affected Qt/backend selection:
+**182 passed in 32.74 s**; separate current-source headless CLI guard:
+**1 passed in 0.71 s**. Whole Ruff and whitespace checks pass. Global tooltip
+coverage and the unchanged host seam pass; `ui.py` is 3,071 lines under its
+unchanged 3,077-line ceiling. Actual offscreen minimum-width rendering was
+inspected. Independent review and combined actual-head, hosted, native Windows
+and manual acceptance remain open. [Scope, commands and preserved evidence](qa/raw-alignment-workflow-20261118.md).
+
+## [RAW-ALIGNMENT-INDEPENDENT-INTEGRATION-20261118]
+
+Independent source review found no blocking defect, with 183 affected passes and six additional adversarial controls. The focused port onto published #307 `58fc1306` passed the same 183 affected checks in 31.01 s with explicit source-pinned children; required Ruff and whitespace checks pass. All earlier failure receipts remain. Published #307 separately passed 355 boundary checks with three native Windows skips. These are overlapping, scope-specific local results; hosted/full/native/manual acceptance remains open. [Complete review, exact identities and raw receipts](qa/raw-alignment-reviewed-20261118/README.md).
+
+## [SAVED-SEARCH-WORKFLOW-20261118]
+
+Source `e705974b` wires the existing project-owned saved-search store into GUI
+and CLI workflows, preserves validated mode/effective filters, and adds bounded,
+explicitly per-user recent text. Initial controls recorded **14 failed, 8 passed**;
+two later self-review failures were also reproduced and repaired. Final affected
+selection: **374 passed in 16.65 s**, including actual default GUI and current-source
+headless CLI journeys, ownership/reopen/stale-row controls and the global tooltip
+sweep. Whole Ruff and whitespace pass. UI host, generic settings limits, schemas
+and enrichment storage are unchanged. Independent review and combined current-head,
+hosted, Windows and native/manual gates remain open.
+[Commands, source identities and preserved failures](qa/saved-search-workflow-20261118.md).
+
+### 2026-11-18 saved-search delayed Build repair
+
+Independent review reproduced recalled text executing on an earlier Build completion.
+Source `c30c7911` binds autosubmit to the captured query generation. Regression red
+1 failed/1 passed; affected rerun 376 passed; unchanged independent reproducer author
+replay 1 passed; whole Ruff passed. See [receipt](qa/saved-search-build-race-20261118.md).
+Independent recheck/full combined/native gates remain separate.
+
+## [SAVED-SEARCH-INDEPENDENT-INTEGRATION-20261118]
+
+Root independently reproduced an old Build completion executing recent text without Enter, retained the failing probe, reviewed repair `c30c7911`, and reran that unchanged probe successfully. The focused port onto published #307 `58fc1306` passed 376 source-pinned affected checks in19.18 s; required Ruff and whitespace pass. Project-owned saved queries and bounded per-user recent text now have local review/regression evidence; full hosted/native/manual gates remain open. [Review, source mapping and original failures](qa/saved-search-reviewed-20261118/README.md).
+
+## [PRIMARY-ENVIRONMENT-DEFAULTS-20261118]
+
+Nine failing regressions reproduced default external child inheritance of authored dummy credentials and injection variables. Reviewed implementation `1f9ad863` enables the existing allowlist by default in backend/CLI and both fresh desktop readers, retaining explicit compatibility settings and mandatory bundle isolation. Independent detached qualification:370 passed,3 existing native Windows skips; required Ruff/whitespace pass. All intermediate fixture and invocation failures remain. Native H7/full/platform/security acceptance and primary memory/output limits remain open. [Exact source, repair, review and raw evidence](qa/primary-environment-20261118/README.md).
+
+
+## [RELEASE-QUALIFICATION-REVIEWED-20261118]
+
+Shared publisher guard and independent repairs: root combined 458 passed / 3 existing xfails; 19 independent controls pass. Native/scanner/publication holds remain explicit. [Receipt](qa/release-qualification-reviewed-20261118/README.md).
+
+
+## [MANIFEST-DTD-REVIEWED-20261118]
+
+Encoding-dependent DTD-policy bypass repaired and independently reviewed; root 384 affected/external passes, zero skips. Original red evidence and remaining native/security gates retained. [Evidence](qa/manifest-dtd-reviewed-20261118/README.md).
+
+## [DEPENDENCY-SECURITY-CANDIDATE-20261118]
+
+The strict scanner candidate at `b61e1593` adds four native OS/profile dependency
+jobs plus an unsuppressed static-security job and matching release requirements.
+Independent interpreter/install provenance defects were reproduced and repaired;
+the exact affected gate reports **599 passed / 3 existing expected failures**,
+with a separate **128-pass** root review and normal Ruff pass. Actual Linux
+runtime/packaging audits cover 17/32 non-owned distributions and both fail on
+bootstrap pip 25.0.1: six distinct advisory IDs across twelve preserved raw
+service records. Static scanning fails with 79 untriaged findings. Original and
+repaired-source failures remain unchanged. An unsharded full attempt ended137
+after fourteen progress dots without JUnit; no cause or pass is inferred.
+Native Windows scans, integrated qualification and substantive remediation are
+still required. [Full receipts and limits](qa/autonomous-ci-20261118/dependency-security/README.md).
+
+## [CALLGRAPH-CAP-TRUTH-20261118]
+
+Source/test head `2c69c4ad1c08112e29aa2403b036ae66dc1c650d` preserves per-origin
+omission truth through query, CLI/JSON/DOT and Calls state. The exact 24-file
+graph/GUI/schema/tooltip gate passes 464 cases, zero skips, in 19.83 s; whole
+Ruff/diff pass. Five headless CLI commands with Qt imports forbidden and three
+real MainWindow states pass on an authored project whose database hash stays
+unchanged. Original 11-fail/3-positive new controls and the obsolete snapshot
+expectation failure are retained, along with the original historical red.
+[Source and QA receipt](qa/callgraph-cap-truth-20261118.md).
+Root's independent exact-source replay passes the same 464 cases in 19.35 s
+and the six unchanged historical cap controls in a separate invocation; the
+receipts are retained without adding overlapping coverage counts. Path
+budgets/lazy CSR and native/manual/full/platform acceptance remain separate open gates.
+
+## [SCANNER-BOOTSTRAP-REMEDIATION-20261118]
+
+Reviewed source `0c004b68` explicitly records the fresh ensurepip bootstrap and
+hash-pinned pip 26.3 installation before scanner/product dependencies. The exact
+affected gate reports **631 passed / 3 existing expected failures**, with a
+separate **160-pass** root review. Actual Linux runtime and packaging audits
+include all 17/32 distributions, including pip, and report zero vulnerabilities,
+skips or fixes; independent CLI/root validation agrees. Pip is the only changed
+package version versus the preserved failed predecessors. Static still refuses
+79 diagnostics. Windows/native/integrated publication holds remain; no full-suite
+rerun or overall clean-security claim follows.
+[Source, primary pins and complete transition receipts](qa/autonomous-ci-20261118/pip-bootstrap/README.md).
+
+## [CALLGRAPH-PATH-BUDGET-20261118]
+
+Separate accepted source `f0b0eb02617a87aea4cfe4b06079528d934d6285` bounds all
+path phases by actual adjacency examinations, avoids CSR/row copies and retains
+a completed canonical shortest witness on later exhaustion. Author gate: 489
+passed/zero skips in 24.72 s. Root independent gate: the same 489 plus a new
+varied-graph oracle pass (490 total, zero skips, 20.78 s); 17 unchanged historical
+controls pass separately. Original 20-fail/5-positive source red, original
+202-versus-40 control and root's duplicate-module collection error are retained.
+Five actual headless CLI calls preserve valid partial/complete/empty/identity
+results, hash-seed determinism and both project database hashes. Whole Ruff/diff
+pass. [Accepted source/QA receipt](qa/callgraph-path-budget-20261118.md).
+Native/manual/Windows, full-repository and package gates remain separate.
+
+## [VERIFIED-FOLLOWUP-INTEGRATION-20261118]
+
+Combined source `3be3af166897fc2376dc64850edc66485273dea1` preserves actual published #304/#307 and #308–#315 ancestry, plus reviewed scanner/bootstrap, project-retry and callgraph repairs. The selected current-source gate passes **1,770 cases with three existing expected failures**; all 75 changed source/test/tool/workflow files have reviewed ownership. Whole normal Ruff passes on identical code bytes. No full/platform/native/package acceptance transfers from another source. Fresh #304 hosted full suites and packages pass, but Windows BinDiff remains blocked inside its green job and compiler sweep is partial 5/11. Main remains `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`; no PR merge/closure or release occurred. The checkpoint retains all original failures, source/parent mapping, independent reviews, raw hosted logs/artifacts and remaining assignments. [Complete checkpoint](qa/verified-followup-integration-20261118/README.md).
+
+## [STATIC-OWNERSHIP-FOLLOWUP-20261118]
+
+At `2c0d51cb3cd237dfd6ef8740f36404cd15abe1bc`, the accepted two-line pilot stage ownership repair and 43-site assertion/SQL review are integrated. Root independently reproduces the original staging loss and passes 140 repaired-source checks; eight static probe groups pass in both normal and optimized Python on the combined predecessor. Current strict scan remains failed with **81 findings** (original 79 plus one parser and one metadata-SQL diagnostic), all retained. A separate failed-attempt persistence-diagnostic defect is reproduced and assigned. Actual final-source/platform/native/package gates remain open. [Evidence and precise source limits](qa/static-ownership-followup-20261118/README.md).
+
+## [SEMANTIC-DISPOSITION-BATCH2-20261118]
+
+Evidence-only comparison at `3be3af166897fc2376dc64850edc66485273dea1` examines
+20 more original reconciliation tips: 18 retain the focal behavior reviewed;
+two overlapping tips share one missing selected-superseded-source explanation.
+Current replacement gates report 955 passed / 2 native Windows skips, then 139
+additional audit cases passed. Unchanged historical controls preserve the real
+warning failure, a replaced internal-helper expectation and an obsolete fixture
+shape; their overlapping results are reported separately. Five actual headless
+CLI calls confirm correct evidence withholding and the missing explanation.
+Source/tests/tools are unchanged. [Complete source-pinned ledger and raw receipt](qa/semantic-disposition-batch2-20261118.md).
+The original 131-tip set now has 40 selected scopes and 91 unselected tips;
+broad residue, native/manual/package and independent source-repair gates remain
+open. No whole branch is closed and no completion percentage is inferred.
+
+## [KB-NAMED-SUPERSEDED-20261118]
+
+Author source `51f33d5a0f0e7e48868ff184a54635ff92606f96`, based on actual
+published PR #316 `55f3d074`, passes 411 affected cases with zero skips, including
+current global tooltip coverage; unchanged original historical control passes
+separately. Eight actual headless CLI calls preserve exit/evidence behavior and
+show the selected-old explanation. Whole Ruff/whitespace pass. Corrected
+baseline18-fail/14-positive results, initial fixture mistakes and all original
+historical failures remain retained. [Sealed source-pinned QA](qa/kb-named-superseded-20261118.md).
+Root independent review and integration remain pending; native/manual/package,
+full/hosted qualification and broad branch residue are separate gates.
+
+## [SEMANTIC-DISPOSITION-BATCH3-20261118]
+
+
+Read-only comparison at actual published #316 `55f3d074`: 20 exact original tips,
+18 retained focal scopes, one retained backup defect and one omitted highlighter
+dispatch guard. Current 36-file source/offscreen gate: **666 passed, four explicit
+Windows skips, 62.85 s**. Separate original contrary controls remain **2 failed/1
+passed** for public backup publication and **1 failed/2 passed** for unchanged
+historical highlighter behavior. No production/test/workflow edit, native run,
+fresh hosted observation or whole-branch closure. Cumulative selected scopes:
+60 of the original 131, with 71 still unselected and broader residue open.
+[Exact sources, commands, archive and limits](qa/semantic-disposition-batch3-20261118.md).
+
+## [CODETEXT-WINDOW-DISPATCH-20261118]
+
+Source `2bf86c883d4d9185f1fb845a7083f73c5541f342` adds the missing early
+highlighter model/session/window guard, inside the existing failure boundary.
+Spec/tests precede source; the original six failing/one positive and unchanged
+historical one failing/two positive controls remain. The same nine-file affected
+gate passes 804 with one optional colorspacious skip at normal scale and at actual
+2x offscreen scale; unchanged historical replay passes three separately. Whole Ruff/diff pass. These are
+overlapping source/Qt checks, not additive or native/package acceptance. Root
+review and actual combined/full/platform gates remain separate.
+[Source and sealed evidence](qa/codetext-window-guard-20261118.md).
+
+
+## [VERIFIED-CONTINUATION-20261118]
+
+Clean source `5bbb925694b89ddc77e2aae1ea36c9f563c7760d` passes **2,764 selected checks / nine explicit skips**
+in 215.13 seconds; all 26 changed code/test/tool/workflow paths match independently
+reviewed owners. Normal Ruff passes; isolated ignore-noqa strict security remains
+**80 findings, exit 1**, with the same path/code/statement multiset as `3faf436a`.
+All 517 imported project modules are source-pinned. An inherited process-local
+network-denial guard and local-only Git transport protect this inspected offline
+selection; no assertion was weakened or test deselected. Original broad-run
+failures and partial receipts, guarded path recheck, native/live blockers and all
+exact skip reasons remain in the [sealed checkpoint](qa/verified-continuation-20261118/README.md).
+Full/platform/native/package/scanner gates and main merge remain open.
+
+## [SEMANTIC-DISPOSITION-BATCH4-20261118]
+
+Read-only 20-tip batch at actual PR316 55f3d074: 15 retained focal scopes, one
+confirmed selective R2 omission, one stricter adapter replacement, one retained
+research prototype and two incomplete developer/research workflows. Current gate:
+42 files, 1,017 passed, zero failures/errors/skips, two explicit compiler-case
+deselections, 27.27 s. Separate historical R2 replay: 74 failed/6 passed; every
+failure classified, with no old Support/CFG/cache policy relaxation. Final external
+public/persisted R2 controls: four failed/one positive. Original probe setup and
+assertion corrections remain transparent. UE-R3 historical replay: one changed-
+contract mismatch/134 passed; R3/R8: 44 passed; valid-domain CFG oracle: 60 passed.
+No additive counting, source edit, native/network run, remote mutation or whole-
+branch closure. Cumulative selected scope: 80 of 131; 51 unselected plus broader
+residue. [Source pins, original bytes, commands and archive](qa/semantic-disposition-batch4-20261118.md).
+
+
+## [CONTINUATION-R2-20261118]
+
+Exact source `ae0b1660e0cc71c51698d70a685ceeb646619184`, 108 selected files:
+3,528 passed/nine explicit skips/zero failures/errors in 282.90s. All 522 project
+imports are pinned; all 31 changed owner paths are preserved. Normal Ruff passes;
+isolated strict S remains 80 identical sites and fails. R2 independent 59-pass review,
+batch4 proof and hosted55 receipt review retain original contrary evidence.
+[Sealed checkpoint](qa/continuation-r2-20261118/README.md) and
+[older-source hosted evidence](qa/hosted-pr316-55f3-20261118/README.md).
+No final native/package/full/security qualification, main merge or release credit.
+
+## Semantic disposition batch 5 — 2026-11-18
+
+Docs-only inspection of 20 original source-bearing tips against actual PR316
+55f3d0742f7d4cf32357a42b8b1cc76d85875e71; see [sealed QA](qa/semantic-disposition-batch5-20261118.md) and its exact ledger/source proofs.
+Current 34-file gate: 1,129 passed, one Windows skip, one existing CODEX-14 xfail,
+four explicit compiler/native deselections. Saved-scope and A/A public-flow proofs plus the direct optional COFF API proof
+remain red at this source; separate repairs are not credited here. Every original
+historical mismatch is classified. 100/131 original tips now have selected scopes;
+31 remain unselected, with broad/native/package residue explicit. No source edits,
+remote mutation, merge, whole-branch closure or native/manual acceptance.
+
+
+## [AA-SHARD-CLASSIFICATION-20261118]
+
+Exact source `9bd17bbecb54f5a3de05d235a1617a3d2f196883` retains nonidentical A/A
+rebuilds in failed shard cases, merged provenance and CLI status. Spec/tests
+precede the four-line production change. Original public 2-fail/1-positive and
+spec-first 5-fail/59-positive receipts remain. Author gate: 67 passed; independent
+gate: 71 passed, zero skips. The independent fixture-budget correction is retained
+with its original 1-fail/69-pass result; no product change followed it. Source
+imports, old observations, exact Git snapshots and archive members are verified.
+No compiler/native/accuracy/frozen-result or release credit. [Full QA](qa/aa-shard-classification-20261118/README.md).
+
+### Semantic disposition batch6 (2026-11-18, frozen 55f3 source)
+
+Twenty focal records; fresh 173 passed/2 compiler deselections across 29 files. Exact historical Java 6 pass; unified originals 1 fail/6 pass/1 setup error and 7 pass/1 setup error, all classified as retained controls or fixture defects. Prior same-source observations are referenced separately. See [receipt](qa/semantic-disposition-batch6-20261118.md). No native/compiler/target/network/Windows/manual gate.
+
+### Semantic disposition final batch7 (2026-11-18, frozen 55f3)
+
+Eleven focal records finish the exact original 131 partition. Fresh 100 passed / 4 known xfails / 1 explicit real-launcher deselection; original audit 19 pass/5 classified failures, deadline 2 pass, reference 23 pass, initial missing-jsonschema collection error retained. No native/package/network/manual acceptance. See [receipt](qa/semantic-disposition-batch7-20261118.md).
+
+
+## [WINDOWS-SOURCE-OBSERVATIONS-20261118]
+
+Exact source `80df2735` repairs compatible path/descriptor observations, final Windows ChangeTime rechecks in both source consumers and dependency receipt reads. Original independent failures remain. Author240/8native skips, independent44/0 and252/8; no native Windows or scanner acceptance. [Complete sealed evidence](qa/windows-source-stat-20261118/README.md).
+
+## 2026-11-18 — Immutable remote action references
+
+Exact qualified test tree `3b3c3d6346c644f04a2e69d9835f147652436535`
+(workflow-only source `2d8ef3f5`) replaces 178 movable references in 21 workflows
+with 11 canonically resolved commits and preserves all 8 existing immutable uses.
+The original action probe and current policy gate pass; the same 13-file gate is
+430 passed / 3 retained CODEX expected failures. The original baseline four-red,
+spec one-red, ten obsolete-tag policy failures and corrected run are all retained.
+Raw/YAML equivalence and exact 23-object API provenance are sealed in
+`docs/qa/workflow-action-pins-20261118.md` and its 98-member archive. No hosted,
+native, package or release qualification follows from this local static slice.
+
+
+## [CONTINUATION-TAIL-20261118]
+
+Exact source `068513a72e8a1412ce3960d3024c462d68d51376`:215 files,6,356 passed,18 skipped,three known CODEX
+expected failures,zero unexpected failures/errors in385.72s.552 project imports
+pinned;101 owner paths exact; original observations unchanged. Normal Ruff passes;
+strict S remains80 identical sites and fails. Main merge/native/platform/package/
+full final acceptance remains blocked. [Sealed checkpoint](qa/continuation-tail-20261118/README.md)
+and [older-source hosted14ef](qa/hosted-pr316-14ef-20261118/README.md).
+
+## 2026-11-18 — Corpus archive cache verification
+
+Source `693d0bc7`, final tests `451e463d`: actual inert-archive Linux shell controls
+verify every cold/restored archive before fresh extraction. Fifteen-file gate:
+495 passed / 2 retained xfails; unchanged original cache probe passes. Prior
+11-red/2-positive, four type-refusal reds and the missed action-tag neighbor are
+retained in `docs/qa/corpus-archive-cache-20261118.md` and its sealed archive.
+This does not qualify hosted cache restoration or native engines/packages.
+
+## 2026-11-18 — Linux full frozen CLI smoke candidate
+
+Production `dd0ad00b` runs the existing full harness before archive publication.
+Six spec-first failures are retained; exact ten-file gate490 passed/1 existing
+import-purity failure (also reproduced unchanged at c7d3f258). This is not a green
+combined gate or native frozen acceptance. Source-CLI and five builder boundary
+controls pass; required Ruff passes after an unused test-import cleanup. Complete
+receipts: `docs/qa/linux-full-frozen-smoke-20261118.md`. Root owns independent
+review and the separate directory-publication import-boundary repair.
+
+## 2026-11-18 — Directory publication import boundary
+
+Exact source `73bd7ead` defers ctypes until Linux native publication. The original
+IR purity assertion is unchanged. Spec-first7 failures/36 positives are retained;
+corrected ten-file gate442 passed/1 native Windows junction skip, with required
+Ruff passing. Initial nonexistent-test-path usage failure is preserved separately.
+Native calls/errno/path/ownership assertions remain identical. Complete source
+and original evidence: `docs/qa/directory-publication-import-purity-20261118.md`.
+Root independent integration and native Windows qualification remain separate.
+
+
+## CI follow-up — 2026-11-18, source f3b7a0e8
+
+Source `f3b7a0e895c3b9928e08f93ac77d2afda5c56dd8` integrates independently reviewed archive-cache verification,
+full Linux frozen-smoke wiring and lazy publication ctypes imports. Exact
+30-file gate: **1,028 passed, two explicit skips, one CODEX5 expected failure**,
+zero failures/errors,22.89s. All221 imported modules and ten changed owner files
+match Git bytes. Normal Ruff passes; strict S remains80 unchanged findings and
+fails. The preceding PR316 f3 checkpoint was published with a verified non-force
+lease; main remains `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`. No merge/release/platform acceptance follows.
+[Source-specific checkpoint](qa/ci-followup-20261118/README.md).
+
+## Phase 2 reference-contract disposition, 2026-11-18
+
+Pinned current source 068513a7; original reference 4522030f. The [nine-family disposition](plans/phase2-reference-contract-disposition-20261118.md) traces real enrichment/pilot callers and keeps their distinct contracts. [Sealed QA](qa/phase2-reference-contract-disposition-20261118.md) retains 697 passing current cases, 23 unchanged reference checks, 10 expected wire-format refusals and a separate **3-fail/4-positive** persisted/reopened GUI navigation proof. The pre-existing live-validator wiring omission is approved for a separate narrow repair; no source change or calibration claim in this checkpoint.
+
+## [CORE-HELD-INPUTS-20261118]
+
+Exact neutral core source `b85a0cf7bf135e9431677737613000707553b192` passes 297
+portable authored/affected checks, zero skips, with 301 loaded project modules
+verified against the exact Git source. Original 36 missing-capability failures
+and two ordinary positives, first 38-pass candidate, and one corrected external
+runner collection error remain. Full normal Ruff and diff checks pass.
+[Sealed source, tests and receipts](qa/core-held-inputs-20261118.md). Root review,
+KB/package propagation and native Windows qualification remain separate.
+
+
+## [CORE-HELD-INPUT-CLEANUP-20261118]
+
+Independent review exposed a temporary-cleanup OSError replacing the primary
+neutral cancellation. Spec/test-first correction `97408609` preserves the original
+exception and reports possible retained bytes with a fixed note; successful-path
+cleanup failures remain observable. Exact source passes 318 checks with no skips,
+301 owned imports, no drift, and full normal Ruff/diff checks. The original
+1-failed/51-passed and new 6-failed/15-passed receipts remain.
+[Complete correction receipt](qa/core-held-inputs-cleanup-20261118.md).
+Corrected independent review and native/package composition remain separate.
+
+## 2026-11-18 — P2-NAV-1 signal navigation validation
+
+Final source `9592f8b362537c0545010d4499e35770a248297e` delegates only the
+existing signal-location action to a 19-line presentation helper. It refuses
+unsupported representations and validates current ownership/excerpt identity
+before any reveal. The unchanged host ceiling passes at 3069/3077 lines.
+Ten-file author gate: 175 passed, zero failures/skips; unchanged original
+location probe: 7 passed; unchanged root representation probe: 2 passed.
+Required full Ruff passes. Original 3-red/4-positive, initial fixture failures,
+corrected 8-red/3-positive, one-line ceiling failure and representation
+1-red/1-positive plus 4-red/11-positive are preserved in
+[the sealed receipt](qa/signal-navigation-validation-20261118.md). Counts are
+not additive coverage; root independent final review and native/manual/package
+acceptance remain separate. No detector, score, schema or stored evidence change.
+
+
+## Worker, core and navigation milestone — 2026-11-18, source207eea9d
+
+Exact source `207eea9d4e125ac1d371139d4db803ddbc2b4c8a` passes **1,103 tests, one native Windows skip**,
+zero failures/errors/xfails,44.57s. The51-file gate preserves all28 unchanged
+independent cases,23 reviewed owner paths and498 exact Git-pinned imports.
+Normal Ruff and generated schemas pass; strict S remains80 unchanged findings.
+Original terminal-counter, cleanup-primary-error and assembly-navigation reds,
+fixture/preflight corrections and all preceding source-specific receipts remain.
+[Complete checkpoint](qa/worker-core-navigation-20261118/README.md).
+Main remains `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`; PR316 is open, PR304/307 blocked by final gates.
+No merge/closure/tag/release/deployment or branch deletion occurred.
+
+
+## 2026-11-18 — KB held-reader propagation design
+
+Read-only proposal pinned to integrated `bca79c2371dc674e1b66177e0396f10332dcf198`
+and the exact reviewed core `97408609`/worker `7259f868` APIs. The
+[72-member evidence packet](qa/kb-held-reader-propagation-design-20261118.md)
+verifies 40 Git snapshots, 51 symbol spans, complete production caller searches
+and unchanged prior observations. No fresh product test or production edit.
+The proposed three-file reader plumbing preserves ordinary injection and saved
+full-index admission; durable package recovery and postcommit checkpoint
+extensions remain separate. Root specification/ownership review is pending.
+
+## [DEPENDENCY-UTF8-20261118]
+
+Exact source `6dea194adf52ae0257d94c1604707a056d11c92c` adds the canonical
+`-I -X utf8` prefix at all 14 direct dependency-tool Python invocation sites.
+The 167-case portable gate passes without skips; 41 loaded project/tool modules
+match the source, with no drift or prohibited execution. Full normal Ruff and
+source diff checks pass. Original hosted Windows CP1252 failures, the unchanged
+4-red/1-positive external probe and the spec-first 9-red/4-positive run remain
+in the [sealed source and evidence packet](qa/windows-dependency-encoding-20261118.md).
+Authored CP1252 simulations do not rerun native pip. Corrected hosted Windows
+inventory/audit, source-independent review and actual scan acceptance remain
+separate; no scanner policy, pins, exclusions or raw-output handling changed.
+
+## 2026-11-18 — internal KB held-input propagation candidate
+
+Following the approved three-file scope, source `d9a93991` carries the same
+operation pair through existing inspection, attachment hashes and core create.
+The [sealed 147-member receipt](qa/kb-held-input-propagation-20261118.md) retains
+the initial 32-fail/1-positive missing-API result, initial 33/39-pass candidates,
+root's actual short-read 3-fail/2-positive proof and subsequent 6-fail/6-positive
+regression before its bounded-prefix correction. Exact final affected gate:
+300 passed, zero skips/errors/failures, 99 source-pinned imported modules;
+unchanged independent probe: 5 passed. Full required Ruff and diff check pass.
+Root independent review/integration remains pending. This is internal capability
+propagation only; durable held-origin recovery, postcommit checkpoint coverage,
+native Windows/FDI and the complete package journey remain unqualified.
+
+## [PW02-CORE-ADMISSION-DESIGN-20261118]
+
+Read-only core identity/reopen investigation at frozen `9ad2ec5c`: ten bounded
+current-behavior controls pass, zero skips, with 60 pinned imports and no drift,
+network or child attempts. Existing preallocated-ID storage, ordered-pair/foreign
+identity distinctions, recovery=false preservation, the postcommit callback gap
+and committed-error retention are observed with authored PE bytes and real SQLite.
+The unchanged public after-create journal gap remains explicit. The
+[proposal and sealed source spans](qa/pw02-core-admission-design-20261118.md)
+recommend only existing create/open/load hooks; production and repository tests
+are unchanged. Implementation needs spec/test-first review, and durable package
+intent/held-origin/provenance/reconciliation plus native acceptance remain separate.
+
+
+## KB, UTF-8 and native diagnostic milestone — 2026-11-18
+
+Exact source `7b5f558fb1a51d45427648c39c15995ab3697e2c` passes803 tests with zero skips/failures/errors in9.76s.
+All118 imported project/tool modules and14 reviewed owner paths match Git; the
+same23-file gate retains the original802-pass/one-registry-failure result and its
+one-row documentation correction. Normal Ruff passes; strict S still fails on80
+unchanged sites. The KB short-read correction, isolated UTF-8 invocation and
+bounded stderr diagnostic source are independently reviewed and integrated.
+[Complete checkpoint](qa/kb-native-followup-20261118/README.md).
+Fresh316-branch/63-open-PR refresh preserves all131 focal tips and verifies all11
+changed/new tips as ancestors of fb09. Main remains `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`; no main merge,
+closure, force-push, deletion, tag, release or deployment occurs. Current fb09
+Windows native/dependency failures and pending full/Qt jobs remain source-specific.
+
+## [CORE-ADMISSION-CHECKPOINTS-20261118]
+
+Exact source `441c47c2262603555aa77c11e63fedcce11ba502` passes 512 affected
+checks with no skips and 462 source-pinned parent imports. The
+[136-payload packet](qa/core-admission-checkpoints-20261118.md) preserves the
+original 4-red/1-positive acquired-open probe, committed 41-red/6-positive
+controls, first-green source/import-format correction, and the first affected
+runner's 510 passes plus two headless-command policy refusals. The corrected
+runner executes all five inspected children with absolute source pins; product
+source and assertions are unchanged. Full normal Ruff and diff checks pass.
+Only creation ID validation/forwarding and explicit open/load recovery/checkpoint
+options change. Root separately reproduced an existing constructor interrupt
+cleanup gap before open receives the store; its authorized test-first follow-up
+is pending. This packet remains immutable and does not claim native/package
+admission or complete cleanup acceptance.
+
+## [CORE-CONSTRUCTOR-CLEANUP-20261118]
+
+Source `63ebc42746fbfbded311084288a339f26ed08d8c` corrects the separately
+reproduced constructor interrupt and secondary cleanup masking boundaries in
+the existing initialization handler. The original root 2-red/1-positive probe,
+the six-case cleanup probe, committed 31-red/19-positive regressions and final
+50/562-pass gates are retained in the
+[separate 140-payload append packet](qa/core-constructor-cleanup-20261118.md).
+All 463 affected parent imports match source; no skips or prohibited execution
+occurred, and normal Ruff/diff checks pass. Connection-close, owned discard and
+final-close ordering, generic close/discard policy and SQLite error mapping are
+preserved. A fixed bounded note reports uncertain cleanup while retaining the
+primary failure. The original 441c/136-payload packet is unchanged. Root final
+independent review remains separate; native/package/durable-recovery acceptance
+is not claimed.
+
+## [PW02-DURABLE-ADMISSION-DESIGN-20261118]
+
+Read-only design at frozen `195e04af`, proposal `efe68b18`; the
+[sealed 93-member packet](qa/package-durable-admission-design-20261118.md)
+retains 42 Git snapshots, 56 complete symbol spans, 11 core/KB/worker equalities,
+five caller searches and 16 unchanged prior files. Seven new Linux SQLite
+observations pass with 32 exact imports and no network/child attempts. They
+show fresh-reader v2 refusal, but also the already-open v1 cached-write
+counterexample; package state outside legacy journal enumeration is therefore
+part of the proposed boundary. Sidecar-before-identity and operation-specific
+revision/CAS requirements remain explicit. The initial rg-order seal failure
+and multiset-only artifact correction are preserved; no product assertion was
+rewritten. Root independent design review, spec/test-first implementation and
+all native/frozen gates remain pending; no production or entry point changed.
+
+
+## Core admission and actual Windows evidence — 2026-11-18
+
+Exact source `a8f698f6a1d075b673bc6ec94c991141113d2b30` passes **1,200 checks with zero failures, errors or
+skips in 17.85 seconds**. The 45-file scope preserves six original external probes,
+434 canonical project/tool imports and 21 reviewed owner paths. Core expected ID,
+explicit non-recovering checkpointed reads, acquired-open and constructor cleanup
+are independently reviewed and integrated. Normal Ruff passes; strict S still
+fails on 80 unchanged sites. Original failure evidence and both core author packets
+remain immutable. [Complete checkpoint](qa/core-admission-integration-20261118/README.md).
+
+At published source 771e, both actual Windows dependency profiles now pass exact
+inventory/audit/UTF-8 verification (17 runtime, 34 packaging distributions). Native
+diagnostics compile and identify restricted NUL-open error 5 before descendant
+creation; complete no-network acceptance still fails. Unified Windows has a new
+preserved repeated-analysis digest mismatch, with the second-run records absent;
+six full QA/Qt jobs remain pending at the separate 22:37 snapshot. Durable package
+design is reviewed with an actual-connection non-initializing capture prerequisite.
+Main remains `9c411ca3d7b47f950be5f0c6f01b3c54184554c6`; PR304/307/316 stay open and unmerged. No tag/release/deployment.
+
+
+## Exact held-reader import guard and full Linux result — 2026-11-18
+
+The preceding published 771e Linux full run has 25,292 passes, 3 failures, 60 skips,
+3 expected failures and 21 warnings. Its three failures are stale static import
+guards for the already reviewed shared reader types in KB service/store/wiring.
+The original failed hosted result, API ownership, exact log and artifact remain
+immutable; newer candidate acceptance cannot reuse it as a pass.
+
+Guard 52a562b6 follows spec/regressions 5cdf1732: thirteen original failures,
+234 positives, then 247 passes with zero skips. Independent replay also passes
+all 247 with 39 canonical imports and no child/network events. Seven exact
+file/symbol exceptions preserve all previous import restrictions. All 45 original
+functions, 67 new controls and the prior guard AST are independently checked for
+preservation. Runtime/tools/workflows/configuration are unchanged. Full normal
+Ruff passes; strict S still fails on 80 unchanged sites. No waiver or suppression.
+
+[Complete correction and retained evidence](qa/kbc-held-import-guard-20261118/README.md).
+Five Windows/Qt jobs remain incomplete at the separate snapshot. Main merge,
+native/package/security and final beta acceptance remain blocked. No release.
+
+## [KB-WORKSPACE-EXISTING-OPEN-20261118]
+
+Spec/tests `f484b54c` precede source `c470a31a`: additive first-connection `mode=rw`, actual supported-v1 base layout, and owned-connection refusal cleanup. Ordinary defaults remain unchanged. The [216-member packet](qa/kb-workspace-existing-open-20261118.md) retains the original independent 2-red/2-positive capture counterexample, the initial 44-red/2-positive gate and its post-run recorder failure, corrected pinned red, 46 focused passes and final 344 affected passes (overlapping, not additive). All 112 affected imports match source; no skips or instrumented network/child attempts; full Ruff/diff pass. Root independent review, including a final-assignment interrupt probe, remains separate. No package exposure, schema-v2, recovery, native or platform acceptance is claimed.
+
+## [KB-WORKSPACE-HANDOFF-CLEANUP-20261118]
+
+Root subsequently confirmed a final-assignment ownership gap at `c470a31a`: the unchanged real-SQLite probe gave 2 failures/1 positive, preserving the original interrupt but leaving the acquired connection open. Additional spec/tests `edf4f3ba` retain 6 failures/1 positive, then source `a7a4fb16` moves only the final assignment into the existing protected admission body. The [213-member append packet](qa/kb-workspace-handoff-cleanup-20261118.md) retains the entire old packet and original root probe/observations unchanged. Final exact-source gate: 354 passes, zero skips/errors, 113 pinned imports, no instrumented network/child attempts; full Ruff/diff pass. The 354 include the original 344 scope, seven new controls and three unchanged root cases. Protection covers the acquired-connection admission body through its attribute handoff, not arbitrary interruption after that method returns. Root independent acceptance and the separate durable/native package work remain open.
+
+
+## Workspace and diagnostic integration — 2026-11-19
+
+Exact source `1a9942a5c63ba707e8678cb2f6dcd1dc39c4afd2` passes 2,043 checks with zero failures, errors or skips
+in 34.62 seconds: 64 selected files, ten unchanged original probes, 480 canonical
+imports and 32 owner paths. Documentation parent `f16d41062a5d558d889ef6a6bda922004e0ac3b4` adds only the unified
+QA packet. Existing-workspace admission/owned handoff, native stdin forwarding,
+Tier R exit-one diagnostics and bounded first/second unified retention are
+independently reviewed and integrated. Normal Ruff passes; strict S still fails
+80 unchanged sites. No Windows/native/release acceptance follows from this gate.
+
+The complete316-head/63-open-PR refresh agrees between REST and Git; all131 focal
+tips remain exact. Main remains9c411ca3; PR304d8c02cae/30758fc1306/316771e remain
+open and unmerged. Thirty-three append-only remote objects are prepared and read
+back, without moving the branch ref. Original source histories and failures remain.
+
+Actual771e Windows full QA is51failed/25155passed/150skipped/2xfailed; root rechecks
+the25358-case JUnit, original artifact/log,28 source snapshots and all51 nodes.
+Only3 are covered by the separately repaired import guard. Platform fixture and
+core creation defects are assigned; four captured causes remain unresolved.
+Two Qt jobs remain in progress at00:18:02UTC. Windows packaging/frozen/installer,
+native repeatability/containment, strict security and real analyst journeys are
+not qualified. The original failed source is not relabeled as a pass.
+
+Pure durable package contracts are approved for spec-first work with independent
+cap/accounting/reducer corrections and actual core revision-zero compatibility.
+Native leaf/reader design is approved but queued behind Windows repair. Neither
+design supplies a complete package route. [Complete source, evidence and branch
+inventory](qa/admission-diagnostics-integration-20261119/README.md).
+
+
+## Formatter diagnostics and final old-head Qt outcomes — 2026-11-19
+
+Spec `fdc1f606dd0b8a3ce94ae2db94f4fb6984a02b69` precedes formatter-harness source `16c35e1fb1a4dd54b2c2c0cb2033c8160ee99347`. The original
+count/stream-error predicate, return 4, empty successful stdout and Python assertion
+condition remain unchanged; only failing observations are added. Independent
+static review finds no blocker. The exact-source bounded replay passes 9 tests,
+zero skips/errors, with 40 canonical imports and changed-file Ruff success. This
+is separate from the prior 2,043-case source gate and does not resolve old Windows
+W51, whose individual predicate values were absent.
+
+The remaining published771e Qt jobs finished cancelled at 00:19:44 and 00:19:53 UTC
+after roughly two hours, without complete passing summaries. All48old-head checks
+are completed:34success/5failure/7skip/2cancelled. Both repeat gates remain unverified;
+dependent packaging is skipped. The earlier pending snapshot remains historical.
+No repeats, timeouts, assertions or workflow sources are changed. Actual cancellation
+and slow-test causes are not established. Windows repairs and pure contracts
+continue independently; main/native/platform/package/security/beta acceptance
+remains blocked. [Complete observations and source evidence](qa/formatter-qt-observations-20261119/README.md).
+
+
+## Independently integrated Windows fixture repair — 2026-11-19
+
+Integrated source `11c3ffabf25d8527732b45bc2d949565d91debc5` retains author spec24651bf5/source81590f93/QA9e228d84.
+Exact LF fixture bytes, local Git normalization pins and one Linux inventory
+`as_posix` projection preserve all144 original assertions/110 test identities.
+Root verifies127 author payloads,74 Git snapshots,264 historical import pairs,
+both recorder omissions and original19-red/1-positive result. Final author
+affected gate:678pass/8 native-Windows skips; those skips remain unverified.
+
+Root's actual integrated replay passes142 with zero errors/skips in1.04seconds:
+20 portability,9 formatter and113 specification-registry cases;42 canonical
+imports and all69 author affected imports match. Full normal Ruff passes. The
+src tree equals the preceding strict80-finding scan source; no waiver or rerun.
+Original2,043 and142 counts are source-bound and not additive. The complete
+original checkpoint is losslessly split for transport; old local branches and
+commit history remain intact. Fresh expected-head PR publication is next.
+Main/platform/native/package/security/beta remain blocked. [Complete review
+and exact-source evidence](qa/windows-portability-integration-20261119/README.md).
