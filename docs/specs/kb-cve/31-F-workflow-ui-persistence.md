@@ -98,6 +98,37 @@ Tests: quit while network pending, close dialog and reopen before worker respons
 
 On Windows release ZIP: login-free metadata-only/offline replay, documented consented sources, search with ambiguity and partial data, import known old/new PE, create normal project, load and reopen, compare via configured supported engine or import fixture, show candidate view and export. Smoke includes dependency metadata, tooltip registry coverage, content-addressed snapshot copies, stale-state persistence, DPI and non-ASCII filesystem paths. Separate tests for Windows DLL/signature behavior and PA30 reconstruction; do not label them validated from Linux unit tests alone.
 
+## Acquisition completion identity (2026-11-19 recovery)
+
+Recover the acquisition identity contract from commit
+`c3868d8335a8f32f676905032dc1a6d0e9f22fd6` (2026-10-31), while retaining the
+later cancellation, revision ownership, saved search scope and source admission
+checks in SPEC-31-D. A consented index acquisition binds completion to the exact
+product scope and investigation revision used to build its plan, including an
+explicit `--product` that differs from the saved selection. Compare that revision
+under the existing workspace lock before committing a scope selection or attaching
+project context. Concurrent revision changes return `PT-KBC-STALE` without
+overwriting the newer investigation or creating a project. Initially unselected
+and previously other-architecture investigations persist the explicitly selected
+preview scope only after final file inspection has matched the approved hashes.
+
+Keep the previewed index pair distinct from the conservative inspected local
+pair. The existing acquisition response gains `scope_id`, `source_pair_id` and
+`verified_pair_id`. An append-only `acquisition-pair-binding` decision records
+the source and verified pair IDs as prior/next, with the acquisition plan SHA,
+scope and exact ordered older/newer SHA-256 values in its reason. The local pair
+remains grade B/tier E with user-asserted lineage and an unverified fix boundary;
+the binding does not authenticate index claims or prove a vulnerability fix.
+Freshly inspected staged hashes must match the captured acquisition plan before
+any selection, approval, journal or project mutation. Existing source admission
+continues to reuse its exact admitted index and captured advisory coverage.
+
+This bounded recovery uses the existing decision record and attachment storage;
+it introduces no schema change. It does not persist the complete index proposal,
+its release window or source-entry metadata in the project. Those provenance
+requirements remain a separate follow-up. Ordinary local/manual imports and
+product-only starts retain their existing behavior.
+
 ## Offline desktop implementation seam (2026-11-05)
 
 The bounded first desktop journey imports a supported local advisory, searches a stored KB/CVE, requires explicit product selection, previews two analyst-selected AMD64 PE files, then creates and opens a separate project. Product-only starts use the separate local catalogue route below; binary-only manual pair starts also have the explicit desktop route below; online discovery/download remains the existing consented acquisition route. The offline dialog never starts downloads or analysis. Pair previews retain advisory source references, hashes, lineage and attribution limitations.

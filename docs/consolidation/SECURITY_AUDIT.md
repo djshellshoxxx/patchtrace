@@ -88,7 +88,7 @@ Baseline: 12 failed/8 passed in 19.07s. Recovered slice: 79 passed in 42.63s. Re
 
 [History evidence](evidence/history-diagnostic-20261119.zip): 9 verified payloads, 16,801 bytes; SHA-256 `60248a2e1bc603b6dba92451df639d22b7c58cc0d8153262a387242ae4dc5f67`.
 
-The all-856-file, 54-group qualification is running on `520b524beb0c837b6e50801bd97c88a2447e39fd` in coordinator session 74806, with its own `/tmp/pt81-final-venv` environment and results under `/tmp/pt81-final-results`. Source/tests are frozen. No aggregate pass is available yet.
+The original all-856-file diagnostic froze runtime/tests at `520b524b` and stopped after 34/54 groups at the 256 MiB temporary-storage reserve. Its JUnit counters total 15,971 tests, four failures, four teardown errors and 86 skips. The original stopped manifest and every completed receipt are preserved. Separate continuation session 78011 executes only groups 35–54 from the identical source/test/tool fingerprint, using the relocated checkout `/workspace/scratch/81e4938f4a3a/pt-candidate` (documentation head `3cde10ae`). No aggregate pass is available. Later integrated repairs require their own final-head qualification.
 
 
 The final supplemental scan on `520b524b` reports 64 findings, no added normalized
@@ -97,3 +97,13 @@ failure. Configured whole-tree Ruff passes. The 65-finding baseline remains
 frozen; see [the final-scope amendment](STATIC_AUDIT.md). The raw final scan is
 `/tmp/pt81-final-results/security-static-final.json`, pending coordinator archival.
 This is not a clean-security or aggregate-test claim.
+
+## Phase 5 — acquisition integrity and dependency follow-up
+
+The recovered acquisition boundary rejects newly inspected staged bytes that differ from the approved plan before product selection, approval, journal or project mutation. Baseline reproduction accepted replacement bytes with exit 0; the corrected source and both-side mutation controls are in [batch 5](RECOVERY_BATCH_5.md). The original cancellation, revision ownership and source-admission guards remain. Authenticated index lineage or confirmed vulnerability repair is not inferred.
+
+Independent review of the separate attempt-retention follow-up reproduced malformed-row eviction and a post-write exception; proposed corrections are still under review at this checkpoint and are not credited as integrated. A mixed NULL/text identifier case was caught during root review. Preserve all original rows and the generic post-write uncertainty contract.
+
+A current scoped primary-advisory lookup found the declared Pydantic 2.13.5 in affected ranges for [GHSA-qpmf-fgh3-ff25](https://github.com/pydantic/pydantic/security/advisories/GHSA-qpmf-fgh3-ff25), [GHSA-3r8g-cqwr-jr29](https://github.com/pydantic/pydantic/security/advisories/GHSA-3r8g-cqwr-jr29), [GHSA-955g-x97g-8mcp](https://github.com/pydantic/pydantic/security/advisories/GHSA-955g-x97g-8mcp), and [GHSA-gj4f-r7mf-jjxh](https://github.com/pydantic/pydantic/security/advisories/GHSA-gj4f-r7mf-jjxh). The relevant extra-data, multi-host URL and Fraction APIs have not been found in the bounded production-path search; that is not proof of unreachability. A private Pydantic 2.14.2/core 2.50.2 compatibility qualification is in progress. No pin change is credited here yet.
+
+Native Qt advisories and a version-resolved Python dependency audit are being checked separately. PySide6's configured package index still lists 6.12.0 as latest. The Snyk status on the initial PR only reports no manifest changes and supplies no fresh audit assurance. A scoped advisory lookup, pip check, configured Ruff, and an advisory scan each establish different facts; none alone proves the application secure.

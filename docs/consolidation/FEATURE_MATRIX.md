@@ -3,12 +3,11 @@
 This matrix distinguishes implemented product paths, reviewed continuation slices,
 and their remaining acceptance gates. The starting main is
 `fdc2696c23bdbfe7668348f25e3b336ce33039f7`; the local branch is
-`codex/patchtrace-completion-20261119-81e4`. The reviewed runtime/test source is `520b524beb0c837b6e50801bd97c88a2447e39fd`.
+`codex/patchtrace-completion-20261119-81e4`. The latest local runtime/test checkpoint is `bc485a6644bee406fbfd92f4bfa47fdfbb4dbcbd`; the separate diagnostic retains its earlier frozen source.
 The earlier remote checkpoint `bdc929ebd3c6aaa2563c758936beb315a10eeea0` was verified
 to equal local `af8772bf`, tree `424709da5b590e68262ea0a11b8f98bb52da8d4b`;
 it predates the later CSAF, CVE, golden-fixture and attempt-history repairs.
-A preserved source checkpoint does not qualify or merge the aggregate. The final
-PR has not yet been created; main remains `fdc2696c`, and no release is claimed.
+Draft PR #322 initially published `32cc4b04`, tree-equal to local `3cde10ae`; hosted gates remain queued. A preserved source checkpoint does not qualify or merge the aggregate. Main remains `fdc2696c`, and no release is claimed.
 
 ## Status vocabulary
 
@@ -57,6 +56,7 @@ source is checked alongside those descriptions.
 | CSAF malformed redirects | Nearly complete | Local correction maps malformed redirect URL failures to the typed refusal while closing the response and avoiding cache publication; 4 failed/6 passed before correction, then 33 passed in 1.08s. [Transport](../../src/patchtrace/intelligence/csaf/transport.py), [CSAF spec](../specs/csaf-cve-interpretation-engine.md). | Reviewed and integrated at `0a4bb12e`; aggregate qualification remains pending. No live MSRC claim follows. |
 | CVE numeric/time integrity | Nearly complete | `93c9e395` / `a4d6dd9b`: typed decimal/UTC failures, exact CVSS tenths and caller-context independence; initial 20 failures/10 controls, 10 further exactness failures, final 124 passed in 6.70s. [Recovery](RECOVERY_BATCH_3.md). | Aggregate/native qualification remains separate; no new CVE accuracy evidence is claimed. |
 | Evidence attempt-history diagnostics | Nearly complete | `254190a0` / `520b524b`: baseline 12 failed/8 passed, recovered 79 passed, two real post-write failures, final 81 passed in 37.33s. [Recovery](RECOVERED_WORK.md). | Generic exceptions say "Attempt storage unconfirmed"; returned ownership refusals can say not saved. Malformed-row retention and the underlying post-write exception remain open. |
+| Approved acquisition plan/product binding | Nearly complete | Recovery `5131bd94`, merge `d7842532`; approved scope and exact staged hashes checked before mutation, source/local pair binding retained. 255 affected and 55 integrated checks pass. [Report](RECOVERY_BATCH_5.md). | Full index proposal/window/source-entry persistence and final-head/native qualification remain open; manual grade B/tier E and unverified fix boundary remain. |
 | Forced strings-export ownership | Broken | Retained PR319 audit records source substitution and OSError cleanup races in [strings export](../../src/patchtrace/strings/export.py). | Current-source reproduction and ownership-safe publication/cleanup remain required; the cancellation repair is a separate boundary. |
 | Other strings export gaps | Partial | Existing exports need race-safe no-clobber behavior and compatible document-level extraction/truncation/redaction metadata, including empty exports. | Separate compatible implementation and regressions; see [prior review](../qa/branch-consolidation-20261118.md). |
 | Historical contributions and broad candidates | Unintegrated | 139 branches retained for semantic review; broad PR316/318 holds remain. Later PR320 `188b4962` and PR321 `976dddfb` remain separate retained observations. | No blanket adoption, supersession, branch deletion or main integration. [Promotion log](MAIN_MERGE_LOG.md). |

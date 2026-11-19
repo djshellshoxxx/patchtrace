@@ -1922,6 +1922,22 @@ Baseline: 12 failed/8 passed in 19.07s. Recovered slice: 79 passed in 42.63s. Re
 
 The first `a4d6dd9b` partition stopped at disk reserve after 9/54 groups: 2,602 passed, 8 skipped and one contextual-digest pin mismatch. Golden correction `70b82275` follows review of the exact new ROUND constant; 9 digest/cache-identity tests pass in 1.85s. The original failure remains failed. [Algorithm-digest evidence](consolidation/evidence/algorithm-digest-review-20261119.zip) preserves both outcomes.
 
-The all-856-file, 54-group qualification is running on `520b524beb0c837b6e50801bd97c88a2447e39fd` in coordinator session 74806, with its own `/tmp/pt81-final-venv` environment and results under `/tmp/pt81-final-results`. Source/tests are frozen. No aggregate pass is available yet.
+The original all-856-file diagnostic froze runtime/tests at `520b524b` and stopped after 34/54 groups at the 256 MiB temporary-storage reserve. Its JUnit counters total 15,971 tests, four failures, four teardown errors and 86 skips. The original stopped manifest and every completed receipt are preserved. Separate continuation session 78011 executes only groups 35–54 from the identical source/test/tool fingerprint, using the relocated checkout `/workspace/scratch/81e4938f4a3a/pt-candidate` (documentation head `3cde10ae`). No aggregate pass is available. Later integrated repairs require their own final-head qualification.
 
-Remote checkpoint `bdc929ebd3c6aaa2563c758936beb315a10eeea0` still contains only the earlier `af8772bf` tree. The final PR has not yet been created; main remains `fdc2696c`. No main merge or release is claimed.
+Remote checkpoint `bdc929ebd3c6aaa2563c758936beb315a10eeea0` contains the earlier `af8772bf` tree. Draft PR #322 subsequently published the reviewed candidate as `32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7`, tree `e00ee281fa43744e892bbcf806e4b07a90c15e13`, exactly matching local `3cde10ae`. Its five hosted workflow runs were queued at the latest observation. Main remains `fdc2696c`; no main merge or release is claimed.
+
+## Reviewed downstream contextual stage identity
+
+Group 12 of the frozen `520b524b` diagnostic completed with 510 passed and two failures in `test_enrichment_hit_golden.py`. Both expected the contextual stage identity derived from the previous algorithm digest. Independent review restored only the prior algorithm map in an isolated process and reproduced the entire original fingerprint exactly. A separate standard-library domain-hash calculation reproduced both old and new stage identities. The other five fingerprint fields, other three stage identities, signal sets and ranking objects are unchanged; actual cold misses and warm hits agree.
+
+The correction changes only `GOLDEN['stages']['contextual']` from `8c34cd25…` to `6e8833bd…`. All existing equality and ranking assertions remain. The combined golden/cache guard selection passed **12 tests in 1.61 seconds**. An initial command named a nonexistent test file and ran zero tests (exit 4); that failed invocation is retained separately. No production code or active frozen-candidate file changed.
+
+[Stage identity review evidence](consolidation/evidence/contextual-stage-key-review-20261119.zip) contains nine verified payloads, including the original group 12 failures, independent proof and corrected test receipts. Archive: 15,870 bytes; SHA-256 `51af1e41cb11765d3191edbdf09c0472b4575a58d6635c4fa01b2e057a161e1e`. The ongoing partition diagnostic retains its original result; this focused correction is separate evidence, not an aggregate pass.
+
+## [CONTINUATION-PHASE5-20261119]
+
+Acquisition source `5131bd94` was reviewed and integrated by `d7842532`: 255 affected tests and 55 integrated acquisition/lifecycle/identity tests pass. Conservative manual provenance remains explicit. Test-only follow-ups `f114eb96` and `bc485a66` fix injected OS faults surviving into fixture cleanup and a path-sensitive preview assertion; 85 tests pass under both cleanup policies with one existing optional skip, plus 30 symbol/backend checks. No production assertion or AF_UNIX acceptance was disabled.
+
+The original 856-file diagnostic stopped after 34/54 groups at temporary-storage reserve. JUnit totals: 15,971 tests, four failures, four errors and 86 skips. Original failures remain preserved; separate session 78011 executes only groups 35–54 at the identical source/test/tool fingerprint after a hash-verified relocation. The later integrated changes are qualified separately, and no aggregate pass is inferred. [Current evidence and commands](consolidation/TEST_RESULTS.md).
+
+Draft PR #322 is published; initial-head workflows remain queued. Attempt-retention and dependency-advisory follow-ups are active and not yet credited as integrated. Main remains unchanged. [Current handoff](consolidation/HANDOFF.md).

@@ -62,7 +62,7 @@ holds continue to govern integration.
 | Priority | Scope | Concrete evidence | Next action |
 |---|---|---|---|
 | High | Forced strings-export ownership | The retained PR319 audit records source substitution and OSError cleanup races; its cancellation correction closes a different boundary. | Reproduce and repair in the exclusively owned security worktree, with current-source controls. |
-| Medium | SPEC-51 PE metadata caching | `pe_overview/cache.py` defines a port but no production caller uses it; the `pe-metadata` storage kind and worker/store integration remain absent from the pinned baselines. | Complete the existing specification through the dedicated PE-cache worktree; keep native WinVerifyTrust acceptance separate. |
+| Medium | SPEC-51 PE metadata caching | The historical missing-cache finding was implemented at `0bc41f6b` and integrated by `6bf57557`; 840 affected passes and two native Windows skips are recorded. | Retain native WinVerifyTrust and aggregate acceptance as separate remaining gates. |
 | Medium | Broad PR316/318 consolidation | The broad branch carries inventory, package admission, native diagnostics and qualification work beyond PR319. | Preserve the mixed stack; resolve actual current failures and recover compatible slices with independent review. |
 | Deferred pending evidence | Historical research and native behavior | Patch equivalence and source-path comparisons do not establish real adapter accuracy, Windows acceptance or current contracts. | Continue scoped semantic comparison and maintain the original source identities and failure evidence. |
 
@@ -82,3 +82,11 @@ Baseline: 12 failed/8 passed in 19.07s. Recovered slice: 79 passed in 42.63s. Re
 [History evidence](evidence/history-diagnostic-20261119.zip): 9 verified payloads, 16,801 bytes; SHA-256 `60248a2e1bc603b6dba92451df639d22b7c58cc0d8153262a387242ae4dc5f67`.
 
 This recovery accounts for the named contribution only; its containing branches and unported scope remain retained.
+
+## Phase 5 — acquisition plan and product binding
+
+Source `c3868d8335a8f32f676905032dc1a6d0e9f22fd6` from retained PR #148 was adapted as `5131bd94f75fa8c920844fa4423596b63e902c4c` and merged locally by `d7842532e0a19244c8e87bb333241c83b6ebff08`. Completion preserves the explicitly approved product, checks fresh ordered hashes against the acquisition plan before mutation, and records source-pair/local-pair identities and plan provenance. It retains the conservative grade B/tier E manual classification and unverified fix boundary.
+
+Seven controls changed from five failures/two passes to green. Thirteen affected files passed 255 tests in 33.14 seconds; the integrated acquisition/lifecycle and identity selection passed 55 tests in 4.67 seconds. Root and independent source review found no blocker in this bounded recovery. Full index proposal/window/source-entry persistence remains open. [Detailed report](RECOVERY_BATCH_5.md).
+
+[Phase 5 evidence](evidence/continuation-phase5-20261119.zip) preserves 58 verified payloads: acquisition reproductions, baseline/affected/integrated results, test-harness proofs and CI queue observations. SHA-256 `a12a4571ebbbf8e15aa1fe70b751c21f496563ac35aede6fbd6711a826ca7d19`; 135,694 bytes.

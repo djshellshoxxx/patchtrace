@@ -85,7 +85,7 @@ The corresponding aggregate checks remain required on the frozen source.
 | Current complete-manifest qualification | Running on `520b524beb0c837b6e50801bd97c88a2447e39fd`: all 856 test files/54 groups, session 74806, `/tmp/pt81-final-results`; no aggregate outcome yet. |
 | Reviewed digest rebaseline | Sole new plain-data rounding constant explains the digest change; eight fresh-process checks stable. Only the contextual fixture value changes. Complete nine-case golden/cache-identity file passes9/9 in1.85s in the separate candidate checkout; no runtime change. |
 | Combined Ruff, dependency and generated-schema checks | Configured whole-tree Ruff and pip check passed at `a4d6dd9b`; schema generation exited 0 with no schema drift. Receipts are in the focused archive. |
-| Hosted aggregate Linux/Windows, repeated Qt and package gates | Not run for this local aggregate. |
+| Hosted aggregate Linux/Windows, repeated Qt and package gates | Initial PR #322 workflows are queued; no completed candidate-head gate. |
 | Existing main CI | Last observed Linux/Windows QA and all five Qt legs green; Linux packaging queued. This does not qualify the aggregate. |
 | PR319, head `a56ab13aaf9916fc12bea70ba1494075991b7f09` | Queued at the coordinator's observation; refresh before any action. |
 | Broad PR316/318 | Existing holds unchanged. |
@@ -151,6 +151,25 @@ Baseline: 12 failed/8 passed in 19.07s. Recovered slice: 79 passed in 42.63s. Re
 
 The first `a4d6dd9b` partition stopped at disk reserve after 9/54 groups: 2,602 passed, 8 skipped and one contextual-digest pin mismatch. Golden correction `70b82275` follows review of the exact new ROUND constant; 9 digest/cache-identity tests pass in 1.85s. The original failure remains failed. [Algorithm-digest evidence](evidence/algorithm-digest-review-20261119.zip) preserves both outcomes.
 
-The all-856-file, 54-group qualification is running on `520b524beb0c837b6e50801bd97c88a2447e39fd` in coordinator session 74806, with its own `/tmp/pt81-final-venv` environment and results under `/tmp/pt81-final-results`. Source/tests are frozen. No aggregate pass is available yet.
+The original all-856-file diagnostic froze runtime/tests at `520b524b` and stopped after 34/54 groups at the 256 MiB temporary-storage reserve. Its JUnit counters total 15,971 tests, four failures, four teardown errors and 86 skips. The original stopped manifest and every completed receipt are preserved. Separate continuation session 78011 executes only groups 35–54 from the identical source/test/tool fingerprint, using the relocated checkout `/workspace/scratch/81e4938f4a3a/pt-candidate` (documentation head `3cde10ae`). No aggregate pass is available. Later integrated repairs require their own final-head qualification.
 
 The earlier 45 unrun groups remain uncovered by that attempt; the new qualification starts from the complete 856-file manifest. No progress dots establish a completed aggregate count.
+
+## Phase 5 — completed corrections and split diagnostic
+
+Current local runtime/test checkpoint: `bc485a6644bee406fbfd92f4bfa47fdfbb4dbcbd`. The continuing 856-file diagnostic still uses the earlier unchanged candidate; it does not qualify these later changes.
+
+| Scope | Observed result | Evidence |
+| --- | --- | --- |
+| Contextual stage pin correction | 12 passed in 1.61 seconds; original group 12 remains 510 passed/2 failed. | [Independent stage proof](evidence/contextual-stage-key-review-20261119.zip); nine payloads, SHA-256 `51af1e41cb11765d3191edbdf09c0472b4575a58d6635c4fa01b2e057a161e1e`. |
+| Acquisition binding | Baseline 5 failed/2 passed; 255 affected passes in 33.14 seconds; integrated 55 passed in 4.67 seconds. | [Batch 5](RECOVERY_BATCH_5.md), phase 5 archive. |
+| Four-file test harness repair | 85 passed/1 existing psutil skip under both failed-only and all retention (11.99 and 8.70 seconds). | [Harness report](TEST_HARNESS_FIXES_20261119.md). |
+| Symbol scanner cleanup lifetime | Baseline 1 passed/1 teardown error; corrected 30 passed in 2.42 seconds. | Same harness report and phase 5 archive. |
+| Initial 34 candidate groups | Stopped at temporary-storage reserve; JUnit totals 15,971 tests, 4 failures, 4 errors, 86 skips. | [Stopped run archive](evidence/candidate-stopped34-20261119.zip), 71 verified payloads, 364,804 bytes, SHA-256 `608d65b6bcaa51a705b78499b44be4ff83b428de406dbdff89a2e806881dba81`. |
+| Remaining original groups 35–54 | Separate session 78011 is active at identical source/test/tool fingerprint; earlier results are not rerun or relabelled. | `/tmp/pt81-final-results/candidate-remaining-manifest.json`. |
+
+The four initial failures were two contextual stage pins, one forbidden AF_UNIX constructor and one path-sensitive preview assertion. The four errors were passed test bodies whose global OS fault patches remained active during fixture cleanup. Group 40 later exposed the same scanner-fixture lifetime issue; its original result remains 519 passed/8 skipped/1 error. The AF_UNIX test is unchanged: bare isolated Python reproduces EPERM before any PatchTrace import, so this runner cannot supply that acceptance result.
+
+The frozen checkout was relocated across filesystems after verifying all 3,946 tracked-file hashes. Its interpreter was repointed and verified using `-I`; source/test/tool fingerprint `9ecd20b2dd0f83047551f8a9f85e28c34a34236f65d77b74e46483eecf33a2b2` is unchanged. Only inactive task-owned environments were removed. No other's workspace or shared dependency environment was modified.
+
+Initial-head hosted gates remain queued. In addition to successful job conclusions, live BinDiff JSON receipts require review because Windows steps can be advisory or report blocked while the job remains green. No full-suite, current-head CI, native, release or main-merge pass is claimed.

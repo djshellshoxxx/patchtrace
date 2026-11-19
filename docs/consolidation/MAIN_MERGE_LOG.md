@@ -89,8 +89,21 @@ The sole contextual-digest golden change reflects the new explicit rounding cons
 
 Original runtime `32abf9702538dc1b2027e8ae052949bbc2436c28`, tests/spec `1c2b770d2eef6266c56504b5d081e5d6d750151e`, lifecycle correction `4d7ae4af9aa6d60fee0f70025d774c3f5b468e0b`.
 
-The all-856-file, 54-group qualification is running on `520b524beb0c837b6e50801bd97c88a2447e39fd` in coordinator session 74806, with its own `/tmp/pt81-final-venv` environment and results under `/tmp/pt81-final-results`. Source/tests are frozen. No aggregate pass is available yet.
+The original all-856-file diagnostic froze runtime/tests at `520b524b` and stopped after 34/54 groups at the 256 MiB temporary-storage reserve. Its JUnit counters total 15,971 tests, four failures, four teardown errors and 86 skips. The original stopped manifest and every completed receipt are preserved. Separate continuation session 78011 executes only groups 35–54 from the identical source/test/tool fingerprint, using the relocated checkout `/workspace/scratch/81e4938f4a3a/pt-candidate` (documentation head `3cde10ae`). No aggregate pass is available. Later integrated repairs require their own final-head qualification.
 
-Remote checkpoint `bdc929ebd3c6aaa2563c758936beb315a10eeea0` still contains only the earlier `af8772bf` tree. The final PR has not yet been created; main remains `fdc2696c`. No main merge or release is claimed.
+Remote checkpoint `bdc929ebd3c6aaa2563c758936beb315a10eeea0` still contains only the earlier `af8772bf` tree. Draft [PR #322](https://github.com/djshellshoxxx/patchtrace/pull/322) was created at `32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7`, tree `e00ee281fa43744e892bbcf806e4b07a90c15e13`, exactly matching local `3cde10ae`. Those hosted runs were queued at the latest observation. Main remains `fdc2696c`; no main merge or release is claimed.
 
 [History evidence](evidence/history-diagnostic-20261119.zip): 9 verified payloads, 16,801 bytes; SHA-256 `60248a2e1bc603b6dba92451df639d22b7c58cc0d8153262a387242ae4dc5f67`.
+
+## Phase 5 — published candidate and reviewed follow-ups
+
+Initial draft PR #322 head `32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7` has tree `e00ee281fa43744e892bbcf806e4b07a90c15e13`, exactly equal to local `3cde10ae`. A later REST snapshot found main unchanged, ahead 2/behind 0, all five workflows queued and 21 substantive jobs without an assigned runner or completed step. The queue cause is not established; no workflow was cancelled or approval bypassed.
+
+| Local follow-up | Identity | Evidence |
+| --- | --- | --- |
+| Reviewed downstream contextual stage pin | `18ccab51` | Independent old-map reconstruction; only one expected value changed; 12 related tests pass in 1.61 seconds. |
+| Acquisition binding source and merge | `5131bd94` / `d7842532` | 255 affected passes; 55 integrated acquisition/lifecycle/identity passes. |
+| Four-file harness repair | `f114eb96` | Both cleanup policies pass 85 tests with one existing optional-dependency skip. |
+| Symbol scanner fixture lifetime | `bc485a6644bee406fbfd92f4bfa47fdfbb4dbcbd` | Original teardown failure retained; 30 affected checks pass in 2.42 seconds. |
+
+The draft-readiness tool available in this session uses GraphQL and therefore is not used under the REST-only rule. If all actual final-head gates pass, an allowed route is a new non-draft PR on a new branch at that exact qualified commit, followed by its applicable checks and a normal expected-head REST merge. Preserve the original draft until replacement ancestry and scope are verified. No main promotion is recorded.

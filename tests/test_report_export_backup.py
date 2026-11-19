@@ -55,9 +55,10 @@ def test_a_failed_backup_leaves_the_old_file_and_no_staging_debris(tmp_path, pro
         if '.previous-' in str(path):
             raise PermissionError('read-only directory')
         return real_open(path, flags, mode)
-    monkeypatch.setattr(reports.os, 'open', refuse_backup)
-    with pytest.raises(ExportError, match='PT-EXPORT'):
-        export_project(project, 'md', out)
+    with monkeypatch.context() as patch:
+        patch.setattr(reports.os, 'open', refuse_backup)
+        with pytest.raises(ExportError, match='PT-EXPORT'):
+            export_project(project, 'md', out)
     assert out.read_bytes() == b'keep me\n'
     assert sorted(path.name for path in tmp_path.iterdir()) == ['p', 'report.md']
 

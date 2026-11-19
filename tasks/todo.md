@@ -1421,7 +1421,17 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [x] Preserve bounded dispositions for all 10 non-PR issues and 39 comments without closing unresolved findings.
 - [x] Preserve the focused archive, original failures and exact source identities.
 - [x] Preserve the stopped 855-file diagnostic on `a4d6dd9b`: 9/54 groups, 2,602 passed, 8 skipped, one pin mismatch; no aggregate pass.
-- [ ] Complete the new all-856-file/54-group qualification on `520b524b`, session 74806, `/tmp/pt81-final-results`.
-- [ ] Publish the final candidate and obtain its actual hosted/platform gates before guarded main promotion.
+- [x] Preserve the original 34/54-group stop at temporary-storage reserve, including every failed result.
+- [ ] Complete separate continuation groups 35–54 in session 78011 at the same source/test/tool fingerprint; no aggregate pass yet.
+- [x] Publish the initial reviewed candidate as draft PR #322; exact source tree verified.
+- [ ] Obtain actual final-head hosted/platform gates and resolve draft readiness through REST before guarded main promotion.
 - [x] Recover and independently correct the history diagnostic contribution at `254190a0`, integrated by `520b524b`; final 81 passed. Source/tests remain frozen; malformed-row retention and the post-write exception remain open.
 - [ ] Continue the retained branch/issue remainder, including planned-pair identity, bounded search/enrichment/build-environment replays and existing forced-export/native/accuracy obligations.
+
+### Phase 5 follow-ups
+
+- [x] Recover approved acquisition scope/plan binding and exact staged-byte validation; 255 affected and 55 integrated checks pass.
+- [x] Correct reviewed stage identity and test-fixture cleanup failures without removing assertions or changing frozen results.
+- [ ] Complete reviewed attempt-retention metadata/ID/cap-protection repair.
+- [ ] Qualify fixed Pydantic dependencies and retain unresolved native Qt advisory/patch availability limits.
+- [ ] Archive remaining diagnostic outcomes and publish exact accepted source; maintain all main/native/release/accuracy gates.

@@ -376,7 +376,8 @@ else:
 
 def test_digest_works_when_o_nonblock_is_absent(tmp_path, monkeypatch):
     """Windows has no os.O_NONBLOCK; the digest path must not require it."""
-    monkeypatch.delattr(os, 'O_NONBLOCK', raising=False)
     path = tmp_path / 'build.bin'
     path.write_bytes(b'abc\n')
-    assert matrix._digest(path) == (hashlib.sha256(b'abc\n').hexdigest(), 4)
+    with monkeypatch.context() as patch:
+        patch.delattr(os, 'O_NONBLOCK', raising=False)
+        assert matrix._digest(path) == (hashlib.sha256(b'abc\n').hexdigest(), 4)

@@ -369,3 +369,9 @@ The new checkpoint branch at the main SHA contains no additional product work. I
 [RECOVERED_WORK.md](RECOVERED_WORK.md) documents the confirmed installer-receipt contribution, its source attribution and verification. The source branch retains separate workflow redesign work; it is not declared wholly recovered.
 
 For retained topics, inspect the recorded unmatched commits and paths against current behavior, then recover only compatible changes with focused tests and independent review. For candidate-contained topics, finish the exact candidate gates before guarded main integration. After a main merge or source movement, refresh this snapshot. Preserve source branches and original failure evidence.
+
+## Subsequent continuation observations
+
+The frozen 320-head census and its disposition counts are unchanged. The checkpoint branch later advanced to `bdc929eb` (tree equal to local `af8772bf`), and draft PR #322 initially published `32cc4b04` (tree equal to local `3cde10ae`). These are separately observed continuation events, not retroactive additions to the frozen census.
+
+[Batch 5](RECOVERY_BATCH_5.md) compared 161 retained heads for acquisition completion identity: 107 contained the service path, with nine distinct blobs; 14 carried the historical repair from `c3868d83` / PR #148. Its narrow compatible recovery is source `5131bd94`, integrated by `d7842532`. Main and inspected PR319/320 service paths lacked that binding. This accounts for the named contribution only; the original branches and remaining scope remain retained.

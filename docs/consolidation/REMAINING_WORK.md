@@ -84,3 +84,16 @@ Prior PW-01/PW-02, real-source coverage, manual and release obligations recorded
 in [the delivery tracker](../../tasks/todo.md) remain open unless a later entry
 provides a specific accepted replacement. This checkpoint does not silently close
 older tasks.
+
+## Phase 5 current priorities
+
+- [x] Publish the initial reviewed candidate as draft PR #322 and verify its tree equals local `3cde10ae`.
+- [x] Review and integrate the downstream stage pin correction, acquisition plan/product binding, four-file harness repair and symbol scanner fixture correction through `bc485a66`.
+- [x] Preserve the stopped 34-group diagnostic and phase 5 receipts in verified archives; retain every original failure.
+- [ ] Finish only the remaining original groups 35–54 in session 78011; the source fingerprint must remain unchanged.
+- [ ] Complete independent review of malformed attempt-retention metadata, NULL/BLOB identifiers and cap-protection behavior; preserve prior originals and post-write uncertainty.
+- [ ] Qualify the isolated Pydantic security update and finish resolved Python/native Qt advisory coverage. Do not describe old-dependency tests as new-dependency qualification.
+- [ ] Publish later accepted source with exact local/remote tree equality; obtain actual final-head Linux/Windows/Qt/package/native/live evidence.
+- [ ] Resolve draft readiness through an allowed REST-only route after qualification, then perform a head-guarded main merge and verify the result.
+
+These are active follow-ups, not completed main integration. The broad branch, release, native and separate L1/L2/L3 obligations above remain open.

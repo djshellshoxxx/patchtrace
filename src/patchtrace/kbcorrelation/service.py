@@ -24,7 +24,7 @@ from pydantic import ValidationError
 from . import components as comp
 from . import pairs as pr
 from . import resolver
-from .acquire import AcquirePort, build_plan, row_for, verify_consent
+from .acquire import AcquirePlan, AcquirePort, build_plan, row_for, verify_consent
 from .acquire import acquire_pair as run_acquire
 from .cli_index import IndexPorts, load_index
 from .context import ContextBundle, RulesPort, build_bundle, vulnerability_pointer
@@ -672,7 +672,8 @@ class KbService:
             def import_current(older, newer, destination):
                 check_current()
                 return self.import_pair(rev.investigation_id, older, newer, destination, name=name,
-                                        expected_revision=owner[0], expected_source_snapshot=owner[2])
+                                        expected_revision=owner[0], expected_source_snapshot=owner[2],
+                                        _acquired=(rev, plan))
 
             check_current()
             done = run_acquire(
@@ -684,6 +685,9 @@ class KbService:
             return Outcome(5, 'cancelled', result, exc.message)
         return Outcome(done.outcome.exit, done.outcome.status,
                        {**done.outcome.result, 'acquisition': {'plan_sha': done.plan_sha,
+                                                               'source_pair_id': plan.pair_id,
+                                                               'verified_pair_id': done.outcome.result['pair']['pair_id'],
+                                                               'scope_id': rev.selected_scope_id,
                                                                'downloads': list(done.downloads)}},
                        done.outcome.text, done.outcome.warnings, done.outcome.error)
 
@@ -693,7 +697,8 @@ class KbService:
                     confirm_same_component: bool = False, dry_run: bool = False,
                     expected_pair_id: str | None = None, expected_revision: int | None = None,
                     expected_source_snapshot: tuple[str, ...] | None = None,
-                    selected_product: ProductScope | None = None) -> Outcome:
+                    selected_product: ProductScope | None = None,
+                    _acquired: tuple[InvestigationRevision, AcquirePlan] | None = None) -> Outcome:
         if selected_product is not None and (investigation != 'new' or expected_revision is not None
                                              or expected_source_snapshot is None):
             raise _fail('PT-KBC-INPUT', 'A product-only pair needs a new investigation and captured source records.')
@@ -702,6 +707,13 @@ class KbService:
             rev = None if investigation == 'new' else self._get(ws, investigation)
             if expected_revision is not None and (rev is None or rev.revision != expected_revision):
                 raise _fail('PT-KBC-STALE', 'the investigation changed after preview; review the pair again')
+            if _acquired is not None:
+                captured, acquisition_plan = _acquired
+                if rev is None or (rev.investigation_id, rev.revision) != (captured.investigation_id,
+                                                                        captured.revision):
+                    raise _fail('PT-KBC-STALE', 'the acquisition belongs to another investigation revision')
+                if (older_f.sha256, newer_f.sha256) != (acquisition_plan.older_sha, acquisition_plan.newer_sha):
+                    raise _fail('PT-KBC-VERIFY', 'the staged files changed after acquisition verification')
             admitted_index = None
             admitted_search = None
             unreadable = ()
@@ -718,6 +730,10 @@ class KbService:
                 admitted_search = self._saved_search(ws, rev, admitted_index, unreadable=unreadable)
             scope_id = (selected_product.scope_id if selected_product is not None else
                         rev.selected_scope_id if rev and rev.selected_scope_id else UNSELECTED_SCOPE)
+            if _acquired is not None:
+                scope_id = captured.selected_scope_id
+                if scope_id is None or scope_id not in rev.scope_ids:
+                    raise _fail('PT-KBC-STALE', 'the planned product mapping changed; review the acquisition again')
             if scope_id != UNSELECTED_SCOPE:
                 index = admitted_index
                 if index is None:
@@ -746,7 +762,14 @@ class KbService:
             approval = ({'selected_product': selected_product,
                          'product_coverage': admitted_index.coverage(now=self._now())}
                         if selected_product is not None else {})
+            if _acquired is not None and rev.selected_scope_id != scope_id:
+                rev = self._step(ws, rev, 'product_selected', scope_id=scope_id)
             rev = self._approve_pair(ws, rev, pair, older_f, newer_f, confirm_same_component, **approval)
+            if _acquired is not None:
+                self._decide(ws, rev.investigation_id, 'acquisition-pair-binding', acquisition_plan.pair_id,
+                             pair.pair_id, f'Acquisition plan {acquisition_plan.plan_sha}; scope {scope_id}; '
+                             f'older {older_f.sha256}; newer {newer_f.sha256}. '
+                             'Local verification is manual grade B and does not prove lineage.')
             index = admitted_index
             if index is None:
                 index, _ = load_index(ws, self.ports)
