@@ -434,6 +434,29 @@ def test_untracked_acceptance_implementation_cannot_claim_an_older_tree(net, tmp
         net._source()
 
 
+def test_untracked_source_refusal_survives_host_git_normalization(net, tmp_path, monkeypatch):
+    config = tmp_path / 'authored.gitconfig'
+    config.write_bytes(b'[core]\n\tautocrlf = true\n\teol = crlf\n')
+    monkeypatch.setenv('GIT_CONFIG_GLOBAL', str(config))
+    monkeypatch.setenv('GIT_CONFIG_NOSYSTEM', '1')
+    original = Path.write_text
+
+    def write(path, data, *args, **kwargs):
+        if kwargs.get('newline') is None:
+            kwargs['newline'] = '\r\n'
+        return original(path, data, *args, **kwargs)
+
+    monkeypatch.setattr(Path, 'write_text', write)
+    root = tmp_path / 'repo'
+    root.mkdir()
+    # The original assertion must still reach the untracked implementation
+    # refusal, not an earlier working-tree size mismatch from its fixture.
+    test_untracked_acceptance_implementation_cannot_claim_an_older_tree(net, root, monkeypatch)
+    assert (root / 'README').read_bytes() == b'authored source ownership control\n'
+    assert subprocess.check_output(['git', '-C', str(root), 'config', '--local', '--get',
+                                    'core.autocrlf']).strip() == b'false'
+
+
 def test_actual_adapter_routes_both_probe_and_diff_through_selected_runner(tmp_path, monkeypatch):
     """Real adapter/scheduler and authored fake child; not real BinDiff evidence."""
     import test_live_bindiff as live

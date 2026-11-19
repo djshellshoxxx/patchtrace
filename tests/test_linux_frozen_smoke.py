@@ -2,9 +2,10 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import subprocess
 import sys
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from types import SimpleNamespace
 
 import pytest
@@ -101,4 +102,61 @@ def test_full_smoke_failure_or_timeout_stops_archive_publication(builder, failur
     with pytest.raises(error):
         module.main([])
     assert [call[0] for call in calls] == ['freeze', 'full-smoke']
+    assert not list((root / 'dist').glob('*.tar.gz*'))
+
+
+@pytest.fixture
+def windows_relative_inventory(builder, monkeypatch):
+    """Real inert file iteration with Windows relative-name string semantics."""
+    module, root, _, _, _ = builder
+    observed = []
+
+    class WindowsRelativePath(type(root)):
+        def relative_to(self, *args, **kwargs):
+            relative = PureWindowsPath(*super().relative_to(*args, **kwargs).parts)
+            observed.append(str(relative))
+            return relative
+
+    monkeypatch.setattr(module, 'Path', WindowsRelativePath)
+    return observed
+
+
+def test_linux_smoke_accepts_canonical_windows_relative_inventory(builder, monkeypatch, windows_relative_inventory):
+    test_linux_builder_requires_complete_smoke_before_archiving(builder, monkeypatch, None)
+    module, root, _, _, _ = builder
+    inventory = json.loads((root / 'dist/PatchTrace/file-inventory.json').read_bytes())
+    assert any('\\' in name for name in windows_relative_inventory)
+    assert all('\\' not in name for name in inventory)
+    assert '_internal/google/_upb/_message.authored' in inventory
+    assert '_internal/' + module.EXTRACTOR_SCRIPT in inventory
+    assert '_internal/' + module.LAUNCHER_SCRIPT in inventory
+
+
+@pytest.mark.parametrize('failure', ['exit', 'timeout'])
+def test_full_smoke_refusal_survives_windows_relative_inventory(builder, windows_relative_inventory, failure):
+    test_full_smoke_failure_or_timeout_stops_archive_publication(builder, failure)
+
+
+@pytest.mark.parametrize('damage', ['extension-missing', 'extractor-missing', 'extractor-changed',
+                                   'launcher-missing', 'launcher-changed', 'unexpected-library'])
+def test_resource_refusal_survives_windows_relative_inventory(builder, windows_relative_inventory, damage):
+    module, root, _, calls, _ = builder
+    package = root / 'dist/PatchTrace'
+    if damage == 'extension-missing':
+        (package / '_internal/google/_upb/_message.authored').unlink()
+        reason = 'extension missing'
+    elif damage == 'unexpected-library':
+        (package / '_internal/libQt6Qml.authored').write_bytes(b'inert unexpected library')
+        reason = 'Unexpected unused'
+    else:
+        script = module.EXTRACTOR_SCRIPT if damage.startswith('extractor') else module.LAUNCHER_SCRIPT
+        path = package / '_internal' / script
+        if damage.endswith('missing'):
+            path.unlink()
+        else:
+            path.write_bytes(b'authored mismatched packaged data')
+        reason = 'Extractor script' if damage.startswith('extractor') else 'Ghidriff launcher'
+    with pytest.raises(RuntimeError, match=reason):
+        module.main([])
+    assert [call[0] for call in calls] == ['freeze']
     assert not list((root / 'dist').glob('*.tar.gz*'))

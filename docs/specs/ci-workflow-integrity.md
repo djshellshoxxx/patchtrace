@@ -75,6 +75,43 @@ is inferred from them. The existing real source-CLI smoke verifies the reused
 harness separately. Hosted execution of the actual frozen Linux package remains
 required before any frozen compatibility claim.
 
+## Authored fixture bytes and Linux inventory spelling (2026-11-19)
+
+Exact-byte source and scanner fixtures must create their declared UTF-8/LF
+bytes without host text-newline conversion. This applies to the shared authored
+qualification checkout, the reviewed bootstrap/audit requirements fixtures,
+and the small authored repositories used to prove publication holds and
+untracked-source refusal. Pin `core.autocrlf=false` in each authored repository
+before staging its bytes. A caller's normalizing Git defaults cannot silently
+change the evidence that the fixture claims to have authored. This requirement
+changes fixture construction, never the source or receipt validators: actual
+CRLF, changed source bytes, missing inputs and malformed evidence remain subject
+to their original refusal rules.
+
+The Linux builder's regular-file inventory is a sorted sequence of relative,
+slash-separated names, independent of the host path object's string spelling.
+Project each enumerated relative path with its POSIX spelling. Preserve the
+same file iteration, regular-file checks, actual Linux names/bytes, unwanted
+library refusal, required protobuf extension, exact extractor/launcher bytes,
+full frozen smoke and no-archive-on-failure behavior. A Windows-style relative
+path model must not stand in for a real Linux frozen build.
+
+Portable controls deliberately apply CRLF text conversion, use an isolated
+authored Git configuration with normalization enabled, and return Windows-style
+relative path objects while exercising the actual builder with inert files and
+its existing injected runner. Preserve the existing hash/identity, same-size
+mutation, hold, untracked-source, smoke and failure assertions. No skip, xfail,
+weakened predicate, scanner invocation, engine or target execution supplies this
+repair. Every real child in these controls is a bounded, reviewed operation on
+authored local data; no fetch or network access is required.
+
+The original Windows full QA at head `771e5a77`, job `135175350823`, remains a
+51-failure result. Its explicit CRLF and path-spelling failures are retained.
+The two tiny Git-source size/type failures did not capture their actual working
+bytes, blob bytes or effective Git settings; a portable reproduction establishes
+fixture reproducibility weakness without claiming those omitted facts for the
+historical job. Corrected hosted Windows/full/frozen acceptance remains separate.
+
 ## Dependency-hash scope
 
 The historical dependency-hash finding is separate from action pinning. The

@@ -77,6 +77,18 @@ blocks publication; no scanner pass is synthesized. Hermetic verification lives
 in `tests/test_release_qualification.py` and the existing release/bundle workflow
 contract tests. Native and hosted qualification remain separate from these tests.
 
+## Cross-platform CI fixture construction (2026-11-19)
+
+`tests/test_release_qualification.py`, `test_release_source_stat.py`,
+`test_dependency_security.py` and `test_windows_bindiff_network.py` author exact
+LF fixture bytes and isolated local Git normalization settings while preserving
+the real source/receipt validators. `tools/build_linux.py` projects enumerated
+inventory names to slash-separated relative strings; `test_linux_frozen_smoke.py`
+exercises that path with inert files, modeled Windows relative paths and the
+existing injected runner. Contract: `docs/specs/ci-workflow-integrity.md`.
+Portable reproduction and fixture correction do not relabel original hosted
+failures or qualify a native/frozen package.
+
 | Module | Responsibility | Verification seam |
 |---|---|---|
 | `tools/branch_inventory.py` | Read-only full-history branch ancestry, patch evidence and exact-tip inventory replay; no ref mutation or deletion authorization | Real authored Git graphs and atomic report preservation in `tests/test_branch_inventory.py` |

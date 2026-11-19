@@ -466,6 +466,52 @@ def test_scanning_a_held_commit_does_not_change_publication_hold(scan, tmp_path)
         importlib.import_module('tools.release_qualification').checked_source(root, sha)
 
 
+@pytest.fixture
+def host_crlf_text(monkeypatch):
+    """Author the same default-newline translation that Windows text I/O applies."""
+    original = Path.write_text
+
+    def write(path, data, *args, **kwargs):
+        if kwargs.get('newline') is None:
+            kwargs['newline'] = '\r\n'
+        return original(path, data, *args, **kwargs)
+
+    monkeypatch.setattr(Path, 'write_text', write)
+
+
+@pytest.mark.parametrize('static,receipt', [(False, 'bootstrap-pip.txt'), (True, 'bootstrap-pip.txt'),
+                                           (False, 'audit-requirements.txt')])
+def test_authored_receipts_remain_exact_under_host_text_newlines(scan, tmp_path, project,
+                                                               host_crlf_text, static, receipt):
+    out = tmp_path / 'evidence'
+    out.mkdir()
+    expected = authored_evidence(scan, out, tmp_path, project, static=static)
+    wanted = scan.bootstrap_requirements_text() if receipt == 'bootstrap-pip.txt' else (
+        scan.requirements_text(json.loads((out / 'inventory.json').read_bytes())))
+    assert (out / receipt).read_bytes() == wanted.encode('utf-8')
+    assert scan.validate_evidence(out, expected, tmp_path, project)['kind'] == (
+        'static' if static else 'dependency')
+
+
+@pytest.mark.parametrize('autocrlf', ['true', 'false'])
+def test_authored_repository_survives_host_git_normalization(scan, tmp_path, monkeypatch,
+                                                            host_crlf_text, autocrlf):
+    config = tmp_path / 'authored.gitconfig'
+    config.write_bytes(f'[core]\n\tautocrlf = {autocrlf}\n\teol = crlf\n'.encode('ascii'))
+    monkeypatch.setenv('GIT_CONFIG_GLOBAL', str(config))
+    monkeypatch.setenv('GIT_CONFIG_NOSYSTEM', '1')
+    root = tmp_path / 'repo'
+    git, sha = authored_repository(root)
+    working = (root / 'src/example.py').read_bytes()
+    committed = subprocess.check_output(['git', '-C', str(root), 'show', f'{sha}:src/example.py'])
+    setting = git('config', '--show-origin', '--get', 'core.autocrlf')
+    assert working == committed == b'VALUE = 1\n', (working, committed, setting)
+    assert git('config', '--local', '--get', 'core.autocrlf') == 'false'
+    assert scan.checked_tree(root, sha) == git('rev-parse', 'HEAD^{tree}')
+    with pytest.raises(scan.EvidenceError, match=r'\[no release\]'):
+        importlib.import_module('tools.release_qualification').checked_source(root, sha)
+
+
 @pytest.mark.parametrize('hide', ['assume-unchanged', 'skip-worktree', 'replace', 'untracked'])
 def test_source_identity_never_uses_hidden_index_or_replacement_bytes(scan, tmp_path, hide):
     root = tmp_path / 'repo'

@@ -6,11 +6,25 @@ import importlib
 import json
 import os
 import stat
+import subprocess
 from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
 from test_release_qualification import authored_checkout
+
+
+@pytest.fixture
+def host_crlf_text(monkeypatch):
+    """Model Windows text output only; keep the real host's file/Git semantics."""
+    original = Path.write_text
+
+    def write(path, data, *args, **kwargs):
+        if kwargs.get('newline') is None:
+            kwargs['newline'] = '\r\n'
+        return original(path, data, *args, **kwargs)
+
+    monkeypatch.setattr(Path, 'write_text', write)
 
 
 @pytest.fixture
@@ -198,6 +212,27 @@ def test_final_tree_pass_observes_post_hash_change_time(gate, tmp_path, monkeypa
     else:
         check(root, source)
         assert not changes and path.read_bytes() == b'authored data\n'
+
+
+def test_authored_checkout_exact_bytes_survive_host_text_newlines(tmp_path, host_crlf_text):
+    witness = tmp_path / 'host-text.txt'
+    witness.write_text('authored data\n')
+    assert witness.read_bytes() == b'authored data\r\n'  # The model actually translates text.
+    root, source = authored_checkout(tmp_path)
+    working = (root / 'sample.txt').read_bytes()
+    committed = subprocess.check_output(['git', '-C', str(root), 'show', f'{source}:sample.txt'])
+    assert working == committed == b'authored data\n'
+
+
+@pytest.mark.parametrize('consumer', ['publication', 'dependency'])
+@pytest.mark.parametrize('change', [False, True])
+def test_final_change_assertions_survive_host_text_newlines(gate, tmp_path, monkeypatch,
+                                                          host_crlf_text, consumer, change):
+    # Replay the unchanged positive/same-size-mutation assertions with authored
+    # CRLF translation; this is not a simulated Windows metadata acceptance.
+    platform = 'native-windows' if os.name == 'nt' else 'posix'
+    test_final_tree_pass_observes_post_hash_change_time(gate, tmp_path, monkeypatch,
+                                                       consumer, change, platform)
 
 
 @pytest.mark.parametrize('suffix', ['.stdout', '.cmd'])
