@@ -312,7 +312,9 @@ I/O limits. Diagnostic capture does not decompress instruction blobs.
 Every component reports complete, prefix, omitted or error status, its retained
 counts, and a fixed bounded reason where incomplete. A function prefix is never
 presented as the complete row set. A capped/unreadable binary payload has no
-fabricated observed digest. The envelope is complete only when all its declared
+fabricated observed digest and explicitly declares zero retained bytes/records
+or rows. An unavailable function projection declares zero rows. A final envelope
+byte-cap refusal is reported as such even when no envelope can fit. The envelope is complete only when all its declared
 components are complete. Count/query/deadline failures cannot label the IR
 snapshot complete. Preserve independently complete components when another is
 unavailable. A bounded failure envelope is attempted when possible.

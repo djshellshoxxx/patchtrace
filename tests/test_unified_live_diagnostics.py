@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import base64
 import hashlib
+import io
 import json
 from pathlib import Path
 from types import SimpleNamespace
@@ -15,15 +16,16 @@ from patchtrace.unified.ir import schema
 from patchtrace.unified.ir.ingest import ExpectedSide, ingest
 
 
-def build_result(root, *, label='older', ordinal=1, mode='analyze', alias='first-alias', text='RET #0', count=1):
+def build_result(root, *, label='older', ordinal=1, mode='analyze', alias='first-alias', text='RET #0', count=1,
+                 sha=SHA):
     directory = root / f'{label}-{ordinal}-{mode}'
     directory.mkdir()
     records = [function(0x1000 + 16 * n, [('ret',)], name=f'fn{n}', aliases=(alias,), texts=[text])
                for n in range(count)]
-    raw = write_jsonl(directory / 'source.jsonl', document_set(*records, sha=SHA, mode=mode))
+    raw = write_jsonl(directory / 'source.jsonl', document_set(*records, sha=sha, mode=mode))
     ir = directory / 'ir'
     ir.mkdir()
-    built = ingest(raw, ExpectedSide(label, SHA, pe_view(), mode=mode), out_dir=ir)
+    built = ingest(raw, ExpectedSide(label, sha, pe_view(), mode=mode), out_dir=ir)
     packed = None
     if mode == 'analyze':
         packed = directory / 'program.gzf'
@@ -356,3 +358,99 @@ def test_partial_write_is_visible_and_cannot_be_announced_saved(setup, monkeypat
     assert path.read_bytes() and not path.read_bytes().endswith(b'}\n')
     stderr = capsys.readouterr().err
     assert 'write-error' in stderr and 'sensitive write details' not in stderr and 'saved' not in stderr
+
+
+def test_omitted_components_declare_zero_retention(setup, monkeypatch):
+    tool, work, out, side = setup
+    result = build_result(work)
+    monkeypatch.setattr(tool, 'DIAGNOSTIC_JSONL_BYTES', 1)
+    monkeypatch.setattr(tool, 'DIAGNOSTIC_IR_BYTES', 1)
+    writer(setup).capture(side, 1, result)
+    doc = documents(out)[0][1]
+    assert doc['jsonl']['retained_bytes'] == doc['jsonl']['retained_records'] == 0
+    assert doc['ir']['retained_bytes'] == doc['ir']['retained_rows'] == 0
+    assert doc['functions']['retained_rows'] == 0 and doc['functions']['rows'] == []
+    assert all(doc[key]['status'] == 'omitted' for key in ('jsonl', 'ir', 'functions'))
+
+
+def test_ir_growth_after_stat_still_stops_at_cap_plus_one(setup, monkeypatch):
+    tool, work, out, side = setup
+    result = build_result(work)
+    target = result['directory'] / schema.DB_NAME
+    original_bytes = target.read_bytes()
+    original_open = Path.open
+    requests, returned = [], []
+
+    class Growing(io.BytesIO):
+        def read(self, count=-1):
+            assert 0 < count <= 65536
+            requests.append(count)
+            data = super().read(count)
+            returned.append(len(data))
+            return data
+
+    def open_after_growth(path, *args, **kwargs):
+        if path == target:
+            return Growing(original_bytes + b'grew after stat')
+        return original_open(path, *args, **kwargs)
+
+    monkeypatch.setattr(tool, 'DIAGNOSTIC_IR_BYTES', len(original_bytes))
+    monkeypatch.setattr(Path, 'open', open_after_growth)
+    writer(setup).capture(side, 1, result)
+    doc = documents(out)[0][1]
+    assert doc['ir']['reason'] == 'byte-cap'
+    assert requests and sum(returned) == len(original_bytes) + 1
+
+
+def test_final_envelope_limit_includes_lf_and_reports_exact_refusal(setup, monkeypatch, capsys):
+    tool, work, out, side = setup
+    result = build_result(work)
+    writer(setup).capture(side, 1, result)
+    initial_size = documents(out)[0][0].stat().st_size
+    monkeypatch.setattr(tool, 'DIAGNOSTIC_FILE_BYTES', initial_size)
+    writer(setup).capture(side, 1, result)
+    assert len(documents(out)) == 2 and all(path.stat().st_size == initial_size for path, _doc in documents(out))
+    capsys.readouterr()
+    monkeypatch.setattr(tool, 'DIAGNOSTIC_FILE_BYTES', initial_size - 1)
+    writer(setup).capture(side, 1, result)
+    assert len(documents(out)) == 2
+    assert 'byte-cap' in capsys.readouterr().err
+
+
+def test_four_slots_share_one_invocation_and_one_ordered_pair(setup):
+    tool, work, out, side = setup
+    diag = writer(setup)
+    for label in ('older', 'newer'):
+        current = SimpleNamespace(label=label, sha256=SHA if label == 'older' else '12' * 32,
+                                  other_sha256='12' * 32 if label == 'older' else SHA, work=work, pe=pe_view())
+        for ordinal in (1, 2):
+            result = build_result(work, label=label, ordinal=ordinal, sha=current.sha256)
+            diag.capture(current, ordinal, result)
+    captured = documents(out)
+    assert len(captured) == 4 and len({doc['invocation_id'] for _p, doc in captured}) == 1
+    assert all(doc['metadata']['pair'] == {'older': SHA, 'newer': '12' * 32} for _p, doc in captured)
+    before = {path: path.read_bytes() for path, _doc in captured}
+    diag.capture(side, 1, result)
+    assert {path: path.read_bytes() for path, _doc in documents(out)} == before
+    assert sum(len(data) for data in before.values()) <= tool.DIAGNOSTIC_PAIR_BYTES
+
+
+@pytest.mark.parametrize('sink_error', [OSError, KeyboardInterrupt])
+def test_reporting_failure_preserves_an_already_active_primary(setup, monkeypatch, sink_error):
+    tool, work, _out, side = setup
+    result = build_result(work)
+    primary = ValueError('original operation error')
+
+    class BrokenStream:
+        def write(self, _text):
+            raise sink_error('secondary sink error')
+
+    monkeypatch.setattr(tool.sys, 'stderr', BrokenStream())
+    monkeypatch.setattr(tool, 'DIAGNOSTIC_PAIR_BYTES', 0)
+    with pytest.raises(ValueError) as caught:
+        try:
+            raise primary
+        except ValueError:
+            writer(setup).capture(side, 1, result)
+            raise
+    assert caught.value is primary
