@@ -1912,3 +1912,13 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [ ] Obtain actual Windows formatter observations; keep its cap/assertion intact.
 - [ ] Diagnose and complete the full Qt repeat gates without reducing repeat coverage.
 - [ ] Complete the append-only PR publication, then continue Windows repairs, pure contracts and queued native ownership work; require new exact-head platform gates.
+
+
+### Windows portability integration — 2026-11-19
+
+- [x] Verify and integrate original19-red/1-positive fixture repair, preserving144 assertions/110 test identities and both recorder errors.
+- [x] Pass142 exact integrated portability/formatter/registry cases, verify42 imports/69 unchanged author imports and full normal lint.
+- [x] Preserve all420 original checkpoint payloads as lossless archive parts; preserve original branch/history and transport/layout errors.
+- [ ] Complete expected-head PR append and read back the exact ref, tree, parents and body.
+- [ ] Complete actual Windows fixture/core/formatter gates and full Qt repeats; original failed/cancelled/skipped outcomes remain unverified.
+- [ ] Continue pure admission contracts, core metadata-family correction and native leaf/reader work with independent review before further integration.

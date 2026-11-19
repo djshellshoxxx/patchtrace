@@ -531,3 +531,23 @@ No repeats, timeouts, assertions or workflow sources are changed. Actual cancell
 and slow-test causes are not established. Windows repairs and pure contracts
 continue independently; main/native/platform/package/security/beta acceptance
 remains blocked. [Complete observations and source evidence](../../qa/formatter-qt-observations-20261119/README.md).
+
+
+## Independently integrated Windows fixture repair — 2026-11-19
+
+Integrated source `11c3ffabf25d8527732b45bc2d949565d91debc5` retains author spec24651bf5/source81590f93/QA9e228d84.
+Exact LF fixture bytes, local Git normalization pins and one Linux inventory
+`as_posix` projection preserve all144 original assertions/110 test identities.
+Root verifies127 author payloads,74 Git snapshots,264 historical import pairs,
+both recorder omissions and original19-red/1-positive result. Final author
+affected gate:678pass/8 native-Windows skips; those skips remain unverified.
+
+Root's actual integrated replay passes142 with zero errors/skips in1.04seconds:
+20 portability,9 formatter and113 specification-registry cases;42 canonical
+imports and all69 author affected imports match. Full normal Ruff passes. The
+src tree equals the preceding strict80-finding scan source; no waiver or rerun.
+Original2,043 and142 counts are source-bound and not additive. The complete
+original checkpoint is losslessly split for transport; old local branches and
+commit history remain intact. Fresh expected-head PR publication is next.
+Main/platform/native/package/security/beta remain blocked. [Complete review
+and exact-source evidence](../../qa/windows-portability-integration-20261119/README.md).
