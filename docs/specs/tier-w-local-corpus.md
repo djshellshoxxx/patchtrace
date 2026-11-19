@@ -62,6 +62,72 @@ Lineage roles come from `lineage.assign_roles`. Recomputing lineages with body-h
 - Cancel: Ctrl-C or the `CANCEL` file. A watcher thread sets the transport's cancel event, so partial temporary files are removed and the ledger records `cancelled`.
 - Exit codes: 0 done, 1 some files failed, 2 configuration/consent/disk, 5 cancelled.
 
+### 4.5 Saved-plan library recovery (2026-11-19)
+
+`fetch_plan.py` selectively recovers the exact-preview design from commits
+`c0255b78`, `f44454ad` and `5b7b2591`. Existing single-file fetch APIs and the
+throttled `SymbolTransport` remain available. The network CLI adapters remain
+BLOCKED until separately implemented and reviewed; a saved library plan does
+not implicitly enable a command or grant network consent.
+
+The strict `tier-w-fetch-plan/1` contract contains only public file identity,
+selected pair ids, source-document digests, exact symbol-server URLs, per-file
+budgets and exclusions. Binary entries bind filename, size, SHA-256, Winbindex
+record digest, timestamp and SizeOfImage. PDB entries additionally bind their
+source binary digest and size, CodeView GUID/age and byte cap. Mixed identity
+fields, noncanonical URLs, unknown fields, duplicate identities, foreign pair
+references, device filenames and malformed bounds are refused. A binary cap is
+its exact expected size and cannot exceed the current 512 MiB acquisition cap;
+PDB caps remain at most 2048 MiB. Plans have a 64 MiB serialized limit, at most
+100,000 entries and at most 1,000,000 aggregate pair references.
+
+Offline binary planning revalidates current pairs/catalogues, requires unique
+binary and pair identities, checks every selected binary against its catalogue
+record, and records unavailable, unresolved, wrong-machine, oversized and
+deferred entries. PDB planning reads only the selected verified local binary
+bytes and derives CodeView requests from that same immutable byte snapshot.
+The PDB plan binds the exact canonical binary-plan digest. No remote PDB URL is
+guessed before a local PE has passed digest, size and AMD64 PE checks.
+
+Plan saving uses exclusive, source-owned publication outside the repository;
+an existing byte-identical plan may be reused, but conflicting bytes are
+preserved. Reading uses a held, bounded ordinary file and accepts only the
+canonical sorted JSON bytes with their final newline. Execution checks the
+displayed file digest, a fresh offline recomputation and exact host/URL consent
+before a request. Binary and PDB operations require independent confirmation.
+
+The saved-plan executor uses the current throttled transport, checks the local
+`CANCEL` switch and the caller's event, repeats disk preflight before each item,
+and records the plan digest, public source URL, redirect host only, observed
+size/digest and result in the existing hash-chained ledger. Publication is
+exclusive through `owned_publication`; an existing destination is reused only
+after bounded exact-byte and format/identity verification. An observed invalid
+or conflicting destination is preserved and refused. This stronger saved-plan
+policy does not change the legacy single-file API's explicit refetch behavior.
+Verified staging files may remain after a failure, because cleanup must not
+unlink a pathname that another writer may have replaced. Permission flags are
+not an integrity receipt; every reuse revalidates the actual bytes.
+
+Transport recovery keeps the existing exact-URL consent, host allowlist,
+single blob redirect, retries, per-attempt deadline and request throttle. It
+rejects invalid cap/interval values before requests, streams into an owned
+temporary handle, verifies the held bytes, and publishes the completed stage
+exclusively. The existing 512 MiB binary and 2048 MiB PDB admission limits do
+not authorize whole-file memory allocations. The shared `owned_publication`
+stream API hashes/copies in chunks of at most 1 MiB and retains one 32-byte
+digest per 64 KiB verification block (at most 1 MiB of digests for a 2 GiB
+file). A snapshot range read verifies every intersecting block before returning
+data and is capped at 16 MiB. Source identity, size and change metadata remain
+bound to the held descriptor. The destination's complete digest is rechecked
+before a successful publication receipt; existing byte-oriented callers retain
+their previous API and behavior. Optional expected PDB GUID/age checks parse
+those same verified blocks, with bounded identity-header/module reads rather
+than materializing entire PDB or DBI streams. MSF directory/stream-count limits
+remain separate parser budgets.
+Interrupted or failed cleanup preserves the primary failure and never deletes
+a replacement staging pathname. Tests use fake responses and self-made local
+PE/PDB fixtures only; no live download or native compatibility is implied.
+
 ## 5. Symbol export (decision and contracts)
 5.1 Options evaluated (decision: (a) is primary; (d) supplies the PDB-level facts; (b) is optional; (c) is rejected):
 
@@ -270,6 +336,96 @@ most the initially admitted size plus one byte, capped at the limit plus one.
 Descriptor identity, size and modification observations must remain stable.
 Nonregular files are refused without waiting for FIFO input. These checks bound
 individual input reads; they do not certify a global corpus memory budget.
+
+### Offline audit and human review adapters (2026-11-19)
+
+`audit` uses the existing sampler with `--seed` (default `1`), `--rate` (default
+0.05), `--size-change` (default 0.40) and `--producer` (default `msf`). Parameters
+are finite and bounded before reading inputs. The adapter validates the selected
+corpus, pair/binary identities and label-detail ownership before sampling. It
+deduplicates identical candidate identities across engines and refuses conflicting
+labels or sides. Candidates take precedence; truth is used only when no labelled
+candidates exist. Missing label files are counted, never treated as negative labels.
+The complete set of label-detail input bytes has a 64 MiB admission budget.
+
+The new adapter module is `tier_w/review_cli.py`; the pure `audit.py` sampler and
+error-rate calculation remain the authority. Selected symbol maps must identify
+the exact binary and producer. Body hashes and capped previews come from verified
+local PE readers and the recorded body ranges; no target is executed. All input
+admission and queue construction finish before publication. Key and queue each
+have a 64 MiB byte budget. Publication is exclusive; an identical audit can be
+resumed, while changed parameters or inputs cannot overwrite a prior audit.
+An incomplete key/queue pair cannot be reviewed or scored.
+
+The CLI queue header adds `audit_sha256`, the exact hidden-key byte digest,
+`pairs_sha256` over the canonical typed pairs document, and `labels_sha256` over
+the ordered pair ids and exact label-detail digests (including missing files).
+Review and report revalidate these inputs and recompute the seeded sample before
+admitting a saved key. A changed population or binary identity cannot reuse the
+old audit merely because its corpus and pair ids stayed the same. The header
+also records the symbol-map producer. Queue sides are recomputed from that
+producer and verified images before review or scoring: edited addresses, sizes,
+body hashes or previews cannot be adopted just by retaining a valid item id. The
+queue has the seeded order, exact selected item set and strata, and only the
+existing blind side fields. Unknown fields, duplicate identities, foreign corpus
+or pair ownership and inconsistent population counts are input errors. Readers
+require this binding; an older unbound queue is not silently admitted.
+The strict CLI profiles `AuditQueueHeader`, `AuditQueueItem` and
+`AuditAnnotation` have generated JSON schemas under `docs/schemas/calibration/`;
+the existing `python -m tools.calibration.schemas` generator reproduces them.
+
+`review --annotator NAME` requires an interactive input terminal. It calls the
+existing `label.run_terminal`; preview and prompts go to stderr and stdout still
+contains exactly one JSON summary. Only an actual human response creates an
+annotation. Quit/EOF leaves remaining items pending; cancellation preserves
+completed annotations. One annotator is admitted per audit, matching the existing
+single-annotator report. Hash-chained events additionally bind the Tier-W marker,
+corpus id, exact audit-key digest and exact queue digest. Events use bounded strict
+JSON, exact field/answer validation and unique item ownership before appending or
+reporting; altered chains and foreign events are refused. The 64 MiB log budget is
+checked before each append; individual events have a 1 MiB admission limit. This
+adapter refuses observed hard-linked or nonordinary annotation/report write
+targets. This is a local single-writer workflow, not an
+authenticity signature or a concurrent-writer transaction.
+
+`audit-report` computes the existing population-weighted report from that key and
+verified human log. Zero or incomplete review remains `insufficient`; `weak` and
+`insufficient` return partial exit 1. It never fabricates answers or promotes a
+native result. Evaluation checks corpus ownership and refuses a saved managed
+audit report that no longer matches its key/queue/annotations. Invalid inputs
+leave earlier reports unchanged; an existing report with foreign corpus ownership
+or malformed data is not adopted for replacement. File replacement and multi-file crash recovery
+retain the existing local publication limitations.
+Cancellation is checked between key and queue publication; a completed key is
+retained and an exact rerun can finish its missing queue after cancellation is
+cleared. No incomplete pair is reported as reviewable.
+
+### Offline runner CLI adapter (2026-11-19)
+
+`run` now calls the reviewed runner in section 9 for `symbols-hidden` only.
+It requires explicit `--python` and `--ghidra-dir` configuration, checked using
+the backend's filesystem-only admission before any project is created. The
+per-pair `--timeout` is an integer from 60 through 86,400 seconds. Missing tool
+configuration returns BLOCKED; invalid configuration returns exit 2. An empty
+pairs document returns partial without selecting a new output generation.
+Direct native CLI execution is refused in CI, as in `run-local`; synthetic
+library and CLI adapter tests remain admission tests without native credit.
+
+`--condition symbols-visible` remains explicitly BLOCKED in this adapter: its
+online symbol policy needs a separately reviewed consent path. No secondary
+invoker is silently selected. The admitted hidden configuration disables symbol
+downloads, while the existing backend performs static analysis and never runs a
+target image. Existing input ownership, project provenance, cancellation and
+paired output checks remain in the runner.
+
+The CLI maps the actual returned run status to exits 0/1/3/5, reports cell counts
+and a root-relative `attempt_record` path in retained history, and redirects
+Python progress output to stderr. It always emits one JSON summary on stdout.
+The history path identifies this attempt, including cancellation; it does not
+claim that a cancelled rerun replaced the usual selected `run.json`. A Ctrl-C
+that escapes before a complete retained record reports cancellation without
+inventing an attempt receipt. Native tool compatibility and filesystem
+qualification remain separate acceptance gates.
 
 ## 12. Repository guard (hook in `tools.calibration.corpus.guard`, logic in `tier_w/guard.py`)
 `guard` fails (and so does `tests/test_calibration_tools.py::test_repository_contains_no_executable_images_outside_fixtures`, plus the Tier-W repository test) when a tracked or untracked-not-ignored file is any of the following:

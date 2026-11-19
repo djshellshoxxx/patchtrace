@@ -1,5 +1,13 @@
 # Spec registry
 
+2026-11-19 additive recovery: `docs/specs/version-provenance.md` owns bounded
+headless source/build observations and the `version` CLI; it grants no release
+or native qualification credit.
+
+2026-11-19 research recovery: `docs/specs/research-pilot.md` owns the offline
+synthetic build/audit/review/pilot receipt workflow; authored controls do not
+qualify native tools or accuracy.
+
 2026-11-18 CI input-integrity amendment: `docs/specs/ci-workflow-integrity.md`
 (`CI-INT`, approved repair; hosted qualification remains separate) owns immutable
 remote action references, corpus archive checks, Linux frozen CLI smoke wiring,

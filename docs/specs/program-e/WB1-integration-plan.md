@@ -394,3 +394,70 @@ Windows pitfalls (roadmap checklist plus search-specific): CRLF in goldens (`.gi
 8. Group leads by pairing by default? Default yes; `--no-group` and a toggle show raw evidence rows.
 9. Strings beyond 256 chars (tool evidence stores only `display_value`)? Default: search the stored prefix and flag `truncated`.
 10. Search for N-way series projects? Default: per pair project only; chain position appears in `PairExpansion.series` when `series.json` is present.
+
+## Stored-source integration recovery (November 19, 2026)
+
+The production CLI and dock connect the existing S8 source factories through
+`search/wiring.py`, recovered from `33e7e338` with the following current
+boundaries. The six stored tool groups (FLOSS, capa and Detect It Easy, each
+side), advisories and CVE snapshots appear in coverage even when unavailable.
+No source is fetched and no tool or target is run by search. Explicitly injected
+source ports retain their existing path, including saved-query callers.
+
+The Qt-free row and tool-evidence admission lives in the shared
+`intelligence/tools/snapshot.py` module. Its public
+`capture_tool_sources(service, engines=(...))` entry point returns `ToolSources`:
+`latest(engine, side)` returns the validated run and evidence, returns `None`
+when no produced run exists, and raises `ToolError` for unreadable or foreign
+newest evidence. It holds no service, store or connection. Search adds its own
+advisory/CVE groups; Strings may turn captured FLOSS values into its worker input
+without duplicating the admission or reaching the store from a worker.
+Requesting a tool omitted from the captured engine selection is refused; an
+unread source cannot masquerade as missing output.
+
+Stored rows are captured on the project's owning thread before dispatch. The
+capture bounds row metadata before loading bodies: at most 1000 rows and 16 MiB
+of serialized bodies across the selected source kinds. Each fetched body must
+match its recorded byte count, SHA-256 and project guard; malformed, duplicate-
+key, nonfinite or excessively nested JSON is unavailable evidence. The copied
+project is independently bounded to 100,000 nodes, depth 64 and a conservative
+16 MiB text/byte budget before a deep copy. A worker receives only the copied
+project, root and immutable source values, never a service, store or SQLite
+connection. Existing saved-query storage and service ownership remain on the
+owner thread.
+
+Stored tool sidecars use the current owned regular-file reader, require their
+canonical content-addressed path, byte count and SHA-256, and share a 64 MiB
+sidecar read budget with advisory reads in one capture. Current artifact hashes,
+engine, side, cache key and configuration must bind a produced run to its
+evidence. A corrupt newest produced run is unavailable rather than falling back
+to an older run and implying current absence. Advisory warnings make that
+source group unavailable rather than presenting a partial retained set as
+complete. Other independently readable groups remain usable.
+Evidence collections are admitted before model construction under the current
+tool producer limits: 200,000 strings, 20,000 capabilities and 512 environment
+records per set. Unknown top-level fields are refused before model allocation.
+A recorded raw-output path must be the canonical engine/digest filename for the
+run's `stdout_digest`. This is a consistency check on recorded provenance, not
+a re-read or native-execution attestation of raw stdout. Cache-hit runs and empty
+FLOSS output may lack raw-output metadata; no new raw digest is invented for them.
+
+The stored run row's id, reserved guard, artifact hash, cache key and status must
+agree with its typed body. Evidence rows must have their recomputed content id,
+matching guard and successful publication status. Stale rows and rows from a
+future project revision are refused. Configuration and cache digests are
+recomputed from the retained manifest and options using the current producer
+identity functions; matching declared digests alone are insufficient. A sidecar
+pointer's complete producer header and counts must match its verified inner
+document. Run status and evidence counts must agree with the retained set.
+Ordinary output binds the exact producing run id. A cache hit may retain an
+earlier set only when its original non-cache producing run remains present and
+has compatible artifact, side, engine, manifest identity, options, status and
+counts. These are consistency checks on retained records; they do not attest
+that an external executable ran or authenticate a deliberately rewritten store.
+
+An inline-only successful snapshot may be reused while the project identity,
+revision and SQLite modification counters remain unchanged. Sidecar-dependent
+or failed captures are revalidated, so external file mutation or repair cannot
+be hidden by a row-metadata cache. These bounds make allocation finite; native
+Windows accessibility and large-project responsiveness remain separate gates.

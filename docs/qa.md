@@ -2671,3 +2671,15 @@ Combined #319 with #316/#318 on the isolated integration branch and opened draft
 ## Exhaustive consolidation recovery checkpoint — 2026-11-19
 
 Source `eb595b82` adds managed training transfer, paired runner output retention, GUI accessible names and research audit/build/observer/pilot/receipt recovery. Integrated research/transfer: 189 passed, 14 native skips; GUI: 145 passed; combined training/runner/admission: 161 passed. Counts overlap with author/independent controls. Normal Ruff passes; installed Linux dependency audit covers 32 distributions with no advisories after pinned pip upgrade. Strict security remains non-green. Frozen broad QA is incomplete and exposes a KEV test-fixture import-order defect plus host-denied Unix sockets; original failure records are retained. See [current handoff](consolidation/HANDOFF.md), [source recovery](consolidation/RECOVERED_WORK.md), and [test evidence](consolidation/TEST_RESULTS.md).
+
+## KEV fixture cold-SSL import repair — 2026-11-19
+
+The frozen bounded suite exposed nine KEV setup errors because the offline fixture replaced `socket.socket` with a function before SSL derived its socket subclass. A fresh isolated-process control reproduced the failure. The fixture now refuses socket construction through the type's initializer, preserving SSL's import and also covering prior references to the socket type. Socket construction, connection helpers and name lookup remain refused; the separate host-denied AF_UNIX test is unchanged. The corrected KEV selection passes 333 tests, with original and final evidence retained in `consolidation/evidence/kev-guard-import-*`.
+
+## Version provenance recovery (2026-11-19)
+
+See [source-bound QA](qa/version-provenance-recovery-20261119.md): 220 passed, 1 skipped; bounded headless source/build observations, no native or release qualification.
+
+## Consolidation checkpoint after source cb1b508c (2026-11-19)
+
+Strings/Search: 1464 passes and independent 49. Version filter correction: 27 passes and independent 27. Integrated lifecycle: 57 passes. Frozen historical suite covers 953 files with 25,943 passes; failures, skips and three killed benchmark cases remain explicit. Hosted historical Linux Rizin control is real and source-bound; strict static gate still fails. See [consolidation verification](consolidation/TEST_RESULTS.md) for exact identities, overlapping counts and artifacts.

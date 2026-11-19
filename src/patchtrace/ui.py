@@ -1894,23 +1894,8 @@ class MainWindow(QMainWindow):
             self.refresh()
 
     def new_project(self):
-        dialog = NewProjectDialog(self)
-        if dialog.exec() != QDialog.DialogCode.Accepted:
-            return
-        # SQLite connections remain in their owner thread. Creation closes before GUI-thread adoption.
-        args = (Path(dialog.older.text()), Path(dialog.newer.text()), dialog.name.text().strip(), Path(dialog.root.text()))
-        def create(cancel, event):
-            service = ProjectService.create(*args)
-            root = service.root
-            service.close()
-            return root
-        def adopt(root):
-            if self.worker and self.worker.cancel.is_set():
-                self.job_label.setText('Cancelled · created project retained without opening')
-                self.logs.appendPlainText(f'Project creation finished before cancellation. Retained directory: {root}')
-                return
-            self.set_service(ProjectService.open(root))
-        self.start_job('Creating project', create, adopt)
+        from .ui_new_project import start_project_creation
+        start_project_creation(self, NewProjectDialog)
 
     def acquisition_dialog(self):
         return AcquisitionDialog(self)

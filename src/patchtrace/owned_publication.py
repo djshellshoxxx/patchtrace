@@ -19,6 +19,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+STREAM_CHUNK = 1024 * 1024
+SNAPSHOT_BLOCK = 64 * 1024
+MAX_SNAPSHOT_READ = 16 * 1024 * 1024
+
 
 class OwnedPublicationError(RuntimeError):
     """The requested operation cannot preserve file identity and ownership."""
@@ -298,6 +302,267 @@ def _observation(info: os.stat_result) -> tuple:
     return file_identity(info), info.st_size, info.st_mtime_ns, info.st_ctime_ns
 
 
+def _descriptor_chunk(fd: int, offset: int, size: int, check: Callable[[], None]) -> bytes:
+    """Unbuffered short-read loop; no physical read can exceed STREAM_CHUNK."""
+    os.lseek(fd, offset, os.SEEK_SET)
+    data = bytearray()
+    while len(data) < size:
+        check()
+        part = os.read(fd, min(STREAM_CHUNK, size - len(data)))
+        if not part:
+            break
+        data.extend(part)
+    return bytes(data)
+
+
+class FileSnapshot:
+    """Verified ranges of a borrowed descriptor, valid only inside its context.
+
+    This single-threaded reader never owns or closes ``fd``. It keeps a SHA-256
+    per 64 KiB block so parsers and publication can reject changed bytes before
+    using them, without retaining the complete file in memory.
+    """
+
+    def __init__(self, fd: int, *, maximum: int, expected_size: int | None = None,
+                 expected_sha256: str | None = None, check: Callable[[], None] = lambda: None):
+        _options(maximum, False, None)
+        if (expected_size is not None and (type(expected_size) is not int or not 0 <= expected_size <= maximum)):
+            raise ValueError('snapshot size must be within its integer byte budget')
+        if (expected_sha256 is not None and (not isinstance(expected_sha256, str) or len(expected_sha256) != 64 or
+                any(char not in '0123456789abcdef' for char in expected_sha256))):
+            raise ValueError('snapshot digest must be a lowercase SHA-256')
+        self._fd, self._guard, self._closed = fd, check, False
+        before = os.fstat(fd)
+        if not stat.S_ISREG(before.st_mode) or not 0 <= before.st_size <= maximum:
+            raise OwnedPublicationError('snapshot requires an ordinary file within its byte budget')
+        if expected_size is not None and before.st_size != expected_size:
+            raise OwnedPublicationError('snapshot size differs from its expected identity')
+        self._baseline, self._size = _observation(before), before.st_size
+        digest, blocks = hashlib.sha256(), bytearray()
+        for offset in range(0, self.size, STREAM_CHUNK):
+            size = min(STREAM_CHUNK, self.size - offset)
+            data = _descriptor_chunk(fd, offset, size, self._check)
+            if len(data) != size:
+                raise OwnedPublicationError('snapshot ended during verification')
+            digest.update(data)
+            view = memoryview(data)
+            for start in range(0, size, SNAPSHOT_BLOCK):
+                blocks.extend(hashlib.sha256(view[start:start + SNAPSHOT_BLOCK]).digest())
+        if _descriptor_chunk(fd, self.size, 1, self._check):
+            raise OwnedPublicationError('snapshot grew during verification')
+        self._check()
+        self._sha256, self._blocks = digest.hexdigest(), bytes(blocks)
+        if expected_sha256 is not None and self.sha256 != expected_sha256:
+            raise OwnedPublicationError('snapshot bytes differ from the expected SHA-256')
+
+    @property
+    def size(self) -> int:
+        return self._size
+
+    @property
+    def sha256(self) -> str:
+        return self._sha256
+
+    def _check(self) -> None:
+        if self._closed:
+            raise OwnedPublicationError('snapshot descriptor is no longer borrowed')
+        self._guard()
+        if _observation(os.fstat(self._fd)) != self._baseline:
+            raise OwnedPublicationError('snapshot identity or bytes changed')
+
+    def read(self, offset: int, length: int, *, clip: bool = True) -> bytes:
+        if (type(offset) is not int or type(length) is not int or not 0 <= offset <= self.size or
+                not 0 <= length <= MAX_SNAPSHOT_READ):
+            raise OwnedPublicationError('snapshot range exceeds its read budget')
+        if not clip and length > self.size - offset:
+            raise OwnedPublicationError('snapshot range ends beyond its verified bytes')
+        end, data = min(self.size, offset + length), bytearray()
+        self._check()
+        if end > offset:
+            for block in range(offset // SNAPSHOT_BLOCK, (end - 1) // SNAPSHOT_BLOCK + 1):
+                start = block * SNAPSHOT_BLOCK
+                size = min(SNAPSHOT_BLOCK, self.size - start)
+                part = _descriptor_chunk(self._fd, start, size, self._check)
+                expected = self._blocks[block * 32:(block + 1) * 32]
+                if len(part) != size or hashlib.sha256(part).digest() != expected:
+                    raise OwnedPublicationError('snapshot block differs from its verified bytes')
+                data.extend(part[max(0, offset - start):min(size, end - start)])
+        self._check()
+        return bytes(data)
+
+    def verify(self) -> None:
+        digest = hashlib.sha256()
+        for offset in range(0, self.size, STREAM_CHUNK):
+            digest.update(self.read(offset, min(STREAM_CHUNK, self.size - offset)))
+        if _descriptor_chunk(self._fd, self.size, 1, self._check) or digest.hexdigest() != self.sha256:
+            raise OwnedPublicationError('snapshot content changed')
+        self._check()
+
+    def __enter__(self) -> FileSnapshot:
+        self._check()
+        return self
+
+    def __exit__(self, exc_type, exc, traceback) -> None:
+        try:
+            if exc_type is None:
+                self.verify()
+        finally:
+            self._closed, self._blocks = True, b''
+
+
+def _close_preserving(close: Callable[[], Any], primary: BaseException | None) -> None:
+    try:
+        close()
+    except BaseException as exc:
+        if primary is None:
+            raise
+        primary.add_note(f'Owned stream cleanup also failed: {type(exc).__name__}')
+
+
+class _StreamStack(ExitStack):
+    """Attempt every owned close without replacing an active operation failure."""
+    def __init__(self):
+        super().__init__()
+        self.failures: list[BaseException] = []
+
+    def callback(self, callback, /, *args, **kwargs):
+        def guarded():
+            try:
+                result = callback(*args, **kwargs)
+                if result is not None and result == 0:
+                    raise OwnedPublicationError('native stream directory handle did not close')
+            except BaseException as exc:
+                self.failures.append(exc)
+        super().callback(guarded)
+        return callback
+
+    def __exit__(self, exc_type, primary, traceback):
+        super().__exit__(exc_type, primary, traceback)
+        if self.failures:
+            error = primary if primary is not None else self.failures[0]
+            for failure in self.failures:
+                if failure is not error:
+                    error.add_note(f'Owned stream cleanup also failed: {type(failure).__name__}')
+            self.failures.clear()
+            if primary is None:
+                raise error
+        return False
+
+
+def _inspect_linux(target: Path, parent: int, maximum: int, inspect: Callable[[FileSnapshot], Any],
+                   anchor: DirectoryAnchor | None, *, check: Callable[[], None] = lambda: None) -> Any:
+    try:
+        fd = os.open(target.name, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | os.O_CLOEXEC, dir_fd=parent)
+    except FileNotFoundError as exc:
+        raise _MissingEvidence(*exc.args) from exc
+    except OSError as exc:
+        if exc.errno in (errno.ELOOP, errno.ENOTDIR):
+            raise OwnedPublicationError('existing evidence is a link or not a regular local file') from exc
+        raise
+    primary = None
+    try:
+        with FileSnapshot(fd, maximum=maximum, check=check) as snapshot:
+            result = inspect(snapshot)
+        before = os.fstat(fd)
+        named = os.stat(target.name, dir_fd=parent, follow_symlinks=False)
+        if snapshot._baseline != _observation(before) or _observation(before) != _observation(named):
+            raise OwnedPublicationError('existing evidence identity changed during verification')
+        check_linux_parent(target.parent, parent, anchor=anchor)
+        return result
+    except BaseException as exc:
+        primary = exc
+        raise
+    finally:
+        _close_preserving(lambda: os.close(fd), primary)
+
+
+def _inspect_windows(target: Path, parent: int, win: WindowsPublication, maximum: int,
+                     inspect: Callable[[FileSnapshot], Any], anchor: DirectoryAnchor | None, *,
+                     check: Callable[[], None] = lambda: None) -> Any:
+    import msvcrt
+
+    try:
+        source = win.open_child(parent, target.name, directory=False, create=False)
+    except FileNotFoundError as exc:
+        raise _MissingEvidence(*exc.args) from exc
+    fd, primary = None, None
+    try:
+        identity = win.identity(source)
+        fd = msvcrt.open_osfhandle(source, os.O_RDONLY | os.O_BINARY)
+        with FileSnapshot(fd, maximum=maximum, check=check) as snapshot:
+            result = inspect(snapshot)
+        if win.identity(source) != identity or snapshot._baseline != _observation(os.fstat(fd)):
+            raise OwnedPublicationError('existing evidence identity changed during verification')
+        win.check_parent(target.parent, parent, anchor=anchor)
+        return result
+    except BaseException as exc:
+        primary = exc
+        raise
+    finally:
+        def close() -> None:
+            if fd is None:
+                if not win.kernel.CloseHandle(source):
+                    win.error()
+            else:
+                os.close(fd)
+        _close_preserving(close, primary)
+
+
+def inspect_file(target: Path, *, maximum: int, inspect: Callable[[FileSnapshot], Any],
+                 anchor: DirectoryAnchor | None = None, check: Callable[[], None] = lambda: None) -> Any:
+    """Run a callback against bounded verified ranges while the ordinary parent/leaf stay held."""
+    _options(maximum, False, inspect)
+    target = Path(os.path.abspath(target))
+    stack, primary = _StreamStack(), None
+    try:
+        if sys.platform.startswith('linux'):
+            parent = linux_directory(target.parent, create=False, anchor=anchor)
+            stack.callback(os.close, parent)
+            return _inspect_linux(target, parent, maximum, inspect, anchor, check=check)
+        if os.name == 'nt':
+            win = WindowsPublication()
+            parent = win.directory(target.parent, stack, create=False, anchor=anchor)
+            return _inspect_windows(target, parent, win, maximum, inspect, anchor, check=check)
+        raise OwnedPublicationError('safe publication is unsupported on this platform')
+    except BaseException as exc:
+        primary = exc
+        raise
+    finally:
+        _close_preserving(stack.close, primary)
+
+
+def _verify_stream_stage(fd: int, source: FileSnapshot, identity: tuple[int, int]) -> None:
+    before = os.fstat(fd)
+    if (not stat.S_ISREG(before.st_mode) or file_identity(before) != identity or before.st_size != source.size):
+        raise OwnedPublicationError('safe publication streaming stage identity or size changed')
+    digest = hashlib.sha256()
+    for offset in range(0, source.size, STREAM_CHUNK):
+        size = min(STREAM_CHUNK, source.size - offset)
+        data = _descriptor_chunk(fd, offset, size, source._check)
+        if len(data) != size:
+            raise OwnedPublicationError('safe publication streaming stage ended during verification')
+        digest.update(data)
+    if (_descriptor_chunk(fd, source.size, 1, source._check) or digest.hexdigest() != source.sha256 or
+            _observation(before) != _observation(os.fstat(fd))):
+        raise OwnedPublicationError('safe publication streaming stage bytes changed')
+
+
+def _write_stream_stage(fd: int, source: FileSnapshot) -> tuple[int, int]:
+    identity = file_identity(os.fstat(fd))
+    os.lseek(fd, 0, os.SEEK_SET)
+    for offset in range(0, source.size, STREAM_CHUNK):
+        chunk = memoryview(source.read(offset, min(STREAM_CHUNK, source.size - offset)))
+        while chunk:
+            source._check()
+            count = os.write(fd, chunk)
+            if count <= 0:
+                raise OwnedPublicationError('short streaming publication write')
+            chunk = chunk[count:]
+    os.fsync(fd)
+    _verify_stream_stage(fd, source, identity)
+    return identity
+
+
 def _read_linux(target: Path, parent: int, maximum: int, validate: Callable[[bytes], None],
                 anchor: DirectoryAnchor | None) -> bytes:
     try:
@@ -362,12 +627,15 @@ def _reuse(reader: Callable[[], bytes], require_existing: bool) -> bool:
 def publish_linux(target: Path, data: bytes, *, validate_existing: Callable[[bytes], None] | None = None,
                   maximum: int = 0, require_existing: bool = False,
                   stage_writer: Callable[[int, bytes], Any] | None = None,
+                  stage_verifier: Callable[[int, Any, tuple[int, int]], Any] | None = None,
+                  existing_reader: Callable | None = None,
+                  stack_factory: Callable[[], ExitStack] = ExitStack,
                   anchor: DirectoryAnchor | None = None) -> bool:
-    with ExitStack() as stack:
+    with stack_factory() as stack:
         parent = linux_directory(target.parent, create=not require_existing, anchor=anchor)
         stack.callback(os.close, parent)
         def read_existing() -> bytes:
-            return _read_linux(target, parent, maximum, validate_existing, anchor)
+            return (existing_reader or _read_linux)(target, parent, maximum, validate_existing, anchor)
 
         if validate_existing is not None and _reuse(read_existing, require_existing):
             return False
@@ -387,7 +655,7 @@ def publish_linux(target: Path, data: bytes, *, validate_existing: Callable[[byt
                 raise
             _reuse(read_existing, require_existing=True)
             return False
-        verify_stage(fd, data, identity)
+        (stage_verifier or verify_stage)(fd, data, identity)
         if file_identity(os.stat(target.name, dir_fd=parent, follow_symlinks=False)) != identity:
             raise OwnedPublicationError('safe publication destination identity changed')
         check_linux_parent(target.parent, parent, anchor=anchor)
@@ -398,6 +666,9 @@ def publish_windows(target: Path, data: bytes, *, validate_existing: Callable[[b
                     maximum: int = 0, require_existing: bool = False,
                     windows_factory: Callable[[], WindowsPublication] = WindowsPublication,
                     stage_writer: Callable[[int, bytes], Any] | None = None,
+                    stage_verifier: Callable[[int, Any, tuple[int, int]], Any] | None = None,
+                    existing_reader: Callable | None = None,
+                    stack_factory: Callable[[], ExitStack] = ExitStack,
                     os_api: Any = os, prefix: str = '.owned-', anchor: DirectoryAnchor | None = None,
                     replace: bool = False) -> bool:
     import msvcrt
@@ -406,10 +677,10 @@ def publish_windows(target: Path, data: bytes, *, validate_existing: Callable[[b
         raise ValueError('forced publication cannot reuse existing evidence')
     win = windows_factory()
     anchor_options = {'anchor': anchor} if anchor is not None else {}
-    with ExitStack() as stack:
+    with stack_factory() as stack:
         parent = win.directory(target.parent, stack, create=not require_existing, **anchor_options)
         def read_existing() -> bytes:
-            return _read_windows(target, parent, win, maximum, validate_existing, anchor)
+            return (existing_reader or _read_windows)(target, parent, win, maximum, validate_existing, anchor)
 
         if validate_existing is not None and _reuse(read_existing, require_existing):
             return False
@@ -419,7 +690,7 @@ def publish_windows(target: Path, data: bytes, *, validate_existing: Callable[[b
         try:
             identity = win.identity(source)
             fd = msvcrt.open_osfhandle(source, os_api.O_RDWR | os_api.O_BINARY)
-            (stage_writer or write_stage)(fd, data)
+            stage_identity = (stage_writer or write_stage)(fd, data)
             win.check_parent(target.parent, parent, **anchor_options)
             if win.identity(source) != identity:
                 raise win.blocked_error('safe publication staging identity changed')
@@ -434,6 +705,8 @@ def publish_windows(target: Path, data: bytes, *, validate_existing: Callable[[b
                 _reuse(read_existing, require_existing=True)
                 return False
             published = True
+            if stage_verifier is not None:
+                stage_verifier(fd, data, stage_identity)
             win.check_parent(target.parent, parent, **anchor_options)
             if win.identity(source) != identity:
                 raise win.blocked_error('safe publication destination identity changed')
@@ -488,6 +761,28 @@ def publish_bytes(target: Path, data: bytes, *, validate_existing: Callable[[byt
         return publish_linux(target, data, **options)
     if os.name == 'nt':
         return publish_windows(target, data, **options)
+    raise OwnedPublicationError('safe publication is unsupported on this platform')
+
+
+def publish_stream(target: Path, source: FileSnapshot, *,
+                   validate_existing: Callable[[FileSnapshot], None] | None = None,
+                   maximum: int = 0, require_existing: bool = False,
+                   anchor: DirectoryAnchor | None = None) -> bool:
+    """Exclusively publish a held verified snapshot in fixed chunks; never replace or close its source."""
+    _options(maximum, require_existing, validate_existing)
+    if not isinstance(source, FileSnapshot):
+        raise TypeError('stream publication requires a held FileSnapshot')
+    source._check()
+    target = Path(os.path.abspath(target))
+    options = dict(validate_existing=validate_existing, maximum=maximum, require_existing=require_existing,
+                   anchor=anchor, stage_writer=_write_stream_stage, stage_verifier=_verify_stream_stage,
+                   stack_factory=_StreamStack)
+    if sys.platform.startswith('linux'):
+        return publish_linux(target, source, existing_reader=lambda *args: _inspect_linux(*args, check=source._check),
+                             **options)
+    if os.name == 'nt':
+        return publish_windows(target, source, existing_reader=lambda *args: _inspect_windows(*args, check=source._check),
+                               **options)
     raise OwnedPublicationError('safe publication is unsupported on this platform')
 
 

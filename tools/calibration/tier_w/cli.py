@@ -1,27 +1,29 @@
 """SPEC-33 s11 CLI: `PYTHONPATH=src python -m tools.calibration.tier_w <cmd> --corpus-id tier-w-<name>`. Dev-only, Qt-free.
 
 Wired offline stages: `catalogue --from-file`, `pairs`, `fetch-plan`, `symbols` (stdlib MSF producer), `labels`,
-`evaluate`, `status` and `guard`. Every other stage exits explicitly, never silently: the network stages (`catalogue`
+`audit`, `review`, `audit-report`, `run` (configured symbols-hidden analysis), `evaluate`, `status` and `guard`.
+Every other stage exits explicitly: the network stages (`catalogue`
 without `--from-file`, `resolve`, `fetch`) refuse without consent naming the host they contact (exit 2) and are
-otherwise BLOCKED (exit 3, transport not wired here); `audit`, `review`, `audit-report` and `run` are BLOCKED too.
+otherwise BLOCKED (exit 3, transport not wired here). Online symbols-visible runs remain BLOCKED.
 `labels` skips a pair whose export table cannot be read on either side (binary gone or unreadable): the export status
 is unknown, so it is never recorded as `exported: false` (the non-exported headline stratum). Each command prints
 exactly one strict-JSON summary line on stdout. Everything is read from and written under the corpus root
-(PATCHTRACE_CALIB_ROOT, refused inside the work tree; decision O1). Nothing is uploaded or executed.
+(PATCHTRACE_CALIB_ROOT, refused inside the work tree; decision O1). No target image is executed or uploaded.
 Exit codes: 0 ok, 1 partial, 2 configuration/consent/input, 3 BLOCKED, 5 cancelled (the CANCEL file or Ctrl-C).
 """
 from __future__ import annotations
 
 import argparse
 import datetime as dt
+import hashlib
 import json
 import os
 import re
+import sys
 from collections import Counter, defaultdict
 from collections.abc import Callable, Mapping, Sequence
+from contextlib import redirect_stdout
 from pathlib import Path
-
-from pydantic import ValidationError
 
 from patchtrace.acquisition import winbindex
 from patchtrace.artifact_bytes import ArtifactBytesError
@@ -35,6 +37,8 @@ from . import fetch as FE
 from . import labels as LB
 from . import msf
 from . import pairs as PA
+from . import review_cli as REVIEW
+from . import runner as RUN
 from .audit import AuditReport
 from .contracts import (
     CATALOGUE_LIMIT,
@@ -71,7 +75,7 @@ from .paths import (
     write_jsonl,
 )
 from .pe_tables import PeTableError, PeView
-from .run_local import ALLOWED_HOSTS
+from .run_local import ALLOWED_HOSTS, CI_VARS
 from .symbols import export_msf
 from .transport import pdb_cap_bytes
 
@@ -82,10 +86,6 @@ NOT_WIRED = {
                  'run catalogue --from-file',
     'resolve': 'resolve: network stage not wired in this CLI yet; builds without SizeOfImage stay ineligible',
     'fetch': 'fetch: network stage not wired in this CLI yet; nothing was downloaded (fetch-plan lists what it needs)',
-    'audit': 'audit: not wired in this CLI yet (library tier_w/audit.py); nothing was sampled',
-    'review': 'review: not wired in this CLI yet; nothing was reviewed',
-    'audit-report': 'audit-report: not wired in this CLI yet; no audit report was written',
-    'run': 'runner not built (LBL-23): no engine was run; evaluate needs runs/<corpus>/matches.jsonl',
 }
 PRODUCERS = ('msf', 'ghidra', 'llvm-pdbutil')
 SYMBOL_OUTCOMES = ('exported', 'missing_binaries', 'mismatched', 'no_codeview', 'missing_pdbs', 'rejected_pdbs',
@@ -123,6 +123,16 @@ def _date(value: str) -> str:
     except ValueError:
         raise argparse.ArgumentTypeError('expected a valid calendar date in YYYY-MM-DD') from None
     return value
+
+
+def _timeout_seconds(value: str) -> int:
+    try:
+        timeout = int(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError('expected an integer from 60 through 86400 seconds') from None
+    if not 60 <= timeout <= 86_400:
+        raise argparse.ArgumentTypeError('expected an integer from 60 through 86400 seconds')
+    return timeout
 
 
 def _now() -> str:
@@ -176,10 +186,6 @@ def _network(args, layout: Layout, corpus_id: str) -> tuple[int, dict]:
                                             + ', '.join(sorted(ALLOWED_HOSTS)))
     if host not in hosts:
         raise TierWError('PT-TIERW-CONFIG', f'{args.command} contacts {host}; --consent-hosts must name it')
-    raise TierWError('PT-TIERW-BLOCKED', NOT_WIRED[args.command])
-
-
-def _blocked(args, layout: Layout, corpus_id: str) -> tuple[int, dict]:
     raise TierWError('PT-TIERW-BLOCKED', NOT_WIRED[args.command])
 
 
@@ -397,13 +403,34 @@ def _truth_labels(layout: Layout, corpus_id: str, sidecar: PairsDoc) -> tuple[li
 
 
 def _audit_report(layout: Layout, corpus_id: str) -> AuditReport | None:
-    path = layout.review_dir(corpus_id) / 'audit-report.json'
-    if not path.is_file():
-        return None
-    try:
-        return AuditReport.model_validate_json(read_bytes(path, DOC_LIMIT))
-    except ValidationError:
-        raise TierWError('PT-TIERW-INPUT', 'audit-report.json is not a valid tier-w-audit-report/1') from None
+    return REVIEW.load_report(layout, corpus_id)
+
+
+def _run(args, layout: Layout, corpus_id: str) -> tuple[int, dict]:
+    from patchtrace.backend import _config_errors
+
+    if args.condition != RUN.HIDDEN:
+        raise TierWError('PT-TIERW-BLOCKED', 'symbols-visible requires a separately configured online symbol '
+                                            'consent path; this CLI currently runs symbols-hidden only')
+    if not args.python or not args.ghidra_dir:
+        raise TierWError('PT-TIERW-BLOCKED', 'run requires explicit --python and --ghidra-dir configuration; '
+                                            'no engine was invoked')
+    configs = RUN.backend_configs(args.python, args.ghidra_dir, args.timeout)
+    if problems := _config_errors(configs(RUN.HIDDEN)):
+        raise TierWError('PT-TIERW-CONFIG', problems[0])
+    sidecar = _sidecar(layout, corpus_id)
+    if not sidecar.pairs:
+        return PARTIAL, {'pairs': 0, 'reason': 'no pairs are available for analysis'}
+    matches = layout.matches(corpus_id)
+    with redirect_stdout(sys.stderr):
+        record = RUN.run_corpus(layout, sidecar, corpus_id=corpus_id, conditions=(RUN.HIDDEN,),
+                                config_factory=configs, matches_path=matches, invoker=RUN.run_pair)
+    attempt_digest = hashlib.sha256(dumps(record.model_dump(mode='json'))).hexdigest()
+    attempt = matches.parent / RUN.HISTORY / attempt_digest / 'run.json'
+    code = {'ok': OK, 'partial': PARTIAL, 'blocked': BLOCKED, 'cancelled': CANCELLED}[record.status]
+    return code, {'attempt_status': record.status, 'attempt_record': attempt.relative_to(layout.root).as_posix(),
+                  'pairs': record.pairs, 'matches': sum(cell.matches for cell in record.cells),
+                  'cells': [cell.model_dump(mode='json') for cell in record.cells], 'problems': len(record.problems)}
 
 
 def _evaluate(args, layout: Layout, corpus_id: str) -> tuple[int, dict]:
@@ -464,8 +491,9 @@ def _guard(args, layout: Layout, corpus_id: str) -> tuple[int, dict]:
 
 HANDLERS: dict[str, Handler] = {
     'catalogue': _catalogue, 'resolve': _network, 'pairs': _pairs, 'fetch-plan': _fetch_plan, 'fetch': _network,
-    'symbols': _symbols, 'labels': _labels, 'audit': _blocked, 'review': _blocked, 'audit-report': _blocked,
-    'run': _blocked, 'evaluate': _evaluate, 'status': _status, 'guard': _guard}
+    'symbols': _symbols, 'labels': _labels, 'audit': REVIEW.audit, 'review': REVIEW.review,
+    'audit-report': REVIEW.audit_report,
+    'run': _run, 'evaluate': _evaluate, 'status': _status, 'guard': _guard}
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -494,10 +522,18 @@ def build_parser() -> argparse.ArgumentParser:
     commands['symbols'].add_argument('--producer', choices=PRODUCERS, default='msf')
     commands['labels'].add_argument('--producer', choices=PRODUCERS, default='msf', help='symbol maps to read')
     commands['labels'].add_argument('--ratio-min', type=_ratio_min, default=LB.RATIO_MIN, help='in (0, 1]')
+    audit = commands['audit']
+    audit.add_argument('--seed', type=REVIEW.short_text, default='1')
+    audit.add_argument('--rate', type=_ratio_min, default=REVIEW.A.RATE)
+    audit.add_argument('--size-change', type=REVIEW.positive, default=REVIEW.A.SIZE_CHANGE)
+    audit.add_argument('--producer', choices=PRODUCERS, default='msf')
+    commands['review'].add_argument('--annotator', type=REVIEW.short_text, required=True)
     run = commands['run']
-    run.add_argument('--python', default='')
-    run.add_argument('--ghidra-dir', default='')
-    run.add_argument('--timeout', type=int, default=3600)
+    run.add_argument('--python', default='', help='absolute path to the external backend Python')
+    run.add_argument('--ghidra-dir', default='', help='absolute path to the extracted Ghidra installation')
+    run.add_argument('--timeout', type=_timeout_seconds, default=3600, help='60..86400 seconds per pair')
+    run.add_argument('--condition', choices=RUN.CONDITIONS, default=RUN.HIDDEN,
+                     help='symbols-visible remains blocked pending online symbol consent wiring')
     return ap
 
 
@@ -514,6 +550,8 @@ def main(argv: Sequence[str] | None = None, environ: Mapping[str, str] | None = 
         command = args.command
         corpus_id = check_corpus_id(args.corpus_id)
         layout = Layout(check_root(calib_root(environ)))
+        if command == 'run' and any(environ.get(name) for name in CI_VARS):
+            raise TierWError('PT-TIERW-CONFIG', 'native Tier-W execution is local-only and is refused in CI')
         if command not in NO_CANCEL:
             _check_cancel(layout)
         code, body = HANDLERS[command](args, layout, corpus_id)

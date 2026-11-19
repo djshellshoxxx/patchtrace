@@ -1,7 +1,7 @@
 # Consolidation security review
 
 Branch: `integration/exhaustive-patchtrace-consolidation-20261119`.
-Source checkpoint: `eb595b82`; strict scan source `3c6f5905`. This is a scoped review, not a security approval of
+Source checkpoint: `cb1b508c`; latest strict scan source `ecfd5960`. This is a scoped review, not a security approval of
 every historical contribution or a release gate waiver.
 
 ## Repaired and tested
@@ -38,10 +38,10 @@ The red/green observations and source identities are in `TEST_RESULTS.md` and
 | Finding | Current behavior and next action |
 |---|---|
 | Linux forced publication final source-name race | An adversary can replace the staged source name after its last name check and before rename. Post-publication verification refuses a success receipt, but foreign bytes may already be visible and the previous destination cannot be guaranteed preserved. A negative regression demonstrates this. Do not describe Linux force mode as atomic held-source ownership. Investigate an identity-safe primitive or narrow/refuse the unsupported guarantee. |
-| Tier-W paired output publication | Reviewed repair `0f0e44d7` retains exact attempt history, preserves canonical prior outputs on cancellation and restores only owned replacements on failure. Two filenames do not provide an atomic view and the final name race is not eliminated. CLI wiring is separate ongoing work. |
+| Tier-W paired output publication | Reviewed repair `0f0e44d7` retains exact attempt history, preserves canonical prior outputs on cancellation and restores only owned replacements on failure. Two filenames do not provide an atomic view and the final name race is not eliminated. Hidden-symbol CLI wiring is now integrated with explicit runtime paths and retained cancelled-attempt identity. |
 | Tier-W multi-file CLI output | Preflight fixes deterministic bad-input clobbering, but labels/evaluation output sets are not a filesystem transaction against concurrent input changes or later publication failure. Do not claim otherwise. |
 | Shared Tier-R publication scope | Managed credit receipts verify exact retained bytes and ownership. Existing named-stage path cleanup is not proof of immunity to an arbitrary same-user filesystem race. Training transfer recovery must retain this bounded scope. |
-| Current strict security scan | Exact workflow flags at `3c6f5905` reproduce 80 findings: S310=6, S101=9, S608=35, S105=14, S603=1, S110=12, S314=2, S108=1. Existing residual/contract triage covers the categories; this is not 80 proven vulnerabilities or a passing gate. No suppression or threshold change was introduced. Later source still requires matching scan coverage. |
+| Current strict security scan | Exact workflow flags at `ecfd5960` reproduce 81 findings: S310=6, S101=9, S608=36, S105=14, S603=1, S110=12, S314=2, S108=1. The additional S608 is the shared source reader metadata query: identifiers/caps are local constants and values remain SQLite parameters. Existing residual/contract triage covers earlier categories; counts are not proven vulnerabilities or a passing gate. No suppression or threshold change was introduced. Hosted `087f` independently fails with the original 80 findings. |
 | Native/platform ownership | Portable controls do not qualify native Windows file-handle behavior, toolchain compatibility or package installation. Those require actual platform results. |
 
 ## Additional recovered boundaries
@@ -66,3 +66,25 @@ budgets, subprocess argument arrays and timeouts, dependency audit, persisted
 ownership and report rendering. Existing static findings must be explained or
 repaired, never hidden to obtain a green job. Remote/native operations remain
 explicit; no release or deployment was performed.
+
+## New independently reviewed boundaries
+
+Shared stored-tool capture binds row/guard/status/revision, current artifact,
+manifest/config/cache digest, sidecar header/content, counts and retained producer.
+The five independent negative controls are retained. Strings refuses unreadable
+stored evidence, verifies both artifacts, cancels older requests before admitting
+a replacement, and distinguishes normalized-evidence digest from raw stdout.
+
+Download staging is now held and rehashed before receipt; same-inode mutation
+cannot receive success. The initially proposed whole-PDB memory copy was rejected
+before integration. FileSnapshot verifies fixed-size blocks and bounded parser
+ranges; publication uses at most 1 MiB physical reads, retains only block digests,
+and preserves active failure during owned cleanup. Native Windows acceptance is
+still skipped here and no arbitrary mutable-name rollback is claimed.
+
+A real configured Git clean filter executed during the first version observer.
+The correction removes status and describe --dirty, including the tempting but
+race-prone config-preflight alternative. Source cleanliness is unknown. Version
+reads remain bounded; packaged metadata is validated without source fallback.
+Project creation cleanup likewise retains active failure across secondary process
+interruptions and preserves files when database state is uncertain.

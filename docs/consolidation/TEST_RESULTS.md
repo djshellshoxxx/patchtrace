@@ -1,7 +1,7 @@
 # Consolidation verification
 
 Branch: `integration/exhaustive-patchtrace-consolidation-20261119`.
-Current recorded source: `eb595b82`; latest verified remote source: `bc7eb632` (local tree equivalent `11bc7014`).
+Current recorded code: `cb1b508c`; latest verified remote source: `087f50aa` (local tree equivalent `bb4f8310`).
 Counts below overlap and must not be added as distinct test coverage.
 
 ## Focused results
@@ -50,33 +50,61 @@ executor outage. Several child processes exited -9 without JUnit results. The
 uncapped 384 MiB allocation control also exited -9 under pressure, then passed
 unchanged in 2.76 s after recovery. Resource-aborted groups receive no pass credit.
 
-The restored run retains the prior successful coverage of 160 files and runs the
-remaining files in 121 groups, at most eight files or 90 KB of test source per
-process. It uses the persistent task virtualenv, offscreen Qt, `PYTHONPATH=src`,
-distinct temporary directories and JUnit results. The complete union manifest is
-953 matching test files. At this recorded observation **65/121 groups**
-finished; JUnit totals were 13181 cases, 1 failure,
-9 setup errors and 84 skips. Groups [39, 44] were
-nonzero; this is an incomplete run, not a passing suite.
+The restored run completed all 121 groups after retaining the original successful
+coverage of 160 files. The exact union is 953 test files. Group 111 was killed
+without JUnit; its smaller files then passed 168 tests, its 10k benchmark cases
+passed 3, and its separate dense 60k control passed 1. The other three 60k cases
+were killed again (shell exit 137) before a result and remain unverified.
 
-Group 39 exposes nine KEV setup errors: a fixture replaces the socket type with a
-function before a lazy SSL import subclasses it. Group 44 has one Unix-socket
-creation refusal from the host's execution policy. Preserve both raw failures;
-repair the fixture without weakening its network guard, and leave actual socket
-platform acceptance unqualified here. No test was skipped to hide this restriction.
+The disjoint completed-case ledger contains **25,943 passed, 150 skipped,
+3 expected failures, 9 errors and 1 failure** (26,106 cases; zero duplicate IDs).
+It excludes the earlier killed group's otherwise-present XML from credited
+coverage. Original attempts, failures, harness, manifests, command lines and
+retry receipts are retained in `evidence/bounded-qa-7dfba50f-all-attempts.zip`;
+selection rules, hashes and exact unverified node IDs are in
+`evidence/bounded-qa-7dfba50f-complete-summary.json`.
 
-The live record is `bounded-qa-restored-7dfba50f/summary.json`; this checkpoint's
-snapshot and compressed failed-group logs are under `evidence/`. Do not edit the
-frozen QA checkout. Added or changed functionality after `7dfba50f` requires its
-own affected-suite run; a final candidate still needs complete qualification.
+The nine errors are the cold SSL import/KEV socket fixture failure, subsequently
+repaired at `c970080c` with 333 focused passes and independent review. The one
+failure is actual AF_UNIX creation denied by this host policy; it remains an
+unqualified platform control and was not skipped to hide the restriction.
+These are results of frozen `7dfba50f`, not a claim that the newer integration
+candidate passed the complete suite.
+
+## Current affected-source results
+
+| Change/source | Observed result | Qualification |
+|---|---|---|
+| Tier-W offline review/run `c6d15e04` | Author 214; integrated 147 passed 12.87s | Offline fixtures and explicit local runtime admission; single-writer/race scope retained. |
+| Shared stored sources `9e559383` | Author 176; independent 49 passed 18.26s | Five demonstrated identity failures repaired; no native tool execution. |
+| Strings completion `ecfd5960` | Integrated 1464 passed 97.89s; independent 49 passed 6.95s | Complete affected Strings/Search/shared-source selection; no skips; counts overlap. |
+| Streaming publication/transport `04df9ede` | Author 188 passed/two native skips; independent 120 passed/one skip, 4.40 s | Held ranged reads and publication; platform qualification remains separate. |
+| Combined schema/CLI/stream/version boundaries | 209 passed/one native skip, 13.55 s | Current integration after schema conflict resolution, before version filter follow-up. |
+| Version `7bce4d02` then `3be22028` | 220 passed/one opt-in frozen-smoke skip; independent filter failure; corrected 27 passed 4.25s and independent 27 passed 3.64s | Real same-size tracked edit proves configured filter no longer runs. Source dirty is explicitly unknown. |
+| Project lifecycle `fbf95d94`/`950da8f1` | 189 author passes, 123 cleanup author passes, 15 + 15 scoped independent controls; integrated 57 passed 8.25s | Current SQLite/Qt/cancellation/primary-error boundaries; these overlapping selections do not certify phase 2 retry. |
+
+Normal full Ruff passes at `cb1b508c`. Strict security Ruff at `ecfd5960` exits 1
+with 81 findings (one additional constant SQL construction relative to the earlier
+80). Raw findings are retained; no suppression or threshold relaxation was made.
 
 ## CI and acceptance
 
-The first remote checkpoint exposed 31 check runs. At the recorded observation,
-26 were queued, 3 were skipped, and the Linux BinDiff and intel-tool workflow
-jobs reported success. A workflow status alone is not evidence that an optional
-native branch actually ran; its actual receipt must be inspected before native
-acceptance is credited. This checkpoint is not a green overall CI gate. At remote `bc7eb632`, a later observation had 28 queued and three skipped checks.
+Latest inspected check snapshot for remote `087f50aa`: 31 checks, 23 queued,
+3 skipped, 1 running, 3 successful and 1 failed. The successful jobs are Ubuntu
+packaging dependency audit, Linux live rz-diff and the Ubuntu probe. The probe
+receipt has not been inspected; job status alone receives no native credit. The
+failed job is security-scan.
+The inspected security and rz-diff jobs checked out GitHub merge commit `001b8372`, whose tree
+`bf90c3f862d144fc11adc471a84a51076987ba2f` exactly equals remote `087f50aa`.
+
+The downloaded security artifact verifies a completed, non-timeout Ruff command
+with exit 1 and the original 80 findings. The downloaded Linux rz-diff receipt
+records real Rizin 0.9.1, the pinned archive digest, `mocked:false`, engine status
+ok, 30 matches, distinct fixture digests and output digest. The ZIP hashes match
+the hosted upload logs. This establishes that historical native control on that
+source; it is not a final-candidate/native-all-platform or accuracy gate. Artifacts
+are retained as `evidence/hosted087f-{security-static,rzdiff}.zip`. The check
+snapshot and artifact identities are in `evidence/hosted087f-observation.json`.
 
 Native Windows, complete Qt repeats, real Ghidra/Ghidriff/rz-diff/BinDiff/capa
 acceptance, real-data accuracy, fresh-profile dependency audits and Windows standalone package

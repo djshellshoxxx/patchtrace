@@ -169,3 +169,28 @@ open with queued/running records; exact checkpoint and positive-byte propagation
 through artifact/raw/PE/cache reads; neutral-stop identity and connection closure;
 secondary-close masking; no callback retention; full corrupt-copy refusal; and
 checkpointed default recovery without a callback after its committed save.
+
+## Ordinary creation cancellation (2026-11-19 recovery)
+
+`ProjectService.create(..., checkpoint=None)` also permits the existing neutral
+operation checkpoint for ordinary pathname sources. An explicit callback is
+validated before filesystem work, checked before acquiring a project store, and
+forwarded to both existing artifact inspections and the first save. It accounts
+the same actual bounded reads and runs at the existing pre-COMMIT boundary.
+No additional callback is allowed alongside `input_readers`: held capabilities
+retain their captured checkpoint and cannot have its budget/cancellation policy
+replaced. The ordinary default call shapes remain unchanged.
+
+A cancelled operation keeps its original `InputReadError` object and uses the
+existing owned rollback. Reused empty/zero-byte databases, foreign files and
+previously committed snapshots retain their existing preservation rules. No
+callback is introduced after a successful save returns. Desktop cancellation
+after commit belongs to a retained-project outcome, not creation rollback.
+
+Creation failure cleanup retains the original active exception, including the
+exact neutral cancellation object, if rollback, connection closure, owned-file
+cleanup or store closure raises a secondary `BaseException`. It adds a bounded
+diagnostic note without exception contents. Uncertain database state retains
+files; after a proven empty database has closed, independent recorded-file
+cleanup attempts may continue. Store closure is always attempted. This does not
+convert a cleanup interruption into success or authorize deleting reused files.

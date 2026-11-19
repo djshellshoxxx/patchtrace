@@ -2021,3 +2021,11 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [ ] Complete runner paired publication and current managed LBL-31 transfer recovery; continue research receipt recovery.
 - [ ] Finish bounded all-file QA, current security/dependency scans and final semantic inventory refresh; qualify actual native Windows/tool/accuracy/package gates.
 - [ ] Publish and read back each new expected-head checkpoint; do not release or merge an unqualified candidate.
+
+- [x] Recover headless version/source observations from 62b9a3de through the current CLI registry; bounded reads and honest unknowns. Author QA 220 passed, 1 skip; independent review pending.
+- [ ] Wire the new strict build-info consumer to reviewed package producers and qualify on native frozen builds; current metadata absence remains explicit.
+
+- [x] Independently review stored-source Search, completed Strings composition/cache/empty provenance and Git-filter-safe version observations; retain original negative controls.
+- [x] Integrate current project creation cancellation/adoption and primary-error cleanup; explicit incomplete-root retry remains separate in-progress work.
+- [x] Preserve complete frozen broad-test attempts and actual hosted historical Rizin/security artifacts, with exact source/tree and honest omissions.
+- [ ] Finish saved-plan executor/consent CLI, explicit retry, refreshed semantic census/new active heads and current-source qualification.

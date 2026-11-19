@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from .ingestion import display_text, inspect_artifact, safe_path
-from .input_readers import PairInputReaders, ReadCheckpoint
+from .input_readers import InputReadError, PairInputReaders, ReadCheckpoint
 from .models import (
     AnalysisRun,
     AnalystAnnotation,
@@ -58,7 +58,7 @@ def _remove_owned(path: Path, recorded: os.stat_result, *, database: bool = Fals
 
 
 def _rollback_creation(store: ProjectStore, database: os.stat_result | None,
-                       created: list[tuple[Path, os.stat_result]]) -> None:
+                       created: list[tuple[Path, os.stat_result]], primary: BaseException) -> None:
     try:
         # A reused zero-byte database keeps schema initialization in the first-save
         # transaction. Roll it back before deciding whether a snapshot committed.
@@ -70,17 +70,22 @@ def _rollback_creation(store: ProjectStore, database: os.stat_result | None,
             return
         store.connection.close()
         store.connection = None
-        for path, recorded in reversed(created):
-            _remove_owned(path, recorded)
+        owned = [(path, recorded, False) for path, recorded in reversed(created)]
         if database is not None:
-            _remove_owned(store.root / 'project.sqlite3', database, database=True)
-    except Exception:
-        pass  # unprovable database state is retained, not guessed to be an abandoned create
+            owned.append((store.root / 'project.sqlite3', database, True))
+        for path, recorded, is_database in owned:
+            try:
+                _remove_owned(path, recorded, database=is_database)
+            except BaseException:
+                primary.add_note('PT-STORAGE: owned creation cleanup was interrupted; a file may remain')
+    except BaseException:
+        # Unprovable database state is retained, not guessed to be abandoned.
+        primary.add_note('PT-STORAGE: creation rollback could not be completed; files may remain')
     finally:
         try:
             store.close()
-        except Exception:
-            pass
+        except BaseException:
+            primary.add_note('PT-STORAGE: creation store close failed; resources may remain open')
 
 
 class ProjectService:
@@ -93,8 +98,13 @@ class ProjectService:
 
     @classmethod
     def create(cls, older: Path, newer: Path, name: str, root: Path, *,
-               input_readers: PairInputReaders | None = None, project_id: str | None = None) -> ProjectService:
+               input_readers: PairInputReaders | None = None, project_id: str | None = None,
+               checkpoint: ReadCheckpoint | None = None) -> ProjectService:
         identity = {'id': Record(id=project_id).id} if project_id is not None else {}
+        if checkpoint is not None:
+            if input_readers is not None or not callable(checkpoint):
+                raise InputReadError('invalid')
+            checkpoint(0)
         root = Path(root).resolve()
         options = ({}, {})
         save_options = {}
@@ -105,6 +115,9 @@ class ProjectService:
             options = tuple({'reader': reader, 'checkpoint': input_readers.checkpoint}
                             for reader in (input_readers.older, input_readers.newer))
             save_options = {'checkpoint': input_readers.checkpoint}
+        elif checkpoint is not None:
+            options = ({'checkpoint': checkpoint}, {'checkpoint': checkpoint})
+            save_options = {'checkpoint': checkpoint}
         store = ProjectStore(root, create=True)
         database = None
         created: list[tuple[Path, os.stat_result]] = []
@@ -123,8 +136,8 @@ class ProjectService:
             project = store.save(project, **save_options)
             # The snapshot is committed. No operation checkpoint may enter rollback from here.
             return cls(root, project, store)
-        except BaseException:  # Ctrl+C and SystemExit must not leave a snapshot-less database behind either
-            _rollback_creation(store, database, created)
+        except BaseException as exc:  # Ctrl+C and SystemExit also use positively owned cleanup.
+            _rollback_creation(store, database, created, exc)
             raise
 
     @classmethod

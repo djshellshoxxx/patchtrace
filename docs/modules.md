@@ -474,6 +474,7 @@ K1 notes: plan 10.1 "4 edges, 1 mention-only" = 4 vendor-remediation edges + 1 m
 | pins | intelligence/tools/pins.py | executable SHA-256 of every verified release (capa 9.4.0, FLOSS 3.1.1, diec 3.21); unpinned builds need `accept_untested` | - | `test_intel_tools_audit.py`, `test_provision_intel_tools.py` |
 | runner | intelligence/tools/runner.py | `Setup`/`RunRequest`, `plan_engines`, `run_job` (private scratch, re-hash before spawn, `jobs.run_process`, memory cap, error isolation), `run_tools` (cap 2 workers, persistence on the caller's thread, cache hits, cooperative cancel) | process, capa, floss, diec, store | `test_intel_tools_runner.py` (fake executables) |
 | store | intelligence/tools/store.py | `tool-run` / `tool-evidence` rows through `EnrichmentStore.publish`, sidecars above 1 MiB, content-addressed raw stdout, re-validated cache hits | enrichment.storage | `test_intel_tools_runner.py` |
+| stored source snapshot | intelligence/tools/snapshot.py | Qt-free bounded owner-thread capture of stored run/evidence rows; verifies sidecar identity and current artifact/run binding; `capture_tool_sources` returns independent values with missing/unreadable results kept distinct for Search and Strings | enrichment.storage, owned_publication, intelligence.tools.common | `test_intel_tools_snapshot.py`, `test_search_wiring_boundaries.py` |
 | cli | intelligence/tools/cli.py | `intel-tools probe|run|delta`, envelope `enrichment-cli/1`, exit 0/2/3/4/5; `cli.py` holds a 5-line hook | runner, store, delta | `test_intel_tools_cli.py` |
 | schemas | tools/generate_intel_tools_schemas.py, docs/schemas/intel-tools/ | `tool-evidence/1` JSON Schemas + examples, regenerate-and-compare | tools.* | `test_intel_tools_schemas.py` |
 | provisioning | tools/provision_intel_tools.py, tools/intel_tools_pin.json, .github/workflows/live-intel-tools.yml | download + verify + safe extract of the pinned releases (never executed); advisory live workflow | stdlib | `test_provision_intel_tools.py`, `test_live_intel_tools.py` |
@@ -1630,3 +1631,36 @@ and shared plain text without changing admission/status/exit behavior. Existing
 CLI and desktop presenters are reused. Tests: `test_kbc_named_superseded.py`,
 `test_ui_kbc_named_superseded.py`; [source/QA](qa/kb-named-superseded-20261118.md).
 No new module, persisted contract, source-scope UI or network operation.
+
+### Strings shared comparison recovery (2026-11-19)
+
+`strings/compose.py` recovers the Qt-free CLI/dock comparison from historical `150d9b9618b4f621ce31101c64502fb555734d46`: per-side source choice, tables, current function pairing, import/export and anchor cue contexts, section regions and cancellation. `strings/qt_panel.py` captures sources on the SQLite-owning thread and sends only detached values to its worker. Current export ownership stays in `strings/export.py`. CLI and dock use the bounded shared tools snapshot, distinguish absent from unreadable evidence, and admit verified cache/empty sources with explicit normalized-evidence provenance when raw output is absent.
+
+### Headless version provenance recovery (2026-11-19)
+
+`buildinfo.py` owns bounded, read-only source and packaged build observations;
+`version_cli.py` renders those observations through the existing CLI envelope and
+`cli_commands/version.py` is its lazy registry adapter. Contract:
+`docs/specs/version-provenance.md`; tests: `test_buildinfo.py` and
+`test_version_cli.py`. Git metadata and a source digest are observations, not a
+release qualification receipt. The existing doctor and package builders keep
+their own contracts.
+
+### Ordinary project creation lifecycle recovery (2026-11-19)
+
+`ui_new_project.py` is the small background creation/adoption adapter; the dialog
+remains in `ui.py`. It binds cancellation and delivered results to the originating
+service and project revision while reusing current ingestion and SQLite ownership
+rules. Contracts: `docs/specs/core-held-inputs.md` and `docs/specs/ui.md`;
+verification: `test_project_creation_checkpoint.py` and
+`test_ui_project_creation_lifecycle.py`.
+
+### Explicit incomplete-project retry adapter (2026-11-19; in progress)
+
+`project_retry.py` will validate and stage an explicitly selected incomplete
+directory under the current project lock, then reuse current exact-schema SQLite
+initialization and held ingestion. The bounded inventory permits only the lock,
+an optional admissible empty database and exact selected artifacts; unknown
+entries and links are refusals. This is an adapter over current ownership rules,
+not the historical database recycling implementation. Source/Qt refusal and
+cancellation controls accompany the recovery before acceptance.

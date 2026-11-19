@@ -10,12 +10,11 @@ from __future__ import annotations
 
 import argparse
 import threading
-from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .pairing import Image
+    from .compose import Computed
 
 ACTIONS = ('list', 'delta', 'explain', 'scan', 'export')
 SOURCES = ('auto', 'floss', 'builtin')
@@ -76,14 +75,6 @@ def register(sub, common, handlers: dict | None = None) -> None:
     export.add_argument('--force', action='store_true', help='replace an existing file')
 
 
-@dataclass
-class Computed:
-    delta: object
-    tables: dict
-    sources: dict[str, str]
-    notes: list[str] = field(default_factory=list)
-
-
 def table_from_source(result):
     """The columnar table of one `SourceResult`: the basis records what the rows were extracted with."""
     from . import contracts as c
@@ -100,6 +91,7 @@ def table_from_source(result):
         parts=(c.BasisPart(
             source=part.source, semantics_id=part.semantics_id, source_version=part.source_version or '',
             executable_sha256=part.executable_sha256, run_id=part.run_id, raw_sha256=part.raw_sha256,
+            normalized_evidence_sha256=part.normalized_evidence_sha256,
             types=types, config_digest=part.config_digest, consent_sha256=part.consent_sha256),))
 
     def u32(value: int | None) -> int:
@@ -123,90 +115,47 @@ def _artifacts(service) -> dict:
     return found
 
 
-def _floss_source(store, artifact):
-    from .sources import FlossEvidenceSource
-    found = store.latest('floss', artifact.side)
-    if found is None or found[1] is None or not found[0].raw_sidecar:
-        return None
-    run, evidence = found
-    raw_sha = run.raw_sidecar.rsplit('-', 1)[-1].removesuffix('.json')
-    return FlossEvidenceSource(
-        evidence, executable_sha256=run.manifest.executable_sha256, source_version=run.manifest.version,
-        consent_sha256=run.options.get('emulation_consent_sha256'), raw_sha256=raw_sha)
-
-
-def _source(args, service, store, artifact, image: Image, cancel: threading.Event):
-    from .scan import BuiltinScanSource
-    if args.source != 'builtin':
-        floss = _floss_source(store, artifact)
-        if floss is not None:
-            return floss, 'floss'
-        if args.source == 'floss':
-            raise _fail(f'no stored FLOSS evidence for the {artifact.side} artifact: run `intel-tools run` first')
-    pe = image.pe
-    return BuiltinScanSource(
-        service.root / artifact.relative_path, artifact_sha256=artifact.sha256, side=artifact.side,
-        min_length=args.min_length, offset_to_rva=(lambda off: pe.offset_to_rva(off)[0]) if pe else None,
-        cancel=cancel.is_set), 'builtin-scan'
-
-
-def _imports(image: Image) -> tuple[frozenset[str], frozenset[str]]:
-    overview = image.overview
-    imports = overview.imports.dlls if overview and overview.imports else ()
-    exports = overview.exports.names if overview and overview.exports else ()
-    return frozenset(n for dll in imports for n in dll.functions), frozenset(exports)
-
-
 def _load_anchors(path: Path | None):
     from pydantic import ValidationError
 
+    from .. import owned_publication as owned
     from ..intelligence.contracts import AnchorSet
+    from ..intelligence.tools.common import ToolError, load_json_strict
     if path is None:
         return None
     try:
-        if path.stat().st_size > MAX_ANCHOR_FILE:
-            raise _fail('the anchors file is too large')
-        return AnchorSet.model_validate_json(path.read_bytes())
-    except OSError:
-        raise _fail('the anchors file cannot be read') from None
-    except ValidationError:
+        raw = owned.read_bytes(path, maximum=MAX_ANCHOR_FILE)
+        load_json_strict(raw, max_bytes=MAX_ANCHOR_FILE)
+        return AnchorSet.model_validate_json(raw)
+    except (OSError, owned.OwnedPublicationError):
+        raise _fail('the anchors file must be a bounded ordinary readable file') from None
+    except (ToolError, ValidationError):
         raise _fail('the anchors file is not a valid AnchorSet') from None
 
 
-def _links(service, tables: dict, images: dict, notes: list[str]):
-    """Pairing and function links when the project has a completed analysis and parsable images, else none."""
-    from .pairing import project_links
-    found = project_links(service.root, service.project, tables, images, notes)
-    return found.pairing, found.linked
-
-
 def compute(args, service, cancel: threading.Event) -> Computed:
-    from ..enrichment.storage import EnrichmentStore
-    from ..intelligence.tools.store import ToolStore
-    from .anchors import attach_anchors, terms
-    from .cues import CueContext
-    from .delta import compute_delta
+    """`--source` per side (stored FLOSS evidence or the built-in scan), then `compose.compare`."""
+    from ..intelligence.tools.snapshot import capture_tool_sources
+    from .compose import NO_FLOSS, _cancelled, builtin_source, compare, missing_floss, stored_sources
+    from .pairing import inspect_image
+    _cancelled(cancel)
     artifacts = _artifacts(service)
     anchors = _load_anchors(args.anchors)
-    store = ToolStore(EnrichmentStore(service.store), service.root, service.project.id, service.project.revision)
-    from .pairing import inspect_image
-    images = {side: inspect_image(service.root / a.relative_path, a.sha256) for side, a in artifacts.items()}
-    tables, sources, notes = {}, {}, []
+    _cancelled(cancel)
+    store = None if args.source == 'builtin' else capture_tool_sources(service, engines=('floss',))
+    found = stored_sources(args.source, store, artifacts)
+    missing = missing_floss(args.source, found)
+    if missing is not None:
+        raise _fail(NO_FLOSS.format(side=missing))
+    images = {}
     for side, artifact in artifacts.items():
-        source, sources[side] = _source(args, service, store, artifact, images[side], cancel)
-        tables[side] = table_from_source(source.load())
-    pairing, linked = _links(service, tables, images, notes)
-    hints = terms(anchors)
-    contexts = {}
-    for side, other in (('older', 'newer'), ('newer', 'older')):
-        imports, exports = _imports(images[side])
-        contexts[side] = CueContext(imports=imports, exports=exports, other_side_imports=_imports(images[other])[0],
-                                    api_hints=hints.api_hints, advisory_phrases=hints.advisory_phrases)
-    sections = {side: image.overview.sections for side, image in images.items()
-                if image.overview and image.overview.sections}
-    delta = compute_delta(tables['older'], tables['newer'], pairing=pairing, links=linked, contexts=contexts,
-                          sections=sections)
-    return Computed(attach_anchors(delta, anchors), tables, sources, notes)
+        _cancelled(cancel)
+        images[side] = inspect_image(service.root / artifact.relative_path, artifact.sha256)
+    _cancelled(cancel)
+    sources = {side: (found[side], 'floss') if found[side] is not None else (builtin_source(
+        service.root / a.relative_path, a.sha256, side, args.min_length, images[side], cancel), 'builtin-scan')
+        for side, a in artifacts.items()}
+    return compare(sources, images, service.root, service.project, anchors, cancel)
 
 
 def reveal_map(tables: dict) -> dict[str, str]:
@@ -304,13 +253,13 @@ def _scan(args, service, cancel) -> int:
     from ..cli import NO_RESULTS, OK, RUNTIME, _emit
     if not args.builtin:
         raise _fail('only the built-in scan runs here: pass --builtin (FLOSS is run by `intel-tools run`)')
-    args.source, args.anchors = 'builtin', None
+    from .compose import builtin_source
+    from .pairing import inspect_image
     rows = []
     for side, artifact in _artifacts(service).items():
-        from .pairing import inspect_image
         image = inspect_image(service.root / artifact.relative_path, artifact.sha256)
-        source, _label = _source(args, service, None, artifact, image, cancel)
-        table = table_from_source(source.load())
+        table = table_from_source(builtin_source(service.root / artifact.relative_path, artifact.sha256, side,
+                                                 args.min_length, image, cancel).load())
         basis = table.basis
         rows.append({'side': side, 'artifact_sha256': artifact.sha256, 'min_length': basis.min_length,
                      'rows_seen': basis.rows_seen, 'rows_kept': basis.rows_kept, 'basis_digest': basis.digest(),

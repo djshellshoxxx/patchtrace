@@ -187,7 +187,7 @@ def test_module_entry_point_prints_one_json_line(tmp_path):
     done = subprocess.run([sys.executable, '-m', 'tools.calibration.tier_w', 'run', '--corpus-id', CID],
                           cwd=ROOT, env=env, capture_output=True, timeout=120, check=False)
     lines = done.stdout.decode('utf-8').strip().splitlines()
-    assert done.returncode == 3 and len(lines) == 1 and 'LBL-23' in strict_json(lines[0])['message']
+    assert done.returncode == 3 and len(lines) == 1 and '--python' in strict_json(lines[0])['message']
 
 
 # ---- explicit exits ------------------------------------------------------------------------------------------------
@@ -206,11 +206,11 @@ def test_network_stages_need_consent_and_are_not_wired(root, capsys, argv, code)
     assert doc['status'] == ('blocked' if code == 3 else 'failed')
 
 
-@pytest.mark.parametrize('command', ['audit', 'review', 'audit-report', 'run'], ids=['audit', 'review', 'report', 'run'])
-def test_unwired_stages_exit_blocked(root, capsys, command):
+@pytest.mark.parametrize('command,expected', [('audit', 2), ('review', 2), ('audit-report', 2), ('run', 3)])
+def test_offline_stages_report_missing_inputs_or_configuration(root, capsys, command, expected):
     code, doc = invoke(capsys, root, command, '--corpus-id', CID)
-    assert code == 3 and doc['status'] == 'blocked' and doc['code'] == 'PT-TIERW-BLOCKED'
-    assert ('LBL-23' in doc['message']) == (command == 'run')
+    assert code == expected and doc['status'] == ('blocked' if expected == 3 else 'failed')
+    assert doc['code'] == ('PT-TIERW-BLOCKED' if expected == 3 else 'PT-TIERW-INPUT')
 
 
 def test_root_inside_the_work_tree_is_refused(capsys):

@@ -5,89 +5,106 @@
 - Repository: `https://github.com/djshellshoxxx/patchtrace`.
 - Integration branch: `integration/exhaustive-patchtrace-consolidation-20261119`.
 - Draft PR: [#320](https://github.com/djshellshoxxx/patchtrace/pull/320).
-- Recorded local source: `eb595b82e10ac7b8482650cd807dc180d26960fe`.
-- Latest verified remote checkpoint: `bc7eb6328b477e2ff19cfe36317279eaf5856fb6`,
-  tree `0533d0aa0db6350a07ae5738bf88c693a2c7e49a`, exactly equal to local `11bc7014`.
-  Local source branch: `checkpoint/exhaustive-local-source-11bc7014`.
-- First remote checkpoint `188b4962` equals local `edb6f20f`; both original stack
-  parents are preserved. Later changes need the next guarded publication.
-- Observed main remains `fdc2696c23bdbfe7668348f25e3b336ce33039f7`. No main merge,
-  release or deployment has been performed by this consolidation.
+- Recorded code: `cb1b508ca8fe07b06145308d28e637a3480d779d`; this record is a
+  subsequent documentation checkpoint.
+- Latest verified remote: `087f50aae76f815dc013fb65e304eef8e21596c1`, tree
+  `bf90c3f862d144fc11adc471a84a51076987ba2f`, exactly equal to local `bb4f8310`.
+  Source history: `checkpoint/exhaustive-local-source-bb4f8310`.
+- Previous remote `bc7eb632` equals local 11bc7014; first 188b4962 equals edb6f20f
+  and preserves both original stack parents. Later code awaits guarded publication.
+- Freshly observed main remains `fdc2696c23bdbfe7668348f25e3b336ce33039f7`.
+  No main merge, release or deployment has occurred.
 
-## Completed source recovery
+## Completed recovery
 
-Combined #319 with all #316/#318 work and resolved eleven conflicts. Recovered
-Tier-W offline CLI/runner and bounded Calls layout; repaired SQLite failure
-ownership, export integrity/cleanup, input bounds and runner provenance.
-Subsequent commits add managed Tier-R training transfer (`3c6f5905`), paired runner
-output retention (`0f0e44d7`), GUI accessible identities (`153581e7`) and research
-workflow/receipt recovery (`8083fccc`, `eb595b82`). Exact historical and recovered
-sources, scope and limitations are mapped in `RECOVERED_WORK.md`.
+Combined #319 and the complete #316/#318 stack with eleven resolved conflicts.
+Recovered Tier-W CLI/runner, Calls layout, SQLite/export/input/runner ownership,
+managed Tier-R transfer, GUI accessibility and research audit/build/pilot receipts.
 
-The frozen inventory preserves 319 branches, 59 tags and 309 PR heads, including
-older merged heads. Enumeration is complete for that census. Semantic exhaustion
-and a fresh final-candidate census remain open.
+Newer checkpoints repair the KEV cold-SSL fixture; integrate Tier-W offline audit,
+blind review, report and hidden-symbol run; recover bounded Search/shared sources
+and Strings CLI/dock parity, source selection and normalized evidence provenance;
+add strict fetch previews and owned streamed transport; recover headless version
+observations with Git filter execution removed; and repair creation cancellation,
+context-bound desktop adoption and primary-failure cleanup. `RECOVERED_WORK.md`
+maps exact original and integrated commits and limitations.
 
-## Current isolated work
+## Active isolated work
 
-| Worker/worktree | Scope |
+| Worktree | Current scope |
 |---|---|
-| Coordinator: `PatchTrace` | Integration, records/publication, broad QA and Strings CLI/GUI composition. |
-| Core: `pt-adapters` | Tier-W offline audit/review/report and selected run CLI wiring. |
-| Security: `pt-security` | Strict saved FetchPlan and gated current transport execution. |
-| Archaeology: `pt-inventory` | Production Search stored-source wiring; later semantic census refresh. |
-| Frozen QA: `/home/agent/patchtrace-qa-792fd5ca6555` | Detached `7dfba50f`; never edit while its sequential test run is active. |
+| Coordinator `PatchTrace` | Integration authority, current verification, durable records and guarded publication. |
+| Core `pt-adapters` | Explicit incomplete-project retry using current locked exact-schema/ingestion mechanisms; phase 1 lifecycle and cleanup already integrated. |
+| Security `pt-security` | Saved-plan executor, immutable attempt events and eventual explicit-consent CLI; streamed transport already integrated. |
+| Archaeology `pt-inventory` | Refreshed census/new active-head comparison and remaining semantic residue; Strings/version independent reviews complete. |
+| Frozen `/home/agent/patchtrace-qa-792fd5ca6555` | Detached `7dfba50f`; bounded run finished with documented failures/resource omissions. Do not relabel it as current-source QA. |
+
+Fresh fetch adds/advances reviewed #319 at 8d130aef,
+`consolidation/patchtrace-continuation-20261119`, and the two
+`codex/patchtrace-{checkpoint,completion}-20261119-81e4` branches. Preserve these
+active branches and inspect stable snapshots. The existing 319/59/309 census and
+semantic comparison `77204ef5` remain frozen pending the refreshed records.
 
 ## Verification and open gates
 
-Combined research/transfer at `eb595b82`: 189 passed, 14 native skips. GUI: 145
-passed. Combined transfer/runner/admission: 161 passed. Counts overlap with author
-and independent selections; see `TEST_RESULTS.md`. Normal full Ruff passes.
-Installed Linux development dependencies: 32 distributions, zero advisories after
-the exact-hash repository-pinned pip upgrade. Strict security Ruff still has 80
-classified findings at `3c6f5905`; it is not a passing gate.
+Strings/Search/shared-source integrated selection: 1464 passed 97.89s; independent
+49 passed 6.95s. Combined schema/CLI/stream/version boundaries: 209 passed/one native
+skip, 13.55 s. Integrated lifecycle: 57 passed 8.25s. Version filter correction: 27
+passed 4.25s, independently 27 passed 3.64s. Counts overlap; other source-specific
+results and raw evidence are in `TEST_RESULTS.md`.
 
-Broad QA at frozen `7dfba50f` survived two resource interruptions through retained
-per-group evidence. Restored observation: 65/121 groups, 13181
-JUnit cases, 1 failure, 9 setup errors,
-84 skips. KEV fixture replaces socket type before SSL import;
-AF_UNIX socket creation is denied by the host. Repair the former without relaxing
-network checks; the latter remains unqualified here. Preserve original failures.
-Newer source requires affected and eventual final-candidate qualification.
+Frozen `7dfba50f`: 953 files attempted; 26,106 disjoint completed cases contain 25,943
+passes, 150 skips, three expected failures, nine KEV setup errors and one host-denied
+AF_UNIX failure. The KEV fixture was subsequently repaired with 333 focused passes.
+Three 60k benchmark cases were killed again without summaries. Original attempts,
+coverage selection and exact unverified IDs are archived under evidence/. No
+whole-suite or final-candidate pass is claimed.
 
-Linux forced-publication source-name race, native/platform/Qt repeats, actual tool
-compatibility, package installation, real-data accuracy and exhaustive semantic
-review remain open. Current partial results do not authorize a main merge.
+Normal Ruff passes at cb1b508c. Strict scan at ecfd5960 still has 81 findings; hosted
+087f independently fails with the earlier 80. Installed Linux development audit
+has 32 distributions and zero advisories after the pinned bootstrap upgrade;
+other/fresh profiles remain separate.
+
+Hosted `087f` check snapshot: 23 queued, 3 skipped, 1 running, 3 successes, 1 failure.
+Actual checkout 001b8372 has the identical `bf90c3f8` tree. Downloaded real Linux
+rz-diff 0.9.1 receipt shows 30 matches and mocked:false; this is historical native
+control evidence, not current-source release or accuracy acceptance. Static
+artifact confirms Ruff exit 1 without timeout/output truncation. Both ZIP hashes
+match the upload logs and are retained. The additional successful Ubuntu probe
+is recorded as job status only; its native receipt has not been inspected.
+
+Open: final source-name race in Linux force mode; final-candidate complete QA;
+exact-source native/platform/package/dependency acceptance; real-data accuracy;
+remaining semantic recovery; strict-security gate. These block a main merge.
 
 ## Resume commands
 
 ```bash
 cd /workspace/scratch/792fd5ca6555/PatchTrace
 git status --short
-git log -12 --oneline
+git log -15 --oneline
 git worktree list
 git fetch origin
 git rev-parse HEAD origin/integration/exhaustive-patchtrace-consolidation-20261119
-cat ../bounded-qa-restored-7dfba50f/summary.json
-QT_QPA_PLATFORM=offscreen PYTHONPATH=src ../.venv/bin/python -m pytest -q tests/test_tier_w_runner.py tests/test_tier_w_runner_admission.py
+cat docs/consolidation/evidence/bounded-qa-7dfba50f-complete-summary.json
+QT_QPA_PLATFORM=offscreen PYTHONPATH=src ../.venv/bin/python -m pytest -q tests/test_tier_w_fetch_plan.py tests/test_project_creation_checkpoint.py
 ../.venv/bin/python -m ruff check src tests tools
 ```
 
-The virtualenv is the persistent actual directory
-`/workspace/scratch/792fd5ca6555/.venv`, not a home-directory symlink. Check the
-existing bounded runner before starting another. Its graceful stop marker is
-`bounded-qa-restored-7dfba50f/STOP`, checked before the next group. Preserve
-completed groups and exact file coverage when resuming.
+The virtualenv is an actual persistent directory, not a home symlink. Do not
+restart completed broad groups or interpret memory kills as passes. Current
+agent frozen commits must be reviewed before cherry-picking; active worktrees
+may contain later unreviewed edits.
 
-## Publishing the next checkpoint
+## Guarded checkpoint publication
 
-Git HTTPS push lacks credentials; public fetch and GitHub connector work. Pin
-local HEAD, build only changed blobs/tree entries, require returned tree SHA to
-equal `git rev-parse HEAD^{tree}`, create a child of the observed remote head,
-and update only this branch using `expected_sha` and `force=false`. Read back
-ref/tree/parents and update draft #320. Preserve a local checkpoint branch before
-aligning equivalent commit metadata. Never publish a partial reconstructed tree.
+Public Git fetch and the GitHub connector work; Git HTTPS push has no credential.
+Pin local HEAD; upload changed blobs and construct a tree against observed remote
+087f50aa; require exact equality with `HEAD^{tree}`; create a child commit;
+update only the integration ref with expected_sha and force=false; read back
+ref/tree/parents and update the existing draft PR. Preserve a local source branch
+before aligning equivalent commit metadata. Never move a ref to a partially
+reconstructed tree. No release/main merge is authorized by partial gates.
 
-Continue independent actionable work when a platform gate is blocked. Do not
-claim full completion or unattended future continuation without an actual
-running mechanism.
+Continue independent safe work while platform gates are blocked. Do not claim
+exhaustion or unattended future continuation without an actual mechanism.

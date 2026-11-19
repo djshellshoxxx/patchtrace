@@ -10,13 +10,17 @@ from patchtrace.calibration.ledger import ValidationLedger
 
 from .contracts import CalibrationReport, CorpusManifest, LabelRecord
 from .shift import ShiftLadder
-from .tier_w.contracts import RunRecord
+from .tier_w.contracts import FetchPlan, RunRecord
+from .tier_w.review_cli import AuditAnnotation, AuditQueueHeader, AuditQueueItem
 from .train import PairRows
 
 SCHEMAS = ((CalibrationArtifact, 'patchtrace-calibration-model/1'), (CorpusManifest, 'calibration-corpus/1'),
            (LabelRecord, 'calibration-labels/1'), (CalibrationReport, 'calibration-report/1'),
            (ValidationLedger, 'validation-ledger/1'), (PairRows, 'tier-r-feature-rows/1'),
-           (ShiftLadder, 'calibration-shift/1'), (RunRecord, 'tier-w-run/1'))
+           (ShiftLadder, 'calibration-shift/1'), (RunRecord, 'tier-w-run/1'),
+           (AuditQueueHeader, 'tier-w-review/1'), (AuditQueueItem, 'tier-w-review/1'),
+           (AuditAnnotation, 'tier-w-review/1'),
+           (FetchPlan, 'tier-w-fetch-plan/1'))
 
 
 def render() -> dict[str, str]:

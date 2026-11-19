@@ -5,7 +5,7 @@ Main baseline: `fdc2696c23bdbfe7668348f25e3b336ce33039f7`.
 Original local merge: `a9e40d27d4b2ef9a7166f5127039d4837e9448f3`.
 Parents: reviewed #319 `a56ab13aaf9916fc12bea70ba1494075991b7f09` and
 #318 (including #316) `c4ace2088ce8dc9ce78a0bf3036b81096accbdb5`.
-Current checkpoint source: `eb595b82`; no unresolved Git conflicts.
+Current code checkpoint source: `cb1b508c`; no unresolved Git conflicts.
 
 The eleven original conflicts are reproducible with
 `git merge-tree --write-tree --name-only --no-messages a56ab13a c4ace208`.
@@ -46,3 +46,18 @@ publication, GUI accessibility and research modules were integrated by selective
 commits; no unresolved conflict remains. Research source was adapted to current
 manifest/output-store interfaces. Shared module index edits were coordinated
 before workers created Search wiring, offline review and strict fetch modules.
+
+## Current recovery conflicts
+
+Saved FetchPlan integration conflicted with the separately recovered review
+contracts in `tools/calibration/schemas.py` and `tests/test_calibration_tools.py`.
+The resolution keeps FetchPlan, RunRecord and all three review schemas. The
+Tier-R TrainingManifest uses its separate generator and remains intact. The
+integrated schema/CLI/publication selection passed 209 tests with one native skip.
+
+The historical Strings producer expected a raw file for every result. Current
+cache/empty producers legitimately omit one. The additive normalized evidence
+digest preserves traceability without inventing raw bytes; null omission preserves
+legacy raw-backed serialization and basis digests. Full affected selection passed
+1464 tests and independent review approved 49 controls. Newer export ownership
+was retained throughout. No unresolved Git conflict remains.

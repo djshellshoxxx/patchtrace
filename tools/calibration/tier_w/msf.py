@@ -15,6 +15,7 @@ import uuid
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Protocol
 
 MAGIC = b'Microsoft C/C++ MSF 7.00\r\n\x1aDS\0\0\0'
 MAGIC_V2 = b'Microsoft C/C++ program database 2.00\r\n\x1aJG\0\0'
@@ -128,20 +129,27 @@ class _Warnings(list):
             self.append(text)
 
 
+class PdbReader(Protocol):
+    size: int
+
+    def read(self, offset: int, length: int, *, clip: bool = True) -> bytes: ...
+
+
 class MsfFile:
     """Superblock + stream directory; streams are read block by block from the open handle."""
 
-    def __init__(self, path: Path, cancel: Callable[[], bool] | None = None):
-        self.path = Path(path)
+    def __init__(self, path: Path | PdbReader, cancel: Callable[[], bool] | None = None):
+        self.snapshot = None if isinstance(path, str | os.PathLike) else path
+        self.path = Path(path) if self.snapshot is None else Path('<verified-pdb-stream>')
         self.cancel = cancel
         try:
-            self.handle = open(self.path, 'rb')  # noqa: SIM115 - closed by close()/context manager
+            self.handle = open(self.path, 'rb') if self.snapshot is None else None  # noqa: SIM115
         except OSError as exc:
             raise MsfError('unreadable', f'cannot open PDB: {exc.strerror or exc}') from None
         try:
             self._parse_header()
         except BaseException:
-            self.handle.close()
+            self.close()
             raise
 
     def __enter__(self):
@@ -151,13 +159,16 @@ class MsfFile:
         self.close()
 
     def close(self) -> None:
-        self.handle.close()
+        if self.handle is not None:
+            self.handle.close()
 
     def _check_cancel(self) -> None:
         if self.cancel is not None and self.cancel():
             raise MsfError('cancelled', 'PDB parsing cancelled')
 
     def _read_at(self, offset: int, length: int) -> bytes:
+        if self.snapshot is not None:
+            return self.snapshot.read(offset, length, clip=False)
         self.handle.seek(offset)
         data = self.handle.read(length)
         if len(data) != length:
@@ -165,10 +176,10 @@ class MsfFile:
         return data
 
     def _parse_header(self) -> None:
-        size = os.fstat(self.handle.fileno()).st_size
+        size = self.snapshot.size if self.snapshot is not None else os.fstat(self.handle.fileno()).st_size
         if size > MAX_FILE:
             raise MsfError('limit', f'PDB is larger than {MAX_FILE} bytes')
-        head = self.handle.read(56)
+        head = self._read_at(0, min(56, size))
         if head.startswith(MAGIC_V2[:32]):
             raise MsfError('unsupported-version', 'MSF 2.00 PDBs are not supported')
         if len(head) < 56 or head[:32] != MAGIC:
@@ -226,6 +237,22 @@ class MsfFile:
             self._check_cancel()
             parts.append(self._block(block))
         return b''.join(parts)[:size]
+
+    def stream_range(self, index: int, offset: int, length: int) -> bytes:
+        """Small logical-stream reads for identity admission; never materialize the complete DBI stream."""
+        if not 0 <= index < len(self.streams):
+            raise MsfError('bad-stream', 'identity stream is missing')
+        size, blocks = self.streams[index]
+        if offset < 0 or length < 0 or length > 2 * (MAX_NAME + 1) or offset + length > size:
+            raise MsfError('bad-stream', 'identity stream range is out of bounds')
+        result = bytearray()
+        while len(result) < length:
+            self._check_cancel()
+            position = offset + len(result)
+            index, within = divmod(position, self.block_size)
+            block = self._block(blocks[index])
+            result.extend(block[within:within + min(length - len(result), self.block_size - within)])
+        return bytes(result)
 
 
 def _cstring(data: bytes, start: int, end: int, warn: _Warnings) -> str:
@@ -371,6 +398,38 @@ def _guarded(fn):
 def read_identity(path: Path, cancel: Callable[[], bool] | None = None) -> PdbInfo:
     with MsfFile(path, cancel) as msf:
         return _identity(msf, _Warnings())[0]
+
+
+@_guarded
+def read_identity_snapshot(reader: PdbReader, cancel: Callable[[], bool] | None = None) -> PdbInfo:
+    """Verify GUID/DBI identity through held, block-verified ranges with bounded module-name reads."""
+    with MsfFile(reader, cancel) as msf:
+        info = msf.stream_range(STREAM_PDB, 0, 28)
+        _version, signature, info_age = struct.unpack_from('<III', info, 0)
+        guid = str(uuid.UUID(bytes_le=info[12:28]))
+        fields = struct.unpack('<iIIHHHHHHiiiiiIiiHHI', msf.stream_range(STREAM_DBI, 0, 64))
+        mod_size, sc_size, sm_size, fi_size, ts_size = fields[9:14]
+        dbg_size, ec_size, flags, machine = fields[15], fields[16], fields[17], fields[18]
+        sizes = (mod_size, sc_size, sm_size, fi_size, ts_size, ec_size, dbg_size)
+        if fields[0] != -1 or any(size < 0 for size in sizes) or 64 + sum(sizes) > msf.streams[STREAM_DBI][0]:
+            raise MsfError('bad-dbi', 'DBI identity header or substream range is invalid')
+        pos, end, count = 64, 64 + mod_size, 0
+        while pos + 64 <= end:
+            if count >= MAX_MODULES:
+                raise MsfError('limit', 'DBI module count exceeds its budget')
+            names = msf.stream_range(STREAM_DBI, pos + 64, min(end - pos - 64, 2 * (MAX_NAME + 1)))
+            first = names.find(b'\0', 0, MAX_NAME + 1)
+            second = names.find(b'\0', first + 1, first + 1 + MAX_NAME + 1) if first >= 0 else -1
+            if second < 0:
+                raise MsfError('bad-dbi', 'module record names are not terminated')
+            pos += 64 + second + 1
+            pos += (-pos) % 4
+            count += 1
+        debug = 64 + mod_size + sc_size + sm_size + fi_size + ts_size + ec_size
+        omap = (dbg_size // 2 > DBG_OMAP_FROM_SRC and struct.unpack('<H', msf.stream_range(
+            STREAM_DBI, debug + 2 * DBG_OMAP_FROM_SRC, 2))[0] != NO_STREAM)
+        return PdbInfo(guid=guid, age=fields[2], info_age=info_age, signature=signature,
+                       stripped=bool(flags & FLAG_STRIPPED), machine=machine, omap=omap)
 
 
 @_guarded

@@ -27,3 +27,22 @@ Export preview policy describes path redaction accurately: report text redacts s
 `MainWindow.set_service` delegates GUI-thread project adoption to `gui/qt/project_adoption.py`. Keep the previous service open until the incoming project has rendered and recent-project preferences/menu have updated. On render or preference/menu failure, restore the previous service and both prior recent-project values (including absent keys), attempt to restore its view, and close only the rejected incoming service. A failed rollback view reports a diagnostic while retaining the previous service. Successful adoption closes the previous service only after all view/preference work succeeds. Re-adopting the same service never closes it. This is local view ownership; no database/service object crosses threads and no KB-specific workflow is introduced.
 
 Project creation destination preflight permits an absent directory, an empty directory, or a directory containing only one regular non-symlink `.patchtrace.lock` file. The persistent kernel-lock inode is intentionally retained by failed creation; the New and Acquisition dialogs and offline KB desktop creation share this read-only storage preflight so the user can retry without deleting it. Foreign entries, a lock directory/symlink, a symlink destination and filesystem inspection errors are refused. Preflight neither reads lock metadata nor infers availability from a PID/content, and never changes/deletes files. It is not a reservation: actual `ProjectStore` kernel-lock acquisition and existing-database checks remain authoritative and can still refuse a destination that changed or has an active writer. Retry qualification must retain the same lock inode, preserve contributor files and verify actual creation/reopening; a mocked successful button click alone is insufficient. The acquisition workflow and KB attachment intent use the same preflight, so deeper checks agree with the dialogs. No schema change.
+
+### New Project cancellation and adoption (2026-11-19 recovery)
+
+New Project does not open another modal while a worker is active or window close
+is pending. Once its dialog is accepted, capture the current service object and
+the complete panel project key (root, project id/revision, latest run and ordered
+artifact hashes). The background creator passes its cancellation event through
+the core ordinary-source checkpoint. It closes its SQLite service on the worker
+thread before returning a result for GUI-thread reopening.
+
+The result carries the original cancellation event, independent of the mutable
+window worker reference. Adopt only when that event is unset, close is not
+pending, and both the service object and captured project key still match.
+Changed projects/revisions and cancellation after commit leave the completed
+directory available and display a retained-without-opening notice. Early
+cooperative cancellation preserves the current project and uses the core's
+owned rollback; it is not shown as a generic failure dialog. Existing
+transactional project adoption and original-service preservation remain the
+authority if opening or refreshing the new project fails.

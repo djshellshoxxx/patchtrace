@@ -325,3 +325,11 @@ Blocked external acceptance, reported separately and never counted as done: pinn
 | Q12 master/3.2 adapter | wait for a tagged release; HEAD-probe monthly |
 | Q13 shortcut and who applies A5/A7/A8 | `Ctrl+Shift+T`; A5 is in the F5 seam, A7 is `PANEL.tips`, A8 stays with the track as its adapter file |
 | Q14 series lifelines | later slice S11 |
+
+## Shared comparison recovery — 2026-11-19
+
+The Strings dock and CLI must use one Qt-free comparison for the same selected sources. Imported/exported API-name cues, section regions, project function pairing, anchor context when supplied, and review order must agree. The dock offers Auto, Built-in scan, and stored FLOSS results; none runs a tool or a target. Auto may use a built-in scan only when no produced FLOSS record exists for a side. An unreadable or foreign newest record is unavailable, never a silent older-result fallback. Explicit FLOSS requires both sides; refusal keeps the previous view.
+
+Capture bounded stored rows on the SQLite owner's thread, validate the current artifact/side/run/config/cache ownership, and detach evidence before passing it to a worker. Built-in selection never consults stored tool evidence. A refused new request cancels any earlier pending request so a late result cannot replace the retained view. GUI result publication remains guarded by project key and request generation. Existing stronger export/publication contracts are unchanged.
+
+A local `--anchors` document is a bounded ordinary file (at most 4 MiB), read through a held parent and leaf without following links. Reject duplicate keys and non-finite numbers before validating AnchorSet; a preceding path-size observation is not the byte budget. Missing/unreadable inputs retain typed path-free CLI errors.

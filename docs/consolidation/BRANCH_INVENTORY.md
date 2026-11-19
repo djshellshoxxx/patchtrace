@@ -2,13 +2,18 @@
 
 ## Later recovery checkpoint
 
-Source `eb595b82` additionally recovers managed training transfer, paired runner
-publication, GUI accessible control identities and five research workflow
-modules. See `RECOVERED_WORK.md` for source hashes and review evidence. The
-machine census and classifications below remain explicitly frozen at their
-original comparison (`77204ef5`); they have not been relabeled as a refreshed
-full semantic review. Search and Strings parity are active recovery queues.
+Code through `cb1b508c` additionally recovers training transfer, paired runner
+publication, accessible controls, research workflow, offline Tier-W review/run,
+Search/shared stored sources, Strings comparison/source choice, strict fetch
+plans/stream transport, version observations and project creation lifecycle.
+Exact source/review evidence is in `RECOVERED_WORK.md`.
 
+A new fetch observed `consolidation/patchtrace-reviewed-20261119` advancing
+from `a56ab13a` to `8d130aef` and new refs `consolidation/patchtrace-continuation-20261119`,
+`codex/patchtrace-checkpoint-20261119-81e4` and
+`codex/patchtrace-completion-20261119-81e4`. These active heads are being inspected
+in isolation. Main remains `fdc2696c`. They are additions to the frozen census below;
+no refreshed all-page count or complete semantic disposition is claimed yet.
 
 ## Scope and baseline
 

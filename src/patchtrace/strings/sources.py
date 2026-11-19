@@ -15,6 +15,7 @@ from typing import Literal, NamedTuple, Protocol, runtime_checkable
 
 from pydantic import ValidationError
 
+from ..enrichment.identity import domain_id
 from ..intelligence.tools import floss
 from ..intelligence.tools.common import (
     DEFAULT_LIMITS,
@@ -68,6 +69,7 @@ class StringPart:
     run_id: str | None = None
     raw_sha256: str | None = None
     consent_sha256: str | None = None
+    normalized_evidence_sha256: str | None = None
 
 
 @dataclass(frozen=True)
@@ -129,6 +131,8 @@ class FlossEvidenceSource:
         language = ev.analysis.get('language')
         part = StringPart(
             source='floss', semantics_id=STATIC_SEMANTICS_ID, run_id=ev.run_id, config_digest=ev.config_digest,
+            normalized_evidence_sha256=(None if self._part['raw_sha256'] is not None else
+                                       domain_id('strings-normalized-evidence', 1, ev.model_dump(mode='json'))),
             types=tuple(kind for kind in STRING_TYPES if kind in run_types), **{
                 **self._part, 'source_version': self._part['source_version'] or _text(ev.analysis.get('version'))})
         return SourceResult(
