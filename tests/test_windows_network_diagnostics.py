@@ -27,7 +27,13 @@ int main(int argc, char **argv) {
         if (!freopen(argv[2], "r", stderr)) return 3;
         for (i = 0; i < 1000; ++i)
             pt_diag_emit(PT_DG_CHILD_SPAWN, PT_DK_WIN32, 1, 2, 5, UINT32_MAX, 0, 0);
-        return pt_diag_count == 16 && ferror(stderr) ? 0 : 4;
+        {
+            int stream_error = ferror(stderr);
+            if (pt_diag_count == 16 && stream_error) return 0;
+            printf("{\"probe\":\"formatter-failed-write/1\",\"attempted\":%lu,"
+                   "\"stream_error\":%d}\n", (unsigned long)pt_diag_count, stream_error);
+            return 4;
+        }
     }
     if (argc != 2) return 2;
     if (strcmp(argv[1], "max") == 0) {
@@ -78,7 +84,9 @@ def formatter(tmp_path_factory):
     def invoke(mode):
         argv = [str(binary), mode, *([str(source)] if mode == 'failed-write' else [])]
         result = subprocess.run(argv, capture_output=True, timeout=5, env=env, check=False)
-        assert result.returncode == 0 and not result.stdout
+        assert result.returncode == 0 and not result.stdout, (
+            'formatter exit/stdout/stderr', result.returncode,
+            result.stdout[:512], result.stderr[:512])
         assert len(result.stderr) < 65536
         lines = result.stderr.splitlines()
         assert all(0 < len(line) < 512 for line in lines)
