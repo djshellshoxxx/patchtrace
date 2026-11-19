@@ -1837,4 +1837,91 @@ Fresh REST inspection found eleven new #302 commits at `121ffb0b`; six repairs m
 
 ## [FOUNDATION-SAVED-SCOPE-20261119]
 
-Independent controls blocked intact #304: scoped native revision conflicts could resurrect 43 positive edges. A narrow provenance-preserving port from #316 restores global admission and finite saved-scope validation. Dedicated regressions changed from **73 failed, 7 passed** to **80 passed**; both independent date variants now pass. Initial broader commands ran zero tests because a later-only path was included; corrected broad, Qt, hosted and independent review remain pending. Raw failures and limits are preserved in [the repair receipt](qa/foundation-saved-scope-20261119.md). No release or native qualification is claimed.
+Independent controls blocked intact #304: scoped native revision conflicts could resurrect 43 positive edges. A narrow provenance-preserving port from #316 restores global admission and finite saved-scope validation. Dedicated regressions changed from **73 failed, 7 passed** to **80 passed**; both independent date variants now pass. Initial broader commands ran zero tests because a later-only path was included; corrected broad, Qt, hosted and independent review were pending at that receipt's checkpoint. Raw failures and limits are preserved in [the repair receipt](qa/foundation-saved-scope-20261119.md). The accepted foundation merge is the continuation's starting main `fdc2696c`; this historical entry is not evidence that later continuation changes passed. No release or native qualification is claimed.
+
+
+## [CONTINUATION-CONSOLIDATION-20261119]
+
+Starting main: `fdc2696c23bdbfe7668348f25e3b336ce33039f7`. The local branch
+`codex/patchtrace-completion-20261119-81e4` contains the reviewed N-way,
+installer-receipt, parser, PE-cache and facts-eligibility slices through `69fa6b8b`.
+Full combined run `full-batch1` is in progress on that source; its outcome and
+aggregate hosted CI remain pending. No main merge or release has been
+performed by this continuation.
+
+| Slice | Completed evidence | Local integration |
+| --- | --- | --- |
+| Branch census | 320 heads including main; 309 PR records; 139 retained for semantic review. | Complete disposition records at `46f37373`; no branch closure or deletion inferred. |
+| N-way path failure isolation | 11 controls fail on base; 85 affected tests pass in 21.76s. Healthy pairs survive a different pair's unreadable path. | `24064cf6`. |
+| Installer receipt recovery | 5 tests pass in 3.07s; exact authored installer size/digest checked without execution. | Recovery `20b54521`, root port `ef9167d2`; broader source workflow scope retained. |
+| Parser bounds and SQLite identity | Initial base replay: 29 failed/4 passed. Independent classifier review: 6 failed/22 passed before correction. Corrected selection: 107 passed. Final affected suite: 432 passed/1 Windows skip in 61.86s. | Chain ends `baf95fcd`, integrated locally by `7610aeaa`. |
+| SPEC-51 cache/worker integration | Final deduplicated affected suite: 840 passed/2 Windows skips in 60.27s. Independent cache peer: 16 passed in 2.15s, no remaining blocker in reviewed paths. | Source `0bc41f6b`, local integration `6bf57557`. |
+| Research facts-eligibility guard | 11 red controls, then 33 focused passes in 3.52s. The caller sweep found one authored fixture missing facts metadata (106 passed/1 failed); explicit metadata correction retained its hit assertion. Final scoped/caller selection: 140 passed in 4.59s. | Source `d87af037`, local merge `69fa6b8b`. |
+
+Cache review corrected invalid digest/proof claims, stale/failed equal-body
+renewal and concurrent row-growth admission. Offscreen production lifecycle
+controls verify worker parsing, owner-thread storage, no second Files-tab reader,
+and stale UI clearing. OS trust still runs independently, and partial UI data
+does not invent a resource-limit cause. Parser/cache Ruff passed; cache schema
+regeneration produced no changes. These overlapping slice results are not a
+combined pass count or native acceptance evidence.
+
+Exact skips are Windows `msdelta.dll`, the real catalog probe and native
+WinVerifyTrust. The coordinator's latest existing-main CI observation had Linux
+and most Qt legs green, Windows and one Qt leg still running; PR319 at `a56ab13a`
+was queued. Broad PR316/318 holds remain unchanged. These earlier-head states do
+not qualify the new aggregate.
+
+The census remains frozen at `2026-11-19T10:34:16.394Z`. Later draft PR320
+(`188b4962`, broad 928-file/333-commit integration, full suite incomplete) and
+documentation PR321 (`976dddfb`, atop PR319) are separately retained observations,
+not additions silently folded into those counts or the local source. The later
+all-state issues scan found 10 open non-PR issues and read their comments; it
+does not resolve those issues. Main remains `fdc2696c` in the coordinator's latest
+observation.
+
+Forced strings-export source-substitution/OSError cleanup races, native trust,
+release/manual acceptance, separate L1/L2/L3 evidence and unreviewed historical
+branches remain explicit. The restored environment's completed reruns replace
+interrupted attempts without inventing results for lost handles. Receipt names,
+exact scopes and next commands are in [the continuation test record](consolidation/TEST_RESULTS.md);
+[remaining work](consolidation/REMAINING_WORK.md) preserves the open gates.
+
+
+## 2026-11-19 continuation batches 2–3: exact values and typed boundaries
+
+Reviewed local runtime/test source `a4d6dd9becb37b6245332643683a2ef1d2bf3812` adds the BinExport2/rz-diff text repairs (414 affected passes), CSAF redirect error typing (33 passes), and CVE decimal/UTC admission with exact tenths (124 passes). Each slice preserves red controls and positive behavior; source and receipts are indexed under `docs/consolidation/`. Root review caught CVSS underflow, excess-precision rounding and caller-context dependence before accepting the numeric slice. No real case facts or accuracy claims changed.
+
+The full attempt on earlier `69fa6b8b` ended with exit 137/SIGKILL before a pytest summary or JUnit. Its kill cause is unestablished; disk pressure and low available memory were observed separately. This is incomplete, not passed. The earlier sequential diagnostic planned all 855 tracked test files in 54 groups of at most 16 with no file exclusions; it later stopped after nine groups at disk reserve. Phase 4 below records its actual result and the new complete-manifest run. Its immutable source/test/tool fingerprint and per-group commands/results are retained; partitioned coverage must not be described as an unsplit full pass.
+
+Whole-tree configured Ruff, pip check and schema generation pass on the frozen source; no schema drift. Supplemental security scanning still has 65 findings, all classified in `docs/consolidation/STATIC_AUDIT.md`; no suppression or clean-scan claim. The focused archive contains 94 verified payloads (SHA-256 `babf10b732007de68adbf265416139bcaf3bd72d13f35916985080055cd5c9df`). It deliberately excludes active partition outcomes.
+
+The guarded remote checkpoint `bdc929ebd3c6aaa2563c758936beb315a10eeea0` exactly preserves the earlier local `af8772bf` tree. The final candidate still needs its own hosted Linux/Windows/Qt/package/native checks before any main merge. Existing main QA/Qt success belongs only to main `fdc2696c`. No release, tag, deployment, main merge or branch deletion is claimed.
+
+
+## Reviewed contextual digest rebaseline after CVE exactness repair
+
+The first nine sequential groups on frozen runtime/test source `a4d6dd9b` collected 2,611 cases: 2,602 passed, 8 skipped and one failed golden expectation. The runner then stopped before group10 because shared disk space was below its 128 MiB reserve; 45 groups are not covered by that attempt. The original failure and all nine group receipts are preserved.
+
+The CVE repair adds exactly one eligible plain-data constant, `ROUND_HALF_EVEN = "ROUND_HALF_EVEN"`. The existing constants-digest contract consequently changes only the contextual digest from `6db85ba584aaa95fe6cac6aee9681c2b6ec064cffe52c9c601fd461081f704cb` to `3d16cbd776c3589f98828a46ebaf420299b2f72d84f5d5bcf79b08de220c5963`. Removing only that constant from a copied current namespace reproduces the prior digest exactly; new class/function imports are excluded. Eight fresh processes across four hash seeds and two Decimal contexts produce the same new digest without changing caller state. Signals, WIL and ranking digests are unchanged.
+
+Reviewed correction: change only the contextual golden expectation. Production hashing and all equality, mutation, stale-row and cache-invalidation assertions remain intact. Existing non-golden guards passed8/8; the complete nine-case file now passes9/9 in1.85s in a separate candidate checkout. Contextual stage identities change and prior stored pipeline algorithm maps correctly become stale until recomputed. Runtime source and the ongoing/frozen partition checkout were not modified by this fixture correction.
+
+`docs/consolidation/evidence/algorithm-digest-review-20261119.zip` contains24 verified payloads, including the original nine-group outcomes and independent/corrected digest evidence. SHA-256: `aaf3f22a9f1b09e8423be01a1667be6afa60b436d6434fe741a0bc852d8ed80a` (84,003bytes). This does not qualify the remaining45 groups or an unsplit full suite.
+
+
+## [CONTINUATION-PHASE4-HISTORY-20261119]
+
+Original runtime `32abf9702538dc1b2027e8ae052949bbc2436c28`, tests/spec `1c2b770d2eef6266c56504b5d081e5d6d750151e`, lifecycle correction `4d7ae4af9aa6d60fee0f70025d774c3f5b468e0b`.
+
+Recovered source `254190a0b36153d28f76782f8d5dae26e9d9a020`, integrated through `520b524b`, preserves bounded attempt-storage diagnostics without replacing original engine errors or prior trusted sets. Generic publication exceptions now say **"Attempt storage unconfirmed"** because a row may already have committed. Definite not-saved wording requires a returned ownership refusal; a result-kept claim requires confirmed publication. Lifecycle resets clear transient details. Malformed-row retention and the underlying post-write retention exception remain open.
+
+Baseline: 12 failed/8 passed in 19.07s. Recovered slice: 79 passed in 42.63s. Real SQLite post-write controls: 2 failed in 3.59s. Final affected UI/host selection: 81 passed in 37.33s; whole-tree Ruff and whitespace checks pass. Independent source review found no blocker in the recovered diagnostics, scheduler/producer boundary or persistence ownership/refusal contract. Authored offscreen controls do not qualify native comparators or atomic storage.
+
+[History evidence](consolidation/evidence/history-diagnostic-20261119.zip): 9 verified payloads, 16,801 bytes; SHA-256 `60248a2e1bc603b6dba92451df639d22b7c58cc0d8153262a387242ae4dc5f67`.
+
+The first `a4d6dd9b` partition stopped at disk reserve after 9/54 groups: 2,602 passed, 8 skipped and one contextual-digest pin mismatch. Golden correction `70b82275` follows review of the exact new ROUND constant; 9 digest/cache-identity tests pass in 1.85s. The original failure remains failed. [Algorithm-digest evidence](consolidation/evidence/algorithm-digest-review-20261119.zip) preserves both outcomes.
+
+The all-856-file, 54-group qualification is running on `520b524beb0c837b6e50801bd97c88a2447e39fd` in coordinator session 74806, with its own `/tmp/pt81-final-venv` environment and results under `/tmp/pt81-final-results`. Source/tests are frozen. No aggregate pass is available yet.
+
+Remote checkpoint `bdc929ebd3c6aaa2563c758936beb315a10eeea0` still contains only the earlier `af8772bf` tree. The final PR has not yet been created; main remains `fdc2696c`. No main merge or release is claimed.

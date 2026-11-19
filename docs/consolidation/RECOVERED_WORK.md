@@ -69,3 +69,16 @@ holds continue to govern integration.
 The inventory does not claim that all unique contributions have been recovered.
 Existing accepted source slices and exact ancestry are counted separately from
 branches retained for semantic review.
+
+
+## Phase 4 — evidence attempt-history recovery
+
+Original runtime `32abf9702538dc1b2027e8ae052949bbc2436c28`, tests/spec `1c2b770d2eef6266c56504b5d081e5d6d750151e`, lifecycle correction `4d7ae4af9aa6d60fee0f70025d774c3f5b468e0b`.
+
+Recovered source `254190a0b36153d28f76782f8d5dae26e9d9a020`, integrated through `520b524b`, preserves bounded attempt-storage diagnostics without replacing original engine errors or prior trusted sets. Generic publication exceptions now say **"Attempt storage unconfirmed"** because a row may already have committed. Definite not-saved wording requires a returned ownership refusal; a result-kept claim requires confirmed publication. Lifecycle resets clear transient details. Malformed-row retention and the underlying post-write retention exception remain open.
+
+Baseline: 12 failed/8 passed in 19.07s. Recovered slice: 79 passed in 42.63s. Real SQLite post-write controls: 2 failed in 3.59s. Final affected UI/host selection: 81 passed in 37.33s; whole-tree Ruff and whitespace checks pass. Independent source review found no blocker in the recovered diagnostics, scheduler/producer boundary or persistence ownership/refusal contract. Authored offscreen controls do not qualify native comparators or atomic storage.
+
+[History evidence](evidence/history-diagnostic-20261119.zip): 9 verified payloads, 16,801 bytes; SHA-256 `60248a2e1bc603b6dba92451df639d22b7c58cc0d8153262a387242ae4dc5f67`.
+
+This recovery accounts for the named contribution only; its containing branches and unported scope remain retained.

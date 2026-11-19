@@ -1,5 +1,36 @@
 # PatchTrace delivery tracker
 
+## 2026-11-19 continuation consolidation
+
+This checkpoint starts at accepted main `fdc2696c`. The listed implementation
+slices are integrated into local branch `codex/patchtrace-completion-20261119-81e4`
+through `520b524b`, including CVE numeric/time, digest-fixture and history-diagnostic repairs; they are not yet an accepted aggregate main promotion.
+
+- [x] Preserve a complete 320-head/309-PR census and every fetched branch disposition; retain the 139 branches needing semantic review.
+- [x] Repair N-way path resolve/stat isolation with fixed unreadable reasons and healthy-hop preservation: 11 base failures, then 85 passes in 21.76s (`24064cf6`).
+- [x] Recover the installer size/digest receipt without the historical workflow redesign: source `20b54521`, local port `ef9167d2`, 5 passes in 3.07s.
+- [x] Correct raw Winbindex byte limits, BinDiff integer-key identity and SQLite virtual/shadow-table classification; retain initial 29-red/4-green and independent 6-red/22-green evidence. Final affected selection: 432 passed, 1 Windows skip in 61.86s; source chain `baf95fcd`, local merge `7610aeaa`.
+- [x] Complete SPEC-51 bounded metadata persistence and existing-worker handoff, with fresh artifact hashing, owner-thread storage, cancellation/ownership/corruption guards and truthful partial UI. Source `0bc41f6b`, local merge `6bf57557`; 840 passed, 2 Windows skips in 60.27s; independent peer 16 passed in 2.15s.
+- [x] Reproduce `facts: unverified` scoring admission with 11 red controls and verify the worker's focused guard with 33 passes in 3.52s.
+- [x] Complete facts-eligibility caller verification and integrate `d87af037` through `69fa6b8b`: 140 passed in 4.59s. Retain the intermediate 106-pass/1-fail fixture-metadata correction and unchanged positive hit assertion.
+- [ ] Complete the all-856-file/54-group qualification on `520b524b` (session 74806, `/tmp/pt81-final-results`) and final-source checks. Retain the earlier 137/SIGKILL and 9/54-group disk-reserve stop as incomplete, not passing.
+- [x] Preserve the existing focused, algorithm-digest and history-diagnostic evidence archives with their separate verified scopes.
+- [ ] Obtain all required hosted checks on the published aggregate head/base; refresh main and PR heads before an expected-head REST merge with `[no release]`.
+- [ ] Reproduce and repair forced strings-export source-substitution and OSError cleanup races. Keep the separate no-clobber and empty-export metadata follow-ups open; cancellation repair does not close those boundaries.
+- [ ] Complete native catalog/WinVerifyTrust, real producer, Windows package, clean-machine/manual/accessibility and original timeout-pair/RB-01 gates with their own evidence.
+- [ ] Preserve separate L1/L2/L3 claims and frozen failed receipts; never score `facts: unverified` cases or count blocked analyses as misses.
+- [ ] Continue semantic recovery of the 139 retained branches; broad PR316/318 holds remain unchanged. Retain every source branch and unported contribution.
+- [ ] Separately review later draft PR320 (`188b4962`, broad 928-file/333-commit integration) and documentation PR321 (`976dddfb`, atop PR319); the frozen 10:34 census does not cover these new candidates. Preserve the 10 open non-PR issues identified by the later scan until individually resolved.
+
+- [x] Integrate CVE numeric/time `93c9e395` / `a4d6dd9b`; final 124 passed in 6.70s.
+- [x] Review the contextual ROUND constant and correct its sole digest golden at `70b82275`; 9 passed in 1.85s.
+- [x] Recover attempt-history diagnostics from `32abf970`/`1c2b770d`/`4d7ae4af`, correct post-write uncertainty in `254190a0`, and integrate at `520b524b`; final 81 passed in 37.33s.
+- [ ] Keep malformed-row retention and the underlying post-write exception open; "Attempt storage unconfirmed" does not assert whether a row committed.
+
+[Current handoff](../docs/consolidation/HANDOFF.md),
+[feature matrix](../docs/consolidation/FEATURE_MATRIX.md) and
+[test results](../docs/consolidation/TEST_RESULTS.md).
+
 ## 2026-11-18 advisory anchor integration
 
 - [x] Independently review #305/#306 and preserve both actual heads in successor history.
@@ -1380,3 +1411,17 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [ ] Complete corrected affected and Qt checks, independent review, and exact-head hosted qualification before guarded merge; preserve separate native, release and accuracy gates.
 
 [Repair evidence and limits](../docs/qa/foundation-saved-scope-20261119.md).
+
+
+## 2026-11-19 continuation follow-up
+
+- [x] Integrate reviewed BinExport2/rz-diff text-boundary corrections; 414 affected checks passed.
+- [x] Classify all 65 supplemental static findings and correct the reproduced CSAF redirect exception; 33 transport checks passed.
+- [x] Recover issue #105 E3/E4 behavior with exact CVSS tenths, deterministic caller-independent Decimal handling, UTC representability and partial-provider CLI controls; 124 checks passed.
+- [x] Preserve bounded dispositions for all 10 non-PR issues and 39 comments without closing unresolved findings.
+- [x] Preserve the focused archive, original failures and exact source identities.
+- [x] Preserve the stopped 855-file diagnostic on `a4d6dd9b`: 9/54 groups, 2,602 passed, 8 skipped, one pin mismatch; no aggregate pass.
+- [ ] Complete the new all-856-file/54-group qualification on `520b524b`, session 74806, `/tmp/pt81-final-results`.
+- [ ] Publish the final candidate and obtain its actual hosted/platform gates before guarded main promotion.
+- [x] Recover and independently correct the history diagnostic contribution at `254190a0`, integrated by `520b524b`; final 81 passed. Source/tests remain frozen; malformed-row retention and the post-write exception remain open.
+- [ ] Continue the retained branch/issue remainder, including planned-pair identity, bounded search/enrichment/build-environment replays and existing forced-export/native/accuracy obligations.
