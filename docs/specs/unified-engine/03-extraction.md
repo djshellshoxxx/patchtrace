@@ -322,8 +322,16 @@ envelope is attempted when possible.
 
 Ordinary diagnostic read, serialization or write failure is reported separately
 and cannot enter `Checks.failures`, change L1/acceptance, mask a primary failure,
-or delete earlier evidence. Reporting is itself bounded and best effort,
-including a failing stderr sink. A partial write is not announced as saved;
+or delete earlier evidence. Reporting is itself bounded and best effort for
+ordinary sink `Exception`s. At capture entry, record whether a caller exception
+was already active; only that explicit per-call state shields the caller's
+primary from a secondary reporter `BaseException`. Internal diagnostic refusal,
+metadata or write exceptions do not create such a shield. A fresh
+`KeyboardInterrupt`/`SystemExit` from the reporter therefore propagates after
+ordinary successful capture or internal refusal, through the existing main
+cleanup. Capture reads/querying/initialization likewise retain their interrupt
+propagation. No exception object or shield is stored globally or retained after
+capture. A partial write is not announced as saved;
 retain failed-write bytes rather than gaining new deletion authority. Captures
 are saved outside private work and never from a cleanup `finally` that could
 mask the original exception. This assumes the existing cooperative private-work

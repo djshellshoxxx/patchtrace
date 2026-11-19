@@ -454,3 +454,53 @@ def test_reporting_failure_preserves_an_already_active_primary(setup, monkeypatc
             writer(setup).capture(side, 1, result)
             raise
     assert caught.value is primary
+
+
+@pytest.mark.parametrize('case', ['success', 'byte-refusal', 'write-collision'])
+@pytest.mark.parametrize('sink_error', [KeyboardInterrupt, SystemExit])
+def test_fresh_reporting_interrupt_propagates_after_capture_or_internal_refusal(setup, monkeypatch, case, sink_error):
+    tool, work, out, side = setup
+    result = build_result(work)
+    stop = sink_error('authored fresh reporting interrupt')
+    collision = None
+    if case == 'byte-refusal':
+        monkeypatch.setattr(tool, 'DIAGNOSTIC_FILE_BYTES', 128)
+    elif case == 'write-collision':
+        monkeypatch.setattr(tool.uuid, 'uuid4', lambda: SimpleNamespace(hex='2' * 32))
+        collision = out / ('live-unified-diagnostics-' + '2' * 32 + '-older-analyze-1.json')
+        collision.write_bytes(b'foreign evidence')
+
+    class Sink:
+        def write(self, _text):
+            raise stop
+
+    monkeypatch.setattr(tool.sys, 'stderr', Sink())
+    with pytest.raises(sink_error) as caught:
+        writer(setup).capture(side, 1, result)
+    assert caught.value is stop
+    if case == 'success':
+        assert documents(out)[0][1]['complete'] is True
+    elif collision is not None:
+        assert collision.read_bytes() == b'foreign evidence'
+    else:
+        assert not list(out.iterdir())
+
+
+def test_entry_primary_shields_secondary_system_exit_during_internal_refusal(setup, monkeypatch):
+    tool, work, out, side = setup
+    result = build_result(work)
+    primary = ValueError('caller operation failure')
+    monkeypatch.setattr(tool, 'DIAGNOSTIC_FILE_BYTES', 128)
+
+    class Sink:
+        def write(self, _text):
+            raise SystemExit('secondary reporter stop')
+
+    monkeypatch.setattr(tool.sys, 'stderr', Sink())
+    with pytest.raises(ValueError) as caught:
+        try:
+            raise primary
+        except ValueError:
+            writer(setup).capture(side, 1, result)
+            raise
+    assert caught.value is primary and not list(out.iterdir())
