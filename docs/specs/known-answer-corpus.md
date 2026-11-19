@@ -359,6 +359,42 @@ This change applies only to newly produced reports. It adds no card/recipe case
 grammar, changes no frozen receipt or expected corpus outcome, and establishes
 no native/compiler reproducibility result from the authored runner controls.
 
+### Exit-1 summary recognition and diagnostics (2026-11-18)
+
+Exit 1 without a recognized command summary is a failed command, rather than
+declared findings. This applies equally to case steps and the separate engine
+evaluation lane. The existing bounded failure reason and stderr-tail logging
+must run for absent, malformed or unrecognized exit-1 summaries. A failed case
+step stops that case's remaining steps; independent evaluation keeps its
+existing scheduling. Raw stderr stays in the job log, with only the existing
+bounded one-line reason retained in the aggregate shard result.
+
+JSON extraction and command recognition are separate. `_summary` continues to
+parse a whole JSON object or its existing trailing-object forms; a parsed object
+alone is insufficient to recognize an exit-1 command result. The recognized
+command names are exactly the current shard step/evaluation names `fetch`,
+`build-suite`, `build-card`, `aa`, `noise`, `mutate`, `evaluate`, plus the existing
+legacy `suite` summary spelling. Recognition requires an exact string command
+and a string `status` equal to `ok`, `findings` or `failed`. If status is absent,
+only legacy `suite` with an integer `disagreements >= 0` is recognized; booleans,
+negative counts, non-integers and present-but-invalid status values are refused.
+The existing `{"command":"suite","disagreements":1}` positive remains valid.
+
+This is a narrow recognition rule, not a complete summary schema or a new
+command-argv binding. Recognized fetch/evaluate `status: failed` summaries keep
+their established exit-1 `findings` classification in this slice. Other parsed
+summary fields, result sanitization/absorption, and report validation keep their
+current contracts. The A/A non-byte-identical override above retains precedence.
+Exit 0/skipped, blocked, timeout and other exit codes keep their existing
+classification. No missing diagnostic, parser fallback or timeout can become
+positive native evidence through this rule.
+
+Authored injected-runner tests cover both lanes, genuine declared findings,
+legacy suite counts, failed-status fetch/evaluation summaries, A/A precedence,
+bounded reasons/log tails and shard/merge propagation. They execute no compiler,
+engine, target or network. Frozen receipts and their unknown native failure
+causes are unchanged; this repair only improves newly observed failure reporting.
+
 ## 14. Tests (`tests/test_tier_r_*.py`; synthetic C compiled inside the tests; BLOCKED, never silently skipped, without a compiler)
 Contracts and schema drift; examples valid/invalid; locator on hostile C (comments, strings, K&R, macros, `#if`);
 every mutation operator (applies, compiles, deterministic, records); identity join and decision table; PDB and DWARF
