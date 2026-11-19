@@ -319,12 +319,15 @@ class _DiagnosticStop(Exception):
         super().__init__(reason)
 
 
-def _diagnostic_report(reason: str, name: str = '') -> None:
-    """Diagnostics and their reporting must never replace the original gate result."""
+def _diagnostic_report(reason: str, name: str = '', *, protect_primary: bool = False) -> None:
+    """Ordinary sink failures are harmless; only an entry-time caller primary shields interrupts."""
     try:
         sys.stderr.write(f'INFO diagnostic {reason[:40]} {name[:120]}\n')
-    except BaseException:
+    except Exception:
         return
+    except BaseException:
+        if not protect_primary:
+            raise
 
 
 def _diagnostic_json(value, limit: int) -> bytes:
@@ -453,7 +456,7 @@ class _RunDiagnostics:
         _diagnostic_json(projection, DIAGNOSTIC_FN_BYTES)
         return projection
 
-    def _ir(self, side, ordinal: int, result, check) -> tuple[dict, dict]:
+    def _ir(self, side, ordinal: int, result, check, report) -> tuple[dict, dict]:
         connection = None
         progress_reason = None
         try:
@@ -502,21 +505,26 @@ class _RunDiagnostics:
                 try:
                     connection.close()
                 except Exception:
-                    _diagnostic_report('snapshot-close-error')
+                    report('snapshot-close-error')
 
     def capture(self, side, ordinal: int, result) -> None:
+        protect_primary = sys.exception() is not None
+
+        def report(reason: str, name: str = '') -> None:
+            _diagnostic_report(reason, name, protect_primary=protect_primary)
+
         name = ''
         try:
             slot = (side.label, ordinal)
             if side.label not in {'older', 'newer'} or type(ordinal) is not int or ordinal not in {1, 2}:
-                _diagnostic_report('invalid-slot')
+                report('invalid-slot')
                 return
             if slot in self.attempts or len(self.attempts) >= DIAGNOSTIC_ATTEMPTS:
-                _diagnostic_report('attempt-limit')
+                report('attempt-limit')
                 return
             self.attempts.add(slot)
             if self.remaining < DIAGNOSTIC_FILE_BYTES:
-                _diagnostic_report('pair-byte-cap')
+                report('pair-byte-cap')
                 return
             self.remaining -= DIAGNOSTIC_FILE_BYTES
             name = f'live-unified-diagnostics-{self.invocation}-{side.label}-analyze-{ordinal}.json'
@@ -533,7 +541,7 @@ class _RunDiagnostics:
                 doc['jsonl'] = self._jsonl(result, check)
             except _DiagnosticStop as exc:
                 doc['jsonl'] = _diagnostic_refusal(exc.reason)
-            doc['ir'], doc['functions'] = self._ir(side, ordinal, result, check)
+            doc['ir'], doc['functions'] = self._ir(side, ordinal, result, check, report)
             expired = self.clock() >= deadline
             if expired:
                 # Once exhausted, attempt only a small failure envelope, never another payload/query/expansion.
@@ -560,15 +568,15 @@ class _RunDiagnostics:
             try:
                 _diagnostic_write(self.out / name, data, None if expired else check)
             except FileExistsError:
-                _diagnostic_report('file-collision', name)
+                report('file-collision', name)
             except Exception:
-                _diagnostic_report('write-error', name)
+                report('write-error', name)
             else:
-                _diagnostic_report('saved' if doc['complete'] else 'saved-incomplete', name)
+                report('saved' if doc['complete'] else 'saved-incomplete', name)
         except _DiagnosticStop as exc:
-            _diagnostic_report(exc.reason, name)
+            report(exc.reason, name)
         except Exception:
-            _diagnostic_report('capture-error', name)
+            report('capture-error', name)
 
 
 class Side:
