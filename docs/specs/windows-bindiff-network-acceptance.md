@@ -175,6 +175,31 @@ controls continue to refuse incomplete chains, code 125 and non-access-denied
 socket results even when diagnostic text is present. Windows compilation and
 actual error-path/runtime behavior remain a separate hosted requirement.
 
+#### Portable failed-write predicate observations
+
+The original Windows full-QA result at head `771e5a77`, job `135175350823`,
+retains a formatter-harness exit 4 with empty output. Its predicate combines
+the 16-attempt count with `ferror(stderr)`; neither constituent was recorded.
+That result remains unresolved and is not proof that either constituent alone
+failed or that the production formatter violated its budget.
+
+When that same predicate fails, the authored standalone formatter harness must
+retain the observed attempt count and stdio error indicator separately in one
+fixed JSON line on its own stdout, strictly below 128 bytes. The record has
+`probe="formatter-failed-write/1"`, `attempted` and `stream_error`; it contains
+no path, source bytes, environment or native identity. It still exits 4. A
+passing harness still emits no stdout. The original count/error conjunction
+and all pytest success/refusal assertions remain unchanged. This observation
+must not perform an extra write to the failed stream, substitute a fake sink,
+clear its error indicator, or modify the actual extracted formatter code.
+
+Pytest must retain a bounded failure message containing the return code and
+at most 512 bytes of each captured stream. This test-harness observation is
+separate from the native helpers' stderr-only protocol; it does not change
+their stdout, stderr, return values, 16-attempt cap or acceptance. Portable
+success does not resolve the original Windows CRT observation; an actual
+subsequent Windows run must supply the missing values.
+
 ### 5.2 Parent-created stdin and descendant identity
 
 At head `771e5a775f5bf60a8d9094232b51dcdbb47d6389`, preview
