@@ -1,0 +1,53 @@
+{
+  "schema": "patchtrace/source-receipt/1",
+  "source": "eb65f7fe9991167fb77c6f620240c46edc6ac702",
+  "source_tree": "ca32dc565d64c0a443cc1fd93953c0dc8cdfdf99",
+  "source_files": {
+    ".github/workflows/live-backend.yml": {
+      "bytes": 4918,
+      "sha256": "56655d82879e2141f0c8a53d5d7bd104ab64852b5c942a1a5f9f0c5208d370b8"
+    },
+    "tools/live_symbol_store_setup.py": {
+      "bytes": 1462,
+      "sha256": "80d3614a5945b9a8e2ffd6827fb45c412611e018d377efcbb36fcf319a349b8b"
+    },
+    "tools/seed_symbol_cache.py": {
+      "bytes": 1410,
+      "sha256": "bdcb3759340702f4bb4dcd1cb4cad9b57d9c8e56e9e36d11c4b9f91dc453515c"
+    },
+    "tests/test_live_symbol_store_setup.py": {
+      "bytes": 5713,
+      "sha256": "1bab1671a9d77a17b726fa74fe48c4df17295a906f6166c4fc9ade660917151e"
+    },
+    "docs/specs/ghidriff-launcher-symbols.md": {
+      "bytes": 26902,
+      "sha256": "d4543ab8f704084ec2a9da7127d606562c55f6f0dff328fff575bb383743389f"
+    }
+  },
+  "files": {
+    "README.md": {
+      "bytes": 4011,
+      "sha256": "35782466b3b85ab2abc014478eebf44620badc11879804a536f3c9e79cc6e0c6"
+    },
+    "baseline-and-red.zip": {
+      "bytes": 3877,
+      "sha256": "ed9c961654c3b3a048bc4f5e05d45cd2b4648a1c0dac669026c6da5a68408eba"
+    },
+    "green.log": {
+      "bytes": 179,
+      "sha256": "a0e1d521e7f978b44e98aa31d340b0bfac0a02c27daf99c756511eead24d8b28"
+    },
+    "green.xml": {
+      "bytes": 13486,
+      "sha256": "df6de98725425483ea25e119ef89a944980a02abe165f8e0b278e8d57e266ae5"
+    },
+    "ruff.log": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "source-proof.json": {
+      "bytes": 1458,
+      "sha256": "2dd3c1a74c123704d6dd412d56787bd5c66c9816a0bc432c90928ee020326a6c"
+    }
+  }
+}

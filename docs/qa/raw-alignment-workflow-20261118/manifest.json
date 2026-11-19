@@ -1,0 +1,73 @@
+{
+  "baseline_commit": "ed4557257cde90a2c10bd81d1d0d469886c84687",
+  "historical_source_commit": "b304034e3c310528f7e0a3206eda48c94e0a6873",
+  "spec_and_red_tests_commit": "640baa22",
+  "implementation_commit": "e4506666edefbbc22419ff97874e3edc599f94e7",
+  "scope": "Selective paired raw-offset GUI adapter recovery; pure backend and native research unchanged.",
+  "raw_receipts": {
+    "red.log": {
+      "sha256": "13b95f68ab8331201b7d19e92599000ef8db446ec587b37558d3090f5bb8fc0c",
+      "bytes": 669
+    },
+    "red.xml": {
+      "sha256": "790bca19a7c8e6044b7633671c1bcbd3020799b7c9e611df4db27171c39be781",
+      "bytes": 715
+    },
+    "initial-green.log": {
+      "sha256": "a1b01ea75f8409d85fa88ffd29e35372938a23331e03b11191fb315b74b75c4e",
+      "bytes": 1233
+    },
+    "initial-green.xml": {
+      "sha256": "b01d9939afe30eb7b7fda9e45e976c0aa391ef09848c958490de493f161f7bdb",
+      "bytes": 16666
+    },
+    "affected-green.log": {
+      "sha256": "1a6b4c6acb059a45c34569f737abeaf7ba0c043dbbba63d9d8bbe22df96e0182",
+      "bytes": 261
+    },
+    "affected-green.xml": {
+      "sha256": "2823a6c455c88f29e5427a7543257cb7a1da726ec6d93d24305cfe30e7b214f7",
+      "bytes": 22710
+    },
+    "cli-headless.log": {
+      "sha256": "2826a5e72c9f873a0370a41fe46a67989c4a682af951a8514eeb48dfd0b0e61b",
+      "bytes": 98
+    },
+    "cli-headless.xml": {
+      "sha256": "c04ff258328a3896ce04fe5f5024a15b35ae075f740696400b16fd33c6aa387a",
+      "bytes": 344
+    },
+    "ruff.log": {
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "bytes": 19
+    }
+  },
+  "archive": {
+    "path": "raw-evidence.zip",
+    "sha256": "423e4ee02f1fbe2c22764b2bd7763e3a5134c93ba3de929e08e13627e7b41fcd",
+    "bytes": 9232
+  },
+  "image": {
+    "path": "minimum-width.png",
+    "sha256": "5599af37b8c6588d5face7d56505c850224cd99c12d38d7101d0ac44a0eb4a33",
+    "bytes": 159205,
+    "description": "Actual synthetic sample in offscreen Qt at 960 x 740; no native manual acceptance."
+  },
+  "source_sha256": {
+    "src/patchtrace/ui.py": "0523abdb2ce0ddd9efc627f8cb139877fc2674934c3fbcb073461a670efb15b8",
+    "src/patchtrace/ui_raw_alignment.py": "9a9a68f52f104d968eca33bc399ed9d7a03386591fd98c2d328c8f79e8a9e144",
+    "tests/test_ui_raw_alignment.py": "c07626b09ef2e7589f1a80aed50c8765304548c983b5bdbaaabbda35b2d358e3",
+    "src/patchtrace/raw_alignment_view.py": "de1bd55be946816b32b3ece72369ebb71020525137d65853ae13d53691221b30",
+    "src/patchtrace/representations/alignment.py": "7c21b174f2366bdb9786b06dfb6e98f1aa5b5bdf43a89454af9f24e46d21dd7a",
+    "docs/specs/byte-representations.md": "8d3cc9887af5363e8d2c2efeb583d0584fcffa4c5f8f321210a1d2d34894192d",
+    "docs/modules.md": "e7343a0658eb3068251d7a13bc2895589eb462ce7ac86e1053fd2a20b53bd61f"
+  },
+  "ui_py_lines": 3071,
+  "source_changed_since_implementation_commit": "",
+  "qualification": {
+    "full_suite": "not run by this feature worker; combined head qualification remains open",
+    "native_manual": "not performed",
+    "hosted_current_head": "not performed",
+    "independent_review": "pending"
+  }
+}

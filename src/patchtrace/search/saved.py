@@ -22,14 +22,14 @@ import uuid
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from typing import Annotated, Literal, Protocol, runtime_checkable
+from typing import Annotated, Literal, Protocol, get_args, runtime_checkable
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from patchtrace.enrichment.contracts import EnrichmentError
 from patchtrace.enrichment.identity import domain_id
 from patchtrace.enrichment.storage import EnrichmentStore, Entry, Guard
-from patchtrace.search.contracts import QueryPlan, SavedSearch
+from patchtrace.search.contracts import Mode, QueryPlan, SavedSearch
 from patchtrace.search.errors import SearchError
 from patchtrace.search.limits import DEFAULT_LIMITS
 from patchtrace.search.normalize import clean_query_text, fold
@@ -55,6 +55,7 @@ class SavedQuery:
     name: str
     text: str
     created: str
+    mode: Mode = 'auto'
 
 
 @dataclass(frozen=True, slots=True)
@@ -90,8 +91,10 @@ def clean_name(value: object) -> str:
 
 
 def rerun_plan(item: SavedQuery) -> QueryPlan:
-    """The plan to run for a saved search: its text parsed again by the current grammar (raises PT-SEARCH-QUERY)."""
-    return parse_query(item.text)
+    """Reparse text and the validated matching mode; stored clauses never become executable plans."""
+    if item.mode not in get_args(Mode):
+        raise SearchError('PT-SEARCH-QUERY', 'the saved query has an unsupported matching mode', recoverable=True)
+    return parse_query(item.text, mode=item.mode)
 
 
 def _ordered(items: list[SavedQuery]) -> tuple[SavedQuery, ...]:
@@ -107,7 +110,8 @@ def _well_formed(event: SavedSearch) -> bool:
 def _fold_events(events: list[SavedSearch]) -> tuple[SavedQuery, ...]:
     """The creates that no delete names; a delete of an unknown row ends nothing."""
     ended = {event.of for event in events if event.op == 'delete'}
-    return _ordered([SavedQuery(e.saved_id, e.name or '', e.plan.text if e.plan else '', e.created)
+    return _ordered([SavedQuery(e.saved_id, e.name or '', e.plan.text if e.plan else '', e.created,
+                               e.plan.mode if e.plan else 'auto')
                      for e in events if e.op == 'create' and e.saved_id not in ended])
 
 
@@ -118,8 +122,8 @@ def _same_name(items: tuple[SavedQuery, ...] | list[SavedQuery], name: str) -> S
 def _text_gives(text: str, plan: QueryPlan) -> bool:
     """True when parsing `text` today gives `plan`: the only trust a stored or supplied plan gets."""
     try:
-        return parse_query(text).digest() == plan.digest()
-    except SearchError:
+        return parse_query(text, mode=plan.mode).digest() == plan.digest()
+    except (SearchError, ValidationError):
         return False
 
 
@@ -165,7 +169,7 @@ def save_into(target, name: str, plan: QueryPlan) -> SavedQuery:
     current = target.list().items
     known = _same_name(current, name)
     if known is not None:
-        if _text_gives(known.text, plan):
+        if known.mode == plan.mode and _text_gives(known.text, plan):
             return known
         raise SearchError('PT-SEARCH-INPUT', 'a saved search already has this name; delete it first or pick another',
                           recoverable=True)
@@ -174,7 +178,7 @@ def save_into(target, name: str, plan: QueryPlan) -> SavedQuery:
                           recoverable=True)
     event = target.make_event(op='create', name=name, plan=plan)
     target.append(event)
-    return SavedQuery(event.saved_id, name, plan.text, event.created)
+    return SavedQuery(event.saved_id, name, plan.text, event.created, plan.mode)
 
 
 def delete_from(target, saved_id: str) -> bool:

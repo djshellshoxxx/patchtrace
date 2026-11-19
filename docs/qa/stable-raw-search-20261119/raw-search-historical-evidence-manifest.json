@@ -1,0 +1,121 @@
+[
+  {
+    "source": "3c9d3f074481b2f609330fa49ab9019eb6637849",
+    "path": "docs/qa/raw-alignment-reviewed-20261118/README.md",
+    "git_blob": "154035bd973017f6e332ed08457eeed763f199b8",
+    "bytes": 3901,
+    "sha256": "f54095feae80c4b0d56449e31c7a305075e0cc281172b66d6d21727a0ea4893d"
+  },
+  {
+    "source": "3c9d3f074481b2f609330fa49ab9019eb6637849",
+    "path": "docs/qa/raw-alignment-reviewed-20261118/evidence.zip",
+    "git_blob": "38b6c4521157ade04578d715f51225f521b30e4a",
+    "bytes": 22767,
+    "sha256": "6ef417992670a5abc59de69d8942982ed0b5eb05a60e98da561cb7406c658cac"
+  },
+  {
+    "source": "3c9d3f074481b2f609330fa49ab9019eb6637849",
+    "path": "docs/qa/raw-alignment-reviewed-20261118/manifest.json",
+    "git_blob": "73bcf8a29ba68510f23b1246e98ff6a7b093e029",
+    "bytes": 3558,
+    "sha256": "81360d31b7deaac8fb0413914b5810edf842cd61568443e82bbe970c1a243792"
+  },
+  {
+    "source": "3c9d3f074481b2f609330fa49ab9019eb6637849",
+    "path": "docs/qa/raw-alignment-workflow-20261118.md",
+    "git_blob": "5ba111f373e71948cb2987719e501fe961267424",
+    "bytes": 6707,
+    "sha256": "d3d77aea70d34902066562397de841fcfde95f9cbd85498052ac8f0811083edb"
+  },
+  {
+    "source": "3c9d3f074481b2f609330fa49ab9019eb6637849",
+    "path": "docs/qa/raw-alignment-workflow-20261118/manifest.json",
+    "git_blob": "1aba4138e3164a70201c0b8c250b750f29d06b3b",
+    "bytes": 3087,
+    "sha256": "de6517d45789a6bbc766e11fb1a60074ff7801362511601cf859724879f391cd"
+  },
+  {
+    "source": "3c9d3f074481b2f609330fa49ab9019eb6637849",
+    "path": "docs/qa/raw-alignment-workflow-20261118/minimum-width.png",
+    "git_blob": "9b7ad762f3abfb009fe7e2ea1187001d8cbaafaa",
+    "bytes": 159205,
+    "sha256": "5599af37b8c6588d5face7d56505c850224cd99c12d38d7101d0ac44a0eb4a33"
+  },
+  {
+    "source": "3c9d3f074481b2f609330fa49ab9019eb6637849",
+    "path": "docs/qa/raw-alignment-workflow-20261118/raw-evidence.zip",
+    "git_blob": "c929e087fde887aa0ad784dae6e3d4754777b626",
+    "bytes": 9232,
+    "sha256": "423e4ee02f1fbe2c22764b2bd7763e3a5134c93ba3de929e08e13627e7b41fcd"
+  },
+  {
+    "source": "26558cd0723aa5fa6d883f2935ad3c43cef94a86",
+    "path": "docs/qa/saved-search-build-race-20261118.md",
+    "git_blob": "994d3eaed1babfc33a2757ae609cca65cf6b68e5",
+    "bytes": 2419,
+    "sha256": "a6baab779838fb24c3f8af8ba6643a004b178b1076fc277e7c33940ed21f9070"
+  },
+  {
+    "source": "26558cd0723aa5fa6d883f2935ad3c43cef94a86",
+    "path": "docs/qa/saved-search-build-race-20261118/manifest.json",
+    "git_blob": "88eda863a2429f516ed5632df29f467860fa3836",
+    "bytes": 3528,
+    "sha256": "6325be30598a6585d0c0b870e312bde07ab331dc347df55758f29f35ab684da3"
+  },
+  {
+    "source": "26558cd0723aa5fa6d883f2935ad3c43cef94a86",
+    "path": "docs/qa/saved-search-build-race-20261118/raw-evidence.zip",
+    "git_blob": "62296e06bcd07cf4836c8f32f4abcd2cd0e0e7c2",
+    "bytes": 11224,
+    "sha256": "e2618eea14e5b8d61ca610a9827e7950e72d9abe8ae766a89a2270f5a1cd70fc"
+  },
+  {
+    "source": "26558cd0723aa5fa6d883f2935ad3c43cef94a86",
+    "path": "docs/qa/saved-search-reviewed-20261118/README.md",
+    "git_blob": "179e6494304994e5cd4ff7a66a78428496a9d788",
+    "bytes": 3725,
+    "sha256": "7f611d131a92c0b4378e1b47c144cce65879d181d24e64eb222d65f57dac7ed3"
+  },
+  {
+    "source": "26558cd0723aa5fa6d883f2935ad3c43cef94a86",
+    "path": "docs/qa/saved-search-reviewed-20261118/evidence.zip",
+    "git_blob": "d2a9097c8c3b9da4886791774a55baf6651feeec",
+    "bytes": 8665,
+    "sha256": "cb5ba2f9e5e8db214089b62981a11b9ffac4cd17ae50f4c689d74a088a5c557c"
+  },
+  {
+    "source": "26558cd0723aa5fa6d883f2935ad3c43cef94a86",
+    "path": "docs/qa/saved-search-reviewed-20261118/manifest.json",
+    "git_blob": "d7b9ea6de3269bc87b7268ff29e3a7fc9856f9d6",
+    "bytes": 3394,
+    "sha256": "ac1a16df44c7b3f29d7383001a2082003dc457db001467f51253ea46fb81790e"
+  },
+  {
+    "source": "26558cd0723aa5fa6d883f2935ad3c43cef94a86",
+    "path": "docs/qa/saved-search-workflow-20261118.md",
+    "git_blob": "f67707081e16e8590d65ca983888a8bbf4a3e381",
+    "bytes": 7821,
+    "sha256": "d025613bec9ec9931a938f12b97bec7ee8ace0772a1c582d7a22288b0c065953"
+  },
+  {
+    "source": "26558cd0723aa5fa6d883f2935ad3c43cef94a86",
+    "path": "docs/qa/saved-search-workflow-20261118/controls-and-results.png",
+    "git_blob": "2129cec25c8a05f57f8bb044ff57f5e5e2bc2fca",
+    "bytes": 40585,
+    "sha256": "cd89915285e5d5a17a668626ef21b7de7f8057ff949337236b77d64ce0b4fc14"
+  },
+  {
+    "source": "26558cd0723aa5fa6d883f2935ad3c43cef94a86",
+    "path": "docs/qa/saved-search-workflow-20261118/manifest.json",
+    "git_blob": "9911f09a5821a1c0165948bbe71b3bab4c060a75",
+    "bytes": 3741,
+    "sha256": "321132504a722e680dbf6628ec1c54a8dfd34eb7bab778be8d5c0d69e29b70d4"
+  },
+  {
+    "source": "26558cd0723aa5fa6d883f2935ad3c43cef94a86",
+    "path": "docs/qa/saved-search-workflow-20261118/raw-evidence.zip",
+    "git_blob": "7171fd17b22a62263cd437b6eac7f8a3a5ef769a",
+    "bytes": 15203,
+    "sha256": "c4e9db1065d280cd345c35dff1bcbfe6e169026fdc2aa13471d0d497ef9e718b"
+  }
+]

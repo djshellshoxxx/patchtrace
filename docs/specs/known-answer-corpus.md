@@ -389,3 +389,23 @@ ambiguity and missing-counterpart rules remain; no matching or label derivation
 algorithm changes. These changes preserve the existing public wire contracts
 and require no generated schema change. Synthetic record regressions establish
 these invariants, without native-tool, corpus, or evaluation acceptance claims.
+
+### Windows advisory prerequisites (2026-11-19)
+
+The Windows smoke leg retains every planned case and its existing blocked/failure
+classification. Before running the shard, provision the same SHA-pinned Windows
+rizin 0.9.1 archive as `live-rizin.yml`, rather than inheriting the Linux asset
+name. Supply LLVM 20.1.8's complete Windows distribution `bin` and `lib/clang`
+directories, verified
+against its pinned upstream release-asset digest; the runner's toolchain-only
+installer does not establish availability of `llvm-dwarfdump`. This version
+matches the inspected Windows image's existing LLVM version. Verify downloaded or
+restored archive bytes before every extraction and refuse an existing runtime
+directory. Require the expected inspector and engine files before exporting
+their locations. The selected archive compiler must resolve its adjacent resource
+directory and required builtin headers before its directory is exported to
+`PATH`. Retain the actual toolchain report alongside the shard JSON.
+These setup checks do not establish native compilation, repeatability, engine
+containment or scoring success; only the ensuing exact-source Windows run can do
+so. No missing tool or changed setup may reduce the smoke subset or turn a
+blocked case into a pass.

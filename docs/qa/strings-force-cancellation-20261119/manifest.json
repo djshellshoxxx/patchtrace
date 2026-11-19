@@ -1,0 +1,81 @@
+{
+  "observed_utc": "2026-11-19T08:31:06.578990+00:00",
+  "status": "INTRODUCED_NON_IO_CLEANUP_REGRESSION_FIXED_INHERITED_FORCE_RACES_BLOCKED",
+  "base": "6e0342ff5217552e14fb37739a4e529ca5db089b",
+  "red_source": "03f23f515e2433cb6442d7c18395be02115598b4",
+  "source": "14f0e2c973dc5a9f6025aa6fa98138b1efe07023",
+  "tree": "df1d30e643bbce570d1e2089c391146e22c00c43",
+  "source_sha256": "c64e6d3ac0ab642b649f72a8104c3e83abe2060ccf4571b05ff1acdd8aaeed4f",
+  "test_counts": {
+    "red": {
+      "tests": 6,
+      "failures": 6,
+      "errors": 0,
+      "skipped": 0
+    },
+    "green": {
+      "tests": 53,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "commands": {
+    "red": "PYTHONPATH=src /workspace/scratch/80dddc5347b2/patchtrace-venv/bin/python -m pytest -q tests/test_strings_export_force_cancellation.py --junitxml=/workspace/scratch/80dddc5347b2/strings-force-cancel-red.xml",
+    "green": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src /workspace/scratch/80dddc5347b2/patchtrace-venv/bin/python -m pytest -q tests/test_strings_export*.py tests/test_strings_cli.py tests/test_owned_publication.py --junitxml=/workspace/scratch/80dddc5347b2/strings-force-cancel-green.xml",
+    "ruff": "PYTHONPATH=src /workspace/scratch/80dddc5347b2/patchtrace-venv/bin/python -m ruff check src tests tools",
+    "baseline_proof": "PYTHONPATH=src /workspace/scratch/80dddc5347b2/patchtrace-venv/bin/python docs/qa/strings-source-ownership-20261119/force_source_probe.py"
+  },
+  "files": [
+    {
+      "file": "strings-force-cancel-red.log",
+      "bytes": 20621,
+      "sha256": "8c1a4c4b59d240fa0229d526c7ad8970dd7296ae2d3cf20cd249659c4cf5878a",
+      "archive": "raw-failures.zip"
+    },
+    {
+      "file": "strings-force-cancel-red.xml",
+      "bytes": 21455,
+      "sha256": "6b9fa4579b3221f7b421e7f8cfca5eda50fe02d9b7e8fff6bd89c5279e6fa02b",
+      "archive": "raw-failures.zip"
+    },
+    {
+      "file": "strings-force-cancel-green.log",
+      "bytes": 99,
+      "sha256": "1a915c88aabcc9d8ed1a15d402f10261e37487371df0eb4b454a84f2d124312e"
+    },
+    {
+      "file": "strings-force-cancel-green.xml",
+      "bytes": 7104,
+      "sha256": "37dacc909a5929738bd0e65ce02e1384fc5aff624d72d72092a190c01f4a28c5"
+    },
+    {
+      "file": "strings-force-cancel-ruff.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "file": "strings-force-cancel-proof.json",
+      "bytes": 4216,
+      "sha256": "f4e829a6b440a1ab0e0d9917ccbfd9f4044a8762a75cd0a42a700bd1b6be5ab8"
+    }
+  ],
+  "limits": [
+    "Restores original OSError-only forced-export pathname cleanup; does not qualify inherited forced source ownership.",
+    "Force success may still publish substituted bytes; ordinary OSError may still remove a foreign replacement stage. These reproduce on main and #317 and remain BLOCKED.",
+    "Non-I/O failures intentionally retain staging entries for inspection, including a still-owned stage.",
+    "No native Windows or full application qualification performed."
+  ],
+  "archives": [
+    {
+      "file": "raw-failures.zip",
+      "bytes": 3582,
+      "sha256": "a1ed0ce40a81514f25267bd2ed8397e2d41632d62ff93825f53e14f00f6ae969",
+      "members": [
+        "strings-force-cancel-red.log",
+        "strings-force-cancel-red.xml"
+      ]
+    }
+  ],
+  "packaging_note": "The original red pytest output includes trailing whitespace. It is retained byte-for-byte in raw-failures.zip so source/documentation whitespace checks remain useful. No result content was normalized."
+}

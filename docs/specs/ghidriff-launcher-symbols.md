@@ -112,6 +112,27 @@ GUI (Setup dialog and the Profiles tab, no new window): replace the single check
 
 ## 10. Amendments, test and QA plan
 
+### Native persisted-store setup prerequisite (2026-11-19)
+
+The existing Windows matrix's symbol-enabled setup is a positive prerequisite:
+both `tools/seed_symbol_cache.py` and the following plain `python -m ghidriff`
+must exit zero before either seeded-store acceptance variant or the separate
+negative reproduction can continue. A seed failure must prevent the engine
+launch. A failed engine launch or nonzero engine exit must fail the setup step;
+neither a PowerShell pipeline nor an unconditional `LASTEXITCODE = 0` may hide it.
+`tools/live_symbol_store_setup.py` enforces these two child statuses, preserving
+the selected interpreter, inherited environment, original fixture/store/output
+paths and symbol-enabled engine arguments. It streams child output to CI without
+capturing an unbounded log in Python memory. No production backend is changed.
+
+Keep all five existing variants and the later `repro-plain-ghidriff` test. That
+test intentionally accepts only a nonzero `--no-symbols` exit containing the
+cached-PDB diagnostic, and may reset its exit status after that assertion.
+Successful setup exits are necessary preconditions, not a new proof of global
+preference state or native compatibility. Portable authored-child controls do
+not qualify PowerShell, Ghidra preferences or Windows execution; fresh native
+matrix results on the exact candidate remain required.
+
 Amendments: `docs/specs/architecture.md` `run_comparison` paragraph: add symbol modes and launcher; `docs/windows.md` symbol sentence: three modes, `off` default; `docs/qa.md`: replace the "Verify Windows real fixture under default `--no-symbols` and optional online-symbol mode" todo with the matrix below; `tasks/todo.md` line 17: link to this spec; `docs/specs/windows-acceptance-and-milestone-builds.md` A11 and a new A13 (air-gap local mode); `docs/specs/secondary-engine.md`/`bindiff-execution.md`: note that BinExport/BinDiff runs read PDB names from the same staged store only if the unified engine adopts it (cross-reference, no change now); `docs/modules.md`: new packages `symbols/`, `ghidriff_launch/`. Registry is not touched (program-e excluded).
 
 Test and QA plan: (1) hermetic unit tests above with a fake `ghidriff` package; (2) air-gap verification matrix, CI-only:

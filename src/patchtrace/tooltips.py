@@ -497,8 +497,8 @@ REGISTRY: dict[str, TooltipEntry] = {
     'setup.restrict_env': _e(
         'Run Ghidra and Java with only an allowlisted set of environment variables.',
         'Keeps credentials and JVM or Python injection variables away from the process that loads binaries.',
-        'Saved with Save setup. Off by default until validated on your machine.',
-        availability='Experimental. Set PATCHTRACE_CHILD_ENV=inherit to override.'),
+        'Enabled by default. Saved with Save setup; existing explicit choices are retained.',
+        availability='Always enforced for bundles. External compatibility opt-out: PATCHTRACE_CHILD_ENV=inherit.'),
     'setup.env_passthrough': _e(
         'Extra environment variable names to keep when the allowlist is on, separated by commas.',
         'Corporate proxy or custom JDK setups may need extra variables.', 'Saved with Save setup.',
@@ -627,6 +627,15 @@ REGISTRY: dict[str, TooltipEntry] = {
         'Save the edited profile.', 'Makes the weights and options available for ranking.',
         'Validates then writes the profile file; errors are shown below.',
         availability=_DEFAULT_RO),
+    'profile.navigation.save': _e(
+        'Save this profile and continue.', 'Preserves the current draft before navigation.',
+        'Validation or write failure keeps the draft and current selection.'),
+    'profile.navigation.discard': _e(
+        'Discard this draft and continue.', 'Leaves the stored profile unchanged.',
+        'The unsaved edits are discarded when the next profile opens.'),
+    'profile.navigation.cancel': _e(
+        'Cancel navigation and keep editing.', 'Preserves the current draft and profile selection.',
+        'No profile is written or discarded.'),
     'profile.provider_nvd': _e(
         'Use NVD as a CVE provider for this profile.', 'Adds advisory context from NVD.',
         'Saved with the profile; network use is still explicit.',

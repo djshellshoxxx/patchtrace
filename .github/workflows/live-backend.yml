@@ -3,9 +3,9 @@ on:
   workflow_dispatch:
   push:
     branches: [main, 'codex/**']
-    paths: ['src/**', 'tools/live_backend_check.py', 'tools/live_cache_check.py', 'tools/seed_symbol_cache.py', 'tests/fixtures/**', '.github/workflows/live-backend.yml']
+    paths: ['src/**', 'tools/live_backend_check.py', 'tools/live_cache_check.py', 'tools/live_primary_environment_check.py', 'tools/live_symbol_store_setup.py', 'tools/seed_symbol_cache.py', 'tests/fixtures/**', '.github/workflows/live-backend.yml']
   pull_request:
-    paths: ['src/**', 'tools/live_backend_check.py', 'tools/live_cache_check.py', 'tools/seed_symbol_cache.py', 'tests/fixtures/**', '.github/workflows/live-backend.yml']
+    paths: ['src/**', 'tools/live_backend_check.py', 'tools/live_cache_check.py', 'tools/live_primary_environment_check.py', 'tools/live_symbol_store_setup.py', 'tools/seed_symbol_cache.py', 'tests/fixtures/**', '.github/workflows/live-backend.yml']
 permissions:
   contents: read
 concurrency:
@@ -50,9 +50,7 @@ jobs:
           $fx = "$PWD\tests\fixtures"
           New-Item -ItemType Directory -Force C:\gout, C:\gsym | Out-Null
           Copy-Item "$fx\old.dll","$fx\new.dll" C:\gsym\
-          python tools/seed_symbol_cache.py C:\gout\symbols "$fx\old.dll" "$fx\new.dll"
-          python -m ghidriff C:\gsym\old.dll C:\gsym\new.dll --output-path C:\gout 2>&1 | Select-Object -Last 15
-          $global:LASTEXITCODE = 0
+          python tools/live_symbol_store_setup.py "$fx" C:\gsym C:\gout
       - name: Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols
         if: matrix.variant == 'repro-plain-ghidriff'
         shell: pwsh
@@ -71,6 +69,10 @@ jobs:
       - name: Native raw-output cache hit is byte-identical
         if: matrix.variant == 'raw-cache-hit'
         run: python tools/live_cache_check.py
+      - name: Native H7 primary environment and cache receipt
+        if: matrix.variant == 'raw-cache-hit'
+        shell: pwsh
+        run: python tools/live_primary_environment_check.py --old tests/fixtures/old.dll --new tests/fixtures/new.dll --ghidra-dir "$env:GHIDRA_INSTALL_DIR" --out live-primary-environment-windows.json
       - name: PatchTrace offline analysis succeeds despite persisted symbol store
         if: matrix.variant != 'repro-plain-ghidriff' && matrix.variant != 'raw-cache-hit'
         run: python tools/live_backend_check.py
@@ -82,3 +84,4 @@ jobs:
           path: |
             live-project/runs/
             live-project/project.sqlite3
+            live-primary-environment-windows.json

@@ -1380,3 +1380,61 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [ ] Complete corrected affected and Qt checks, independent review, and exact-head hosted qualification before guarded merge; preserve separate native, release and accuracy gates.
 
 [Repair evidence and limits](../docs/qa/foundation-saved-scope-20261119.md).
+# 2026-11-19: profile draft navigation
+
+- [x] Reproduce #116 dirty profile loss during selection, New and Duplicate.
+- [x] Preserve drafts on Cancel/failed Save; retain requested destination after
+  a successful renamed Save; require explicit Discard to abandon edits.
+- [x] Verify 71 profile/Setup/accessibility tests and 9 existing failure controls.
+- [ ] Run integrated cross-platform CI before merge; no release acceptance claim.
+
+
+## Stable raw/search recovery — 2026-11-19 UTC
+
+- [x] Recover #309 paired raw-window workflow and #310 project-owned saved/recent searches on #317, including generation-bound build completion.
+- [x] Retain unchanged historical evidence and actual 1060-pass/1-host-timing-failure run; full Ruff passes.
+- [ ] Obtain passing integrated hosted Linux/Windows qualification without relaxing the 0.5 s host-cost gate; untouched #317 also fails the isolated local cold run.
+- [ ] Obtain completed 20-repeat raw/search Qt qualification: the local wrapper aborted with child status -9 during executor stalls; retained incomplete output is BLOCKED, not a pass.
+
+
+- [x] Recover bounded pilot/CVRF freshness and report/navigation checks from PR #314 with staging ownership fix, preserving stable saved scope and advisory bounds (2026-11-19). Exact source `cd96aa9183d1c28c0d08da0198b515f9ab87f29e`; 2,009 affected Linux/offscreen tests, full Ruff and schema checks pass. Evidence: `docs/qa/stable-pilot-cvrf-20261119/README.md`.
+- [ ] Qualify the combined stable head in required hosted full-suite/Qt/Windows gates before treating the recovered pilot/CVRF slice as integrated platform acceptance. No whole #307/#316 or native release acceptance claim.
+
+## Strings source ownership — 2026-11-19 UTC
+
+- [x] Reproduce stage substitution and foreign cleanup; bind no-force publication
+  to the existing held-source helper with an existing parent anchor and no reuse.
+- [x] Verify same-content refusal, missing-parent refusal, destination preservation,
+  parent/source substitution and cancellation; 47 focused Linux tests and Ruff pass.
+- [ ] Qualify native Windows no-force publication and the integrated actual head.
+- [ ] Repair forced-overwrite source ownership while preserving intended force
+  behavior. Retained proof shows wrong-byte publication and unsafe OSError cleanup
+  already on main/317, plus foreign-stage deletion on cancellation added by #308.
+
+
+- [x] Restore pre-#308 non-I/O forced-export cleanup boundary after independent Ctrl+C/SystemExit/runtime-error reproduction (2026-11-19). Source `14f0e2c973dc5a9f6025aa6fa98138b1efe07023`; six red controls, 53 green export/CLI/publication controls; Linux force retained.
+- [ ] Resolve inherited forced strings export source-substitution and OSError cleanup ownership races; retained baseline proof remains BLOCKED. The cancellation regression repair is not whole force-path qualification. See `docs/qa/strings-force-cancellation-20261119/README.md`.
+
+## Native symbol-store setup prerequisite — 2026-11-19
+
+- [x] Stop the Windows native matrix's positive setup on failed seed or engine
+  exit, preserving every variant and the intentional later negative reproduction.
+- [x] Verify authored real-child success/failure controls and affected workflow
+  contracts: 97 passed at `eb65f7fe`; whole-tree ordinary Ruff passed.
+- [ ] Obtain exact-candidate Windows PowerShell and real Ghidriff/Ghidra matrix
+  results; portable controls do not qualify persisted preferences or native
+  compatibility. Evidence: `docs/qa/native-symbol-setup-20261119/README.md`.
+
+
+## Reviewed consolidation — 2026-11-19
+
+- [x] Merge qualified foundation #317 with the head guard and no-release marker;
+  refresh all 318 branches.
+- [x] Preserve seven standalone feature ports, profile/corpus/ownership repairs
+  and all five audit records in the reviewed candidate.
+- [x] Repair native positive-setup exit masking and Windows corpus dependencies
+  without removing cases or changing the intentional negative acceptance.
+- [ ] Resolve the local full-suite interruption and obtain exact-candidate hosted
+  Linux/Windows, native H7 and package gates before merging the reviewed candidate.
+- [ ] Keep inherited forced-export ownership, broad-stack scanner findings,
+  inventory/native qualification and release/manual/accuracy gaps explicit.

@@ -1,0 +1,333 @@
+{
+  "archive": {
+    "bytes": 69379,
+    "path": "evidence.zip",
+    "sha256": "74cf31afd5b832ee9d7f0fa422d792488869f2a58976bfcda12a4d8112c35301"
+  },
+  "contract": "pilot-staleness-qa/1",
+  "members": {
+    "implementation/action-recheck-red.log": {
+      "bytes": 2494,
+      "sha256": "a98ff21812f4130755ebf4c7bce192bd5417c3681db57c138f265752cdacd23d"
+    },
+    "implementation/action-recheck-red.xml": {
+      "bytes": 2829,
+      "sha256": "0d5d06838d55d43310f762273b28a2f8373f07ad80b52b70df663c445199406c"
+    },
+    "implementation/affected-final.log": {
+      "bytes": 341,
+      "sha256": "5fc8a855c1e5866fd80681065bffbb0325dbe05ef5c2636ff95f77ab51551fc9"
+    },
+    "implementation/affected-final.xml": {
+      "bytes": 33251,
+      "sha256": "dce92f9b092a5e58d5d2794c576cd50eb8daf82c3fa4fab9117606ffb3c015de"
+    },
+    "implementation/affected.log": {
+      "bytes": 261,
+      "sha256": "668bc05bb60d24f33cc8f4e28968b43e8e01e5ff17b36a26659a33f175f20b98"
+    },
+    "implementation/affected.xml": {
+      "bytes": 26883,
+      "sha256": "33d61cb66d2c4d6d532b7935a3a51bedc74401d7898b658dfe35974b846f58e1"
+    },
+    "implementation/exact-head-ruff.log": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "implementation/exact-head.log": {
+      "bytes": 581,
+      "sha256": "016df6d9f439b567f2999d98a5a97797d62b234cf706f62d908f91b146a65a25"
+    },
+    "implementation/exact-head.xml": {
+      "bytes": 58959,
+      "sha256": "f73c952c7437c2c526a2d20e0aebd27bdaf729dbd239fdf14f534604e759127e"
+    },
+    "implementation/green-first.log": {
+      "bytes": 99,
+      "sha256": "a10758b0c3d0c3d796e608b5974774a09619315a18b79051462edd18cfd45420"
+    },
+    "implementation/green-first.xml": {
+      "bytes": 4279,
+      "sha256": "2ecd1f3d5f2494cd5adac89cec32123f37fc79c0b18d8af48f96cea7675dc381"
+    },
+    "implementation/harness-initial.log": {
+      "bytes": 39192,
+      "sha256": "bae4818f7a9f859e0543c88af33a4c48e4ff34cc94f635d6b42cda5abb391be4"
+    },
+    "implementation/harness-initial.xml": {
+      "bytes": 42072,
+      "sha256": "53ba842aff467a89c6bd1e346aff9352f194d6b5296e109269bdc37d77b1d43b"
+    },
+    "implementation/pre-fix-existing-ui.log": {
+      "bytes": 99,
+      "sha256": "5747b9c774fd3d06d3db10699f75135bf664f73eb4e200485fcf4bd418dfdc41"
+    },
+    "implementation/pre-fix-existing-ui.xml": {
+      "bytes": 7426,
+      "sha256": "d0f4a94cd981c6ce56952fea3a5d020de31b21daa7ebf0cbde052eb623b34a12"
+    },
+    "implementation/red.log": {
+      "bytes": 14272,
+      "sha256": "ec8d255f1d373ea9a14ab23bc52f42f9b9a8f905d9ff089cbd450595b7c4c59f"
+    },
+    "implementation/red.xml": {
+      "bytes": 17446,
+      "sha256": "f698b9d88c47bbf7f3f9467f63336377bee3bd3aff516d4196dcf0eae841551a"
+    },
+    "implementation/related-first.log": {
+      "bytes": 1083,
+      "sha256": "041a96d0c77195db769f5783d6f420d64766d4b5a5d795c40748151ce0dc0fc0"
+    },
+    "implementation/related-first.xml": {
+      "bytes": 23297,
+      "sha256": "2e782dc470e4fa4056b2fdd34872748c9f0a5d97222211406b03c9e595dc6b8a"
+    },
+    "implementation/report-green.log": {
+      "bytes": 260,
+      "sha256": "8659c7d83a0eb4d7927ca7ab750991721240cab68c8976364e415de243e8e96c"
+    },
+    "implementation/report-green.xml": {
+      "bytes": 25958,
+      "sha256": "0b7e7b9afd0377631765759cef7a2b10a589bc928eade7cb44fe824350f747a3"
+    },
+    "implementation/report-red.log": {
+      "bytes": 4805,
+      "sha256": "6b4cceabf43109db738b2883c3bb7df3b443e24b08e7e91a1c12583b08c023bb"
+    },
+    "implementation/report-red.xml": {
+      "bytes": 6158,
+      "sha256": "d308ede3f36b19f5efc4528664674e742c4d72e1cdc98806f54c43e4173c6bff"
+    },
+    "implementation/report-ruff.log": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "implementation/required-inputs.log": {
+      "bytes": 99,
+      "sha256": "924e9000bb8381e37d397a9e0645f0bdfc912f3502cf3b6942998012dd0c7b3c"
+    },
+    "implementation/required-inputs.xml": {
+      "bytes": 6070,
+      "sha256": "6c90a569de10cbe717375935587aba1bed59cf8b869183c2e5469c21f6dbdc50"
+    },
+    "implementation/ruff-final.log": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "implementation/ruff.log": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "implementation/source-context.json": {
+      "bytes": 3339,
+      "sha256": "a2d9012b84469e6cac8d631bfb9304cc9edf76b503e7f3f352cde7ab5969f6f1"
+    },
+    "original-review/flow-red.log": {
+      "bytes": 4683,
+      "sha256": "d1b5ee11eb5884444eca73462ad91f20b6e7390d9c96f5c6af0a0ab01f80adee"
+    },
+    "original-review/flow-red.xml": {
+      "bytes": 5677,
+      "sha256": "a58b6895c64584362b876ff3c84092501ca842d21c5f86001dd305fab69a2ee5"
+    },
+    "original-review/issue121.json": {
+      "bytes": 18710,
+      "sha256": "b5e196803401f8befbbaa39a763f58d8e7fcf133de78a073c0af882219704dd2"
+    },
+    "original-review/test_flow_gaps.py": {
+      "bytes": 6751,
+      "sha256": "95b72882c1ce1adfdd9703b322b2ff6eb76f0a300393d1b70f01baab522bba44"
+    },
+    "pilot-red-tests/pilot_freshness_support.py": {
+      "bytes": 2414,
+      "sha256": "54b4bb69a5d343ddd5dd52831471d86f0b6dbdd7abfdacf7bfe54399d8bb9763"
+    },
+    "pilot-red-tests/test_pilot_current_inputs.py": {
+      "bytes": 11383,
+      "sha256": "edfb84c4a5e41e9016b445b000ab106dd2b5bc760da562d801689b8facb4bb28"
+    },
+    "pilot-red-tests/test_ui_leads_freshness.py": {
+      "bytes": 2040,
+      "sha256": "b667614b1f45f9fcc6e0be36d1fdd692cb75df43b101a909675c9d66de357269"
+    },
+    "report-red-tests/pilot_freshness_support.py": {
+      "bytes": 2943,
+      "sha256": "bbd8dac1cc1fea5c2948f28e1a4dc53f2ceee96e6b4cbac01594ad68889e7f73"
+    },
+    "report-red-tests/test_report2_current_leads.py": {
+      "bytes": 2472,
+      "sha256": "ba6ceeab808202cbb6e2838d2f79079e59c5ec74edd217c92916f68a33392762"
+    }
+  },
+  "runs": {
+    "action-recheck-red": {
+      "errors": 0,
+      "failures": 2,
+      "seconds": 0.956,
+      "skipped": 0,
+      "tests": 2
+    },
+    "affected": {
+      "errors": 0,
+      "failures": 0,
+      "seconds": 25.992,
+      "skipped": 0,
+      "tests": 209
+    },
+    "affected-final": {
+      "errors": 0,
+      "failures": 0,
+      "seconds": 24.429,
+      "skipped": 0,
+      "tests": 262
+    },
+    "exact-head": {
+      "errors": 0,
+      "failures": 0,
+      "seconds": 33.283,
+      "skipped": 0,
+      "tests": 474
+    },
+    "green-first": {
+      "errors": 0,
+      "failures": 0,
+      "seconds": 2.534,
+      "skipped": 0,
+      "tests": 27
+    },
+    "harness-initial": {
+      "errors": 18,
+      "failures": 8,
+      "seconds": 2.217,
+      "skipped": 0,
+      "tests": 26
+    },
+    "pre-fix-existing-ui": {
+      "errors": 0,
+      "failures": 0,
+      "seconds": 5.343,
+      "skipped": 0,
+      "tests": 61
+    },
+    "red": {
+      "errors": 0,
+      "failures": 22,
+      "seconds": 2.298,
+      "skipped": 0,
+      "tests": 27
+    },
+    "related-first": {
+      "errors": 0,
+      "failures": 1,
+      "seconds": 13.961,
+      "skipped": 0,
+      "tests": 180
+    },
+    "report-green": {
+      "errors": 0,
+      "failures": 0,
+      "seconds": 9.052,
+      "skipped": 0,
+      "tests": 212
+    },
+    "report-red": {
+      "errors": 0,
+      "failures": 4,
+      "seconds": 0.95,
+      "skipped": 0,
+      "tests": 5
+    },
+    "required-inputs": {
+      "errors": 0,
+      "failures": 0,
+      "seconds": 3.29,
+      "skipped": 0,
+      "tests": 39
+    }
+  },
+  "source": {
+    "PYTHONPATH": "/workspace/scratch/c7a9e8d98848/pilot-staleness/src",
+    "QT_QPA_PLATFORM": "offscreen",
+    "base": "9002a1f44c6aebcf2c49b29d631aacf20e7ce9e3",
+    "branch": "codex/pilot-staleness-20261118",
+    "changed_files": {
+      "docs/modules.md": {
+        "bytes": 356575,
+        "sha256": "ba5b52181bdf5b3d65b95e42a4ef5b9538d3c92febecc87c63b36fc6eda1e0b8"
+      },
+      "docs/specs/program-e/PIL-integration-plan.md": {
+        "bytes": 60044,
+        "sha256": "aaea7d3f284154492e89a6c428a64c2e4e328608c7afec87b63652ca8360d3f3"
+      },
+      "docs/specs/report-export-contract-v2.md": {
+        "bytes": 30512,
+        "sha256": "b732440137bf53573ab28e3685e8621ca0b021be545f52736b97bbd4d0a808b5"
+      },
+      "src/patchtrace/pilot/cli.py": {
+        "bytes": 21759,
+        "sha256": "ae42d9dcab7c19a5968b8ccaffb3f982e2e352622269c177fe3d136000804f31"
+      },
+      "src/patchtrace/pilot/current_inputs.py": {
+        "bytes": 6073,
+        "sha256": "19bccbe2fba4418bad820c5b904a5b69820ed05247347dbb578cd7f42e5c976a"
+      },
+      "src/patchtrace/pilot/store.py": {
+        "bytes": 25355,
+        "sha256": "bde221dcb0c378eb23ac0a897bcbd2746df64cab3007fd9e678b0402bd6148b0"
+      },
+      "src/patchtrace/report2/adapters.py": {
+        "bytes": 12521,
+        "sha256": "3637fea5c7690a14bcd5c4c6bb3900c8a9d3ef9e16c53c36ef58425893f8c5f2"
+      },
+      "src/patchtrace/ui_leads.py": {
+        "bytes": 38063,
+        "sha256": "5ee1a0d44ce5400484f325581857ff52108d88f04b9e4e6d380f4cc38df6befa"
+      },
+      "tests/leads_support.py": {
+        "bytes": 7154,
+        "sha256": "0177dcd412a23294c76179684caddd85b18bc5d507ade4377c35b83661d84e48"
+      },
+      "tests/pilot_freshness_support.py": {
+        "bytes": 2943,
+        "sha256": "bbd8dac1cc1fea5c2948f28e1a4dc53f2ceee96e6b4cbac01594ad68889e7f73"
+      },
+      "tests/test_pilot_cli.py": {
+        "bytes": 32766,
+        "sha256": "2576031f47b06933f0bf92bcee1b0e0a06ff12001bca4f84eebd6fad07cc0286"
+      },
+      "tests/test_pilot_current_inputs.py": {
+        "bytes": 15061,
+        "sha256": "d9334306053829c94f0b01dbdd73f54482247e5da6ef708b7129f36045ad1b98"
+      },
+      "tests/test_report2_adapters.py": {
+        "bytes": 22972,
+        "sha256": "5d8a3c44dc07850d0b6022886c361e457d901156fa03849978c3e1bc411d081e"
+      },
+      "tests/test_report2_current_leads.py": {
+        "bytes": 2472,
+        "sha256": "ba6ceeab808202cbb6e2838d2f79079e59c5ec74edd217c92916f68a33392762"
+      },
+      "tests/test_ui_leads_freshness.py": {
+        "bytes": 3294,
+        "sha256": "617997d39c445f8944b0c4593bc742c3b01acaf1c33c135054d6f76c59f41c2a"
+      }
+    },
+    "imported_current_inputs": "/workspace/scratch/c7a9e8d98848/pilot-staleness/src/patchtrace/pilot/current_inputs.py",
+    "original_review_baseline": "9e5a5303da6e9a745e604979932f814de8eca4b0",
+    "packages": {
+      "PySide6": "6.12.0",
+      "pydantic": "2.13.5",
+      "pytest": "9.2.0",
+      "pytest-qt": "4.5.0",
+      "ruff": "0.17.5"
+    },
+    "pilot_source": "f47d212a876e0df78e79cb23a4fec2b75b647a54",
+    "python": "/workspace/scratch/3a6632a6e5ff/venv/bin/python",
+    "report_test_first": "2cc95278003942654a3ae5d35a6bf75056d4d91f",
+    "source_head": "ade0f32a0e18e578516b58482b29212579c524ba",
+    "spec_test_first": "a2531d390a0e35a5cb4d8c0080767598eaa923e4",
+    "version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "working_tree_before_qa": "",
+    "worktree": "/workspace/scratch/c7a9e8d98848/pilot-staleness"
+  }
+}

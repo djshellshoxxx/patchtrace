@@ -1,0 +1,79 @@
+{
+  "baseline_commit": "c8a6840c5e89e7f7825c775d0cde8b1dfb77f54a",
+  "spec_and_tests_commit": "ada1a164fed338497d57850f8276c1e80ed2b00c",
+  "implementation_commit": "e705974b0c8a13be0942a172b93bb1cdfa74895f",
+  "scope": "Project-owned saved query GUI/CLI actions; compatible mode/filter replay; bounded per-user recent text.",
+  "raw_receipts": {
+    "red.log": {
+      "sha256": "dbd2f372487d26c229032f70e435807e4817caae219cf15b4262b4ebe87abce1",
+      "bytes": 8843
+    },
+    "red.xml": {
+      "sha256": "24c67a7c051468e995e0a42b3d072764eea12a20e219a930200d87170a30100d",
+      "bytes": 11244
+    },
+    "initial-green.log": {
+      "sha256": "44b5cdb519f249a6f91799a362056ed9f1ed725c7dca699055caf60e86c21443",
+      "bytes": 261
+    },
+    "initial-green.xml": {
+      "sha256": "d77051b794b49a4003ae6bb2b8428b85c4cb749fa76b27bafaea423e25b60f91",
+      "bytes": 21578
+    },
+    "review-controls-red.log": {
+      "sha256": "be226781474cc2952df09a966ffd5981fa809f58c10359f3bfbb564445b8388f",
+      "bytes": 2449
+    },
+    "review-controls-red.xml": {
+      "sha256": "55a2bddaebaa8da9fccb00d6f521a7e4e7ebe0e7c6ec20fcc4c86f304b015e50",
+      "bytes": 3170
+    },
+    "affected-green.log": {
+      "sha256": "aadf2c0d1f83564b79398e072705aabbc7a2867e6d07483dd8600ac3826ccd67",
+      "bytes": 501
+    },
+    "affected-green.xml": {
+      "sha256": "c844d2e696859a3b2624422f5d97158e9997e808c1af83f76f11d529352a4ffa",
+      "bytes": 42770
+    },
+    "ruff.log": {
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "bytes": 19
+    }
+  },
+  "archive": {
+    "path": "raw-evidence.zip",
+    "sha256": "c4e9db1065d280cd345c35dff1bcbfe6e169026fdc2aa13471d0d497ef9e718b",
+    "bytes": 15203
+  },
+  "image": {
+    "path": "controls-and-results.png",
+    "sha256": "cd89915285e5d5a17a668626ef21b7de7f8057ff949337236b77d64ce0b4fc14",
+    "bytes": 40585,
+    "description": "Real offscreen MainWindow/default SearchService, synthetic project, explicit index build and exact/newer/changed query."
+  },
+  "source_sha256": {
+    "src/patchtrace/search/saved.py": "a2c526ecb5872bade06da380747ed5a8a2ee5bcf76496554a92fd70994f0aeab",
+    "src/patchtrace/search/saved_actions.py": "5a8aa3f5e4ad797c15b638a09a0b49bb149219832b06e605708ded5616ae2bd6",
+    "src/patchtrace/search/qt_saved.py": "2ebe256b90074a59c4a2cff2d282e7b359118376cf668e49805bb74b80afd36f",
+    "src/patchtrace/search/qt_panel.py": "64670b22a45350e0fa43b71633884e85811383cb64db25bab25520594b5a4be7",
+    "src/patchtrace/search/cli.py": "9401e3ee48b4a279dd074439999b86c8f0ad0b764582885626de6f07aacec252",
+    "src/patchtrace/search/tooltip_entries.py": "1450cde4e442bf65e519b577952ec88d34fd1ed0cad29d43280d84ac16666ca8",
+    "tests/test_search_saved_workflow.py": "d84a390753b5e35ddb479bd40bc69ec7afdc08ab2d635afa777a6fd3fb2decb9",
+    "tests/test_ui_search_saved.py": "6d329254bcc2a0473116a54f194737e96ab1e2316934964f69bfd82a414422bb",
+    "tests/test_tooltips.py": "366784dd613517fa8c50418d7950e6f4085d26a618a94e8eeecd788edecefdb6"
+  },
+  "unchanged_from_baseline": {
+    "src/patchtrace/ui.py": "4b58777d6962093757ae397553bd306de7c48a701d38237be126617d0d6130d6",
+    "src/patchtrace/gui/qt/settings.py": "22c5fe265ebe6a1082c78c1af002af12ca2a083021cd14c598fad2652de67720",
+    "src/patchtrace/search/contracts.py": "3c8eef20cc28d6c304dc9d2f1c4412acca70e43bb8bbda9c6e96b9e8f226147f",
+    "src/patchtrace/enrichment/storage.py": "e908d0ca8651a87e23281f92b006bfe17a6d3aa8752f4bf46817e8d75f8c9321"
+  },
+  "qualification": {
+    "independent_review": "pending root review",
+    "full_suite": "combined actual-head gate remains open",
+    "native_windows": "not run",
+    "native_manual": "not performed",
+    "tool_target_network_execution": "none"
+  }
+}

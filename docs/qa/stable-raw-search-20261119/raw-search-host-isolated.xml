@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="47.202" timestamp="2026-11-18T23:59:31.820749-08:00" hostname="b148a722dc6d"><testcase classname="tests.test_gui_host_seam" name="test_building_the_host_is_cheap" time="42.926"><failure message="assert (24384.34033812 - 24359.475195232) &lt; 0.5&#10; +  where 24384.34033812 = &lt;built-in function perf_counter&gt;()&#10; +    where &lt;built-in function perf_counter&gt; = time.perf_counter">qtbot = &lt;pytestqt.qtbot.QtBot object at 0x7fdd2c202060&gt;
+settings = &lt;PySide6.QtCore.QSettings(0x9f30d70) at 0x7fdd2c0937c0&gt;
+
+    def test_building_the_host_is_cheap(qtbot, settings):
+        window = Window(settings)
+        qtbot.addWidget(window)
+        start = time.perf_counter()
+        PanelHost(window)
+&gt;       assert time.perf_counter() - start &lt; 0.5  # 14 absent modules; the budget is 25 ms, this is 5x slack and then some
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       assert (24384.34033812 - 24359.475195232) &lt; 0.5
+E        +  where 24384.34033812 = &lt;built-in function perf_counter&gt;()
+E        +    where &lt;built-in function perf_counter&gt; = time.perf_counter
+
+tests/test_gui_host_seam.py:128: AssertionError</failure></testcase></testsuite></testsuites>
