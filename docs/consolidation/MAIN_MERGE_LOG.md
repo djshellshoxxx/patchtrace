@@ -9,7 +9,9 @@ admission repair merge. That baseline merge predates this continuation.
 ## Local continuation history
 
 Branch: `codex/patchtrace-completion-20261119-81e4`.
-Recorded local runtime/test checkpoint: `520b524beb0c837b6e50801bd97c88a2447e39fd`.
+Recorded accepted source/test checkpoint: `5aebd98f362e7cc5f01a0c96878860b04835cea4`,
+a test-only follow-up to runtime/dependency integration `5208c758`. Evidence
+checkpoint `e430309a` preserves the Phase 6 archives and advisory report.
 
 | Source or local event | Exact identity | Disposition |
 | --- | --- | --- |
@@ -64,7 +66,7 @@ none of those issues. Main remains pinned at `fdc2696c` in that observation.
 
 - [x] Integrate the reviewed facts-eligibility caller repair and record its exact head (`69fa6b8b`).
 - [ ] Complete the full combined suite and final-source lint, dependency and schema checks.
-- [x] Preserve focused logs/JUnit, discovery inputs and their identities in the verified 94-payload [archive](evidence/continuation-20261119-focused.zip). Active partition outcomes remain separate.
+- [x] Preserve focused logs/JUnit, discovery inputs and their identities in the verified 94-payload [archive](evidence/continuation-20261119-focused.zip). Later partition outcomes remain separate.
 - [ ] Publish the reviewed aggregate and obtain all required hosted checks on its actual head/base.
 - [ ] Resolve blocking findings without changing frozen facts or weakening assertions.
 - [ ] Refresh main and PR head, then use the normal REST merge with the expected head SHA.
@@ -85,13 +87,13 @@ The sole contextual-digest golden change reflects the new explicit rounding cons
 | --- | --- | --- |
 | Reviewed digest golden | `70b82275` | Exact new ROUND constant reviewed; 9 passed in 1.85s, original pin failure retained. |
 | History diagnostic source | `254190a0b36153d28f76782f8d5dae26e9d9a020` | Recovered historical slice plus independently reproduced post-write correction; 81 final passes. |
-| Candidate history merge | `520b524beb0c837b6e50801bd97c88a2447e39fd` | Current frozen runtime/tests; all 856 files assigned to 54 groups. |
+| Candidate history merge | `520b524beb0c837b6e50801bd97c88a2447e39fd` | Historical frozen runtime/tests; all 856 files assigned to 54 groups. |
 
 Original runtime `32abf9702538dc1b2027e8ae052949bbc2436c28`, tests/spec `1c2b770d2eef6266c56504b5d081e5d6d750151e`, lifecycle correction `4d7ae4af9aa6d60fee0f70025d774c3f5b468e0b`.
 
-The original all-856-file diagnostic froze runtime/tests at `520b524b` and stopped after 34/54 groups at the 256 MiB temporary-storage reserve. Its JUnit counters total 15,971 tests, four failures, four teardown errors and 86 skips. The original stopped manifest and every completed receipt are preserved. Separate continuation session 78011 executes only groups 35–54 from the identical source/test/tool fingerprint, using the relocated checkout `/workspace/scratch/81e4938f4a3a/pt-candidate` (documentation head `3cde10ae`). No aggregate pass is available. Later integrated repairs require their own final-head qualification.
+The final frozen diagnostic reached all **856 original test files through 59 terminal pytest processes** at runtime/test source `520b524b` (documentation head `3cde10ae`) with unchanged Pydantic 2.13.5. Actual pytest summaries total **23,110 passed, 139 skipped, 6 xfailed, 4 failed and 8 teardown errors**: the diagnostic **FAILED**. Both storage-reserve stops and the original group-51 SIGKILL/-9 without a summary/JUnit remain preserved. Final subpartitions completed the remaining file coverage without rewriting those outcomes. This is not an unsplit pass or qualification of the newer 859-file source and Pydantic 2.14.2.
 
-Remote checkpoint `bdc929ebd3c6aaa2563c758936beb315a10eeea0` still contains only the earlier `af8772bf` tree. Draft [PR #322](https://github.com/djshellshoxxx/patchtrace/pull/322) was created at `32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7`, tree `e00ee281fa43744e892bbcf806e4b07a90c15e13`, exactly matching local `3cde10ae`. Those hosted runs were queued at the latest observation. Main remains `fdc2696c`; no main merge or release is claimed.
+Earlier remote checkpoint `bdc929ebd3c6aaa2563c758936beb315a10eeea0` contains the earlier `af8772bf` tree. Draft [PR #322](https://github.com/djshellshoxxx/patchtrace/pull/322) was created at `32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7`, tree `e00ee281fa43744e892bbcf806e4b07a90c15e13`, exactly matching local `3cde10ae`. Those initial hosted runs were queued at that historical observation; Phase 6 below records the subsequent publication. Main remains `fdc2696c`; no main merge or release is claimed.
 
 [History evidence](evidence/history-diagnostic-20261119.zip): 9 verified payloads, 16,801 bytes; SHA-256 `60248a2e1bc603b6dba92451df639d22b7c58cc0d8153262a387242ae4dc5f67`.
 
@@ -107,3 +109,40 @@ Initial draft PR #322 head `32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7` has tree `
 | Symbol scanner fixture lifetime | `bc485a6644bee406fbfd92f4bfa47fdfbb4dbcbd` | Original teardown failure retained; 30 affected checks pass in 2.42 seconds. |
 
 The draft-readiness tool available in this session uses GraphQL and therefore is not used under the REST-only rule. If all actual final-head gates pass, an allowed route is a new non-draft PR on a new branch at that exact qualified commit, followed by its applicable checks and a normal expected-head REST merge. Preserve the original draft until replacement ancestry and scope are verified. No main promotion is recorded.
+
+## Phase 6 — retention, dependencies and final diagnostic
+
+| Local event | Identity | Evidence and limit |
+| --- | --- | --- |
+| Subsequent PR #322 publication | `2511301f` | Tree `f2366be08a4951880692b56ecbbefbe92a3611dd` equals local `7093ee68`; 78 changed files, ahead 3/behind 0 against main `fdc2696c`. Predates the following source changes. |
+| Reviewed retention source / integration | `74d5f4bb15a94c6e4f2cb16a5da22a2031d985c7` / `153f6cea8289547aa83acf85100e8c162631b77e` | 175 affected passes; independent NULL/BLOB preservation replay; genuine storage errors and post-write uncertainty retained. |
+| Pydantic source / integration | `b28f697162f9edbadbdc860c0358be5feb41f377` / `5208c7589495cea749142f57599c4382be9caed5` | 2.14.2/core 2.50.2; 2,903 passes plus existing CODEX-14 xfail across 79 files. 301 schemas and generated CSAF table unchanged across 16 generators. |
+| Integrated affected checks | `5208c758` | 254 passes across four groups on actual new dependency versions; configured Ruff and pip check pass. Not a full 859-file result. |
+| Backup-test fault lifetime | `5aebd98f362e7cc5f01a0c96878860b04835cea4` | Tree `1b4fdd985ccea86e436172ee52ad3b5ab51b8877`; 3 passes/3 teardown errors before correction, then 41 affected passes in 2.62s. Test-only mock scope, production source and assertions unchanged. |
+| Evidence preservation | `e430309ac9c9d1ea7a5b271af68df5a5113ea1bb` | Tree `cd26238038b462f3b0beed0577e169237b09d0a0`; Phase 6 archives and exact advisory report preserved. |
+
+At published `2511301f`, QA `44522261517`, rz `44522261469`, native PR
+`44522261551`, native push `44522248460` and BinDiff `44522261617` were queued.
+Queue cause is unestablished. Earlier success does not qualify later accepted
+source; refresh every actual final-head job after publishing it.
+
+The original 856-file diagnostic reached all files through 59 terminal processes
+and FAILED: 23,110 passed, 139 skipped, 6 xfailed, 4 failed, 8 teardown errors.
+Both reserve stops and original group-51 kill remain preserved. The final four
+groups' 1,396 collected node IDs match XML exactly; complete coverage does not
+make this an unsplit pass or qualify current 859-file source/new dependencies.
+Later fixture repairs are separate; external AF_UNIX constructor EPERM remains.
+
+Both actual 15-package Python graphs completed PyPI and OSV audits with zero
+returned advisories, but direct API cross-checks also miss four upstream findings
+for old Pydantic 2.13.5. The new pin clears those ranges. Seven native Qt findings
+remain open; no 6.12.1 binding wheels were available at official-index retrieval,
+and 6.11.3 is not a complete fix. [Advisory audit](DEPENDENCY_ADVISORY_AUDIT_20261119.md).
+Fresh source scan: 64 findings, unchanged normalized multiset versus `520b524b`;
+the separate 70-finding tools expansion requires review.
+
+[TEST_RESULTS.md](TEST_RESULTS.md) records verified archive identities for
+retention/integration, Pydantic, advisory audit, complete failed diagnostic and
+backup-test correction. Source branches remain preserved. Strings-export recovery
+and build-tool HTTPS redirect triage are ongoing separate work, excluded from
+this accepted checkpoint. Main promotion and release gates remain open.

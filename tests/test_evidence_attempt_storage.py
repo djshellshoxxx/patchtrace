@@ -257,7 +257,7 @@ def test_a_later_saved_attempt_replaces_its_unsaved_notice(main_window, qtbot):
 
 
 @pytest.mark.parametrize('status', ['failed', 'ok'])
-def test_post_write_failure_does_not_claim_the_attempt_is_absent(main_window, status):
+def test_post_write_failure_does_not_claim_the_attempt_is_absent(main_window, status, monkeypatch):
     controller = request(main_window)
     outcome = view(controller, status)
     project = main_window.service.project
@@ -266,9 +266,16 @@ def test_post_write_failure_does_not_claim_the_attempt_is_absent(main_window, st
     malformed_id = 'authored-malformed-retention-row'
     store.publish('secondary-matches', guard, guard, project.revision, 'complete', {}, malformed_id)
     with main_window.service.store.connection as db:
-        # Authored malformed metadata triggers retention after the attempt's INSERT commits.
+        # Preserve the original malformed-row fixture; retention now safely keeps this evidence.
         db.execute('UPDATE enrichment_entries SET body=?,body_sha256=? WHERE id=?',
                    ('[]', hashlib.sha256(b'[]').hexdigest(), malformed_id))
+
+    def fail_after_commit(attempt_store, *args, **kwargs):
+        assert not attempt_store.store.connection.in_transaction
+        assert attempt_store.entry('engine-run', outcome.run.run_id) is not None
+        raise AttributeError('authored post-write retention failure')
+
+    monkeypatch.setattr(EnrichmentStore, 'prune_runs', fail_after_commit)
     controller._engine_finished(outcome, controller.run_generation)
     assert [entry.id for entry in entries(main_window)] == [outcome.run.run_id]
     controller._all_finished((outcome,), controller.run_generation)

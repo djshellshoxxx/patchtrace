@@ -1,7 +1,8 @@
 # Continuation security and integrity review — 2026-11-19
 
 This is a scoped review of the continuation from main `fdc2696c`, with reviewed
-source integrated locally through `a4d6dd9b`. It records concrete findings,
+runtime/dependencies integrated through `5208c758`, with test-only follow-up
+`5aebd98f` and evidence checkpoint `e430309a`. It records concrete findings,
 repairs and limits. It is not a completed audit of all retained branches or a
 native Windows qualification. No target binary was executed for these authored
 parser/cache controls.
@@ -34,11 +35,11 @@ See [parser details](parser-integrity-20261119.md) and
 
 ## Open security and integrity work
 
-The [supplemental static audit](STATIC_AUDIT.md) classifies all 65 Ruff security
-warnings, including 21 SQL sites. Baseline/current warning multisets match; that
-does not establish absence of defects. No suppression was added. Dependency
-vulnerability auditing remains separate work. The attempt-history observability
-slice is now corrected in Phase 4 below; malformed-row retention remains open. The first complete-suite attempt ended 137/SIGKILL without
+The [supplemental static audit](STATIC_AUDIT.md) classifies the original 65 Ruff
+security warnings, including 21 SQL sites. That historical baseline comparison
+matched; later Phase 4 and Phase 6 source scans each have 64 findings. None of
+those observations establishes absence of defects. No suppression was added. Actual dependency advisory auditing is recorded separately in Phase 6 below. The attempt-history observability
+slice is corrected in Phase 4 below; the later bounded retention repair is accepted in Phase 6. The first complete-suite attempt ended 137/SIGKILL without
 a final report, so focused repairs do not yet qualify the aggregate.
 
 The CVE numeric/time slice is reviewed and integrated through `a4d6dd9b`. Besides
@@ -82,28 +83,90 @@ PR316/318 holds remain in place; only documented compatible slices are recovered
 
 ## Phase 4 — truthful attempt-storage outcomes
 
-Recovered source `254190a0b36153d28f76782f8d5dae26e9d9a020`, integrated through `520b524b`, preserves bounded attempt-storage diagnostics without replacing original engine errors or prior trusted sets. Generic publication exceptions now say **"Attempt storage unconfirmed"** because a row may already have committed. Definite not-saved wording requires a returned ownership refusal; a result-kept claim requires confirmed publication. Lifecycle resets clear transient details. Malformed-row retention and the underlying post-write retention exception remain open.
+Recovered source `254190a0b36153d28f76782f8d5dae26e9d9a020`, integrated through `520b524b`, preserves bounded attempt-storage diagnostics without replacing original engine errors or prior trusted sets. Generic publication exceptions now say **"Attempt storage unconfirmed"** because a row may already have committed. Definite not-saved wording requires a returned ownership refusal; a result-kept claim requires confirmed publication. Lifecycle resets clear transient details. Malformed-row retention remained open at this historical checkpoint; the accepted Phase 6 repair below addresses the reproduced cause while preserving generic post-write uncertainty.
 
 Baseline: 12 failed/8 passed in 19.07s. Recovered slice: 79 passed in 42.63s. Real SQLite post-write controls: 2 failed in 3.59s. Final affected UI/host selection: 81 passed in 37.33s; whole-tree Ruff and whitespace checks pass. Independent source review found no blocker in the recovered diagnostics, scheduler/producer boundary or persistence ownership/refusal contract. Authored offscreen controls do not qualify native comparators or atomic storage.
 
 [History evidence](evidence/history-diagnostic-20261119.zip): 9 verified payloads, 16,801 bytes; SHA-256 `60248a2e1bc603b6dba92451df639d22b7c58cc0d8153262a387242ae4dc5f67`.
 
-The original all-856-file diagnostic froze runtime/tests at `520b524b` and stopped after 34/54 groups at the 256 MiB temporary-storage reserve. Its JUnit counters total 15,971 tests, four failures, four teardown errors and 86 skips. The original stopped manifest and every completed receipt are preserved. Separate continuation session 78011 executes only groups 35–54 from the identical source/test/tool fingerprint, using the relocated checkout `/workspace/scratch/81e4938f4a3a/pt-candidate` (documentation head `3cde10ae`). No aggregate pass is available. Later integrated repairs require their own final-head qualification.
+The final frozen diagnostic reached all **856 original test files through 59 terminal pytest processes** at runtime/test source `520b524b` (documentation head `3cde10ae`) with unchanged Pydantic 2.13.5. Actual pytest summaries total **23,110 passed, 139 skipped, 6 xfailed, 4 failed and 8 teardown errors**: the diagnostic **FAILED**. Both storage-reserve stops and the original group-51 SIGKILL/-9 without a summary/JUnit remain preserved. Final subpartitions completed the remaining file coverage without rewriting those outcomes. This is not an unsplit pass or qualification of the newer 859-file source and Pydantic 2.14.2.
 
 
 The final supplemental scan on `520b524b` reports 64 findings, no added normalized
 warnings, and one removed S110 warning for swallowed `ui_evidence` publication
 failure. Configured whole-tree Ruff passes. The 65-finding baseline remains
 frozen; see [the final-scope amendment](STATIC_AUDIT.md). The raw final scan is
-`/tmp/pt81-final-results/security-static-final.json`, pending coordinator archival.
+`diagnostic/security-static-final.json` in the verified [complete diagnostic archive](evidence/candidate-partitioned-20261119.zip).
 This is not a clean-security or aggregate-test claim.
 
 ## Phase 5 — acquisition integrity and dependency follow-up
 
 The recovered acquisition boundary rejects newly inspected staged bytes that differ from the approved plan before product selection, approval, journal or project mutation. Baseline reproduction accepted replacement bytes with exit 0; the corrected source and both-side mutation controls are in [batch 5](RECOVERY_BATCH_5.md). The original cancellation, revision ownership and source-admission guards remain. Authenticated index lineage or confirmed vulnerability repair is not inferred.
 
-Independent review of the separate attempt-retention follow-up reproduced malformed-row eviction and a post-write exception; proposed corrections are still under review at this checkpoint and are not credited as integrated. A mixed NULL/text identifier case was caught during root review. Preserve all original rows and the generic post-write uncertainty contract.
+Phase 5 review reproduced malformed-row eviction, a post-write exception and mixed NULL/text identifiers. The accepted Phase 6 repair below preserves those findings and all original rows; generic post-write uncertainty remains required.
 
-A current scoped primary-advisory lookup found the declared Pydantic 2.13.5 in affected ranges for [GHSA-qpmf-fgh3-ff25](https://github.com/pydantic/pydantic/security/advisories/GHSA-qpmf-fgh3-ff25), [GHSA-3r8g-cqwr-jr29](https://github.com/pydantic/pydantic/security/advisories/GHSA-3r8g-cqwr-jr29), [GHSA-955g-x97g-8mcp](https://github.com/pydantic/pydantic/security/advisories/GHSA-955g-x97g-8mcp), and [GHSA-gj4f-r7mf-jjxh](https://github.com/pydantic/pydantic/security/advisories/GHSA-gj4f-r7mf-jjxh). The relevant extra-data, multi-host URL and Fraction APIs have not been found in the bounded production-path search; that is not proof of unreachability. A private Pydantic 2.14.2/core 2.50.2 compatibility qualification is in progress. No pin change is credited here yet.
+The original scoped primary-advisory lookup found the declared Pydantic 2.13.5 in affected ranges for [GHSA-qpmf-fgh3-ff25](https://github.com/pydantic/pydantic/security/advisories/GHSA-qpmf-fgh3-ff25), [GHSA-3r8g-cqwr-jr29](https://github.com/pydantic/pydantic/security/advisories/GHSA-3r8g-cqwr-jr29), [GHSA-955g-x97g-8mcp](https://github.com/pydantic/pydantic/security/advisories/GHSA-955g-x97g-8mcp), and [GHSA-gj4f-r7mf-jjxh](https://github.com/pydantic/pydantic/security/advisories/GHSA-gj4f-r7mf-jjxh). The relevant extra-data, multi-host URL and Fraction APIs have not been found in the bounded production-path search; that is not proof of unreachability. Qualified Pydantic 2.14.2/core 2.50.2 is now integrated by `5208c758` and clears the four assessed V2 ranges; the original frozen environment remains unchanged.
 
-Native Qt advisories and a version-resolved Python dependency audit are being checked separately. PySide6's configured package index still lists 6.12.0 as latest. The Snyk status on the initial PR only reports no manifest changes and supplies no fresh audit assurance. A scoped advisory lookup, pip check, configured Ruff, and an advisory scan each establish different facts; none alone proves the application secure.
+Actual resolved Python graphs and assessed native Qt advisories are recorded below. The initial PR Snyk status reported only no manifest changes and supplies no new audit assurance. Configured lint, pip check, compatibility tests and advisory lookups establish different facts; none alone proves the application secure.
+## Phase 6 — bounded retention correction
+
+Source `74d5f4bb`, integrated by `153f6cea`, requires bounded hash-checked strict
+JSON/model admission and matching text/project identities before inferring
+engine-run eviction eligibility. Indeterminate rows preserve originals. Explicit
+protected run IDs are skipped before deletion/freed-byte accounting; null-safe
+publication sums count NULL-ID rows against the cap. Caller audit confirms the
+private scanner serves eviction, not unrelated read-only history.
+
+Meaningful baseline: 26 failed/6 passed. Root's mixed-NULL-ID finding and separate
+BLOB, protect-set and NULL-cap regressions failed before correction. Final:
+175 passed across 10 files in 18.92s, whole-tree Ruff passed; independent real-SQLite
+NULL/BLOB controls preserved all originals. Initial 32 fixture-setup failures
+are separately retained as an authored algorithm mistake. Ordinary eviction,
+valid replacements, cap refusal and genuine storage errors remain covered.
+[Batch 6](RECOVERY_BATCH_6.md) preserves source and exact receipts.
+
+UI uncertainty assertions remain, with explicit post-commit prune faults now
+injected after fixing the original malformed-row cause. Publication is not
+atomic; noncooperating concurrent mutation, aggregate hostile-database budgets
+and unrelated reader boundaries remain wider limits. No migration, deletion or
+quarantine of corrupt originals was introduced. Integrated `5208c758` separately
+passed 254 affected checks on actual Pydantic 2.14.2/core 2.50.2; configured Ruff
+and pip check pass. These are not full-source or native results.
+
+## Phase 6 — dependency audit and remaining security work
+
+Pydantic source `b28f6971`, integrated by `5208c758`, passed 2,903 controls and one
+existing strict CODEX-14 xfail across 79 files. Sixteen generators left all 301
+schemas and the generated CSAF table byte-identical. The earlier SIGKILL attempt
+has no summary/JUnit and remains incomplete. [Qualification](PYDANTIC_SECURITY_UPGRADE_20261119.md)
+is Linux/source scoped; Windows and final-head qualification remain open.
+
+The [advisory audit](DEPENDENCY_ADVISORY_AUDIT_20261119.md) derives both actual
+15-package Linux runtime/search/rules graphs from installed metadata and audits
+each through PyPI and OSV. All four runs return zero findings; direct API requests
+also miss four known upstream findings affecting the original 2.13.5 pin. This
+is a lookup coverage gap. Qualified 2.14.2 clears the four assessed V2 ranges;
+zero automated findings do not establish a secure dependency closure.
+
+Qt 6.12.0 remains within seven assessed native-component advisory ranges.
+Successful official PyPI retrieval found no 6.12.1 PySide6/shiboken6 files;
+6.11.3 is not a complete fix. The report preserves vendor ambiguities, three
+unclassified patch records, failed retrievals and a bounded 900-file source scan.
+Absence of literal API uses is not a callgraph, exploitability proof or frozen
+artifact SBOM. Dev/build/all-platform and native transitive graphs remain outside
+this audit. Qualify a supported patched artifact or another evidenced disposition
+before closing the native dependency blocker.
+
+Fresh supplemental source findings remain 64 with no normalized additions/removals
+versus frozen `520b524b`; the separate 70 tools findings require review. Prior
+source classifications do not cover all 134 combined results. [Static record](STATIC_AUDIT.md).
+The verified [retention archive](evidence/attempt-retention-20261119.zip) preserves
+these raw scans and the independent/integrated checks.
+
+The complete frozen diagnostic remains FAILED despite full original-file coverage.
+The final three backup-test teardown errors were independently reproduced on
+current dependencies, then fixed only through mock lifetime at `5aebd98f`; 41
+checks pass. [Separate harness receipt](evidence/backup-scandir-harness-20261119.zip).
+No frozen result is rewritten; external AF_UNIX constructor EPERM remains.
+Strings-export recovery and build-tool HTTPS redirect triage are ongoing separate
+work, not completed repairs credited by this checkpoint.

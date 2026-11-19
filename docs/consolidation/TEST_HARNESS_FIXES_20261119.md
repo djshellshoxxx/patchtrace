@@ -98,3 +98,25 @@ assertions are unchanged. The complete staging and local-symbol backend files
 pass **30 tests in 2.42 seconds** with immediate failed-only cleanup. Production
 symbol handling and the frozen diagnostic candidate were not modified. Receipts
 are `verification/symbol-fixture-{red,green}.{log,xml}`.
+
+## Verified-backup directory-read follow-up
+
+The final frozen diagnostic subpartition 53-2 recorded **346 passed and three
+teardown errors in 22.52 seconds**. All three parametrizations of
+`test_directory_read_failure_never_admits_a_failed_sqlite_publication` completed
+their assertions, then their global `os.scandir` fault patch intercepted
+pytest's cleanup with an integer directory descriptor. The patch called
+`Path(descriptor)`, which raised `TypeError` outside the operation under test.
+
+On integration source `5208c758` with Pydantic 2.14.2/core 2.50.2, the unchanged
+three cases reproduced **3 passed and 3 teardown errors**. The correction scopes
+only that fault patch to `find_verified_backup`. The failed-publication
+setup, requested scan number, interrupted-iteration behavior, refusal result and
+exact unchanged stage/final byte assertions remain intact. No production backup
+implementation or frozen diagnostic source changed.
+
+The complete publication-admission, byte-integrity and prune-backup modules
+then passed **41 tests in 2.62 seconds** with immediate failed-only cleanup.
+The original red and green logs, JUnit and command/source receipts are retained
+in [backup-scandir-harness-20261119.zip](evidence/backup-scandir-harness-20261119.zip).
+This separate replay does not turn the preserved frozen diagnostic into a pass.

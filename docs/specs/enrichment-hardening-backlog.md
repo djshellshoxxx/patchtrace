@@ -27,6 +27,49 @@ def apply_retention(self, current: Guard, protect: set[str]):
 Tests (new `tests/test_enrichment_retention.py`): 12 sequential edits then publish -> row count bounded and current generation intact (`load_default` still returns it); two profiles share one `wil` row and deleting one generation keeps it; cap fallback: fill to 120 MiB with stale rows, publish a 20 MiB generation succeeds; still-over-cap raises `PT-ENRICH-LIMIT` and leaves existing rows untouched; `secondary-matches` rows survive every path; read-only (future `extension_version`) store deletes nothing; backup created once, verified, not repeated; crash simulation (exception inside the transaction) leaves the table unchanged; v1 open/save/backup test with retention applied; orphan from a concurrent publish is not reaped.
 Risk: deleting a generation a GUI still holds in memory (harmless: memory copy) ; mis-ref-counting shared `wil` rows (covered by test). 
 
+### Engine-run retention admission (2026-11-19)
+
+Engine-run eviction is permitted only after all stored `engine-run` and
+`secondary-matches` rows used by its reference scan have been admitted through
+the existing bounded exact-row reader. Apply the existing 32 MiB row limit before
+materializing a body, verify its stored SHA-256, decode strict JSON, and validate
+the corresponding current or supported legacy model. The row belongs to the live
+project and its stored ID must match the model's run or set identity. A malformed,
+unknown-version, oversized, integrity-failing or inconsistently owned row makes
+the engine-run eviction scan indeterminate. Return no engine-run candidates for
+that scan; do not substitute an anonymous group or infer that an unreadable
+reference is absent. Preserve every original engine-run and secondary-match row
+and body verbatim while that scan is indeterminate. No automatic repair, rewrite,
+deletion or quarantine of corrupt evidence is authorized.
+
+This admission rule applies to both best-effort `prune_runs` and the engine-run
+portion of `make_room`. An indeterminate scan skips attempt pruning. The cap
+fallback may use independently eligible derived generations under its existing
+rules, but cannot count or delete the uncertain engine-run rows; if safe space is
+insufficient, return the existing recoverable `PT-ENRICH-LIMIT` before publication.
+The caller's explicit `protect` IDs apply to engine-run candidates as well as
+derived generations: skip protected attempts before counting freed bytes or
+deleting rows, and report insufficient safe space when the protected set prevents
+meeting the cap.
+
+Publication's used-byte accounting includes preserved rows whose SQLite ID is
+NULL. Exclude only the exact row being replaced by an upsert, using null-safe
+comparison in both cap checks. A valid replacement that fits the cap remains
+allowed; insufficient safe space leaves the prior row and all protected evidence
+unchanged.
+
+Ordinary history, match-set and cache readers keep their existing per-row behavior;
+this rule changes only deletion eligibility. Healthy rows retain the existing
+per-engine/pair bound, reference protection and verified pre-retention backup.
+
+A successful attempt INSERT and later retention remain separate operations.
+Skipping an indeterminate retention scan does not undo or misreport the completed
+write. Genuine publication failures and unexpected post-write exceptions retain
+their existing propagation and UI uncertainty semantics; no atomic-save guarantee
+is introduced. Tests preserve raw malformed bodies, healthy evidence and original
+artifacts, exercise both eviction paths, and retain a deliberate post-write fault
+control after malformed input no longer raises accidentally.
+
 ## H2. History table bound , tier M (**needs owner decision**, see end)
 
 Current: every `ProjectStore.save` inserts a full snapshot payload (`persistence.py:328`, `history` table `:253`), each up to 256 MiB, and nothing prunes it; the module docstring promises "append-only history" (`:1`). `history()` is read by tests and revision displays (`:359`).

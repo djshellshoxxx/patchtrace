@@ -375,3 +375,25 @@ For retained topics, inspect the recorded unmatched commits and paths against cu
 The frozen 320-head census and its disposition counts are unchanged. The checkpoint branch later advanced to `bdc929eb` (tree equal to local `af8772bf`), and draft PR #322 initially published `32cc4b04` (tree equal to local `3cde10ae`). These are separately observed continuation events, not retroactive additions to the frozen census.
 
 [Batch 5](RECOVERY_BATCH_5.md) compared 161 retained heads for acquisition completion identity: 107 contained the service path, with nine distinct blobs; 14 carried the historical repair from `c3868d83` / PR #148. Its narrow compatible recovery is source `5131bd94`, integrated by `d7842532`. Main and inspected PR319/320 service paths lacked that binding. This accounts for the named contribution only; the original branches and remaining scope remain retained.
+
+### Phase 6 checkpoint observation
+
+The preceding 320-head/309-PR snapshot, every branch row and the accompanying
+JSON remain frozen. Later PR #322 publication `2511301f` has tree
+`f2366be08a4951880692b56ecbbefbe92a3611dd`, equal to local `7093ee68`; this is a
+separate publication observation, not a new census or main merge.
+
+[Batch 6](RECOVERY_BATCH_6.md) compared the 161 retained heads for the
+attempt-retention scanner: 120 contained the same vulnerable implementation,
+27 predated it and 14 lacked the path. Main and inspected PR319/PR320 retained
+that implementation. New correction `74d5f4bb`, integrated by `153f6cea`, repairs
+current behavior rather than recovering an existing fixed slice. Its 175 affected
+passes and independent NULL/BLOB preservation controls do not close the containing
+branches or their unreviewed scope; 139 semantic-review dispositions retain their
+original meaning.
+
+Subsequent runtime/dependency integration `5208c758` and test-only follow-up
+`5aebd98f` have 859 tracked test files. Evidence checkpoint `e430309a` preserves
+new receipts; the separate original 856-file diagnostic reached all files and
+FAILED. None of these later observations changes this census, establishes final
+CI/main promotion, or completes semantic recovery. [Handoff](HANDOFF.md).

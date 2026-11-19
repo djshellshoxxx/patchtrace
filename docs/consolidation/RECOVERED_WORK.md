@@ -75,7 +75,7 @@ branches retained for semantic review.
 
 Original runtime `32abf9702538dc1b2027e8ae052949bbc2436c28`, tests/spec `1c2b770d2eef6266c56504b5d081e5d6d750151e`, lifecycle correction `4d7ae4af9aa6d60fee0f70025d774c3f5b468e0b`.
 
-Recovered source `254190a0b36153d28f76782f8d5dae26e9d9a020`, integrated through `520b524b`, preserves bounded attempt-storage diagnostics without replacing original engine errors or prior trusted sets. Generic publication exceptions now say **"Attempt storage unconfirmed"** because a row may already have committed. Definite not-saved wording requires a returned ownership refusal; a result-kept claim requires confirmed publication. Lifecycle resets clear transient details. Malformed-row retention and the underlying post-write retention exception remain open.
+Recovered source `254190a0b36153d28f76782f8d5dae26e9d9a020`, integrated through `520b524b`, preserves bounded attempt-storage diagnostics without replacing original engine errors or prior trusted sets. Generic publication exceptions now say **"Attempt storage unconfirmed"** because a row may already have committed. Definite not-saved wording requires a returned ownership refusal; a result-kept claim requires confirmed publication. Lifecycle resets clear transient details. Malformed-row retention remained open at this historical checkpoint; the accepted Phase 6 repair below addresses the reproduced cause while preserving generic post-write uncertainty.
 
 Baseline: 12 failed/8 passed in 19.07s. Recovered slice: 79 passed in 42.63s. Real SQLite post-write controls: 2 failed in 3.59s. Final affected UI/host selection: 81 passed in 37.33s; whole-tree Ruff and whitespace checks pass. Independent source review found no blocker in the recovered diagnostics, scheduler/producer boundary or persistence ownership/refusal contract. Authored offscreen controls do not qualify native comparators or atomic storage.
 
@@ -90,3 +90,42 @@ Source `c3868d8335a8f32f676905032dc1a6d0e9f22fd6` from retained PR #148 was adap
 Seven controls changed from five failures/two passes to green. Thirteen affected files passed 255 tests in 33.14 seconds; the integrated acquisition/lifecycle and identity selection passed 55 tests in 4.67 seconds. Root and independent source review found no blocker in this bounded recovery. Full index proposal/window/source-entry persistence remains open. [Detailed report](RECOVERY_BATCH_5.md).
 
 [Phase 5 evidence](evidence/continuation-phase5-20261119.zip) preserves 58 verified payloads: acquisition reproductions, baseline/affected/integrated results, test-harness proofs and CI queue observations. SHA-256 `a12a4571ebbbf8e15aa1fe70b751c21f496563ac35aede6fbd6711a826ca7d19`; 135,694 bytes.
+
+## Phase 6 — preserve uncertain attempt evidence
+
+New correction `74d5f4bb15a94c6e4f2cb16a5da22a2031d985c7`, integrated locally by
+`153f6cea8289547aa83acf85100e8c162631b77e`, repairs the malformed-row retention
+cause exposed by Phase 4. No repaired historical slice was found: 120 retained
+heads had the same vulnerable scanner, 27 predated it and 14 lacked the path.
+Main/PR319/PR320 also retained it. [Batch 6](RECOVERY_BATCH_6.md) records the
+introducing source and exact comparisons; frozen census dispositions are unchanged.
+
+Eviction now requires bounded, hash-checked, strictly decoded, model-validated
+run/reference records with matching project and text identities. Indeterminate
+records supply no engine-run eviction candidates, preserving originals. Explicit
+protected run IDs are honored; null-safe upsert sums count preserved NULL-ID rows
+against the cap. Caller review confirmed this private helper serves eviction;
+unrelated read-only history remains unchanged. Ordinary eviction, valid
+replacement accounting, cap refusal and genuine storage errors stay covered.
+No schema migration, deletion or quarantine of corrupt originals is introduced.
+
+Meaningful baseline: **26 failed/6 passed**. Independent root review then
+reproduced mixed NULL/text IDs; BLOB-ID, protect-set and NULL-cap regressions
+failed before correction. Final verification: **175 passed in 18.92s across
+10 files**, including 46 new integrity controls; whole-tree Ruff and whitespace
+checks passed. Root's separate real-SQLite NULL/BLOB replay confirms zero eviction
+and preservation of every original row. The initial 32 setup failures were an
+authored fixture algorithm mistake, not a reproduced production defect.
+
+The two UI post-write controls now deliberately inject a prune exception after
+commit and preserve all original uncertainty/publication assertions. This is not
+atomic-save or universal corrupt-database qualification: noncooperating concurrent
+mutation, aggregate hostile-database budgets and unrelated reader boundaries
+retain their wider limits.
+
+The verified [retention/integrated archive](evidence/attempt-retention-20261119.zip)
+contains 41 payloads plus its manifest, including original failures, peer replay
+and later 254 affected passes on combined `5208c758` with Pydantic 2.14.2/core
+2.50.2. These overlapping selections are not summed. [Exact results and archive
+identities](TEST_RESULTS.md). Pydantic and test-only backup cleanup follow-ups
+have separate sources and do not imply further historical-branch closure.

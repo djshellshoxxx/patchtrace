@@ -215,7 +215,7 @@ nor declared qualified by unchanged scanner findings.
 
 ## Phase 4 disposition of failure-history observability
 
-The warning tables above describe the audited baseline. Recovered source `254190a0b36153d28f76782f8d5dae26e9d9a020`, integrated through `520b524b`, preserves bounded attempt-storage diagnostics without replacing original engine errors or prior trusted sets. Generic publication exceptions now say **"Attempt storage unconfirmed"** because a row may already have committed. Definite not-saved wording requires a returned ownership refusal; a result-kept claim requires confirmed publication. Lifecycle resets clear transient details. Malformed-row retention and the underlying post-write retention exception remain open.
+The warning tables above describe the audited baseline. Recovered source `254190a0b36153d28f76782f8d5dae26e9d9a020`, integrated through `520b524b`, preserves bounded attempt-storage diagnostics without replacing original engine errors or prior trusted sets. Generic publication exceptions now say **"Attempt storage unconfirmed"** because a row may already have committed. Definite not-saved wording requires a returned ownership refusal; a result-kept claim requires confirmed publication. Lifecycle resets clear transient details. Malformed-row retention remained open at this historical checkpoint; the accepted Phase 6 repair below addresses the reproduced cause while preserving generic post-write uncertainty.
 
 Baseline: 12 failed/8 passed in 19.07s. Recovered slice: 79 passed in 42.63s. Real SQLite post-write controls: 2 failed in 3.59s. Final affected UI/host selection: 81 passed in 37.33s; whole-tree Ruff and whitespace checks pass. Independent source review found no blocker in the recovered diagnostics, scheduler/producer boundary or persistence ownership/refusal contract. Authored offscreen controls do not qualify native comparators or atomic storage.
 
@@ -232,8 +232,34 @@ normalized comparison adds no warning and removes one S110 finding: the swallowe
 slice. Configured whole-tree Ruff passes. The original 65-finding inventory above
 remains the frozen `69fa6b8b` baseline; it is not rewritten as the final count.
 
-Raw final receipt: `/tmp/pt81-final-results/security-static-final.json`. The
-coordinator will archive it with later qualification evidence. These are scanner
-findings, not a clean security verdict. Malformed-row retention, the underlying
-post-write retention exception, and the other listed native/dependency/security
-obligations remain open.
+Raw final receipt: `diagnostic/security-static-final.json` in the verified
+[complete frozen diagnostic archive](evidence/candidate-partitioned-20261119.zip).
+These are scanner findings, not a clean security verdict. Later retention and
+dependency corrections have their own source and verification scopes below.
+
+## Phase 6 source and dependency observation
+
+Retention source `74d5f4bb` / integration `153f6cea` corrects the bounded
+admission/identity/protection/cap failures: 175 affected passes and independent
+NULL/BLOB preservation controls. [Batch 6](RECOVERY_BATCH_6.md) retains wider
+database and post-write limits. Original 65-site classification and Phase 4's
+64-finding scan keep their source identities and original receipts.
+
+Fresh source scan at `5208c758`: **64 findings**, SHA-256
+`4f1de97fd6d670524c040b720633ae83c77709744347545f38fbe34a2a65072f`.
+`security-static-phase6-comparison.json` records no added/removed normalized
+`(source path, rule, message)` findings versus `520b524b`. Counts: S608 21,
+S105 14, S110 12, S101 9, S310 5, S603 1, S314 1 and S108 1. Configured
+whole-tree Ruff and pip check separately pass at `5208c758`.
+
+The expanded source/tools scan records **70 additional findings in tools**;
+those require their own review. Existing source dispositions do not classify
+all 134 combined results. No warnings were suppressed. Raw scans, comparison
+and gate receipts are in the verified [retention/integrated archive](evidence/attempt-retention-20261119.zip).
+
+Pydantic 2.14.2/core 2.50.2 is separately qualified at `b28f6971` / `5208c758`.
+Both actual 15-package PyPI/OSV graph audits returned zero findings but omit known
+old-pin upstream advisories. Seven assessed native Qt findings remain unresolved.
+[Advisory audit](DEPENDENCY_ADVISORY_AUDIT_20261119.md) and [upgrade qualification](PYDANTIC_SECURITY_UPGRADE_20261119.md)
+retain exact scope. Lint, supplemental rules, advisory lookup and runtime checks
+establish different facts; none alone establishes clean security or acceptance.

@@ -1845,8 +1845,9 @@ Independent controls blocked intact #304: scoped native revision conflicts could
 Starting main: `fdc2696c23bdbfe7668348f25e3b336ce33039f7`. The local branch
 `codex/patchtrace-completion-20261119-81e4` contains the reviewed N-way,
 installer-receipt, parser, PE-cache and facts-eligibility slices through `69fa6b8b`.
-Full combined run `full-batch1` is in progress on that source; its outcome and
-aggregate hosted CI remain pending. No main merge or release has been
+Full combined run `full-batch1` ended 137/SIGKILL without a summary or JUnit
+on that source; it remains incomplete. Later diagnostic and focused results are
+recorded separately, and aggregate hosted acceptance remains pending. No main merge or release has been
 performed by this continuation.
 
 | Slice | Completed evidence | Local integration |
@@ -1894,7 +1895,7 @@ Reviewed local runtime/test source `a4d6dd9becb37b6245332643683a2ef1d2bf3812` ad
 
 The full attempt on earlier `69fa6b8b` ended with exit 137/SIGKILL before a pytest summary or JUnit. Its kill cause is unestablished; disk pressure and low available memory were observed separately. This is incomplete, not passed. The earlier sequential diagnostic planned all 855 tracked test files in 54 groups of at most 16 with no file exclusions; it later stopped after nine groups at disk reserve. Phase 4 below records its actual result and the new complete-manifest run. Its immutable source/test/tool fingerprint and per-group commands/results are retained; partitioned coverage must not be described as an unsplit full pass.
 
-Whole-tree configured Ruff, pip check and schema generation pass on the frozen source; no schema drift. Supplemental security scanning still has 65 findings, all classified in `docs/consolidation/STATIC_AUDIT.md`; no suppression or clean-scan claim. The focused archive contains 94 verified payloads (SHA-256 `babf10b732007de68adbf265416139bcaf3bd72d13f35916985080055cd5c9df`). It deliberately excludes active partition outcomes.
+Whole-tree configured Ruff, pip check and schema generation passed on that frozen source; no schema drift. Its supplemental scan had 65 findings, classified in `docs/consolidation/STATIC_AUDIT.md`; later source scans are recorded separately, with no suppression or clean-scan claim. The focused archive contains 94 verified payloads (SHA-256 `babf10b732007de68adbf265416139bcaf3bd72d13f35916985080055cd5c9df`). It excludes later partition outcomes and Phase 6 receipts.
 
 The guarded remote checkpoint `bdc929ebd3c6aaa2563c758936beb315a10eeea0` exactly preserves the earlier local `af8772bf` tree. The final candidate still needs its own hosted Linux/Windows/Qt/package/native checks before any main merge. Existing main QA/Qt success belongs only to main `fdc2696c`. No release, tag, deployment, main merge or branch deletion is claimed.
 
@@ -1914,7 +1915,7 @@ Reviewed correction: change only the contextual golden expectation. Production h
 
 Original runtime `32abf9702538dc1b2027e8ae052949bbc2436c28`, tests/spec `1c2b770d2eef6266c56504b5d081e5d6d750151e`, lifecycle correction `4d7ae4af9aa6d60fee0f70025d774c3f5b468e0b`.
 
-Recovered source `254190a0b36153d28f76782f8d5dae26e9d9a020`, integrated through `520b524b`, preserves bounded attempt-storage diagnostics without replacing original engine errors or prior trusted sets. Generic publication exceptions now say **"Attempt storage unconfirmed"** because a row may already have committed. Definite not-saved wording requires a returned ownership refusal; a result-kept claim requires confirmed publication. Lifecycle resets clear transient details. Malformed-row retention and the underlying post-write retention exception remain open.
+Recovered source `254190a0b36153d28f76782f8d5dae26e9d9a020`, integrated through `520b524b`, preserves bounded attempt-storage diagnostics without replacing original engine errors or prior trusted sets. Generic publication exceptions now say **"Attempt storage unconfirmed"** because a row may already have committed. Definite not-saved wording requires a returned ownership refusal; a result-kept claim requires confirmed publication. Lifecycle resets clear transient details. Malformed-row retention remained open at this historical checkpoint; the accepted Phase 6 repair below addresses the reproduced cause while preserving generic post-write uncertainty.
 
 Baseline: 12 failed/8 passed in 19.07s. Recovered slice: 79 passed in 42.63s. Real SQLite post-write controls: 2 failed in 3.59s. Final affected UI/host selection: 81 passed in 37.33s; whole-tree Ruff and whitespace checks pass. Independent source review found no blocker in the recovered diagnostics, scheduler/producer boundary or persistence ownership/refusal contract. Authored offscreen controls do not qualify native comparators or atomic storage.
 
@@ -1922,7 +1923,7 @@ Baseline: 12 failed/8 passed in 19.07s. Recovered slice: 79 passed in 42.63s. Re
 
 The first `a4d6dd9b` partition stopped at disk reserve after 9/54 groups: 2,602 passed, 8 skipped and one contextual-digest pin mismatch. Golden correction `70b82275` follows review of the exact new ROUND constant; 9 digest/cache-identity tests pass in 1.85s. The original failure remains failed. [Algorithm-digest evidence](consolidation/evidence/algorithm-digest-review-20261119.zip) preserves both outcomes.
 
-The original all-856-file diagnostic froze runtime/tests at `520b524b` and stopped after 34/54 groups at the 256 MiB temporary-storage reserve. Its JUnit counters total 15,971 tests, four failures, four teardown errors and 86 skips. The original stopped manifest and every completed receipt are preserved. Separate continuation session 78011 executes only groups 35–54 from the identical source/test/tool fingerprint, using the relocated checkout `/workspace/scratch/81e4938f4a3a/pt-candidate` (documentation head `3cde10ae`). No aggregate pass is available. Later integrated repairs require their own final-head qualification.
+The final frozen diagnostic reached all **856 original test files through 59 terminal pytest processes** at runtime/test source `520b524b` (documentation head `3cde10ae`) with unchanged Pydantic 2.13.5. Actual pytest summaries total **23,110 passed, 139 skipped, 6 xfailed, 4 failed and 8 teardown errors**: the diagnostic **FAILED**. Both storage-reserve stops and the original group-51 SIGKILL/-9 without a summary/JUnit remain preserved. Final subpartitions completed the remaining file coverage without rewriting those outcomes. This is not an unsplit pass or qualification of the newer 859-file source and Pydantic 2.14.2.
 
 Remote checkpoint `bdc929ebd3c6aaa2563c758936beb315a10eeea0` contains the earlier `af8772bf` tree. Draft PR #322 subsequently published the reviewed candidate as `32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7`, tree `e00ee281fa43744e892bbcf806e4b07a90c15e13`, exactly matching local `3cde10ae`. Its five hosted workflow runs were queued at the latest observation. Main remains `fdc2696c`; no main merge or release is claimed.
 
@@ -1932,12 +1933,107 @@ Group 12 of the frozen `520b524b` diagnostic completed with 510 passed and two f
 
 The correction changes only `GOLDEN['stages']['contextual']` from `8c34cd25…` to `6e8833bd…`. All existing equality and ranking assertions remain. The combined golden/cache guard selection passed **12 tests in 1.61 seconds**. An initial command named a nonexistent test file and ran zero tests (exit 4); that failed invocation is retained separately. No production code or active frozen-candidate file changed.
 
-[Stage identity review evidence](consolidation/evidence/contextual-stage-key-review-20261119.zip) contains nine verified payloads, including the original group 12 failures, independent proof and corrected test receipts. Archive: 15,870 bytes; SHA-256 `51af1e41cb11765d3191edbdf09c0472b4575a58d6635c4fa01b2e057a161e1e`. The ongoing partition diagnostic retains its original result; this focused correction is separate evidence, not an aggregate pass.
+[Stage identity review evidence](consolidation/evidence/contextual-stage-key-review-20261119.zip) contains nine verified payloads, including the original group 12 failures, independent proof and corrected test receipts. Archive: 15,870 bytes; SHA-256 `51af1e41cb11765d3191edbdf09c0472b4575a58d6635c4fa01b2e057a161e1e`. The frozen partition diagnostic retains its original result; this focused correction is separate evidence, not an aggregate pass.
 
 ## [CONTINUATION-PHASE5-20261119]
 
 Acquisition source `5131bd94` was reviewed and integrated by `d7842532`: 255 affected tests and 55 integrated acquisition/lifecycle/identity tests pass. Conservative manual provenance remains explicit. Test-only follow-ups `f114eb96` and `bc485a66` fix injected OS faults surviving into fixture cleanup and a path-sensitive preview assertion; 85 tests pass under both cleanup policies with one existing optional skip, plus 30 symbol/backend checks. No production assertion or AF_UNIX acceptance was disabled.
 
-The original 856-file diagnostic stopped after 34/54 groups at temporary-storage reserve. JUnit totals: 15,971 tests, four failures, four errors and 86 skips. Original failures remain preserved; separate session 78011 executes only groups 35–54 at the identical source/test/tool fingerprint after a hash-verified relocation. The later integrated changes are qualified separately, and no aggregate pass is inferred. [Current evidence and commands](consolidation/TEST_RESULTS.md).
+At the Phase 5 checkpoint, groups 1–34 stopped at reserve: JUnit 15,971 tests, four failures, four errors and 86 skips. The first continuation later stopped after 35–45; subsequent tail/subpartitions reached every original file while preserving all failures and the group-51 kill. Phase 6 below records the final FAILED diagnostic and separate repairs.
 
-Draft PR #322 is published; initial-head workflows remain queued. Attempt-retention and dependency-advisory follow-ups are active and not yet credited as integrated. Main remains unchanged. [Current handoff](consolidation/HANDOFF.md).
+Draft PR #322 is published; its initial queued workflows are a historical observation. Phase 6 below records the later publication, accepted retention/dependency changes, final diagnostic and remaining gates. [Current handoff](consolidation/HANDOFF.md).
+## [CONTINUATION-PHASE6-20261119]
+
+Accepted source/test checkpoint is `5aebd98f362e7cc5f01a0c96878860b04835cea4`,
+tree `1b4fdd985ccea86e436172ee52ad3b5ab51b8877`: 859 tracked test files, after
+runtime/dependency integration `5208c758`. Evidence checkpoint `e430309a`
+preserves the new archives and exact advisory report. Last published PR #322
+head `2511301f` has tree `f2366be08a4951880692b56ecbbefbe92a3611dd`, equal to
+local `7093ee68`; 78 changed files, ahead 3/behind 0 against main `fdc2696c`.
+That publication predates the new source. No main merge/release is recorded.
+
+### Retention and dependency verification
+
+Retention `74d5f4bb` / `153f6cea` replaces unsafe eviction inference with bounded,
+hash-checked strict JSON/model admission and matching text/project identities.
+Indeterminate records preserve originals. Explicit protected IDs are honored;
+null-safe sums count NULL-ID bytes against the existing cap. Read-only history
+is outside this private eviction helper. Genuine storage errors propagate and
+post-write uncertainty remains truthful; publication is not atomic.
+
+Meaningful baseline: 26 failed/6 passed. Root's NULL-ID finding and authored
+BLOB/protection/NULL-cap controls failed before corrections. Final: **175 passed
+in 18.92s across 10 files**, including 46 new controls, whole-tree Ruff and
+whitespace pass. Independent real-SQLite NULL/BLOB replay preserves all originals
+with zero eviction. Initial 32 setup failures were an authored fixture algorithm
+mistake, not a production reproduction. The two UI post-write controls now
+inject a real post-commit prune exception and preserve original assertions.
+[Batch 6](consolidation/RECOVERY_BATCH_6.md) records wider concurrency/hostile-DB limits.
+
+Pydantic `b28f6971` / `5208c758` changes the pin to 2.14.2/core 2.50.2. New
+controls changed from 8 failed/1 passed to 9 passed. Compatibility completed in
+28 bounded batches over 79 files: **2,903 passed, 1 existing strict CODEX-14 xfail**,
+no skips/failures/errors. The nine new controls are included, not added again.
+All 16 schema generators completed under both versions; 301 schema files and
+generated CSAF table stayed byte-identical. No golden or xfail marker changed.
+The earlier grouped attempt ended SIGKILL/-9 without summary/JUnit; cause remains
+unestablished. [Upgrade report](consolidation/PYDANTIC_SECURITY_UPGRADE_20261119.md).
+
+Root separately verified integrated `5208c758` on actual new versions: **254
+passed across four groups**, zero failures/errors/skips, covering retention,
+secondary attempts/backups, acquisition/lifecycle and Pydantic/cache/identity.
+Configured Ruff and pip check pass. Original shared/frozen environments retained
+2.13.5. Overlapping slices are not summed into full-suite coverage.
+
+Both actual 15-package Linux runtime/search/rules graphs completed PyPI and OSV
+audits, all four returning zero advisories. Direct API cross-checks also miss
+four known upstream old-pin Pydantic findings; the qualified pin clears those
+ranges. This is a coverage gap, not a clean-security result. Qt 6.12.0 remains
+in seven assessed native advisory ranges; no official 6.12.1 binding wheels were
+available at retrieval and 6.11.3 is not a complete fix. [Advisory audit](consolidation/DEPENDENCY_ADVISORY_AUDIT_20261119.md)
+preserves exact graphs, primary findings, retrieval failures and a 26-file
+manifest. A bounded source scan does not prove unreachability or a final package SBOM.
+
+Fresh supplemental source scan: 64 findings, no normalized additions/removals
+against `520b524b`. Separate tools expansion: 70 findings requiring review;
+existing source classifications do not cover all 134 combined findings.
+[Static record](consolidation/STATIC_AUDIT.md).
+
+### Final frozen diagnostic and separate fixture repair
+
+All 856 original files reached terminal results through 59 processes: 50 original
+groups, eight final subpartitions and an isolated dense case. Frozen source/tests
+remain `520b524b` (documentation head `3cde10ae`), old Pydantic 2.13.5, fingerprint
+`9ecd20b2dd0f83047551f8a9f85e28c34a34236f65d77b74e46483eecf33a2b2`.
+All 1,396 collected node IDs in the last four groups match the XML multiset exactly,
+with no omissions/duplicates. All seven residual-performance cases pass split 6+1.
+
+Actual pytest summaries: **23,110 passed, 139 skipped, 6 xfailed, 4 failed and
+8 teardown errors**. JUnit: 23,259 tests, 4 failures, 8 errors, 145 skips including
+xfails. Errors coexist with passing bodies; do not subtract them from pytest
+passes. The diagnostic **FAILED**. Both reserve stops and the original group-51
+kill without summary/JUnit remain preserved; the dense-case pass does not prove
+that kill's cause. Full file coverage is not an unsplit or current-head pass.
+
+Three new errors in subpartition 53-2 came from the verified-backup test's
+`os.scandir` mock surviving into pytest cleanup. Root reproduced 3 passes/3
+teardown errors on new dependencies, then scoped only mock lifetime at `5aebd98f`:
+**41 passed in 2.62s across three files**. Production source and assertions stay
+unchanged; original frozen errors remain errors. External AF_UNIX constructor
+EPERM before product imports remains an unchanged acceptance block.
+[Harness report](consolidation/TEST_HARNESS_FIXES_20261119.md).
+
+Verified archives contain 41 retention/integrated, 82 Pydantic, 27 advisory,
+132 complete-diagnostic and six backup-correction payloads plus their manifests.
+[Exact archive hashes and results](consolidation/TEST_RESULTS.md) distinguish these
+from the original 94-payload focused archive. The complete failed diagnostic is
+599,873 bytes, SHA-256 `29a5149bbc2671db26fe260dcc9e94515cd543ac0643f0e74f29f4f0b5720653`.
+
+At published `2511301f`, QA `44522261517`, rz `44522261469`, native PR
+`44522261551`, native push `44522248460` and BinDiff `44522261617` were queued.
+Scheduling cause is unestablished; earlier heads do not qualify later accepted
+source. Actual final-head Linux/Windows/Qt/package/native/live checks, Qt
+remediation, manual acceptance and separate L1/L2/L3 evidence remain open.
+REST-only readiness and the all-jobs-green/no-blocker expected-head merge gate
+remain. Strings-export recovery and build-tool HTTPS redirect triage are ongoing
+separate work, excluded from this checkpoint's accepted-source claims.

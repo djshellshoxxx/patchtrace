@@ -243,11 +243,11 @@ class EnrichmentStore:
         if size > MAX_ROW:
             raise EnrichmentError('PT-ENRICH-LIMIT', 'enrichment result exceeds 32 MiB row limit')
         used = self._db.execute('SELECT COALESCE(SUM(LENGTH(CAST(body AS BLOB))),0) FROM enrichment_entries '
-                                'WHERE id != ?', (entry_id,)).fetchone()[0]
+                                'WHERE id IS NOT ?', (entry_id,)).fetchone()[0]
         if used + size > MAX_TOTAL:
             self.make_room(used + size - MAX_TOTAL, current, {entry_id, *protect})
             used = self._db.execute('SELECT COALESCE(SUM(LENGTH(CAST(body AS BLOB))),0) FROM enrichment_entries '
-                                    'WHERE id != ?', (entry_id,)).fetchone()[0]
+                                    'WHERE id IS NOT ?', (entry_id,)).fetchone()[0]
             if used + size > MAX_TOTAL:
                 raise EnrichmentError('PT-ENRICH-LIMIT', 'project enrichment data would exceed 128 MiB',
                                       recoverable=True)
@@ -407,29 +407,50 @@ class EnrichmentStore:
 
     def _run_rows(self) -> list[tuple[str, str, int, tuple, bool]]:
         """(id, created, size, group, referenced) for every engine-run row, newest first. A run is
-        referenced when a stored secondary set names it (`run_id`) or it names a stored set."""
+        referenced when a stored secondary set names it (`run_id`) or it names a stored set.
+
+        This scan authorizes deletion only. Unreadable evidence makes reference ownership
+        indeterminate, so offer no runs rather than treating a malformed row as unreferenced.
+        """
+        from ..secondary.contracts import SecondaryMatchSet
+        from ..secondary.runs import EngineRun
+
         rows = self._db.execute(
-            'SELECT id, created, LENGTH(CAST(body AS BLOB)), body FROM enrichment_entries WHERE kind=? '
+            'SELECT id, created, LENGTH(CAST(body AS BLOB)) FROM enrichment_entries WHERE kind=? '
             'ORDER BY created DESC, id DESC', (RUN_KIND,)).fetchall()
+        if not rows or any(type(row[0]) is not str for row in rows):
+            return []
         sets = {r[0] for r in self._db.execute('SELECT id FROM enrichment_entries WHERE kind=?',
                                                ('secondary-matches',))}
+        if any(type(row_id) is not str for row_id in sets):
+            return []
+        project_id = self._project_id()
+        if project_id is None:
+            return []
         named = set()
-        for (body,) in self._db.execute('SELECT body FROM enrichment_entries WHERE kind=?', ('secondary-matches',)):
-            try:
-                run_id = json.loads(body).get('run_id')
-            except ValueError:
-                continue
-            if isinstance(run_id, str):
-                named.add(run_id)
         out = []
-        for row_id, created, size, body in rows:
-            try:
-                doc = json.loads(body)
-                group = (doc.get('engine'), doc.get('older_sha256'), doc.get('newer_sha256'))
-                referenced = row_id in named or doc.get('match_set_id') in sets
-            except (ValueError, AttributeError):
-                group, referenced = (None, None, None), False
-            out.append((row_id, created, size, group, referenced))
+        try:
+            for row_id in sorted(sets):
+                entry = self.entry('secondary-matches', row_id, max_bytes=MAX_ROW)
+                if entry is None or entry.guard.project_id != project_id or entry.body_json is None:
+                    return []
+                match_set = SecondaryMatchSet.model_validate_json(entry.body_json)
+                if match_set.entry_id != row_id:
+                    return []
+                if match_set.run_id is not None:
+                    named.add(match_set.run_id)
+            for row_id, created, size in rows:
+                entry = self.entry(RUN_KIND, row_id, max_bytes=MAX_ROW)
+                if entry is None or entry.guard.project_id != project_id or entry.body_json is None:
+                    return []
+                run = EngineRun.model_validate_json(entry.body_json)
+                if run.run_id != row_id:
+                    return []
+                group = (run.engine, run.older_sha256, run.newer_sha256)
+                referenced = row_id in named or run.match_set_id in sets
+                out.append((row_id, created, size, group, referenced))
+        except (EnrichmentError, ValueError):
+            return []
         return out
 
     def _evictable_runs(self, keep: int) -> list[tuple[str, int]]:
@@ -512,6 +533,8 @@ class EnrichmentStore:
             for row_id, size in self._evictable_runs(1):  # run history is cheap to lose; sets are never offered
                 if freed >= need_bytes:
                     break
+                if row_id in protected:
+                    continue
                 runs.add(row_id)
                 freed += size
             remaining = list(pipes)

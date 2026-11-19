@@ -4,7 +4,8 @@
 
 This checkpoint starts at accepted main `fdc2696c`. The listed implementation
 slices are integrated into local branch `codex/patchtrace-completion-20261119-81e4`
-through `520b524b`, including CVE numeric/time, digest-fixture and history-diagnostic repairs; they are not yet an accepted aggregate main promotion.
+through `5aebd98f`, including CVE numeric/time, digest-fixture, acquisition,
+history/retention, Pydantic and test-fixture repairs; they are not yet an accepted aggregate main promotion.
 
 - [x] Preserve a complete 320-head/309-PR census and every fetched branch disposition; retain the 139 branches needing semantic review.
 - [x] Repair N-way path resolve/stat isolation with fixed unreadable reasons and healthy-hop preservation: 11 base failures, then 85 passes in 21.76s (`24064cf6`).
@@ -13,7 +14,7 @@ through `520b524b`, including CVE numeric/time, digest-fixture and history-diagn
 - [x] Complete SPEC-51 bounded metadata persistence and existing-worker handoff, with fresh artifact hashing, owner-thread storage, cancellation/ownership/corruption guards and truthful partial UI. Source `0bc41f6b`, local merge `6bf57557`; 840 passed, 2 Windows skips in 60.27s; independent peer 16 passed in 2.15s.
 - [x] Reproduce `facts: unverified` scoring admission with 11 red controls and verify the worker's focused guard with 33 passes in 3.52s.
 - [x] Complete facts-eligibility caller verification and integrate `d87af037` through `69fa6b8b`: 140 passed in 4.59s. Retain the intermediate 106-pass/1-fail fixture-metadata correction and unchanged positive hit assertion.
-- [ ] Complete the all-856-file/54-group qualification on `520b524b` (session 74806, `/tmp/pt81-final-results`) and final-source checks. Retain the earlier 137/SIGKILL and 9/54-group disk-reserve stop as incomplete, not passing.
+- [x] Reach and archive all original 856-file diagnostic scope; final result FAILED. Preserve reserve stops, original group-51 kill and all failed/error receipts. Current-source qualification remains separate.
 - [x] Preserve the existing focused, algorithm-digest and history-diagnostic evidence archives with their separate verified scopes.
 - [ ] Obtain all required hosted checks on the published aggregate head/base; refresh main and PR heads before an expected-head REST merge with `[no release]`.
 - [ ] Reproduce and repair forced strings-export source-substitution and OSError cleanup races. Keep the separate no-clobber and empty-export metadata follow-ups open; cancellation repair does not close those boundaries.
@@ -25,7 +26,7 @@ through `520b524b`, including CVE numeric/time, digest-fixture and history-diagn
 - [x] Integrate CVE numeric/time `93c9e395` / `a4d6dd9b`; final 124 passed in 6.70s.
 - [x] Review the contextual ROUND constant and correct its sole digest golden at `70b82275`; 9 passed in 1.85s.
 - [x] Recover attempt-history diagnostics from `32abf970`/`1c2b770d`/`4d7ae4af`, correct post-write uncertainty in `254190a0`, and integrate at `520b524b`; final 81 passed in 37.33s.
-- [ ] Keep malformed-row retention and the underlying post-write exception open; "Attempt storage unconfirmed" does not assert whether a row committed.
+- [x] Repair the bounded malformed-row retention cause at `74d5f4bb` / `153f6cea`; 175 affected passes. Genuine post-write errors remain unconfirmed; saves remain non-atomic.
 
 [Current handoff](../docs/consolidation/HANDOFF.md),
 [feature matrix](../docs/consolidation/FEATURE_MATRIX.md) and
@@ -1422,16 +1423,37 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 - [x] Preserve the focused archive, original failures and exact source identities.
 - [x] Preserve the stopped 855-file diagnostic on `a4d6dd9b`: 9/54 groups, 2,602 passed, 8 skipped, one pin mismatch; no aggregate pass.
 - [x] Preserve the original 34/54-group stop at temporary-storage reserve, including every failed result.
-- [ ] Complete separate continuation groups 35–54 in session 78011 at the same source/test/tool fingerprint; no aggregate pass yet.
+- [x] Complete original groups 35–54 via unchanged-source subpartitions; session 78011 ended at reserve, and original group-51 kill remains preserved. Full original-file coverage is not an aggregate pass.
 - [x] Publish the initial reviewed candidate as draft PR #322; exact source tree verified.
 - [ ] Obtain actual final-head hosted/platform gates and resolve draft readiness through REST before guarded main promotion.
-- [x] Recover and independently correct the history diagnostic contribution at `254190a0`, integrated by `520b524b`; final 81 passed. Source/tests remain frozen; malformed-row retention and the post-write exception remain open.
-- [ ] Continue the retained branch/issue remainder, including planned-pair identity, bounded search/enrichment/build-environment replays and existing forced-export/native/accuracy obligations.
+- [x] Recover history diagnostics at `254190a0` / `520b524b`; final 81 passed. The later bounded retention repair preserves these original receipts and generic post-write uncertainty.
+- [ ] Continue the retained branch/issue remainder, including full index proposal/window/source-entry persistence, bounded search/enrichment/build-environment replays and existing forced-export/native/accuracy obligations. Approved plan/product binding is repaired separately.
 
 ### Phase 5 follow-ups
 
 - [x] Recover approved acquisition scope/plan binding and exact staged-byte validation; 255 affected and 55 integrated checks pass.
 - [x] Correct reviewed stage identity and test-fixture cleanup failures without removing assertions or changing frozen results.
-- [ ] Complete reviewed attempt-retention metadata/ID/cap-protection repair.
-- [ ] Qualify fixed Pydantic dependencies and retain unresolved native Qt advisory/patch availability limits.
-- [ ] Archive remaining diagnostic outcomes and publish exact accepted source; maintain all main/native/release/accuracy gates.
+- [x] Integrate reviewed retention source `74d5f4bb` by `153f6cea`; 175 affected passes plus independent NULL/BLOB preservation controls.
+- [x] Integrate qualified Pydantic 2.14.2/core 2.50.2 at `b28f6971` / `5208c758`; 2,903 passes plus existing strict xfail across 79 files. Native Qt remediation remains open.
+- [x] Archive all original diagnostic outcomes and the separately passing backup-test correction `5aebd98f`; frozen diagnostic remains FAILED.
+- [ ] Publish exact later accepted source and qualify its own hosted checks; maintain all main/native/release/accuracy gates.
+
+### Phase 6 checkpoint and remaining gates
+
+- [x] Observe published PR #322 checkpoint `2511301f`, tree-equal to `7093ee68` (78 changed files, ahead 3/behind 0); later retention/dependency work is not attributed to that publication.
+- [x] Verify integrated `5208c758` on actual Pydantic 2.14.2/core 2.50.2: 254 affected passes across four groups, configured Ruff/pip checks pass. Not a full current-head suite.
+- [x] Audit both actual 15-package Python graphs through PyPI and OSV; preserve the known upstream Pydantic lookup gap despite four successful zero-finding responses.
+- [x] Complete and archive the frozen diagnostic: all 856 files reached through 59 terminal processes; 23,110 passed, 139 skipped, 6 xfailed, 4 failed, 8 teardown errors. FAILED; original kill/reserve stops and all errors preserved.
+- [x] Integrate separate backup-test lifetime repair `5aebd98f`; 3 passes/3 teardown errors before correction, then 41 passes in 2.62s. Production code and assertions unchanged.
+- [x] Preserve verified 41/82/27/132/6-payload archives and exact advisory report in `e430309a` and backup-test commit. Frozen census text/counts/JSON remain unchanged apart from subsequent observations.
+- [ ] Qualify combined current 859-file source/new dependencies independently of failed frozen/old-dependency results and overlapping focused slices. External AF_UNIX constructor EPERM remains an acceptance block.
+- [ ] Resolve seven assessed native Qt findings through a supported qualified artifact or evidenced disposition. Official 6.12.1 binding wheels were unavailable; 6.11.3 is not a complete fix.
+- [ ] Review separate 70-finding tools scan; original source classifications do not classify all 134 combined results. Fresh source64 multiset has no additions/removals versus `520b524b`.
+- [ ] Finish separately owned strings-export recovery and build-tool HTTPS redirect triage; ongoing work is not credited as accepted Phase 6 source.
+- [ ] Publish accepted source with exact local/remote tree equality; obtain actual final-head Linux/Windows/Qt/package/native/live checks, resolve REST-only draft readiness, then use expected-head merge and verify main.
+
+[Current handoff](../docs/consolidation/HANDOFF.md), [retention scope](../docs/consolidation/RECOVERY_BATCH_6.md),
+[Pydantic qualification](../docs/consolidation/PYDANTIC_SECURITY_UPGRADE_20261119.md)
+and [dependency findings](../docs/consolidation/DEPENDENCY_ADVISORY_AUDIT_20261119.md)
+retain exact evidence and limits. Main/native/release/manual and separate L1/L2/L3
+obligations remain open; no main merge or release is recorded.
