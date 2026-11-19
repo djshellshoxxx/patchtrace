@@ -1,0 +1,34 @@
+{
+  "correction": "Original reopened CLI result followed an uncommitted mutation and is not persisted-row evidence. Original in-owner snapshot evidence remains valid.",
+  "original_archive_unchanged_sha256": "950394cc84b96616fc9286fa4f021a91882bc44a6699b497a853141fe210e011",
+  "red_source": "ebdb8cd044f3296291f6ab236e9920d1d8826980",
+  "red_wiring_equal_to_source": "c14c836fd9fee3e054ae2294122f818ce45b1062",
+  "red_wiring_blob": "929389a31f4d864303ddf02c59622ab3b5586459",
+  "green_source": "b5aace25a36809ae7e4ab044e692c12015772a7d",
+  "green_wiring_blob": "58837168de5c6a5d4db7f0da24739e642d8271c2",
+  "review_scope": "Search owner executed corrected probes. Independent review inspected exact script diff, commit/reopen assertions, source blob equality, caller source and red/green receipts; no independent replay is claimed.",
+  "archive": "search-cli-correction.zip",
+  "archive_sha256": "26749b06c2574889dedfa1732a84f0384ca8a3bd989f99f5663cdc514b4409c5",
+  "members": [
+    {
+      "name": "search-stale-guard-persisted.py",
+      "bytes": 3245,
+      "sha256": "a9b34ac0f9838727a34efa6be4e5483215d7be1db4b2778f02b99b225e27e931"
+    },
+    {
+      "name": "search-stale-guard-persisted-red.json",
+      "bytes": 2268,
+      "sha256": "ca9b8729758d8e33687cde3a72293bbd1f3a3f3137483045c4b2ec2874746a77"
+    },
+    {
+      "name": "search-stale-guard-persisted-green.json",
+      "bytes": 2406,
+      "sha256": "b1820803a49debd2d695a2fe3e2e70d6c66a32bf97d01cef86c1d156a46dae66"
+    },
+    {
+      "name": "search-caller.patch",
+      "bytes": 4887,
+      "sha256": "aeb385b682c1226703c2c84ffffe4559dd74eb1df934bc7ee4460987ef226bbe"
+    }
+  ]
+}

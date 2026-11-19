@@ -1,0 +1,90 @@
+{
+  "source": "ebdb8cd044f3296291f6ab236e9920d1d8826980",
+  "wiring_source": "/workspace/scratch/80dddc5347b2/PatchTrace-search-admission-red/src/patchtrace/search/wiring.py",
+  "cases": [
+    {
+      "case": "stale-run",
+      "before": {
+        "exit": 0,
+        "newer_capa_hits": 1,
+        "newer_coverage": {
+          "built_utc": "2026-11-19T10:54:57Z",
+          "digest16": "15b3fdcc5e909047",
+          "docs": 6,
+          "group": "tool:capa:newer",
+          "kinds": [
+            "capability"
+          ],
+          "reason": "",
+          "side": "newer",
+          "status": "indexed"
+        }
+      },
+      "persisted_after_close": true,
+      "admission_after": {
+        "snapshot_rebuilt": true,
+        "buildable": true,
+        "status": "indexed",
+        "comparable": true
+      },
+      "after": {
+        "exit": 0,
+        "newer_capa_hits": 1,
+        "newer_coverage": {
+          "built_utc": "2026-11-19T10:54:57Z",
+          "digest16": "15b3fdcc5e909047",
+          "docs": 6,
+          "group": "tool:capa:newer",
+          "kinds": [
+            "capability"
+          ],
+          "reason": "",
+          "side": "newer",
+          "status": "indexed"
+        }
+      }
+    },
+    {
+      "case": "foreign-run-project",
+      "before": {
+        "exit": 0,
+        "newer_capa_hits": 1,
+        "newer_coverage": {
+          "built_utc": "2026-11-19T10:54:57Z",
+          "digest16": "15b3fdcc5e909047",
+          "docs": 6,
+          "group": "tool:capa:newer",
+          "kinds": [
+            "capability"
+          ],
+          "reason": "",
+          "side": "newer",
+          "status": "indexed"
+        }
+      },
+      "persisted_after_close": true,
+      "admission_after": {
+        "snapshot_rebuilt": true,
+        "buildable": true,
+        "status": "indexed",
+        "comparable": true
+      },
+      "after": {
+        "exit": 0,
+        "newer_capa_hits": 1,
+        "newer_coverage": {
+          "built_utc": "2026-11-19T10:54:58Z",
+          "digest16": "15b3fdcc5e909047",
+          "docs": 6,
+          "group": "tool:capa:newer",
+          "kinds": [
+            "capability"
+          ],
+          "reason": "",
+          "side": "newer",
+          "status": "indexed"
+        }
+      }
+    }
+  ]
+}

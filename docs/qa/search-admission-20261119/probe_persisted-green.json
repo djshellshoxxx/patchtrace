@@ -1,0 +1,90 @@
+{
+  "source": "b5aace25a36809ae7e4ab044e692c12015772a7d",
+  "wiring_source": "/workspace/scratch/80dddc5347b2/PatchTrace-search-sources/src/patchtrace/search/wiring.py",
+  "cases": [
+    {
+      "case": "stale-run",
+      "before": {
+        "exit": 0,
+        "newer_capa_hits": 1,
+        "newer_coverage": {
+          "built_utc": "2026-11-19T10:57:14Z",
+          "digest16": "15b3fdcc5e909047",
+          "docs": 6,
+          "group": "tool:capa:newer",
+          "kinds": [
+            "capability"
+          ],
+          "reason": "",
+          "side": "newer",
+          "status": "indexed"
+        }
+      },
+      "persisted_after_close": true,
+      "admission_after": {
+        "snapshot_rebuilt": true,
+        "buildable": false,
+        "status": "unavailable",
+        "comparable": false
+      },
+      "after": {
+        "exit": 0,
+        "newer_capa_hits": 0,
+        "newer_coverage": {
+          "built_utc": null,
+          "digest16": null,
+          "docs": 0,
+          "group": "tool:capa:newer",
+          "kinds": [
+            "capability"
+          ],
+          "reason": "The stored capa results for the newer build could not be read (PT-TOOL-STALE). Run capa again.",
+          "side": "newer",
+          "status": "unavailable"
+        }
+      }
+    },
+    {
+      "case": "foreign-run-project",
+      "before": {
+        "exit": 0,
+        "newer_capa_hits": 1,
+        "newer_coverage": {
+          "built_utc": "2026-11-19T10:57:15Z",
+          "digest16": "15b3fdcc5e909047",
+          "docs": 6,
+          "group": "tool:capa:newer",
+          "kinds": [
+            "capability"
+          ],
+          "reason": "",
+          "side": "newer",
+          "status": "indexed"
+        }
+      },
+      "persisted_after_close": true,
+      "admission_after": {
+        "snapshot_rebuilt": true,
+        "buildable": false,
+        "status": "unavailable",
+        "comparable": false
+      },
+      "after": {
+        "exit": 0,
+        "newer_capa_hits": 0,
+        "newer_coverage": {
+          "built_utc": null,
+          "digest16": null,
+          "docs": 0,
+          "group": "tool:capa:newer",
+          "kinds": [
+            "capability"
+          ],
+          "reason": "The stored capa results for the newer build could not be read (PT-TOOL-STALE). Run capa again.",
+          "side": "newer",
+          "status": "unavailable"
+        }
+      }
+    }
+  ]
+}

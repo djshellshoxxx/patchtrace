@@ -1,0 +1,72 @@
+{
+  "source_commit": "90ae12381795e12061a8cf8e929cfbd306d54dd6",
+  "base": "ac3a98150bd17bbbd973c7e7dcadb7edcf551934",
+  "original_composition": "150d9b9618b4f621ce31101c64502fb555734d46",
+  "members": [
+    {
+      "path": "strings-composition-controls.log",
+      "bytes": 661,
+      "sha256": "795305927489ca28a4bf09a1e30e75319fcb198ebf6476bb5bdb340aca8ace50"
+    },
+    {
+      "path": "strings-composition-controls.xml",
+      "bytes": 58791,
+      "sha256": "a8336dec1021216defb6392dc8d9ab6f79ee9d02a3a373162fb659a2303d8c00"
+    },
+    {
+      "path": "strings-source-identity-red.log",
+      "bytes": 3846,
+      "sha256": "e580713c57d5929523df4c001edf0a40c8b25d931ca3f991570f92b81422a85b"
+    },
+    {
+      "path": "strings-source-identity-red.xml",
+      "bytes": 4519,
+      "sha256": "f628187b898139837cfebee88081d417367589af08857cff1aded9696dcf44a2"
+    },
+    {
+      "path": "strings-identity-combined.log",
+      "bytes": 981,
+      "sha256": "523776e1797a6b5c198a1d177df0daac9e7cd6063852932361e9a02b48b65029"
+    },
+    {
+      "path": "strings-identity-combined.xml",
+      "bytes": 103976,
+      "sha256": "8c65c7ed98eb16f183113446beee34f56ada2dc78ba762158d95bc1e6a8cf17b"
+    },
+    {
+      "path": "strings-inherited-identity-probe.py",
+      "bytes": 1502,
+      "sha256": "f22e3ca4a7cde36135c2706b0447afe3285324e89b5c677d792df20540d7e284"
+    },
+    {
+      "path": "strings-inherited-identity-baseline.json",
+      "bytes": 599,
+      "sha256": "d14ae43b4d01cde114e696afe5027f4407799cebaa143e66a9e66a5161754491"
+    },
+    {
+      "path": "strings-inherited-identity-repaired.json",
+      "bytes": 625,
+      "sha256": "3c2661cc1a163104156d87a6fd243872a33a291724541a6ffef221925aa544e0"
+    },
+    {
+      "path": "residual_missing_behavior_probe.py",
+      "bytes": 4873,
+      "sha256": "232303429d62133e1ea50295f97c5f143995eb3ab8d761dae21ab5dedb182a9e"
+    },
+    {
+      "path": "residual-missing-behavior.log",
+      "bytes": 6807,
+      "sha256": "b8ff3f109c1c6dd3cb075402719e54557a1d4e4d35011b38eb4095e927cfefbc"
+    },
+    {
+      "path": "residual-missing-behavior-result.json",
+      "bytes": 340,
+      "sha256": "cf417af579b09f2f6522b27fb9575d757d58d34f8c35ed4907f36ef398726139"
+    }
+  ],
+  "inherited_cli_source_blobs": {
+    "fdc2696c23bdbfe7668348f25e3b336ce33039f7": "77a106455d4c438a78b702a992bc2c285717d764",
+    "ac3a98150bd17bbbd973c7e7dcadb7edcf551934": "77a106455d4c438a78b702a992bc2c285717d764"
+  },
+  "archive_sha256": "848331f335bee477209858fad2b3e0085e1944bd10fce024d6a66d12df5ff265"
+}

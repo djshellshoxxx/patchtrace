@@ -1,6 +1,72 @@
 # Outstanding bugs and verified repairs — consolidation pass
 
-## Latest continuation checkpoint — 2026-11-19 10:31:52 UTC
+## Resumed assembled recovery — 2026-11-19 11:34: 21 UTC
+
+This current section supersedes the dated interruption status below. Original
+source records and failed/incomplete evidence remain preserved. The execution
+workspace recovered; the previously unpublished inventory, GUI, Strings,
+Search and shared-admission source is now assembled locally for guarded publication to the continuation
+candidate [PR #321](https://github.com/djshellshoxxx/PatchTrace/pull/321).
+At preparation, remote #321 still has documentation checkpoint 976dddfb; the
+actual guarded publication is established by its later PR receipt. This is a
+candidate, not an additional main merge or release acceptance.
+
+Reviewed runtime: **9335e7dcadc6d0337243f894e8f234ccc74bc62e**, tree
+**05509de7d8038a9079fe80b08fa97da8cb61b7fd**. Main remains **fdc2696c23bdbfe7668348f25e3b336ce33039f7**.
+The [resumed checkpoint](consolidation-20261119/resumed-checkpoint.md) distinguishes
+the tested source, later CI-test correction, publication guard, exact component
+pins and remaining gates. The final guarded publication SHA belongs to the PR
+operation receipt; local and REST-created commit IDs are not assumed equal.
+
+## Updated bug dispositions
+
+The repairs below are assembled and locally qualified; they are not yet main
+fixes. Earlier core repair evidence remains in the historical sections.
+
+| Finding | Reproduction / priority | Current repair and evidence |
+| --- | --- | --- |
+| Inventory misses valid decision references | P2: pretty/escaped JSON references missed by literal compact-text prefilter | 0afd6f54 uses semantic header/one-reference projection, strict keys/types and inventory-only claim limits; unrelated valid large decisions remain compatible. 183 author controls, 48 overlapping independent controls and eight service-ordering variants; final combined selection passes. |
+| Stored tool rows bypass selected Entry ownership/staleness | P2: real selected run/evidence marked stale or foreign still contributes | Shared helper 41af7c7e checks selected run/evidence/origin metadata, strict original JSON and artifact/engine/side/config/cache bindings. 33 helper controls, independent metadata/BLOB/selection controls, both real callers integrated. |
+| SQLite BLOB body escapes typed refusal | P2: identical JSON bytes stored with BLOB affinity raise AttributeError | Opt-in admission maps this to typed OUTPUT refusal; independent original helper and both Strings caller modes refuse without writes. Public store behavior is not globally changed. |
+| Real cache-hit FLOSS evidence disappears | P2: actual producer's second run has no new raw sidecar/stdout digest | Strings 2f8f69c2 admits the origin evidence run and uses its recorded raw/executable/version/consent fields. Actual cache probes pass; no raw provenance fabricated or current raw-file verification claimed. |
+| Dock hides current artifact refusal | P2: remove/replace artifact after capture while stored FLOSS is available | Existing76734261 artifact-read/hash repair is retained by 2f8f69c2. CLI/dock both report PT-STR-INPUT; prior displayed results survive refusal. |
+| Invalid newer stored run falls back to older evidence | P2: mutate newest selected metadata while older good result exists | Selected invalid data refuses; it does not silently choose an older run. Auto can use the current verified artifact's built-in scanner; explicit FLOSS refuses. |
+| Search returns inadmissible selected rows | P2: committed/reopened stale or foreign selected row still yields newer capa hit on old c14 wiring | Caller b5aace25 uses the shared boundary. Corrected persisted-row red: four CLI failures; 60 focused and 418 adjacent passes, then final combined selection. Saved queries and ordinary raw/PE/function/note search remain. |
+| Workflow pin assertion rejects approved cache SHA | CI blocker: #319 Linux full run has23,268 passed, one failed, 50 skipped, 6 expected failures; test_tier_r_shard expects a version tag except MSVC | Repaired in 5575af79 and published in core 8d130aef: 21 related controls and six independent guard controls pass. Existing tagged actions and exact MSVC checking remain. No workflow/runtime change or full-pass claim follows. See the completed correction below. |
+| Forced publication and OSError cleanup substitution | P2 inherited source ownership: replace staging pathname during force success/ordinary cleanup | Still open. The no-force held-source repair and restored non-I/O cancellation boundary remain scoped repairs, not full forced-publication qualification. |
+
+The earlier Search probe changed SQLite rows without committing before close.
+Its in-owner snapshot finding remains valid, but its original reopened-CLI claim
+was withdrawn. The corrected probe explicitly commits, reopens and asserts the
+bad row before checking the caller. No merge relied on the withdrawn claim.
+Original probe bytes and fixture failures remain in the QA packets.
+
+The initial Strings run's eight wrong-column fixture failures and authored
+version-probe timeout are not additional product bugs. Its bounded incomplete
+attempt remains incomplete; the recovered real red was ten failed/nine passed.
+Final frozen Strings controls passed 889; the combined 1199-pass selection is
+separate and overlapping. No totals are added across these selections.
+
+[Combined receipt](../qa/combined-recovery-20261119/README.md),
+[Strings admission](../qa/strings-composition-admission-20261119/README.md),
+[corrected Search evidence](../qa/search-admission-20261119/README.md),
+[shared boundary](../qa/tool-admission-20261119/README.md).
+
+### Completed core CI correction and publication
+
+Core PR #319 was guarded forward from a56ab13a to **8d130aefe1be6e737cff1d90d2a5b1658d60a3a6**.
+Its tree **ce0399940c5fa24ea017498f9e4cf80b0ee6d2de** equals local
+**e9be6e009ff0aee69ca7be78d47c5b740b62fd00**. The four changed files are
+one test assertion and three QA files; runtime and workflows are unchanged.
+One red control precedes 21 related passes and six independent guard controls.
+The old 23,268-pass/one-failure full run remains failed; the new head needs its
+own hosted qualification. [Source and QA](../qa/tier-r-cache-pin-20261119/README.md),
+[guard, exact tree/parent/ref and PR readback](consolidation-20261119/core-cache-pin-publication.json).
+The continuation publication is prepared with original checkpoint 976dddfb as
+first parent and this fresh core head as second parent. Its actual ref update
+is established by the subsequent PR #321 publication receipt.
+
+## Historical interruption checkpoint — 2026-11-19 10:31:52 UTC
 
 This section supersedes current-status statements in the earlier source-pinned history below. The history is retained verbatim. See the [continuation checkpoint](consolidation-20261119/continuation-checkpoint.md) and [complete remote snapshot](consolidation-20261119/continuation-checkpoint.json) for evidence, source identities and exact continuation.
 

@@ -1,0 +1,22 @@
+{
+  "independent-stale-guard-red.json": "5ebc930b2812c416b64b350f23c8ee929ac2aa487f7051055d6fe573cd3c990b",
+  "ruff-final.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+  "limit-fixture-failure.log.gz": "215fbabf03009d65d40836b3015a7f16560494b1f67d6bdd9d3127a207f2c162",
+  "affected-green.log": "1c31dbd16673a2d05a3b5bbaed4d0b916ebd9ffe83040d4fde10aca9d512e2a3",
+  "baseline-result.json": "cf417af579b09f2f6522b27fb9575d757d58d34f8c35ed4907f36ef398726139",
+  "original-port-red-source-hashes.json": "9ef848a4d3a8c90b7752100e7c98468febceebf1cd6ddc6dfd6952500ceb81ef",
+  "final-green.log": "593bc2ad6086d05d28d74d55d52f0ef851598778b15846cc71581a9d4ba0ef40",
+  "affected-green.xml.gz": "0f29cc11b8206c8940022bd356d675397c73a65648461b4d61f4b2a2de75c043",
+  "independent_stale_guard.py": "79d2e61cb61bbab6d995b76843e151365270df3802508e8ca802563f76c8b74a",
+  "reconciliation.txt": "4c52de8e3a1585c5859586189fa9512adccf8d700a9cdcf9e97d08c04349db95",
+  "final-green.xml.gz": "67d0a601b6ebd110e342087f543c0111f0a1d67ff6eb1649ab0bbcedfbc16eee",
+  "red.xml.gz": "32cf28a3dff9c92580c941e5d9d7e076ff113fc4c3b52a60a8237c79f00d58d3",
+  "red.log.gz": "d906fa0de0d2682412d828bb0edcc94d0d742f87b622793913479fa52eabe52a",
+  "original-port-red-source.patch.gz": "fe3e127fe4b99c940ea9d16a3206424bc33f28ea54767fc5700c266ef54e6e02",
+  "baseline-missing-behavior.json": "b8ff3f109c1c6dd3cb075402719e54557a1d4e4d35011b38eb4095e927cfefbc",
+  "receipt.json": "039c8dcf1e4fbceb2a9b82c35700c2ebc81e4dd0b4178505e66db03b29f50a5c",
+  "README.md": "acda19f1ac601281b9efac56fe6ceecb83335dbdb0bf2c10f54cb15b3b3c1960",
+  "limit-fixture-failure.xml.gz": "8284ff94f0a5f5fb74b12fe07a04671c2f68114012e8921b33869b45ae5c8514",
+  "baseline_missing_behavior.py": "232303429d62133e1ea50295f97c5f143995eb3ab8d761dae21ab5dedb182a9e",
+  "ruff-initial.log": "9a11713e22e9b757d07dbb18d2223a5ca310bcc9a6134344165d701ea5c44d0b"
+}

@@ -394,3 +394,48 @@ Windows pitfalls (roadmap checklist plus search-specific): CRLF in goldens (`.gi
 8. Group leads by pairing by default? Default yes; `--no-group` and a toggle show raw evidence rows.
 9. Strings beyond 256 chars (tool evidence stores only `display_value`)? Default: search the stored prefix and flag `truncated`.
 10. Search for N-way series projects? Default: per pair project only; chain position appears in `PairExpansion.series` when `series.json` is present.
+
+
+### S8 production binding recovery — 2026-11-19
+
+The CLI and dock must connect the existing stored tool, advisory and CVE source
+adapters. A successful local advisory import must be searchable by its CVE through
+the normal command, without injecting test-only `extra_specs`. Capture validated
+source values on the project-store owner thread. Search workers receive the copied
+project/root and frozen source snapshot, never a store or SQLite connection.
+Preserve named/recent saved-query behavior and the current bounded, owned advisory
+reader; this recovery does not change persisted contracts or tool execution.
+
+For each tool side, require a produced run bound to the current side's artifact
+SHA-256, engine and side. Validate the evidence against that artifact, engine,
+cache key and configuration digest, and require matching side. Non-cache evidence
+must name the selected run; a validated cache hit may retain the original evidence
+run ID. A stale or unreadable side is unavailable, never an empty comparable side
+and never proof of absence. Tool comparability is allowed only after both sides
+pass these bindings. No store lookup alone establishes current-artifact ownership.
+
+Reuse source snapshots only while the project/artifact identity and source row
+metadata, including body hashes and stale/guard fields, are unchanged. Metadata
+capture admits at most 10,000 relevant rows; an over-limit snapshot reports its
+groups unavailable before reading evidence bodies. This is an admission limit for
+this source bridge, not a new claim that all existing store I/O is globally bounded.
+Errors remain isolated to the affected source group. Injected test ports keep their
+existing route. Verify real-store import/search, orientation changes, mismatched
+run/evidence identity, cache reuse, metadata changes and worker custody with focused
+controls. Native engines, frozen Windows and full hosted qualification remain separate.
+
+### S8 selected-row admission correction — 2026-11-19
+
+The production bridge uses the shared opt-in `latest_admitted` boundary in
+SPEC-36 T14 for each engine and current artifact side. Snapshot rows retain its
+admitted run and evidence; a rejected selected row becomes explicit unavailable
+coverage and cannot establish comparability or fall back to an older stored run.
+The shared boundary also admits the originating evidence run for cache hits.
+Existing public `ToolStore` callers keep their contracts.
+
+Normal CLI searches must stop returning a previously indexed tool result after
+selected run/evidence metadata becomes stale or belongs to another project, even
+without `--rebuild`. The source-key metadata invalidates the owner-thread snapshot;
+unavailable groups are excluded from the query's current buildable sources.
+Other valid source groups, saved queries, optional-source admission limits and
+the store-free worker snapshot remain unchanged.

@@ -1,0 +1,49 @@
+I001 [*] Import block is un-sorted or un-formatted
+  --> src/patchtrace/search/qt_panel.py:11:1
+   |
+ 9 |   window of its own and no network connection.
+10 |   """
+11 | / from __future__ import annotations
+12 | |
+13 | | from copy import deepcopy
+14 | | from collections.abc import Callable
+15 | | from dataclasses import dataclass
+16 | |
+17 | | from PySide6.QtCore import Qt, QTimer
+18 | | from PySide6.QtGui import QKeySequence, QShortcut
+19 | | from PySide6.QtWidgets import QComboBox, QHBoxLayout, QLineEdit, QPushButton, QSplitter, QVBoxLayout, QWidget
+20 | |
+21 | | from ..gui.anchors import AnchorRef, NavResult
+22 | | from ..gui.qt.docks import ControllerBase
+23 | | from ..gui.qt.labels import SafeTextView
+24 | | from ..gui.qt.state_view import StateView
+25 | | from ..gui.qt.table import VirtualTable
+26 | | from ..gui.qt.tasks import Progress as TaskProgress
+27 | | from ..gui.qt.tasks import TaskFailure
+28 | | from ..gui.registry import PanelContext
+29 | | from ..gui.state import StateModel
+30 | | from ..gui.table_spec import ColumnSpec, TableSpec, prepare_table
+31 | | from ..gui.text import sanitize_text
+32 | | from ..gui.tips import apply_tip, register_gui_tips, register_tips
+33 | | from . import view_model as vm
+34 | | from .contracts import CoverageEntry, SearchRequest, SearchResult
+35 | | from .errors import SearchError
+36 | | from .qt_saved import SavedController
+37 | | from .saved_actions import effective_plan
+38 | | from .tooltip_entries import TEMPLATES, TIPS
+39 | | from .wiring import BoundService
+   | |________________________________^
+40 |
+41 |   DEBOUNCE_MS = 250
+   |
+help: Organize imports
+   |
+12 |
+13 + from collections.abc import Callable
+14 | from copy import deepcopy
+   - from collections.abc import Callable
+15 | from dataclasses import dataclass
+   |
+
+Found 1 error.
+[*] 1 fixable with `--fix`.

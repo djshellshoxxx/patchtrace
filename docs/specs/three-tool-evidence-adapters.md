@@ -134,3 +134,56 @@ Additive to T1-T10; where a line below differs from T1-T10, this block wins.
 - **T13.5 T7 runner and cache (CAP-4).** The cache is raw-first: `DerivedCache` in `enrichment/cache.py`, stage `capa-raw`, key = existing `cache_key(artifact_sha256, manifest, options)`, payload = zlib-compressed raw stdout. A hit is re-parsed by the current parser, so parser changes never invalidate raw output; an option token `argv: capa/2` marks a change of argv or parse semantics. Admission failure is a soft miss, never an analysis failure. Cross-project reuse requires an explicit profile `cache_dir`. A rules or capa change is a cache miss and a new run, never a rewrite of stored evidence. Default rules are the built-in pack of the pinned exe (identity `embedded:<executable_sha256>`, labelled "built-in rules of capa 9.4.0 (Apache-2.0)"); the embedded pack is not byte-compared with the upstream tag [unverified].
 - **T13.6 T1 pin and T10 open items.** Pin rows 3-4 (capa and capa-rules pins) carry executable members, `trust: trust-on-first-use`, and a comparison with GitHub's per-asset digest when reachable. Open after CAP-0: `intel-tools pairs` (CAP-5); capa rule inventory (CAP-7, names and scopes only, no rule text); live Linux required leg and Windows advisory leg (CAP-8, `live-capa.yml`); extent attribution through the unified IR (CAP-9, deferred); BinExport2 backend (CAP-10, deferred); consented in-app download (CAP-11, owner decision). No CAP item changes the T10 items above.
 - **Scope of T13.** Only the amendments above are specified here. No item in T13 is implemented by CAP-0; a slice that implements one updates its own status line and tests.
+
+### T14. Opt-in stored-tool admission for Search and Strings (2026-11-19)
+
+The new Search and Strings production consumers share
+`intelligence/tools/admission.py::latest_admitted(store, *, engine, side,
+artifact_sha256)`. It returns an immutable `AdmittedToolEvidence(run, evidence,
+evidence_run)`, or `None` when no produced run exists for that engine and side.
+Invalid selected metadata or identity raises a bounded `ToolError`; it must not
+become an empty source or silently fall back to an older produced run. Existing
+public `ToolStore` methods and their other callers retain their behavior.
+
+Read through the existing owner-thread `EnrichmentStore` API, retaining Entry
+metadata. Select the newest produced matching run in existing store order.
+Ordinary failed/absent/cancelled attempts do not replace that produced selection.
+Validate original `body_json` with the existing strict JSON boundary before model
+admission; parsed dictionaries must not erase duplicate keys. The selected run row
+must have its exact body `run_id` as row ID, coherent row/body status, `stale=False`,
+and guard `(current project ID, 'intel-tools', current artifact SHA-256, cache key)`.
+The body must name the requested engine/side/current artifact. Classify valid
+engine/side labels before validating the selected run contract; unrelated groups
+and older unselected history do not become selected merely because they exist.
+Unreadable or unclassifiable potential selections still refuse explicitly.
+The selected
+evidence row must have its derived `evidence_entry_id`, status `ok`, the same exact
+guard, and no stale flag. Its contract, engine, side, artifact, cache key and
+configuration digest must agree with the selected run; evidence counts must agree
+with the produced status/count. A sidecar pointer's identity fields must also agree
+with the loaded evidence. The existing sidecar loader and its I/O behavior remain
+unchanged; this amendment introduces no general store row, byte or migration policy.
+
+For cache evidence, select matching engine, side and cache key before metadata
+admission: the existing key need not distinguish side, and orientation history
+can retain the same artifact/key under both sides. A bad selected matching row
+refuses; it never falls back to an older matching row.
+
+For a direct run, `evidence.run_id` equals `run.run_id`, and `evidence_run` is that
+same admitted run. For a cache hit, locate and fully admit the stored run named by
+`evidence.run_id`, with the same project, artifact, engine, side, cache key and
+configuration. The selected cache run may have no `raw_sidecar` or stdout digest;
+the originating `evidence_run` retains the raw provenance needed by Strings.
+Missing, stale, foreign or mismatched originating records refuse explicitly.
+Consumers enforce their own artifact-byte requirements. The originating run's
+raw sidecar/digest is recorded provenance, not proof that a consumer reread the raw
+file: Strings consumes normalized evidence and retains that recorded provenance.
+Row admission does not claim that native tools were rerun or that raw file contents
+are currently verified. No writes or tool execution occur in this helper.
+
+Search maps a refused side to unavailable and prevents comparability. Strings maps
+it to an unavailable stored source: Auto may use verified built-in scanning, while
+explicit FLOSS use refuses. Tests must include actual runner fresh-to-cache reuse
+with `cache_hit=True` and `raw_sidecar=None`, selected/evidence/origin metadata
+corruption and raw-provenance retention. Authored fake tools establish orchestration
+and storage behavior only; native acceptance remains a separate gate.

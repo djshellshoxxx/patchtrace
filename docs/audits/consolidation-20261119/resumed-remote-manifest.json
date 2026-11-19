@@ -1,0 +1,73 @@
+{
+  "scope": "Final paginated census, external focal review, exact candidate gates and PR318 strict failure receipt.",
+  "census_observed_utc": "2026-11-19 11:22:32 through 11:22:34 UTC",
+  "archive_sha256": "ac4e7621e1867c41fb7e0f831d0fad36e4c18e66c0259e7bac7212e8fa704b4e",
+  "archive_bytes": 572969,
+  "members": [
+    {
+      "path": "final-remote-census-raw-20261119.json",
+      "bytes": 1669534,
+      "sha256": "72debf1840b70dfcd8335c7ecaba24b87031b539be99a504070ba346f0a826d0"
+    },
+    {
+      "path": "final-remote-census-20261119.json",
+      "bytes": 202942,
+      "sha256": "96b0452ca29b249bf71831bb103993da26fb3946532667157725279302709c22"
+    },
+    {
+      "path": "final-remote-census-20261119.md",
+      "bytes": 4701,
+      "sha256": "a4d4e39189f6d8c1bd859aeabe7f99e38bfb1b6ca4783d052edfc735010f3c72"
+    },
+    {
+      "path": "final-remote-census-delta-20261119.json",
+      "bytes": 1388,
+      "sha256": "c256555161412d4f472fa86bf26f2ed596e7b0632342d38fc53d9e5740dad288"
+    },
+    {
+      "path": "final-remote-census-manifest-20261119.json",
+      "bytes": 799,
+      "sha256": "9ff7d5131024b8a95f5511ce83615dac6fcdd1e33d0cbe3c5a27c2e83559e698"
+    },
+    {
+      "path": "external-branch-focal-review-20261119.json",
+      "bytes": 31419,
+      "sha256": "c1b6dcedf32ec99906de3d40c37ec4fbeaf6bbf950dd5a1b616d017f8ef5dd80"
+    },
+    {
+      "path": "external-branch-focal-review-20261119.md",
+      "bytes": 10093,
+      "sha256": "d0927ca613dcd30af6fe33ce9abb26350fbf82e968b0543792533b1ccb0625bd"
+    },
+    {
+      "path": "external-branch-remote-raw-20261119.json",
+      "bytes": 1181860,
+      "sha256": "f408807dabeb489f10e88a364db7bc0614fa85a4adb21ed8c37a2a626a32a3a1"
+    },
+    {
+      "path": "external-branch-local-evidence-20261119.json",
+      "bytes": 21462,
+      "sha256": "b36b6fd7444db2e118cb7bc839bc03020ff9963f6703d747d8836bcc069725af"
+    },
+    {
+      "path": "external-branch-overlap-evidence-20261119.json",
+      "bytes": 9523,
+      "sha256": "3866519608a1d4e63cf14b046d524355b0447e6bbe2337875f4a5898bb5a2261"
+    },
+    {
+      "path": "external-branch-focal-manifest-20261119.json",
+      "bytes": 965,
+      "sha256": "5a16f0b6a7ffa68f537a112020c4dc9c148774ec185d9fde4056aec9fc527f13"
+    },
+    {
+      "path": "candidate-gates-before-assembly-20261119.json",
+      "bytes": 67167,
+      "sha256": "f2f0373a37e11ac85fb7a8191e60de71af8a0762529dae5c11b0324db62eb328"
+    },
+    {
+      "path": "pr318-security-c4-20261119.zip",
+      "bytes": 75514,
+      "sha256": "d93ba169d3920de572933c28b4c5d692e258c3546cbffcf65f5d07ea9a0e73a0"
+    }
+  ]
+}

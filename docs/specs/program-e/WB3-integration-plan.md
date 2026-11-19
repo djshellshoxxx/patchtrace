@@ -170,6 +170,59 @@ Consent text v2 (`EMULATION_CONSENT`, new sha recorded in options): keeps the ex
 | artifact changed or hash differs | failed `PT-TOOL-ARTIFACT` |
 
 ## 8. CLI and GUI
+
+### S7c selective recovery contract (2026-11-19)
+
+For the same selected sources and no external anchors, the Strings dock and
+`strings delta` must compute the same changes, import/export cues, function
+links and review ordering. A single Qt-free `strings.compose` comparison owns
+that logic. Preserve existing export publication, redaction, CLI envelopes and
+exit codes. Do not change evidence tiers or turn a review cue into a finding.
+
+The dock exposes Source **Auto**, **Built-in scan**, and **FLOSS results**.
+Auto selects existing stored FLOSS evidence per side and falls back to the
+built-in scan where none is stored. Built-in scan does not read the tool store.
+FLOSS results requires stored evidence for both sides; otherwise read neither
+artifact, show which side is missing and preserve the displayed prior result.
+Changing the choice only affects the next explicitly requested comparison.
+This action reads existing evidence and never runs FLOSS or a target binary.
+
+Read the project tool store only on its owning GUI thread. Pass validated source
+objects and a copied project snapshot to the worker, never a live connection or
+service. Preserve generation/project guards, cancellation, prior results on
+failure, source labels and literal plain-text rendering. The Scan tooltip must
+describe its actual display effect and must not claim the comparison is saved
+to the project. Real FLOSS, Windows UI and full hosted qualification remain
+separate from authored fixture and offscreen controls.
+
+Stored-source identity amendment: a selected FLOSS run and its evidence must
+both describe the current artifact hash, requested side and FLOSS engine, and
+agree on configuration and cache identity. Non-cache evidence must also name
+the selected run. A cached run may reuse the original evidence run identity
+when the artifact, side, engine, configuration and cache key match. Pre-swap
+records are not current evidence for the opposite artifact: Auto falls back to
+the built-in scan, while explicit FLOSS reports that current stored evidence is
+missing. Swapping back may reuse the original correctly bound records. No
+records are rewritten or removed, and the shared ToolStore API is unchanged.
+
+Stored metadata and cache provenance amendment: both callers use the opt-in
+`intelligence.tools.admission.latest_admitted` contract (SPEC-29 T14), retaining
+the selected run/evidence rows' ownership, status, stale flag and strict JSON
+binding before constructing a source. Refusal makes that side unavailable to
+Auto and explicit FLOSS under the existing source-choice rules; it must not
+silently select an older run after a selected row fails admission. A real cache
+attempt has no new raw sidecar: preserve its admitted originating evidence run
+for the raw digest, executable/version and emulation consent. Do not invent raw
+provenance or discard a valid cache result merely because the cache attempt has
+no raw sidecar. The public ToolStore and existing sidecar I/O bounds are unchanged.
+
+Worker admission also verifies that each current artifact is readable and still
+matches its recorded hash even when stored FLOSS evidence supplies the strings.
+A missing or changed artifact is an input failure, not merely unknown PE layout;
+the dock must preserve its prior comparison and show the failure, matching the
+CLI refusal. A readable owned artifact with unsupported PE layout may still have
+unknown layout-derived links under the existing parser contract.
+
 CLI (`strings/cli.py`; adapter `cli_commands/strings.py`, no `cli.py` hook; envelope `enrichment-cli/1`; exits 0 results, 2 invalid input or nothing readable, 3 rejected or partial (basis, stale, truncated, source failed), 4 complete without results, 5 cancelled; offline; FLOSS is run only by `intel-tools run --engines floss`):
 ```
 patchtrace strings list    PROJECT [--side older|newer|both] [--change only-newer|only-older|edited|changed|all] [--type T..] [--function ID] [--cue K..] [--limit N] [--show-secrets] --json

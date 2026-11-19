@@ -1,0 +1,124 @@
+{
+  "created_at": "2026-11-19T11:41:10.017405+00:00",
+  "source_commit": "5575af797dfaabdce6a3ee4081d680054d0a2d8f",
+  "source_tree": "e7324bcbb709702e688fb77c53db5c3c614b4a18",
+  "runtime_source": "9335e7dcadc6d0337243f894e8f234ccc74bc62e",
+  "scope": "One test assertion; no runtime/workflow/configuration edits. Hosted full failure retained; no fresh full/native acceptance claim.",
+  "archive": {
+    "path": "evidence.zip",
+    "bytes": 39374,
+    "sha256": "75d15247d0d4ed3c2f03b42805786bbd06f404a2d0bc809cf25b1a0b949addfd"
+  },
+  "readme": {
+    "path": "README.md",
+    "bytes": 6648,
+    "sha256": "5e11f93b6fa72ef8b7b21711d4401f36dda655e2dae709e4b668d9166b87da25"
+  },
+  "members": [
+    {
+      "path": "diff-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "hosted-head-tree-correspondence.json",
+      "bytes": 393,
+      "sha256": "2ed80bf8c78fbaf93319232362172ab311af0ba45e5795555a759982246d2069"
+    },
+    {
+      "path": "hosted-merge-git-response.json",
+      "bytes": 2904,
+      "sha256": "65c70c776a49f53fad785519892ef7e9885a1bc56dca792b7897465bad82429a"
+    },
+    {
+      "path": "job-135483923306.log",
+      "bytes": 86706,
+      "sha256": "481a596f7ecfcbff7d2f724507780062ef6b58fa9b1ee011b872573fa855a72e"
+    },
+    {
+      "path": "local-after-result.json",
+      "bytes": 1672,
+      "sha256": "cab9d3b6d0ad9c799e7e931d4ce9f349de3b226a3f83d4b6722591d29337c7e8"
+    },
+    {
+      "path": "local-after.log",
+      "bytes": 99,
+      "sha256": "dbfe68807e34b77b35db8e2c74588106d836f1ab1eac4f56e7bcc911743910c4"
+    },
+    {
+      "path": "local-after.xml",
+      "bytes": 2925,
+      "sha256": "45620385534e7e60b82b65b149863bb31be352ebaddd1b85d9fa14d6acbba9fb"
+    },
+    {
+      "path": "local-before-result.json",
+      "bytes": 1334,
+      "sha256": "8d5a00f14a1fce91bc59427dab50882ce5b0c740e9f4686bdaa004ebf73412fd"
+    },
+    {
+      "path": "local-before.log",
+      "bytes": 1307,
+      "sha256": "33b52d8ea91b1dce5017f568a6dece56c87c6fccecafc8ed9322d4f6fb8167e1"
+    },
+    {
+      "path": "local-before.xml",
+      "bytes": 1430,
+      "sha256": "1d7aa83c01d8765c6f045fda2b644146c62a83e0eaa19d8532c12b2fbe9c9a35"
+    },
+    {
+      "path": "ordinary-ruff.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "remote-source-and-steps.json",
+      "bytes": 64666,
+      "sha256": "22d797483d207f7d14e72d1d037094f984f2478abf416b0427a1a21a5d7ffbe7"
+    },
+    {
+      "path": "remote-workflow.json",
+      "bytes": 15876,
+      "sha256": "b050d0d2a3b505086e6fdb23a772191739e4d04f53faee1ff7d37f3c1104dc01"
+    },
+    {
+      "path": "root-import-correspondence.json",
+      "bytes": 447,
+      "sha256": "2e3842a6f50793b46d2dc1a31bb40cb22c94cda9f6197970fff82a13792b3faf"
+    },
+    {
+      "path": "runtime-workflow-unchanged.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "source-repair.json",
+      "bytes": 473,
+      "sha256": "ca35a3e57c02fed62b510dc178c3efbcd0410afa0a23b26c9ad32de1bef32f4d"
+    },
+    {
+      "path": "static-checks.json",
+      "bytes": 954,
+      "sha256": "cf8e958b7eae3c4c64a9249486d53185fc2c000f61dd40765ad39d603232d189"
+    },
+    {
+      "path": "test_tier_r_cache_pin_independent.py",
+      "bytes": 1304,
+      "sha256": "03cd7f161135db087679fad7ed19edf8412e1ba5f61b3cdd30fabda8ea9e6918"
+    },
+    {
+      "path": "tier-r-cache-pin-independent-proof.json",
+      "bytes": 2748,
+      "sha256": "6f3e85b4caeb724a2beac63674697565578bdf04415034173aa458e40ea421d1"
+    },
+    {
+      "path": "tier-r-cache-pin-independent.log",
+      "bytes": 98,
+      "sha256": "e2edb01d708fa49697c4302268a176c486ad7401ab735fd47f7af9d43d08f855"
+    },
+    {
+      "path": "tier-r-cache-pin-independent.xml",
+      "bytes": 1590,
+      "sha256": "dff0ea5f19b908a0a8763e7fc8fda135c6819a8e609dda454e9ca66cb0a0aae2"
+    }
+  ]
+}

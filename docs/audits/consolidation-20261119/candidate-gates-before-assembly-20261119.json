@@ -1,0 +1,1565 @@
+{
+  "observed_utc": "2026-11-19T11:27:59.024Z",
+  "repository": "djshellshoxxx/PatchTrace",
+  "scope": "Complete current exact-head checks, statuses, workflow and submitted-review first pages: all collections below100, total_count matched where supplied.",
+  "items": [
+    {
+      "path": "pulls/318",
+      "sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+      "pr": {
+        "number": 318,
+        "head_ref": "codex/patchtrace-stabilization-20261119",
+        "base_ref": "codex/verified-followup-integration-20261118",
+        "base_sha": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+        "draft": false,
+        "state": "open",
+        "mergeable": true,
+        "mergeable_state": "unstable",
+        "updated_at": "2026-11-19T10:08:58Z"
+      },
+      "checks": {
+        "total_count": 28,
+        "check_runs": [
+          {
+            "id": 135516692626,
+            "name": "shard 1 of 2",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:04:51Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502067000/job/135516692626"
+          },
+          {
+            "id": 135516692498,
+            "name": "shard 0 of 2",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:04:51Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502067000/job/135516692498"
+          },
+          {
+            "id": 135503993548,
+            "name": "msvc cl advisory (windows-2022)",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "completed",
+            "conclusion": "skipped",
+            "started_at": "2026-11-19T10:40:29Z",
+            "completed_at": "2026-11-19T10:40:29Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502067000/job/135503993548"
+          },
+          {
+            "id": 135503992009,
+            "name": "windows advisory (smoke)",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T10:40:29Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502067000/job/135503992009"
+          },
+          {
+            "id": 135503991341,
+            "name": "plan",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T11:04:23Z",
+            "completed_at": "2026-11-19T11:04:51Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502067000/job/135503991341"
+          },
+          {
+            "id": 135484260904,
+            "name": "release-gate",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "completed",
+            "conclusion": "skipped",
+            "started_at": "2026-11-19T10:03:45Z",
+            "completed_at": "2026-11-19T10:03:45Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502066991/job/135484260904"
+          },
+          {
+            "id": 135484259554,
+            "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T10:03:45Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502066991/job/135484259554"
+          },
+          {
+            "id": 135484259463,
+            "name": "qa (windows-latest)",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T10:03:45Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502066991/job/135484259463"
+          },
+          {
+            "id": 135484259461,
+            "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T10:03:45Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502066991/job/135484259461"
+          },
+          {
+            "id": 135484259383,
+            "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "in_progress",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:27:56Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502066991/job/135484259383"
+          },
+          {
+            "id": 135484259344,
+            "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "in_progress",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:18:57Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502066991/job/135484259344"
+          },
+          {
+            "id": 135484259190,
+            "name": "qt-gate (windows-latest, 5, 1/1)",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "in_progress",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:26:21Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502066991/job/135484259190"
+          },
+          {
+            "id": 135484258857,
+            "name": "qa (ubuntu-latest)",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "in_progress",
+            "conclusion": null,
+            "started_at": "2026-11-19T10:49:03Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502066991/job/135484258857"
+          },
+          {
+            "id": 135484111728,
+            "name": "dependency-audit (ubuntu-latest, runtime)",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T10:46:49Z",
+            "completed_at": "2026-11-19T10:47:43Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502066999/job/135484111728"
+          },
+          {
+            "id": 135484111507,
+            "name": "dependency-audit (ubuntu-latest, packaging)",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T10:43:29Z",
+            "completed_at": "2026-11-19T10:44:13Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502066999/job/135484111507"
+          },
+          {
+            "id": 135484111319,
+            "name": "dependency-audit (windows-latest, packaging)",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T10:52:44Z",
+            "completed_at": "2026-11-19T10:54:17Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502066999/job/135484111319"
+          },
+          {
+            "id": 135484111301,
+            "name": "security-scan",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "completed",
+            "conclusion": "failure",
+            "started_at": "2026-11-19T10:47:33Z",
+            "completed_at": "2026-11-19T10:48:00Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502066999/job/135484111301"
+          },
+          {
+            "id": 135484111278,
+            "name": "dependency-audit (windows-latest, runtime)",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T10:53:29Z",
+            "completed_at": "2026-11-19T10:54:31Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502066999/job/135484111278"
+          },
+          {
+            "id": 135484111240,
+            "name": "native (raw-cache-hit)",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T11:00:14Z",
+            "completed_at": "2026-11-19T11:04:19Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502066950/job/135484111240"
+          },
+          {
+            "id": 135484111213,
+            "name": "native (patchtrace-clean)",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T10:38:35Z",
+            "completed_at": "2026-11-19T10:41:52Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502066950/job/135484111213"
+          },
+          {
+            "id": 135484111200,
+            "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T11:05:19Z",
+            "completed_at": "2026-11-19T11:10:59Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502066950/job/135484111200"
+          },
+          {
+            "id": 135484111136,
+            "name": "native (repro-plain-ghidriff)",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T10:51:13Z",
+            "completed_at": "2026-11-19T10:54:23Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502066950/job/135484111136"
+          },
+          {
+            "id": 135484110700,
+            "name": "native (patchtrace-seeded-store)",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T10:48:03Z",
+            "completed_at": "2026-11-19T10:52:28Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502066950/job/135484110700"
+          },
+          {
+            "id": 135484076721,
+            "name": "dependency-audit (windows-latest, runtime)",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T11:05:36Z",
+            "completed_at": "2026-11-19T11:06:48Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502057178/job/135484076721"
+          },
+          {
+            "id": 135484076464,
+            "name": "dependency-audit (ubuntu-latest, packaging)",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T10:54:51Z",
+            "completed_at": "2026-11-19T10:55:45Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502057178/job/135484076464"
+          },
+          {
+            "id": 135484076453,
+            "name": "dependency-audit (ubuntu-latest, runtime)",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T10:52:37Z",
+            "completed_at": "2026-11-19T10:53:26Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502057178/job/135484076453"
+          },
+          {
+            "id": 135484076343,
+            "name": "dependency-audit (windows-latest, packaging)",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T10:49:46Z",
+            "completed_at": "2026-11-19T10:51:18Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502057178/job/135484076343"
+          },
+          {
+            "id": 135484075846,
+            "name": "security-scan",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "status": "completed",
+            "conclusion": "failure",
+            "started_at": "2026-11-19T10:48:38Z",
+            "completed_at": "2026-11-19T10:49:00Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502057178/job/135484075846"
+          }
+        ]
+      },
+      "statuses": [
+        {
+          "id": 59350898231,
+          "context": "security/snyk (djshellshoxxx)",
+          "state": "success",
+          "target_url": "https://app.snyk.io/org/djshellshoxxx/pr-checks/9877ae00-e7c7-4b25-9272-fbdd1bc3097e",
+          "description": "No manifest changes detected in 1 project",
+          "updated_at": "2026-11-19T10:03:45Z"
+        }
+      ],
+      "runs": {
+        "total_count": 5,
+        "workflow_runs": [
+          {
+            "id": 44502067000,
+            "name": "Corpus Tier R (sharded)",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "event": "pull_request",
+            "status": "queued",
+            "conclusion": null,
+            "run_attempt": 1,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502067000",
+            "created_at": "2026-11-19T10:03:28Z",
+            "updated_at": "2026-11-19T10:40:29Z"
+          },
+          {
+            "id": 44502066991,
+            "name": "QA and Windows standalone",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "event": "pull_request",
+            "status": "queued",
+            "conclusion": null,
+            "run_attempt": 1,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502066991",
+            "created_at": "2026-11-19T10:03:28Z",
+            "updated_at": "2026-11-19T10:03:45Z"
+          },
+          {
+            "id": 44502066999,
+            "name": "Dependency and static-security qualification",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "event": "pull_request",
+            "status": "completed",
+            "conclusion": "failure",
+            "run_attempt": 1,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502066999",
+            "created_at": "2026-11-19T10:03:28Z",
+            "updated_at": "2026-11-19T10:54:32Z"
+          },
+          {
+            "id": 44502066950,
+            "name": "Native Windows Ghidriff acceptance",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "event": "pull_request",
+            "status": "completed",
+            "conclusion": "success",
+            "run_attempt": 1,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502066950",
+            "created_at": "2026-11-19T10:03:28Z",
+            "updated_at": "2026-11-19T11:10:59Z"
+          },
+          {
+            "id": 44502057178,
+            "name": "Dependency and static-security qualification",
+            "head_sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+            "event": "push",
+            "status": "completed",
+            "conclusion": "failure",
+            "run_attempt": 1,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502057178",
+            "created_at": "2026-11-19T10:03:24Z",
+            "updated_at": "2026-11-19T11:06:49Z"
+          }
+        ]
+      },
+      "reviews": []
+    },
+    {
+      "path": "pulls/319",
+      "sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+      "pr": {
+        "number": 319,
+        "head_ref": "consolidation/patchtrace-reviewed-20261119",
+        "base_ref": "main",
+        "base_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+        "draft": true,
+        "state": "open",
+        "mergeable": true,
+        "mergeable_state": "unstable",
+        "updated_at": "2026-11-19T10:18:29Z"
+      },
+      "checks": {
+        "total_count": 20,
+        "check_runs": [
+          {
+            "id": 135508645353,
+            "name": "linux",
+            "head_sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T10:49:22Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502009971/job/135508645353"
+          },
+          {
+            "id": 135498316211,
+            "name": "shard 1 of 2",
+            "head_sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T10:58:24Z",
+            "completed_at": "2026-11-19T11:00:12Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502009846/job/135498316211"
+          },
+          {
+            "id": 135498316109,
+            "name": "shard 0 of 2",
+            "head_sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+            "status": "in_progress",
+            "conclusion": null,
+            "started_at": "2026-11-19T10:50:21Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502009846/job/135498316109"
+          },
+          {
+            "id": 135483925739,
+            "name": "release-gate",
+            "head_sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+            "status": "completed",
+            "conclusion": "skipped",
+            "started_at": "2026-11-19T10:03:09Z",
+            "completed_at": "2026-11-19T10:03:08Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502009773/job/135483925739"
+          },
+          {
+            "id": 135483924164,
+            "name": "msvc cl advisory (windows-2022)",
+            "head_sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+            "status": "completed",
+            "conclusion": "skipped",
+            "started_at": "2026-11-19T10:03:08Z",
+            "completed_at": "2026-11-19T10:03:08Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502009846/job/135483924164"
+          },
+          {
+            "id": 135483924026,
+            "name": "native (patchtrace-clean)",
+            "head_sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+            "status": "in_progress",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:25:38Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502009956/job/135483924026"
+          },
+          {
+            "id": 135483923969,
+            "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+            "head_sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T10:03:08Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502009956/job/135483923969"
+          },
+          {
+            "id": 135483923948,
+            "name": "native (patchtrace-seeded-store)",
+            "head_sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T11:21:02Z",
+            "completed_at": "2026-11-19T11:25:35Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502009956/job/135483923948"
+          },
+          {
+            "id": 135483923844,
+            "name": "native (repro-plain-ghidriff)",
+            "head_sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T11:10:13Z",
+            "completed_at": "2026-11-19T11:13:09Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502009956/job/135483923844"
+          },
+          {
+            "id": 135483923783,
+            "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+            "head_sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T10:54:30Z",
+            "completed_at": "2026-11-19T11:24:25Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502009773/job/135483923783"
+          },
+          {
+            "id": 135483923756,
+            "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+            "head_sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T10:43:23Z",
+            "completed_at": "2026-11-19T11:22:02Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502009773/job/135483923756"
+          },
+          {
+            "id": 135483923707,
+            "name": "qt-gate (windows-latest, 5, 1/1)",
+            "head_sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+            "status": "in_progress",
+            "conclusion": null,
+            "started_at": "2026-11-19T10:51:08Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502009773/job/135483923707"
+          },
+          {
+            "id": 135483923687,
+            "name": "qa (windows-latest)",
+            "head_sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+            "status": "in_progress",
+            "conclusion": null,
+            "started_at": "2026-11-19T10:53:57Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502009773/job/135483923687"
+          },
+          {
+            "id": 135483923636,
+            "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+            "head_sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+            "status": "in_progress",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:01:58Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502009773/job/135483923636"
+          },
+          {
+            "id": 135483923595,
+            "name": "native (raw-cache-hit)",
+            "head_sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T11:13:54Z",
+            "completed_at": "2026-11-19T11:18:54Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502009956/job/135483923595"
+          },
+          {
+            "id": 135483923565,
+            "name": "windows advisory (smoke)",
+            "head_sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T10:47:26Z",
+            "completed_at": "2026-11-19T10:50:48Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502009846/job/135483923565"
+          },
+          {
+            "id": 135483923549,
+            "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+            "head_sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T10:41:39Z",
+            "completed_at": "2026-11-19T11:05:16Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502009773/job/135483923549"
+          },
+          {
+            "id": 135483923334,
+            "name": "windows",
+            "head_sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T10:42:51Z",
+            "completed_at": "2026-11-19T10:49:22Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502009971/job/135483923334"
+          },
+          {
+            "id": 135483923306,
+            "name": "qa (ubuntu-latest)",
+            "head_sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+            "status": "completed",
+            "conclusion": "failure",
+            "started_at": "2026-11-19T10:48:36Z",
+            "completed_at": "2026-11-19T11:27:53Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502009773/job/135483923306"
+          },
+          {
+            "id": 135483923043,
+            "name": "plan",
+            "head_sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T10:29:16Z",
+            "completed_at": "2026-11-19T10:29:47Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502009846/job/135483923043"
+          }
+        ]
+      },
+      "statuses": [
+        {
+          "id": 59350857080,
+          "context": "security/snyk (djshellshoxxx)",
+          "state": "success",
+          "target_url": "https://app.snyk.io/org/djshellshoxxx/pr-checks/7c54984d-9642-46cf-aba9-c923f3adef47",
+          "description": "No manifest changes detected in 1 project",
+          "updated_at": "2026-11-19T10:03:13Z"
+        }
+      ],
+      "runs": {
+        "total_count": 4,
+        "workflow_runs": [
+          {
+            "id": 44502009956,
+            "name": "Native Windows Ghidriff acceptance",
+            "head_sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+            "event": "pull_request",
+            "status": "queued",
+            "conclusion": null,
+            "run_attempt": 1,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502009956",
+            "created_at": "2026-11-19T10:03:07Z",
+            "updated_at": "2026-11-19T10:03:08Z"
+          },
+          {
+            "id": 44502009971,
+            "name": "Live unified extraction (SPEC-31 S1)",
+            "head_sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+            "event": "pull_request",
+            "status": "queued",
+            "conclusion": null,
+            "run_attempt": 1,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502009971",
+            "created_at": "2026-11-19T10:03:07Z",
+            "updated_at": "2026-11-19T10:49:22Z"
+          },
+          {
+            "id": 44502009846,
+            "name": "Corpus Tier R (sharded)",
+            "head_sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+            "event": "pull_request",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_attempt": 1,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502009846",
+            "created_at": "2026-11-19T10:03:07Z",
+            "updated_at": "2026-11-19T10:58:25Z"
+          },
+          {
+            "id": 44502009773,
+            "name": "QA and Windows standalone",
+            "head_sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+            "event": "pull_request",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_attempt": 1,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44502009773",
+            "created_at": "2026-11-19T10:03:07Z",
+            "updated_at": "2026-11-19T11:01:59Z"
+          }
+        ]
+      },
+      "reviews": []
+    },
+    {
+      "path": "pulls/320",
+      "sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+      "pr": {
+        "number": 320,
+        "head_ref": "integration/exhaustive-patchtrace-consolidation-20261119",
+        "base_ref": "main",
+        "base_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+        "draft": true,
+        "state": "open",
+        "mergeable": true,
+        "mergeable_state": "unstable",
+        "updated_at": "2026-11-19T11:02:43Z"
+      },
+      "checks": {
+        "total_count": 31,
+        "check_runs": [
+          {
+            "id": 135515405330,
+            "name": "release-gate",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "completed",
+            "conclusion": "skipped",
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": "2026-11-19T11:02:24Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144777/job/135515405330"
+          },
+          {
+            "id": 135515403619,
+            "name": "msvc cl advisory (windows-2022)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "completed",
+            "conclusion": "skipped",
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": "2026-11-19T11:02:24Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144265/job/135515403619"
+          },
+          {
+            "id": 135515403435,
+            "name": "qt-gate (windows-latest, 5, 1/1)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144777/job/135515403435"
+          },
+          {
+            "id": 135515403391,
+            "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144777/job/135515403391"
+          },
+          {
+            "id": 135515403338,
+            "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144777/job/135515403338"
+          },
+          {
+            "id": 135515403221,
+            "name": "qa (ubuntu-latest)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144777/job/135515403221"
+          },
+          {
+            "id": 135515403173,
+            "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144777/job/135515403173"
+          },
+          {
+            "id": 135515403094,
+            "name": "qa (windows-latest)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144777/job/135515403094"
+          },
+          {
+            "id": 135515402788,
+            "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144777/job/135515402788"
+          },
+          {
+            "id": 135515401656,
+            "name": "windows advisory (smoke)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144265/job/135515401656"
+          },
+          {
+            "id": 135515401585,
+            "name": "plan",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144265/job/135515401585"
+          },
+          {
+            "id": 135515401233,
+            "name": "live build environment (ubuntu-22.04)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "completed",
+            "conclusion": "skipped",
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": "2026-11-19T11:02:24Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144334/job/135515401233"
+          },
+          {
+            "id": 135515400820,
+            "name": "windows",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144313/job/135515400820"
+          },
+          {
+            "id": 135515400075,
+            "name": "dependency-audit (windows-latest, packaging)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144398/job/135515400075"
+          },
+          {
+            "id": 135515400010,
+            "name": "dependency-audit (ubuntu-latest, packaging)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144398/job/135515400010"
+          },
+          {
+            "id": 135515399928,
+            "name": "dependency-audit (ubuntu-latest, runtime)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144398/job/135515399928"
+          },
+          {
+            "id": 135515399917,
+            "name": "live BinDiff (windows-latest)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144329/job/135515399917"
+          },
+          {
+            "id": 135515399894,
+            "name": "security-scan",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144398/job/135515399894"
+          },
+          {
+            "id": 135515399674,
+            "name": "native (raw-cache-hit)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144423/job/135515399674"
+          },
+          {
+            "id": 135515399492,
+            "name": "live rz-diff (windows-latest)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144339/job/135515399492"
+          },
+          {
+            "id": 135515399342,
+            "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144423/job/135515399342"
+          },
+          {
+            "id": 135515399340,
+            "name": "native (patchtrace-clean)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144423/job/135515399340"
+          },
+          {
+            "id": 135515399257,
+            "name": "native (repro-plain-ghidriff)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144423/job/135515399257"
+          },
+          {
+            "id": 135515399239,
+            "name": "dependency-audit (windows-latest, runtime)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144398/job/135515399239"
+          },
+          {
+            "id": 135515399197,
+            "name": "live intel tools (ubuntu-22.04)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144334/job/135515399197"
+          },
+          {
+            "id": 135515399184,
+            "name": "live BinDiff (ubuntu-22.04)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144329/job/135515399184"
+          },
+          {
+            "id": 135515399103,
+            "name": "probe (ubuntu-latest)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144284/job/135515399103"
+          },
+          {
+            "id": 135515399053,
+            "name": "live rz-diff (ubuntu-latest)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144339/job/135515399053"
+          },
+          {
+            "id": 135515398829,
+            "name": "probe (windows-latest)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144284/job/135515398829"
+          },
+          {
+            "id": 135515398826,
+            "name": "native (patchtrace-seeded-store)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144423/job/135515398826"
+          },
+          {
+            "id": 135515398802,
+            "name": "live intel tools (windows-latest)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:02:24Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144334/job/135515398802"
+          }
+        ]
+      },
+      "statuses": [
+        {
+          "id": 59355496992,
+          "context": "security/snyk (djshellshoxxx)",
+          "state": "success",
+          "target_url": "https://app.snyk.io/org/djshellshoxxx/pr-checks/6c3ed53b-dc86-46a7-b13f-68f17a1a91dc",
+          "description": "No manifest changes detected in 1 project",
+          "updated_at": "2026-11-19T11:02:47Z"
+        }
+      ],
+      "runs": {
+        "total_count": 9,
+        "workflow_runs": [
+          {
+            "id": 44511144777,
+            "name": "QA and Windows standalone",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "event": "pull_request",
+            "status": "pending",
+            "conclusion": null,
+            "run_attempt": 1,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144777",
+            "created_at": "2026-11-19T11:02:23Z",
+            "updated_at": "2026-11-19T11:02:24Z"
+          },
+          {
+            "id": 44511144265,
+            "name": "Corpus Tier R (sharded)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "event": "pull_request",
+            "status": "queued",
+            "conclusion": null,
+            "run_attempt": 1,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144265",
+            "created_at": "2026-11-19T11:02:23Z",
+            "updated_at": "2026-11-19T11:02:24Z"
+          },
+          {
+            "id": 44511144284,
+            "name": "Optional dependency wheels probe",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "event": "pull_request",
+            "status": "queued",
+            "conclusion": null,
+            "run_attempt": 1,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144284",
+            "created_at": "2026-11-19T11:02:23Z",
+            "updated_at": "2026-11-19T11:02:24Z"
+          },
+          {
+            "id": 44511144339,
+            "name": "Live rizin rz-diff acceptance",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "event": "pull_request",
+            "status": "queued",
+            "conclusion": null,
+            "run_attempt": 1,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144339",
+            "created_at": "2026-11-19T11:02:23Z",
+            "updated_at": "2026-11-19T11:02:24Z"
+          },
+          {
+            "id": 44511144313,
+            "name": "Live unified extraction (SPEC-31 S1)",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "event": "pull_request",
+            "status": "queued",
+            "conclusion": null,
+            "run_attempt": 1,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144313",
+            "created_at": "2026-11-19T11:02:23Z",
+            "updated_at": "2026-11-19T11:02:24Z"
+          },
+          {
+            "id": 44511144423,
+            "name": "Native Windows Ghidriff acceptance",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "event": "pull_request",
+            "status": "queued",
+            "conclusion": null,
+            "run_attempt": 1,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144423",
+            "created_at": "2026-11-19T11:02:23Z",
+            "updated_at": "2026-11-19T11:02:24Z"
+          },
+          {
+            "id": 44511144398,
+            "name": "Dependency and static-security qualification",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "event": "pull_request",
+            "status": "queued",
+            "conclusion": null,
+            "run_attempt": 1,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144398",
+            "created_at": "2026-11-19T11:02:23Z",
+            "updated_at": "2026-11-19T11:02:24Z"
+          },
+          {
+            "id": 44511144334,
+            "name": "Live intel tools acceptance",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "event": "pull_request",
+            "status": "queued",
+            "conclusion": null,
+            "run_attempt": 1,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144334",
+            "created_at": "2026-11-19T11:02:23Z",
+            "updated_at": "2026-11-19T11:02:24Z"
+          },
+          {
+            "id": 44511144329,
+            "name": "Live BinDiff acceptance",
+            "head_sha": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+            "event": "pull_request",
+            "status": "queued",
+            "conclusion": null,
+            "run_attempt": 1,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44511144329",
+            "created_at": "2026-11-19T11:02:23Z",
+            "updated_at": "2026-11-19T11:02:24Z"
+          }
+        ]
+      },
+      "reviews": []
+    },
+    {
+      "path": "pulls/321",
+      "sha": "976dddfbbcdf9a320e48813d8cf2c3c6540aac81",
+      "pr": {
+        "number": 321,
+        "head_ref": "consolidation/patchtrace-continuation-20261119",
+        "base_ref": "consolidation/patchtrace-reviewed-20261119",
+        "base_sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+        "draft": true,
+        "state": "open",
+        "mergeable": true,
+        "mergeable_state": "unstable",
+        "updated_at": "2026-11-19T10:54:25Z"
+      },
+      "checks": {
+        "total_count": 8,
+        "check_runs": [
+          {
+            "id": 135505812345,
+            "name": "release-gate",
+            "head_sha": "976dddfbbcdf9a320e48813d8cf2c3c6540aac81",
+            "status": "completed",
+            "conclusion": "skipped",
+            "started_at": "2026-11-19T10:43:58Z",
+            "completed_at": "2026-11-19T10:43:58Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44508367872/job/135505812345"
+          },
+          {
+            "id": 135505810868,
+            "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+            "head_sha": "976dddfbbcdf9a320e48813d8cf2c3c6540aac81",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T10:43:58Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44508367872/job/135505810868"
+          },
+          {
+            "id": 135505810657,
+            "name": "qa (ubuntu-latest)",
+            "head_sha": "976dddfbbcdf9a320e48813d8cf2c3c6540aac81",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T10:43:58Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44508367872/job/135505810657"
+          },
+          {
+            "id": 135505810591,
+            "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+            "head_sha": "976dddfbbcdf9a320e48813d8cf2c3c6540aac81",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T10:43:58Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44508367872/job/135505810591"
+          },
+          {
+            "id": 135505810570,
+            "name": "qt-gate (windows-latest, 5, 1/1)",
+            "head_sha": "976dddfbbcdf9a320e48813d8cf2c3c6540aac81",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T10:43:58Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44508367872/job/135505810570"
+          },
+          {
+            "id": 135505810416,
+            "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+            "head_sha": "976dddfbbcdf9a320e48813d8cf2c3c6540aac81",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T10:43:58Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44508367872/job/135505810416"
+          },
+          {
+            "id": 135505810402,
+            "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+            "head_sha": "976dddfbbcdf9a320e48813d8cf2c3c6540aac81",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T10:43:58Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44508367872/job/135505810402"
+          },
+          {
+            "id": 135505810209,
+            "name": "qa (windows-latest)",
+            "head_sha": "976dddfbbcdf9a320e48813d8cf2c3c6540aac81",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T10:43:58Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44508367872/job/135505810209"
+          }
+        ]
+      },
+      "statuses": [
+        {
+          "id": 59354064183,
+          "context": "security/snyk (djshellshoxxx)",
+          "state": "success",
+          "target_url": "https://app.snyk.io/org/djshellshoxxx/pr-checks/7d445188-d01d-4cae-9b6f-fce2c900fc51",
+          "description": "No manifest changes detected in 1 project",
+          "updated_at": "2026-11-19T10:44:04Z"
+        }
+      ],
+      "runs": {
+        "total_count": 1,
+        "workflow_runs": [
+          {
+            "id": 44508367872,
+            "name": "QA and Windows standalone",
+            "head_sha": "976dddfbbcdf9a320e48813d8cf2c3c6540aac81",
+            "event": "pull_request",
+            "status": "queued",
+            "conclusion": null,
+            "run_attempt": 1,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44508367872",
+            "created_at": "2026-11-19T10:43:58Z",
+            "updated_at": "2026-11-19T10:43:58Z"
+          }
+        ]
+      },
+      "reviews": []
+    },
+    {
+      "path": "branches/main",
+      "sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+      "checks": {
+        "total_count": 24,
+        "check_runs": [
+          {
+            "id": 135514886000,
+            "name": "linux-package",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "status": "queued",
+            "conclusion": null,
+            "started_at": "2026-11-19T11:01:25Z",
+            "completed_at": null,
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135514886000"
+          },
+          {
+            "id": 135478236798,
+            "name": "merge",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T10:13:40Z",
+            "completed_at": "2026-11-19T10:14:00Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196151/job/135478236798"
+          },
+          {
+            "id": 135450187093,
+            "name": "linux",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T09:52:30Z",
+            "completed_at": "2026-11-19T09:58:20Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196128/job/135450187093"
+          },
+          {
+            "id": 135444312101,
+            "name": "shard 1 of 2",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T09:46:36Z",
+            "completed_at": "2026-11-19T09:52:19Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196151/job/135444312101"
+          },
+          {
+            "id": 135444311907,
+            "name": "shard 0 of 2",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T09:31:56Z",
+            "completed_at": "2026-11-19T09:39:41Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196151/job/135444311907"
+          },
+          {
+            "id": 135440204383,
+            "name": "qa (windows-latest)",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T10:06:17Z",
+            "completed_at": "2026-11-19T11:01:25Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135440204383"
+          },
+          {
+            "id": 135440203428,
+            "name": "msvc cl advisory (windows-2022)",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "status": "completed",
+            "conclusion": "skipped",
+            "started_at": "2026-11-19T08:37:36Z",
+            "completed_at": "2026-11-19T08:37:36Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196151/job/135440203428"
+          },
+          {
+            "id": 135440202274,
+            "name": "native (patchtrace-clean)",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T10:01:55Z",
+            "completed_at": "2026-11-19T10:05:36Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196246/job/135440202274"
+          },
+          {
+            "id": 135440202267,
+            "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T10:14:03Z",
+            "completed_at": "2026-11-19T10:48:34Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135440202267"
+          },
+          {
+            "id": 135440202255,
+            "name": "native (raw-cache-hit)",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T09:55:44Z",
+            "completed_at": "2026-11-19T09:59:51Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196246/job/135440202255"
+          },
+          {
+            "id": 135440202183,
+            "name": "native (repro-plain-ghidriff)",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T10:04:43Z",
+            "completed_at": "2026-11-19T10:08:11Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196246/job/135440202183"
+          },
+          {
+            "id": 135440202174,
+            "name": "live rz-diff (windows-latest)",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T09:29:53Z",
+            "completed_at": "2026-11-19T09:31:18Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196180/job/135440202174"
+          },
+          {
+            "id": 135440202066,
+            "name": "native (patchtrace-seeded-store)",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T09:31:45Z",
+            "completed_at": "2026-11-19T09:35:36Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196246/job/135440202066"
+          },
+          {
+            "id": 135440201942,
+            "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T10:03:48Z",
+            "completed_at": "2026-11-19T10:31:55Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135440201942"
+          },
+          {
+            "id": 135440201914,
+            "name": "release-gate",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T09:52:30Z",
+            "completed_at": "2026-11-19T09:52:47Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135440201914"
+          },
+          {
+            "id": 135440201897,
+            "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T09:46:56Z",
+            "completed_at": "2026-11-19T09:51:22Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196246/job/135440201897"
+          },
+          {
+            "id": 135440201850,
+            "name": "qt-gate (windows-latest, 5, 1/1)",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T09:44:15Z",
+            "completed_at": "2026-11-19T10:32:28Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135440201850"
+          },
+          {
+            "id": 135440201840,
+            "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T09:58:44Z",
+            "completed_at": "2026-11-19T10:31:38Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135440201840"
+          },
+          {
+            "id": 135440201818,
+            "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T09:43:34Z",
+            "completed_at": "2026-11-19T10:14:37Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135440201818"
+          },
+          {
+            "id": 135440201772,
+            "name": "live rz-diff (ubuntu-latest)",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T09:27:40Z",
+            "completed_at": "2026-11-19T09:28:23Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196180/job/135440201772"
+          },
+          {
+            "id": 135440201691,
+            "name": "windows",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T08:46:50Z",
+            "completed_at": "2026-11-19T08:58:13Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196128/job/135440201691"
+          },
+          {
+            "id": 135440201639,
+            "name": "plan",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T08:45:45Z",
+            "completed_at": "2026-11-19T08:46:09Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196151/job/135440201639"
+          },
+          {
+            "id": 135440201420,
+            "name": "qa (ubuntu-latest)",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T09:32:30Z",
+            "completed_at": "2026-11-19T10:10:34Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135440201420"
+          },
+          {
+            "id": 135440201227,
+            "name": "windows advisory (smoke)",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-11-19T08:57:42Z",
+            "completed_at": "2026-11-19T08:58:41Z",
+            "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196151/job/135440201227"
+          }
+        ]
+      },
+      "statuses": [],
+      "runs": {
+        "total_count": 5,
+        "workflow_runs": [
+          {
+            "id": 44489196180,
+            "name": "Live rizin rz-diff acceptance",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "event": "push",
+            "status": "completed",
+            "conclusion": "success",
+            "run_attempt": 1,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196180",
+            "created_at": "2026-11-19T08:37:35Z",
+            "updated_at": "2026-11-19T09:31:18Z"
+          },
+          {
+            "id": 44489196128,
+            "name": "Live unified extraction (SPEC-31 S1)",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "event": "push",
+            "status": "completed",
+            "conclusion": "success",
+            "run_attempt": 1,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196128",
+            "created_at": "2026-11-19T08:37:35Z",
+            "updated_at": "2026-11-19T09:58:21Z"
+          },
+          {
+            "id": 44489196246,
+            "name": "Native Windows Ghidriff acceptance",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "event": "push",
+            "status": "completed",
+            "conclusion": "success",
+            "run_attempt": 1,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196246",
+            "created_at": "2026-11-19T08:37:35Z",
+            "updated_at": "2026-11-19T10:08:12Z"
+          },
+          {
+            "id": 44489196151,
+            "name": "Corpus Tier R (sharded)",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "event": "push",
+            "status": "completed",
+            "conclusion": "success",
+            "run_attempt": 1,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196151",
+            "created_at": "2026-11-19T08:37:35Z",
+            "updated_at": "2026-11-19T10:14:01Z"
+          },
+          {
+            "id": 44489196124,
+            "name": "QA and Windows standalone",
+            "head_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+            "event": "push",
+            "status": "queued",
+            "conclusion": null,
+            "run_attempt": 1,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124",
+            "created_at": "2026-11-19T08:37:35Z",
+            "updated_at": "2026-11-19T11:01:25Z"
+          }
+        ]
+      },
+      "reviews": []
+    }
+  ]
+}

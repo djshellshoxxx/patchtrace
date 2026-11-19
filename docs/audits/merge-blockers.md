@@ -1,6 +1,98 @@
 # Merge and release blockers — source-pinned checkpoint
 
-## Latest continuation checkpoint — 2026-11-19 10:31:52 UTC
+## Resumed assembled recovery — 2026-11-19 11:34: 21 UTC
+
+This current section supersedes the dated interruption status below. Original
+source records and failed/incomplete evidence remain preserved. The execution
+workspace recovered; the previously unpublished inventory, GUI, Strings,
+Search and shared-admission source is now assembled locally for guarded publication to the continuation
+candidate [PR #321](https://github.com/djshellshoxxx/PatchTrace/pull/321).
+At preparation, remote #321 still has documentation checkpoint 976dddfb; the
+actual guarded publication is established by its later PR receipt. This is a
+candidate, not an additional main merge or release acceptance.
+
+Reviewed runtime: **9335e7dcadc6d0337243f894e8f234ccc74bc62e**, tree
+**05509de7d8038a9079fe80b08fa97da8cb61b7fd**. Main remains **fdc2696c23bdbfe7668348f25e3b336ce33039f7**.
+The [resumed checkpoint](consolidation-20261119/resumed-checkpoint.md) distinguishes
+the tested source, later CI-test correction, publication guard, exact component
+pins and remaining gates. The final guarded publication SHA belongs to the PR
+operation receipt; local and REST-created commit IDs are not assumed equal.
+
+## Current gate boundary
+
+**No additional main merge is qualified.** This is a precise current-source
+test/review/platform boundary, not an execution-workspace outage. The workspace
+recovered and the local source/evidence assembly completed.
+
+At **2026-11-19T11:27:59.024Z**, the complete check/status/workflow/review reads were:
+
+| Candidate | Exact head | Check-run snapshot |
+| --- | --- | --- |
+| pulls/318 | `c4ace2088ce8dc9ce78a0bf3036b81096accbdb5` | 6 queued; 2 skipped; 14 success; 4 in progress; 2 failure |
+| pulls/319 | `a56ab13aaf9916fc12bea70ba1494075991b7f09` | 2 queued; 10 success; 5 in progress; 2 skipped; 1 failure |
+| pulls/320 | `bc7eb6328b477e2ff19cfe36317279eaf5856fb6` | 3 skipped; 28 queued |
+| pulls/321 | `976dddfbbcdf9a320e48813d8cf2c3c6540aac81` | 1 skipped; 7 queued |
+| branches/main | `fdc2696c23bdbfe7668348f25e3b336ce33039f7` | 1 queued; 22 success; 1 skipped |
+
+All four candidate heads had a successful Snyk legacy status; no submitted
+GitHub review was returned. Independent agent reviews are separate records.
+Queued/in-progress/skipped jobs are not treated as completed passes. Later
+CI-test source updates require their own exact-head checks.
+
+#319's Linux job 135483923306 failed one workflow-pin assertion after 23,268 passes,
+50 skips and 6 expected failures. It rejects the approved immutable cache action
+because the old assertion expects a version tag. The narrow correction and
+independent qualification are tracked in the subsequent CI receipt. Its earlier
+full failure remains a failure; local focused success will not relabel it green.
+
+#318's two hosted static-security jobs 135484111301/135484075846 both report the
+same80 Ruff-S diagnostics, normal exit 1, with no timeout/output limit/launch error.
+The PR checkout is synthetic merge de9a8cf060a5def95acb9d887f68e0dc01237221 and
+the push checkout is c4ace2088ce8dc9ce78a0bf3036b81096accbdb5; both have exact
+tree ee130e5c201683794abf42b76fb6c9372731d892. No gate is waived.
+[Hosted failure summary](consolidation-20261119/pr318-security-c4-summary.json).
+
+The same isolated runtime-only scan on immutable local source reports **68** on
+core 319 and **82** on combined 9335, with 14 added and zero removed diagnostics.
+Added sites are12 inventory SQL diagnostics, one inventory URL opener and one
+Search SQL construction. Fixed SQL/parameters, URL/DNS/TLS and exact consent were
+reviewed in context; that review does not suppress the findings or turn the
+strict scan green. Ordinary Ruff is a distinct passing check.
+
+## Remaining acceptance work
+
+- Finish applicable exact-source hosted Linux/Windows full QA, repeated Qt,
+  actual native/cache/child-environment and packaging/installer lifecycle gates.
+- Keep the native Windows existing-object-sharing control unqualified on Linux.
+- Keep the inherited forced Strings source/cleanup ownership races open until
+  a preserving supported-platform protocol and adversarial controls qualify it.
+- Resolve strict-security diagnostics through substantiated fixes/dispositions
+  under repository policy; neither suppressions nor automatic waiver were added.
+- Preserve the earlier two incomplete exit 137 full runs, the exit 124 Strings
+  attempt and known elapsed-time failures. The combined 1199-pass selection is
+  not a completed full suite.
+- Keep macOS, clean-machine/manual Windows, actual assistive technology and
+  separate L1/L2/L3 accuracy acceptance open. Never score unverified facts.
+
+The external #320 and checkpoint81e4 branches retain distinct active source and
+their own qualification needs. This continuation does not overwrite or approve
+those branches. Source freshness must be checked before any later integration.
+
+### Completed core CI correction and publication
+
+Core PR #319 was guarded forward from a56ab13a to **8d130aefe1be6e737cff1d90d2a5b1658d60a3a6**.
+Its tree **ce0399940c5fa24ea017498f9e4cf80b0ee6d2de** equals local
+**e9be6e009ff0aee69ca7be78d47c5b740b62fd00**. The four changed files are
+one test assertion and three QA files; runtime and workflows are unchanged.
+One red control precedes 21 related passes and six independent guard controls.
+The old 23,268-pass/one-failure full run remains failed; the new head needs its
+own hosted qualification. [Source and QA](../qa/tier-r-cache-pin-20261119/README.md),
+[guard, exact tree/parent/ref and PR readback](consolidation-20261119/core-cache-pin-publication.json).
+The continuation publication is prepared with original checkpoint 976dddfb as
+first parent and this fresh core head as second parent. Its actual ref update
+is established by the subsequent PR #321 publication receipt.
+
+## Historical interruption checkpoint — 2026-11-19 10:31:52 UTC
 
 This section supersedes current-status statements in the earlier source-pinned history below. The history is retained verbatim. See the [continuation checkpoint](consolidation-20261119/continuation-checkpoint.md) and [complete remote snapshot](consolidation-20261119/continuation-checkpoint.json) for evidence, source identities and exact continuation.
 
@@ -129,3 +221,11 @@ this is ABORTED, not full-suite PASS. Fresh hosted full-source gates remain open
 The two adjacent BinDiff controls subsequently passed unchanged in a bounded
 isolated run (2 passed, 6.23 s). No host/product cause is established, and the
 incomplete full-suite result is not converted to PASS.
+
+The second full suite, on #319's exact tree using the dedicated interpreter,
+also ended without a completed result: exit 137, no requested interruption,
+1,344 progress outcomes, no final JUnit or diagnostic stack dump. Its active
+memory-cap control passed alone (1 passed, 2.97 s). Neither executor memory
+exhaustion nor a product cause is established by these observations. Exact
+receipts are linked from the operation record; full hosted qualification remains
+blocked until actual current-source results complete.

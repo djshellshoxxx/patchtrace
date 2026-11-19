@@ -1,0 +1,150 @@
+{
+  "recorded_utc": "2026-11-19T11:43:40.033Z",
+  "repository": "djshellshoxxx/PatchTrace",
+  "pr": 319,
+  "branch": "consolidation/patchtrace-reviewed-20261119",
+  "old_head": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+  "new_head": "8d130aefe1be6e737cff1d90d2a5b1658d60a3a6",
+  "tree": "ce0399940c5fa24ea017498f9e4cf80b0ee6d2de",
+  "local_counterpart": "e9be6e009ff0aee69ca7be78d47c5b740b62fd00",
+  "source_change": "One exact immutable cache action exception in tests/test_tier_r_shard.py; three QA files. No runtime/workflow/configuration change.",
+  "guard": {
+    "expected_sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+    "force": false,
+    "success": true
+  },
+  "commit": {
+    "sha": "8d130aefe1be6e737cff1d90d2a5b1658d60a3a6",
+    "node_id": "C_kwDOVEPRFdoAKDhkMTMwYWVmZTFiZTZlNzM3Y2ZmMWQ5MGQyYTViMTY1OGQ2MGEzYTY",
+    "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/8d130aefe1be6e737cff1d90d2a5b1658d60a3a6",
+    "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/8d130aefe1be6e737cff1d90d2a5b1658d60a3a6",
+    "author": {
+      "name": "sheldon",
+      "email": "127660907+djshellshoxxx@users.noreply.github.com",
+      "date": "2026-11-19T11:42:24Z"
+    },
+    "committer": {
+      "name": "sheldon",
+      "email": "127660907+djshellshoxxx@users.noreply.github.com",
+      "date": "2026-11-19T11:42:24Z"
+    },
+    "tree": {
+      "sha": "ce0399940c5fa24ea017498f9e4cf80b0ee6d2de",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/ce0399940c5fa24ea017498f9e4cf80b0ee6d2de"
+    },
+    "message": "test(ci): accept the approved Tier R cache pin and retain failure evidence [no release]",
+    "parents": [
+      {
+        "sha": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/a56ab13aaf9916fc12bea70ba1494075991b7f09",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/a56ab13aaf9916fc12bea70ba1494075991b7f09"
+      }
+    ],
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "ref": {
+    "ref": "refs/heads/consolidation/patchtrace-reviewed-20261119",
+    "node_id": "REF_kwDOVEPRFdoANXJlZnMvaGVhZHMvY29uc29saWRhdGlvbi9wYXRjaHRyYWNlLXJldmlld2VkLTIwMjYxMTE5",
+    "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/refs/heads/consolidation/patchtrace-reviewed-20261119",
+    "object": {
+      "sha": "8d130aefe1be6e737cff1d90d2a5b1658d60a3a6",
+      "type": "commit",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/8d130aefe1be6e737cff1d90d2a5b1658d60a3a6"
+    }
+  },
+  "pr_readback": {
+    "head": "8d130aefe1be6e737cff1d90d2a5b1658d60a3a6",
+    "base": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+    "draft": true,
+    "updated_at": "2026-11-19T11:42:34Z"
+  },
+  "compare": {
+    "status": "ahead",
+    "total_commits": 1,
+    "files": [
+      {
+        "path": "docs/qa/tier-r-cache-pin-20261119/README.md",
+        "status": "added",
+        "sha": "c94f41e837e49524b612ce7755db57d9f5bbbe5f",
+        "additions": 119,
+        "deletions": 0
+      },
+      {
+        "path": "docs/qa/tier-r-cache-pin-20261119/evidence.zip",
+        "status": "added",
+        "sha": "0842fe704129574e040d680e6cf0207a4c758077",
+        "additions": 0,
+        "deletions": 0
+      },
+      {
+        "path": "docs/qa/tier-r-cache-pin-20261119/manifest.json",
+        "status": "added",
+        "sha": "751b205be5dcfdb1372d077ac177c917c00450bb",
+        "additions": 124,
+        "deletions": 0
+      },
+      {
+        "path": "tests/test_tier_r_shard.py",
+        "status": "modified",
+        "sha": "41d36b118f24ac98194393123e078eb18542bba4",
+        "additions": 1,
+        "deletions": 1
+      }
+    ]
+  },
+  "blobs": [
+    {
+      "path": "docs/qa/tier-r-cache-pin-20261119/README.md",
+      "sha": "c94f41e837e49524b612ce7755db57d9f5bbbe5f",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 6648,
+      "known_remote": false
+    },
+    {
+      "path": "docs/qa/tier-r-cache-pin-20261119/evidence.zip",
+      "sha": "0842fe704129574e040d680e6cf0207a4c758077",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 39374,
+      "known_remote": false
+    },
+    {
+      "path": "docs/qa/tier-r-cache-pin-20261119/manifest.json",
+      "sha": "751b205be5dcfdb1372d077ac177c917c00450bb",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 4031,
+      "known_remote": false
+    },
+    {
+      "path": "tests/test_tier_r_shard.py",
+      "sha": "41d36b118f24ac98194393123e078eb18542bba4",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 20559,
+      "known_remote": false
+    }
+  ],
+  "verification": {
+    "red": 1,
+    "related_passed": 21,
+    "independent_guard_passed": 6,
+    "source": "5575af797dfaabdce6a3ee4081d680054d0a2d8f",
+    "qa": "83d45573a9049ccb07325920149b22f5ff71a3b6",
+    "ordinary_ruff": "passed",
+    "hosted_full_at_previous_head": {
+      "passed": 23268,
+      "failed": 1,
+      "skipped": 50,
+      "xfailed": 6
+    }
+  },
+  "readback_note": "First PR metadata read lagged the verified branch/commit update; a later read converged to the new head without another ref mutation."
+}

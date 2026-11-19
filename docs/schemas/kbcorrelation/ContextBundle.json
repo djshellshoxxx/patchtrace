@@ -871,7 +871,9 @@
             "sug-cve",
             "winbindex-file",
             "kev",
-            "local-note"
+            "local-note",
+            "kb-file-csv",
+            "kb-support-html"
           ],
           "title": "Source Kind",
           "type": "string"

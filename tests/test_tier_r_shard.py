@@ -433,7 +433,7 @@ def test_workflow_structure_and_pins():
             if action.startswith('ilammy/msvc-dev-cmd@'):
                 assert action == 'ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756'
             else:
-                assert '@v' in action, line
+                assert '@v' in action or action == 'actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830', line
     yaml = pytest.importorskip('yaml')
     doc = yaml.safe_load(text)
     assert set(doc['jobs']) == {'plan', 'shard', 'merge', 'windows-advisory', 'msvc-advisory'}

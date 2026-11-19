@@ -1,0 +1,24 @@
+{
+  "source_head": "2e301a74649e59e27b19a83bc283d646109ccd09",
+  "job_id": 135439504114,
+  "run_id": 44488945595,
+  "platform": "Ubuntu hosted",
+  "result": "FAILED",
+  "pytest": {
+    "failed": 1,
+    "passed": 25705,
+    "skipped": 60,
+    "xfailed": 3,
+    "seconds": 2633.42
+  },
+  "failed_case": "tests/test_ci_summary.py::test_artifacts_hold_only_labels_and_reports",
+  "cause": "expected upload-path allowlist omitted newly required Windows toolchain JSON metadata receipt",
+  "members": [
+    {
+      "path": "318-linux-current-head-failure.log",
+      "bytes": 92693,
+      "sha256": "9a4762a21c4e0cb4c390bb391fc1046caff0eef7add8e1a3f6a4b46ea28716f0"
+    }
+  ],
+  "archive_sha256": "f6e64c07d3b75e14b5266a1e342d84e09d9aff327a8151a9c4865bf0d7eeb39f"
+}

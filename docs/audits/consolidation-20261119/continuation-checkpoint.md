@@ -1,5 +1,28 @@
 # Continuation checkpoint after execution interruption
 
+## Later resumption and evidence correction
+
+This is the historical10:31:52 interruption checkpoint. The current completion
+and continuation instructions are in [the resumed checkpoint](resumed-checkpoint.md).
+The execution workspace recovered, all five component sources were committed,
+reviewed and assembled, and the combined selection passed 1199 with one native
+Windows skip and one explicit deselection. The previously local source and
+evidence packets are included in the resumed candidate.
+
+Two wording corrections are recorded here: the 319-branch census was the last
+completed pre-publication observation, not an immediate-before-publication lock;
+the implementation/test state was unobserved at interruption, not proof that no
+underlying operation could have completed. The original checkpoint commit
+976dddfbbcdf9a320e48813d8cf2c3c6540aac81 preserves the original wording.
+
+The original Search reopened-CLI claim below was also withdrawn: its SQLite
+mutation was not committed before close. Its in-owner snapshot finding remains
+valid. The corrected probe commits, reopens and asserts the modified row; four
+old-caller CLI regressions then fail, and the repaired caller passes its focused
+and adjacent controls. See [the corrected receipt](../../qa/search-admission-20261119/README.md).
+Inventory's48 independent controls overlap the 183 author controls. The residual
+ZIP contains14 payload entries plus its original source-hash manifest.
+
 Recorded 2026-11-19 10:31:52 UTC. Remote facts were read through GitHub REST after the second execution outage. This document preserves completed work and the exact continuation boundary. It is not a release acceptance statement.
 
 ## Verified repository outcome
@@ -37,7 +60,7 @@ The broad strict runtime S scan remained red with 80 observations on its previou
 
 ## Census and review coverage
 
-The complete remote snapshot immediately before this checkpoint branch was published contains **319 branches including main**, with pages 100/100/100/19 followed by an empty page, and **53 open PRs**, followed by an empty page. It also lists ten open non-PR issues: #35, #36, #39, #104, #105, #116, #118, #120, #121 and #255. No issue was blanket-closed from historical reports.
+The last completed pre-publication census at 10:31:52 UTC contains **319 branches including main**, with pages 100/100/100/19 followed by an empty page, and **53 open PRs**, followed by an empty page. It also lists ten open non-PR issues: #35, #36, #39, #104, #105, #116, #118, #120, #121 and #255. No issue was blanket-closed from historical reports.
 
 Keep the following census scopes distinct:
 
@@ -104,7 +127,7 @@ The initial actual producer/metadata probe found **20 invalid cases accepted and
 
 Independent review reproduced a further typed-error gap: a SQLite BLOB holding identical JSON bytes can escape EnrichmentStore.entries() as AttributeError before strict admission. The latest saved draft maps this to ToolError, matches cached evidence by engine/side/key, validates only the selected matching run and necessary origin models, and preserves original body_json for strict duplicate-key validation. The public ToolStore implementation is unchanged. These refinements were textually inspected but not qualified by a final run.
 
-The last confirmed test file contained **31 controls**: original 24, two BLOB cases, three duplicate-key cases and two missing evidence/origin controls. A later attempt to add opposite-side orientation history and unrelated-side model controls had no observed completion. Its orchestration cell g5:33 was terminated to prevent further dependent dispatch; underlying patch/test dispatch remains unknown and must be inspected on restoration. No implementation commit or final passing result exists.
+The last confirmed test file contained **31 controls**: original 24, two BLOB cases, three duplicate-key cases and two missing evidence/origin controls. A later attempt to add opposite-side orientation history and unrelated-side model controls had no observed completion. Its orchestration cell g5:33 was terminated to prevent further dependent dispatch; underlying patch/test dispatch remains unknown and must be inspected on restoration. No implementation commit or final passing result was observed or verified before interruption.
 
 Recorded raw digest/path fields are provenance metadata. This slice does not add verification of current raw-file bytes or strengthen the existing normalized-sidecar I/O/resource contract. Current target artifact bytes are separately verified by the Strings loader.
 

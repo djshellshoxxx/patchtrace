@@ -1,0 +1,11 @@
+{
+  "command": [
+    "/workspace/scratch/80dddc5347b2/patchtrace-reviewed-venv/bin/python",
+    "/workspace/scratch/80dddc5347b2/residual_missing_behavior_probe.py"
+  ],
+  "cwd": "/workspace/scratch/80dddc5347b2/PatchTrace-reviewed",
+  "outer_timeout_seconds": 60,
+  "timed_out": false,
+  "returncode": 0,
+  "seconds": 1.8218580940010725
+}

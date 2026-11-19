@@ -1,0 +1,108 @@
+{
+  "recorded_utc": "2026-11-19T11:14:03.099374+00:00",
+  "base": "ac3a98150bd17bbbd973c7e7dcadb7edcf551934",
+  "runtime": "2f8f69c268dcc03750596114ef891ad651c59506",
+  "tree": "6627312de90423b0d3161e4c5096fd69cf342a18",
+  "shared_helper": "41af7c7e3f3bd5e50c49b86bc061fdef834b4daf",
+  "helper_sha256": "7a06f5087927e263b2433e820ed1b1f5c3c80a6c517d445a342523685c77c373",
+  "compose_sha256": "f7688fc4e47b5c44aad195da3b55d467b8690de661c0973d4bd3c0232f1114a1",
+  "files": [
+    {
+      "path": "docs/help/25-strings-panel.md",
+      "git_blob": "33d6a9d87323c612ff1add995f42634f8eecaabe",
+      "sha256": "49036820b8a112068cb570e4495e1ec04404f111750c67dd6b57d04c039e4222",
+      "bytes": 2206
+    },
+    {
+      "path": "docs/help/73-cli-strings.md",
+      "git_blob": "1963861eed81e380674fe8ca9ace82e04a45c7a2",
+      "sha256": "06a48c27b9cb73a7afc263a557755701cf43d1bf3deb789ac5677259dcf88d38",
+      "bytes": 1401
+    },
+    {
+      "path": "docs/modules.md",
+      "git_blob": "613812b5b416343c41b6567540f8c3097b89bca7",
+      "sha256": "255c004ba6acf9ec015227db1925eebacdefee29f3d0da23ad653e628b562c2a",
+      "bytes": 360107
+    },
+    {
+      "path": "docs/specs/program-e/WB3-integration-plan.md",
+      "git_blob": "ffaf2c00391cd225919735db5d4d72238d0e2f10",
+      "sha256": "e4373167f081545a3ce2664483e6a500b06072c50582173ba46fd136b4ec8917",
+      "bytes": 60260
+    },
+    {
+      "path": "docs/specs/three-tool-evidence-adapters.md",
+      "git_blob": "198fde98dcc5f2c3b5b59e94cd38e14d5bd6dd93",
+      "sha256": "1b2455d43d354e8134f0db309248296e8a91503d7d7e2bb23b3187a5dc025e00",
+      "bytes": 40067
+    },
+    {
+      "path": "src/patchtrace/intelligence/tools/admission.py",
+      "git_blob": "ae64016dc65d575d649aafae1264d15d6d434e3c",
+      "sha256": "7a06f5087927e263b2433e820ed1b1f5c3c80a6c517d445a342523685c77c373",
+      "bytes": 6964
+    },
+    {
+      "path": "src/patchtrace/strings/cli.py",
+      "git_blob": "d7a7f54873914b1e70c055a9c23b7a63dee129ca",
+      "sha256": "b7dd07c7ead90198e33025eee0c600d6e6ad7df7c441af9ff490c41efc7f6f40",
+      "bytes": 15535
+    },
+    {
+      "path": "src/patchtrace/strings/compose.py",
+      "git_blob": "5ed4151a7513f952376b444fee85f9246b159ac9",
+      "sha256": "f7688fc4e47b5c44aad195da3b55d467b8690de661c0973d4bd3c0232f1114a1",
+      "bytes": 5763
+    },
+    {
+      "path": "src/patchtrace/strings/copy.py",
+      "git_blob": "c12434652f2af1d6599609cc0e7a657949d4c0ca",
+      "sha256": "9f283cbdb40d610843571bb08409619f65983c6365945fa2d9a8f03aff0402fb",
+      "bytes": 12425
+    },
+    {
+      "path": "src/patchtrace/strings/qt_panel.py",
+      "git_blob": "9e47c309c13eaa16670af69dec2e7a55e97d929c",
+      "sha256": "6a61576067cb79891f048b961be22b7f304c47b1fdb74ef48dc0a1cb0a17c937",
+      "bytes": 28907
+    },
+    {
+      "path": "src/patchtrace/strings/tooltip_entries.py",
+      "git_blob": "d98d7513b507ff7c3ab7cb1e85748d9c160424c8",
+      "sha256": "93ffb7c49b538311e9be88099d1954ec864357c6efa680059b6e6a5c025bf401",
+      "bytes": 8956
+    },
+    {
+      "path": "tests/test_intel_tools_admission.py",
+      "git_blob": "626e95da8297eea959d7c9b0344e1e32eecc3e4d",
+      "sha256": "7b9de0cb4f716df0fc940cb64854a4f686f6fd85db67fe8cc18e3c95fa194e11",
+      "bytes": 8597
+    },
+    {
+      "path": "tests/test_strings_compose.py",
+      "git_blob": "afe5fa0e4c6ed8cb6066991f91c4a3a80a2462ac",
+      "sha256": "4209c8041045413eecbbaf4c652b5d59c5b8f0849f14c2172adbec49035cadbd",
+      "bytes": 5036
+    },
+    {
+      "path": "tests/test_strings_source_identity.py",
+      "git_blob": "e5407f77ad1fcada4950dd533f1be84b5ba1e9eb",
+      "sha256": "8653fea513a949bf003ebb8d8848eebb87e9771e207de3a29231e3133d9a934c",
+      "bytes": 3531
+    },
+    {
+      "path": "tests/test_strings_stored_admission.py",
+      "git_blob": "44bdad5e1cc80e60c1b235edc55846c42dcd7b93",
+      "sha256": "4983cae4b8e4a041f0b045efcc7284e2d51f68a82ea8fa67ec507868bbbaded9",
+      "bytes": 7485
+    },
+    {
+      "path": "tests/test_ui_strings_source.py",
+      "git_blob": "a24cbdea196d1b0242daca1f46447c7b26deaa5c",
+      "sha256": "b3421bb53e142a0afb036bc637bf95bded2a2736c81b3f7403e7c2278988e976",
+      "bytes": 11830
+    }
+  ],
+  "qualification": "Authored FLOSS executable and synthetic input bytes; no target or native engine executed."
+}

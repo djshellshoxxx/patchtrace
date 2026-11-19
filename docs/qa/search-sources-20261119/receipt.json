@@ -1,0 +1,164 @@
+{
+  "recorded_at": "2026-11-19T09:57:40.007109+00:00",
+  "status": "BLOCKED_PENDING_SELECTED_ROW_GUARD_ADMISSION",
+  "base": "ac3a98150bd17bbbd973c7e7dcadb7edcf551934",
+  "original_source": "33e7e33805e68b03665ab860fc19c83fd11fc5d8",
+  "spec": "f96b2c3a4f8c77e8f7c0bbec419775ad4e601c83",
+  "source": "c14c836fd9fee3e054ae2294122f818ce45b1062",
+  "source_tree": "3e8b6b92259b34fa6873056254381320d2073312",
+  "runtime_and_test_sha256": {
+    "src/patchtrace/search/cli.py": "ea05dd1986407ab8765848f950ace4dd012f374de52dbbeac2033e708c280a74",
+    "src/patchtrace/search/panel.py": "51f9f9db67f62011adabca393a4663d381953f73d6f5c8201d1135475d8a943c",
+    "src/patchtrace/search/qt_panel.py": "3e36f65b19a01d1e4b3a11bd63c29081e84a2d1507250ba7f21436903179dcc3",
+    "src/patchtrace/search/wiring.py": "3a37d859a78bb241a98286c2ef505f0d27e3b99aa50203455549e5f24cef159e",
+    "tests/test_search_wiring.py": "8f040fc9e5e7e9326cf0464e05b1e9e72c574e965cfde1c04783b2788afbf1e1",
+    "tests/test_search_current_sources.py": "0af5810186fd2d5e7ea1291f64e6678b9ea36ef15258e9037762238011d29e1f"
+  },
+  "unchanged_base_blobs": {
+    "src/patchtrace/intelligence/tools/store.py": "7e38298266e02eb52ea86c66e0f086a7bb9fd7d1",
+    "src/patchtrace/enrichment/storage.py": "419b518a9cc19f112513359bab5c7cb3f8b208d5",
+    "src/patchtrace/intelligence/storage.py": "66dd7d1caada74c6ee8654686e072ff26f36c1dc",
+    "src/patchtrace/owned_publication.py": "71f3bbd5b74fb8ddfa212001e50ade82e4340354",
+    "src/patchtrace/search/saved.py": "802453910297cef1b8792d7a1c530bf932726d6b",
+    "src/patchtrace/search/saved_actions.py": "053955c173e45ca230ae2f9c021b41d7b7467192",
+    "src/patchtrace/search/qt_saved.py": "2f1749489739cd923834c62001d0cd0357c528ee"
+  },
+  "junit": {
+    "red": {
+      "tests": "22",
+      "failures": "13",
+      "errors": "0",
+      "skipped": "0",
+      "time": "8.624"
+    },
+    "green": {
+      "tests": "927",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "59.230"
+    },
+    "limit-fixture-failure": {
+      "tests": "237",
+      "failures": "1",
+      "errors": "0",
+      "skipped": "0",
+      "time": "10.551"
+    },
+    "final": {
+      "tests": "237",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "9.132"
+    }
+  },
+  "transport": {
+    "baseline_missing_behavior.py": {
+      "original_file": "residual_missing_behavior_probe.py",
+      "original_sha256": "232303429d62133e1ea50295f97c5f143995eb3ab8d761dae21ab5dedb182a9e",
+      "stored_sha256": "232303429d62133e1ea50295f97c5f143995eb3ab8d761dae21ab5dedb182a9e"
+    },
+    "baseline-missing-behavior.json": {
+      "original_file": "residual-missing-behavior.log",
+      "original_sha256": "b8ff3f109c1c6dd3cb075402719e54557a1d4e4d35011b38eb4095e927cfefbc",
+      "stored_sha256": "b8ff3f109c1c6dd3cb075402719e54557a1d4e4d35011b38eb4095e927cfefbc"
+    },
+    "baseline-result.json": {
+      "original_file": "residual-missing-behavior-result.json",
+      "original_sha256": "cf417af579b09f2f6522b27fb9575d757d58d34f8c35ed4907f36ef398726139",
+      "stored_sha256": "cf417af579b09f2f6522b27fb9575d757d58d34f8c35ed4907f36ef398726139"
+    },
+    "original-port-red-source.patch.gz": {
+      "original_file": "search-sources-red-source.patch",
+      "original_sha256": "0ee03eaa608b1f3633e70d0553c968da7d545a0670df785e955f08321faeb819",
+      "stored_sha256": "fe3e127fe4b99c940ea9d16a3206424bc33f28ea54767fc5700c266ef54e6e02"
+    },
+    "original-port-red-source-hashes.json": {
+      "original_file": "search-sources-red-source-hashes.json",
+      "original_sha256": "9ef848a4d3a8c90b7752100e7c98468febceebf1cd6ddc6dfd6952500ceb81ef",
+      "stored_sha256": "9ef848a4d3a8c90b7752100e7c98468febceebf1cd6ddc6dfd6952500ceb81ef"
+    },
+    "red.log.gz": {
+      "original_file": "search-sources-red.log",
+      "original_sha256": "236fa17eb57cd62907336dcb7a7c18f907af64a4750d2b16b13f45e8edba9902",
+      "stored_sha256": "d906fa0de0d2682412d828bb0edcc94d0d742f87b622793913479fa52eabe52a"
+    },
+    "red.xml.gz": {
+      "original_file": "search-sources-red.xml",
+      "original_sha256": "236332352ec610172e3665c2238421d21a0db978b152829e8b99a5abf5533ef4",
+      "stored_sha256": "32cf28a3dff9c92580c941e5d9d7e076ff113fc4c3b52a60a8237c79f00d58d3"
+    },
+    "affected-green.log": {
+      "original_file": "search-sources-green.log",
+      "original_sha256": "1c31dbd16673a2d05a3b5bbaed4d0b916ebd9ffe83040d4fde10aca9d512e2a3",
+      "stored_sha256": "1c31dbd16673a2d05a3b5bbaed4d0b916ebd9ffe83040d4fde10aca9d512e2a3"
+    },
+    "affected-green.xml.gz": {
+      "original_file": "search-sources-green.xml",
+      "original_sha256": "c094120d5d81881a3bfff81a022a92ddb541d3347d14873f5d63271375ab1d33",
+      "stored_sha256": "0f29cc11b8206c8940022bd356d675397c73a65648461b4d61f4b2a2de75c043"
+    },
+    "limit-fixture-failure.log.gz": {
+      "original_file": "search-sources-limit-fixture-failure.log",
+      "original_sha256": "a1f44a4d75ffed9e14c15fb8276c0d6ddae6cce026632887eff3495ce00d8067",
+      "stored_sha256": "215fbabf03009d65d40836b3015a7f16560494b1f67d6bdd9d3127a207f2c162"
+    },
+    "limit-fixture-failure.xml.gz": {
+      "original_file": "search-sources-limit-fixture-failure.xml",
+      "original_sha256": "010ac9bf25e99f6e0978c81480183c93c175087712305b387c97d896ef1551e8",
+      "stored_sha256": "8284ff94f0a5f5fb74b12fe07a04671c2f68114012e8921b33869b45ae5c8514"
+    },
+    "final-green.log": {
+      "original_file": "search-sources-final.log",
+      "original_sha256": "593bc2ad6086d05d28d74d55d52f0ef851598778b15846cc71581a9d4ba0ef40",
+      "stored_sha256": "593bc2ad6086d05d28d74d55d52f0ef851598778b15846cc71581a9d4ba0ef40"
+    },
+    "final-green.xml.gz": {
+      "original_file": "search-sources-final.xml",
+      "original_sha256": "e30699807e4b899c18a32d39837aa6ebcda22c0abdcec468bb8182ec9157ef76",
+      "stored_sha256": "67d0a601b6ebd110e342087f543c0111f0a1d67ff6eb1649ab0bbcedfbc16eee"
+    },
+    "ruff-initial.log": {
+      "original_file": "search-sources-ruff-initial.log",
+      "original_sha256": "9a11713e22e9b757d07dbb18d2223a5ca310bcc9a6134344165d701ea5c44d0b",
+      "stored_sha256": "9a11713e22e9b757d07dbb18d2223a5ca310bcc9a6134344165d701ea5c44d0b"
+    },
+    "ruff-final.log": {
+      "original_file": "search-sources-ruff-final.log",
+      "original_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "stored_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "reconciliation.txt": {
+      "original_file": "search-source-port-reconciliation.txt",
+      "original_sha256": "4c52de8e3a1585c5859586189fa9512adccf8d700a9cdcf9e97d08c04349db95",
+      "stored_sha256": "4c52de8e3a1585c5859586189fa9512adccf8d700a9cdcf9e97d08c04349db95"
+    },
+    "independent_stale_guard.py": {
+      "original_file": "search-stale-guard-independent.py",
+      "original_sha256": "79d2e61cb61bbab6d995b76843e151365270df3802508e8ca802563f76c8b74a",
+      "stored_sha256": "79d2e61cb61bbab6d995b76843e151365270df3802508e8ca802563f76c8b74a"
+    },
+    "independent-stale-guard-red.json": {
+      "original_file": "search-stale-guard-independent.json",
+      "original_sha256": "5ebc930b2812c416b64b350f23c8ee929ac2aa487f7051055d6fe573cd3c990b",
+      "stored_sha256": "5ebc930b2812c416b64b350f23c8ee929ac2aa487f7051055d6fe573cd3c990b"
+    }
+  },
+  "commands": {
+    "environment": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src QT_QPA_PLATFORM=offscreen",
+    "interpreter": "/workspace/scratch/80dddc5347b2/patchtrace-reviewed-venv/bin/python",
+    "red": "python -m pytest -q -p no:cacheprovider tests/test_search_current_sources.py tests/test_search_wiring.py",
+    "affected": "python -m pytest -q -p no:cacheprovider tests/test_search*.py tests/test_ui_search*.py tests/test_intel_storage.py tests/test_advisory_read_bounds.py",
+    "final": "python -m pytest -q -p no:cacheprovider tests/test_search_current_sources.py tests/test_search_wiring.py tests/test_help_docs.py",
+    "ruff": "python -m ruff check src tests tools",
+    "whitespace": "git diff --check"
+  },
+  "qualification": [
+    "927 affected tests preceded only import ordering, the source-limit user copy and the added optional-group preservation control.",
+    "237 final controls tested byte-identical runtime/tests to the source commit; help text was present in the tested worktree and is sealed with this docs commit.",
+    "An independent real-store/CLI probe then found stale/foreign selected-row guards still admitted; this source is blocked until a shared opt-in admission repair lands.",
+    "No full repository, repeated20-session Qt, native tool, Windows desktop, frozen package or release qualification is claimed.",
+    "ToolStore and EnrichmentStore were unchanged. Metadata-key inclusion is not selected-row admission."
+  ]
+}

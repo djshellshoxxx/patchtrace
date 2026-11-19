@@ -2,6 +2,8 @@
 
 Searches a project's saved names, strings, APIs, code, notes and advisories. It is offline: nothing is uploaded and no target runs. Results keep their side (older, newer or both), their kind and their source.
 
+Stored FLOSS strings, capa capabilities, Detect It Easy build information, imported advisories and existing CVE snapshots join the search when available. Tool results must describe the current artifact and side; after swapping builds, older stored results may be unavailable until fresh matching results exist. Search does not run these tools. Coverage explains unavailable groups, while other indexed project groups remain searchable.
+
 ```
 patchtrace search [PROJECT] --query TEXT [--kind K] [--side older|newer|both] [--scope indexed|changed]
                   [--mode auto|words|exact|prefix|substring|similar] [--sort relevance|change|name|address]

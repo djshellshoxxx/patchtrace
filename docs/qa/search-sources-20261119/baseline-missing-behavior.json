@@ -1,0 +1,52 @@
+{
+  "source": "ac3a98150bd17bbbd973c7e7dcadb7edcf551934",
+  "search": {
+    "import": {
+      "code": 0,
+      "stdout": "imported PT-SYNTH_CVE-2099-10001 revision 1 (f91e5c16ff21): 2 CVE(s), current, 1 retrieval(s), unverified-local-file\n",
+      "stderr": ""
+    },
+    "stored_advisory_count": 1,
+    "production": {
+      "code": 4,
+      "stdout": "{\"command\": \"search\", \"contract\": \"enrichment-cli/1\", \"result\": {\"contract\": \"search/1\", \"counterpart_hints\": [], \"coverage\": [{\"built_utc\": \"2026-11-19T09:27:08Z\", \"digest16\": \"91d93e972f571c64\", \"docs\": 0, \"group\": \"ann\", \"kinds\": [\"note\"], \"reason\": \"\", \"side\": null, \"status\": \"indexed\"}, {\"built_utc\": \"2026-11-19T09:27:08Z\", \"digest16\": \"9aeeb96e9942b31a\", \"docs\": 0, \"group\": \"fnd\", \"kinds\": [\"finding\"], \"reason\": \"\", \"side\": null, \"status\": \"indexed\"}, {\"built_utc\": \"2026-11-19T09:27:08Z\", \"digest16\": \"274386b093470e52\", \"docs\": 3, \"group\": \"pe:older\", \"kinds\": [\"import\", \"export\", \"build\"], \"reason\": \"\", \"side\": \"older\", \"status\": \"indexed\"}, {\"built_utc\": \"2026-11-19T09:27:08Z\", \"digest16\": \"1083beda0e3b152d\", \"docs\": 3, \"group\": \"pe:newer\", \"kinds\": [\"import\", \"export\", \"build\"], \"reason\": \"\", \"side\": \"newer\", \"status\": \"indexed\"}, {\"built_utc\": null, \"digest16\": null, \"docs\": 0, \"group\": \"fn\", \"kinds\": [\"function\", \"code\"], \"reason\": \"No completed analysis run with raw output yet.\", \"side\": null, \"status\": \"not-applicable\"}, {\"built_utc\": null, \"digest16\": null, \"docs\": 0, \"group\": \"raw\", \"kinds\": [\"string\", \"function\"], \"reason\": \"No completed analysis run with raw output yet.\", \"side\": null, \"status\": \"not-applicable\"}, {\"built_utc\": null, \"digest16\": null, \"docs\": 0, \"group\": \"ir\", \"kinds\": [\"asm\"], \"reason\": \"Instruction text is not searchable: Ghidriff keeps only a hash of each function's instructions. Run unified extraction to add it.\", \"side\": null, \"status\": \"unavailable\"}], \"cursor\": null, \"hits\": [], \"index_key\": \"1ab3ec3319b6467c\", \"interpreted_as\": \"all of: CVE-2099-10001; scope: indexed\", \"status\": \"no-results\", \"suggestions\": [], \"timings_ms\": {\"build\": 15, \"search\": 16}, \"total\": 0, \"total_capped\": false, \"warnings\": []}, \"status\": \"no-results\", \"warnings\": []}\n",
+      "stderr": "",
+      "groups": [],
+      "hit_count": 0
+    },
+    "existing_adapter_injected_control": {
+      "code": 0,
+      "stdout": "{\"command\": \"search\", \"contract\": \"enrichment-cli/1\", \"result\": {\"contract\": \"search/1\", \"counterpart_hints\": [], \"coverage\": [{\"built_utc\": \"2026-11-19T09:27:08Z\", \"digest16\": \"91d93e972f571c64\", \"docs\": 0, \"group\": \"ann\", \"kinds\": [\"note\"], \"reason\": \"\", \"side\": null, \"status\": \"indexed\"}, {\"built_utc\": \"2026-11-19T09:27:08Z\", \"digest16\": \"9aeeb96e9942b31a\", \"docs\": 0, \"group\": \"fnd\", \"kinds\": [\"finding\"], \"reason\": \"\", \"side\": null, \"status\": \"indexed\"}, {\"built_utc\": \"2026-11-19T09:27:08Z\", \"digest16\": \"274386b093470e52\", \"docs\": 3, \"group\": \"pe:older\", \"kinds\": [\"import\", \"export\", \"build\"], \"reason\": \"\", \"side\": \"older\", \"status\": \"indexed\"}, {\"built_utc\": \"2026-11-19T09:27:08Z\", \"digest16\": \"1083beda0e3b152d\", \"docs\": 3, \"group\": \"pe:newer\", \"kinds\": [\"import\", \"export\", \"build\"], \"reason\": \"\", \"side\": \"newer\", \"status\": \"indexed\"}, {\"built_utc\": null, \"digest16\": null, \"docs\": 0, \"group\": \"fn\", \"kinds\": [\"function\", \"code\"], \"reason\": \"No completed analysis run with raw output yet.\", \"side\": null, \"status\": \"not-applicable\"}, {\"built_utc\": null, \"digest16\": null, \"docs\": 0, \"group\": \"raw\", \"kinds\": [\"string\", \"function\"], \"reason\": \"No completed analysis run with raw output yet.\", \"side\": null, \"status\": \"not-applicable\"}, {\"built_utc\": null, \"digest16\": null, \"docs\": 0, \"group\": \"ir\", \"kinds\": [\"asm\"], \"reason\": \"Instruction text is not searchable: Ghidriff keeps only a hash of each function's instructions. Run unified extraction to add it.\", \"side\": null, \"status\": \"unavailable\"}, {\"built_utc\": \"2026-11-19T09:27:08Z\", \"digest16\": \"47dd603dbd6246a4\", \"docs\": 2, \"group\": \"adv\", \"kinds\": [\"advisory\", \"cwe\", \"kb\"], \"reason\": \"\", \"side\": null, \"status\": \"indexed\"}, {\"built_utc\": null, \"digest16\": null, \"docs\": 0, \"group\": \"cve\", \"kinds\": [\"cve\", \"cwe\"], \"reason\": \"CVE records are not available for this project.\", \"side\": null, \"status\": \"unavailable\"}], \"cursor\": null, \"hits\": [{\"change_class\": 3, \"components\": 1, \"evidence\": [{\"digest16\": \"47dd603dbd6246a4\", \"group\": \"adv\", \"kind\": \"advisory\", \"locator\": {\"excerpt_sha256\": null, \"file_offset\": null, \"function_id\": null, \"line_end\": null, \"line_start\": null, \"run_id\": null, \"rva\": null, \"scheme\": \"advisory\", \"side\": null, \"source_ref\": \"adv#0\"}, \"origin\": \"advisory\", \"reasons\": [{\"code\": \"exact-id\", \"detail\": \"\", \"field\": \"cve\"}], \"seen_by\": [\"advisory\"], \"side\": null, \"snippet\": \"\\u2026heading\\\\n\\\\u202eevil\\\\u202c \\u00dcn\\u00efc\\u00f6d\\u00e9 \\u2014 \\u6f0f\\u6d1e `code`  \\\\nCVE-2099-10001\\\\nSYNTHETIC Example OS netstack Remote Code Execution\\u2026\", \"spans\": [[50, 64]], \"title\": \"SYNTHETIC Example OS netstack and print spooler vulnerabilities\"}], \"evidence_total\": 1, \"expansion\": null, \"hit_id\": \"h-821e042cc86856e1a874221f\", \"presence\": null, \"rank_reasons\": [\"tier 0: exact identity (full name, address, id or hash)\", \"change class 3: not tied to a function\", \"1 independent source: advisory\"], \"tier\": 0}], \"index_key\": \"7bba48a7178ced13\", \"interpreted_as\": \"all of: CVE-2099-10001; scope: indexed\", \"status\": \"ok\", \"suggestions\": [], \"timings_ms\": {\"build\": 10, \"search\": 12}, \"total\": 1, \"total_capped\": false, \"warnings\": []}, \"status\": \"ok\", \"warnings\": []}\n",
+      "stderr": "",
+      "groups": [
+        "adv"
+      ],
+      "hit_count": 1
+    }
+  },
+  "strings": {
+    "cli": [
+      {
+        "display": "GetProcAddress",
+        "status": "only-newer",
+        "cues": [
+          "api-name",
+          "identifier"
+        ]
+      }
+    ],
+    "dock_loader": [
+      {
+        "display": "GetProcAddress",
+        "status": "only-newer",
+        "cues": [
+          "identifier"
+        ]
+      }
+    ],
+    "fixture_sha256": [
+      "82742d4d59224f3ce0f2fdaf9485063dfbb517200afc12a7352bb82157784292",
+      "6b2e552712b0ec1474dda3e578c58c291314fa711d5060f372f448756a9c1624"
+    ]
+  }
+}

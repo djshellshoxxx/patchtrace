@@ -11,6 +11,7 @@ patchtrace strings export ...    # write the delta to a JSON or CSV file (redact
 ```
 
 - Strings that look like secrets are redacted unless you pass `--show-secrets`.
+- `--source auto` uses existing FLOSS results that match each current artifact and side, falling back to the built-in scan where they are unavailable. `--source builtin` reads both files directly; `--source floss` requires current stored evidence for both sides. Results from before an orientation swap are not reused for the wrong build.
 - Compare the extraction settings of both sides before you call a string added or removed. Incompatible settings leave the comparison unknown.
 - A string in a file is not proof that a function uses it.
 

@@ -1,0 +1,67 @@
+{
+  "source": "41af7c7e3f3bd5e50c49b86bc061fdef834b4daf",
+  "tree": "3e2e48e4fd7fd159d84eefb3b9f3acf5b78d7e8d",
+  "base": "ac3a98150bd17bbbd973c7e7dcadb7edcf551934",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "sqlite": "3.53.1",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "executable": "/workspace/scratch/80dddc5347b2/patchtrace-tool-admission-venv/bin/python",
+  "patchtrace_import": "/workspace/scratch/80dddc5347b2/PatchTrace-tool-admission/src/patchtrace/__init__.py",
+  "source_files": [
+    "docs/modules.md",
+    "docs/specs/three-tool-evidence-adapters.md",
+    "src/patchtrace/intelligence/tools/admission.py",
+    "tests/test_intel_tools_admission.py"
+  ],
+  "unchanged_blobs": {
+    "src/patchtrace/intelligence/tools/store.py": {
+      "base": "7e38298266e02eb52ea86c66e0f086a7bb9fd7d1",
+      "source": "7e38298266e02eb52ea86c66e0f086a7bb9fd7d1"
+    },
+    "src/patchtrace/enrichment/storage.py": {
+      "base": "419b518a9cc19f112513359bab5c7cb3f8b208d5",
+      "source": "419b518a9cc19f112513359bab5c7cb3f8b208d5"
+    },
+    "src/patchtrace/intelligence/tools/common.py": {
+      "base": "50a32384f6d8cfd57c41efc472599214132e4faa",
+      "source": "50a32384f6d8cfd57c41efc472599214132e4faa"
+    },
+    "src/patchtrace/intelligence/tools/normalize.py": {
+      "base": "bb568abb13805096e0c21fe7b552339bae516a35",
+      "source": "bb568abb13805096e0c21fe7b552339bae516a35"
+    },
+    "src/patchtrace/persistence.py": {
+      "base": "ba7adbde847d646dcc7420149da2dea013f597d3",
+      "source": "ba7adbde847d646dcc7420149da2dea013f597d3"
+    },
+    "pyproject.toml": {
+      "base": "7d619559d3d94364c2b81e8700fbc5268a417da6",
+      "source": "7d619559d3d94364c2b81e8700fbc5268a417da6"
+    }
+  },
+  "focused_command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src:tests /workspace/scratch/80dddc5347b2/patchtrace-tool-admission-venv/bin/python -m pytest -q tests/test_intel_tools_admission.py --junitxml=/workspace/scratch/80dddc5347b2/tool-admission-focused-final.xml",
+  "focused_result": {
+    "passed": 33,
+    "seconds": 3.54,
+    "exit_code": 0
+  },
+  "ruff_command": "/workspace/scratch/80dddc5347b2/patchtrace-tool-admission-venv/bin/python -m ruff check src/patchtrace/intelligence/tools/admission.py tests/test_intel_tools_admission.py",
+  "ruff_observed_stdout": "All checks passed!",
+  "ruff_exit_code": 0,
+  "diff_check_exit_code": 0,
+  "outage_history": {
+    "session25304": "Interrupted; no green-initial artifact found; no pass credited.",
+    "cell_g5_33": "Terminated without result; restoration confirmed the pending two-test patch and focused-final artifacts were absent; fresh33-control run followed."
+  },
+  "independent_helper_review": {
+    "source": "41af7c7e3f3bd5e50c49b86bc061fdef834b4daf",
+    "helper_sha256": "7a06f5087927e263b2433e820ed1b1f5c3c80a6c517d445a342523685c77c373",
+    "disposition": "scoped approved",
+    "blob_typed_refusals": 2,
+    "metadata_typed_refusals": 21,
+    "selected_controls_passed": 7,
+    "selected_controls_seconds": 1.96,
+    "counts_overlap_author_selection": true,
+    "caller_and_native_gate": "separate, not qualified by these results"
+  }
+}

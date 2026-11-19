@@ -1,0 +1,82 @@
+{
+  "baseline": "ac3a98150bd17bbbd973c7e7dcadb7edcf551934",
+  "source": "dc841095307c486ad8397e6e44ccea2c98b4e7d1",
+  "source_tree": "9793bfb0e7db1a9bf804d00d4724cdd6ebc5e923",
+  "archive_sha256": "bbb040644d8cbf661d6a5494d729e097e9b7668bc77c123e69711099c0418741",
+  "members": [
+    {
+      "path": "checks/gui-recovery-red.log",
+      "bytes": 2327,
+      "sha256": "ca9c0522a44b96691b8eb6e46f19ab833e01203eefee8327d1af6edb17cf1eb5"
+    },
+    {
+      "path": "checks/gui-recovery-red.xml",
+      "bytes": 2651,
+      "sha256": "958ac205bf786c72ee6d69fbcf47e29432b92e546b73e0761df05d6e0f82199b"
+    },
+    {
+      "path": "checks/gui-recovery-green.log",
+      "bytes": 261,
+      "sha256": "e5f387090bc0e66e9fad3129107ff8261779bde32da411d8983bb321c1f0d2fa"
+    },
+    {
+      "path": "checks/gui-recovery-green.xml",
+      "bytes": 22827,
+      "sha256": "7e4799b161cb72fa8635dae735cffb1e99d9785db6c44d4f2f5fd9c8b9b4edd3"
+    },
+    {
+      "path": "checks/gui-recovery-collection-error.log",
+      "bytes": 92,
+      "sha256": "faf4247f807f7eecc7591af3e6842a942b8c8f9b6eabb2e4715a8e5c95d1d86d"
+    },
+    {
+      "path": "checks/gui-recovery-collection-error.xml",
+      "bytes": 238,
+      "sha256": "fd8853c1d1823933eb2cf4859987eb35e9622ed8e7883f32ad3a01989ed0c55d"
+    },
+    {
+      "path": "baseline/src/patchtrace/gui/qt/table.py",
+      "bytes": 17522,
+      "sha256": "ab394b5d9ea3d93d1ed2e9921bb49b8fec918b495efa947d977c958adf4eafdb"
+    },
+    {
+      "path": "baseline/src/patchtrace/gui/table_spec.py",
+      "bytes": 6064,
+      "sha256": "784125aaafdc1df2e52c39e2974697acb572baee43687f1d8781ca183ec40f47"
+    },
+    {
+      "path": "baseline/src/patchtrace/ui_evidence.py",
+      "bytes": 63816,
+      "sha256": "2c8ac654d5a79c90b1fd1013ad1e59d82a96198c77a3f1be892f5146e4511b04"
+    },
+    {
+      "path": "source/selective-source.diff",
+      "bytes": 4676,
+      "sha256": "8fac542fdd1488aa5086dea1f90efcac20cacc7825dbce72d4b68176f3e32885"
+    },
+    {
+      "path": "source/original-header-help-and-excluded-keyboard-palette.diff",
+      "bytes": 6135,
+      "sha256": "3c730b4ba52563db50a44d99886c2ffa3476b7cd9343eaaf62ddb1d35d8ccdcd"
+    },
+    {
+      "path": "source/original-evidence-announcer.diff",
+      "bytes": 2887,
+      "sha256": "7131f9055df74f8ec0fbcc2b57fb70b0975de64625b335b723bc0c391e3d4f8b"
+    }
+  ],
+  "source_files": [
+    {
+      "path": "src/patchtrace/gui/qt/table.py",
+      "sha256": "c8ff60f1623852435dd9d11519b10356999ce8dd8efd2d5eebb006467b3228dc"
+    },
+    {
+      "path": "src/patchtrace/gui/table_spec.py",
+      "sha256": "474cf5217e456ab64b75d98155e7580013a34ffc02508a5d79bcf0efcca7e862"
+    },
+    {
+      "path": "src/patchtrace/ui_evidence.py",
+      "sha256": "ae0a4c0a0ce24a2f05060b3c3712df1f9ff0388f7bd2ada542b40baeb2651ae2"
+    }
+  ]
+}
