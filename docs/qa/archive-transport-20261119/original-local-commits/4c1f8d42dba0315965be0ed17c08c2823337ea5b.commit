@@ -1,0 +1,6 @@
+tree 78be82946c50d28a4bd96fd1bde44b4bdbfc2b6c
+parent 8e1bdb09c3cb6140d56ec17e0d129e0ecaa8e986
+author Codex <codex@openai.com> 1795044663 -0800
+committer Codex <codex@openai.com> 1795045652 -0800
+
+Make diagnostic omissions and final cap refusal explicit [no release]

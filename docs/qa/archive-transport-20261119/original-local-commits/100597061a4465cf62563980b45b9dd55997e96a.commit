@@ -1,0 +1,8 @@
+tree 48714a998f3bf5c9ad82d7ded5044dc633d6aa70
+parent 01fa79dfcb03f495df9461833591b4bc2075bd52
+author Codex <codex@openai.com> 1795040729 -0800
+committer Codex <codex@openai.com> 1795041047 -0800
+
+Retain exact core admission checkpoint qualification [no release]
+
+(cherry picked from commit fa4bebbb7a5a7095d4764066ffb73cd73cf85499)

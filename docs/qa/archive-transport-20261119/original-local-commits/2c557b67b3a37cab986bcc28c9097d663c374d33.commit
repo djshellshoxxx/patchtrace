@@ -1,0 +1,8 @@
+tree c4a64312b15ebb6cb73ecb62060362398022bb44
+parent c1685bca780de6702d8c3d1932136f75f760de35
+author Codex <codex@openai.com> 1795043080 -0800
+committer Codex <codex@openai.com> 1795044125 -0800
+
+Specify exact shared reader imports and adversarial guard controls [no release]
+
+(cherry picked from commit 5cdf1732a1d85679bb9a72ab79a4337fd8497405)

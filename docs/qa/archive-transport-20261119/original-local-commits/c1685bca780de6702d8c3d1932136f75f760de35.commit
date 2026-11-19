@@ -1,0 +1,8 @@
+tree 2f6936a0097a7b9317d98c0dbefc637acf8cc721
+parent 5124d15ae9923388d8958c900536e0f12f23873b
+author Codex <codex@openai.com> 1795041812 -0800
+committer Codex <codex@openai.com> 1795042911 -0800
+
+Record independent non-initializing capture prerequisite [no release]
+
+(cherry picked from commit 62f0712782b999b63cdb40b1f906526f8fef64f3)

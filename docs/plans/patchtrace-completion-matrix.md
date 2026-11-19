@@ -523,3 +523,49 @@ Ruff passes; strict S still fails on 80 unchanged sites. No waiver or suppressio
 [Complete correction and retained evidence](../qa/kbc-held-import-guard-20261118/README.md).
 Five Windows/Qt jobs remain incomplete at the separate snapshot. Main merge,
 native/package/security and final beta acceptance remain blocked. No release.
+
+
+## Workspace and diagnostic integration — 2026-11-19
+
+Exact source `1a9942a5c63ba707e8678cb2f6dcd1dc39c4afd2` passes 2,043 checks with zero failures, errors or skips
+in 34.62 seconds: 64 selected files, ten unchanged original probes, 480 canonical
+imports and 32 owner paths. Documentation parent `f16d41062a5d558d889ef6a6bda922004e0ac3b4` adds only the unified
+QA packet. Existing-workspace admission/owned handoff, native stdin forwarding,
+Tier R exit-one diagnostics and bounded first/second unified retention are
+independently reviewed and integrated. Normal Ruff passes; strict S still fails
+80 unchanged sites. No Windows/native/release acceptance follows from this gate.
+
+The complete316-head/63-open-PR refresh agrees between REST and Git; all131 focal
+tips remain exact. Main remains9c411ca3; PR304d8c02cae/30758fc1306/316771e remain
+open and unmerged. Thirty-three append-only remote objects are prepared and read
+back, without moving the branch ref. Original source histories and failures remain.
+
+Actual771e Windows full QA is51failed/25155passed/150skipped/2xfailed; root rechecks
+the25358-case JUnit, original artifact/log,28 source snapshots and all51 nodes.
+Only3 are covered by the separately repaired import guard. Platform fixture and
+core creation defects are assigned; four captured causes remain unresolved.
+Two Qt jobs remain in progress at00:18:02UTC. Windows packaging/frozen/installer,
+native repeatability/containment, strict security and real analyst journeys are
+not qualified. The original failed source is not relabeled as a pass.
+
+Pure durable package contracts are approved for spec-first work with independent
+cap/accounting/reducer corrections and actual core revision-zero compatibility.
+Native leaf/reader design is approved but queued behind Windows repair. Neither
+design supplies a complete package route. [Complete source, evidence and branch
+inventory](../qa/admission-diagnostics-integration-20261119/README.md).
+
+| Feature / bounded scope | Current state | Completion | Remaining work | Source | Dependencies | Tests | Security | Owner | Acceptance |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Existing-workspace admission and handoff | Implemented and independently integrated | D,R:50% for this slice | Explicit v2 migration, durable caller, native journey and final gates |c470a31a/a7a4fb16; local0196dc4a/3711b2d4|Actual SQLite connection and owned cleanup|44original admission reds;6handoff reds; unchanged original root probe; combined2043|No application initialization, no forensic zero-write claim; ordinary defaults retained|KB + root|Representative durable journey and platform G|
+| Trusted native stdin forwarding | Implemented portable source; actual Windows acceptance pending | D,R:50% | Windows SDK/ABI, restricted descendants, full containment and final gates |3d083102/49e2bf90; locala28c37eb/4e086f10|Held original kernel object and existing supervisor|57focused/379affected; root2043 union; original125 failure preserved|No reopen-by-path, stale-close retry or timeout-as-denial credit|CI + root|Actual final-source Windows ownership/lifecycle/network receipts|
+| Tier R failed-run diagnostics | Implemented and independently integrated | D,R:50% for diagnostic scope | Actual native cause investigation and final gates |4cdd463f; local4c5cb091|Existing recognized summary and bounded diagnostics|46original reds;265affected; unchanged2red/2positive probe; combined2043|No native-cause inference, outcome mutation or new unbounded data|CI + root|Exact-source native observation with unchanged research outcomes|
+| Unified first/second diagnostic retention | Implemented and independently integrated | D,R:50% for diagnostic scope | Obtain both real mismatch captures, repair demonstrated cause, native/final gates |adab5118; local1a9942a5|Existing independent analysis runs and exact retained bytes|333affected;6unchangedboundarycontrols; root2043 union|Four slots/48MiB cap, explicit omissions, original digest and fresh interrupts preserved|Binary analysis + root|Both actual run records plus unchanged native acceptance|
+| Windows full QA and packaging | Failed at published771e; repairs assigned | No new completed final gate | Repair12healthy retry refusals,32fixture failures,4unresolved causes; rerun full/Qt/frozen/installer |771e job135175350823;52a fixes3separate guards|Qualified Windows lane and unchanged source/ownership assertions|25155passes/51failures/152JUnit skipped; packaging skipped|No assertion suppression, metadata identity relaxation or stale-source pass|CI + core + root|Exact candidate complete Windows gate and artifacts|
+| Pure durable package intent/progress | Reviewed design with explicit accepted corrections; source assigned | None:0% implementation at this checkpoint | New strict roots, exact imports, two-root schemas and independent tests |5e224f3e draft;55b3critique; revision-zero append|Existing strict package/worker parser, KB reducers and identity helper|Existing-helper observations only; no proposed model pass claim|Worker raw cap, own baseline, deadline, complete lineage and distinct core revision0|KB + security reviewer + root|Spec-first source, original counterexamples and exact candidate replay|
+| Native single-file stage and held reader | Reviewed narrow design; source queued | None:0% implementation at this checkpoint | Bounded native/file ownership, original-budget refusal seam, portable and actual Windows tests |1a9942a5 design;8bedf424 archive|Borrowed local-NTFS parents, actual128-bit IDs and retained locks|19source snapshots; no new native execution|Exact-handle cleanup, no path revival/worker authority, no private-directory claim|CI + root|Independent source review plus actual Windows authored-file receipts|
+| Whole PW02 local package fallback | Partial; no exposed package-to-project route | None:0% whole-feature milestones | Native stage/FDI/transfer, durable CAS/provenance/reconciliation, frozen journey and final gates |Reviewed component slices and retained designs|Qualified Windows lane and existing KB/core services|Component evidence only; complete journey absent|Live ownership, original finite budgets, expected project identity and retained unknown outcomes|KB + core + CI|Complete specified D/R/J/G journey before exposure|
+
+Percentages refer only to the previously defined named milestones for each stated
+scope; they do not add together or estimate overall coding progress. Frozen
+research, calibration, full CVE/KB/analyst journeys, platform/package/security
+and reproducibility acceptance remain separate.

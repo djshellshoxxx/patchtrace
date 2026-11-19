@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/workspace/scratch/c7a9e8d98848/continuation-integration",
+    "-c",
+    "credential.helper=",
+    "-c",
+    "core.hooksPath=/dev/null",
+    "fetch",
+    "--no-tags",
+    "origin",
+    "f1634bd6dfdce5dcbe4d73a482f46763e6f9abf8"
+  ],
+  "exit": 0,
+  "timeout": false
+}

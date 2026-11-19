@@ -1881,3 +1881,18 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [x] Specify the protected-region/post-return limit and retain six authored failures plus one positive before the one-statement handoff relocation at `a7a4fb16`.
 - [x] Replay the unchanged original probe with fresh observations alongside all 344 prior cases and seven new controls: 354 pass, 113 pinned imports, no skips/prohibited attempts; seal the separate 213-member correction packet with full Ruff/diff success.
 - [ ] Root independently review/replay and integrate the corrected chain; keep ordinary defaults, post-return interruption limits, package exposure and durable/native prerequisites distinct.
+
+
+### Admission and diagnostic checkpoint — 2026-11-19
+
+- [x] Independently review/integrate workspace existing-open/handoff, stdin, Tier R and unified retention; preserve every original failure and author packet.
+- [x] Pass exact1a9942a5 bounded2043-case replay; verify480imports/32owners/10unchangedprobes, normal lint and unchanged strict80-site failure.
+- [x] Refresh all316heads/63openPRs, recompute main relationships, preserve131focaldispositions and priority discussion history.
+- [x] Prepare/read back33append-only remote objects without moving the branch ref.
+- [x] Retain and independently verify actual771e Windows51-failure result, full node table and source/log/artifact ownership.
+- [x] Approve bounded pure-contract and native-file designs with explicit independent corrections; preserve zero-core-revision observation separately.
+- [ ] Complete fresh-lease append publication and verify exact ref/tree/parents/preview/PR body.
+- [ ] Implement/review strict pure package roots and schemas; storage/CAS/provenance/recovery remain later work.
+- [ ] Repair Windows byte/path/Git fixture boundaries and actual core creation/file-ownership defects; diagnose unresolved formatter predicate without weakening its cap.
+- [ ] Complete queued native leaf/reader, private directories, source capture, worker transfer/FDI and complete package journey.
+- [ ] Complete full platform/Qt/native/frozen/package/dependency/security/reproducibility gates and real CVE/KB/analyst journeys; main and release remain blocked.

@@ -1,0 +1,6 @@
+tree 2f7c162065fdb351aff555b7dad048821a98d59e
+parent 4e086f109c101af4b8ccf3181e070f7f86e8fe82
+author Codex <codex@openai.com> 1795044604 -0800
+committer Codex <codex@openai.com> 1795044905 -0800
+
+Preserve stdin handoff red and portable qualification evidence [no release]

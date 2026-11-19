@@ -481,3 +481,33 @@ Ruff passes; strict S still fails on 80 unchanged sites. No waiver or suppressio
 [Complete correction and retained evidence](../../qa/kbc-held-import-guard-20261118/README.md).
 Five Windows/Qt jobs remain incomplete at the separate snapshot. Main merge,
 native/package/security and final beta acceptance remain blocked. No release.
+
+
+## Workspace and diagnostic integration — 2026-11-19
+
+Exact source `1a9942a5c63ba707e8678cb2f6dcd1dc39c4afd2` passes 2,043 checks with zero failures, errors or skips
+in 34.62 seconds: 64 selected files, ten unchanged original probes, 480 canonical
+imports and 32 owner paths. Documentation parent `f16d41062a5d558d889ef6a6bda922004e0ac3b4` adds only the unified
+QA packet. Existing-workspace admission/owned handoff, native stdin forwarding,
+Tier R exit-one diagnostics and bounded first/second unified retention are
+independently reviewed and integrated. Normal Ruff passes; strict S still fails
+80 unchanged sites. No Windows/native/release acceptance follows from this gate.
+
+The complete316-head/63-open-PR refresh agrees between REST and Git; all131 focal
+tips remain exact. Main remains9c411ca3; PR304d8c02cae/30758fc1306/316771e remain
+open and unmerged. Thirty-three append-only remote objects are prepared and read
+back, without moving the branch ref. Original source histories and failures remain.
+
+Actual771e Windows full QA is51failed/25155passed/150skipped/2xfailed; root rechecks
+the25358-case JUnit, original artifact/log,28 source snapshots and all51 nodes.
+Only3 are covered by the separately repaired import guard. Platform fixture and
+core creation defects are assigned; four captured causes remain unresolved.
+Two Qt jobs remain in progress at00:18:02UTC. Windows packaging/frozen/installer,
+native repeatability/containment, strict security and real analyst journeys are
+not qualified. The original failed source is not relabeled as a pass.
+
+Pure durable package contracts are approved for spec-first work with independent
+cap/accounting/reducer corrections and actual core revision-zero compatibility.
+Native leaf/reader design is approved but queued behind Windows repair. Neither
+design supplies a complete package route. [Complete source, evidence and branch
+inventory](../../qa/admission-diagnostics-integration-20261119/README.md).

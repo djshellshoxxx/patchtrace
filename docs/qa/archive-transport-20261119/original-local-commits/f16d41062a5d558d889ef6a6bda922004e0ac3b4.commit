@@ -1,0 +1,6 @@
+tree e7084b3be4ef00ab55c16fb4344797aedfebc03a
+parent 1a9942a5c63ba707e8678cb2f6dcd1dc39c4afd2
+author Codex <codex@openai.com> 1795045817 -0800
+committer Codex <codex@openai.com> 1795045968 -0800
+
+Retain exact bounded diagnostic red and green evidence [no release]
