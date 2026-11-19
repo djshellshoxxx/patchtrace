@@ -540,6 +540,12 @@ class _RunDiagnostics:
                 for key in ('jsonl', 'ir', 'functions'):
                     if doc[key]['status'] in {'complete', 'prefix'}:
                         doc[key] = _diagnostic_refusal('deadline')
+            for key in ('jsonl', 'ir'):
+                doc[key]['retained_bytes'] = doc[key].get('bytes', 0) if doc[key]['status'] == 'complete' else 0
+            doc['jsonl']['retained_records'] = doc['jsonl'].get('records', 0)
+            doc['ir']['retained_rows'] = sum(doc['ir'].get('row_counts', {}).values())
+            doc['functions'].setdefault('retained_rows', 0)
+            doc['functions'].setdefault('rows', [])
             metadata_view = {**doc, 'jsonl': {k: v for k, v in doc['jsonl'].items() if k != 'data_base64'},
                              'ir': {k: v for k, v in doc['ir'].items() if k != 'data_base64'},
                              'functions': {'status': doc['functions']['status']}}
@@ -559,6 +565,8 @@ class _RunDiagnostics:
                 _diagnostic_report('write-error', name)
             else:
                 _diagnostic_report('saved' if doc['complete'] else 'saved-incomplete', name)
+        except _DiagnosticStop as exc:
+            _diagnostic_report(exc.reason, name)
         except Exception:
             _diagnostic_report('capture-error', name)
 

@@ -314,10 +314,11 @@ counts, and a fixed bounded reason where incomplete. A function prefix is never
 presented as the complete row set. A capped/unreadable binary payload has no
 fabricated observed digest and explicitly declares zero retained bytes/records
 or rows. An unavailable function projection declares zero rows. A final envelope
-byte-cap refusal is reported as such even when no envelope can fit. The envelope is complete only when all its declared
-components are complete. Count/query/deadline failures cannot label the IR
-snapshot complete. Preserve independently complete components when another is
-unavailable. A bounded failure envelope is attempted when possible.
+byte-cap refusal is reported as such even when no envelope can fit. The envelope
+is complete only when all its declared components are complete.
+Count/query/deadline failures cannot label the IR snapshot complete. Preserve
+independently complete components when another is unavailable. A bounded failure
+envelope is attempted when possible.
 
 Ordinary diagnostic read, serialization or write failure is reported separately
 and cannot enter `Checks.failures`, change L1/acceptance, mask a primary failure,
