@@ -1896,3 +1896,12 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [ ] Repair Windows byte/path/Git fixture boundaries and actual core creation/file-ownership defects; diagnose unresolved formatter predicate without weakening its cap.
 - [ ] Complete queued native leaf/reader, private directories, source capture, worker transfer/FDI and complete package journey.
 - [ ] Complete full platform/Qt/native/frozen/package/dependency/security/reproducibility gates and real CVE/KB/analyst journeys; main and release remain blocked.
+
+
+### Formatter and Qt observation checkpoint — 2026-11-19
+
+- [x] Preserve W51 failure and both original predicate operands; add bounded failing observations, obtain independent static review and pass the exact-source nine-test gate.
+- [x] Retain final old-head Qt cancellation logs, API metadata, runner/workflow identity and same-tree timing context without attributing an unobserved cause.
+- [ ] Obtain actual Windows formatter observations; keep its cap/assertion intact.
+- [ ] Diagnose and complete the full Qt repeat gates without reducing repeat coverage.
+- [ ] Complete the append-only PR publication, then continue Windows repairs, pure contracts and queued native ownership work; require new exact-head platform gates.

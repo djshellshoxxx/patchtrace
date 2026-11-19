@@ -2542,3 +2542,23 @@ cap/accounting/reducer corrections and actual core revision-zero compatibility.
 Native leaf/reader design is approved but queued behind Windows repair. Neither
 design supplies a complete package route. [Complete source, evidence and branch
 inventory](qa/admission-diagnostics-integration-20261119/README.md).
+
+
+## Formatter diagnostics and final old-head Qt outcomes — 2026-11-19
+
+Spec `fdc1f606dd0b8a3ce94ae2db94f4fb6984a02b69` precedes formatter-harness source `16c35e1fb1a4dd54b2c2c0cb2033c8160ee99347`. The original
+count/stream-error predicate, return 4, empty successful stdout and Python assertion
+condition remain unchanged; only failing observations are added. Independent
+static review finds no blocker. The exact-source bounded replay passes 9 tests,
+zero skips/errors, with 40 canonical imports and changed-file Ruff success. This
+is separate from the prior 2,043-case source gate and does not resolve old Windows
+W51, whose individual predicate values were absent.
+
+The remaining published771e Qt jobs finished cancelled at 00:19:44 and 00:19:53 UTC
+after roughly two hours, without complete passing summaries. All48old-head checks
+are completed:34success/5failure/7skip/2cancelled. Both repeat gates remain unverified;
+dependent packaging is skipped. The earlier pending snapshot remains historical.
+No repeats, timeouts, assertions or workflow sources are changed. Actual cancellation
+and slow-test causes are not established. Windows repairs and pure contracts
+continue independently; main/native/platform/package/security/beta acceptance
+remains blocked. [Complete observations and source evidence](qa/formatter-qt-observations-20261119/README.md).
