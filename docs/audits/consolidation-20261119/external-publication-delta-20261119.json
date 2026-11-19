@@ -1,0 +1,1408 @@
+{
+  "schema": "patchtrace.external-publication-delta/1",
+  "repository": "djshellshoxxx/PatchTrace",
+  "review_finished_at": "2026-11-19 11:57:08 UTC",
+  "census_observation": "2026-11-19 11:51:48\u201311:51:51 UTC",
+  "scope": "Bounded read-only comparison of two external source deltas plus validation of frozen census identities. No tests, external source edits, remote mutation, whole-branch approval or repeated whole census.",
+  "source_census": {
+    "raw": "post-publication-census-raw-20261119.json",
+    "raw_sha256": "c717ebb985e0430f53c93840b7d7fde87edc683d372d9276233b317a1297ee7e",
+    "compact": "post-publication-census-20261119.json",
+    "compact_sha256": "d5dff53335abe7088870f44e9a504df39c3dbd4fada1949168552c9463ccb18b"
+  },
+  "baseline_census": "final-remote-census-20261119.json",
+  "recommended_tally": {
+    "branches": 323,
+    "topics": 322,
+    "distinct_commit_heads_including_main": 322,
+    "open_prs": 56,
+    "open_non_pr_issues": 10,
+    "integrated": 144,
+    "dependency_blocked": 11,
+    "retained_review_active": 167
+  },
+  "main": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+  "identity_verification": "All144integrated and all11dependency-blocked exact heads unchanged versus the sealed11:22 census. Main unchanged; no branch removals. Verified against saved census files, not a new remote census.",
+  "publication_heads": {
+    "pr319": "8d130aefe1be6e737cff1d90d2a5b1658d60a3a6",
+    "pr321": "2042e24dc7f3eac265e0eb183c738527852b22cf"
+  },
+  "branches": [
+    {
+      "branch": "codex/patchtrace-completion-20261119-81e4",
+      "pr": 322,
+      "draft": true,
+      "base": "main",
+      "head": "32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7",
+      "parent": "bdc929ebd3c6aaa2563c758936beb315a10eeea0",
+      "tree": "e00ee281fa43744e892bbcf806e4b07a90c15e13",
+      "commit_source": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7",
+      "comparison": {
+        "source_url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/compare/bdc929ebd3c6aaa2563c758936beb315a10eeea0...32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7",
+        "status": "ahead",
+        "ahead_by": 1,
+        "behind_by": 0,
+        "merge_base": "bdc929ebd3c6aaa2563c758936beb315a10eeea0",
+        "changed_paths": 22,
+        "files": [
+          {
+            "path": "docs/consolidation/FEATURE_MATRIX.md",
+            "blob": "7331758163d732afb6bbf4f05a2f7e32c1fad969",
+            "status": "added",
+            "additions": 83,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/HANDOFF.md",
+            "blob": "c08374fb88465ac50e9fc848c6a6acc380c1ed58",
+            "status": "added",
+            "additions": 106,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/MAIN_MERGE_LOG.md",
+            "blob": "9f2f6514833b1ff3d0db688b54110a8bd013ad8e",
+            "status": "added",
+            "additions": 96,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/RECOVERED_WORK.md",
+            "blob": "8d081e79952f3a0e1070a5d8174e80a0cfc2284c",
+            "status": "modified",
+            "additions": 13,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/RECOVERY_BATCH_3.md",
+            "blob": "1e6ea45c7e68ba77b884c8e5c3159e48f91b0aa4",
+            "status": "added",
+            "additions": 175,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/REMAINING_WORK.md",
+            "blob": "496f8d8f66e2f096031b7e287906d84f08c85b2e",
+            "status": "added",
+            "additions": 86,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/SECURITY_AUDIT.md",
+            "blob": "d0dd3fe5f8dfd5e9b49cdfec877c0ae0c17b1788",
+            "status": "added",
+            "additions": 99,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/STATIC_AUDIT.md",
+            "blob": "458a4ad0ce290e48a2a513e6d15ea7cda0264b8f",
+            "status": "added",
+            "additions": 239,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/TEST_RESULTS.md",
+            "blob": "b7f1ea09f40896e3e7be286031215bb382fae58f",
+            "status": "added",
+            "additions": 156,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/evidence/algorithm-digest-review-20261119.zip",
+            "blob": "d7f6f69e0e6b5b2724b2f200e97921b5e8a6249e",
+            "status": "added",
+            "additions": 0,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/evidence/continuation-20261119-focused.zip",
+            "blob": "22b692327019601d609101ae7be81d3cb358ee9e",
+            "status": "added",
+            "additions": 0,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/evidence/history-diagnostic-20261119.zip",
+            "blob": "fce5de6333918dc5465b863e0526223547d06591",
+            "status": "added",
+            "additions": 0,
+            "deletions": 0
+          },
+          {
+            "path": "docs/qa.md",
+            "blob": "18abb9cb47f1a43d7782e90114fea406454b1c71",
+            "status": "modified",
+            "additions": 88,
+            "deletions": 1
+          },
+          {
+            "path": "docs/specs/multi-engine-evidence-panel.md",
+            "blob": "e63f3690d561ae2984b01ad96fdb28c170b2b579",
+            "status": "modified",
+            "additions": 3,
+            "deletions": 0
+          },
+          {
+            "path": "src/patchtrace/enrichment/cve.py",
+            "blob": "a3dc4a194efcc07aaec58b057301bc7190b73c77",
+            "status": "modified",
+            "additions": 28,
+            "deletions": 6
+          },
+          {
+            "path": "src/patchtrace/intelligence/csaf/transport.py",
+            "blob": "3f1c14f53e77b2a70eab1d0050b35037bc91fc29",
+            "status": "modified",
+            "additions": 4,
+            "deletions": 1
+          },
+          {
+            "path": "src/patchtrace/ui_evidence.py",
+            "blob": "72c8cb12fe4f6144dd23f637f2ab69431b7b2d34",
+            "status": "modified",
+            "additions": 52,
+            "deletions": 19
+          },
+          {
+            "path": "tasks/todo.md",
+            "blob": "47b80e41611e0b5809396ba479e16d264fb76689",
+            "status": "modified",
+            "additions": 45,
+            "deletions": 0
+          },
+          {
+            "path": "tests/fixtures/algorithm_digests.json",
+            "blob": "0ac9cf19c414cced4425ace847e188a53ba72880",
+            "status": "modified",
+            "additions": 1,
+            "deletions": 1
+          },
+          {
+            "path": "tests/test_csaf_redirect_integrity.py",
+            "blob": "0727a07522110a2c34c6df87e5db6db711103caf",
+            "status": "added",
+            "additions": 74,
+            "deletions": 0
+          },
+          {
+            "path": "tests/test_enrichment_numeric_boundaries.py",
+            "blob": "7cd1d61696d7edc5eb6a34c8d348db784614e904",
+            "status": "added",
+            "additions": 161,
+            "deletions": 0
+          },
+          {
+            "path": "tests/test_evidence_attempt_storage.py",
+            "blob": "73421fb5bad9cebef6fdba8b5147fa4b5dd79e7e",
+            "status": "added",
+            "additions": 283,
+            "deletions": 0
+          }
+        ]
+      },
+      "disposition": "RETAIN ACTIVE EXTERNAL COMPLETION",
+      "focal_observations": [
+        {
+          "paths": [
+            "src/patchtrace/enrichment/cve.py"
+          ],
+          "finding": "Uses an explicit Decimal context with Inexact refusal for exact-tenth admission and typed UTC representability errors. Preserves prior metadata/parser/N-way/scoring/adapter recovery by ancestry."
+        },
+        {
+          "paths": [
+            "src/patchtrace/intelligence/csaf/transport.py"
+          ],
+          "finding": "Converts malformed redirect urljoin ValueError into typed PT-INTEL-CONFIG refusal."
+        },
+        {
+          "paths": [
+            "src/patchtrace/ui_evidence.py",
+            "docs/specs/multi-engine-evidence-panel.md"
+          ],
+          "finding": "Keeps bounded per-engine attempt-storage diagnostics; separates confirmed not-saved refusal from post-write uncertainty, retains original engine status and only credits successfully persisted results as kept. Clears transient feedback on superseding run/project."
+        },
+        {
+          "paths": [
+            "tests/fixtures/algorithm_digests.json",
+            "docs/consolidation/RECOVERY_BATCH_3.md",
+            "docs/consolidation/REMAINING_WORK.md"
+          ],
+          "finding": "Changes one contextual digest golden with retained author/independent-review receipts. This reviewer did not rerun or independently derive the golden; it is a test-fixture change, not new runtime algorithm implementation."
+        }
+      ],
+      "overlap": "The22-path delta does not add Search wiring, Strings composition, shared admission or inventory recovery. The earlier bdc checkpoint remains a separate retained branch, now contained in unmerged PR322; ancestry to an unmerged candidate is not main integration.",
+      "reported_prior_results": "Commit/docs report scoped portable controls and independent review, including numeric/time and history-diagnostic repairs. Full unsplit attempt exited137 without final report; grouped work remains diagnostic/incomplete. No current full/native/release success claimed.",
+      "current_head_ci": {
+        "checks_url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/commits/32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7/check-runs?per_page=100&page=1",
+        "total_count": 22,
+        "returned": 22,
+        "complete_single_page": true,
+        "status_counts": {
+          "queued": 21,
+          "completed": 1
+        },
+        "conclusion_counts": {
+          "null": 21,
+          "skipped": 1
+        },
+        "check_runs": [
+          {
+            "id": 135537486345,
+            "name": "live BinDiff (windows-latest)",
+            "head_sha": "32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44517577122/job/135537486345"
+          },
+          {
+            "id": 135537485899,
+            "name": "live BinDiff (ubuntu-22.04)",
+            "head_sha": "32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44517577122/job/135537485899"
+          },
+          {
+            "id": 135537485384,
+            "name": "release-gate",
+            "head_sha": "32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44517577038/job/135537485384"
+          },
+          {
+            "id": 135537483904,
+            "name": "qa (windows-latest)",
+            "head_sha": "32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44517577038/job/135537483904"
+          },
+          {
+            "id": 135537483775,
+            "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+            "head_sha": "32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44517577038/job/135537483775"
+          },
+          {
+            "id": 135537483705,
+            "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+            "head_sha": "32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44517577038/job/135537483705"
+          },
+          {
+            "id": 135537483552,
+            "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+            "head_sha": "32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44517577038/job/135537483552"
+          },
+          {
+            "id": 135537483542,
+            "name": "qt-gate (windows-latest, 5, 1/1)",
+            "head_sha": "32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44517577038/job/135537483542"
+          },
+          {
+            "id": 135537483479,
+            "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+            "head_sha": "32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44517577038/job/135537483479"
+          },
+          {
+            "id": 135537483334,
+            "name": "live rz-diff (ubuntu-latest)",
+            "head_sha": "32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44517576844/job/135537483334"
+          },
+          {
+            "id": 135537483205,
+            "name": "qa (ubuntu-latest)",
+            "head_sha": "32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44517577038/job/135537483205"
+          },
+          {
+            "id": 135537482941,
+            "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+            "head_sha": "32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44517576866/job/135537482941"
+          },
+          {
+            "id": 135537482822,
+            "name": "native (raw-cache-hit)",
+            "head_sha": "32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44517576866/job/135537482822"
+          },
+          {
+            "id": 135537482821,
+            "name": "native (patchtrace-clean)",
+            "head_sha": "32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44517576866/job/135537482821"
+          },
+          {
+            "id": 135537482785,
+            "name": "native (repro-plain-ghidriff)",
+            "head_sha": "32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44517576866/job/135537482785"
+          },
+          {
+            "id": 135537482775,
+            "name": "native (patchtrace-seeded-store)",
+            "head_sha": "32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44517576866/job/135537482775"
+          },
+          {
+            "id": 135537482461,
+            "name": "live rz-diff (windows-latest)",
+            "head_sha": "32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44517576844/job/135537482461"
+          },
+          {
+            "id": 135537091052,
+            "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+            "head_sha": "32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44517464281/job/135537091052"
+          },
+          {
+            "id": 135537090863,
+            "name": "native (patchtrace-clean)",
+            "head_sha": "32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44517464281/job/135537090863"
+          },
+          {
+            "id": 135537090767,
+            "name": "native (repro-plain-ghidriff)",
+            "head_sha": "32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44517464281/job/135537090767"
+          },
+          {
+            "id": 135537090706,
+            "name": "native (patchtrace-seeded-store)",
+            "head_sha": "32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44517464281/job/135537090706"
+          },
+          {
+            "id": 135537090446,
+            "name": "native (raw-cache-hit)",
+            "head_sha": "32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44517464281/job/135537090446"
+          }
+        ],
+        "legacy_url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/commits/32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7/status",
+        "legacy_statuses": [
+          {
+            "context": "security/snyk (djshellshoxxx)",
+            "state": "success",
+            "target_url": "https://app.snyk.io/org/djshellshoxxx/pr-checks/522c7625-33a7-48b8-be8f-50a395f07336"
+          }
+        ],
+        "qualification": "Queued/skipped checks and a legacy Snyk success do not establish current-head CI acceptance."
+      },
+      "limit": "Read named runtime patches/spec and path-level delta only; no full semantic approval of the branch or archive claims."
+    },
+    {
+      "branch": "integration/exhaustive-patchtrace-consolidation-20261119",
+      "pr": 320,
+      "draft": true,
+      "base": "main",
+      "head": "087f50aae76f815dc013fb65e304eef8e21596c1",
+      "parent": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+      "tree": "bf90c3f862d144fc11adc471a84a51076987ba2f",
+      "commit_source": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/087f50aae76f815dc013fb65e304eef8e21596c1",
+      "comparison": {
+        "source_url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/compare/bc7eb6328b477e2ff19cfe36317279eaf5856fb6...087f50aae76f815dc013fb65e304eef8e21596c1",
+        "status": "ahead",
+        "ahead_by": 1,
+        "behind_by": 0,
+        "merge_base": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+        "changed_paths": 82,
+        "files": [
+          {
+            "path": ".github/workflows/corpus-tier-r.yml",
+            "blob": "e0786cb910ece293679a018fe10aea399c5121cf",
+            "status": "modified",
+            "additions": 44,
+            "deletions": 5
+          },
+          {
+            "path": "corpus/ours/r1-pilot/defined/README.md",
+            "blob": "3c8a5d8fb49546afae7cdafbb02317ba741b9ec6",
+            "status": "added",
+            "additions": 92,
+            "deletions": 0
+          },
+          {
+            "path": "corpus/ours/r1-pilot/defined/suite.json",
+            "blob": "ca723ceef4ac1728995889cca30d25c8488d0126",
+            "status": "added",
+            "additions": 204,
+            "deletions": 0
+          },
+          {
+            "path": "corpus/ours/r1-pilot/defined/v1/r1.c",
+            "blob": "ae179c3390f051fbc99ce56efc57cc706e7a823d",
+            "status": "added",
+            "additions": 158,
+            "deletions": 0
+          },
+          {
+            "path": "corpus/ours/r1-pilot/defined/v2/r1.c",
+            "blob": "3ee1a709969541ef2402e331fc901032fe6dd289",
+            "status": "added",
+            "additions": 163,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/BRANCH_INVENTORY.md",
+            "blob": "c8db8baee2bb80baedaf7b0494e071458c0d13e2",
+            "status": "modified",
+            "additions": 10,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/CONFLICT_RESOLUTIONS.md",
+            "blob": "b277daa558d04eb8d7dbd7d62038f9f372901334",
+            "status": "modified",
+            "additions": 8,
+            "deletions": 1
+          },
+          {
+            "path": "docs/consolidation/HANDOFF.md",
+            "blob": "2fbcdf45c813c7edb08fedc18c06aea8d9ec1d2a",
+            "status": "modified",
+            "additions": 61,
+            "deletions": 56
+          },
+          {
+            "path": "docs/consolidation/RECOVERED_WORK.md",
+            "blob": "3f0ca80dcab252514367eaee63c40a37ec82279c",
+            "status": "modified",
+            "additions": 20,
+            "deletions": 8
+          },
+          {
+            "path": "docs/consolidation/REMAINING_WORK.md",
+            "blob": "c71048589f6f1525857e853a0b450bd3ac987366",
+            "status": "modified",
+            "additions": 52,
+            "deletions": 49
+          },
+          {
+            "path": "docs/consolidation/SECURITY_REVIEW.md",
+            "blob": "f329337dc8f2a68a03625f99a62f2f72deaa8eab",
+            "status": "modified",
+            "additions": 18,
+            "deletions": 3
+          },
+          {
+            "path": "docs/consolidation/TEST_RESULTS.md",
+            "blob": "644b4b2821694b11f4a8821dd0aaa68820c11786",
+            "status": "modified",
+            "additions": 38,
+            "deletions": 11
+          },
+          {
+            "path": "docs/consolidation/evidence/bounded-qa-restored-7dfba50f-progress.json",
+            "blob": "68995c37d45a15b285ebbc062661c4b2f11289d3",
+            "status": "added",
+            "additions": 4629,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/evidence/bounded-qa-restored-group-039.log.gz",
+            "blob": "c21b5b9d482e9455028b95d9df41d4de44ee8f21",
+            "status": "added",
+            "additions": 0,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/evidence/bounded-qa-restored-group-044.log.gz",
+            "blob": "b83801aa927ddce9299ca69948f672c0e5e4d46f",
+            "status": "added",
+            "additions": 0,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/evidence/combined-new-recovery-0f0e44d7.log",
+            "blob": "496f3d20241b18211c9fdfd81cf55d328d893352",
+            "status": "added",
+            "additions": 4,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/evidence/dependency-current-audit-after-bootstrap.json",
+            "blob": "67edb07001e9bf804be2227ea5b4dffd18c2ffcc",
+            "status": "added",
+            "additions": 1,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/evidence/dependency-current-audit-after-bootstrap.stderr",
+            "blob": "4e4ce70c8d4f14a24f5a5a4e533fea4ce4a246ca",
+            "status": "added",
+            "additions": 3,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/evidence/dependency-current-requirements-after-bootstrap.txt",
+            "blob": "f7b15341f090ce1cab168578c99bb67c547f8853",
+            "status": "added",
+            "additions": 32,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/evidence/dependency-pip-bootstrap-upgrade.log",
+            "blob": "6092300755feda72cdd29256b74056154be87606",
+            "status": "added",
+            "additions": 9,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/evidence/gui-accessibility-final.log",
+            "blob": "4614f24548efae6b114783b1e45b676b68a8daa2",
+            "status": "added",
+            "additions": 4,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/evidence/gui-accessibility-final.xml",
+            "blob": "24a4d4c84e0d6a2fafbd805d9db424e6b2d82a2b",
+            "status": "added",
+            "additions": 1,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/evidence/gui-accessibility-recovery-green-corrected.log",
+            "blob": "09d3bf1b7f1d0cc7a3d80c6c6a2e1365a6f05d2a",
+            "status": "added",
+            "additions": 33,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/evidence/gui-accessibility-recovery-red.log.gz",
+            "blob": "9e59f3f43514c4982d58c37ff1dde71b7f1e2a92",
+            "status": "added",
+            "additions": 0,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/evidence/integrated-research-eb595b82.log",
+            "blob": "a84889f7a67c6dc0cfade685de9784ba1a804ea6",
+            "status": "added",
+            "additions": 4,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/evidence/integrated-research-eb595b82.xml",
+            "blob": "7d86be627a9072a37dcf7a79031687cdeed6393f",
+            "status": "added",
+            "additions": 1,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/evidence/security-strict-3c6f5905.json",
+            "blob": "6476981b3e06134560474f8d21e73e41e4638ce4",
+            "status": "added",
+            "additions": 1522,
+            "deletions": 0
+          },
+          {
+            "path": "docs/consolidation/evidence/tierw-runner-publication-final.log",
+            "blob": "baa539b686204297f44aa7ed60aa8ae0906d82a7",
+            "status": "added",
+            "additions": 2,
+            "deletions": 0
+          },
+          {
+            "path": "docs/modules.md",
+            "blob": "5c38e8a64b10ea61808cba849501c65cfb7b55f0",
+            "status": "modified",
+            "additions": 27,
+            "deletions": 0
+          },
+          {
+            "path": "docs/qa.md",
+            "blob": "35ace49973355847d2087415717527be71417644",
+            "status": "modified",
+            "additions": 4,
+            "deletions": 0
+          },
+          {
+            "path": "docs/qa/gui-accessibility-recovery-20261119.md",
+            "blob": "f2db7222cf08be0f3b4333f0bbfa6ac7e785dd06",
+            "status": "added",
+            "additions": 37,
+            "deletions": 0
+          },
+          {
+            "path": "docs/qa/research-recovery-20261119.log",
+            "blob": "6ee6dbae6c017517966746ae8c4512369dc462e1",
+            "status": "added",
+            "additions": 4,
+            "deletions": 0
+          },
+          {
+            "path": "docs/qa/research-recovery-20261119.md",
+            "blob": "a294a80fc074f6b7d2f513cf1c660906bf3c319e",
+            "status": "added",
+            "additions": 75,
+            "deletions": 0
+          },
+          {
+            "path": "docs/qa/research-recovery-20261119.xml",
+            "blob": "80a8b20d53b1ce8a36c582c82b9dc1496ac67066",
+            "status": "added",
+            "additions": 1,
+            "deletions": 0
+          },
+          {
+            "path": "docs/qa/research-recovery-cancellation-20261119.log",
+            "blob": "edd32e4d5f6cd69e7ea8be96c81deb2e92d805e6",
+            "status": "added",
+            "additions": 4,
+            "deletions": 0
+          },
+          {
+            "path": "docs/qa/research-recovery-cancellation-20261119.md",
+            "blob": "2648789918333b90312bd89e71ffe0754719ff45",
+            "status": "added",
+            "additions": 30,
+            "deletions": 0
+          },
+          {
+            "path": "docs/qa/research-recovery-cancellation-20261119.xml",
+            "blob": "fa867d79c42a6ecca514b2ca26996d59a636a650",
+            "status": "added",
+            "additions": 1,
+            "deletions": 0
+          },
+          {
+            "path": "docs/qa/tier-r-transfer-recovery-20261119.md",
+            "blob": "fecaf14fc7e41513eed182fae1a756bbeb484145",
+            "status": "added",
+            "additions": 91,
+            "deletions": 0
+          },
+          {
+            "path": "docs/schemas/corpus/TrainingManifest.json",
+            "blob": "21b0e3662c9f4798bec60027f0d4c7c50292a3db",
+            "status": "added",
+            "additions": 252,
+            "deletions": 0
+          },
+          {
+            "path": "docs/specs/accessibility-baseline.md",
+            "blob": "e3743884cf7665defa10aa9cf98a8da75f409620",
+            "status": "modified",
+            "additions": 14,
+            "deletions": 1
+          },
+          {
+            "path": "docs/specs/known-answer-corpus.md",
+            "blob": "2384748ae9dbea9e72965b3a0b8b10b50a20d44f",
+            "status": "modified",
+            "additions": 64,
+            "deletions": 0
+          },
+          {
+            "path": "docs/specs/program-e/LBL-DATA-integration-plan.md",
+            "blob": "e5d0a839796b8aeb6ebc9435e11be7c0f775b910",
+            "status": "modified",
+            "additions": 21,
+            "deletions": 0
+          },
+          {
+            "path": "docs/specs/research-pilot.md",
+            "blob": "e3eec6efd02a73f065e88a1442416ce440da6bb6",
+            "status": "added",
+            "additions": 148,
+            "deletions": 0
+          },
+          {
+            "path": "docs/specs/tier-w-local-corpus.md",
+            "blob": "0d2695f74cd7c55e5b6c1b2fbd374ad0b2ecf96d",
+            "status": "modified",
+            "additions": 43,
+            "deletions": 2
+          },
+          {
+            "path": "src/patchtrace/buildenv/qt_panel.py",
+            "blob": "ff69d4bdb6272eebee26f3a33d726da76f8546ff",
+            "status": "modified",
+            "additions": 1,
+            "deletions": 1
+          },
+          {
+            "path": "src/patchtrace/callgraph/panel_qt.py",
+            "blob": "50695b0ac060c4b0eb26bb8d59aba3a6640572c8",
+            "status": "modified",
+            "additions": 3,
+            "deletions": 3
+          },
+          {
+            "path": "src/patchtrace/gui/access_names.py",
+            "blob": "928fadca01a0d079937c9fc78e30073ec7ae3f2a",
+            "status": "added",
+            "additions": 36,
+            "deletions": 0
+          },
+          {
+            "path": "src/patchtrace/gui/qt/chips.py",
+            "blob": "115f19fe470aa6e7fee70f35da19b8e268f972a7",
+            "status": "modified",
+            "additions": 4,
+            "deletions": 3
+          },
+          {
+            "path": "src/patchtrace/gui/qt/docks.py",
+            "blob": "c254a5c32a711ab42c0c63ddc8fd8085173cd8f1",
+            "status": "modified",
+            "additions": 20,
+            "deletions": 6
+          },
+          {
+            "path": "src/patchtrace/gui/qt/state_view.py",
+            "blob": "f1748822ebe085f3d739d555e70320927af58f3f",
+            "status": "modified",
+            "additions": 9,
+            "deletions": 6
+          },
+          {
+            "path": "src/patchtrace/gui/tips.py",
+            "blob": "ebc71e49c47922e266d7c04ed1b0f0e77ce9c7ad",
+            "status": "modified",
+            "additions": 28,
+            "deletions": 6
+          },
+          {
+            "path": "src/patchtrace/intelligence/tools/capa_qt.py",
+            "blob": "2fcad4b4ec691c3c58da6069e0398f9f9ccc6336",
+            "status": "modified",
+            "additions": 1,
+            "deletions": 1
+          },
+          {
+            "path": "src/patchtrace/search/qt_panel.py",
+            "blob": "cbf922e8632c0972cced1f58a2b5c93be14c4723",
+            "status": "modified",
+            "additions": 1,
+            "deletions": 1
+          },
+          {
+            "path": "src/patchtrace/search/qt_saved.py",
+            "blob": "894f96ad76dd7b8fb79cdae5b5794e4d6cbe3748",
+            "status": "modified",
+            "additions": 4,
+            "deletions": 2
+          },
+          {
+            "path": "src/patchtrace/strings/qt_panel.py",
+            "blob": "93158287e9cbcdf5bb93a72e6943fa44ebabcfaf",
+            "status": "modified",
+            "additions": 1,
+            "deletions": 1
+          },
+          {
+            "path": "src/patchtrace/ui_engine_setup.py",
+            "blob": "3c91bd822c2f1dbdd75cff9f5fa54704f631a231",
+            "status": "modified",
+            "additions": 1,
+            "deletions": 1
+          },
+          {
+            "path": "src/patchtrace/ui_evidence.py",
+            "blob": "ad246a7320c0cf16d2c117b408abe8a610a43a17",
+            "status": "modified",
+            "additions": 4,
+            "deletions": 1
+          },
+          {
+            "path": "src/patchtrace/ui_inspection.py",
+            "blob": "543a228be5029da41fe1d43d5c9615b059680e79",
+            "status": "modified",
+            "additions": 3,
+            "deletions": 0
+          },
+          {
+            "path": "src/patchtrace/ui_kev.py",
+            "blob": "cb5010e8c0c6487a401eb29bc0148af7a1a80a58",
+            "status": "modified",
+            "additions": 2,
+            "deletions": 2
+          },
+          {
+            "path": "src/patchtrace/ui_leads.py",
+            "blob": "dd5768c6660168c701736fcf2a33893061044f73",
+            "status": "modified",
+            "additions": 2,
+            "deletions": 2
+          },
+          {
+            "path": "src/patchtrace/ui_unified.py",
+            "blob": "bd40fd7114eb3ca58d3073bb6d9096fefe3a9637",
+            "status": "modified",
+            "additions": 3,
+            "deletions": 2
+          },
+          {
+            "path": "tasks/todo.md",
+            "blob": "a304099e07f925ee8895e9f40d4694d7d4571701",
+            "status": "modified",
+            "additions": 11,
+            "deletions": 0
+          },
+          {
+            "path": "tests/test_ci_summary.py",
+            "blob": "cb0eec9f322118a00559bd0007f5839fc8055213",
+            "status": "modified",
+            "additions": 12,
+            "deletions": 4
+          },
+          {
+            "path": "tests/test_gui_a11y_window.py",
+            "blob": "2b10f4411909b22ce8fd216e91b20ae1e6699638",
+            "status": "added",
+            "additions": 109,
+            "deletions": 0
+          },
+          {
+            "path": "tests/test_tier_r_receipt_parent_race.py",
+            "blob": "2709c69391791e62ee3ef339e8f2c6fd2a07a6d1",
+            "status": "added",
+            "additions": 344,
+            "deletions": 0
+          },
+          {
+            "path": "tests/test_tier_r_research_audit.py",
+            "blob": "7fa15b951b008541dbc0fa18e8b07d2e111ea66d",
+            "status": "added",
+            "additions": 170,
+            "deletions": 0
+          },
+          {
+            "path": "tests/test_tier_r_research_build.py",
+            "blob": "11a60722cc1af8d5eb5aa0bfab713a08c8f718a1",
+            "status": "added",
+            "additions": 302,
+            "deletions": 0
+          },
+          {
+            "path": "tests/test_tier_r_research_observers.py",
+            "blob": "f7c306f2df077f51a6fb023f9e1b3e27a7d50506",
+            "status": "added",
+            "additions": 127,
+            "deletions": 0
+          },
+          {
+            "path": "tests/test_tier_r_research_pilot.py",
+            "blob": "b378e2e1ca8d4bb47c2d5530066aa92198238551",
+            "status": "added",
+            "additions": 191,
+            "deletions": 0
+          },
+          {
+            "path": "tests/test_tier_r_research_recovery.py",
+            "blob": "11bfde464634229cbb3a3e8c41a4132fc3090c08",
+            "status": "added",
+            "additions": 459,
+            "deletions": 0
+          },
+          {
+            "path": "tests/test_tier_r_training_artifacts.py",
+            "blob": "4cb803f1821f1fe29c859cd3c0f8cc4025106278",
+            "status": "added",
+            "additions": 528,
+            "deletions": 0
+          },
+          {
+            "path": "tests/test_tier_r_transfer_integration.py",
+            "blob": "18eb8d3fa4683c9ac68608cc0e48d5de6d171a4e",
+            "status": "added",
+            "additions": 113,
+            "deletions": 0
+          },
+          {
+            "path": "tests/test_tier_w_runner_publication.py",
+            "blob": "7de877ebdb70cc717917e6472575d679d7c48a31",
+            "status": "added",
+            "additions": 345,
+            "deletions": 0
+          },
+          {
+            "path": "tools/calibration/tier_r/cli.py",
+            "blob": "21262d8c126a79bf596965622768a7b1c51edbad",
+            "status": "modified",
+            "additions": 3,
+            "deletions": 0
+          },
+          {
+            "path": "tools/calibration/tier_r/receipts.py",
+            "blob": "9a965a969c74caa7fc83253471d021a92208d0bb",
+            "status": "added",
+            "additions": 182,
+            "deletions": 0
+          },
+          {
+            "path": "tools/calibration/tier_r/research_audit.py",
+            "blob": "df4e4c29b927a8997621eee0b6bf2ba57b4412a1",
+            "status": "added",
+            "additions": 178,
+            "deletions": 0
+          },
+          {
+            "path": "tools/calibration/tier_r/research_build.py",
+            "blob": "15e8c7c3c3fff6af0097c394a95d5195ec2678bd",
+            "status": "added",
+            "additions": 231,
+            "deletions": 0
+          },
+          {
+            "path": "tools/calibration/tier_r/research_observers.py",
+            "blob": "2f9ba4cc82f3e3a1783cca23cc9e692d30f30f3b",
+            "status": "added",
+            "additions": 169,
+            "deletions": 0
+          },
+          {
+            "path": "tools/calibration/tier_r/research_pilot.py",
+            "blob": "7005f719a5c74dfae4f9c8cdc505e54ac75e1420",
+            "status": "added",
+            "additions": 365,
+            "deletions": 0
+          },
+          {
+            "path": "tools/calibration/tier_r/shard.py",
+            "blob": "7f4d273f039934e96bf7166be54ee56961bfdcb6",
+            "status": "modified",
+            "additions": 76,
+            "deletions": 30
+          },
+          {
+            "path": "tools/calibration/tier_r/training_artifacts.py",
+            "blob": "7394a0ae4d91bff9344b24afaa180790bd5a87aa",
+            "status": "added",
+            "additions": 422,
+            "deletions": 0
+          },
+          {
+            "path": "tools/calibration/tier_w/runner.py",
+            "blob": "e3962eeeea71081500dd09da7fa9839a8649939c",
+            "status": "modified",
+            "additions": 236,
+            "deletions": 10
+          }
+        ]
+      },
+      "disposition": "RETAIN ACTIVE EXTERNAL INTEGRATION",
+      "focal_observations": [
+        {
+          "paths": [
+            "tools/calibration/tier_r/training_artifacts.py",
+            "tools/calibration/tier_r/shard.py",
+            ".github/workflows/corpus-tier-r.yml"
+          ],
+          "finding": "Adds explicit managed training bundles with report/output/label/case ownership, exact file/hash checks and manifest-last publication. Shard CLI/workflow transfer is conditional on verified training; diagnostic artifacts remain separate. Path/parent and Tier-W exclusion checks are present. No real corpus/producer/native qualification executed here."
+        },
+        {
+          "paths": [
+            "tools/calibration/tier_w/runner.py"
+          ],
+          "finding": "Adds retained generation history, prior pair validation, cancellation preservation and ownership-checked attempted restoration around selecting matches/run.json. Selected filenames are individually replaced; source no longer describes a two-file atomic transaction. This materially updates the previously open paired-publication slice; independent execution/native/race qualification is not supplied by this read."
+        },
+        {
+          "paths": [
+            "src/patchtrace/gui/access_names.py",
+            "src/patchtrace/gui/qt/docks.py",
+            "src/patchtrace/gui/tips.py",
+            "src/patchtrace/gui/qt/state_view.py"
+          ],
+          "finding": "Adds named controls, popup naming and stable unique dock-tab accessible identifiers, plus adjacent accessibility adjustments. Bounded focal source read; no manual/assistive-technology qualification."
+        },
+        {
+          "paths": [
+            "tools/calibration/tier_r/receipts.py",
+            "tools/calibration/tier_r/research_audit.py",
+            "tools/calibration/tier_r/research_build.py",
+            "tools/calibration/tier_r/research_observers.py",
+            "tools/calibration/tier_r/research_pilot.py",
+            "corpus/ours/r1-pilot/defined/"
+          ],
+          "finding": "New research workflow/receipt modules and authored defined fixtures are distinct retained recovery. Mechanically identified from the complete delta; not a whole-module audit or real accuracy approval."
+        }
+      ],
+      "overlap": "No change to inventory_selection.py, strings/compose.py, search/wiring.py or intelligence/tools/admission.py in this82-path delta. Thus the old canonical-text inventory reader and missing new composition/admission/source bridge recorded atbc7 remain. Search/Strings Qt changes in this delta are accessibility-level, not our source-binding repair. Forced-export source is unchanged frombc7; do not infer its separate ownership gate closed.",
+      "reported_prior_results": "Commit reports189passed/14native-skips research/transfer and145GUI passes at earlier local source; broad frozen QA remains incomplete with preserved KEV fixture and AF_UNIX failures. Strict/native/package/accuracy and semantic-exhaustion gates remain open. These are author-reported local receipts, not new executions by this reviewer.",
+      "current_head_ci": {
+        "checks_url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/commits/087f50aae76f815dc013fb65e304eef8e21596c1/check-runs?per_page=100&page=1",
+        "total_count": 31,
+        "returned": 31,
+        "complete_single_page": true,
+        "status_counts": {
+          "queued": 28,
+          "completed": 3
+        },
+        "conclusion_counts": {
+          "null": 28,
+          "skipped": 3
+        },
+        "check_runs": [
+          {
+            "id": 135532175171,
+            "name": "probe (windows-latest)",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035127/job/135532175171"
+          },
+          {
+            "id": 135532174529,
+            "name": "probe (ubuntu-latest)",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035127/job/135532174529"
+          },
+          {
+            "id": 135532164232,
+            "name": "msvc cl advisory (windows-2022)",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035215/job/135532164232"
+          },
+          {
+            "id": 135532163620,
+            "name": "live build environment (ubuntu-22.04)",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035233/job/135532163620"
+          },
+          {
+            "id": 135532163577,
+            "name": "release-gate",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035165/job/135532163577"
+          },
+          {
+            "id": 135532162574,
+            "name": "plan",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035215/job/135532162574"
+          },
+          {
+            "id": 135532162197,
+            "name": "windows advisory (smoke)",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035215/job/135532162197"
+          },
+          {
+            "id": 135532162030,
+            "name": "dependency-audit (ubuntu-latest, runtime)",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035193/job/135532162030"
+          },
+          {
+            "id": 135532161957,
+            "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035165/job/135532161957"
+          },
+          {
+            "id": 135532161943,
+            "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035165/job/135532161943"
+          },
+          {
+            "id": 135532161871,
+            "name": "qa (ubuntu-latest)",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035165/job/135532161871"
+          },
+          {
+            "id": 135532161862,
+            "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035165/job/135532161862"
+          },
+          {
+            "id": 135532161803,
+            "name": "qt-gate (windows-latest, 5, 1/1)",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035165/job/135532161803"
+          },
+          {
+            "id": 135532161756,
+            "name": "qa (windows-latest)",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035165/job/135532161756"
+          },
+          {
+            "id": 135532161706,
+            "name": "live intel tools (ubuntu-22.04)",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035233/job/135532161706"
+          },
+          {
+            "id": 135532161439,
+            "name": "live BinDiff (windows-latest)",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035247/job/135532161439"
+          },
+          {
+            "id": 135532161409,
+            "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035165/job/135532161409"
+          },
+          {
+            "id": 135532161321,
+            "name": "dependency-audit (windows-latest, packaging)",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035193/job/135532161321"
+          },
+          {
+            "id": 135532161295,
+            "name": "dependency-audit (windows-latest, runtime)",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035193/job/135532161295"
+          },
+          {
+            "id": 135532161266,
+            "name": "dependency-audit (ubuntu-latest, packaging)",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035193/job/135532161266"
+          },
+          {
+            "id": 135532161184,
+            "name": "live BinDiff (ubuntu-22.04)",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035247/job/135532161184"
+          },
+          {
+            "id": 135532161115,
+            "name": "live intel tools (windows-latest)",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035233/job/135532161115"
+          },
+          {
+            "id": 135532161028,
+            "name": "security-scan",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035193/job/135532161028"
+          },
+          {
+            "id": 135532160890,
+            "name": "windows",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035305/job/135532160890"
+          },
+          {
+            "id": 135532160564,
+            "name": "live rz-diff (windows-latest)",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035390/job/135532160564"
+          },
+          {
+            "id": 135532160247,
+            "name": "live rz-diff (ubuntu-latest)",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035390/job/135532160247"
+          },
+          {
+            "id": 135532160229,
+            "name": "native (patchtrace-seeded-store)",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035244/job/135532160229"
+          },
+          {
+            "id": 135532160180,
+            "name": "native (raw-cache-hit)",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035244/job/135532160180"
+          },
+          {
+            "id": 135532160159,
+            "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035244/job/135532160159"
+          },
+          {
+            "id": 135532160137,
+            "name": "native (patchtrace-clean)",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035244/job/135532160137"
+          },
+          {
+            "id": 135532159678,
+            "name": "native (repro-plain-ghidriff)",
+            "head_sha": "087f50aae76f815dc013fb65e304eef8e21596c1",
+            "status": "queued",
+            "conclusion": null,
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44516035244/job/135532159678"
+          }
+        ],
+        "legacy_url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/commits/087f50aae76f815dc013fb65e304eef8e21596c1/status",
+        "legacy_statuses": [
+          {
+            "context": "security/snyk (djshellshoxxx)",
+            "state": "success",
+            "target_url": "https://app.snyk.io/org/djshellshoxxx/pr-checks/3f11f618-d835-432f-96bf-361c1f90f6c7"
+          }
+        ],
+        "qualification": "Queued/skipped checks and a legacy Snyk success do not establish current-head CI acceptance."
+      },
+      "limit": "82 changed paths were enumerated; named transfer/runner/accessibility patches read focally. New research modules were identified, not exhaustively reviewed."
+    }
+  ],
+  "preservation": "Keep both old receipts and the new delta. Retain checkpointbdc, newcompletion32cc and integration087 source branches. No new main-integrated classification, automatic merge, PR closure or deletion follows.",
+  "historical_boundary": "Original317-topic partition144+11+162 stays frozen. The prior321-topic tally144+11+166 remains a valid11:22 observation. The new external PR322 adds one retained topic; current322-topic tally is144+11+167.",
+  "identity_checks": [
+    {
+      "classification": "ALREADY INTEGRATED",
+      "count": 144,
+      "changed_or_missing": []
+    },
+    {
+      "classification": "DEPENDENCY BLOCKED",
+      "count": 11,
+      "changed_or_missing": []
+    }
+  ],
+  "ref_delta": {
+    "added": [
+      {
+        "name": "codex/patchtrace-completion-20261119-81e4",
+        "sha": "32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7"
+      }
+    ],
+    "removed": [],
+    "moved": [
+      {
+        "name": "consolidation/patchtrace-continuation-20261119",
+        "before": "976dddfbbcdf9a320e48813d8cf2c3c6540aac81",
+        "after": "2042e24dc7f3eac265e0eb183c738527852b22cf",
+        "previous_classification": "REQUIRES REVIEW"
+      },
+      {
+        "name": "consolidation/patchtrace-reviewed-20261119",
+        "before": "a56ab13aaf9916fc12bea70ba1494075991b7f09",
+        "after": "8d130aefe1be6e737cff1d90d2a5b1658d60a3a6",
+        "previous_classification": "REQUIRES REVIEW"
+      },
+      {
+        "name": "integration/exhaustive-patchtrace-consolidation-20261119",
+        "before": "bc7eb6328b477e2ff19cfe36317279eaf5856fb6",
+        "after": "087f50aae76f815dc013fb65e304eef8e21596c1",
+        "previous_classification": "REQUIRES REVIEW"
+      }
+    ]
+  },
+  "census_page_sizes": {
+    "branches": [
+      100,
+      100,
+      100,
+      23,
+      0
+    ],
+    "pulls": [
+      56,
+      0
+    ],
+    "issues": [
+      66,
+      0
+    ]
+  },
+  "all_open_pr_heads_match_branches": true
+}

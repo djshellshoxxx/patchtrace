@@ -1,5 +1,21 @@
 # Resumed source and qualification checkpoint
 
+## Publication completed
+
+Runtime/evidence head **2042e24dc7f3eac265e0eb183c738527852b22cf**, tree
+**8e5327e9348c41496a029cb090337e1308d3ce5b**, was guarded forward from 976dddfb
+with core 8d130aef as the second parent. All 212 file blobs, exact tree/parents,
+ref and PR head/base were verified. [Receipt](continuation-publication.json).
+This documentation-only followup records that completed operation. The steps
+below were preparation history; source publication is no longer pending.
+The remaining work is fresh exact-head full/native/security qualification and
+explicit blocker resolution before another guarded main merge.
+
+The final complete census observed 323 branches, 56 open PRs and ten issues at
+11:51:48–11:51:51 UTC: 144 integrated + 11 dependency-blocked + 167 retained/review
+topics, with main unchanged. [Census](post-publication-census.json),
+[gates](post-publication-gates.json), [external delta](external-publication-delta-20261119.md).
+
 The execution workspace recovered after the 10:31:52 interruption. All component
 source, raw failure evidence and residual branch reviews are now assembled in
 the existing continuation candidate. This is not an additional main merge or a

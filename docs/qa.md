@@ -1946,3 +1946,12 @@ independent guard controls; ordinary Ruff passed. Guarded core publication
 8d130aefe1be6e737cff1d90d2a5b1658d60a3a6 has exact verified tree ce039994.
 Runtime/workflows are unchanged. The original full failure is retained and
 fresh exact-head acceptance remains required. [Evidence](qa/tier-r-cache-pin-20261119/README.md).
+
+
+## [GUARDED-CONTINUATION-PUBLICATION-20261119]
+
+Published runtime/evidence **2042e24dc7f3eac265e0eb183c738527852b22cf**, exact tree 8e5327e9348c41496a029cb090337e1308d3ce5b, equals local e8a6592c.
+The expected-head fast-forward retains checkpoint 976dddfb and corrected core 8d130aef as parents; all 212 changed-file blobs and commit/ref/PR readback match.
+This receipt followup changes documentation only. Runtime 9335 and the separately
+qualified CI test correction 5575 remain unchanged. Full/native/strict gates remain
+open; no additional main merge is claimed. [Publication and current gates](audits/final-consolidation-report.md).

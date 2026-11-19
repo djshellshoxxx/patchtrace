@@ -27,9 +27,14 @@
     "expected_old_head": "976dddfbbcdf9a320e48813d8cf2c3c6540aac81",
     "base_pr": 319,
     "force": false,
-    "receipt": "Actual remote commit/tree/parents are recorded in the guarded publication PR receipt.",
+    "receipt": "continuation-publication.json",
     "additional_parent": "8d130aefe1be6e737cff1d90d2a5b1658d60a3a6",
-    "core_head": "8d130aefe1be6e737cff1d90d2a5b1658d60a3a6"
+    "core_head": "8d130aefe1be6e737cff1d90d2a5b1658d60a3a6",
+    "status": "runtime and evidence published; this followup is documentation only",
+    "published_runtime_head": "2042e24dc7f3eac265e0eb183c738527852b22cf",
+    "published_runtime_tree": "8e5327e9348c41496a029cb090337e1308d3ce5b",
+    "readback_verified": true,
+    "files_verified": 212
   },
   "runtime": {
     "commit": "9335e7dcadc6d0337243f894e8f234ccc74bc62e",
@@ -85,5 +90,16 @@
     "readback_verified": true,
     "source_change": "One test assertion plus three QA files; no runtime/workflow change.",
     "receipt": "core-cache-pin-publication.json"
+  },
+  "census_after_publication": {
+    "observed_utc": "2026-11-19T11:51:51.022Z",
+    "branches": 323,
+    "topics": 322,
+    "open_prs": 56,
+    "open_issues": 10,
+    "integrated": 144,
+    "dependency_blocked": 11,
+    "retained_review_active": 167,
+    "receipt": "post-publication-census.json"
   }
 }

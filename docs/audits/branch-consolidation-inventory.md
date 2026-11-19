@@ -1,6 +1,58 @@
 # PatchTrace branch consolidation inventory
 
-## Resumed assembled recovery — 2026-11-19 11:34: 21 UTC
+## Published outcome — 2026-11-19 11:56:58 UTC
+
+The reviewed continuation source and evidence were published in draft
+[PR #321](https://github.com/djshellshoxxx/PatchTrace/pull/321) at
+**2042e24dc7f3eac265e0eb183c738527852b22cf**, tree
+**8e5327e9348c41496a029cb090337e1308d3ce5b**. The tree equals verified local
+**e8a6592c02544d8186416be64f9df78f31078a52**. The expected-head guard preserved
+checkpoint **976dddfbbcdf9a320e48813d8cf2c3c6540aac81** as first parent and
+updated core **8d130aefe1be6e737cff1d90d2a5b1658d60a3a6** as second parent. All 212 changed-file blobs,
+both parents, the exact tree, branch ref and PR head/base were read back.
+
+This later receipt revision changes documentation only. It records completed
+publication, superseding the earlier preparation instructions below. The
+reviewed runtime remains 9335e7dc and the sole later test change remains the
+approved cache-pin assertion 5575af79. Main remains **fdc2696c23bdbfe7668348f25e3b336ce33039f7**;
+there has been no additional main merge, branch deletion, force push, release,
+tag or deployment.
+
+[Guarded publication receipt](consolidation-20261119/continuation-publication.json),
+[core correction receipt](consolidation-20261119/core-cache-pin-publication.json),
+[combined QA](../qa/combined-recovery-20261119/README.md).
+
+### Final complete census
+
+The post-publication observation at **11:51:48–11:51:51 UTC** contains
+**323 branches, 56 open PRs and ten open non-PR issues**. Branch pages were
+100/100/100/23/0; PR pages 56/0; issue pages 66/0, including the same 56 PRs.
+Every open PR head matches its branch; no duplicate page entries were found.
+
+| Current topic disposition | Count |
+| --- | ---: |
+| Already integrated; later cleanup candidates only |144 |
+| Dependency blocked |11 |
+| Retained / requiring review or qualification |167 |
+| Total topics, excluding main |322 |
+
+All 144 integrated heads and all 11 dependency-blocked heads remain unchanged.
+The additional topic since the 322-branch observation is external draft PR #322,
+codex/patchtrace-completion-20261119-81e4 at
+32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7. It extends the retained checkpoint bdc929eb;
+ancestry to that unmerged checkpoint does not establish integration into main.
+External PR #320 advanced from bc7eb632 to 087f50aae76f815dc013fb65e304eef8e21596c1.
+Both remain distinct active work with their own qualification requirements.
+
+The initial 317-branch census, post-foundation 318-branch partition and later 322
+snapshot remain separate historical observations. The all-branch mapping and
+bounded focal-review limits are unchanged; no every-commit approval is claimed.
+[Post-publication census](consolidation-20261119/post-publication-census.json),
+[external delta review](consolidation-20261119/external-publication-delta-20261119.md),
+[complete parsed REST pages and gate receipts](consolidation-20261119/post-publication-evidence.zip).
+
+
+## Earlier preparation checkpoint — 2026-11-19 11:34: 21 UTC
 
 This current section supersedes the dated interruption status below. Original
 source records and failed/incomplete evidence remain preserved. The execution

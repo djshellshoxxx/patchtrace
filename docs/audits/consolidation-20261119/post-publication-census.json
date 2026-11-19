@@ -1,0 +1,2005 @@
+{
+  "schema": "patchtrace.post-publication-census/1",
+  "repository": "djshellshoxxx/PatchTrace",
+  "started_utc": "2026-11-19T11:51:48.552Z",
+  "finished_utc": "2026-11-19T11:51:51.022Z",
+  "page_sizes": {
+    "branches": [
+      100,
+      100,
+      100,
+      23,
+      0
+    ],
+    "pulls": [
+      56,
+      0
+    ],
+    "issues": [
+      66,
+      0
+    ]
+  },
+  "counts": {
+    "branches": 323,
+    "topics": 322,
+    "open_prs": 56,
+    "open_issues": 10
+  },
+  "main": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+  "branches": [
+    {
+      "name": "access-test-noprefix",
+      "sha": "726a371ab34d4589b0456d059865ade6b82fac88"
+    },
+    {
+      "name": "audit/ai-reports",
+      "sha": "dd6402b9c00d5aae79f152f4fe5ce0fa8597dc24"
+    },
+    {
+      "name": "audit/core",
+      "sha": "fae13b2ed3043ddce00bbf387e386e93e7b3ee06"
+    },
+    {
+      "name": "audit/desktop",
+      "sha": "4d5e48ab7df30f6318a8f3177b37ac98741e2b1f"
+    },
+    {
+      "name": "audit/enrichment",
+      "sha": "cbc5b079ad2c8cdea4ec161b1afe9ac554b8ed39"
+    },
+    {
+      "name": "audit/integration",
+      "sha": "f6505928d8264343caa33f878deb253626752944"
+    },
+    {
+      "name": "audit/kb-correlation-20261107",
+      "sha": "c760e6ccea0d3e4df04bf76e58139d9a7fc9e9e6"
+    },
+    {
+      "name": "audit/random-boundaries-20261105",
+      "sha": "802b5b1bb5f5e64118256e75414b7ca74ad61fcc"
+    },
+    {
+      "name": "audit/random-invariants-20261105",
+      "sha": "7716e2b02feaa04e59dce302c1c6cacbe800634b"
+    },
+    {
+      "name": "audit/random-lifecycle-20261105",
+      "sha": "f2b7d1786f60df27b0228f247aab9a00bd7c1078"
+    },
+    {
+      "name": "audit/runtime",
+      "sha": "9f32a6ecbd056249373b82bc1e814bd938da8c70"
+    },
+    {
+      "name": "audit/trust-boundaries-20261107",
+      "sha": "d75c0490aa0109e3a983c5e6baea2cea1855f956"
+    },
+    {
+      "name": "automation/api-funded-persistent-codex-20261103",
+      "sha": "6fe6c4b1be060eb6e9d5208a68f0d68e1082b59c"
+    },
+    {
+      "name": "automation/parallel-api-eight-agents-20261103",
+      "sha": "f8050a1fef23b71fd3a02b216c5035bcac3f4889"
+    },
+    {
+      "name": "automation/patchtrace-api-agent-pilot-20261103",
+      "sha": "def36c822a80c77ae94b8e9a77da6f1ee9de1160"
+    },
+    {
+      "name": "chatgpt/corpus-1",
+      "sha": "b7a0f0a45d2de1462367d877b7386091b4d275ce"
+    },
+    {
+      "name": "chatgpt/deferred-audit-fixes-1",
+      "sha": "2174837f3172c3ff2a3c676da106f42b55648a70"
+    },
+    {
+      "name": "chatgpt/ghidriff-sequential-lock-fix-20261017",
+      "sha": "f6b7545bcc7a161440ab7119233c204510571370"
+    },
+    {
+      "name": "chatgpt/help-docs-1",
+      "sha": "e5bee6fe157c90a40f2d9f458768e2169ce123e5"
+    },
+    {
+      "name": "chatgpt/java-probe-boundaries-20261016",
+      "sha": "09bb4519d7d8e9ff8f40abcba7e11cb297d8b61e"
+    },
+    {
+      "name": "chatgpt/java-probe-ci-fix-20261016",
+      "sha": "0254841e3e635ed717e35abcf83021f001d7df29"
+    },
+    {
+      "name": "chatgpt/java-probe-qa-fix-20261016",
+      "sha": "89500e12068656fa1958443ef634064effcbc40b"
+    },
+    {
+      "name": "chatgpt/kb-fixtures-1",
+      "sha": "781b36fb60e775ce01bf0c114e6a17b609fdb475"
+    },
+    {
+      "name": "chatgpt/lbl30-prereg-guard-20261016",
+      "sha": "6ae2c079e6cafa2b7bd5396cac443cd34ba7138a"
+    },
+    {
+      "name": "chatgpt/lbl31-coff-quoted-rip-20261016",
+      "sha": "6e71bfabbf5ef75449b46981e9e822f7e555a6bf"
+    },
+    {
+      "name": "chatgpt/lbl31-coff-symbol-mask-20261016",
+      "sha": "9622704d5c751d55700c4b642111131a7135d139"
+    },
+    {
+      "name": "chatgpt/lbl31-output-persistence-20261015",
+      "sha": "2019a37fa65fc37f4758469143c2daadc07e0098"
+    },
+    {
+      "name": "chatgpt/lbl31-windows-qa-fixes-20261016-a",
+      "sha": "ddb2ff077a21c1f0053ba8079564f6f86c3e155f"
+    },
+    {
+      "name": "chatgpt/lbl32-card-controls-20261016",
+      "sha": "9513bc05229dd7a8460fc229d7420154d61498db"
+    },
+    {
+      "name": "chatgpt/lbl32-recipe-aa-noise-20261016",
+      "sha": "eaa30013794a9bd0fedc9ec34bbe374d6db0cfc9"
+    },
+    {
+      "name": "chatgpt/merge-first-handoff-20261016",
+      "sha": "19153f10780e783bc931739dd26db97d8eaf2b92"
+    },
+    {
+      "name": "chatgpt/nway-external-note-qa-20261016",
+      "sha": "8c7288276d3e49b7794b7fd80db4b02d5891cf00"
+    },
+    {
+      "name": "chatgpt/panels-1",
+      "sha": "cfd7cfff52f4f9b8b1264e8b7d70ef1bbef2d63f"
+    },
+    {
+      "name": "chatgpt/patchwatch-reuse-roadmap-20261026",
+      "sha": "4eabf8dff2c4094681da70c7bd85ecd0da5aed9f"
+    },
+    {
+      "name": "chatgpt/r5-calibration-research-20261030",
+      "sha": "4d9d9051aea87319847a0b321a14d37b95cb8abd"
+    },
+    {
+      "name": "chatgpt/semantic-analysis-r3-20261030",
+      "sha": "2698b9a04d33b2d04f49c1ab737636539c6ef6f7"
+    },
+    {
+      "name": "chatgpt/ue-r3-retain-decompiled-20261016",
+      "sha": "ebbd621d4f557905892aee5f7cf8cb7b0e2addc2"
+    },
+    {
+      "name": "chatgpt/ue-r7-p15-unresolved-20261016-a",
+      "sha": "292dc3953dd2b8f157752d12251aff68b6e5bda5"
+    },
+    {
+      "name": "chatgpt/ue-r7-strict-worker-report-20261016-a",
+      "sha": "9c5f9a42b499133b842b14b9619bf8390010e1ff"
+    },
+    {
+      "name": "chatgpt/unified-fixture-collection-fix-20261016",
+      "sha": "941c617b6854291e2448cad6d7d5710a24a8543d"
+    },
+    {
+      "name": "chatgpt/unified-fixtures-1",
+      "sha": "161a88345efc6484f4d7809fc6963a0193bd0057"
+    },
+    {
+      "name": "chatgpt/unified-sort-perf-qa-20261016",
+      "sha": "27b0a48bb8007f504b4a127a099136a6ea5c00b7"
+    },
+    {
+      "name": "claude/access-test-1791773355",
+      "sha": "726a371ab34d4589b0456d059865ade6b82fac88"
+    },
+    {
+      "name": "claude/affectionate-galileo-bqd3tw",
+      "sha": "b29351d41060f8e9330fc9673457d835e188f993"
+    },
+    {
+      "name": "claude/audit-beta",
+      "sha": "c93ff945b9b523abe0b829247137105788a5ea27"
+    },
+    {
+      "name": "claude/autonomous-finish-20261104",
+      "sha": "ad4c49282a65d17d2ef23dfcc03e82be065c9021"
+    },
+    {
+      "name": "claude/awesome-ramanujan-o3pxx3-ci",
+      "sha": "0bf1f8309e8425ba34199657009d3055215336f1"
+    },
+    {
+      "name": "claude/awesome-ramanujan-o3pxx3-hostile",
+      "sha": "077b04e681ac74b20c0ff8bf367aa720c277f2d2"
+    },
+    {
+      "name": "claude/awesome-ramanujan-o3pxx3-win1",
+      "sha": "7ac57759f3b9b332eaafb48c82f366566892f1b1"
+    },
+    {
+      "name": "claude/bugfix-kbc-20261029",
+      "sha": "653f384d1ca60b7e943bd658698e0989d826b696"
+    },
+    {
+      "name": "claude/bugfix-kev-acq-20261029",
+      "sha": "fbe58d800da27aff2544c6a478f0a591ff7dad3b"
+    },
+    {
+      "name": "claude/bugfix-rules-cg-20261029",
+      "sha": "78d48cf80bf9a8c698e604dc1ce58e8aecedca45"
+    },
+    {
+      "name": "claude/bugfix-rules-cg-rest-20261111",
+      "sha": "67b2bc456c59a510b854b0cdd9e85ed29d00b17d"
+    },
+    {
+      "name": "claude/bugfix-search-pilot-20261111",
+      "sha": "d1f7d9aa64b28c8a8ca0a1065bb88e1e2f15b7f0"
+    },
+    {
+      "name": "claude/bugfix-strings-pe-20261029",
+      "sha": "7ae041e79e419159299c32df98b8e69ab176e859"
+    },
+    {
+      "name": "claude/bundle-license-gate",
+      "sha": "d3617acf9af7834582b4962a8c149969a7d55a22"
+    },
+    {
+      "name": "claude/clever-clarke-s4nhi6",
+      "sha": "502402684b0d0aa35d7719bb5a3467de035982bc"
+    },
+    {
+      "name": "claude/compassionate-goldberg-5uuqks",
+      "sha": "198eb21e8813b28de361422cfe3c002bdb9e3970"
+    },
+    {
+      "name": "claude/fix-deadline-test",
+      "sha": "22ff025a7710d07d7ad74be2c8f7cc0b4db0daf7"
+    },
+    {
+      "name": "claude/funny-feynman-d2m0b5",
+      "sha": "770c11f40ef70e11dfeb3fbc2f5646cc2b4b97b9"
+    },
+    {
+      "name": "claude/gallant-knuth-8gxuzd",
+      "sha": "f249edc8ee70ae003a1478eae5418d85ed629d87"
+    },
+    {
+      "name": "claude/instance-b-features",
+      "sha": "9237c2601c0f25d306b51883875c339bab8ed82b"
+    },
+    {
+      "name": "claude/instance-c-research",
+      "sha": "6f767ccef8ebfffd1d2373c5124d8a961dc54b41"
+    },
+    {
+      "name": "claude/instance-d-gui",
+      "sha": "2fa113889d1ffee6b68496993d3b3b6ebb0ba035"
+    },
+    {
+      "name": "claude/java-version-retry-integration",
+      "sha": "45fa67ad7e924cb4e2df1cd487c04a2c0ddab381"
+    },
+    {
+      "name": "claude/jolly-fermi-eghaxy",
+      "sha": "99f8328ce89d02f200cf9fbc5852d9801761af28"
+    },
+    {
+      "name": "claude/live-harness-infra-20261111",
+      "sha": "c59ccada97b649366af808a6d83bb465078c9011"
+    },
+    {
+      "name": "claude/live-proof-20261111",
+      "sha": "18efb7ef6d196775645f195552a32ad08e277459"
+    },
+    {
+      "name": "claude/modest-hamilton-kz2gta",
+      "sha": "280bf05856eb60f4ddb0d58210616f65a3735816"
+    },
+    {
+      "name": "claude/patchtrace-cli-dotpath-spec-er6hha",
+      "sha": "62b9a3de4d1036a6e4b9bd2618372f4042b15f7f"
+    },
+    {
+      "name": "claude/patchtrace-features",
+      "sha": "66e9adc50fb118c04e5e24eacd0c221ca483a130"
+    },
+    {
+      "name": "claude/patchtrace-haiku-agent-motpbx",
+      "sha": "cbabc09e9df8a8190c769164ef0fae44f9c5cb1b"
+    },
+    {
+      "name": "claude/patchtrace-kbf04-fp-tests-20261118",
+      "sha": "16ab88b0626ef05700c4199e926103932312e5c7"
+    },
+    {
+      "name": "claude/patchtrace-multi-worker-consolidate-24ct7v",
+      "sha": "ca10acb506fbf61db8142a836acfbd1e50a2aeb3"
+    },
+    {
+      "name": "claude/patchtrace-search-anchors-circularity-20261118",
+      "sha": "f6ef1528c15b2281ee7b6f32625d02a5211c926d"
+    },
+    {
+      "name": "claude/patchtraces-consolidation-trngn0",
+      "sha": "faddea300daf4058d38d24ff04a270be6f3d832b"
+    },
+    {
+      "name": "claude/quirky-curie-n5pxf5",
+      "sha": "a5593fa58b2ead6ecf6adfe045db242232cd52a3"
+    },
+    {
+      "name": "claude/serene-heisenberg-2y5kz6",
+      "sha": "7ed5cebfdaee4dc508b0cc739e86c18c1ff34a97"
+    },
+    {
+      "name": "claude/sleepy-fermi-cli-parity-1",
+      "sha": "cf50b4e8725cb1291ac6150667f2e136f023aff3"
+    },
+    {
+      "name": "claude/sleepy-fermi-kbc-1",
+      "sha": "53f5dd2611b38e3f69f8d72c3ca7cf73e9e896ab"
+    },
+    {
+      "name": "claude/sleepy-fermi-na-rzdiff-ownership",
+      "sha": "aacb984e9d627be051ca8c8c3b88d5ceca0ff505"
+    },
+    {
+      "name": "claude/sleepy-fermi-rq-l1-runner",
+      "sha": "e88d748cf9846e04c0c81449976f530519da83a9"
+    },
+    {
+      "name": "claude/sleepy-fermi-security-1",
+      "sha": "1d5a022d2840c5c071ccece503664c8c961d63f1"
+    },
+    {
+      "name": "claude/sleepy-fermi-test-reliability",
+      "sha": "37d9e47ca202b33f737b15f7af724649db8c3e15"
+    },
+    {
+      "name": "claude/sleepy-fermi-y3z4yj",
+      "sha": "160a60e838742b21f70effedb8e7bb48886d9266"
+    },
+    {
+      "name": "claude/spec53-diagnose-launcher",
+      "sha": "a00fcc14ea11751ce5ca05271e2be32d06dd4535"
+    },
+    {
+      "name": "claude/symbol-policy-isolated-settings",
+      "sha": "5db597257decc219db520c0dab8369b4d4e2ea5e"
+    },
+    {
+      "name": "claude/ws-a2-ci-speed-20261104",
+      "sha": "bef720fdd50c0ab7c93a10955b3e5ec7d2a5f992"
+    },
+    {
+      "name": "claude/ws-a-20261104",
+      "sha": "dabba4aea4ba0fa19e71ede05ce4fb8ab6741942"
+    },
+    {
+      "name": "claude/ws-bc-20261104",
+      "sha": "e1193c8896e009930dae4edec974d9795876f0e0"
+    },
+    {
+      "name": "claude/ws-i-20261104",
+      "sha": "b03a77b8a2fe9e4fa65fbe43889e06f4e68180e9"
+    },
+    {
+      "name": "claude/ws-p-20261104",
+      "sha": "597a8b106491cd587cedf1273ee5ef6d56d71508"
+    },
+    {
+      "name": "codex/advisory-read-bounds-20261118",
+      "sha": "a4061979547ef88855fbdb085228a42c3be21603"
+    },
+    {
+      "name": "codex/agent-skills-spec56-20261014",
+      "sha": "4467d1f3c6e113a7da808a67e8dee9d4aa5083d8"
+    },
+    {
+      "name": "codex/analyst-accessibility-20261109",
+      "sha": "b90a2cd49fa4ba71050a378abc753fe8c90733fd"
+    },
+    {
+      "name": "codex/audit-1",
+      "sha": "c2070cf8b4e7b0ade76cb000a5805009754eec55"
+    },
+    {
+      "name": "codex/audit-2",
+      "sha": "08b12f1b279d917736cfc17d4b8e447c8f552616"
+    },
+    {
+      "name": "codex/autonomous-checkpoint-20261102-0945",
+      "sha": "d038ddea43182b8709afd447140dc74fded487c5"
+    },
+    {
+      "name": "codex/autonomous-checkpoint-20261102-1020",
+      "sha": "c13d3257c88140c23fb585a8a59a4dce81e81928"
+    },
+    {
+      "name": "codex/autonomous-reconcile-20261101",
+      "sha": "0130bf81e2fe3154f30af7b68a0e6ab197946040"
+    },
+    {
+      "name": "codex/codespaces-cs1-20261109",
+      "sha": "a5f049cd777d3d885ec8e1572f94ea8935c9cbb6"
+    },
+    {
+      "name": "codex/consolidate-backup-stability-20261102",
+      "sha": "f1a55c4cf21ddb0dea243bd417b74f86caaed142"
+    },
+    {
+      "name": "codex/consolidate-prereg-prefix-20261102",
+      "sha": "9b9452b4677ee3809a6e0f43d49567a8d15602e6"
+    },
+    {
+      "name": "codex/consolidate-replay-schema-20261102",
+      "sha": "ca411e77f43a9fd95ca5e0bcc7d2b58071ccae37"
+    },
+    {
+      "name": "codex/consolidated-reviewed-20261102",
+      "sha": "6e82fd70f315b99c6798a42c9061a1424a02933e"
+    },
+    {
+      "name": "codex/consolidation-audit-20261104",
+      "sha": "fbd9595351bf50217402b7a62b3e057de79f45f0"
+    },
+    {
+      "name": "codex/consolidation-cve-reviewed-20261118",
+      "sha": "d8c02caea407f6d323eecd636735849c1eb31a2d"
+    },
+    {
+      "name": "codex/consolidation-evidence-20261102",
+      "sha": "44c320e37b84a38259f13fa8f0f444b542b96f2c"
+    },
+    {
+      "name": "codex/consolidation-integrity-20261103",
+      "sha": "b58bb53debcb3323e5d8d634e09397cb7e02965f"
+    },
+    {
+      "name": "codex/consolidation-reviewed-20261118",
+      "sha": "121ffb0bcdd6af4f24e5035389d4709dffddf263"
+    },
+    {
+      "name": "codex/coordinator-rule-repairs-20261031",
+      "sha": "798e11ef345ed7a7a65508a466eaf77ee85ef77c"
+    },
+    {
+      "name": "codex/corpus-integrity-20261116",
+      "sha": "6a5b6f2609604fe34a8da9cf347c713b21578834"
+    },
+    {
+      "name": "codex/corpus-output-main-20261101",
+      "sha": "874e9a267fdc589a796ce573f2958e1aa84ea0f6"
+    },
+    {
+      "name": "codex/deep-review-consolidation-20261030",
+      "sha": "95e09548a82202ae4cfd9380522f36513da87a66"
+    },
+    {
+      "name": "codex/essential-combined-verification-20261030",
+      "sha": "a7f13e13ffb512f8e9621753a0ae162d78942f3b"
+    },
+    {
+      "name": "codex/essential-integration-20261029",
+      "sha": "5ed624e91468c410f2cf738ed4e36c2be3e0201d"
+    },
+    {
+      "name": "codex/essential-project-safety-20261031",
+      "sha": "c3868d8335a8f32f676905032dc1a6d0e9f22fd6"
+    },
+    {
+      "name": "codex/fix-pr110-ci-gates-20261029",
+      "sha": "c0d1c38aee74461969ff0a8b4d61179c3dbb9b0b"
+    },
+    {
+      "name": "codex/gt01-extraction-recovery-20261030",
+      "sha": "d76d23372acef4049115e9ae176acbeb538a82e5"
+    },
+    {
+      "name": "codex/gui-bounded-ambiguous-candidates-20261029",
+      "sha": "3287cb3d36052bd6e44420f631ed033baf939d64"
+    },
+    {
+      "name": "codex/identity-main-repair-20261101",
+      "sha": "4eebea4a5389af16bffe32a2bf9285c406d95fb1"
+    },
+    {
+      "name": "codex/java-version-retry-20261015",
+      "sha": "8ee61c623fa37c5a219f912cf7870bfeddcb1f70"
+    },
+    {
+      "name": "codex/kb-explicit-filename-selection-20261104",
+      "sha": "761b6b885f00143597c74f0457b1165a144fbdd4"
+    },
+    {
+      "name": "codex/kb-fixture-contract-repairs-20261030",
+      "sha": "a4d1e6a38c34d1952584aa65d7f5f908c45547b3"
+    },
+    {
+      "name": "codex/manifest-dtd-reviewed-20261118",
+      "sha": "23fbe4a54880319f62f40f3196794f85b6cdaec5"
+    },
+    {
+      "name": "codex/manual-correction-completeness-20261104",
+      "sha": "65f979a163a88ec5b32b3eb4173fa4a50ee9c920"
+    },
+    {
+      "name": "codex/master-foundation-scope-20261118-4a7",
+      "sha": "88b0b52281dd314aa72f93819145a73135618bc4"
+    },
+    {
+      "name": "codex/msrc-mixed-format-revision-20261102",
+      "sha": "e1b79e048d3963d747bc9f07448b039a250180ed"
+    },
+    {
+      "name": "codex/msrc-reconcile-integration-20261102",
+      "sha": "56374f867594dd923383c91ea71970cb7d24d173"
+    },
+    {
+      "name": "codex/parser-test-cpu-budget-20261104",
+      "sha": "cb204f7625d4de496642926bbda37d07e2888131"
+    },
+    {
+      "name": "codex/patchtrace-beta",
+      "sha": "c7937246a5bf3f1a09c7d121c0d438088b02040c"
+    },
+    {
+      "name": "codex/patchtrace-checkpoint-20261119-81e4",
+      "sha": "bdc929ebd3c6aaa2563c758936beb315a10eeea0"
+    },
+    {
+      "name": "codex/patchtrace-completion-20261119-81e4",
+      "sha": "32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7"
+    },
+    {
+      "name": "codex/patchtrace-stabilization-20261119",
+      "sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5"
+    },
+    {
+      "name": "codex/pilot-current-evidence-reviewed-20261118",
+      "sha": "b41d6631e679ad2777d248fa087ea71582a5bf63"
+    },
+    {
+      "name": "codex/post-consolidation-20261116",
+      "sha": "2d330075fbe00209fbe096ee29b60dcfd0e347b4"
+    },
+    {
+      "name": "codex/pr110-ci-repairs-20261029",
+      "sha": "bb42828d05b775c59b73a7bbd02c0113b9b9bb3b"
+    },
+    {
+      "name": "codex/pr110-kb-arch-scope-20261029",
+      "sha": "40e02daf93c8e13a94b74f5b80d86c1680fea7ad"
+    },
+    {
+      "name": "codex/pr110-persistence-feedback-20261029",
+      "sha": "3e9cedb012b4c82da3b0e5f9bc977ecd7313b64c"
+    },
+    {
+      "name": "codex/pr110-qa-wbjson-diaphora-help-20261029",
+      "sha": "aba4c2001a6b093f7f8cdc8b0ac20ab074ed57b8"
+    },
+    {
+      "name": "codex/pr111-bounded-nav-into-integration-20261029",
+      "sha": "025300f8e169556f84b6a8cfed20413e0a26b019"
+    },
+    {
+      "name": "codex/primary-environment-20261118",
+      "sha": "09b032f205f4ffa1838bef56007ebdb7a2308420"
+    },
+    {
+      "name": "codex/project-safe-export-20261101",
+      "sha": "e90254424c26ecd00e4c10c3c638e76d11b35841"
+    },
+    {
+      "name": "codex/pw01-kb-inventory-20261118",
+      "sha": "2b697222b34359bb46adc90aad69fd0a12708601"
+    },
+    {
+      "name": "codex/pw01-retained-source-pages-20261118",
+      "sha": "58fc130631f602b6e907bb054d30c21d810551d4"
+    },
+    {
+      "name": "codex/r1-ground-truth-research-20261030",
+      "sha": "10856edf05afae8166291f09fb3ead92f297360d"
+    },
+    {
+      "name": "codex/r1-receipt-publication-20261031",
+      "sha": "8c9eafc79b007a963453d8edf6cb40c804c9bc3d"
+    },
+    {
+      "name": "codex/r2-unified-matching-research-20261030",
+      "sha": "b3ceb8b30d7a83da5e22c231c3b8c28179246816"
+    },
+    {
+      "name": "codex/raw-alignment-reviewed-20261118",
+      "sha": "3c9d3f074481b2f609330fa49ab9019eb6637849"
+    },
+    {
+      "name": "codex/real-msrc-adapter-20261101",
+      "sha": "d99cd7712b76e9e42661ef0b268417d7ca322d3e"
+    },
+    {
+      "name": "codex/receipt-parent-race-20261101",
+      "sha": "2fdac2ea9042985ac3c98545d38ac3461d00f4cc"
+    },
+    {
+      "name": "codex/release-integration-20261116",
+      "sha": "95db052a11cce162d2d633cae805f28119f783a1"
+    },
+    {
+      "name": "codex/release-qualification-reviewed-20261118",
+      "sha": "573829f33c84e9b2d53ba51ebd7f699e39f406fe"
+    },
+    {
+      "name": "codex/repair-openai-agent-20261104",
+      "sha": "f019606665a740dc252e745913924debf73adc48"
+    },
+    {
+      "name": "codex/rzdiff-164-investigation",
+      "sha": "20ef68eaab59a2941bd2fb0db918eee36107c75f"
+    },
+    {
+      "name": "codex/saved-search-reviewed-20261118",
+      "sha": "26558cd0723aa5fa6d883f2935ad3c43cef94a86"
+    },
+    {
+      "name": "codex/semantic-proof-reconciliation-20261031",
+      "sha": "745e93426a16e0a91a961b6e0bbcb71be69f2a7e"
+    },
+    {
+      "name": "codex/storage-integrity-20261101",
+      "sha": "9911af4d9130b81b1875f82179e03e0a89e89794"
+    },
+    {
+      "name": "codex/strings-export-publication-20261118",
+      "sha": "92a411bf02fc8beb00b7a148e39db2bf68efa061"
+    },
+    {
+      "name": "codex/t9-qa-20261020",
+      "sha": "ecc4f2054c00dc2b324bb71134595c48dc4b6a18"
+    },
+    {
+      "name": "codex/tier-w-fetch-20261015",
+      "sha": "5b7b2591e616e8c28c05c7070661b33e2ca0435c"
+    },
+    {
+      "name": "codex/training-prereg-identity-20261101",
+      "sha": "dfe8f421db390ccd3158393a60205fa5dd25df0b"
+    },
+    {
+      "name": "codex/verified-followup-integration-20261118",
+      "sha": "f2b6827fc6270b96fb241b0722f2878de5a17361"
+    },
+    {
+      "name": "codex/windows-branding-reconcile-20261030",
+      "sha": "8f4c4a2e0021d424d403317c6780b6db026ad76b"
+    },
+    {
+      "name": "codex/windows-setup-installer-20261017",
+      "sha": "9c5fe67bd10a5d1342440bb8ea6a524cca3ce1f2"
+    },
+    {
+      "name": "consolidate/docs-20261104",
+      "sha": "ed70e6ddac449a42f843f1c60aa878416ab31727"
+    },
+    {
+      "name": "consolidate/kb-fixtures-20261104",
+      "sha": "820d70744dff58ef484299791d073b2e712f0524"
+    },
+    {
+      "name": "consolidate/research-r7-20261104",
+      "sha": "552c29453c5de93e22c65e47ad4187ded91e993a"
+    },
+    {
+      "name": "consolidate/rules-callgraph-20261104",
+      "sha": "7b3fcbaca88256971eafd55b8fb8fe9f44634a9e"
+    },
+    {
+      "name": "consolidate/test-stability-20261104",
+      "sha": "64e8374d5d3ae97a719a2bb3ac800497c50892af"
+    },
+    {
+      "name": "consolidation/desktop-keyboard-accessibility-20261116",
+      "sha": "45997cfc997b06996a982705e6cd60dc73a8fae1"
+    },
+    {
+      "name": "consolidation/patchtrace-continuation-20261119",
+      "sha": "2042e24dc7f3eac265e0eb183c738527852b22cf"
+    },
+    {
+      "name": "consolidation/patchtrace-reviewed-20261119",
+      "sha": "8d130aefe1be6e737cff1d90d2a5b1658d60a3a6"
+    },
+    {
+      "name": "docs/claude-autonomous-alpha-handoff-20261013",
+      "sha": "1038d3f13f214d55c28ceeb51c1c13c9b43b1d3f"
+    },
+    {
+      "name": "docs/codespaces-plan-20261107",
+      "sha": "c3536288ee3745826be814afb4d8fd07a53c526b"
+    },
+    {
+      "name": "docs/csaf-patch-intelligence-specs",
+      "sha": "24244831ec443fa19555586835e71da6dd4aac98"
+    },
+    {
+      "name": "docs/diaphora-optional-engine-20261014",
+      "sha": "b75ac57d85c75e8d61c61af8d104119bb1c65587"
+    },
+    {
+      "name": "docs/dockable-workspace-spec-20261030",
+      "sha": "6a1e3ce348a7e5f67bbabfe388315812cc830b03"
+    },
+    {
+      "name": "docs/findings-20261107",
+      "sha": "9d72402cc3fd884203c7a759f714fd0a4bd2c51f"
+    },
+    {
+      "name": "docs/handoff-20261107",
+      "sha": "39db34c5beaaf16cc60fec30f084acfde4035316"
+    },
+    {
+      "name": "docs/kbc-live-probe-result-20261107",
+      "sha": "c21d0ab8471ac1a541eb6d2ff929cce1fb34a2fd"
+    },
+    {
+      "name": "docs/nway-matches",
+      "sha": "f748cc48ea07b9af189d967979aa078610550eea"
+    },
+    {
+      "name": "docs/post-consolidation-gap-analysis-20261030",
+      "sha": "61b5c2bade71a8cec58ca9e1514141f4508b7c79"
+    },
+    {
+      "name": "docs/r8-reconciliation-20261106",
+      "sha": "5e1e19828b3801a2f0f7d50b4250ff9a273264ef"
+    },
+    {
+      "name": "docs/ranking-reuse-20261105",
+      "sha": "bc52940fb32d5b5f6d1a58a860062ec60d423d1e"
+    },
+    {
+      "name": "docs/readme-and-wiki",
+      "sha": "ad8fbe9f2f041653760c02e9d18a91a66dd11c39"
+    },
+    {
+      "name": "docs/refresh-accuracy-handoff-20261109",
+      "sha": "2e408e3c24c2efad6144bf8953d639edcf9fc489"
+    },
+    {
+      "name": "docs/research-reconciliation-20261105",
+      "sha": "febc9de57e61162da12fb1cc9280aef9b3ec2a99"
+    },
+    {
+      "name": "docs/research-tools-execution-plan-20261106",
+      "sha": "40da817650498eb7b87502016d2be90062467c50"
+    },
+    {
+      "name": "docs/semantic-ghidra-roadmap",
+      "sha": "8b9ebc01bb221a60ee65838dfdafd59d66e15f5d"
+    },
+    {
+      "name": "docs/sonar235-package-path-20261105",
+      "sha": "c30f11fb6f94ab3325e3bf6252326004f792294d"
+    },
+    {
+      "name": "docs/spec-31-kb-cve-correlation-20261014",
+      "sha": "9088bf0e2e452c5d792f2a9e6e879f417e9fc120"
+    },
+    {
+      "name": "docs/spec-32-kb-patch-search-20261014",
+      "sha": "d0ceb56f30f81f881f1f25fb4d1dba772ff476b9"
+    },
+    {
+      "name": "docs/specs-plan",
+      "sha": "a5194581396b67395a0ae8453d73eec5ab024e54"
+    },
+    {
+      "name": "docs/workbench-search-graph-floss-20261014",
+      "sha": "af15701d13b516662a36f20a00ece01b8462160f"
+    },
+    {
+      "name": "feat/acquisition",
+      "sha": "293362a2d8cee7d5cc373439436945888b3b805a"
+    },
+    {
+      "name": "feat/acquisition-gui",
+      "sha": "7ae34d8fa26a6b6c8b7acf40f5c16d99643151ce"
+    },
+    {
+      "name": "feat/alpha-ui-integration",
+      "sha": "c7ed1d90a890afa9eb67c238f9f52f458db96432"
+    },
+    {
+      "name": "feat/artifact-bytes-seam",
+      "sha": "91b35d09afd29e9c78169a3b095d9ea3be6c31b1"
+    },
+    {
+      "name": "feat/byte-representations",
+      "sha": "303bc452d0bb6cd46ee67f731f64ec951e1ee215"
+    },
+    {
+      "name": "feat/diffscore-workflow-20261107",
+      "sha": "a3aa53744006845e782c154ca6b51eb4ffcb6e1e"
+    },
+    {
+      "name": "feat/enrichment-cache",
+      "sha": "0368fd9b5453ab50166c08cf8dfc493e57b0ee52"
+    },
+    {
+      "name": "feat/enrichment-contracts",
+      "sha": "010d809d2581d3a8ed8208e83325ba29f91b2419"
+    },
+    {
+      "name": "feat/enrichment-cve",
+      "sha": "49bf245583d040a8b29d80daee8666d8c7f7b8d4"
+    },
+    {
+      "name": "feat/enrichment-signals",
+      "sha": "e96441a1a90478d5b06e7b0d9b4320695a2018ed"
+    },
+    {
+      "name": "feat/enrichment-wil",
+      "sha": "9a6999a0e644ef03670d10fc0b08524345c6c709"
+    },
+    {
+      "name": "feat/local-runtime-discovery",
+      "sha": "b9198705ab4c144746214c1e42c15b6098063009"
+    },
+    {
+      "name": "feat/nway",
+      "sha": "44d431788bcc55429a033049ed997fa33c92289b"
+    },
+    {
+      "name": "feat/pe-overview",
+      "sha": "4b78a6d3c0015a5fd46d557cde6cc8f0a583795b"
+    },
+    {
+      "name": "feat/phase2-finish",
+      "sha": "86afe3f6563b71e1fff5ed56a907f29c6703b96e"
+    },
+    {
+      "name": "feat/phase3-batch",
+      "sha": "3581b520207b464b35a7baa39d188fb4f2a08cf1"
+    },
+    {
+      "name": "feat/profiles",
+      "sha": "d21b5917a66041cb1ffa4f46931e551e55f3165a"
+    },
+    {
+      "name": "feat/raw-cache",
+      "sha": "28bc476713fc9b77b876cfc8f5454760ea23d4e0"
+    },
+    {
+      "name": "feat/rq-engine-adapters-20261107",
+      "sha": "b561ed60db9e9bed77b37faa76d875c93e7f3364"
+    },
+    {
+      "name": "feat/rq-parity-20261107",
+      "sha": "f8806bb7210793efdc8d0e2f8848c3452afd5d69"
+    },
+    {
+      "name": "feat/secondary",
+      "sha": "b932ae1a1c8916aeac7be2d49ce27c24717f2846"
+    },
+    {
+      "name": "feat/tooltip-registry",
+      "sha": "0a3843ea2abe37d42ff0291d621fa9a7c9744bbc"
+    },
+    {
+      "name": "feat/verified-offline-runtime-bundle",
+      "sha": "1724503d01be7aee13cb43a3a7a28b8a9ff54ece"
+    },
+    {
+      "name": "feat/winpairs-workflow-20261107",
+      "sha": "2e43d3f4d7ee6327f1f95e20c5f5b505bcd8b624"
+    },
+    {
+      "name": "feature/alpha-file-overview-20261013",
+      "sha": "476016590be5cd1315613759af18ff61c7c27851"
+    },
+    {
+      "name": "feature/current-project-investigation-20261105",
+      "sha": "ef70e0bdf02a202cf7ce4780da37bba8ed63fafd"
+    },
+    {
+      "name": "feature/evidence-reconciliation-confidence",
+      "sha": "ddda35f40b94c145b2a9a9b68509b4ddb76a090a"
+    },
+    {
+      "name": "feature/gui-inspection-preview",
+      "sha": "8b94227a81b71841c65783c775f704a538d35710"
+    },
+    {
+      "name": "fix/backend-exit-diagnostics",
+      "sha": "bc00a6912dde57482a301bf64ef6fbc3f324cb92"
+    },
+    {
+      "name": "fix/codetext-budget-wave3",
+      "sha": "c7fb422c750f1d0e5591277b91492874afd79af7"
+    },
+    {
+      "name": "fix/codex-cloud-secret-preflight-20261103",
+      "sha": "bd3dbcae9254853f534b735864c0709f6766ced3"
+    },
+    {
+      "name": "fix/explicit-offline-symbol-policy",
+      "sha": "2e6618762ab6e15e5be0be60aec3fb8f56af44f3"
+    },
+    {
+      "name": "fix/ghidra-dot-paths",
+      "sha": "5c3b1df94c0d2a908bb0459caceb336912527555"
+    },
+    {
+      "name": "fix/ghidriff-timeout-progress-20261106",
+      "sha": "7e5d981935e2f8190790de90c2cc261834f9b519"
+    },
+    {
+      "name": "fix/isolate-ghidra-scratch",
+      "sha": "7ea7272311271a540a188e5d0de6d3aaa8864611"
+    },
+    {
+      "name": "fix/pe-inspection-row-tooltips-20261013",
+      "sha": "0182a8035d64071fc88b5f299edc3ef3760946b5"
+    },
+    {
+      "name": "fix/pr110-ci-regressions-20261029",
+      "sha": "979ddfad860c95ceabeb5b670b771900b5617098"
+    },
+    {
+      "name": "fix/pr205-partial-pe-inspect-20261106",
+      "sha": "cce47934dfc4184bc33df63b712e188e9bca25ac"
+    },
+    {
+      "name": "fix/pr205-review-contracts-20261106",
+      "sha": "4f3e62c4f130227b6ff1201f798b3f449ab89c60"
+    },
+    {
+      "name": "fix/pr205-ui-seam-help-extraction-20261106",
+      "sha": "a53c7d1bd360f2dbc3c75ead8da8e978cbb4c314"
+    },
+    {
+      "name": "fix/remediation-53088704-982db3",
+      "sha": "15370a0bf690ea65f49d1f6cc67c40f73fd3d77c"
+    },
+    {
+      "name": "fix/remediation-a58defa8-139db0",
+      "sha": "6d9c06c2d82cb778712cf2e3c963b63c6363f7c9"
+    },
+    {
+      "name": "fix/remediation-b1ab7332-a8fac4",
+      "sha": "3feec96f6546e755061a458ce0dc6e8ee0fab640"
+    },
+    {
+      "name": "fix/windows-posix-mingw-workflow-20261115",
+      "sha": "3b3ad32f60df9fd6994e25a8920cfb335cc3d602"
+    },
+    {
+      "name": "haiku/cli-help-suppress-20261027",
+      "sha": "37940b706f117f9786109433aed7751eca4e52a6"
+    },
+    {
+      "name": "haiku/phase2-handoff-import-20261027",
+      "sha": "4522030ff3ff76d720a5efc33953aaa5e5837398"
+    },
+    {
+      "name": "haiku/skills-manifest-import-20261027",
+      "sha": "039b0ef8a5d0cb5136aca72be5c65d11867c19af"
+    },
+    {
+      "name": "integrate/autonomous-20261105",
+      "sha": "3d6c37e665bd3039aa374dbb58e1dde4e8dd7d0e"
+    },
+    {
+      "name": "integrate/calibration-prereg-20261105",
+      "sha": "57f95e09d8a924b8469490cfa08387b849065179"
+    },
+    {
+      "name": "integrate/calibration-replay-20261105",
+      "sha": "f8ed23564166f1952512ae004543c91e85c4a6ee"
+    },
+    {
+      "name": "integrate/continuation-20261106",
+      "sha": "37b771300053e8872febead1fc384fea9126ae90"
+    },
+    {
+      "name": "integrate/gui-inspection-20261105",
+      "sha": "3fa22c611697d7593755c329fd762bfb47b39b84"
+    },
+    {
+      "name": "integrate/independent-wave4-20261105",
+      "sha": "6e9f4524776abb95a7da7f4f49de01483a2c5330"
+    },
+    {
+      "name": "integrate/kb-20261105",
+      "sha": "75c01a29ea791a2a5859d18d54f8e6db06f255b8"
+    },
+    {
+      "name": "integrate/kb-investigation-20261105",
+      "sha": "bdbfd7dc45083dd7439f4591f17724b6de651412"
+    },
+    {
+      "name": "integrate/merge-readiness-20261106",
+      "sha": "f393bb68ddc11eabb95a6598aa6f86650bd9aa37"
+    },
+    {
+      "name": "integrate/native-controls-20261105",
+      "sha": "a0f417466da80ddc18ee05cc31b8d3492e7cb98b"
+    },
+    {
+      "name": "integrate/project-adoption-20261105",
+      "sha": "1c97defacd54a593a8ecdcda2b9c11c85b073791"
+    },
+    {
+      "name": "integrate/recovery-forward-wave3-20261106",
+      "sha": "a1ed8c9167529fbf855d7dc088132379ee385cf4"
+    },
+    {
+      "name": "integrate/rules-20261105",
+      "sha": "c849d0087b7dbb647d887a2501259a87c79579f4"
+    },
+    {
+      "name": "integrate/secondary-prep-20261105",
+      "sha": "b6b5bf6c65611f50b9fa6524ce980a0ff07511ee"
+    },
+    {
+      "name": "integrate/swarm-followups-20261105",
+      "sha": "c6691ab1ca143930f746f5c5087d3f492fd544d1"
+    },
+    {
+      "name": "integrate/swarm-qualified-20261105",
+      "sha": "4e9f1d5d71cf1f193fb7ed500daf852e5156304f"
+    },
+    {
+      "name": "integrate/swarm-wave3-20261105",
+      "sha": "a0e2c80eda74b70be370bf5f6a93424365230b89"
+    },
+    {
+      "name": "integration/controlled-consolidation-20261030",
+      "sha": "f18687fd035b67961c1072af84f8c2b3442979e0"
+    },
+    {
+      "name": "integration/exhaustive-patchtrace-consolidation-20261119",
+      "sha": "087f50aae76f815dc013fb65e304eef8e21596c1"
+    },
+    {
+      "name": "integration/kb-fixtures-pr69-20261030",
+      "sha": "2fcd627e52a6d784d5c2e5b4ea8105e90b8589b3"
+    },
+    {
+      "name": "main",
+      "sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7"
+    },
+    {
+      "name": "qualify/native-cli-seeding-20261105",
+      "sha": "8fae317bcac6cb125956965cd3ebbb39e9f9bbd2"
+    },
+    {
+      "name": "qualify/native-controls-20261105",
+      "sha": "dc3bf773fead3f10d3e825d56ccf035741f29c28"
+    },
+    {
+      "name": "qualify/native-provision-20261105",
+      "sha": "c50ab287de13982b132716d67f9e5fabe22799cb"
+    },
+    {
+      "name": "qualify/offline-tooling-20261105",
+      "sha": "c3370578086cbfda7b971a031d173b82e860a1f5"
+    },
+    {
+      "name": "repair/gt01-consolidated-native-evidence-20261030",
+      "sha": "c04ad725551fe8daa139b37aa2cdf46d6d161b65"
+    },
+    {
+      "name": "repair/gt01-native-identical-controls-20261030",
+      "sha": "fb91cff6d91c77a2c539c896b670d81180dcc637"
+    },
+    {
+      "name": "repair/gt01-unified-live-gates-20261030",
+      "sha": "ca1a36c0caea44a9225e487f3ba7b0828c90a567"
+    },
+    {
+      "name": "repair/kb-ui-import-boundary-20261105",
+      "sha": "226ac7e514fd90ddb71ec7e3d295bb4aa5bc06b6"
+    },
+    {
+      "name": "repair/native-input-open-20261105",
+      "sha": "0526d546a247f47411b088ac083d6f1fe1e10781"
+    },
+    {
+      "name": "repair/native-normalizer-wave3-20261105",
+      "sha": "cf9cefff88b71dbae6af9131b8f59a1fbb82c894"
+    },
+    {
+      "name": "repair/native-source-identity-20261105",
+      "sha": "c3be348b544b5022b3f92858923d6d890538aa53"
+    },
+    {
+      "name": "repair/normalizer-address-identity-20261105",
+      "sha": "631b5e919699e722e0ce3e3dee11b29c9c40ce10"
+    },
+    {
+      "name": "repair/parity-parser-budget-20261105",
+      "sha": "c923039bd311449d8c97bee8ed09e97b339b6653"
+    },
+    {
+      "name": "repair/pr205-main-reconciliation-20261106",
+      "sha": "96e8e085cb95f2b75bd75b63c8ede436e2152499"
+    },
+    {
+      "name": "repair/pr205-qualification-20261106",
+      "sha": "4465a0492367d08f324e80b290a594791921691c"
+    },
+    {
+      "name": "repair/project-create-rollback-20261105",
+      "sha": "2a3639adde50585dd7ac6dbcb029f085ac0856c6"
+    },
+    {
+      "name": "repair/rzdiff-native-callback-size-20261103",
+      "sha": "edab7d916970144b33c98384834369773e5b0e62"
+    },
+    {
+      "name": "repair/rzdiff-native-red-control-20261103",
+      "sha": "b304034e3c310528f7e0a3206eda48c94e0a6873"
+    },
+    {
+      "name": "repair/rzdiff-producer-ownership",
+      "sha": "4d66af5577e6f6ad8f6e21440f6fe4187e0c8fe5"
+    },
+    {
+      "name": "repair/streamed-series-recovery-20261105",
+      "sha": "20a60f9d12d75b8df9d4f70f96a0fd27bd038331"
+    },
+    {
+      "name": "repair/subprocess-venv-20261106",
+      "sha": "c804e4d94430368c0eafe1da899493a8cf6520aa"
+    },
+    {
+      "name": "repair/unified-ci-20261105",
+      "sha": "b5f6e1381dfbe98ccc71d1e126a6fd02fc95aa81"
+    },
+    {
+      "name": "repair/unified-support-evidence-20261105",
+      "sha": "95749419783e6be7548be613e1000113497c6d2a"
+    },
+    {
+      "name": "repair/verified-bytes-20261105",
+      "sha": "e5f9302e20ee37e8e3323a8d8b177fd8b0649e6a"
+    },
+    {
+      "name": "repair/winbindex-metadata-budget-20261105",
+      "sha": "64eb58ece2f44914e8f94135ab1caefbb5a83f6b"
+    },
+    {
+      "name": "repair/wizard-lock-retry-20261105",
+      "sha": "38be184cda6fbe6f79a6f265b04e2efc6a2688dd"
+    },
+    {
+      "name": "repair/workflow-fragment-20261105",
+      "sha": "1229ca3bba6bc099d040c279ed9ebc8b91ae913e"
+    },
+    {
+      "name": "research/additional-reuse-claude-20261103",
+      "sha": "be4a58ff7d8facc57e99faac9c743cb8d60b36f4"
+    },
+    {
+      "name": "research/kbc-live-probe-20261106",
+      "sha": "3839f3b62c923a80340c40c44855305890604f78"
+    },
+    {
+      "name": "research/l1-join-corpus-20261107",
+      "sha": "ca3572e7d7a5cf78d45732c18af7ebfe4922d350"
+    },
+    {
+      "name": "research/qualification-tools-rq00-rq01-20261106",
+      "sha": "941c0da4431f682537e99aa230df0da04013b4e1"
+    },
+    {
+      "name": "research/r4-vulnerability-correlation-20261030",
+      "sha": "ff570bdd784d02f745e4ad21d8aa7b4f1f776344"
+    },
+    {
+      "name": "research/r6-final-integration-engineering-notes-20261030",
+      "sha": "3010f289dbb46a1db62218a35cca03420090e306"
+    },
+    {
+      "name": "research/r7-advanced-binary-analysis-20261030",
+      "sha": "c9d1aab6a78847ce1632fe833d15af2e3b9c6e9b"
+    },
+    {
+      "name": "research/r8-deep-uncertainty-20261030",
+      "sha": "12dd4f2b41b468b0eb566bd502219daa821012df"
+    },
+    {
+      "name": "research/windows-candidates-gaps-20261107",
+      "sha": "1f11a43ba1904e5c6c9d5d4f261fa606347da6ca"
+    },
+    {
+      "name": "research/windows-candidates-github-20261107",
+      "sha": "35d7e3c980c0e04c7b6319bfd8fc6c7898c31226"
+    },
+    {
+      "name": "research/windows-candidates-sources-20261107",
+      "sha": "740961828e22ca8048cd881f21ef9c028955ab73"
+    },
+    {
+      "name": "research/windows-pair-candidates-20261107",
+      "sha": "e5e783f6b8ffae83341092f5915ba02b9856ecc1"
+    },
+    {
+      "name": "research/windows-pins-20261107",
+      "sha": "ac826a2efe428de7dbf290aa5894a2d357d7da0c"
+    },
+    {
+      "name": "resume/desktop-index-refresh-20261106",
+      "sha": "c9cea0671442a6051b068acfb69d17aabcf674ae"
+    },
+    {
+      "name": "resume/kb-acquire-lifecycle-20261106",
+      "sha": "b8bda98452b2f742ad55064aa2e1452700658a33"
+    },
+    {
+      "name": "security/offline-bundle-no-overwrite-20261013",
+      "sha": "a39cab81de3e0eeadf57e6255d2fe3e131b3294a"
+    },
+    {
+      "name": "test/advisory-acceptance-20261105",
+      "sha": "69c705d052e6b6fb3c96ea49062d6a207829c1b8"
+    },
+    {
+      "name": "test/product-acceptance-20261106",
+      "sha": "81825ee9638454737d3fb7efa3e6c73b8f3eb105"
+    },
+    {
+      "name": "test/recovery-diagnostics-20261106",
+      "sha": "064f1c0075a4cfe5ec1eba2f9a04d3f1058ecf0c"
+    },
+    {
+      "name": "work/calibration-invariants-20261105",
+      "sha": "a6948be8049591247f0bc19a601645b85bc03eb7"
+    },
+    {
+      "name": "work/candidate-correlation-20261105",
+      "sha": "fee7c3664a2050aed30a3c3d43ea28c0c3621ee3"
+    },
+    {
+      "name": "work/consented-winbindex-refresh-20261105",
+      "sha": "83320a32c7249f92a1d7ba708c8fc8e12e4aa15c"
+    },
+    {
+      "name": "work/investigation-accessibility-20261105",
+      "sha": "b5d4bceabdc34f520120d9dc336d975768e20483"
+    },
+    {
+      "name": "work/investigation-candidates-20261105",
+      "sha": "bf3661966785a971f484b6339af81274278d1434"
+    },
+    {
+      "name": "work/online-adapter-20261105",
+      "sha": "e14b4445fd0705e2ecffa1bc4842ab73bce373e9"
+    },
+    {
+      "name": "work/online-investigation-20261105",
+      "sha": "bf46954ef2c6c9a278d9b78f5b4274242e617e09"
+    },
+    {
+      "name": "work/pe-parser-security-20261105",
+      "sha": "8975c517af22aca0c0f90eb931b8a06ab18687b5"
+    },
+    {
+      "name": "work/persistence-security-20261105",
+      "sha": "1a1e1951c55cdef46ff248145031639674ce1c63"
+    },
+    {
+      "name": "work/product-start-20261106",
+      "sha": "0b7d858149db0c88ffcf8f3e6ba474d99f39afeb"
+    },
+    {
+      "name": "work/product-start-wave3",
+      "sha": "7e7a52ebf4de1529cfc5da7274820a5e955126fc"
+    },
+    {
+      "name": "work/winbindex-publication-20261105",
+      "sha": "2afe874d6be17a4596d3955b71b493d5e0e4ed00"
+    },
+    {
+      "name": "work/windows-package-preflight-20261105",
+      "sha": "93b4b9a80d31c97659269429e0b680c9218fdf70"
+    },
+    {
+      "name": "worker/patchtrace-cli-help-20261104",
+      "sha": "81a9fb28f30630e2fd168422dc4672af3a34aa52"
+    }
+  ],
+  "prs": [
+    {
+      "number": 322,
+      "title": "Complete PE metadata caching and consolidate reviewed repairs [no release]",
+      "head": "32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7",
+      "branch": "codex/patchtrace-completion-20261119-81e4",
+      "base": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+      "base_ref": "main",
+      "draft": true,
+      "updated_at": "2026-11-19T11:44:55Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/322"
+    },
+    {
+      "number": 321,
+      "title": "Recover reviewed inventory, Strings, Search and GUI with qualification evidence",
+      "head": "2042e24dc7f3eac265e0eb183c738527852b22cf",
+      "branch": "consolidation/patchtrace-continuation-20261119",
+      "base": "8d130aefe1be6e737cff1d90d2a5b1658d60a3a6",
+      "base_ref": "consolidation/patchtrace-reviewed-20261119",
+      "draft": true,
+      "updated_at": "2026-11-19T11:51:17Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/321"
+    },
+    {
+      "number": 320,
+      "title": "[no release] Consolidate PatchTrace recovery stacks and recover analyst workflows",
+      "head": "087f50aae76f815dc013fb65e304eef8e21596c1",
+      "branch": "integration/exhaustive-patchtrace-consolidation-20261119",
+      "base": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+      "base_ref": "main",
+      "draft": true,
+      "updated_at": "2026-11-19T11:34:44Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/320"
+    },
+    {
+      "number": 319,
+      "title": "Recover reviewed product fixes and strengthen native qualification [no release]",
+      "head": "8d130aefe1be6e737cff1d90d2a5b1658d60a3a6",
+      "branch": "consolidation/patchtrace-reviewed-20261119",
+      "base": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+      "base_ref": "main",
+      "draft": true,
+      "updated_at": "2026-11-19T11:43:40Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/319"
+    },
+    {
+      "number": 318,
+      "title": "Repair Windows consolidation failures and restricted corpus startup [no release]",
+      "head": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+      "branch": "codex/patchtrace-stabilization-20261119",
+      "base": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+      "base_ref": "codex/verified-followup-integration-20261118",
+      "draft": false,
+      "updated_at": "2026-11-19T10:08:58Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/318"
+    },
+    {
+      "number": 316,
+      "title": "Consolidate reviewed analyst workflows and security fixes [no release]",
+      "head": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+      "branch": "codex/verified-followup-integration-20261118",
+      "base": "9c411ca3d7b47f950be5f0c6f01b3c54184554c6",
+      "base_ref": "main",
+      "draft": false,
+      "updated_at": "2026-11-19T01:01:57Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/316"
+    },
+    {
+      "number": 315,
+      "title": "Refuse PE manifest doctypes at the parser boundary [no release]",
+      "head": "23fbe4a54880319f62f40f3196794f85b6cdaec5",
+      "branch": "codex/manifest-dtd-reviewed-20261118",
+      "base": "58fc130631f602b6e907bb054d30c21d810551d4",
+      "base_ref": "codex/pw01-retained-source-pages-20261118",
+      "draft": false,
+      "updated_at": "2026-11-18T16:00:36Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/315"
+    },
+    {
+      "number": 314,
+      "title": "Connect retained CVRF leads to current evidence and reports [no release]",
+      "head": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "branch": "codex/pilot-current-evidence-reviewed-20261118",
+      "base": "a4061979547ef88855fbdb085228a42c3be21603",
+      "base_ref": "codex/advisory-read-bounds-20261118",
+      "draft": false,
+      "updated_at": "2026-11-18T15:52:32Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/314"
+    },
+    {
+      "number": 313,
+      "title": "Bound retained advisory reads and preserve verified recovery [no release]",
+      "head": "a4061979547ef88855fbdb085228a42c3be21603",
+      "branch": "codex/advisory-read-bounds-20261118",
+      "base": "58fc130631f602b6e907bb054d30c21d810551d4",
+      "base_ref": "codex/pw01-retained-source-pages-20261118",
+      "draft": false,
+      "updated_at": "2026-11-18T15:36:46Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/313"
+    },
+    {
+      "number": 312,
+      "title": "Require exact-source publication qualification [no release]",
+      "head": "573829f33c84e9b2d53ba51ebd7f699e39f406fe",
+      "branch": "codex/release-qualification-reviewed-20261118",
+      "base": "58fc130631f602b6e907bb054d30c21d810551d4",
+      "base_ref": "codex/pw01-retained-source-pages-20261118",
+      "draft": false,
+      "updated_at": "2026-11-18T15:34:36Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/312"
+    },
+    {
+      "number": 311,
+      "title": "Restrict primary engine environment by default [no release]",
+      "head": "09b032f205f4ffa1838bef56007ebdb7a2308420",
+      "branch": "codex/primary-environment-20261118",
+      "base": "58fc130631f602b6e907bb054d30c21d810551d4",
+      "base_ref": "codex/pw01-retained-source-pages-20261118",
+      "draft": false,
+      "updated_at": "2026-11-18T15:17:10Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/311"
+    },
+    {
+      "number": 310,
+      "title": "Complete reviewed saved-search GUI and CLI workflows [no release]",
+      "head": "26558cd0723aa5fa6d883f2935ad3c43cef94a86",
+      "branch": "codex/saved-search-reviewed-20261118",
+      "base": "58fc130631f602b6e907bb054d30c21d810551d4",
+      "base_ref": "codex/pw01-retained-source-pages-20261118",
+      "draft": false,
+      "updated_at": "2026-11-18T15:09:32Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/310"
+    },
+    {
+      "number": 309,
+      "title": "Restore reviewed paired raw-offset desktop workflow [no release]",
+      "head": "3c9d3f074481b2f609330fa49ab9019eb6637849",
+      "branch": "codex/raw-alignment-reviewed-20261118",
+      "base": "58fc130631f602b6e907bb054d30c21d810551d4",
+      "base_ref": "codex/pw01-retained-source-pages-20261118",
+      "draft": false,
+      "updated_at": "2026-11-18T14:57:58Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/309"
+    },
+    {
+      "number": 308,
+      "title": "Preserve concurrent files and evidence during strings export [no release]",
+      "head": "92a411bf02fc8beb00b7a148e39db2bf68efa061",
+      "branch": "codex/strings-export-publication-20261118",
+      "base": "9c411ca3d7b47f950be5f0c6f01b3c54184554c6",
+      "base_ref": "main",
+      "draft": false,
+      "updated_at": "2026-11-18T14:08:42Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/308"
+    },
+    {
+      "number": 307,
+      "title": "Complete retained inventories and guard native qualification identities",
+      "head": "58fc130631f602b6e907bb054d30c21d810551d4",
+      "branch": "codex/pw01-retained-source-pages-20261118",
+      "base": "d8c02caea407f6d323eecd636735849c1eb31a2d",
+      "base_ref": "codex/consolidation-cve-reviewed-20261118",
+      "draft": false,
+      "updated_at": "2026-11-18T14:43:57Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/307"
+    },
+    {
+      "number": 303,
+      "title": "Add scoped KB file inventories with offline import and exact source consent",
+      "head": "2b697222b34359bb46adc90aad69fd0a12708601",
+      "branch": "codex/pw01-kb-inventory-20261118",
+      "base": "9c411ca3d7b47f950be5f0c6f01b3c54184554c6",
+      "base_ref": "main",
+      "draft": false,
+      "updated_at": "2026-11-18T10:38:20Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/303"
+    },
+    {
+      "number": 289,
+      "title": "Handoff record: autonomous-finish integration branch (paused; do not merge as-is)",
+      "head": "ad4c49282a65d17d2ef23dfcc03e82be065c9021",
+      "branch": "claude/autonomous-finish-20261104",
+      "base": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+      "base_ref": "main",
+      "draft": true,
+      "updated_at": "2026-11-11T01:19:12Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/289"
+    },
+    {
+      "number": 284,
+      "title": "Completion session record: ledger, status roll-up, slice cards and handoff (session stopped by owner)",
+      "head": "160a60e838742b21f70effedb8e7bb48886d9266",
+      "branch": "claude/sleepy-fermi-y3z4yj",
+      "base": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+      "base_ref": "main",
+      "draft": true,
+      "updated_at": "2026-11-11T01:56:49Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/284"
+    },
+    {
+      "number": 283,
+      "title": "unified bench: a missing ticks count fails the work checks (UE-B-07)",
+      "head": "6f767ccef8ebfffd1d2373c5124d8a961dc54b41",
+      "branch": "claude/instance-c-research",
+      "base": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+      "base_ref": "main",
+      "draft": true,
+      "updated_at": "2026-11-11T00:55:01Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/283"
+    },
+    {
+      "number": 282,
+      "title": "Consolidate R7 research prototypes: bounded semantic slicing and patch patterns (from #134)",
+      "head": "552c29453c5de93e22c65e47ad4187ded91e993a",
+      "branch": "consolidate/research-r7-20261104",
+      "base": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+      "base_ref": "main",
+      "draft": true,
+      "updated_at": "2026-11-11T00:47:23Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/282"
+    },
+    {
+      "number": 281,
+      "title": "ci: name tag releases after the tag and pin the release action (alpha precondition)",
+      "head": "cbabc09e9df8a8190c769164ef0fae44f9c5cb1b",
+      "branch": "claude/patchtrace-haiku-agent-motpbx",
+      "base": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+      "base_ref": "main",
+      "draft": true,
+      "updated_at": "2026-11-11T01:19:27Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/281"
+    },
+    {
+      "number": 279,
+      "title": "codespaces: bootstrap the PatchTrace accuracy lab",
+      "head": "a5f049cd777d3d885ec8e1572f94ea8935c9cbb6",
+      "branch": "codex/codespaces-cs1-20261109",
+      "base": "77055d4f0f435a457ae6d7d9e9a1d78f4ef8601b",
+      "base_ref": "main",
+      "draft": false,
+      "updated_at": "2026-11-09T11:20:39Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/279"
+    },
+    {
+      "number": 268,
+      "title": "Narrow #174: fix two RB-01 measurement defects in the unified live gates (G-U2, G-U3)",
+      "head": "b29351d41060f8e9330fc9673457d835e188f993",
+      "branch": "claude/affectionate-galileo-bqd3tw",
+      "base": "652677b0be6da09125c89c017e513b6b2baadbb2",
+      "base_ref": "main",
+      "draft": true,
+      "updated_at": "2026-11-11T00:33:43Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/268"
+    },
+    {
+      "number": 224,
+      "title": "docs(native): retain CLI baseline failures and isolated seeding experiment",
+      "head": "8fae317bcac6cb125956965cd3ebbb39e9f9bbd2",
+      "branch": "qualify/native-cli-seeding-20261105",
+      "base": "c50ab287de13982b132716d67f9e5fabe22799cb",
+      "base_ref": "qualify/native-provision-20261105",
+      "draft": true,
+      "updated_at": "2026-11-05T23:28:10Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/224"
+    },
+    {
+      "number": 222,
+      "title": "test(rzdiff): execute pinned-native API ownership and IO controls",
+      "head": "c50ab287de13982b132716d67f9e5fabe22799cb",
+      "branch": "qualify/native-provision-20261105",
+      "base": "f33e2a0aaa3399644367f2419fee21cfe2e8702b",
+      "base_ref": "integrate/swarm-qualified-20261105",
+      "draft": true,
+      "updated_at": "2026-11-05T23:18:59Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/222"
+    },
+    {
+      "number": 187,
+      "title": "Audit open PatchTrace consolidation branches and identify integration order",
+      "head": "fbd9595351bf50217402b7a62b3e057de79f45f0",
+      "branch": "codex/consolidation-audit-20261104",
+      "base": "5d504ff5c046bfb758623182b472976003632bba",
+      "base_ref": "main",
+      "draft": true,
+      "updated_at": "2026-11-04T23:44:04Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/187"
+    },
+    {
+      "number": 179,
+      "title": "Consolidate-and-build prompt, branch inventory tool and C0 ledger",
+      "head": "ca10acb506fbf61db8142a836acfbd1e50a2aeb3",
+      "branch": "claude/patchtrace-multi-worker-consolidate-24ct7v",
+      "base": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+      "base_ref": "main",
+      "draft": true,
+      "updated_at": "2026-11-11T01:18:48Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/179"
+    },
+    {
+      "number": 176,
+      "title": "Offline KB investigation, calibration replay identity, GUI tiny wins, audit dispositions (WS-D/F/G/H)",
+      "head": "597a8b106491cd587cedf1273ee5ef6d56d71508",
+      "branch": "claude/ws-p-20261104",
+      "base": "25b2ac8000e4bb2b941ce44ccbbb25a7eff5c278",
+      "base_ref": "main",
+      "draft": true,
+      "updated_at": "2026-11-04T05:53:49Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/176"
+    },
+    {
+      "number": 174,
+      "title": "GT-01 live-gate harness repairs and rz-diff producer controls, ported onto main (WS-B/C)",
+      "head": "e1193c8896e009930dae4edec974d9795876f0e0",
+      "branch": "claude/ws-bc-20261104",
+      "base": "25b2ac8000e4bb2b941ce44ccbbb25a7eff5c278",
+      "base_ref": "main",
+      "draft": true,
+      "updated_at": "2026-11-04T17:14:16Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/174"
+    },
+    {
+      "number": 172,
+      "title": "docs: autonomous finish prompt (launch record)",
+      "head": "7ed5cebfdaee4dc508b0cc739e86c18c1ff34a97",
+      "branch": "claude/serene-heisenberg-2y5kz6",
+      "base": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+      "base_ref": "main",
+      "draft": false,
+      "updated_at": "2026-11-11T01:18:48Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/172"
+    },
+    {
+      "number": 168,
+      "title": "test(rzdiff): require complete stock-native red controls and preserve failure evidence",
+      "head": "b304034e3c310528f7e0a3206eda48c94e0a6873",
+      "branch": "repair/rzdiff-native-red-control-20261103",
+      "base": "edab7d916970144b33c98384834369773e5b0e62",
+      "base_ref": "repair/rzdiff-native-callback-size-20261103",
+      "draft": true,
+      "updated_at": "2026-11-03T04:21:07Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/168"
+    },
+    {
+      "number": 165,
+      "title": "Repair Rizin singleton result ownership in pinned research producer; retain quarantine",
+      "head": "4d66af5577e6f6ad8f6e21440f6fe4187e0c8fe5",
+      "branch": "repair/rzdiff-producer-ownership",
+      "base": "b58bb53debcb3323e5d8d634e09397cb7e02965f",
+      "base_ref": "codex/consolidation-integrity-20261103",
+      "draft": true,
+      "updated_at": "2026-11-03T03:59:04Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/165"
+    },
+    {
+      "number": 164,
+      "title": "Consolidate build provenance and saved-rule integrity repairs",
+      "head": "b58bb53debcb3323e5d8d634e09397cb7e02965f",
+      "branch": "codex/consolidation-integrity-20261103",
+      "base": "6e82fd70f315b99c6798a42c9061a1424a02933e",
+      "base_ref": "codex/consolidated-reviewed-20261102",
+      "draft": true,
+      "updated_at": "2026-11-03T00:42:28Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/164"
+    },
+    {
+      "number": 150,
+      "title": "Anchor research receipts against parent replacement and preserve completed evidence",
+      "head": "2fdac2ea9042985ac3c98545d38ac3461d00f4cc",
+      "branch": "codex/receipt-parent-race-20261101",
+      "base": "8c9eafc79b007a963453d8edf6cb40c804c9bc3d",
+      "base_ref": "codex/r1-receipt-publication-20261031",
+      "draft": true,
+      "updated_at": "2026-11-01T12:47:42Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/150"
+    },
+    {
+      "number": 144,
+      "title": "fix: reconcile matching evidence, semantic uncertainty and typed literals",
+      "head": "745e93426a16e0a91a961b6e0bbcb71be69f2a7e",
+      "branch": "codex/semantic-proof-reconciliation-20261031",
+      "base": "a7f13e13ffb512f8e9621753a0ae162d78942f3b",
+      "base_ref": "codex/essential-combined-verification-20261030",
+      "draft": true,
+      "updated_at": "2026-11-01T11:59:27Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/144"
+    },
+    {
+      "number": 143,
+      "title": "Draft: combined verification of native recovery and KB fixture repairs",
+      "head": "a7f13e13ffb512f8e9621753a0ae162d78942f3b",
+      "branch": "codex/essential-combined-verification-20261030",
+      "base": "f18687fd035b67961c1072af84f8c2b3442979e0",
+      "base_ref": "integration/controlled-consolidation-20261030",
+      "draft": true,
+      "updated_at": "2026-10-31T05:52:30Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/143"
+    },
+    {
+      "number": 141,
+      "title": "fix: isolate native extraction failures between comparisons",
+      "head": "d76d23372acef4049115e9ae176acbeb538a82e5",
+      "branch": "codex/gt01-extraction-recovery-20261030",
+      "base": "fb91cff6d91c77a2c539c896b670d81180dcc637",
+      "base_ref": "repair/gt01-native-identical-controls-20261030",
+      "draft": true,
+      "updated_at": "2026-10-31T04:13:12Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/141"
+    },
+    {
+      "number": 140,
+      "title": "fix(GT-01): run native identical controls and distinguish output rejections",
+      "head": "fb91cff6d91c77a2c539c896b670d81180dcc637",
+      "branch": "repair/gt01-native-identical-controls-20261030",
+      "base": "c04ad725551fe8daa139b37aa2cdf46d6d161b65",
+      "base_ref": "repair/gt01-consolidated-native-evidence-20261030",
+      "draft": true,
+      "updated_at": "2026-10-31T04:14:25Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/140"
+    },
+    {
+      "number": 139,
+      "title": "fix(GT-01): consolidate R1 native recovery and PR #138 regressions",
+      "head": "c04ad725551fe8daa139b37aa2cdf46d6d161b65",
+      "branch": "repair/gt01-consolidated-native-evidence-20261030",
+      "base": "f18687fd035b67961c1072af84f8c2b3442979e0",
+      "base_ref": "integration/controlled-consolidation-20261030",
+      "draft": true,
+      "updated_at": "2026-10-31T00:51:08Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/139"
+    },
+    {
+      "number": 137,
+      "title": "docs: post-consolidation 20-feature gap audit and parallel development roadmap",
+      "head": "61b5c2bade71a8cec58ca9e1514141f4508b7c79",
+      "branch": "docs/post-consolidation-gap-analysis-20261030",
+      "base": "f18687fd035b67961c1072af84f8c2b3442979e0",
+      "base_ref": "integration/controlled-consolidation-20261030",
+      "draft": false,
+      "updated_at": "2026-10-31T00:51:10Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/137"
+    },
+    {
+      "number": 135,
+      "title": "R8 (draft): adversarial proof and literal-type normalization research",
+      "head": "12dd4f2b41b468b0eb566bd502219daa821012df",
+      "branch": "research/r8-deep-uncertainty-20261030",
+      "base": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "base_ref": "main",
+      "draft": true,
+      "updated_at": "2026-10-31T05:15:25Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/135"
+    },
+    {
+      "number": 134,
+      "title": "R7 research: bounded semantic slicing and evidence-grounded security interpretation",
+      "head": "c9d1aab6a78847ce1632fe833d15af2e3b9c6e9b",
+      "branch": "research/r7-advanced-binary-analysis-20261030",
+      "base": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "base_ref": "main",
+      "draft": true,
+      "updated_at": "2026-10-30T23:32:45Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/134"
+    },
+    {
+      "number": 133,
+      "title": "R6: comprehensive engineer-ready final integration and release acceptance notes",
+      "head": "3010f289dbb46a1db62218a35cca03420090e306",
+      "branch": "research/r6-final-integration-engineering-notes-20261030",
+      "base": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "base_ref": "main",
+      "draft": true,
+      "updated_at": "2026-10-30T23:31:35Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/133"
+    },
+    {
+      "number": 130,
+      "title": "R4 research: CVE/KB/product/build/binary provenance and function evidence",
+      "head": "ff570bdd784d02f745e4ad21d8aa7b4f1f776344",
+      "branch": "research/r4-vulnerability-correlation-20261030",
+      "base": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "base_ref": "main",
+      "draft": true,
+      "updated_at": "2026-10-30T22:59:10Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/130"
+    },
+    {
+      "number": 129,
+      "title": "R3 research: semantic-change proofs, compiler noise and guarded PE comparisons",
+      "head": "2698b9a04d33b2d04f49c1ab737636539c6ef6f7",
+      "branch": "chatgpt/semantic-analysis-r3-20261030",
+      "base": "a04f5a299a8d4afef023261e52e08d14678cf1e7",
+      "base_ref": "main",
+      "draft": true,
+      "updated_at": "2026-10-31T05:15:22Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/129"
+    },
+    {
+      "number": 125,
+      "title": "docs: next-milestone dev prompt for integrated essential alpha",
+      "head": "198eb21e8813b28de361422cfe3c002bdb9e3970",
+      "branch": "claude/compassionate-goldberg-5uuqks",
+      "base": "5214720716c7afb7952bacbc9afd4b8255574ae8",
+      "base_ref": "main",
+      "draft": true,
+      "updated_at": "2026-10-30T12:56:25Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/125"
+    },
+    {
+      "number": 98,
+      "title": "Add wiki pages and link them from README",
+      "head": "ad8fbe9f2f041653760c02e9d18a91a66dd11c39",
+      "branch": "docs/readme-and-wiki",
+      "base": "bb84b2606f0674a1db675645f2db98b3a8d3d789",
+      "base_ref": "main",
+      "draft": true,
+      "updated_at": "2026-10-21T09:17:07Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/98"
+    },
+    {
+      "number": 86,
+      "title": "UE-R3: persist bounded on-demand Ghidra C into unified result sidecars",
+      "head": "ebbd621d4f557905892aee5f7cf8cb7b0e2addc2",
+      "branch": "chatgpt/ue-r3-retain-decompiled-20261016",
+      "base": "53f366e8b50ac60a95bdb3734b815daac82cd63d",
+      "base_ref": "claude/instance-d-gui",
+      "draft": true,
+      "updated_at": "2026-10-16T10:59:23Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/86"
+    },
+    {
+      "number": 85,
+      "title": "LBL-30: verify preregistration and enforce single-use final training",
+      "head": "6ae2c079e6cafa2b7bd5396cac443cd34ba7138a",
+      "branch": "chatgpt/lbl30-prereg-guard-20261016",
+      "base": "53f366e8b50ac60a95bdb3734b815daac82cd63d",
+      "base_ref": "claude/instance-d-gui",
+      "draft": true,
+      "updated_at": "2026-10-16T11:01:25Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/85"
+    },
+    {
+      "number": 82,
+      "title": "LBL-32: two-sided recipe A/A and noise cases in Tier R planner",
+      "head": "eaa30013794a9bd0fedc9ec34bbe374d6db0cfc9",
+      "branch": "chatgpt/lbl32-recipe-aa-noise-20261016",
+      "base": "53f366e8b50ac60a95bdb3734b815daac82cd63d",
+      "base_ref": "claude/instance-d-gui",
+      "draft": true,
+      "updated_at": "2026-10-16T11:08:16Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/82"
+    },
+    {
+      "number": 79,
+      "title": "LBL-32: run pinned recipe-card A/A and noise controls on both sides",
+      "head": "9513bc05229dd7a8460fc229d7420154d61498db",
+      "branch": "chatgpt/lbl32-card-controls-20261016",
+      "base": "5f30a79119b59e337b11a21d81b5e3b12d2bd92a",
+      "base_ref": "chatgpt/lbl31-output-persistence-20261015",
+      "draft": true,
+      "updated_at": "2026-10-16T10:58:26Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/79"
+    },
+    {
+      "number": 78,
+      "title": "LBL-31: persist Tier R engine outputs and transfer verified training artifacts",
+      "head": "2019a37fa65fc37f4758469143c2daadc07e0098",
+      "branch": "chatgpt/lbl31-output-persistence-20261015",
+      "base": "53f366e8b50ac60a95bdb3734b815daac82cd63d",
+      "base_ref": "claude/instance-d-gui",
+      "draft": true,
+      "updated_at": "2026-10-16T11:08:14Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/78"
+    },
+    {
+      "number": 72,
+      "title": "docs: specify Program E panels and coordinated build plan",
+      "head": "cfd7cfff52f4f9b8b1264e8b7d70ef1bbef2d63f",
+      "branch": "chatgpt/panels-1",
+      "base": "2ed83e9c2c9c26a1677586d47989aee89cb8a2a6",
+      "base_ref": "claude/instance-d-gui",
+      "draft": true,
+      "updated_at": "2026-10-15T05:12:33Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/72"
+    },
+    {
+      "number": 70,
+      "title": "docs: add first 25 Prompt 5 help topics",
+      "head": "e5bee6fe157c90a40f2d9f458768e2169ce123e5",
+      "branch": "chatgpt/help-docs-1",
+      "base": "a423d3d580d898e4398990b0790fd41d18dea246",
+      "base_ref": "claude/instance-d-gui",
+      "draft": true,
+      "updated_at": "2026-10-15T05:05:26Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/70"
+    },
+    {
+      "number": 68,
+      "title": "Corpus batch 1: 24 candidate recipes and continuation plan",
+      "head": "b7a0f0a45d2de1462367d877b7386091b4d275ce",
+      "branch": "chatgpt/corpus-1",
+      "base": "a423d3d580d898e4398990b0790fd41d18dea246",
+      "base_ref": "claude/instance-d-gui",
+      "draft": true,
+      "updated_at": "2026-10-15T05:05:05Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/68"
+    },
+    {
+      "number": 61,
+      "title": "Add Caveman and PatchTrace agent skills with spec-first workflow (SPEC-56)",
+      "head": "4467d1f3c6e113a7da808a67e8dee9d4aa5083d8",
+      "branch": "codex/agent-skills-spec56-20261014",
+      "base": "0fb25d8e2ad52d4bfe079c7d31b706d55569c8af",
+      "base_ref": "main",
+      "draft": false,
+      "updated_at": "2026-10-15T01:14:12Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/61"
+    }
+  ],
+  "issues": [
+    {
+      "number": 255,
+      "title": "Research tool qualification, native experiments and integration tracker",
+      "updated_at": "2026-11-07T01:25:31Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/issues/255"
+    },
+    {
+      "number": 121,
+      "title": "Audit: PatchTrace CI and security",
+      "updated_at": "2026-10-30T04:07:57Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/issues/121"
+    },
+    {
+      "number": 120,
+      "title": "Audit: PatchTrace unified diff and adapters",
+      "updated_at": "2026-10-30T04:08:30Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/issues/120"
+    },
+    {
+      "number": 118,
+      "title": "Audit: PatchTrace KB CVE and acquisition",
+      "updated_at": "2026-10-30T04:10:02Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/issues/118"
+    },
+    {
+      "number": 116,
+      "title": "Audit: PatchTrace GUI persistence and history",
+      "updated_at": "2026-10-30T04:10:00Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/issues/116"
+    },
+    {
+      "number": 105,
+      "title": "Bug search findings (2026-10-29, source main e093ade + PR #103 380db48)",
+      "updated_at": "2026-11-11T01:02:58Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/issues/105"
+    },
+    {
+      "number": 104,
+      "title": "Handoff for ChatGPT: KB/CVE/KEV correlation follow-up (PR #103)",
+      "updated_at": "2026-10-29T03:29:01Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/issues/104"
+    },
+    {
+      "number": 39,
+      "title": "Implement optional Diaphora evidence engine (D0\u2013D9)",
+      "updated_at": "2026-10-14T09:02:50Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/issues/39"
+    },
+    {
+      "number": 36,
+      "title": "Implement radiff2-inspired byte, PE-layout, opcode and CFG comparison layers",
+      "updated_at": "2026-10-14T08:16:53Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/issues/36"
+    },
+    {
+      "number": 35,
+      "title": "Implement QBinDiff-inspired configurable matching and modular integration",
+      "updated_at": "2026-10-14T08:09:22Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/issues/35"
+    }
+  ],
+  "pr_branch_mismatches": []
+}

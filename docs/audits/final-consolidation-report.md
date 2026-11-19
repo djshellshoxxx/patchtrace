@@ -1,6 +1,111 @@
 # Consolidation report — active source-pinned checkpoint
 
-## Resumed assembled recovery — 2026-11-19 11:34: 21 UTC
+## Published outcome — 2026-11-19 11:56:58 UTC
+
+The reviewed continuation source and evidence were published in draft
+[PR #321](https://github.com/djshellshoxxx/PatchTrace/pull/321) at
+**2042e24dc7f3eac265e0eb183c738527852b22cf**, tree
+**8e5327e9348c41496a029cb090337e1308d3ce5b**. The tree equals verified local
+**e8a6592c02544d8186416be64f9df78f31078a52**. The expected-head guard preserved
+checkpoint **976dddfbbcdf9a320e48813d8cf2c3c6540aac81** as first parent and
+updated core **8d130aefe1be6e737cff1d90d2a5b1658d60a3a6** as second parent. All 212 changed-file blobs,
+both parents, the exact tree, branch ref and PR head/base were read back.
+
+This later receipt revision changes documentation only. It records completed
+publication, superseding the earlier preparation instructions below. The
+reviewed runtime remains 9335e7dc and the sole later test change remains the
+approved cache-pin assertion 5575af79. Main remains **fdc2696c23bdbfe7668348f25e3b336ce33039f7**;
+there has been no additional main merge, branch deletion, force push, release,
+tag or deployment.
+
+[Guarded publication receipt](consolidation-20261119/continuation-publication.json),
+[core correction receipt](consolidation-20261119/core-cache-pin-publication.json),
+[combined QA](../qa/combined-recovery-20261119/README.md).
+
+### Completed operations
+
+- One guarded main merge: #317 at fdc2696c, with its exact tested tree and
+  [no release] retained; twelve contained PRs closed automatically.
+- Three repair/recovery PRs advanced: broad #318 at c4ace208, core #319 at 8d130aef,
+  and continuation #321 at 2042e24d. The last two remain draft; none is represented
+  as an additional main merge.
+- Seven standalone feature slices were recovered into the core, then the mixed
+  inventory and scoped GUI/Strings/Search recovery were assembled with their
+  real-caller correctness repairs and one shared admission implementation.
+- All five requested audit records, the complete census, original failures,
+  interrupted-run evidence and source/QA manifests are preserved and published.
+- Independent assembly review verified 30 runtime component blobs. Combined
+  affected verification passed 1,199 with one native Windows skip and one explicit
+  timing deselection; ordinary Ruff and relevant schema/help checks passed.
+- The newly completed core Linux run's sole stale pin assertion was repaired;
+  one red precedes 21 related passes and six independent guard controls. The old
+  full failure remains historical and new-head full/native gates remain pending.
+
+Publication is complete; the remaining continuation is qualification and scoped
+blocker resolution. No permission request or execution-workspace outage is
+blocking the published work. No further main merge is justified by the actual
+current gate state.
+
+### Final complete census
+
+The post-publication observation at **11:51:48–11:51:51 UTC** contains
+**323 branches, 56 open PRs and ten open non-PR issues**. Branch pages were
+100/100/100/23/0; PR pages 56/0; issue pages 66/0, including the same 56 PRs.
+Every open PR head matches its branch; no duplicate page entries were found.
+
+| Current topic disposition | Count |
+| --- | ---: |
+| Already integrated; later cleanup candidates only |144 |
+| Dependency blocked |11 |
+| Retained / requiring review or qualification |167 |
+| Total topics, excluding main |322 |
+
+All 144 integrated heads and all 11 dependency-blocked heads remain unchanged.
+The additional topic since the 322-branch observation is external draft PR #322,
+codex/patchtrace-completion-20261119-81e4 at
+32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7. It extends the retained checkpoint bdc929eb;
+ancestry to that unmerged checkpoint does not establish integration into main.
+External PR #320 advanced from bc7eb632 to 087f50aae76f815dc013fb65e304eef8e21596c1.
+Both remain distinct active work with their own qualification requirements.
+
+The initial 317-branch census, post-foundation 318-branch partition and later 322
+snapshot remain separate historical observations. The all-branch mapping and
+bounded focal-review limits are unchanged; no every-commit approval is claimed.
+[Post-publication census](consolidation-20261119/post-publication-census.json),
+[external delta review](consolidation-20261119/external-publication-delta-20261119.md),
+[complete parsed REST pages and gate receipts](consolidation-20261119/post-publication-evidence.zip).
+
+### Current qualification boundary
+
+**No additional main merge is qualified.** The complete 11:53:11 UTC gate snapshot
+is tied to the published runtime heads. The documentation receipt revision needs
+its own current-head check readback; no pending job is converted to a pass.
+
+| Scope | Source | Observed checks |
+| --- | --- | --- |
+| pulls/318 | `c4ace2088ce8` | 2 queued; 2 skipped; 16 success; 6 in progress; 2 failure |
+| pulls/319 | `8d130aefe1be` | 1 skipped; 13 queued |
+| pulls/320 | `087f50aae76f` | 28 queued; 3 skipped |
+| pulls/321 | `2042e24dc7f3` | 2 skipped; 14 queued |
+| pulls/322 | `32cc4b04cf1f` | 21 queued; 1 skipped |
+| branches/main | `fdc2696c23bd` | 5 queued; 2 skipped; 22 success |
+
+Main's scheduled/non-gating runs are included in that same-head snapshot; they
+are separate from the completed foundation PR qualification. No submitted GitHub
+reviews were returned for the candidate heads. Independent source reviews are
+recorded separately. The new core/continuation and external candidates remain
+draft; #318 retains two actual strict-security failures.
+
+Strict runtime scan results remain red: 68 core, 80 broad and 82 combined. Their
+trust-boundary review is not a waiver. Inherited forced Strings publication and
+ordinary OSError cleanup ownership remain P2. Fresh applicable full/native,
+Windows sharing, packaging/lifecycle, manual/macOS/assistive-technology and
+separate L1/L2/L3 accuracy gates remain open.
+
+[Exact gate/status/workflow/review receipt](consolidation-20261119/post-publication-gates.json).
+
+
+## Earlier preparation checkpoint — 2026-11-19 11:34: 21 UTC
 
 This current section supersedes the dated interruption status below. Original
 source records and failed/incomplete evidence remain preserved. The execution

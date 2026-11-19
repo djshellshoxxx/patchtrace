@@ -1467,8 +1467,9 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
   current audit records; refresh every branch/PR/issue page through empty pages.
 - [x] Complete the narrow core immutable-action pin test repair and publish
   core 8d130aef with expected-head guard and exact tree/parent/ref/PR readback.
-- [ ] Publish the prepared continuation with original 976dddfb and fresh core 8d130aef
-  as parents; verify its exact tree/ref and retain the PR publication receipt.
+- [x] Publish continuation 2042e24d with original 976dddfb and fresh core 8d130aef
+  as parents; verify all 212 file blobs, exact tree/parents/ref/PR and retain
+  docs/audits/consolidation-20261119/continuation-publication.json.
 - [ ] Obtain passing applicable exact-head full/platform/native/package/security
   gates before additional main merge; do not count queued/skipped/incomplete work.
 - [ ] Keep inherited forced-export ownership, strict scanner diagnostics,
