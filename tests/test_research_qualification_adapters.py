@@ -267,3 +267,8 @@ def test_huge_json_integer_is_a_clean_error():
     from tools.research_qualification.adapters._common import unit_float
     with pytest.raises(ValueError):
         unit_float(10 ** 400, 'x')
+
+
+def test_rizin_real_rz_diff_091_capture():
+    got = AD.rizin.parse(FX / 'real' / 'rizin-functions.json')
+    assert got == ['dbg.classify']
