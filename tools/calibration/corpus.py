@@ -21,14 +21,17 @@ from pathlib import Path
 from .contracts import Binary, ContractError, CorpusManifest, load_manifest
 
 ROOT_ENV = 'PATCHTRACE_CALIB_ROOT'
-DEFAULT_ROOT = Path.home() / '.patchtrace-calibration'
 FIXTURE_ALLOW = ('tests/fixtures/',)
 MAX_DOWNLOAD = 512 * 1024 * 1024
 
 
 def calib_root(environ=None) -> Path:
     env = os.environ if environ is None else environ
-    return Path(env.get(ROOT_ENV) or DEFAULT_ROOT).expanduser().resolve()
+    configured = env.get(ROOT_ENV)
+    # Restricted Windows workers have an explicit corpus root but no USERPROFILE.
+    # Resolve the optional default only when needed, never during module import.
+    root = Path(configured) if configured else Path.home() / '.patchtrace-calibration'
+    return root.expanduser().resolve()
 
 
 def binary_path(root: Path, binary: Binary) -> Path:

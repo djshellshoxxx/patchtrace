@@ -202,17 +202,84 @@ jobs:
           path: merged/
           if-no-files-found: warn
   windows-advisory:
-    # Advisory leg: the runner's LLVM clang and lld-link build freestanding suites; missing tools are BLOCKED, not fatal.
+    # Advisory leg: provision complete LLVM tools and the existing pinned Windows rizin.
+    # Missing prerequisites still remain BLOCKED in the shard; no smoke case is removed.
     name: windows advisory (smoke)
     runs-on: windows-latest
     continue-on-error: true
     timeout-minutes: 45
+    env:
+      # Same Windows engine pin as live-rizin.yml; the workflow-wide asset is Linux-only.
+      RIZIN_ASSET: rizin-windows-static-v0.9.1.zip
+      RIZIN_SHA256: 2d14e0a6ecba1196dcd742d63de83bbaffed2a7a78ef5a0a9b4e92a0f73d1d28
+      # Same LLVM version as inspected runner image 20261103.298. The full distribution
+      # disables LLVM_INSTALL_TOOLCHAIN_ONLY and supplies llvm-dwarfdump.
+      LLVM_WINDOWS_URL: https://github.com/llvm/llvm-project/releases/download/llvmorg-20.1.8/clang%2Bllvm-20.1.8-x86_64-pc-windows-msvc.tar.xz
+      LLVM_WINDOWS_ROOT: clang+llvm-20.1.8-x86_64-pc-windows-msvc
+      LLVM_WINDOWS_SHA256: f229769f11d6a6edc8ada599c0cda964b7dee6ab1a08c6cf9dd7f513e85b107f
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.12'
       - run: python -m pip install -e .
+      - name: Restore pinned complete LLVM archive
+        id: llvm-windows-cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: .engine-archives/llvm-windows-20.1.8.tar.xz
+          key: llvm-windows-archive-v1-${{ env.LLVM_WINDOWS_SHA256 }}
+      - name: Install pinned complete LLVM tools
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:LLVM_WINDOWS_SHA256 -notmatch '^[0-9a-f]{64}$') { throw 'missing or malformed LLVM SHA-256' }
+          $archive = '.engine-archives/llvm-windows-20.1.8.tar.xz'
+          if (Test-Path -LiteralPath $archive) {
+            $item = Get-Item -LiteralPath $archive
+            if ($item -isnot [IO.FileInfo] -or ($item.Attributes -band [IO.FileAttributes]::ReparsePoint)) {
+              throw 'LLVM archive must be an ordinary file'
+            }
+          } else {
+            New-Item -ItemType Directory -Force .engine-archives | Out-Null
+            Invoke-WebRequest $env:LLVM_WINDOWS_URL -OutFile $archive
+          }
+          $actual = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLower()
+          if ($actual -ne $env:LLVM_WINDOWS_SHA256) { throw 'LLVM archive digest mismatch' }
+          if (Test-Path -LiteralPath llvm-windows-runtime) { throw 'LLVM runtime directory already exists' }
+          New-Item -ItemType Directory llvm-windows-runtime | Out-Null
+          tar -xf $archive -C llvm-windows-runtime --strip-components 1 "$($env:LLVM_WINDOWS_ROOT)/bin" "$($env:LLVM_WINDOWS_ROOT)/lib/clang"
+          if ($LASTEXITCODE -ne 0) { throw 'LLVM archive extraction failed' }
+          $bin = (Resolve-Path llvm-windows-runtime/bin).Path
+          $inspector = Join-Path $bin llvm-dwarfdump.exe
+          if (-not (Test-Path -LiteralPath $inspector -PathType Leaf)) { throw 'llvm-dwarfdump.exe not found in archive' }
+          & $inspector --version
+          if ($LASTEXITCODE -ne 0) { throw 'llvm-dwarfdump could not start' }
+          $clang = Join-Path $bin clang.exe
+          if (-not (Test-Path -LiteralPath $clang -PathType Leaf)) { throw 'clang.exe not found in archive' }
+          $resources = @(& $clang -print-resource-dir)
+          if ($LASTEXITCODE -ne 0 -or $resources.Count -ne 1) { throw 'clang resource directory is unavailable' }
+          $header = Join-Path ($resources[0].Trim()) 'include/stddef.h'
+          if (-not (Test-Path -LiteralPath $header -PathType Leaf)) { throw 'clang builtin headers are unavailable' }
+          $bin | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+      - name: Install pinned Windows rizin
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RIZIN_SHA256 -notmatch '^[0-9a-f]{64}$') { throw 'missing or malformed rizin SHA-256' }
+          Invoke-WebRequest "https://github.com/rizinorg/rizin/releases/download/v$($env:RIZIN_VERSION)/$($env:RIZIN_ASSET)" -OutFile $env:RIZIN_ASSET
+          $actual = (Get-FileHash $env:RIZIN_ASSET -Algorithm SHA256).Hash.ToLower()
+          if ($actual -ne $env:RIZIN_SHA256) { throw 'rizin archive digest mismatch' }
+          if (Test-Path -LiteralPath rizin) { throw 'rizin runtime directory already exists' }
+          Expand-Archive $env:RIZIN_ASSET -DestinationPath rizin
+          $executables = @(Get-ChildItem rizin -Recurse -File -Filter rz-diff.exe)
+          if ($executables.Count -ne 1) { throw 'expected exactly one rz-diff.exe in archive' }
+          $exe = $executables[0].FullName
+          "RZ_DIFF=$exe" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          (Split-Path $exe) | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+      - name: Record the actual Windows toolchain
+        shell: pwsh
+        run: python -m tools.calibration.tier_r toolchain > windows-toolchain.json
       - name: Plan and run the smoke subset as one shard
         shell: bash
         run: |
@@ -222,7 +289,9 @@ jobs:
         if: always()
         with:
           name: tier-r-windows-advisory
-          path: shard-out/shard-*.json
+          path: |
+            shard-out/shard-*.json
+            windows-toolchain.json
           if-no-files-found: warn
   msvc-advisory:
     # LBL-08 optional MSVC `cl` leg: dispatch-only and enabled by the repository variable TIER_R_MSVC=1, advisory, pinned

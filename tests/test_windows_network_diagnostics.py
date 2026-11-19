@@ -20,11 +20,30 @@ BEGIN, END = '/* PT_DIAGNOSTIC_PORTABLE_BEGIN */', '/* PT_DIAGNOSTIC_PORTABLE_EN
 KEYS = {'diagnostic', 'sequence', 'stage', 'kind', 'owner_pid', 'subject_pid',
         'error', 'socket_index', 'sent_bytes', 'received_bytes'}
 HARNESS = r'''
+#include <fcntl.h>
+#ifdef _WIN32
+#include <io.h>
+#define pt_test_fileno _fileno
+#define pt_test_open _open
+#define pt_test_dup2 _dup2
+#define pt_test_close _close
+#else
+#include <unistd.h>
+#define pt_test_fileno fileno
+#define pt_test_open open
+#define pt_test_dup2 dup2
+#define pt_test_close close
+#endif
 int main(int argc, char **argv) {
     unsigned int i;
     if (argc == 3 && strcmp(argv[1], "failed-write") == 0) {
-        /* A valid read-only FILE rejects real stdio writes without a fake sink. */
-        if (!freopen(argv[2], "r", stderr)) return 3;
+        /* Keep stdio writable; the real read-only descriptor rejects its writes. */
+        int readonly = pt_test_open(argv[2], O_RDONLY);
+        if (readonly < 0) return 3;
+        if (!freopen(argv[2], "r+", stderr) || pt_test_dup2(readonly, pt_test_fileno(stderr)) < 0) {
+            pt_test_close(readonly); return 3;
+        }
+        if (pt_test_close(readonly) != 0) return 3;
         for (i = 0; i < 1000; ++i)
             pt_diag_emit(PT_DG_CHILD_SPAWN, PT_DK_WIN32, 1, 2, 5, UINT32_MAX, 0, 0);
         {
@@ -74,8 +93,9 @@ def formatter(tmp_path_factory):
         pytest.skip('portable C compiler unavailable; this does not qualify Windows')
     directory = tmp_path_factory.mktemp('native-diagnostic-formatter')
     source, binary = directory / 'formatter.c', directory / 'formatter-check'
-    source.write_text('#include <stdio.h>\n#include <stdint.h>\n#include <string.h>\n'
+    source.write_text('#define _POSIX_C_SOURCE 200809L\n#include <stdio.h>\n#include <stdint.h>\n#include <string.h>\n'
                       + block + HARNESS, encoding='utf-8')
+    source_bytes = source.read_bytes()
     env = {'PATH': os.defpath, 'LANG': 'C', 'LC_ALL': 'C'}
     result = subprocess.run([compiler, '-std=c11', '-Wall', '-Wextra', '-Werror', str(source),
                              '-o', str(binary)], capture_output=True, timeout=20, env=env, check=False)
@@ -84,6 +104,7 @@ def formatter(tmp_path_factory):
     def invoke(mode):
         argv = [str(binary), mode, *([str(source)] if mode == 'failed-write' else [])]
         result = subprocess.run(argv, capture_output=True, timeout=5, env=env, check=False)
+        assert source.read_bytes() == source_bytes
         assert result.returncode == 0 and not result.stdout, (
             'formatter exit/stdout/stderr', result.returncode,
             result.stdout[:512], result.stderr[:512])

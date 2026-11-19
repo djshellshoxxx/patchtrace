@@ -29,10 +29,11 @@ def test_real_project_creation_uses_both_held_inputs_and_reopens_without_them(tm
             lease.bytes_read for lease in (readers.older, readers.newer))
         assert sum(count for kind, count in readers.checkpoint.counts if kind == 'core') >= sum(
             lease.captured[2] for lease in (readers.older, readers.newer))
-        for path in paths:
-            path.unlink()
-        with ProjectService.open(root, maintenance=False) as reopened:
-            assert [item.sha256 for item in reopened.project.artifacts] == expected
+    # The source owner releases its handles before removal on Windows.
+    for path in paths:
+        path.unlink()
+    with ProjectService.open(root, maintenance=False) as reopened:
+        assert [item.sha256 for item in reopened.project.artifacts] == expected
 
 
 @pytest.mark.parametrize('phase', ['before-store', 'newer-copy', 'save-verification'])

@@ -24,6 +24,20 @@ PRELUDE = r'''
 #include <stdlib.h>
 #include <string.h>
 #include <wchar.h>
+/* Namespace scripted APIs so the host CRT never links to these surrogates. */
+#define GetLastError pt_test_GetLastError
+#define SetLastError pt_test_SetLastError
+#define GetCurrentProcess pt_test_GetCurrentProcess
+#define GetStdHandle pt_test_GetStdHandle
+#define GetStartupInfoW pt_test_GetStartupInfoW
+#define GetFileType pt_test_GetFileType
+#define GetHandleInformation pt_test_GetHandleInformation
+#define LoadLibraryExW pt_test_LoadLibraryExW
+#define GetProcAddress pt_test_GetProcAddress
+#define FreeLibrary pt_test_FreeLibrary
+#define DuplicateHandle pt_test_DuplicateHandle
+#define CreateFileW pt_test_CreateFileW
+#define CloseHandle pt_test_CloseHandle
 typedef uint32_t DWORD;
 typedef int BOOL;
 typedef void *HANDLE;

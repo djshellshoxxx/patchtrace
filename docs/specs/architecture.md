@@ -161,6 +161,15 @@ separately from reused candidates. Only that ownership record can authorize
 initialization/service rollback cleanup; observing a pathname later does not
 create ownership. Refuse an observed replacement before accessing schema or
 initializing the database, preserving it and any newly observed companions.
+The reservation descriptor and pathname are separate metadata observations.
+While the descriptor remains open, bind their regular-file identity, link count,
+size and modification time and require the descriptor metadata (including its
+change time) to remain unchanged around the pathname observation. Retain that
+pathname snapshot for subsequent pathname checks, including its own change time.
+Do not compare descriptor change time to pathname change time: Windows Python
+can expose different timestamp meanings through those APIs. Neither timestamp
+check is removed; comparisons remain within the same observation API. Portable
+observation controls supplement, but do not replace, native Windows acceptance.
 These checks and the SQLite transaction address the reproduced admission/open/
 initialization seams. They do not make arbitrary noncooperating filesystem
 renames or journal creation between checks race-free: SQLite recovery on first
