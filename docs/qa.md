@@ -1833,3 +1833,8 @@ PR #304 at `bb4277ae` failed the hosted Windows publication boundary: **15 faile
 ## [CURRENT302-INTEGRATION-20261118]
 
 Fresh REST inspection found eleven new #302 commits at `121ffb0b`; six repairs match earlier #304 patch IDs, while four behavior commits repair additional ZIP/lineage/selection/budget defects. Actual merge parents preserve both that head and #304 `6cc6b6b7`. Independent review verified all forty #304-only paths remain unchanged. A copied-target chronology-cache regression was reproduced and fixed; four stale test-double failures were preserved and repaired through fixture flags only. Disjoint affected selections total **1,650 passed, 2 native Windows skips**, with separate independent controls, whole Ruff and schema checks passing. Final code/tree is local `3693ca3b` / published `34c06d9e`, tree `42327753`. Hosted exact-head acceptance and guarded merge remain pending; no PR closure or accuracy promotion follows from local checks. [Evidence and limits](qa/current302-integration-20261118.md).
+
+
+## [FOUNDATION-SAVED-SCOPE-20261119]
+
+Independent controls blocked intact #304: scoped native revision conflicts could resurrect 43 positive edges. A narrow provenance-preserving port from #316 restores global admission and finite saved-scope validation. Dedicated regressions changed from **73 failed, 7 passed** to **80 passed**; both independent date variants now pass. Initial broader commands ran zero tests because a later-only path was included; corrected broad, Qt, hosted and independent review remain pending. Raw failures and limits are preserved in [the repair receipt](qa/foundation-saved-scope-20261119.md). No release or native qualification is claimed.

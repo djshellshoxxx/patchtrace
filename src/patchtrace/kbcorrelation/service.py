@@ -51,6 +51,8 @@ from .plan import index_plan, local_plan
 from .ports import AdvisoryPort, ClockPort, ProjectPort
 from .products import clean_text, find_scopes
 from .recovery import repair
+from .saved_scope import SavedScopeError
+from .saved_scope import resolve as saved_scope
 from .sources.cvrf import SourceError, load_json
 from .store import AttachRequest, Fault, KbcStoreError, ProjectAttachment, WorkspaceStore, atomic_write
 from .workflow import Event
@@ -362,7 +364,7 @@ class KbService:
     def products(self, investigation: str) -> Outcome:
         with self._open() as ws:
             rev = self._get(ws, investigation)
-            index, _ = load_index(ws, self.ports)
+            index = self._checked_index(ws, rev)
         wanted = set(rev.scope_ids)
         scopes = [_scope_dict(s) for s in index.scopes() if s.scope_id in wanted]
         if wanted - {s['scope_id'] for s in scopes}:
@@ -385,6 +387,7 @@ class KbService:
             raise _fail('PT-KBC-INPUT', str(exc)) from None
         with self._open() as ws:
             rev = self._get(ws, investigation)
+            index = self._checked_index(ws, rev)
             scope_id = product or rev.selected_scope_id
             if scope_id is None:
                 raise _fail('PT-KBC-INPUT', TEXT_KB6)
@@ -397,7 +400,6 @@ class KbService:
                              'File name entered by the analyst; a user assertion, not evidence.')
             entered = sorted({*names, *(d.next for d in ws.decisions(rev.investigation_id)
                                         if d.op == 'component-name')})
-            index, _ = load_index(ws, self.ports)
             cards, refs = self._lead_cards(index, rev, ws)
             hints, truncated = comp.hints_for(cards, refs, entered, scope_id)
             rev = self._step(ws, rev, 'components_ready' if comp.selectable(hints) else 'needs_filename')
@@ -412,18 +414,42 @@ class KbService:
                        result, '\n'.join(lines))
 
     @staticmethod
-    def _stored_scope(ws: WorkspaceStore, rev: InvestigationRevision) -> SearchScope | None:
-        """The document scope the investigation's recorded search used (issue #118 P1a). Every later lookup keeps it,
-        so an investigation is never widened without a new recorded search. None means the whole cached corpus."""
-        coverage = ws.get_coverage(rev.coverage_ids[-1]) if rev.coverage_ids else None
-        if coverage is None or coverage.scope.kind == 'cached_corpus':
-            return None
-        return coverage.scope
+    def _saved_search(ws: WorkspaceStore, rev: InvestigationRevision, index: ReverseIndex | None = None,
+                      *, unreadable=()) -> tuple[tuple[Coverage, ...], SearchScope | None]:
+        try:
+            if rev.lead.kind in {'kb', 'cve'} and unreadable:
+                raise SavedScopeError('cannot establish current admission while a stored source is unreadable')
+            coverage = tuple(ws.get_coverage(key) for key in rev.coverage_ids)
+            scope = saved_scope(rev.lead, coverage, keys=rev.coverage_ids, index=index)
+            if rev.lead.kind not in {'kb', 'cve'}:
+                coverage = tuple(item for item in coverage if item is not None)
+                scope = coverage[-1].scope if coverage and coverage[-1].scope.kind != 'cached_corpus' else None
+            return coverage, scope
+        except (ValueError, TypeError) as exc:
+            message = str(exc) if isinstance(exc, SavedScopeError) else str(SavedScopeError('is malformed'))
+            raise _fail('PT-KBC-SCOPE', message) from None
+
+    def _checked_index(self, ws: WorkspaceStore, rev: InvestigationRevision, *,
+                       captured: Sequence[InvestigationRevision] = ()) -> ReverseIndex:
+        try:
+            index, unreadable = load_index(ws, self.ports)
+        except ValidationError:
+            raise _fail('PT-KBC-SCOPE', str(SavedScopeError('has an unreadable source record'))) from None
+        for revision in (rev, *captured):
+            self._saved_search(ws, revision, index, unreadable=unreadable)
+        return index
+
+    @staticmethod
+    def _stored_scope(ws: WorkspaceStore, rev: InvestigationRevision,
+                      index: ReverseIndex | None = None) -> SearchScope | None:
+        """Finite recorded selector; advisory coverage is never replaced with the current cache."""
+        return KbService._saved_search(ws, rev, index)[1]
 
     def _lead_cards(self, index: ReverseIndex, rev: InvestigationRevision,
                     ws: WorkspaceStore) -> tuple[list[CveCard], dict[str, SourceRef]]:
-        cves, _, _ = self._lead_cves(index, rev, ws)
-        scope = self._stored_scope(ws, rev)
+        saved = self._saved_search(ws, rev, index)
+        cves, _, _ = self._lead_cves(index, rev, ws, saved=saved)
+        scope = saved[1]
         cards: list[CveCard] = []
         refs: dict[str, SourceRef] = {}
         for cve in cves:
@@ -436,14 +462,14 @@ class KbService:
         return cards, refs
 
     def _lead_cves(self, index: ReverseIndex, rev: InvestigationRevision,
-                   ws: WorkspaceStore) -> tuple[tuple[str, ...], tuple[str, ...], tuple[Coverage, ...]]:
+                   ws: WorkspaceStore, *, saved=None) -> tuple[tuple[str, ...], tuple[str, ...], tuple[Coverage, ...]]:
         """CVEs the lead names under the selected product, CVEs mentioned only, and the stored search coverage."""
-        coverage = tuple(c for c in (ws.get_coverage(i) for i in rev.coverage_ids) if c is not None)
+        coverage, scope = saved if saved is not None else self._saved_search(ws, rev, index)
         now, scope_id, lead = self._now(), rev.selected_scope_id, rev.lead
         if lead.kind == 'kb':
-            look = index.lookup_kb(lead.value, scope=self._stored_scope(ws, rev), scope_id=scope_id, now=now)
+            look = index.lookup_kb(lead.value, scope=scope, scope_id=scope_id, now=now)
             return (tuple(sorted({e.cve for e in look.edges})), tuple(sorted({e.cve for e in look.mention_only})),
-                    coverage or (look.coverage,))
+                    coverage)
         if lead.kind == 'cve':
             return (lead.value,), (), coverage
         return (), (), coverage
@@ -479,6 +505,7 @@ class KbService:
         file_index = self.env.file_index(self.root) if self.env.file_index else None
         with self._open() as ws:
             rev = self._get(ws, investigation)
+            index = self._checked_index(ws, rev)
             if file_index is None or not file_index.available():
                 return rev, self._unanswered(rev, 'file index not available offline', TEXT_PAIRS_E0)
             scope_id = product or rev.selected_scope_id
@@ -487,7 +514,6 @@ class KbService:
             if scope_id not in rev.scope_ids:
                 raise _fail('PT-KBC-INPUT', 'that product is not one of the products listed for the lead')
             rev = rev.model_copy(update={'selected_scope_id': scope_id})
-            index, _ = load_index(ws, self.ports)
             scope = next((s for s in index.scopes() if s.scope_id == scope_id), None)
             if scope is None:
                 raise _fail('PT-KBC-INPUT', 'the selected product mapping is no longer current; repeat the search '
@@ -497,7 +523,7 @@ class KbService:
             cards, refs = self._lead_cards(index, rev, ws)
             hints, _ = comp.hints_for(cards, refs, entered, scope_id)
             chosen = sorted({h.basename for h in hints if h.tier in comp.SELECTING_TIERS})
-            kbs = self._lead_kbs(index, rev, self._stored_scope(ws, rev))
+            kbs = self._lead_kbs(index, rev, self._stored_scope(ws, rev, index))
         if not chosen:
             return rev, self._unanswered(rev, 'no file name', TEXT_KB7)
         covered = scope.family != 'windows-server' and scope.winbindex_key is not None
@@ -677,6 +703,8 @@ class KbService:
             if expected_revision is not None and (rev is None or rev.revision != expected_revision):
                 raise _fail('PT-KBC-STALE', 'the investigation changed after preview; review the pair again')
             admitted_index = None
+            admitted_search = None
+            unreadable = ()
             if expected_source_snapshot is not None:
                 admitted_index, unreadable = load_index(ws, self.ports)
                 # Sources are append-only: check after the read, then retain this index for the whole import.
@@ -684,6 +712,10 @@ class KbService:
                     raise _fail('PT-KBC-STALE', 'the advisory sources changed after preview; review the pair again')
                 if selected_product is not None and unreadable:
                     raise _fail('PT-KBC-STALE', 'a stored source can no longer be read; restore it and list products again')
+            if rev is not None and rev.lead.kind in {'kb', 'cve'}:
+                if admitted_index is None:
+                    admitted_index = self._checked_index(ws, rev)
+                admitted_search = self._saved_search(ws, rev, admitted_index, unreadable=unreadable)
             scope_id = (selected_product.scope_id if selected_product is not None else
                         rev.selected_scope_id if rev and rev.selected_scope_id else UNSELECTED_SCOPE)
             if scope_id != UNSELECTED_SCOPE:
@@ -719,7 +751,7 @@ class KbService:
             if index is None:
                 index, _ = load_index(ws, self.ports)
             bundle = self._bundle(index, ws, rev, base=rev.revision, pair_id=pair.pair_id, older=pair.older.sha256,
-                                  newer=pair.newer.sha256)
+                                  newer=pair.newer.sha256, saved=admitted_search)
             request = AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer,
                                     older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory,
                                     source_shas=tuple(d.sha256 for d in bundle.sources), plan_sha=plan.plan_sha,
@@ -787,12 +819,13 @@ class KbService:
         return self._step(ws, rev, 'bytes_verified', parsed=True, both_sides=True)
 
     def _bundle(self, index: ReverseIndex, ws: WorkspaceStore, rev: InvestigationRevision, *, base: int,
-                pair_id: str | None, older: str | None, newer: str | None) -> ContextBundle:
-        cves, mention, coverage = self._lead_cves(index, rev, ws)
+                pair_id: str | None, older: str | None, newer: str | None, saved=None) -> ContextBundle:
+        saved = saved if saved is not None else self._saved_search(ws, rev, index)
+        cves, mention, coverage = self._lead_cves(index, rev, ws, saved=saved)
         return build_bundle(investigation_id=rev.investigation_id, base_revision=base, lead=rev.lead, cves=cves,
                             index=index, rules=self.env.rules, now=self._now(), coverage=coverage,
                             scope_id=rev.selected_scope_id, pair_id=pair_id, older_sha=older, newer_sha=newer,
-                            mention_only=mention, scope=self._stored_scope(ws, rev))
+                            mention_only=mention, scope=saved[1])
 
     def _attach_outcome(self, outcome, investigation_id: str, pair, plan_sha: str, context_key: str) -> Outcome:
         link = outcome.value
@@ -814,16 +847,26 @@ class KbService:
     def attach(self, project_dir: str, investigation: str, *, repair_it: bool) -> Outcome:
         directory = Path(project_dir).resolve().as_posix()
         with self._open(create=False) as ws:
-            self._get(ws, investigation)
+            current = self._get(ws, investigation)
             ours = self._ops_for(ws, directory, investigation)
             if not ours:
                 raise _fail('PT-KBC-UNSUPPORTED', 'this workspace did not create that project, and attaching '
                             'context to a foreign project arrives with a later slice')
             if not repair_it:
                 return self._link_outcome(ours, None, 'Context is not attached yet. Run "kb attach --repair".')
-            index, _ = load_index(ws, self.ports)
+            captured = []
+            for _, _, body in ours:
+                try:
+                    captured.append(InvestigationRevision.model_validate_json(json.dumps(body['revision'])))
+                except (ValueError, TypeError):
+                    raise _fail('PT-KBC-SCOPE', str(SavedScopeError('has a malformed captured revision'))) from None
+            index = self._checked_index(ws, current, captured=captured)
+            prepared = {}
+            for op, state, body in ours:
+                if state != 'done' or body.get('link_state') == 'context-pending':
+                    prepared[op] = self._rebuilt_rows(index, ws, body)
             port = self.env.project(ws, 'KB comparison')
-            result = repair(ws, port, context_for=lambda op, body: self._rebuilt_rows(index, ws, body),
+            result = repair(ws, port, context_for=lambda op, body: prepared[op],
                             only=lambda body: body['directory'] == directory
                             and body['revision']['investigation_id'] == investigation)
             return self._link_outcome(self._ops_for(ws, directory, investigation), result,

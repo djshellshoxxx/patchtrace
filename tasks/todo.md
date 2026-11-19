@@ -1370,3 +1370,13 @@ Full `QT_QPA_PLATFORM=offscreen python -m pytest -q` for this isolated native sl
 ## Accuracy validation (opened 2026-11-06)
 - [ ] Follow [accuracy validation plan](../docs/plans/accuracy-validation-plan-20261106.md): per-layer claims (L1 advisory join, L2 open-source pair diff, L3 real Windows pairs), manifests frozen before engine runs. AV-0 and AV-1 done, AV-2 next; no accuracy result exists yet.
 - [ ] 2026-11-07 status and findings: see [accuracy program findings](../docs/qa/accuracy-program-findings-20261107.md) (PR triage, CI observations, Windows candidate research, open gates).
+
+
+### [FOUNDATION-SAVED-SCOPE-20261119]
+
+- [x] Independently reproduce #304 scoped counterevidence loss with zoned and unzoned native revision controls.
+- [x] Recover the narrow #316 saved-scope/global-admission implementation with source provenance, specification amendments and unchanged safety assertions; dedicated suite: 80 passed after 73 failed and 7 passed on old source.
+- [x] Preserve raw red/green and zero-test missing-path harness failures with exact production-file hashes.
+- [ ] Complete corrected affected and Qt checks, independent review, and exact-head hosted qualification before guarded merge; preserve separate native, release and accuracy gates.
+
+[Repair evidence and limits](../docs/qa/foundation-saved-scope-20261119.md).

@@ -150,10 +150,12 @@ def test_unlocatable_xml_card_does_not_hide_locatable_csaf_card():
     value['vulnerabilities'][0]['cve'] = xml_cve
     value['vulnerabilities'][0]['title'] = 'Located CSAF card'
     csaf = import_bytes(_raw(value), now=NOW, advisory=IntelligenceAdvisoryPort())
+    index = _index(xml, csaf)
     bundle = build_bundle(investigation_id=INV, base_revision=3,
                           lead=Lead(kind='cve', value=xml_cve, raw=xml_cve), cves=(xml_cve,),
-                          index=_index(xml, csaf), rules=wiring.IntelligenceRules(), now=NOW,
-                          coverage=(), scope_id=None, pair_id=None, older_sha=None, newer_sha=None)
+                          index=index, rules=wiring.IntelligenceRules(), now=NOW,
+                          coverage=(index.coverage(now=NOW),), scope_id=None, pair_id=None,
+                          older_sha=None, newer_sha=None)
     card, = bundle.context.cards
     assert card.source_kind == 'csaf' and card.title == 'Located CSAF card'
     assert {source.doc_id for source in bundle.sources} == {xml.doc_id, csaf.doc_id}
