@@ -1,0 +1,208 @@
+{
+  "$defs": {
+    "RunCell": {
+      "additionalProperties": false,
+      "description": "Counts for one (engine, condition), never pooled: attempted = ok + failed, and attempted + blocked +\ncancelled = the pair count. `matches` are the lines written; `skipped` counts engine rows not written.",
+      "properties": {
+        "engine": {
+          "pattern": "^[a-z0-9._-]{1,64}$",
+          "title": "Engine",
+          "type": "string"
+        },
+        "condition": {
+          "enum": [
+            "symbols-hidden",
+            "symbols-visible",
+            "n/a"
+          ],
+          "title": "Condition",
+          "type": "string"
+        },
+        "attempted": {
+          "minimum": 0,
+          "title": "Attempted",
+          "type": "integer"
+        },
+        "ok": {
+          "minimum": 0,
+          "title": "Ok",
+          "type": "integer"
+        },
+        "failed": {
+          "minimum": 0,
+          "title": "Failed",
+          "type": "integer"
+        },
+        "blocked": {
+          "minimum": 0,
+          "title": "Blocked",
+          "type": "integer"
+        },
+        "cancelled": {
+          "minimum": 0,
+          "title": "Cancelled",
+          "type": "integer"
+        },
+        "matches": {
+          "minimum": 0,
+          "title": "Matches",
+          "type": "integer"
+        },
+        "skipped": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "propertyNames": {
+            "enum": [
+              "split",
+              "merged",
+              "ambiguous",
+              "added",
+              "removed",
+              "not-one-to-one",
+              "one-sided",
+              "no-address",
+              "address-space",
+              "out-of-image",
+              "image-base-unknown",
+              "duplicate"
+            ]
+          },
+          "title": "Skipped",
+          "type": "object"
+        }
+      },
+      "required": [
+        "engine",
+        "condition",
+        "attempted",
+        "ok",
+        "failed",
+        "blocked",
+        "cancelled",
+        "matches",
+        "skipped"
+      ],
+      "title": "RunCell",
+      "type": "object"
+    },
+    "RunProblem": {
+      "additionalProperties": false,
+      "properties": {
+        "pair": {
+          "pattern": "^[A-Za-z0-9._-]{1,64}$",
+          "title": "Pair",
+          "type": "string"
+        },
+        "engine": {
+          "pattern": "^[a-z0-9._-]{1,64}$",
+          "title": "Engine",
+          "type": "string"
+        },
+        "condition": {
+          "enum": [
+            "symbols-hidden",
+            "symbols-visible",
+            "n/a"
+          ],
+          "title": "Condition",
+          "type": "string"
+        },
+        "outcome": {
+          "enum": [
+            "failed",
+            "blocked"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "message": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pair",
+        "engine",
+        "condition",
+        "outcome",
+        "message"
+      ],
+      "title": "RunProblem",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "tier-w-run/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "tier": {
+      "enum": [
+        "W",
+        "test"
+      ],
+      "title": "Tier",
+      "type": "string"
+    },
+    "corpus_id": {
+      "pattern": "^tier-w-[A-Za-z0-9._-]{1,57}$",
+      "title": "Corpus Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ok",
+        "partial",
+        "blocked",
+        "cancelled"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "pairs": {
+      "minimum": 0,
+      "title": "Pairs",
+      "type": "integer"
+    },
+    "matches_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Matches Sha256",
+      "type": "string"
+    },
+    "cells": {
+      "items": {
+        "$ref": "#/$defs/RunCell"
+      },
+      "maxItems": 64,
+      "title": "Cells",
+      "type": "array"
+    },
+    "problems": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/RunProblem"
+      },
+      "maxItems": 100000,
+      "title": "Problems",
+      "type": "array"
+    }
+  },
+  "required": [
+    "contract",
+    "tier",
+    "corpus_id",
+    "status",
+    "pairs",
+    "matches_sha256",
+    "cells"
+  ],
+  "title": "RunRecord",
+  "type": "object",
+  "$id": "https://patchtrace.local/schemas/tier-w-run/1/RunRecord.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

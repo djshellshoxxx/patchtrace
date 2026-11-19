@@ -1,0 +1,156 @@
+FFFFFFFFFFFFFFFFFFFFFFFF                                                 [100%]
+=================================== FAILURES ===================================
+_ test_schema_failure_survives_failed_rollback_and_closes_owned_connection[False-error-sqlite-new] _
+tests/test_kbc_workspace_constructor_cleanup.py:225: in test_schema_failure_survives_failed_rollback_and_closes_owned_connection
+    assert caught.value.__cause__ is primary
+E   AssertionError: assert OperationalError('untrusted rollback failure /private/path') is OperationalError('authored initialization failure')
+E    +  where OperationalError('untrusted rollback failure /private/path') = KbcStoreError('the workspace database cannot be opened').__cause__
+E    +    where KbcStoreError('the workspace database cannot be opened') = <ExceptionInfo KbcStoreError('the workspace database cannot be opened') tblen=2>.value
+_ test_schema_failure_survives_failed_rollback_and_closes_owned_connection[False-error-sqlite-retained-v0] _
+tests/test_kbc_workspace_constructor_cleanup.py:225: in test_schema_failure_survives_failed_rollback_and_closes_owned_connection
+    assert caught.value.__cause__ is primary
+E   AssertionError: assert OperationalError('untrusted rollback failure /private/path') is OperationalError('authored initialization failure')
+E    +  where OperationalError('untrusted rollback failure /private/path') = KbcStoreError('the workspace database cannot be opened').__cause__
+E    +    where KbcStoreError('the workspace database cannot be opened') = <ExceptionInfo KbcStoreError('the workspace database cannot be opened') tblen=2>.value
+_ test_schema_failure_survives_failed_rollback_and_closes_owned_connection[False-error-interrupt-new] _
+tests/test_kbc_workspace_constructor_cleanup.py:228: in test_schema_failure_survives_failed_rollback_and_closes_owned_connection
+    assert caught.value is primary
+E   AssertionError: assert KbcStoreError('the workspace database cannot be opened') is KeyboardInterrupt('authored initialization interrupt')
+E    +  where KbcStoreError('the workspace database cannot be opened') = <ExceptionInfo KbcStoreError('the workspace database cannot be opened') tblen=2>.value
+_ test_schema_failure_survives_failed_rollback_and_closes_owned_connection[False-error-interrupt-retained-v0] _
+tests/test_kbc_workspace_constructor_cleanup.py:228: in test_schema_failure_survives_failed_rollback_and_closes_owned_connection
+    assert caught.value is primary
+E   AssertionError: assert KbcStoreError('the workspace database cannot be opened') is KeyboardInterrupt('authored initialization interrupt')
+E    +  where KbcStoreError('the workspace database cannot be opened') = <ExceptionInfo KbcStoreError('the workspace database cannot be opened') tblen=2>.value
+_ test_schema_failure_survives_failed_rollback_and_closes_owned_connection[False-error-exit-new] _
+tests/test_kbc_workspace_constructor_cleanup.py:228: in test_schema_failure_survives_failed_rollback_and_closes_owned_connection
+    assert caught.value is primary
+E   AssertionError: assert KbcStoreError('the workspace database cannot be opened') is SystemExit(29)
+E    +  where KbcStoreError('the workspace database cannot be opened') = <ExceptionInfo KbcStoreError('the workspace database cannot be opened') tblen=2>.value
+_ test_schema_failure_survives_failed_rollback_and_closes_owned_connection[False-error-exit-retained-v0] _
+tests/test_kbc_workspace_constructor_cleanup.py:228: in test_schema_failure_survives_failed_rollback_and_closes_owned_connection
+    assert caught.value is primary
+E   AssertionError: assert KbcStoreError('the workspace database cannot be opened') is SystemExit(29)
+E    +  where KbcStoreError('the workspace database cannot be opened') = <ExceptionInfo KbcStoreError('the workspace database cannot be opened') tblen=2>.value
+_ test_schema_failure_survives_failed_rollback_and_closes_owned_connection[False-interrupt-sqlite-new] _
+tests/test_kbc_workspace_constructor_cleanup.py:224: in test_schema_failure_survives_failed_rollback_and_closes_owned_connection
+    assert isinstance(caught.value, KbcStoreError)
+E   AssertionError: assert False
+E    +  where False = isinstance(KeyboardInterrupt('untrusted rollback interrupt /private/path'), KbcStoreError)
+E    +    where KeyboardInterrupt('untrusted rollback interrupt /private/path') = <ExceptionInfo KeyboardInterrupt('untrusted rollback interrupt /private/path') tblen=4>.value
+_ test_schema_failure_survives_failed_rollback_and_closes_owned_connection[False-interrupt-sqlite-retained-v0] _
+tests/test_kbc_workspace_constructor_cleanup.py:224: in test_schema_failure_survives_failed_rollback_and_closes_owned_connection
+    assert isinstance(caught.value, KbcStoreError)
+E   AssertionError: assert False
+E    +  where False = isinstance(KeyboardInterrupt('untrusted rollback interrupt /private/path'), KbcStoreError)
+E    +    where KeyboardInterrupt('untrusted rollback interrupt /private/path') = <ExceptionInfo KeyboardInterrupt('untrusted rollback interrupt /private/path') tblen=4>.value
+_ test_schema_failure_survives_failed_rollback_and_closes_owned_connection[False-interrupt-interrupt-new] _
+tests/test_kbc_workspace_constructor_cleanup.py:228: in test_schema_failure_survives_failed_rollback_and_closes_owned_connection
+    assert caught.value is primary
+E   AssertionError: assert KeyboardInterrupt('untrusted rollback interrupt /private/path') is KeyboardInterrupt('authored initialization interrupt')
+E    +  where KeyboardInterrupt('untrusted rollback interrupt /private/path') = <ExceptionInfo KeyboardInterrupt('untrusted rollback interrupt /private/path') tblen=4>.value
+_ test_schema_failure_survives_failed_rollback_and_closes_owned_connection[False-interrupt-interrupt-retained-v0] _
+tests/test_kbc_workspace_constructor_cleanup.py:228: in test_schema_failure_survives_failed_rollback_and_closes_owned_connection
+    assert caught.value is primary
+E   AssertionError: assert KeyboardInterrupt('untrusted rollback interrupt /private/path') is KeyboardInterrupt('authored initialization interrupt')
+E    +  where KeyboardInterrupt('untrusted rollback interrupt /private/path') = <ExceptionInfo KeyboardInterrupt('untrusted rollback interrupt /private/path') tblen=4>.value
+_ test_schema_failure_survives_failed_rollback_and_closes_owned_connection[False-interrupt-exit-new] _
+tests/test_kbc_workspace_constructor_cleanup.py:228: in test_schema_failure_survives_failed_rollback_and_closes_owned_connection
+    assert caught.value is primary
+E   AssertionError: assert KeyboardInterrupt('untrusted rollback interrupt /private/path') is SystemExit(29)
+E    +  where KeyboardInterrupt('untrusted rollback interrupt /private/path') = <ExceptionInfo KeyboardInterrupt('untrusted rollback interrupt /private/path') tblen=4>.value
+_ test_schema_failure_survives_failed_rollback_and_closes_owned_connection[False-interrupt-exit-retained-v0] _
+tests/test_kbc_workspace_constructor_cleanup.py:228: in test_schema_failure_survives_failed_rollback_and_closes_owned_connection
+    assert caught.value is primary
+E   AssertionError: assert KeyboardInterrupt('untrusted rollback interrupt /private/path') is SystemExit(29)
+E    +  where KeyboardInterrupt('untrusted rollback interrupt /private/path') = <ExceptionInfo KeyboardInterrupt('untrusted rollback interrupt /private/path') tblen=4>.value
+_ test_schema_failure_survives_failed_rollback_and_closes_owned_connection[True-error-sqlite-new] _
+tests/test_kbc_workspace_constructor_cleanup.py:225: in test_schema_failure_survives_failed_rollback_and_closes_owned_connection
+    assert caught.value.__cause__ is primary
+E   AssertionError: assert OperationalError('untrusted rollback failure /private/path') is OperationalError('authored initialization failure')
+E    +  where OperationalError('untrusted rollback failure /private/path') = KbcStoreError('the workspace database cannot be opened').__cause__
+E    +    where KbcStoreError('the workspace database cannot be opened') = <ExceptionInfo KbcStoreError('the workspace database cannot be opened') tblen=2>.value
+_ test_schema_failure_survives_failed_rollback_and_closes_owned_connection[True-error-sqlite-retained-v0] _
+tests/test_kbc_workspace_constructor_cleanup.py:225: in test_schema_failure_survives_failed_rollback_and_closes_owned_connection
+    assert caught.value.__cause__ is primary
+E   AssertionError: assert OperationalError('untrusted rollback failure /private/path') is OperationalError('authored initialization failure')
+E    +  where OperationalError('untrusted rollback failure /private/path') = KbcStoreError('the workspace database cannot be opened').__cause__
+E    +    where KbcStoreError('the workspace database cannot be opened') = <ExceptionInfo KbcStoreError('the workspace database cannot be opened') tblen=2>.value
+_ test_schema_failure_survives_failed_rollback_and_closes_owned_connection[True-error-interrupt-new] _
+tests/test_kbc_workspace_constructor_cleanup.py:228: in test_schema_failure_survives_failed_rollback_and_closes_owned_connection
+    assert caught.value is primary
+E   AssertionError: assert KbcStoreError('the workspace database cannot be opened') is KeyboardInterrupt('authored initialization interrupt')
+E    +  where KbcStoreError('the workspace database cannot be opened') = <ExceptionInfo KbcStoreError('the workspace database cannot be opened') tblen=2>.value
+_ test_schema_failure_survives_failed_rollback_and_closes_owned_connection[True-error-interrupt-retained-v0] _
+tests/test_kbc_workspace_constructor_cleanup.py:228: in test_schema_failure_survives_failed_rollback_and_closes_owned_connection
+    assert caught.value is primary
+E   AssertionError: assert KbcStoreError('the workspace database cannot be opened') is KeyboardInterrupt('authored initialization interrupt')
+E    +  where KbcStoreError('the workspace database cannot be opened') = <ExceptionInfo KbcStoreError('the workspace database cannot be opened') tblen=2>.value
+_ test_schema_failure_survives_failed_rollback_and_closes_owned_connection[True-error-exit-new] _
+tests/test_kbc_workspace_constructor_cleanup.py:228: in test_schema_failure_survives_failed_rollback_and_closes_owned_connection
+    assert caught.value is primary
+E   AssertionError: assert KbcStoreError('the workspace database cannot be opened') is SystemExit(29)
+E    +  where KbcStoreError('the workspace database cannot be opened') = <ExceptionInfo KbcStoreError('the workspace database cannot be opened') tblen=2>.value
+_ test_schema_failure_survives_failed_rollback_and_closes_owned_connection[True-error-exit-retained-v0] _
+tests/test_kbc_workspace_constructor_cleanup.py:228: in test_schema_failure_survives_failed_rollback_and_closes_owned_connection
+    assert caught.value is primary
+E   AssertionError: assert KbcStoreError('the workspace database cannot be opened') is SystemExit(29)
+E    +  where KbcStoreError('the workspace database cannot be opened') = <ExceptionInfo KbcStoreError('the workspace database cannot be opened') tblen=2>.value
+_ test_schema_failure_survives_failed_rollback_and_closes_owned_connection[True-interrupt-sqlite-new] _
+tests/test_kbc_workspace_constructor_cleanup.py:224: in test_schema_failure_survives_failed_rollback_and_closes_owned_connection
+    assert isinstance(caught.value, KbcStoreError)
+E   AssertionError: assert False
+E    +  where False = isinstance(KeyboardInterrupt('untrusted rollback interrupt /private/path'), KbcStoreError)
+E    +    where KeyboardInterrupt('untrusted rollback interrupt /private/path') = <ExceptionInfo KeyboardInterrupt('untrusted rollback interrupt /private/path') tblen=4>.value
+_ test_schema_failure_survives_failed_rollback_and_closes_owned_connection[True-interrupt-sqlite-retained-v0] _
+tests/test_kbc_workspace_constructor_cleanup.py:224: in test_schema_failure_survives_failed_rollback_and_closes_owned_connection
+    assert isinstance(caught.value, KbcStoreError)
+E   AssertionError: assert False
+E    +  where False = isinstance(KeyboardInterrupt('untrusted rollback interrupt /private/path'), KbcStoreError)
+E    +    where KeyboardInterrupt('untrusted rollback interrupt /private/path') = <ExceptionInfo KeyboardInterrupt('untrusted rollback interrupt /private/path') tblen=4>.value
+_ test_schema_failure_survives_failed_rollback_and_closes_owned_connection[True-interrupt-interrupt-new] _
+tests/test_kbc_workspace_constructor_cleanup.py:228: in test_schema_failure_survives_failed_rollback_and_closes_owned_connection
+    assert caught.value is primary
+E   AssertionError: assert KeyboardInterrupt('untrusted rollback interrupt /private/path') is KeyboardInterrupt('authored initialization interrupt')
+E    +  where KeyboardInterrupt('untrusted rollback interrupt /private/path') = <ExceptionInfo KeyboardInterrupt('untrusted rollback interrupt /private/path') tblen=4>.value
+_ test_schema_failure_survives_failed_rollback_and_closes_owned_connection[True-interrupt-interrupt-retained-v0] _
+tests/test_kbc_workspace_constructor_cleanup.py:228: in test_schema_failure_survives_failed_rollback_and_closes_owned_connection
+    assert caught.value is primary
+E   AssertionError: assert KeyboardInterrupt('untrusted rollback interrupt /private/path') is KeyboardInterrupt('authored initialization interrupt')
+E    +  where KeyboardInterrupt('untrusted rollback interrupt /private/path') = <ExceptionInfo KeyboardInterrupt('untrusted rollback interrupt /private/path') tblen=4>.value
+_ test_schema_failure_survives_failed_rollback_and_closes_owned_connection[True-interrupt-exit-new] _
+tests/test_kbc_workspace_constructor_cleanup.py:228: in test_schema_failure_survives_failed_rollback_and_closes_owned_connection
+    assert caught.value is primary
+E   AssertionError: assert KeyboardInterrupt('untrusted rollback interrupt /private/path') is SystemExit(29)
+E    +  where KeyboardInterrupt('untrusted rollback interrupt /private/path') = <ExceptionInfo KeyboardInterrupt('untrusted rollback interrupt /private/path') tblen=4>.value
+_ test_schema_failure_survives_failed_rollback_and_closes_owned_connection[True-interrupt-exit-retained-v0] _
+tests/test_kbc_workspace_constructor_cleanup.py:228: in test_schema_failure_survives_failed_rollback_and_closes_owned_connection
+    assert caught.value is primary
+E   AssertionError: assert KeyboardInterrupt('untrusted rollback interrupt /private/path') is SystemExit(29)
+E    +  where KeyboardInterrupt('untrusted rollback interrupt /private/path') = <ExceptionInfo KeyboardInterrupt('untrusted rollback interrupt /private/path') tblen=4>.value
+=========================== short test summary info ============================
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_schema_failure_survives_failed_rollback_and_closes_owned_connection[False-error-sqlite-new]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_schema_failure_survives_failed_rollback_and_closes_owned_connection[False-error-sqlite-retained-v0]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_schema_failure_survives_failed_rollback_and_closes_owned_connection[False-error-interrupt-new]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_schema_failure_survives_failed_rollback_and_closes_owned_connection[False-error-interrupt-retained-v0]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_schema_failure_survives_failed_rollback_and_closes_owned_connection[False-error-exit-new]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_schema_failure_survives_failed_rollback_and_closes_owned_connection[False-error-exit-retained-v0]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_schema_failure_survives_failed_rollback_and_closes_owned_connection[False-interrupt-sqlite-new]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_schema_failure_survives_failed_rollback_and_closes_owned_connection[False-interrupt-sqlite-retained-v0]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_schema_failure_survives_failed_rollback_and_closes_owned_connection[False-interrupt-interrupt-new]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_schema_failure_survives_failed_rollback_and_closes_owned_connection[False-interrupt-interrupt-retained-v0]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_schema_failure_survives_failed_rollback_and_closes_owned_connection[False-interrupt-exit-new]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_schema_failure_survives_failed_rollback_and_closes_owned_connection[False-interrupt-exit-retained-v0]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_schema_failure_survives_failed_rollback_and_closes_owned_connection[True-error-sqlite-new]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_schema_failure_survives_failed_rollback_and_closes_owned_connection[True-error-sqlite-retained-v0]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_schema_failure_survives_failed_rollback_and_closes_owned_connection[True-error-interrupt-new]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_schema_failure_survives_failed_rollback_and_closes_owned_connection[True-error-interrupt-retained-v0]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_schema_failure_survives_failed_rollback_and_closes_owned_connection[True-error-exit-new]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_schema_failure_survives_failed_rollback_and_closes_owned_connection[True-error-exit-retained-v0]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_schema_failure_survives_failed_rollback_and_closes_owned_connection[True-interrupt-sqlite-new]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_schema_failure_survives_failed_rollback_and_closes_owned_connection[True-interrupt-sqlite-retained-v0]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_schema_failure_survives_failed_rollback_and_closes_owned_connection[True-interrupt-interrupt-new]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_schema_failure_survives_failed_rollback_and_closes_owned_connection[True-interrupt-interrupt-retained-v0]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_schema_failure_survives_failed_rollback_and_closes_owned_connection[True-interrupt-exit-new]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_schema_failure_survives_failed_rollback_and_closes_owned_connection[True-interrupt-exit-retained-v0]
+24 failed, 26 deselected in 1.92s

@@ -1,0 +1,20 @@
+{
+  "commit": "dcfc7e8158d897a3cd30b6d5880ac357781378b1",
+  "dependency_import_alias_only": true,
+  "results": [
+    {
+      "force": false,
+      "returned_success": true,
+      "bytes_match_expected": false,
+      "expected_sha256": "1fd2d184e2f6d65eed4d3bc7bee1fd0367a53838609e9894be027aff9c940fc1",
+      "actual_sha256": "e4af613d9f38fdd75b5362923ef1fb958190fd684c605e8af28ad3bce67752ca"
+    },
+    {
+      "force": true,
+      "returned_success": true,
+      "bytes_match_expected": false,
+      "expected_sha256": "1fd2d184e2f6d65eed4d3bc7bee1fd0367a53838609e9894be027aff9c940fc1",
+      "actual_sha256": "e4af613d9f38fdd75b5362923ef1fb958190fd684c605e8af28ad3bce67752ca"
+    }
+  ]
+}

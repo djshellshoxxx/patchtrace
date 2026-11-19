@@ -2002,3 +2002,11 @@ See the [immutable continuation checkpoint](../docs/qa/verified-continuation-202
 - [x] Reproduce import-time home lookup failure with an explicit corpus root and repair lazy fallback selection; four red controls become green.
 - [x] Run the affected calibration, shard and factory selection: 73 passed, five native-toolchain skips remain BLOCKED.
 - [ ] Rerun the exact repaired source on Windows advisory CI; this portable repair does not qualify native comparison or accuracy.
+
+### Exhaustive consolidation — 2026-11-19
+
+- [x] Preserve #316/#318/#319 together, recover Calls layout and offline Tier-W workflows, and create draft #320 with exact tree equivalence.
+- [x] Inventory319 branches,59 tags and309 PR heads with explicit residual dispositions; repair tested SQLite/export/input ownership defects.
+- [ ] Complete runner paired publication and current managed LBL-31 transfer recovery; continue research receipt recovery.
+- [ ] Finish bounded all-file QA, current security/dependency scans and final semantic inventory refresh; qualify actual native Windows/tool/accuracy/package gates.
+- [ ] Publish and read back each new expected-head checkpoint; do not release or merge an unqualified candidate.

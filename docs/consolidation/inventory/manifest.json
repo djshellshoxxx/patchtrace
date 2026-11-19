@@ -1,0 +1,73 @@
+{
+  "schema": "patchtrace-consolidation-inventory/1",
+  "generated_at_utc": "2026-11-19T10:52:28.586872+00:00",
+  "repository": "djshellshoxxx/patchtrace",
+  "main": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+  "candidate": "77204ef5c9623545d81b0eb73d5cd14f80b2d0e7",
+  "candidate_tree": "fb5d56464b9a951add6fddbe4731dcd7388a9a27",
+  "snapshot": {
+    "date": "2026-11-19",
+    "scope": "Pre-publication frozen census; session-created integration branches are recorded separately by the coordinator.",
+    "branches_query": "GET /repos/djshellshoxxx/patchtrace/branches?per_page=100&page=N",
+    "branch_page_sizes": [
+      100,
+      100,
+      100,
+      19
+    ],
+    "pulls_query": "GET /repos/djshellshoxxx/patchtrace/pulls?state=all&per_page=100&page=N",
+    "pull_page_sizes": [
+      100,
+      100,
+      100,
+      9
+    ],
+    "tags_query": "GET /repos/djshellshoxxx/patchtrace/git/matching-refs/tags/"
+  },
+  "counts": {
+    "branches": 319,
+    "topic_branches": 318,
+    "pull_requests": 309,
+    "open_prs": 53,
+    "closed_unmerged_prs": 84,
+    "merged_prs": 172,
+    "tags": 59,
+    "branch_dispositions": {
+      "historical-scope-checked-residue-open": 116,
+      "ancestor-of-main": 128,
+      "unreviewed-semantic-residue": 43,
+      "scoped-port-with-open-residue": 2,
+      "patch-equivalent-scope-review-open": 16,
+      "ancestor-of-candidate": 13,
+      "main-baseline": 1
+    },
+    "historical_scopes_rechecked": 131,
+    "historical_tip_mismatches": 0,
+    "historical_source_blob_checks": 3030,
+    "historical_source_blob_mismatches": 0,
+    "replacement_marker_checks": 298,
+    "replacement_markers_absent": 10,
+    "orphan_pr_heads": 35,
+    "closed_unmerged_orphan_heads": 2,
+    "pr_heads_available_locally": 309,
+    "merged_pr_commits_ancestor_of_candidate": 168,
+    "orphan_missing_python_paths": 0,
+    "orphan_only_missing_python_paths": 0,
+    "formerly_absent_python_paths": 60,
+    "still_absent_python_paths": 33,
+    "unreviewed_residue_with_production_paths": 13,
+    "unreviewed_residue_without_production_paths": 30,
+    "absent_marker_source_interpretations": 10
+  },
+  "qualification": "Complete enumeration of the frozen refs and PR metadata. Ancestry, patch identity, source blobs and historical markers were checked. Full semantic exhaustion and release qualification are not claimed.",
+  "files": [
+    "branches.json",
+    "pull-requests.json",
+    "tags.json",
+    "orphan-pr-heads.json",
+    "historical-semantic-checks.json",
+    "python-path-residue.json",
+    "orphan-path-residue.json",
+    "marker-source-interpretations.json"
+  ]
+}

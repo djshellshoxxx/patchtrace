@@ -1,0 +1,112 @@
+FFFFFFFFFFFFFFFFFF..                                                     [100%]
+=================================== FAILURES ===================================
+_ test_initialization_failure_closes_real_connection_and_keeps_primary[sqlite-PRAGMA busy_timeout=5000] _
+tests/test_kbc_workspace_constructor_cleanup.py:57: in test_initialization_failure_closes_real_connection_and_keeps_primary
+    assert acquired[0].close_calls == 1
+E   assert 0 == 1
+E    +  where 0 = <test_kbc_workspace_constructor_cleanup.test_initialization_failure_closes_real_connection_and_keeps_primary.<locals>.ObservedConnection object at 0x7fa6916a4c50>.close_calls
+_ test_initialization_failure_closes_real_connection_and_keeps_primary[sqlite-PRAGMA user_version] _
+tests/test_kbc_workspace_constructor_cleanup.py:57: in test_initialization_failure_closes_real_connection_and_keeps_primary
+    assert acquired[0].close_calls == 1
+E   assert 0 == 1
+E    +  where 0 = <test_kbc_workspace_constructor_cleanup.test_initialization_failure_closes_real_connection_and_keeps_primary.<locals>.ObservedConnection object at 0x7fa6916a7050>.close_calls
+_ test_initialization_failure_closes_real_connection_and_keeps_primary[sqlite-CREATE TABLE docs ] _
+tests/test_kbc_workspace_constructor_cleanup.py:57: in test_initialization_failure_closes_real_connection_and_keeps_primary
+    assert acquired[0].close_calls == 1
+E   assert 0 == 1
+E    +  where 0 = <test_kbc_workspace_constructor_cleanup.test_initialization_failure_closes_real_connection_and_keeps_primary.<locals>.ObservedConnection object at 0x7fa6915bc150>.close_calls
+_ test_initialization_failure_closes_real_connection_and_keeps_primary[sqlite-PRAGMA journal_mode=WAL] _
+tests/test_kbc_workspace_constructor_cleanup.py:57: in test_initialization_failure_closes_real_connection_and_keeps_primary
+    assert acquired[0].close_calls == 1
+E   assert 0 == 1
+E    +  where 0 = <test_kbc_workspace_constructor_cleanup.test_initialization_failure_closes_real_connection_and_keeps_primary.<locals>.ObservedConnection object at 0x7fa6915bcb50>.close_calls
+_ test_initialization_failure_closes_real_connection_and_keeps_primary[interrupt-PRAGMA busy_timeout=5000] _
+tests/test_kbc_workspace_constructor_cleanup.py:57: in test_initialization_failure_closes_real_connection_and_keeps_primary
+    assert acquired[0].close_calls == 1
+E   assert 0 == 1
+E    +  where 0 = <test_kbc_workspace_constructor_cleanup.test_initialization_failure_closes_real_connection_and_keeps_primary.<locals>.ObservedConnection object at 0x7fa6915bd550>.close_calls
+_ test_initialization_failure_closes_real_connection_and_keeps_primary[interrupt-PRAGMA user_version] _
+tests/test_kbc_workspace_constructor_cleanup.py:57: in test_initialization_failure_closes_real_connection_and_keeps_primary
+    assert acquired[0].close_calls == 1
+E   assert 0 == 1
+E    +  where 0 = <test_kbc_workspace_constructor_cleanup.test_initialization_failure_closes_real_connection_and_keeps_primary.<locals>.ObservedConnection object at 0x7fa6915bde50>.close_calls
+_ test_initialization_failure_closes_real_connection_and_keeps_primary[interrupt-CREATE TABLE docs ] _
+tests/test_kbc_workspace_constructor_cleanup.py:57: in test_initialization_failure_closes_real_connection_and_keeps_primary
+    assert acquired[0].close_calls == 1
+E   assert 0 == 1
+E    +  where 0 = <test_kbc_workspace_constructor_cleanup.test_initialization_failure_closes_real_connection_and_keeps_primary.<locals>.ObservedConnection object at 0x7fa6915be750>.close_calls
+_ test_initialization_failure_closes_real_connection_and_keeps_primary[interrupt-PRAGMA journal_mode=WAL] _
+tests/test_kbc_workspace_constructor_cleanup.py:57: in test_initialization_failure_closes_real_connection_and_keeps_primary
+    assert acquired[0].close_calls == 1
+E   assert 0 == 1
+E    +  where 0 = <test_kbc_workspace_constructor_cleanup.test_initialization_failure_closes_real_connection_and_keeps_primary.<locals>.ObservedConnection object at 0x7fa6915bf050>.close_calls
+_ test_initialization_failure_closes_real_connection_and_keeps_primary[exit-PRAGMA busy_timeout=5000] _
+tests/test_kbc_workspace_constructor_cleanup.py:57: in test_initialization_failure_closes_real_connection_and_keeps_primary
+    assert acquired[0].close_calls == 1
+E   assert 0 == 1
+E    +  where 0 = <test_kbc_workspace_constructor_cleanup.test_initialization_failure_closes_real_connection_and_keeps_primary.<locals>.ObservedConnection object at 0x7fa6915bfa50>.close_calls
+_ test_initialization_failure_closes_real_connection_and_keeps_primary[exit-PRAGMA user_version] _
+tests/test_kbc_workspace_constructor_cleanup.py:57: in test_initialization_failure_closes_real_connection_and_keeps_primary
+    assert acquired[0].close_calls == 1
+E   assert 0 == 1
+E    +  where 0 = <test_kbc_workspace_constructor_cleanup.test_initialization_failure_closes_real_connection_and_keeps_primary.<locals>.ObservedConnection object at 0x7fa691430450>.close_calls
+_ test_initialization_failure_closes_real_connection_and_keeps_primary[exit-CREATE TABLE docs ] _
+tests/test_kbc_workspace_constructor_cleanup.py:57: in test_initialization_failure_closes_real_connection_and_keeps_primary
+    assert acquired[0].close_calls == 1
+E   assert 0 == 1
+E    +  where 0 = <test_kbc_workspace_constructor_cleanup.test_initialization_failure_closes_real_connection_and_keeps_primary.<locals>.ObservedConnection object at 0x7fa691430d50>.close_calls
+_ test_initialization_failure_closes_real_connection_and_keeps_primary[exit-PRAGMA journal_mode=WAL] _
+tests/test_kbc_workspace_constructor_cleanup.py:57: in test_initialization_failure_closes_real_connection_and_keeps_primary
+    assert acquired[0].close_calls == 1
+E   assert 0 == 1
+E    +  where 0 = <test_kbc_workspace_constructor_cleanup.test_initialization_failure_closes_real_connection_and_keeps_primary.<locals>.ObservedConnection object at 0x7fa6915bf850>.close_calls
+_ test_root_verification_failure_closes_current_connection_preserves_retained_data[none-1] _
+tests/test_kbc_workspace_constructor_cleanup.py:105: in test_root_verification_failure_closes_current_connection_preserves_retained_data
+    assert all(db.close_calls == 1 for db in acquired)
+E   assert False
+E    +  where False = all(<generator object test_root_verification_failure_closes_current_connection_preserves_retained_data.<locals>.<genexpr> at 0x7fa691603030>)
+_ test_root_verification_failure_closes_current_connection_preserves_retained_data[none-2] _
+tests/test_kbc_workspace_constructor_cleanup.py:105: in test_root_verification_failure_closes_current_connection_preserves_retained_data
+    assert all(db.close_calls == 1 for db in acquired)
+E   assert False
+E    +  where False = all(<generator object test_root_verification_failure_closes_current_connection_preserves_retained_data.<locals>.<genexpr> at 0x7fa69157db10>)
+_ test_root_verification_failure_closes_current_connection_preserves_retained_data[error-1] _
+tests/test_kbc_workspace_constructor_cleanup.py:105: in test_root_verification_failure_closes_current_connection_preserves_retained_data
+    assert all(db.close_calls == 1 for db in acquired)
+E   assert False
+E    +  where False = all(<generator object test_root_verification_failure_closes_current_connection_preserves_retained_data.<locals>.<genexpr> at 0x7fa6915b76b0>)
+_ test_root_verification_failure_closes_current_connection_preserves_retained_data[error-2] _
+tests/test_kbc_workspace_constructor_cleanup.py:105: in test_root_verification_failure_closes_current_connection_preserves_retained_data
+    assert all(db.close_calls == 1 for db in acquired)
+E   assert False
+E    +  where False = all(<generator object test_root_verification_failure_closes_current_connection_preserves_retained_data.<locals>.<genexpr> at 0x7fa691425ff0>)
+_ test_root_verification_failure_closes_current_connection_preserves_retained_data[interrupt-1] _
+tests/test_kbc_workspace_constructor_cleanup.py:105: in test_root_verification_failure_closes_current_connection_preserves_retained_data
+    assert all(db.close_calls == 1 for db in acquired)
+E   assert False
+E    +  where False = all(<generator object test_root_verification_failure_closes_current_connection_preserves_retained_data.<locals>.<genexpr> at 0x7fa691602b50>)
+_ test_root_verification_failure_closes_current_connection_preserves_retained_data[interrupt-2] _
+tests/test_kbc_workspace_constructor_cleanup.py:105: in test_root_verification_failure_closes_current_connection_preserves_retained_data
+    assert all(db.close_calls == 1 for db in acquired)
+E   assert False
+E    +  where False = all(<generator object test_root_verification_failure_closes_current_connection_preserves_retained_data.<locals>.<genexpr> at 0x7fa69157f9f0>)
+=========================== short test summary info ============================
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_initialization_failure_closes_real_connection_and_keeps_primary[sqlite-PRAGMA busy_timeout=5000]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_initialization_failure_closes_real_connection_and_keeps_primary[sqlite-PRAGMA user_version]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_initialization_failure_closes_real_connection_and_keeps_primary[sqlite-CREATE TABLE docs ]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_initialization_failure_closes_real_connection_and_keeps_primary[sqlite-PRAGMA journal_mode=WAL]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_initialization_failure_closes_real_connection_and_keeps_primary[interrupt-PRAGMA busy_timeout=5000]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_initialization_failure_closes_real_connection_and_keeps_primary[interrupt-PRAGMA user_version]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_initialization_failure_closes_real_connection_and_keeps_primary[interrupt-CREATE TABLE docs ]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_initialization_failure_closes_real_connection_and_keeps_primary[interrupt-PRAGMA journal_mode=WAL]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_initialization_failure_closes_real_connection_and_keeps_primary[exit-PRAGMA busy_timeout=5000]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_initialization_failure_closes_real_connection_and_keeps_primary[exit-PRAGMA user_version]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_initialization_failure_closes_real_connection_and_keeps_primary[exit-CREATE TABLE docs ]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_initialization_failure_closes_real_connection_and_keeps_primary[exit-PRAGMA journal_mode=WAL]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_root_verification_failure_closes_current_connection_preserves_retained_data[none-1]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_root_verification_failure_closes_current_connection_preserves_retained_data[none-2]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_root_verification_failure_closes_current_connection_preserves_retained_data[error-1]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_root_verification_failure_closes_current_connection_preserves_retained_data[error-2]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_root_verification_failure_closes_current_connection_preserves_retained_data[interrupt-1]
+FAILED tests/test_kbc_workspace_constructor_cleanup.py::test_root_verification_failure_closes_current_connection_preserves_retained_data[interrupt-2]
+18 failed, 2 passed in 8.65s

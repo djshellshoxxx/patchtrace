@@ -18,6 +18,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol, get_args
 
+from pydantic import ValidationError
+
 from patchtrace.enrichment.identity import parse_address
 from patchtrace.hostile_text import escape_text
 from patchtrace.secondary.contracts import Engine, SecondaryMatchSet
@@ -160,7 +162,20 @@ def _snapshot(project_dir: Path, images: tuple[_Image, _Image]):
     sides = {a.side: a.sha256 for a in project.artifacts}
     if (sides['older'], sides['newer']) != (images[0].sha256, images[1].sha256):
         raise _Outcome('failed', 'project inputs differ from the pair (older/newer hash or orientation)')
+    if project.sample:
+        raise _Outcome('blocked', 'a demonstration project cannot supply Tier-W engine evidence')
     return project
+
+
+def _eligible_runs(snapshot, images: tuple[_Image, _Image], condition: str) -> list:
+    policy, downloads = ('online', True) if condition == VISIBLE else ('disabled', False)
+    return [run for run in snapshot.runs if run.status == 'completed' and run.backend == GHIDRIFF
+            and run.settings.get('older_sha256') == images[0].sha256
+            and run.settings.get('newer_sha256') == images[1].sha256
+            and run.settings.get('symbol_policy') == policy
+            and run.settings.get('allow_symbol_downloads') is downloads
+            and run.settings.get('symbol_mode', 'online' if downloads else 'off') ==
+            ('online' if downloads else 'off')]
 
 
 class _Stop:
@@ -200,18 +215,22 @@ class _Run:
     def ghidriff(self, pair, condition, files, images) -> tuple[str, list]:
         project = self.project(pair, condition, files)
         snapshot = _snapshot(project, images)
-        if not any(run.status in DONE for run in snapshot.runs):
+        if images[0].sha256 == images[1].sha256 and any(run.status == 'identical' for run in snapshot.runs):
+            return 'not-run-identical', []
+        done = _eligible_runs(snapshot, images, condition)
+        if not done:
+            if any(run.status in DONE for run in snapshot.runs):
+                raise _Outcome('blocked', 'stored completed runs lack matching backend, input or symbol-policy evidence')
             error = self.invoker(self.config_factory(condition), project, self.stop)
             if error:
                 raise _Outcome('failed', error)
             snapshot = _snapshot(project, images)
-        done = {run.id: run.backend_version for run in snapshot.runs if run.status in DONE}
+            done = _eligible_runs(snapshot, images, condition)
         if not done:
-            raise _Outcome('failed', 'the engine returned without a completed run')
-        versions = set(done.values())
-        version = versions.pop() if len(versions) == 1 else 'mixed'
-        matches = [m for m in snapshot.matches if m.run_id in done]
-        return version, _rows(matches, _ghidriff_rvas, *images)
+            raise _Outcome('failed', 'the engine returned without a completed run with matching provenance')
+        selected = done[-1]  # preserve stored run order; never pool historical engine generations
+        matches = [m for m in snapshot.matches if m.run_id == selected.id]
+        return selected.backend_version, _rows(matches, _ghidriff_rvas, *images)
 
     def secondary_set(self, engine, pair, files, images) -> tuple[str, list]:
         invoker = self.secondary.get(engine)
@@ -294,13 +313,23 @@ def _status(cells: Sequence[RunCell]) -> str:
 def _validated(doc: PairsDoc, corpus_id: str, conditions: Sequence[str],
                engines: Sequence[str]) -> list[tuple[PairEntry, PairBinary, PairBinary]]:
     check_corpus_id(corpus_id)
+    try:
+        if not isinstance(doc, PairsDoc):
+            raise ValueError('not a pairs document')
+        doc = PairsDoc.model_validate(doc.model_dump(mode='python'))
+    except (ValidationError, ValueError):
+        raise TierWError('PT-TIERW-INPUT', 'the pairs sidecar is not valid') from None
     if doc.corpus_id != corpus_id:
         raise TierWError('PT-TIERW-INPUT', 'the pairs sidecar belongs to another corpus id')
     if bad := sorted(set(conditions) - set(CONDITIONS)):
         raise TierWError('PT-TIERW-INPUT', f'unknown condition {_text(bad[0], 64)}; use {" or ".join(CONDITIONS)}')
     if bad := sorted(set(engines) - SECONDARY_ENGINES):
         raise TierWError('PT-TIERW-INPUT', f'unknown secondary engine {_text(bad[0], 64)}')
+    if not conditions and not engines:
+        raise TierWError('PT-TIERW-INPUT', 'select at least one engine and condition')
     by_id = {b.id: b for b in doc.binaries}
+    if len(by_id) != len(doc.binaries):
+        raise TierWError('PT-TIERW-INPUT', 'binary ids in the pairs sidecar must be unique')
     out, seen = [], set()
     for pair in sorted(doc.pairs, key=lambda p: p.id):
         if not pair.id.startswith('tw.') or pair.id in seen:
@@ -313,6 +342,25 @@ def _validated(doc: PairsDoc, corpus_id: str, conditions: Sequence[str],
     return out
 
 
+def _output_admission(layout: Layout, corpus_id: str, pairs: Sequence, conditions: set[str],
+                      matches_path: Path) -> None:
+    outputs = (matches_path, matches_path.with_name(RUN_RECORD))
+    if not inside(matches_path.parent, layout.root) or matches_path.name.casefold() == RUN_RECORD:
+        raise TierWError('PT-TIERW-CONFIG', 'matches and run.json must be distinct files under the corpus root')
+    inputs = [layout.root / 'binaries' / binary.sha256 / binary.file_name
+              for _pair, older, newer in pairs for binary in (older, newer)]
+    projects = [layout.run_dir(corpus_id, pair.id, condition) / 'project'
+                for pair, _older, _newer in pairs for condition in conditions]
+    for output in outputs:
+        if (output.is_symlink() or output.is_dir() or inside(output, layout.root / 'binaries') or
+                any(inside(output, project) for project in projects)):
+            raise TierWError('PT-TIERW-CONFIG', 'runner output aliases a protected input, project or linked path')
+        if output.exists() and any(source.exists() and output.samefile(source) for source in inputs):
+            raise TierWError('PT-TIERW-CONFIG', 'runner output aliases an input binary')
+    if all(output.exists() for output in outputs) and outputs[0].samefile(outputs[1]):
+        raise TierWError('PT-TIERW-CONFIG', 'matches and run.json alias the same file')
+
+
 def run_corpus(layout: Layout, pairs_doc: PairsDoc, *, corpus_id: str, conditions: Sequence[str] = (HIDDEN,),
                secondary_engines: Sequence[str] = (), config_factory: ConfigFactory,
                factory: ProjectFactory = create_project, invoker: PairInvoker = run_pair,
@@ -322,10 +370,9 @@ def run_corpus(layout: Layout, pairs_doc: PairsDoc, *, corpus_id: str, condition
     atomically, and return the `tier-w-run/1` record. Inputs are checked before any work starts."""
     pairs = _validated(pairs_doc, corpus_id, conditions, secondary_engines)
     matches_path = Path(matches_path)
-    if not inside(matches_path.parent, layout.root):
-        raise TierWError('PT-TIERW-CONFIG', 'the matches file must lie under the corpus root')
     keys = [(GHIDRIFF, c) for c in CONDITIONS if c in conditions] + [(e, NA) for e in sorted(set(secondary_engines))]
     used = set(conditions) | ({HIDDEN} if secondary_engines else set())
+    _output_admission(layout, corpus_id, pairs, used, matches_path)
     for pair, _older, _newer in pairs:
         for condition in sorted(used):
             if problems := tool_safe_path(layout.run_dir(corpus_id, pair.id, condition) / 'project'):

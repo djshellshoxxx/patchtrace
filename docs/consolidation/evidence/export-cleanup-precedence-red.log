@@ -1,0 +1,214 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+_ test_successful_force_cleanup_does_not_hide_fresh_failure_behind_caller_exception[io] _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-15/test_successful_force_cleanup_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdddf6903e0>
+kind = 'io'
+
+    @pytest.mark.skipif(not sys.platform.startswith('linux'), reason='Linux explicit cleanup exception ownership')
+    @pytest.mark.parametrize('kind', ['io', 'interrupt', 'exit'])
+    def test_successful_force_cleanup_does_not_hide_fresh_failure_behind_caller_exception(tmp_path, monkeypatch, kind):
+        target = tmp_path / 'report.json'
+        caller = ValueError('unrelated caller exception')
+        failure = {'io': OSError(5, 'authored close failure'),
+                   'interrupt': KeyboardInterrupt('authored close interrupt'), 'exit': SystemExit(23)}[kind]
+        descriptor = []
+        sync, close = os.fsync, os.close
+    
+        def remember(fd):
+            descriptor.append(fd)
+            sync(fd)
+    
+        def close_then_fail(fd):
+            close(fd)
+            if descriptor and fd == descriptor[0]:
+                raise failure
+    
+        monkeypatch.setattr(os, 'fsync', remember)
+        monkeypatch.setattr(os, 'close', close_then_fail)
+        try:
+>           raise caller
+E           ValueError: unrelated caller exception
+E           Export descriptor cleanup also failed: OSError
+
+tests/test_strings_export_force_ownership.py:215: ValueError
+
+During handling of the above exception, another exception occurred:
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-15/test_successful_force_cleanup_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdddf6903e0>
+kind = 'io'
+
+    @pytest.mark.skipif(not sys.platform.startswith('linux'), reason='Linux explicit cleanup exception ownership')
+    @pytest.mark.parametrize('kind', ['io', 'interrupt', 'exit'])
+    def test_successful_force_cleanup_does_not_hide_fresh_failure_behind_caller_exception(tmp_path, monkeypatch, kind):
+        target = tmp_path / 'report.json'
+        caller = ValueError('unrelated caller exception')
+        failure = {'io': OSError(5, 'authored close failure'),
+                   'interrupt': KeyboardInterrupt('authored close interrupt'), 'exit': SystemExit(23)}[kind]
+        descriptor = []
+        sync, close = os.fsync, os.close
+    
+        def remember(fd):
+            descriptor.append(fd)
+            sync(fd)
+    
+        def close_then_fail(fd):
+            close(fd)
+            if descriptor and fd == descriptor[0]:
+                raise failure
+    
+        monkeypatch.setattr(os, 'fsync', remember)
+        monkeypatch.setattr(os, 'close', close_then_fail)
+        try:
+            raise caller
+        except ValueError:
+>           with pytest.raises(StringsError if kind == 'io' else type(failure)) as caught:
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE StringsError
+
+tests/test_strings_export_force_ownership.py:217: Failed
+_ test_successful_force_cleanup_does_not_hide_fresh_failure_behind_caller_exception[interrupt] _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-15/test_successful_force_cleanup_1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdddf2564b0>
+kind = 'interrupt'
+
+    @pytest.mark.skipif(not sys.platform.startswith('linux'), reason='Linux explicit cleanup exception ownership')
+    @pytest.mark.parametrize('kind', ['io', 'interrupt', 'exit'])
+    def test_successful_force_cleanup_does_not_hide_fresh_failure_behind_caller_exception(tmp_path, monkeypatch, kind):
+        target = tmp_path / 'report.json'
+        caller = ValueError('unrelated caller exception')
+        failure = {'io': OSError(5, 'authored close failure'),
+                   'interrupt': KeyboardInterrupt('authored close interrupt'), 'exit': SystemExit(23)}[kind]
+        descriptor = []
+        sync, close = os.fsync, os.close
+    
+        def remember(fd):
+            descriptor.append(fd)
+            sync(fd)
+    
+        def close_then_fail(fd):
+            close(fd)
+            if descriptor and fd == descriptor[0]:
+                raise failure
+    
+        monkeypatch.setattr(os, 'fsync', remember)
+        monkeypatch.setattr(os, 'close', close_then_fail)
+        try:
+>           raise caller
+E           ValueError: unrelated caller exception
+E           Export descriptor cleanup also failed: KeyboardInterrupt
+
+tests/test_strings_export_force_ownership.py:215: ValueError
+
+During handling of the above exception, another exception occurred:
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-15/test_successful_force_cleanup_1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdddf2564b0>
+kind = 'interrupt'
+
+    @pytest.mark.skipif(not sys.platform.startswith('linux'), reason='Linux explicit cleanup exception ownership')
+    @pytest.mark.parametrize('kind', ['io', 'interrupt', 'exit'])
+    def test_successful_force_cleanup_does_not_hide_fresh_failure_behind_caller_exception(tmp_path, monkeypatch, kind):
+        target = tmp_path / 'report.json'
+        caller = ValueError('unrelated caller exception')
+        failure = {'io': OSError(5, 'authored close failure'),
+                   'interrupt': KeyboardInterrupt('authored close interrupt'), 'exit': SystemExit(23)}[kind]
+        descriptor = []
+        sync, close = os.fsync, os.close
+    
+        def remember(fd):
+            descriptor.append(fd)
+            sync(fd)
+    
+        def close_then_fail(fd):
+            close(fd)
+            if descriptor and fd == descriptor[0]:
+                raise failure
+    
+        monkeypatch.setattr(os, 'fsync', remember)
+        monkeypatch.setattr(os, 'close', close_then_fail)
+        try:
+            raise caller
+        except ValueError:
+>           with pytest.raises(StringsError if kind == 'io' else type(failure)) as caught:
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE KeyboardInterrupt
+
+tests/test_strings_export_force_ownership.py:217: Failed
+_ test_successful_force_cleanup_does_not_hide_fresh_failure_behind_caller_exception[exit] _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-15/test_successful_force_cleanup_2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdddf257ce0>
+kind = 'exit'
+
+    @pytest.mark.skipif(not sys.platform.startswith('linux'), reason='Linux explicit cleanup exception ownership')
+    @pytest.mark.parametrize('kind', ['io', 'interrupt', 'exit'])
+    def test_successful_force_cleanup_does_not_hide_fresh_failure_behind_caller_exception(tmp_path, monkeypatch, kind):
+        target = tmp_path / 'report.json'
+        caller = ValueError('unrelated caller exception')
+        failure = {'io': OSError(5, 'authored close failure'),
+                   'interrupt': KeyboardInterrupt('authored close interrupt'), 'exit': SystemExit(23)}[kind]
+        descriptor = []
+        sync, close = os.fsync, os.close
+    
+        def remember(fd):
+            descriptor.append(fd)
+            sync(fd)
+    
+        def close_then_fail(fd):
+            close(fd)
+            if descriptor and fd == descriptor[0]:
+                raise failure
+    
+        monkeypatch.setattr(os, 'fsync', remember)
+        monkeypatch.setattr(os, 'close', close_then_fail)
+        try:
+>           raise caller
+E           ValueError: unrelated caller exception
+E           Export descriptor cleanup also failed: SystemExit
+
+tests/test_strings_export_force_ownership.py:215: ValueError
+
+During handling of the above exception, another exception occurred:
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-15/test_successful_force_cleanup_2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdddf257ce0>
+kind = 'exit'
+
+    @pytest.mark.skipif(not sys.platform.startswith('linux'), reason='Linux explicit cleanup exception ownership')
+    @pytest.mark.parametrize('kind', ['io', 'interrupt', 'exit'])
+    def test_successful_force_cleanup_does_not_hide_fresh_failure_behind_caller_exception(tmp_path, monkeypatch, kind):
+        target = tmp_path / 'report.json'
+        caller = ValueError('unrelated caller exception')
+        failure = {'io': OSError(5, 'authored close failure'),
+                   'interrupt': KeyboardInterrupt('authored close interrupt'), 'exit': SystemExit(23)}[kind]
+        descriptor = []
+        sync, close = os.fsync, os.close
+    
+        def remember(fd):
+            descriptor.append(fd)
+            sync(fd)
+    
+        def close_then_fail(fd):
+            close(fd)
+            if descriptor and fd == descriptor[0]:
+                raise failure
+    
+        monkeypatch.setattr(os, 'fsync', remember)
+        monkeypatch.setattr(os, 'close', close_then_fail)
+        try:
+            raise caller
+        except ValueError:
+>           with pytest.raises(StringsError if kind == 'io' else type(failure)) as caught:
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE SystemExit
+
+tests/test_strings_export_force_ownership.py:217: Failed
+=========================== short test summary info ============================
+FAILED tests/test_strings_export_force_ownership.py::test_successful_force_cleanup_does_not_hide_fresh_failure_behind_caller_exception[io]
+FAILED tests/test_strings_export_force_ownership.py::test_successful_force_cleanup_does_not_hide_fresh_failure_behind_caller_exception[interrupt]
+FAILED tests/test_strings_export_force_ownership.py::test_successful_force_cleanup_does_not_hide_fresh_failure_behind_caller_exception[exit]
+3 failed, 13 deselected in 1.89s

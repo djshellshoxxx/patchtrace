@@ -54,3 +54,14 @@ Result: **124 passed in 61.92 seconds**. These include historical algorithm
 controls, hostile input and cancellation controls, and actual offscreen Qt
 worker/canvas integration. No target binary or external analysis engine ran.
 Full integrated source and native/platform qualification remain separate gates.
+
+An independent reviewer examined recovery commit `02055acb` after the executor
+recovered. The review found no blocker in seed retention, raw-input and budget
+ceilings, deterministic coordinate/edge mapping, cancellation propagation or
+the worker/GUI boundary. The independent focused run reported **68 passed in
+3.08 seconds** across the pure layout, boundary and Qt layout tests. Its logs
+are `callgraph-independent.log` and `callgraph-independent.xml` in the session
+evidence directory. These 68 tests overlap the author run above and must not be
+added to the 124 as a larger independent test count. Integration cherry-pick
+`77204ef5` preserves the existing capped-view specification amendment alongside
+the new layout specification; the coordinator owns its combined test gate.

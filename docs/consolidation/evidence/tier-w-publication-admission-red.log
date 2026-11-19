@@ -1,0 +1,78 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+______ test_foreign_later_symbol_map_does_not_replace_earlier_pair_labels ______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-36/test_foreign_later_symbol_map_0')
+capsys = <_pytest.capture.CaptureFixture object at 0x7ff28303a0c0>
+
+    def test_foreign_later_symbol_map_does_not_replace_earlier_pair_labels(tmp_path, capsys):
+        root = tmp_path / 'ptcal'
+        prepare(tmp_path, capsys, root)
+        place(root)
+        step(capsys, root, 'symbols')
+        step(capsys, root, 'labels')
+        layout = Layout(root)
+        path = layout.pairs(CID)
+        document = json.loads(path.read_bytes())
+        foreign = copy.deepcopy(document['binaries'][-1])
+        original_sha = foreign['sha256']
+        foreign.update(id='tw.foreign-binary', sha256='f' * 64)
+        document['binaries'].append(foreign)
+        pair = copy.deepcopy(document['pairs'][-1])
+        pair.update(id='tw.foreign-pair', newer=foreign['id'])
+        document['pairs'].append(pair)
+        path.write_text(json.dumps(document), encoding='utf-8')
+        layout.symbols(foreign['sha256'], 'msf').write_bytes(layout.symbols(original_sha, 'msf').read_bytes())
+        folder = layout.labels_dir(CID)
+        for label in folder.iterdir():
+            label.write_bytes(b'previous committed result\n')
+        before = {p.name: p.read_bytes() for p in folder.iterdir()}
+        code, result = invoke(capsys, root, 'labels', '--corpus-id', CID)
+        assert code == 2 and result['code'] == 'PT-TIERW-INPUT'
+>       assert {p.name: p.read_bytes() for p in folder.iterdir()} == before
+E       assert {'tw.tiny.dll...ier": "W"}\n'} == {'tw.tiny.dll...ted result\n'}
+E         
+E         Differing items:
+E         {'tw.tiny.dll.b4ffb80d48.candidates.jsonl': b''} != {'tw.tiny.dll.b4ffb80d48.candidates.jsonl': b'previous committed result\n'}
+E         {'tw.tiny.dll.b4ffb80d48.truth.jsonl': b'{"A": "same", "match_id": "sym:1000-1000", "p_incl": 1.0, "pair": "tw.tiny.dl..."tw.tiny.dll.b4ffb80d48", "source": "symbol-derived", "stage": "symbols-hidden", "stratum": "natural", "tier": "W"}\n'} != {'tw.tiny.dll.b4ffb80d48.truth.jsonl': b'previous committed result\n'}
+E         {'tw.tiny.dll.b4ffb80d48.detail.jsonl': b'{"A": "same", "contract": "tier-w-label-detail/1", "engine": null, "kind": "....
+E         
+E         ...Full output truncated, use '-vv' to show
+
+tests/test_tier_w_cli_admission.py:90: AssertionError
+________ test_invalid_audit_report_does_not_replace_previous_evaluation ________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-36/test_invalid_audit_report_does0')
+capsys = <_pytest.capture.CaptureFixture object at 0x7ff282f42b10>
+
+    def test_invalid_audit_report_does_not_replace_previous_evaluation(tmp_path, capsys):
+        root = tmp_path / 'ptcal'
+        prepare(tmp_path, capsys, root)
+        place(root)
+        step(capsys, root, 'symbols')
+        step(capsys, root, 'labels')
+        write_matches(root)
+        step(capsys, root, 'evaluate')
+        layout = Layout(root)
+        layout.report(CID).write_bytes(b'previous committed evaluation\n')
+        audit = layout.review_dir(CID) / 'audit-report.json'
+        audit.parent.mkdir(parents=True, exist_ok=True)
+        audit.write_text('{"contract":"foreign"}', encoding='utf-8')
+        outputs = [layout.report(CID), layout.base / 'export' / 'aggregate.json',
+                   layout.base / 'export' / 'aggregate.md']
+        before = {p: p.read_bytes() for p in outputs}
+        code, result = invoke(capsys, root, 'evaluate', '--corpus-id', CID)
+        assert code == 2 and result['code'] == 'PT-TIERW-INPUT'
+>       assert {p: p.read_bytes() for p in outputs} == before
+E       assert {PosixPath('/...ressed: 7.\n'} == {PosixPath('/...ressed: 7.\n'}
+E         
+E         Omitting 2 identical items, use -vv to show
+E         Differing items:
+E         {PosixPath('/tmp/pytest-of-agent/pytest-36/test_invalid_audit_report_does0/ptcal/tier-w/reports/tier-w-t.evaluation.js...": {\n  "intervals": "wilson-95-item-level",\n  "lineage_adjusted": false,\n  "pooled": false\n },\n "tier": "W"\n}\n'} != {PosixPath('/tmp/pytest-of-agent/pytest-36/test_invalid_audit_report_does0/ptcal/tier-w/reports/tier-w-t.evaluation.json'): b'previous committed evaluation\n'}
+E         Use -v to get more diff
+
+tests/test_tier_w_cli_admission.py:111: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_tier_w_cli_admission.py::test_foreign_later_symbol_map_does_not_replace_earlier_pair_labels
+FAILED tests/test_tier_w_cli_admission.py::test_invalid_audit_report_does_not_replace_previous_evaluation
+2 failed, 11 deselected in 1.56s

@@ -201,16 +201,47 @@ missing parent folders, adopt existing same-content files, follow parent links,
 or fall back to pathname publication when the ownership primitive is unavailable.
 Existing destinations, including dangling links, remain no-clobber failures.
 
-This amendment does not qualify forced replacement. Existing `--force` behavior
-remains available, with a known source-path substitution/cleanup race retained
-as BLOCKED work; it must not be represented as an owned-source guarantee.
-Forced replacement retains the original exception boundary: only an `OSError`
-enters its existing pathname cleanup. Cancellation (`KeyboardInterrupt` or
-`SystemExit`) and other non-I/O exceptions propagate without unlinking a staging
-pathname, which may no longer identify this export's file. Close any descriptor
-still owned by the operation; retain the staging entry for inspection. This
-restores the pre-#308 behavior for these failures, without qualifying the separate
-forced source-substitution and ordinary I/O cleanup races.
+Forced ownership amendment (2026-11-19, exhaustive consolidation): `--force`
+continues to authorize atomic replacement of the selected destination. Windows
+uses the same rooted, held-source publisher with explicit native
+`ReplaceIfExists=True`; the immutable-evidence publisher's default remains
+no-replace, and forced replacement cannot be combined with content reuse. Source
+failure cleanup targets only the held native source handle. Native Windows
+filesystem qualification is still required separately from portable call tests.
+
+On Linux, write, flush, sync and verify through an anonymous staging descriptor
+in the existing selected directory. After verifying the parent, link that exact
+source to an unpredictable, exclusively created name for the final atomic rename.
+Check the named source's identity, type, size and change metadata against the
+held descriptor immediately before rename. Use directory-relative operations
+on the held parent and reject an observed replacement parent. After rename,
+verify destination identity before returning an export receipt. At linked-stage
+admission and again after rename, compare the held source's digest with the
+intended bytes using reads bounded by the expected length plus one byte and
+stable before/after size and change metadata. Same-inode edits must not produce
+a successful receipt containing a digest of bytes that were not published.
+The shared no-replace Linux publisher performs the same bounded verification
+after linking, before crediting new immutable evidence. Initial stage validation
+uses the same verifier so externally extended sources cannot cause unbounded
+digest reads. This detects observed edits before the receipt; it does not lock
+published Linux files against subsequent external mutation.
+
+No I/O failure, cancellation or other exception may unlink a mutable staging pathname. Anonymous
+failures leave no staged name; a failure after the link retains any surviving
+named entry for inspection, including a foreign substitute. Always close owned
+descriptors, and preserve the primary operation exception if close also fails.
+Cleanup takes the active operation exception explicitly from the exit stack;
+an unrelated exception being handled by the caller must not hide a new close
+failure, interruption or process exit, or receive this operation's cleanup note.
+
+The Linux final check-to-rename source substitution race remains **OPEN**. Linux
+does not provide a rename-by-held-descriptor operation here. A replacement after
+the final source check can become visible at the destination before the
+post-rename identity check reports failure. Do not claim a rollback, guaranteed
+prior-destination preservation for that adversarial interval, or complete
+held-source ownership for Linux forced replacement. Ordinary successful
+replacement remains supported; no-force publication retains its stronger
+held-source contract. Platforms without a supported primitive fail closed.
 JSON/CSV bytes, redaction defaults, digest results and CLI exit conventions
 remain unchanged. Native Windows no-force publication qualification is separate
 from Linux or portable-call checks.

@@ -364,7 +364,7 @@ def test_schemas_render_and_committed_copies_are_current():
     rendered = render()
     assert set(rendered) == {'CalibrationArtifact.json', 'CorpusManifest.json', 'LabelRecord.json',
                              'CalibrationReport.json', 'ValidationLedger.json', 'PairRows.json',
-                             'ShiftLadder.json'}
+                             'ShiftLadder.json', 'RunRecord.json'}
     folder = ROOT / 'docs' / 'schemas' / 'calibration'
     for name, text in rendered.items():
         assert (folder / name).read_text(encoding='utf-8') == text

@@ -248,6 +248,32 @@ SQLite connect. Nor does this make Python construction universally atomic:
 asynchronous interruption after the protected region returns, during later
 constructor/caller handoff, remains outside this guarantee.
 
+The ordinary constructor also owns every SQLite connection it acquires until
+successful return. Failure during initialization, WAL configuration, the
+higher-version read-only reopen, or root verification closes the current owned
+connection, including for `KeyboardInterrupt` and `SystemExit`. Preserve the
+existing SQLite-to-storage error mapping and original cause; other primary
+exceptions retain their identity. A secondary close failure adds only a fixed
+bounded note that resources may remain. Do not delete any workspace file or
+silently replace a failed constructor with an apparently usable store. This
+cleanup guarantee does not alter ordinary initialization, higher-version
+read-only behavior, or the existing-mode format-admission contract.
+
+If initialization fails inside its schema transaction, a failed rollback must
+not replace that original exception. Attempt rollback only while the connection
+still reports an active transaction, append a fixed bounded note on secondary
+rollback failure, and let the constructor close its owned connection. Preserve
+preexisting database contents; cleanup does not authorize deletion or claim
+that an uncertain commit was undone.
+
+The same error precedence applies to ordinary workspace write transactions.
+A rollback failure cannot replace the original write, validation or cancellation
+exception. Add a fixed bounded note requiring closure before reuse; do not hide
+an active transaction, retry the callback, delete rows outside the transaction,
+or claim rollback succeeded. An error observed after a completed COMMIT must not
+trigger rollback or erase the committed operation. The workspace owner retains
+its normal connection-close responsibility.
+
 The guarantee is absence of application initialization/version writes/WAL setup.
 SQLite's own hot-journal recovery and lock/shared-memory activity remain possible
 with `mode=rw`; quiescent byte-equality tests do not establish forensic zero

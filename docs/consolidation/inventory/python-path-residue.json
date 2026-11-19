@@ -1,0 +1,1832 @@
+[
+  {
+    "path": "src/patchtrace/acquisition/package_budget.py",
+    "candidate_blob": "68159ee7c65c0c88d81f10b688d9ac28ffdc508f",
+    "status": "present-in-candidate",
+    "sources": [
+      {
+        "branch": "codex/patchtrace-stabilization-20261119",
+        "tip": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+        "blob": "68159ee7c65c0c88d81f10b688d9ac28ffdc508f"
+      },
+      {
+        "branch": "codex/verified-followup-integration-20261118",
+        "tip": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+        "blob": "68159ee7c65c0c88d81f10b688d9ac28ffdc508f"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/acquisition/package_contracts.py",
+    "candidate_blob": "26e9b5da8a96d9cb70721d8ec5d3e4585940e751",
+    "status": "present-in-candidate",
+    "sources": [
+      {
+        "branch": "codex/patchtrace-stabilization-20261119",
+        "tip": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+        "blob": "26e9b5da8a96d9cb70721d8ec5d3e4585940e751"
+      },
+      {
+        "branch": "codex/verified-followup-integration-20261118",
+        "tip": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+        "blob": "26e9b5da8a96d9cb70721d8ec5d3e4585940e751"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/acquisition/package_paths.py",
+    "candidate_blob": "ba9b8ff853b00fb448feadd556d0bbf38fb67ebb",
+    "status": "present-in-candidate",
+    "sources": [
+      {
+        "branch": "codex/patchtrace-stabilization-20261119",
+        "tip": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+        "blob": "ba9b8ff853b00fb448feadd556d0bbf38fb67ebb"
+      },
+      {
+        "branch": "codex/verified-followup-integration-20261118",
+        "tip": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+        "blob": "ba9b8ff853b00fb448feadd556d0bbf38fb67ebb"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/acquisition/package_platform.py",
+    "candidate_blob": "c21cc38505e2e2dbb1867f95da1d534353eab8ce",
+    "status": "present-in-candidate",
+    "sources": [
+      {
+        "branch": "codex/patchtrace-stabilization-20261119",
+        "tip": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+        "blob": "c21cc38505e2e2dbb1867f95da1d534353eab8ce"
+      },
+      {
+        "branch": "codex/verified-followup-integration-20261118",
+        "tip": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+        "blob": "c21cc38505e2e2dbb1867f95da1d534353eab8ce"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/acquisition/package_worker_contracts.py",
+    "candidate_blob": "07d7126a1843c0f57616beab12981193d7921fa1",
+    "status": "present-in-candidate",
+    "sources": [
+      {
+        "branch": "codex/patchtrace-stabilization-20261119",
+        "tip": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+        "blob": "07d7126a1843c0f57616beab12981193d7921fa1"
+      },
+      {
+        "branch": "codex/verified-followup-integration-20261118",
+        "tip": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+        "blob": "07d7126a1843c0f57616beab12981193d7921fa1"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/buildinfo.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "claude/patchtrace-cli-dotpath-spec-er6hha",
+        "tip": "62b9a3de4d1036a6e4b9bd2618372f4042b15f7f",
+        "blob": "f050f4241ba7c1926ebbcb70b449ff16dcd4d740"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/callgraph/layout.py",
+    "candidate_blob": "36eb00f8e98777a8f272982898c90e206a73cd3d",
+    "status": "present-in-candidate",
+    "sources": [
+      {
+        "branch": "claude/instance-b-features",
+        "tip": "9237c2601c0f25d306b51883875c339bab8ed82b",
+        "blob": "f692fc704e4d70ba91411eb0f1061658c3cb4d6a"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/config.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "claude/patchtrace-cli-dotpath-spec-er6hha",
+        "tip": "62b9a3de4d1036a6e4b9bd2618372f4042b15f7f",
+        "blob": "91f8bf32fddfc422329e868e0855b1bb63fd0b23"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/directory_publication.py",
+    "candidate_blob": "b9b4b12aa99325994cf7e2d051cc0e2a5cc7d89d",
+    "status": "present-in-candidate",
+    "sources": [
+      {
+        "branch": "codex/patchtrace-stabilization-20261119",
+        "tip": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+        "blob": "b9b4b12aa99325994cf7e2d051cc0e2a5cc7d89d"
+      },
+      {
+        "branch": "codex/verified-followup-integration-20261118",
+        "tip": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+        "blob": "b9b4b12aa99325994cf7e2d051cc0e2a5cc7d89d"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/gui/access_names.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "claude/autonomous-finish-20261104",
+        "tip": "ad4c49282a65d17d2ef23dfcc03e82be065c9021",
+        "blob": "928fadca01a0d079937c9fc78e30073ec7ae3f2a"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/gui/qt/kb_selftest.py",
+    "candidate_blob": "7ec08d6fc97ece9fc8843f9766a8252dd2a4b37f",
+    "status": "present-in-candidate",
+    "sources": [
+      {
+        "branch": "codex/autonomous-checkpoint-20261102-0945",
+        "tip": "d038ddea43182b8709afd447140dc74fded487c5",
+        "blob": "52cec1f99e2bca4a67608408ed5b5dbc8ee5e040"
+      },
+      {
+        "branch": "codex/autonomous-checkpoint-20261102-1020",
+        "tip": "c13d3257c88140c23fb585a8a59a4dce81e81928",
+        "blob": "52cec1f99e2bca4a67608408ed5b5dbc8ee5e040"
+      },
+      {
+        "branch": "codex/autonomous-reconcile-20261101",
+        "tip": "0130bf81e2fe3154f30af7b68a0e6ab197946040",
+        "blob": "52cec1f99e2bca4a67608408ed5b5dbc8ee5e040"
+      },
+      {
+        "branch": "codex/consolidated-reviewed-20261102",
+        "tip": "6e82fd70f315b99c6798a42c9061a1424a02933e",
+        "blob": "52cec1f99e2bca4a67608408ed5b5dbc8ee5e040"
+      },
+      {
+        "branch": "codex/consolidation-evidence-20261102",
+        "tip": "44c320e37b84a38259f13fa8f0f444b542b96f2c",
+        "blob": "52cec1f99e2bca4a67608408ed5b5dbc8ee5e040"
+      },
+      {
+        "branch": "codex/consolidation-integrity-20261103",
+        "tip": "b58bb53debcb3323e5d8d634e09397cb7e02965f",
+        "blob": "52cec1f99e2bca4a67608408ed5b5dbc8ee5e040"
+      },
+      {
+        "branch": "codex/msrc-reconcile-integration-20261102",
+        "tip": "56374f867594dd923383c91ea71970cb7d24d173",
+        "blob": "52cec1f99e2bca4a67608408ed5b5dbc8ee5e040"
+      },
+      {
+        "branch": "codex/patchtrace-stabilization-20261119",
+        "tip": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+        "blob": "7ec08d6fc97ece9fc8843f9766a8252dd2a4b37f"
+      },
+      {
+        "branch": "codex/rzdiff-164-investigation",
+        "tip": "20ef68eaab59a2941bd2fb0db918eee36107c75f",
+        "blob": "52cec1f99e2bca4a67608408ed5b5dbc8ee5e040"
+      },
+      {
+        "branch": "codex/verified-followup-integration-20261118",
+        "tip": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+        "blob": "7ec08d6fc97ece9fc8843f9766a8252dd2a4b37f"
+      },
+      {
+        "branch": "repair/rzdiff-native-callback-size-20261103",
+        "tip": "edab7d916970144b33c98384834369773e5b0e62",
+        "blob": "52cec1f99e2bca4a67608408ed5b5dbc8ee5e040"
+      },
+      {
+        "branch": "repair/rzdiff-native-red-control-20261103",
+        "tip": "b304034e3c310528f7e0a3206eda48c94e0a6873",
+        "blob": "52cec1f99e2bca4a67608408ed5b5dbc8ee5e040"
+      },
+      {
+        "branch": "repair/rzdiff-producer-ownership",
+        "tip": "4d66af5577e6f6ad8f6e21440f6fe4187e0c8fe5",
+        "blob": "52cec1f99e2bca4a67608408ed5b5dbc8ee5e040"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/gui/qt/selftest_loop.py",
+    "candidate_blob": "c0281e4cef1b941db092f35c0b58260ff35844ff",
+    "status": "present-in-candidate",
+    "sources": [
+      {
+        "branch": "codex/patchtrace-stabilization-20261119",
+        "tip": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+        "blob": "c0281e4cef1b941db092f35c0b58260ff35844ff"
+      },
+      {
+        "branch": "codex/verified-followup-integration-20261118",
+        "tip": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+        "blob": "c0281e4cef1b941db092f35c0b58260ff35844ff"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/input_readers.py",
+    "candidate_blob": "c81357c276a87370ecb45c9ae03ceebe5cf68a38",
+    "status": "present-in-candidate",
+    "sources": [
+      {
+        "branch": "codex/patchtrace-stabilization-20261119",
+        "tip": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+        "blob": "c81357c276a87370ecb45c9ae03ceebe5cf68a38"
+      },
+      {
+        "branch": "codex/verified-followup-integration-20261118",
+        "tip": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+        "blob": "c81357c276a87370ecb45c9ae03ceebe5cf68a38"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/kbcorrelation/adapters/panel_snapshot.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "codex/autonomous-checkpoint-20261102-0945",
+        "tip": "d038ddea43182b8709afd447140dc74fded487c5",
+        "blob": "03d71480a4553b3661818da91224c3254c0ab5f3"
+      },
+      {
+        "branch": "codex/autonomous-checkpoint-20261102-1020",
+        "tip": "c13d3257c88140c23fb585a8a59a4dce81e81928",
+        "blob": "03d71480a4553b3661818da91224c3254c0ab5f3"
+      },
+      {
+        "branch": "codex/autonomous-reconcile-20261101",
+        "tip": "0130bf81e2fe3154f30af7b68a0e6ab197946040",
+        "blob": "03d71480a4553b3661818da91224c3254c0ab5f3"
+      },
+      {
+        "branch": "codex/consolidated-reviewed-20261102",
+        "tip": "6e82fd70f315b99c6798a42c9061a1424a02933e",
+        "blob": "03d71480a4553b3661818da91224c3254c0ab5f3"
+      },
+      {
+        "branch": "codex/consolidation-evidence-20261102",
+        "tip": "44c320e37b84a38259f13fa8f0f444b542b96f2c",
+        "blob": "03d71480a4553b3661818da91224c3254c0ab5f3"
+      },
+      {
+        "branch": "codex/consolidation-integrity-20261103",
+        "tip": "b58bb53debcb3323e5d8d634e09397cb7e02965f",
+        "blob": "03d71480a4553b3661818da91224c3254c0ab5f3"
+      },
+      {
+        "branch": "codex/msrc-reconcile-integration-20261102",
+        "tip": "56374f867594dd923383c91ea71970cb7d24d173",
+        "blob": "03d71480a4553b3661818da91224c3254c0ab5f3"
+      },
+      {
+        "branch": "codex/rzdiff-164-investigation",
+        "tip": "20ef68eaab59a2941bd2fb0db918eee36107c75f",
+        "blob": "03d71480a4553b3661818da91224c3254c0ab5f3"
+      },
+      {
+        "branch": "repair/rzdiff-native-callback-size-20261103",
+        "tip": "edab7d916970144b33c98384834369773e5b0e62",
+        "blob": "03d71480a4553b3661818da91224c3254c0ab5f3"
+      },
+      {
+        "branch": "repair/rzdiff-native-red-control-20261103",
+        "tip": "b304034e3c310528f7e0a3206eda48c94e0a6873",
+        "blob": "03d71480a4553b3661818da91224c3254c0ab5f3"
+      },
+      {
+        "branch": "repair/rzdiff-producer-ownership",
+        "tip": "4d66af5577e6f6ad8f6e21440f6fe4187e0c8fe5",
+        "blob": "03d71480a4553b3661818da91224c3254c0ab5f3"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/kbcorrelation/cli_inventory.py",
+    "candidate_blob": "f75fe05009c7445bb02ac01827cc258ff430661c",
+    "status": "present-in-candidate",
+    "sources": [
+      {
+        "branch": "codex/advisory-read-bounds-20261118",
+        "tip": "a4061979547ef88855fbdb085228a42c3be21603",
+        "blob": "f75fe05009c7445bb02ac01827cc258ff430661c"
+      },
+      {
+        "branch": "codex/manifest-dtd-reviewed-20261118",
+        "tip": "23fbe4a54880319f62f40f3196794f85b6cdaec5",
+        "blob": "f75fe05009c7445bb02ac01827cc258ff430661c"
+      },
+      {
+        "branch": "codex/patchtrace-stabilization-20261119",
+        "tip": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+        "blob": "f75fe05009c7445bb02ac01827cc258ff430661c"
+      },
+      {
+        "branch": "codex/pilot-current-evidence-reviewed-20261118",
+        "tip": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+        "blob": "f75fe05009c7445bb02ac01827cc258ff430661c"
+      },
+      {
+        "branch": "codex/primary-environment-20261118",
+        "tip": "09b032f205f4ffa1838bef56007ebdb7a2308420",
+        "blob": "f75fe05009c7445bb02ac01827cc258ff430661c"
+      },
+      {
+        "branch": "codex/pw01-kb-inventory-20261118",
+        "tip": "2b697222b34359bb46adc90aad69fd0a12708601",
+        "blob": "cf6f52f9ff5d7bd4a42ee460c9b9d22ffec1422c"
+      },
+      {
+        "branch": "codex/pw01-retained-source-pages-20261118",
+        "tip": "58fc130631f602b6e907bb054d30c21d810551d4",
+        "blob": "f75fe05009c7445bb02ac01827cc258ff430661c"
+      },
+      {
+        "branch": "codex/raw-alignment-reviewed-20261118",
+        "tip": "3c9d3f074481b2f609330fa49ab9019eb6637849",
+        "blob": "f75fe05009c7445bb02ac01827cc258ff430661c"
+      },
+      {
+        "branch": "codex/release-qualification-reviewed-20261118",
+        "tip": "573829f33c84e9b2d53ba51ebd7f699e39f406fe",
+        "blob": "f75fe05009c7445bb02ac01827cc258ff430661c"
+      },
+      {
+        "branch": "codex/saved-search-reviewed-20261118",
+        "tip": "26558cd0723aa5fa6d883f2935ad3c43cef94a86",
+        "blob": "f75fe05009c7445bb02ac01827cc258ff430661c"
+      },
+      {
+        "branch": "codex/verified-followup-integration-20261118",
+        "tip": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+        "blob": "f75fe05009c7445bb02ac01827cc258ff430661c"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/kbcorrelation/inventory_contracts.py",
+    "candidate_blob": "a1b19a0d0d89537f126e0d9ebcbfa61bf6eed53e",
+    "status": "present-in-candidate",
+    "sources": [
+      {
+        "branch": "codex/advisory-read-bounds-20261118",
+        "tip": "a4061979547ef88855fbdb085228a42c3be21603",
+        "blob": "a1b19a0d0d89537f126e0d9ebcbfa61bf6eed53e"
+      },
+      {
+        "branch": "codex/manifest-dtd-reviewed-20261118",
+        "tip": "23fbe4a54880319f62f40f3196794f85b6cdaec5",
+        "blob": "a1b19a0d0d89537f126e0d9ebcbfa61bf6eed53e"
+      },
+      {
+        "branch": "codex/patchtrace-stabilization-20261119",
+        "tip": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+        "blob": "a1b19a0d0d89537f126e0d9ebcbfa61bf6eed53e"
+      },
+      {
+        "branch": "codex/pilot-current-evidence-reviewed-20261118",
+        "tip": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+        "blob": "a1b19a0d0d89537f126e0d9ebcbfa61bf6eed53e"
+      },
+      {
+        "branch": "codex/primary-environment-20261118",
+        "tip": "09b032f205f4ffa1838bef56007ebdb7a2308420",
+        "blob": "a1b19a0d0d89537f126e0d9ebcbfa61bf6eed53e"
+      },
+      {
+        "branch": "codex/pw01-kb-inventory-20261118",
+        "tip": "2b697222b34359bb46adc90aad69fd0a12708601",
+        "blob": "a9ecdefbd463d854dd8bbf2032b818bca8785082"
+      },
+      {
+        "branch": "codex/pw01-retained-source-pages-20261118",
+        "tip": "58fc130631f602b6e907bb054d30c21d810551d4",
+        "blob": "a1b19a0d0d89537f126e0d9ebcbfa61bf6eed53e"
+      },
+      {
+        "branch": "codex/raw-alignment-reviewed-20261118",
+        "tip": "3c9d3f074481b2f609330fa49ab9019eb6637849",
+        "blob": "a1b19a0d0d89537f126e0d9ebcbfa61bf6eed53e"
+      },
+      {
+        "branch": "codex/release-qualification-reviewed-20261118",
+        "tip": "573829f33c84e9b2d53ba51ebd7f699e39f406fe",
+        "blob": "a1b19a0d0d89537f126e0d9ebcbfa61bf6eed53e"
+      },
+      {
+        "branch": "codex/saved-search-reviewed-20261118",
+        "tip": "26558cd0723aa5fa6d883f2935ad3c43cef94a86",
+        "blob": "a1b19a0d0d89537f126e0d9ebcbfa61bf6eed53e"
+      },
+      {
+        "branch": "codex/verified-followup-integration-20261118",
+        "tip": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+        "blob": "a1b19a0d0d89537f126e0d9ebcbfa61bf6eed53e"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/kbcorrelation/inventory_csv.py",
+    "candidate_blob": "a3cbd45c051f34068c15f62741ce21f2a28af76a",
+    "status": "present-in-candidate",
+    "sources": [
+      {
+        "branch": "codex/advisory-read-bounds-20261118",
+        "tip": "a4061979547ef88855fbdb085228a42c3be21603",
+        "blob": "a3cbd45c051f34068c15f62741ce21f2a28af76a"
+      },
+      {
+        "branch": "codex/manifest-dtd-reviewed-20261118",
+        "tip": "23fbe4a54880319f62f40f3196794f85b6cdaec5",
+        "blob": "a3cbd45c051f34068c15f62741ce21f2a28af76a"
+      },
+      {
+        "branch": "codex/patchtrace-stabilization-20261119",
+        "tip": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+        "blob": "a3cbd45c051f34068c15f62741ce21f2a28af76a"
+      },
+      {
+        "branch": "codex/pilot-current-evidence-reviewed-20261118",
+        "tip": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+        "blob": "a3cbd45c051f34068c15f62741ce21f2a28af76a"
+      },
+      {
+        "branch": "codex/primary-environment-20261118",
+        "tip": "09b032f205f4ffa1838bef56007ebdb7a2308420",
+        "blob": "a3cbd45c051f34068c15f62741ce21f2a28af76a"
+      },
+      {
+        "branch": "codex/pw01-kb-inventory-20261118",
+        "tip": "2b697222b34359bb46adc90aad69fd0a12708601",
+        "blob": "af43be871633528db5d12b16f1817ad0ece57726"
+      },
+      {
+        "branch": "codex/pw01-retained-source-pages-20261118",
+        "tip": "58fc130631f602b6e907bb054d30c21d810551d4",
+        "blob": "a3cbd45c051f34068c15f62741ce21f2a28af76a"
+      },
+      {
+        "branch": "codex/raw-alignment-reviewed-20261118",
+        "tip": "3c9d3f074481b2f609330fa49ab9019eb6637849",
+        "blob": "a3cbd45c051f34068c15f62741ce21f2a28af76a"
+      },
+      {
+        "branch": "codex/release-qualification-reviewed-20261118",
+        "tip": "573829f33c84e9b2d53ba51ebd7f699e39f406fe",
+        "blob": "a3cbd45c051f34068c15f62741ce21f2a28af76a"
+      },
+      {
+        "branch": "codex/saved-search-reviewed-20261118",
+        "tip": "26558cd0723aa5fa6d883f2935ad3c43cef94a86",
+        "blob": "a3cbd45c051f34068c15f62741ce21f2a28af76a"
+      },
+      {
+        "branch": "codex/verified-followup-integration-20261118",
+        "tip": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+        "blob": "a3cbd45c051f34068c15f62741ce21f2a28af76a"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/kbcorrelation/inventory_qt.py",
+    "candidate_blob": "69fe31d23a4a6a4cc1895b679f0eeb49dd97d6d8",
+    "status": "present-in-candidate",
+    "sources": [
+      {
+        "branch": "codex/advisory-read-bounds-20261118",
+        "tip": "a4061979547ef88855fbdb085228a42c3be21603",
+        "blob": "69fe31d23a4a6a4cc1895b679f0eeb49dd97d6d8"
+      },
+      {
+        "branch": "codex/manifest-dtd-reviewed-20261118",
+        "tip": "23fbe4a54880319f62f40f3196794f85b6cdaec5",
+        "blob": "69fe31d23a4a6a4cc1895b679f0eeb49dd97d6d8"
+      },
+      {
+        "branch": "codex/patchtrace-stabilization-20261119",
+        "tip": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+        "blob": "69fe31d23a4a6a4cc1895b679f0eeb49dd97d6d8"
+      },
+      {
+        "branch": "codex/pilot-current-evidence-reviewed-20261118",
+        "tip": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+        "blob": "69fe31d23a4a6a4cc1895b679f0eeb49dd97d6d8"
+      },
+      {
+        "branch": "codex/primary-environment-20261118",
+        "tip": "09b032f205f4ffa1838bef56007ebdb7a2308420",
+        "blob": "69fe31d23a4a6a4cc1895b679f0eeb49dd97d6d8"
+      },
+      {
+        "branch": "codex/pw01-kb-inventory-20261118",
+        "tip": "2b697222b34359bb46adc90aad69fd0a12708601",
+        "blob": "85796a5428a55b42077a3cd44a2c4d34ce997a7d"
+      },
+      {
+        "branch": "codex/pw01-retained-source-pages-20261118",
+        "tip": "58fc130631f602b6e907bb054d30c21d810551d4",
+        "blob": "69fe31d23a4a6a4cc1895b679f0eeb49dd97d6d8"
+      },
+      {
+        "branch": "codex/raw-alignment-reviewed-20261118",
+        "tip": "3c9d3f074481b2f609330fa49ab9019eb6637849",
+        "blob": "69fe31d23a4a6a4cc1895b679f0eeb49dd97d6d8"
+      },
+      {
+        "branch": "codex/release-qualification-reviewed-20261118",
+        "tip": "573829f33c84e9b2d53ba51ebd7f699e39f406fe",
+        "blob": "69fe31d23a4a6a4cc1895b679f0eeb49dd97d6d8"
+      },
+      {
+        "branch": "codex/saved-search-reviewed-20261118",
+        "tip": "26558cd0723aa5fa6d883f2935ad3c43cef94a86",
+        "blob": "69fe31d23a4a6a4cc1895b679f0eeb49dd97d6d8"
+      },
+      {
+        "branch": "codex/verified-followup-integration-20261118",
+        "tip": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+        "blob": "69fe31d23a4a6a4cc1895b679f0eeb49dd97d6d8"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/kbcorrelation/inventory_selection.py",
+    "candidate_blob": "12d931d3ce918fba442dec658b045a9a48c81d7a",
+    "status": "present-in-candidate",
+    "sources": [
+      {
+        "branch": "codex/advisory-read-bounds-20261118",
+        "tip": "a4061979547ef88855fbdb085228a42c3be21603",
+        "blob": "142f8f63b77f4df56b8844cff0c3cca26e80619a"
+      },
+      {
+        "branch": "codex/manifest-dtd-reviewed-20261118",
+        "tip": "23fbe4a54880319f62f40f3196794f85b6cdaec5",
+        "blob": "142f8f63b77f4df56b8844cff0c3cca26e80619a"
+      },
+      {
+        "branch": "codex/patchtrace-stabilization-20261119",
+        "tip": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+        "blob": "12d931d3ce918fba442dec658b045a9a48c81d7a"
+      },
+      {
+        "branch": "codex/pilot-current-evidence-reviewed-20261118",
+        "tip": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+        "blob": "142f8f63b77f4df56b8844cff0c3cca26e80619a"
+      },
+      {
+        "branch": "codex/primary-environment-20261118",
+        "tip": "09b032f205f4ffa1838bef56007ebdb7a2308420",
+        "blob": "142f8f63b77f4df56b8844cff0c3cca26e80619a"
+      },
+      {
+        "branch": "codex/pw01-kb-inventory-20261118",
+        "tip": "2b697222b34359bb46adc90aad69fd0a12708601",
+        "blob": "0ec5123eae264383d8d5d59cbd6fcfbe033e8e8a"
+      },
+      {
+        "branch": "codex/pw01-retained-source-pages-20261118",
+        "tip": "58fc130631f602b6e907bb054d30c21d810551d4",
+        "blob": "142f8f63b77f4df56b8844cff0c3cca26e80619a"
+      },
+      {
+        "branch": "codex/raw-alignment-reviewed-20261118",
+        "tip": "3c9d3f074481b2f609330fa49ab9019eb6637849",
+        "blob": "142f8f63b77f4df56b8844cff0c3cca26e80619a"
+      },
+      {
+        "branch": "codex/release-qualification-reviewed-20261118",
+        "tip": "573829f33c84e9b2d53ba51ebd7f699e39f406fe",
+        "blob": "142f8f63b77f4df56b8844cff0c3cca26e80619a"
+      },
+      {
+        "branch": "codex/saved-search-reviewed-20261118",
+        "tip": "26558cd0723aa5fa6d883f2935ad3c43cef94a86",
+        "blob": "142f8f63b77f4df56b8844cff0c3cca26e80619a"
+      },
+      {
+        "branch": "codex/verified-followup-integration-20261118",
+        "tip": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+        "blob": "12d931d3ce918fba442dec658b045a9a48c81d7a"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/kbcorrelation/inventory_service.py",
+    "candidate_blob": "44757c9c85f8f79c13f248fef44258d540482564",
+    "status": "present-in-candidate",
+    "sources": [
+      {
+        "branch": "codex/advisory-read-bounds-20261118",
+        "tip": "a4061979547ef88855fbdb085228a42c3be21603",
+        "blob": "44757c9c85f8f79c13f248fef44258d540482564"
+      },
+      {
+        "branch": "codex/manifest-dtd-reviewed-20261118",
+        "tip": "23fbe4a54880319f62f40f3196794f85b6cdaec5",
+        "blob": "44757c9c85f8f79c13f248fef44258d540482564"
+      },
+      {
+        "branch": "codex/patchtrace-stabilization-20261119",
+        "tip": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+        "blob": "44757c9c85f8f79c13f248fef44258d540482564"
+      },
+      {
+        "branch": "codex/pilot-current-evidence-reviewed-20261118",
+        "tip": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+        "blob": "44757c9c85f8f79c13f248fef44258d540482564"
+      },
+      {
+        "branch": "codex/primary-environment-20261118",
+        "tip": "09b032f205f4ffa1838bef56007ebdb7a2308420",
+        "blob": "44757c9c85f8f79c13f248fef44258d540482564"
+      },
+      {
+        "branch": "codex/pw01-kb-inventory-20261118",
+        "tip": "2b697222b34359bb46adc90aad69fd0a12708601",
+        "blob": "1b1ffc4817489a42e6fa71365ebc3cf4c73d88c6"
+      },
+      {
+        "branch": "codex/pw01-retained-source-pages-20261118",
+        "tip": "58fc130631f602b6e907bb054d30c21d810551d4",
+        "blob": "44757c9c85f8f79c13f248fef44258d540482564"
+      },
+      {
+        "branch": "codex/raw-alignment-reviewed-20261118",
+        "tip": "3c9d3f074481b2f609330fa49ab9019eb6637849",
+        "blob": "44757c9c85f8f79c13f248fef44258d540482564"
+      },
+      {
+        "branch": "codex/release-qualification-reviewed-20261118",
+        "tip": "573829f33c84e9b2d53ba51ebd7f699e39f406fe",
+        "blob": "44757c9c85f8f79c13f248fef44258d540482564"
+      },
+      {
+        "branch": "codex/saved-search-reviewed-20261118",
+        "tip": "26558cd0723aa5fa6d883f2935ad3c43cef94a86",
+        "blob": "44757c9c85f8f79c13f248fef44258d540482564"
+      },
+      {
+        "branch": "codex/verified-followup-integration-20261118",
+        "tip": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+        "blob": "44757c9c85f8f79c13f248fef44258d540482564"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/kbcorrelation/inventory_store.py",
+    "candidate_blob": "287cb37d2163ea6b35c1a36d8b3a113c5ecfca6f",
+    "status": "present-in-candidate",
+    "sources": [
+      {
+        "branch": "codex/advisory-read-bounds-20261118",
+        "tip": "a4061979547ef88855fbdb085228a42c3be21603",
+        "blob": "287cb37d2163ea6b35c1a36d8b3a113c5ecfca6f"
+      },
+      {
+        "branch": "codex/manifest-dtd-reviewed-20261118",
+        "tip": "23fbe4a54880319f62f40f3196794f85b6cdaec5",
+        "blob": "287cb37d2163ea6b35c1a36d8b3a113c5ecfca6f"
+      },
+      {
+        "branch": "codex/patchtrace-stabilization-20261119",
+        "tip": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+        "blob": "287cb37d2163ea6b35c1a36d8b3a113c5ecfca6f"
+      },
+      {
+        "branch": "codex/pilot-current-evidence-reviewed-20261118",
+        "tip": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+        "blob": "287cb37d2163ea6b35c1a36d8b3a113c5ecfca6f"
+      },
+      {
+        "branch": "codex/primary-environment-20261118",
+        "tip": "09b032f205f4ffa1838bef56007ebdb7a2308420",
+        "blob": "287cb37d2163ea6b35c1a36d8b3a113c5ecfca6f"
+      },
+      {
+        "branch": "codex/pw01-kb-inventory-20261118",
+        "tip": "2b697222b34359bb46adc90aad69fd0a12708601",
+        "blob": "f44e518358086f47b546a86507ecec98ad0401cb"
+      },
+      {
+        "branch": "codex/pw01-retained-source-pages-20261118",
+        "tip": "58fc130631f602b6e907bb054d30c21d810551d4",
+        "blob": "287cb37d2163ea6b35c1a36d8b3a113c5ecfca6f"
+      },
+      {
+        "branch": "codex/raw-alignment-reviewed-20261118",
+        "tip": "3c9d3f074481b2f609330fa49ab9019eb6637849",
+        "blob": "287cb37d2163ea6b35c1a36d8b3a113c5ecfca6f"
+      },
+      {
+        "branch": "codex/release-qualification-reviewed-20261118",
+        "tip": "573829f33c84e9b2d53ba51ebd7f699e39f406fe",
+        "blob": "287cb37d2163ea6b35c1a36d8b3a113c5ecfca6f"
+      },
+      {
+        "branch": "codex/saved-search-reviewed-20261118",
+        "tip": "26558cd0723aa5fa6d883f2935ad3c43cef94a86",
+        "blob": "287cb37d2163ea6b35c1a36d8b3a113c5ecfca6f"
+      },
+      {
+        "branch": "codex/verified-followup-integration-20261118",
+        "tip": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+        "blob": "287cb37d2163ea6b35c1a36d8b3a113c5ecfca6f"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/kbcorrelation/sources/inventory_fetch.py",
+    "candidate_blob": "5c457eb7c63df2b75b8b71552ca2ea37d045d348",
+    "status": "present-in-candidate",
+    "sources": [
+      {
+        "branch": "codex/advisory-read-bounds-20261118",
+        "tip": "a4061979547ef88855fbdb085228a42c3be21603",
+        "blob": "5c457eb7c63df2b75b8b71552ca2ea37d045d348"
+      },
+      {
+        "branch": "codex/manifest-dtd-reviewed-20261118",
+        "tip": "23fbe4a54880319f62f40f3196794f85b6cdaec5",
+        "blob": "5c457eb7c63df2b75b8b71552ca2ea37d045d348"
+      },
+      {
+        "branch": "codex/patchtrace-stabilization-20261119",
+        "tip": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+        "blob": "5c457eb7c63df2b75b8b71552ca2ea37d045d348"
+      },
+      {
+        "branch": "codex/pilot-current-evidence-reviewed-20261118",
+        "tip": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+        "blob": "5c457eb7c63df2b75b8b71552ca2ea37d045d348"
+      },
+      {
+        "branch": "codex/primary-environment-20261118",
+        "tip": "09b032f205f4ffa1838bef56007ebdb7a2308420",
+        "blob": "5c457eb7c63df2b75b8b71552ca2ea37d045d348"
+      },
+      {
+        "branch": "codex/pw01-kb-inventory-20261118",
+        "tip": "2b697222b34359bb46adc90aad69fd0a12708601",
+        "blob": "5c457eb7c63df2b75b8b71552ca2ea37d045d348"
+      },
+      {
+        "branch": "codex/pw01-retained-source-pages-20261118",
+        "tip": "58fc130631f602b6e907bb054d30c21d810551d4",
+        "blob": "5c457eb7c63df2b75b8b71552ca2ea37d045d348"
+      },
+      {
+        "branch": "codex/raw-alignment-reviewed-20261118",
+        "tip": "3c9d3f074481b2f609330fa49ab9019eb6637849",
+        "blob": "5c457eb7c63df2b75b8b71552ca2ea37d045d348"
+      },
+      {
+        "branch": "codex/release-qualification-reviewed-20261118",
+        "tip": "573829f33c84e9b2d53ba51ebd7f699e39f406fe",
+        "blob": "5c457eb7c63df2b75b8b71552ca2ea37d045d348"
+      },
+      {
+        "branch": "codex/saved-search-reviewed-20261118",
+        "tip": "26558cd0723aa5fa6d883f2935ad3c43cef94a86",
+        "blob": "5c457eb7c63df2b75b8b71552ca2ea37d045d348"
+      },
+      {
+        "branch": "codex/verified-followup-integration-20261118",
+        "tip": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+        "blob": "5c457eb7c63df2b75b8b71552ca2ea37d045d348"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/kbcorrelation/sources/inventory_http.py",
+    "candidate_blob": "2c426ed77c1a9496a9f99de47fd0c08198913208",
+    "status": "present-in-candidate",
+    "sources": [
+      {
+        "branch": "codex/advisory-read-bounds-20261118",
+        "tip": "a4061979547ef88855fbdb085228a42c3be21603",
+        "blob": "2c426ed77c1a9496a9f99de47fd0c08198913208"
+      },
+      {
+        "branch": "codex/manifest-dtd-reviewed-20261118",
+        "tip": "23fbe4a54880319f62f40f3196794f85b6cdaec5",
+        "blob": "2c426ed77c1a9496a9f99de47fd0c08198913208"
+      },
+      {
+        "branch": "codex/patchtrace-stabilization-20261119",
+        "tip": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+        "blob": "2c426ed77c1a9496a9f99de47fd0c08198913208"
+      },
+      {
+        "branch": "codex/pilot-current-evidence-reviewed-20261118",
+        "tip": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+        "blob": "2c426ed77c1a9496a9f99de47fd0c08198913208"
+      },
+      {
+        "branch": "codex/primary-environment-20261118",
+        "tip": "09b032f205f4ffa1838bef56007ebdb7a2308420",
+        "blob": "2c426ed77c1a9496a9f99de47fd0c08198913208"
+      },
+      {
+        "branch": "codex/pw01-kb-inventory-20261118",
+        "tip": "2b697222b34359bb46adc90aad69fd0a12708601",
+        "blob": "2c426ed77c1a9496a9f99de47fd0c08198913208"
+      },
+      {
+        "branch": "codex/pw01-retained-source-pages-20261118",
+        "tip": "58fc130631f602b6e907bb054d30c21d810551d4",
+        "blob": "2c426ed77c1a9496a9f99de47fd0c08198913208"
+      },
+      {
+        "branch": "codex/raw-alignment-reviewed-20261118",
+        "tip": "3c9d3f074481b2f609330fa49ab9019eb6637849",
+        "blob": "2c426ed77c1a9496a9f99de47fd0c08198913208"
+      },
+      {
+        "branch": "codex/release-qualification-reviewed-20261118",
+        "tip": "573829f33c84e9b2d53ba51ebd7f699e39f406fe",
+        "blob": "2c426ed77c1a9496a9f99de47fd0c08198913208"
+      },
+      {
+        "branch": "codex/saved-search-reviewed-20261118",
+        "tip": "26558cd0723aa5fa6d883f2935ad3c43cef94a86",
+        "blob": "2c426ed77c1a9496a9f99de47fd0c08198913208"
+      },
+      {
+        "branch": "codex/verified-followup-integration-20261118",
+        "tip": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+        "blob": "2c426ed77c1a9496a9f99de47fd0c08198913208"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/kbcorrelation/sources/support_links.py",
+    "candidate_blob": "4c204e93221f67df716d1d0bc6633a792cfd70b3",
+    "status": "present-in-candidate",
+    "sources": [
+      {
+        "branch": "codex/advisory-read-bounds-20261118",
+        "tip": "a4061979547ef88855fbdb085228a42c3be21603",
+        "blob": "4c204e93221f67df716d1d0bc6633a792cfd70b3"
+      },
+      {
+        "branch": "codex/manifest-dtd-reviewed-20261118",
+        "tip": "23fbe4a54880319f62f40f3196794f85b6cdaec5",
+        "blob": "4c204e93221f67df716d1d0bc6633a792cfd70b3"
+      },
+      {
+        "branch": "codex/patchtrace-stabilization-20261119",
+        "tip": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+        "blob": "4c204e93221f67df716d1d0bc6633a792cfd70b3"
+      },
+      {
+        "branch": "codex/pilot-current-evidence-reviewed-20261118",
+        "tip": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+        "blob": "4c204e93221f67df716d1d0bc6633a792cfd70b3"
+      },
+      {
+        "branch": "codex/primary-environment-20261118",
+        "tip": "09b032f205f4ffa1838bef56007ebdb7a2308420",
+        "blob": "4c204e93221f67df716d1d0bc6633a792cfd70b3"
+      },
+      {
+        "branch": "codex/pw01-kb-inventory-20261118",
+        "tip": "2b697222b34359bb46adc90aad69fd0a12708601",
+        "blob": "4c204e93221f67df716d1d0bc6633a792cfd70b3"
+      },
+      {
+        "branch": "codex/pw01-retained-source-pages-20261118",
+        "tip": "58fc130631f602b6e907bb054d30c21d810551d4",
+        "blob": "4c204e93221f67df716d1d0bc6633a792cfd70b3"
+      },
+      {
+        "branch": "codex/raw-alignment-reviewed-20261118",
+        "tip": "3c9d3f074481b2f609330fa49ab9019eb6637849",
+        "blob": "4c204e93221f67df716d1d0bc6633a792cfd70b3"
+      },
+      {
+        "branch": "codex/release-qualification-reviewed-20261118",
+        "tip": "573829f33c84e9b2d53ba51ebd7f699e39f406fe",
+        "blob": "4c204e93221f67df716d1d0bc6633a792cfd70b3"
+      },
+      {
+        "branch": "codex/saved-search-reviewed-20261118",
+        "tip": "26558cd0723aa5fa6d883f2935ad3c43cef94a86",
+        "blob": "4c204e93221f67df716d1d0bc6633a792cfd70b3"
+      },
+      {
+        "branch": "codex/verified-followup-integration-20261118",
+        "tip": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+        "blob": "4c204e93221f67df716d1d0bc6633a792cfd70b3"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/project_creation.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "codex/autonomous-checkpoint-20261102-0945",
+        "tip": "d038ddea43182b8709afd447140dc74fded487c5",
+        "blob": "63394132f7ed0874c674ba10b2a41ec0a8452bde"
+      },
+      {
+        "branch": "codex/autonomous-checkpoint-20261102-1020",
+        "tip": "c13d3257c88140c23fb585a8a59a4dce81e81928",
+        "blob": "63394132f7ed0874c674ba10b2a41ec0a8452bde"
+      },
+      {
+        "branch": "codex/autonomous-reconcile-20261101",
+        "tip": "0130bf81e2fe3154f30af7b68a0e6ab197946040",
+        "blob": "63394132f7ed0874c674ba10b2a41ec0a8452bde"
+      },
+      {
+        "branch": "codex/consolidated-reviewed-20261102",
+        "tip": "6e82fd70f315b99c6798a42c9061a1424a02933e",
+        "blob": "63394132f7ed0874c674ba10b2a41ec0a8452bde"
+      },
+      {
+        "branch": "codex/consolidation-evidence-20261102",
+        "tip": "44c320e37b84a38259f13fa8f0f444b542b96f2c",
+        "blob": "63394132f7ed0874c674ba10b2a41ec0a8452bde"
+      },
+      {
+        "branch": "codex/consolidation-integrity-20261103",
+        "tip": "b58bb53debcb3323e5d8d634e09397cb7e02965f",
+        "blob": "63394132f7ed0874c674ba10b2a41ec0a8452bde"
+      },
+      {
+        "branch": "codex/msrc-reconcile-integration-20261102",
+        "tip": "56374f867594dd923383c91ea71970cb7d24d173",
+        "blob": "63394132f7ed0874c674ba10b2a41ec0a8452bde"
+      },
+      {
+        "branch": "codex/rzdiff-164-investigation",
+        "tip": "20ef68eaab59a2941bd2fb0db918eee36107c75f",
+        "blob": "63394132f7ed0874c674ba10b2a41ec0a8452bde"
+      },
+      {
+        "branch": "repair/rzdiff-native-callback-size-20261103",
+        "tip": "edab7d916970144b33c98384834369773e5b0e62",
+        "blob": "63394132f7ed0874c674ba10b2a41ec0a8452bde"
+      },
+      {
+        "branch": "repair/rzdiff-native-red-control-20261103",
+        "tip": "b304034e3c310528f7e0a3206eda48c94e0a6873",
+        "blob": "63394132f7ed0874c674ba10b2a41ec0a8452bde"
+      },
+      {
+        "branch": "repair/rzdiff-producer-ownership",
+        "tip": "4d66af5577e6f6ad8f6e21440f6fe4187e0c8fe5",
+        "blob": "63394132f7ed0874c674ba10b2a41ec0a8452bde"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/project_retry.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "codex/autonomous-checkpoint-20261102-1020",
+        "tip": "c13d3257c88140c23fb585a8a59a4dce81e81928",
+        "blob": "19a04884031ea62fd8fdfc6e3d06d870f980f094"
+      },
+      {
+        "branch": "codex/autonomous-reconcile-20261101",
+        "tip": "0130bf81e2fe3154f30af7b68a0e6ab197946040",
+        "blob": "19a04884031ea62fd8fdfc6e3d06d870f980f094"
+      },
+      {
+        "branch": "codex/consolidated-reviewed-20261102",
+        "tip": "6e82fd70f315b99c6798a42c9061a1424a02933e",
+        "blob": "19a04884031ea62fd8fdfc6e3d06d870f980f094"
+      },
+      {
+        "branch": "codex/consolidation-evidence-20261102",
+        "tip": "44c320e37b84a38259f13fa8f0f444b542b96f2c",
+        "blob": "19a04884031ea62fd8fdfc6e3d06d870f980f094"
+      },
+      {
+        "branch": "codex/consolidation-integrity-20261103",
+        "tip": "b58bb53debcb3323e5d8d634e09397cb7e02965f",
+        "blob": "19a04884031ea62fd8fdfc6e3d06d870f980f094"
+      },
+      {
+        "branch": "codex/msrc-reconcile-integration-20261102",
+        "tip": "56374f867594dd923383c91ea71970cb7d24d173",
+        "blob": "19a04884031ea62fd8fdfc6e3d06d870f980f094"
+      },
+      {
+        "branch": "codex/rzdiff-164-investigation",
+        "tip": "20ef68eaab59a2941bd2fb0db918eee36107c75f",
+        "blob": "19a04884031ea62fd8fdfc6e3d06d870f980f094"
+      },
+      {
+        "branch": "repair/rzdiff-native-callback-size-20261103",
+        "tip": "edab7d916970144b33c98384834369773e5b0e62",
+        "blob": "19a04884031ea62fd8fdfc6e3d06d870f980f094"
+      },
+      {
+        "branch": "repair/rzdiff-native-red-control-20261103",
+        "tip": "b304034e3c310528f7e0a3206eda48c94e0a6873",
+        "blob": "19a04884031ea62fd8fdfc6e3d06d870f980f094"
+      },
+      {
+        "branch": "repair/rzdiff-producer-ownership",
+        "tip": "4d66af5577e6f6ad8f6e21440f6fe4187e0c8fe5",
+        "blob": "19a04884031ea62fd8fdfc6e3d06d870f980f094"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/search/wiring.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "claude/autonomous-finish-20261104",
+        "tip": "ad4c49282a65d17d2ef23dfcc03e82be065c9021",
+        "blob": "79b03ae3ef85501816ed9a3245e55481e1e39414"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/strings/compose.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "claude/autonomous-finish-20261104",
+        "tip": "ad4c49282a65d17d2ef23dfcc03e82be065c9021",
+        "blob": "0c83d42cd88778bfe8d93db292ae8205f999e956"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/ui_inspection_session.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "claude/autonomous-finish-20261104",
+        "tip": "ad4c49282a65d17d2ef23dfcc03e82be065c9021",
+        "blob": "c399a4618e6ed9b80bfbfc0b0cfd1f94f98543ed"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/ui_new_project.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "codex/autonomous-checkpoint-20261102-1020",
+        "tip": "c13d3257c88140c23fb585a8a59a4dce81e81928",
+        "blob": "9635a864959d565972d7eb273ad7e97352f2daf8"
+      },
+      {
+        "branch": "codex/autonomous-reconcile-20261101",
+        "tip": "0130bf81e2fe3154f30af7b68a0e6ab197946040",
+        "blob": "9635a864959d565972d7eb273ad7e97352f2daf8"
+      },
+      {
+        "branch": "codex/consolidated-reviewed-20261102",
+        "tip": "6e82fd70f315b99c6798a42c9061a1424a02933e",
+        "blob": "9635a864959d565972d7eb273ad7e97352f2daf8"
+      },
+      {
+        "branch": "codex/consolidation-evidence-20261102",
+        "tip": "44c320e37b84a38259f13fa8f0f444b542b96f2c",
+        "blob": "9635a864959d565972d7eb273ad7e97352f2daf8"
+      },
+      {
+        "branch": "codex/consolidation-integrity-20261103",
+        "tip": "b58bb53debcb3323e5d8d634e09397cb7e02965f",
+        "blob": "9635a864959d565972d7eb273ad7e97352f2daf8"
+      },
+      {
+        "branch": "codex/msrc-reconcile-integration-20261102",
+        "tip": "56374f867594dd923383c91ea71970cb7d24d173",
+        "blob": "9635a864959d565972d7eb273ad7e97352f2daf8"
+      },
+      {
+        "branch": "codex/rzdiff-164-investigation",
+        "tip": "20ef68eaab59a2941bd2fb0db918eee36107c75f",
+        "blob": "9635a864959d565972d7eb273ad7e97352f2daf8"
+      },
+      {
+        "branch": "repair/rzdiff-native-callback-size-20261103",
+        "tip": "edab7d916970144b33c98384834369773e5b0e62",
+        "blob": "9635a864959d565972d7eb273ad7e97352f2daf8"
+      },
+      {
+        "branch": "repair/rzdiff-native-red-control-20261103",
+        "tip": "b304034e3c310528f7e0a3206eda48c94e0a6873",
+        "blob": "9635a864959d565972d7eb273ad7e97352f2daf8"
+      },
+      {
+        "branch": "repair/rzdiff-producer-ownership",
+        "tip": "4d66af5577e6f6ad8f6e21440f6fe4187e0c8fe5",
+        "blob": "9635a864959d565972d7eb273ad7e97352f2daf8"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "src/patchtrace/ui_signal_navigation.py",
+    "candidate_blob": "0ca937e3a92bbac04d2e3ea7e74269f8e3918412",
+    "status": "present-in-candidate",
+    "sources": [
+      {
+        "branch": "codex/patchtrace-stabilization-20261119",
+        "tip": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+        "blob": "0ca937e3a92bbac04d2e3ea7e74269f8e3918412"
+      },
+      {
+        "branch": "codex/verified-followup-integration-20261118",
+        "tip": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+        "blob": "0ca937e3a92bbac04d2e3ea7e74269f8e3918412"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/calibration/tier_r/receipts.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "codex/receipt-parent-race-20261101",
+        "tip": "2fdac2ea9042985ac3c98545d38ac3461d00f4cc",
+        "blob": "be26bfa337b2d3cae3e6f6cd4b8fdbbb2517b54c"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/calibration/tier_r/research_audit.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "codex/r1-ground-truth-research-20261030",
+        "tip": "10856edf05afae8166291f09fb3ead92f297360d",
+        "blob": "d3557898bea65af152bee3dd7cbe1c74e055f6d4"
+      },
+      {
+        "branch": "codex/r1-receipt-publication-20261031",
+        "tip": "8c9eafc79b007a963453d8edf6cb40c804c9bc3d",
+        "blob": "d3557898bea65af152bee3dd7cbe1c74e055f6d4"
+      },
+      {
+        "branch": "codex/receipt-parent-race-20261101",
+        "tip": "2fdac2ea9042985ac3c98545d38ac3461d00f4cc",
+        "blob": "d3557898bea65af152bee3dd7cbe1c74e055f6d4"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/calibration/tier_r/research_build.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "codex/r1-ground-truth-research-20261030",
+        "tip": "10856edf05afae8166291f09fb3ead92f297360d",
+        "blob": "3d29b6e033243e300650a4d330ac0b0d2dfcc4f7"
+      },
+      {
+        "branch": "codex/r1-receipt-publication-20261031",
+        "tip": "8c9eafc79b007a963453d8edf6cb40c804c9bc3d",
+        "blob": "3d29b6e033243e300650a4d330ac0b0d2dfcc4f7"
+      },
+      {
+        "branch": "codex/receipt-parent-race-20261101",
+        "tip": "2fdac2ea9042985ac3c98545d38ac3461d00f4cc",
+        "blob": "3e378921ecab3ae68ca7a90345ff650d3cf02930"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/calibration/tier_r/research_observers.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "codex/r1-ground-truth-research-20261030",
+        "tip": "10856edf05afae8166291f09fb3ead92f297360d",
+        "blob": "2f9ba4cc82f3e3a1783cca23cc9e692d30f30f3b"
+      },
+      {
+        "branch": "codex/r1-receipt-publication-20261031",
+        "tip": "8c9eafc79b007a963453d8edf6cb40c804c9bc3d",
+        "blob": "2f9ba4cc82f3e3a1783cca23cc9e692d30f30f3b"
+      },
+      {
+        "branch": "codex/receipt-parent-race-20261101",
+        "tip": "2fdac2ea9042985ac3c98545d38ac3461d00f4cc",
+        "blob": "2f9ba4cc82f3e3a1783cca23cc9e692d30f30f3b"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/calibration/tier_r/research_pilot.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "codex/r1-ground-truth-research-20261030",
+        "tip": "10856edf05afae8166291f09fb3ead92f297360d",
+        "blob": "39c279319557167bf7566752335e0daae3cf30ff"
+      },
+      {
+        "branch": "codex/r1-receipt-publication-20261031",
+        "tip": "8c9eafc79b007a963453d8edf6cb40c804c9bc3d",
+        "blob": "39c279319557167bf7566752335e0daae3cf30ff"
+      },
+      {
+        "branch": "codex/receipt-parent-race-20261101",
+        "tip": "2fdac2ea9042985ac3c98545d38ac3461d00f4cc",
+        "blob": "16026f4e8c1f7540a885b610861c77587edf03fd"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/calibration/tier_r/training_artifacts.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "chatgpt/lbl30-prereg-guard-20261016",
+        "tip": "6ae2c079e6cafa2b7bd5396cac443cd34ba7138a",
+        "blob": "adc5171d3189b5eaf0e6a3de6c3f58c787583568"
+      },
+      {
+        "branch": "chatgpt/lbl31-coff-quoted-rip-20261016",
+        "tip": "6e71bfabbf5ef75449b46981e9e822f7e555a6bf",
+        "blob": "adc5171d3189b5eaf0e6a3de6c3f58c787583568"
+      },
+      {
+        "branch": "chatgpt/lbl31-coff-symbol-mask-20261016",
+        "tip": "9622704d5c751d55700c4b642111131a7135d139",
+        "blob": "adc5171d3189b5eaf0e6a3de6c3f58c787583568"
+      },
+      {
+        "branch": "chatgpt/lbl31-output-persistence-20261015",
+        "tip": "2019a37fa65fc37f4758469143c2daadc07e0098",
+        "blob": "adc5171d3189b5eaf0e6a3de6c3f58c787583568"
+      },
+      {
+        "branch": "chatgpt/lbl31-windows-qa-fixes-20261016-a",
+        "tip": "ddb2ff077a21c1f0053ba8079564f6f86c3e155f",
+        "blob": "adc5171d3189b5eaf0e6a3de6c3f58c787583568"
+      },
+      {
+        "branch": "chatgpt/lbl32-card-controls-20261016",
+        "tip": "9513bc05229dd7a8460fc229d7420154d61498db",
+        "blob": "adc5171d3189b5eaf0e6a3de6c3f58c787583568"
+      },
+      {
+        "branch": "chatgpt/lbl32-recipe-aa-noise-20261016",
+        "tip": "eaa30013794a9bd0fedc9ec34bbe374d6db0cfc9",
+        "blob": "adc5171d3189b5eaf0e6a3de6c3f58c787583568"
+      },
+      {
+        "branch": "chatgpt/unified-sort-perf-qa-20261016",
+        "tip": "27b0a48bb8007f504b4a127a099136a6ea5c00b7",
+        "blob": "adc5171d3189b5eaf0e6a3de6c3f58c787583568"
+      },
+      {
+        "branch": "codex/autonomous-checkpoint-20261102-0945",
+        "tip": "d038ddea43182b8709afd447140dc74fded487c5",
+        "blob": "39ae4c58026872bba72ff06647b1d7d00e975c4d"
+      },
+      {
+        "branch": "codex/autonomous-checkpoint-20261102-1020",
+        "tip": "c13d3257c88140c23fb585a8a59a4dce81e81928",
+        "blob": "7d4b5efb631b40cb88c08666ef132d4ff33972e7"
+      },
+      {
+        "branch": "codex/autonomous-reconcile-20261101",
+        "tip": "0130bf81e2fe3154f30af7b68a0e6ab197946040",
+        "blob": "7d4b5efb631b40cb88c08666ef132d4ff33972e7"
+      },
+      {
+        "branch": "codex/consolidated-reviewed-20261102",
+        "tip": "6e82fd70f315b99c6798a42c9061a1424a02933e",
+        "blob": "7d4b5efb631b40cb88c08666ef132d4ff33972e7"
+      },
+      {
+        "branch": "codex/consolidation-evidence-20261102",
+        "tip": "44c320e37b84a38259f13fa8f0f444b542b96f2c",
+        "blob": "7d4b5efb631b40cb88c08666ef132d4ff33972e7"
+      },
+      {
+        "branch": "codex/consolidation-integrity-20261103",
+        "tip": "b58bb53debcb3323e5d8d634e09397cb7e02965f",
+        "blob": "7d4b5efb631b40cb88c08666ef132d4ff33972e7"
+      },
+      {
+        "branch": "codex/msrc-reconcile-integration-20261102",
+        "tip": "56374f867594dd923383c91ea71970cb7d24d173",
+        "blob": "7d4b5efb631b40cb88c08666ef132d4ff33972e7"
+      },
+      {
+        "branch": "codex/rzdiff-164-investigation",
+        "tip": "20ef68eaab59a2941bd2fb0db918eee36107c75f",
+        "blob": "7d4b5efb631b40cb88c08666ef132d4ff33972e7"
+      },
+      {
+        "branch": "repair/rzdiff-native-callback-size-20261103",
+        "tip": "edab7d916970144b33c98384834369773e5b0e62",
+        "blob": "7d4b5efb631b40cb88c08666ef132d4ff33972e7"
+      },
+      {
+        "branch": "repair/rzdiff-native-red-control-20261103",
+        "tip": "b304034e3c310528f7e0a3206eda48c94e0a6873",
+        "blob": "7d4b5efb631b40cb88c08666ef132d4ff33972e7"
+      },
+      {
+        "branch": "repair/rzdiff-producer-ownership",
+        "tip": "4d66af5577e6f6ad8f6e21440f6fe4187e0c8fe5",
+        "blob": "7d4b5efb631b40cb88c08666ef132d4ff33972e7"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/calibration/tier_w/__main__.py",
+    "candidate_blob": "eb53e2f31b2f703ad32ef64b8a41faa3e7d18e08",
+    "status": "present-in-candidate",
+    "sources": [
+      {
+        "branch": "claude/autonomous-finish-20261104",
+        "tip": "ad4c49282a65d17d2ef23dfcc03e82be065c9021",
+        "blob": "eb53e2f31b2f703ad32ef64b8a41faa3e7d18e08"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/calibration/tier_w/cli.py",
+    "candidate_blob": "bc3c535b3321a3964f35b378163249740736c37a",
+    "status": "present-in-candidate",
+    "sources": [
+      {
+        "branch": "claude/autonomous-finish-20261104",
+        "tip": "ad4c49282a65d17d2ef23dfcc03e82be065c9021",
+        "blob": "bc3c535b3321a3964f35b378163249740736c37a"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/calibration/tier_w/runner.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "claude/autonomous-finish-20261104",
+        "tip": "ad4c49282a65d17d2ef23dfcc03e82be065c9021",
+        "blob": "afc20c085dce08788332d5089a125e52591669a3"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/cloud_agent/pilot.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "automation/patchtrace-api-agent-pilot-20261103",
+        "tip": "def36c822a80c77ae94b8e9a77da6f1ee9de1160",
+        "blob": "55debabd3dffd7455b9a50822fb28558f1c90cec"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/dependency_security.py",
+    "candidate_blob": "2b6f43edcc2370040bb94ffe65e3bf79dc4a46d0",
+    "status": "present-in-candidate",
+    "sources": [
+      {
+        "branch": "codex/patchtrace-stabilization-20261119",
+        "tip": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+        "blob": "2b6f43edcc2370040bb94ffe65e3bf79dc4a46d0"
+      },
+      {
+        "branch": "codex/verified-followup-integration-20261118",
+        "tip": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+        "blob": "2b6f43edcc2370040bb94ffe65e3bf79dc4a46d0"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/dev/branch_inventory.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "claude/patchtrace-multi-worker-consolidate-24ct7v",
+        "tip": "ca10acb506fbf61db8142a836acfbd1e50a2aeb3",
+        "blob": "949dbfd3520cc9ea15c2128ce068d968911a929e"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/generate_package_schemas.py",
+    "candidate_blob": "7c5ee0466e7f68b0b0fca9d0708bf7b398a8ab8f",
+    "status": "present-in-candidate",
+    "sources": [
+      {
+        "branch": "codex/patchtrace-stabilization-20261119",
+        "tip": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+        "blob": "7c5ee0466e7f68b0b0fca9d0708bf7b398a8ab8f"
+      },
+      {
+        "branch": "codex/verified-followup-integration-20261118",
+        "tip": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+        "blob": "7c5ee0466e7f68b0b0fca9d0708bf7b398a8ab8f"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/journey_gate.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "claude/autonomous-finish-20261104",
+        "tip": "ad4c49282a65d17d2ef23dfcc03e82be065c9021",
+        "blob": "980ec901261a06120eb1cdbdf3894d92d2e3ea70"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/native_receipt.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "claude/autonomous-finish-20261104",
+        "tip": "ad4c49282a65d17d2ef23dfcc03e82be065c9021",
+        "blob": "8c922fa56493c60d4ad24d437a347b2c8dfa474f"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/parallel_cloud/agent.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "automation/parallel-api-eight-agents-20261103",
+        "tip": "f8050a1fef23b71fd3a02b216c5035bcac3f4889",
+        "blob": "a4a1e7a9fa328f7b66b443f8e982ad15e315fc28"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/parallel_cloud/guard.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "automation/parallel-api-eight-agents-20261103",
+        "tip": "f8050a1fef23b71fd3a02b216c5035bcac3f4889",
+        "blob": "df76c45d1138a2baa7796760bd40ad1e684583d5"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/release_qualification.py",
+    "candidate_blob": "2bb986d123de421ede5ab3e5ca5a7620c732a4da",
+    "status": "present-in-candidate",
+    "sources": [
+      {
+        "branch": "codex/patchtrace-stabilization-20261119",
+        "tip": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+        "blob": "2bb986d123de421ede5ab3e5ca5a7620c732a4da"
+      },
+      {
+        "branch": "codex/release-qualification-reviewed-20261118",
+        "tip": "573829f33c84e9b2d53ba51ebd7f699e39f406fe",
+        "blob": "ef5b9ebfee9020787a427969e5e569ffc8a6555b"
+      },
+      {
+        "branch": "codex/verified-followup-integration-20261118",
+        "tip": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+        "blob": "2bb986d123de421ede5ab3e5ca5a7620c732a4da"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/research/r2_cjson_probe.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "codex/r2-unified-matching-research-20261030",
+        "tip": "b3ceb8b30d7a83da5e22c231c3b8c28179246816",
+        "blob": "b35a18fec9f24a44e6c533dc92b49f7c1ee99212"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/research/r2_ghidra_probe.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "codex/r2-unified-matching-research-20261030",
+        "tip": "b3ceb8b30d7a83da5e22c231c3b8c28179246816",
+        "blob": "03a998362624c2d914a02ab2dffed782285a9255"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/research/r2_ghidra_replay.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "codex/r2-unified-matching-research-20261030",
+        "tip": "b3ceb8b30d7a83da5e22c231c3b8c28179246816",
+        "blob": "d3e678ea529dc1276e217bd2e9de32ff28750470"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/research/r2_graph_benchmark.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "codex/r2-unified-matching-research-20261030",
+        "tip": "b3ceb8b30d7a83da5e22c231c3b8c28179246816",
+        "blob": "43bacffb7bb5269b6d7fb371ac22995983eea920"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/research/r2_paths.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "codex/r2-unified-matching-research-20261030",
+        "tip": "b3ceb8b30d7a83da5e22c231c3b8c28179246816",
+        "blob": "1bc6a91548dfb01e4a75a012df923b1059899b12"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/research/r2_rizin_probe.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "codex/r2-unified-matching-research-20261030",
+        "tip": "b3ceb8b30d7a83da5e22c231c3b8c28179246816",
+        "blob": "525ddd44940aa6a20bff67a70924ccbdece82f89"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/research/r8_icf_probe.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "research/r8-deep-uncertainty-20261030",
+        "tip": "12dd4f2b41b468b0eb566bd502219daa821012df",
+        "blob": "e405cb94b488d16ebd5e75174cb590b93baafb3d"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/research/rzdiff_count_observation.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "codex/autonomous-checkpoint-20261102-0945",
+        "tip": "d038ddea43182b8709afd447140dc74fded487c5",
+        "blob": "e50e3c438304af8d1c281cf28196de4def14a74c"
+      },
+      {
+        "branch": "codex/autonomous-checkpoint-20261102-1020",
+        "tip": "c13d3257c88140c23fb585a8a59a4dce81e81928",
+        "blob": "e50e3c438304af8d1c281cf28196de4def14a74c"
+      },
+      {
+        "branch": "codex/autonomous-reconcile-20261101",
+        "tip": "0130bf81e2fe3154f30af7b68a0e6ab197946040",
+        "blob": "e50e3c438304af8d1c281cf28196de4def14a74c"
+      },
+      {
+        "branch": "codex/consolidated-reviewed-20261102",
+        "tip": "6e82fd70f315b99c6798a42c9061a1424a02933e",
+        "blob": "e50e3c438304af8d1c281cf28196de4def14a74c"
+      },
+      {
+        "branch": "codex/consolidation-evidence-20261102",
+        "tip": "44c320e37b84a38259f13fa8f0f444b542b96f2c",
+        "blob": "e50e3c438304af8d1c281cf28196de4def14a74c"
+      },
+      {
+        "branch": "codex/consolidation-integrity-20261103",
+        "tip": "b58bb53debcb3323e5d8d634e09397cb7e02965f",
+        "blob": "e50e3c438304af8d1c281cf28196de4def14a74c"
+      },
+      {
+        "branch": "codex/msrc-reconcile-integration-20261102",
+        "tip": "56374f867594dd923383c91ea71970cb7d24d173",
+        "blob": "e50e3c438304af8d1c281cf28196de4def14a74c"
+      },
+      {
+        "branch": "codex/rzdiff-164-investigation",
+        "tip": "20ef68eaab59a2941bd2fb0db918eee36107c75f",
+        "blob": "e50e3c438304af8d1c281cf28196de4def14a74c"
+      },
+      {
+        "branch": "repair/rzdiff-native-callback-size-20261103",
+        "tip": "edab7d916970144b33c98384834369773e5b0e62",
+        "blob": "e50e3c438304af8d1c281cf28196de4def14a74c"
+      },
+      {
+        "branch": "repair/rzdiff-native-red-control-20261103",
+        "tip": "b304034e3c310528f7e0a3206eda48c94e0a6873",
+        "blob": "e50e3c438304af8d1c281cf28196de4def14a74c"
+      },
+      {
+        "branch": "repair/rzdiff-producer-ownership",
+        "tip": "4d66af5577e6f6ad8f6e21440f6fe4187e0c8fe5",
+        "blob": "e50e3c438304af8d1c281cf28196de4def14a74c"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/status/build_status.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "claude/sleepy-fermi-y3z4yj",
+        "tip": "160a60e838742b21f70effedb8e7bb48886d9266",
+        "blob": "9e050d342f73ba0bbc79d0fde0cde2b00d3700da"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/unified/bench_workloads.py",
+    "candidate_blob": null,
+    "status": "absent-path-needs-semantic-review",
+    "sources": [
+      {
+        "branch": "codex/autonomous-checkpoint-20261102-0945",
+        "tip": "d038ddea43182b8709afd447140dc74fded487c5",
+        "blob": "b7e7ab57423eee0cf2fd2182e8857474ae044af0"
+      },
+      {
+        "branch": "codex/autonomous-checkpoint-20261102-1020",
+        "tip": "c13d3257c88140c23fb585a8a59a4dce81e81928",
+        "blob": "b7e7ab57423eee0cf2fd2182e8857474ae044af0"
+      },
+      {
+        "branch": "codex/autonomous-reconcile-20261101",
+        "tip": "0130bf81e2fe3154f30af7b68a0e6ab197946040",
+        "blob": "b7e7ab57423eee0cf2fd2182e8857474ae044af0"
+      },
+      {
+        "branch": "codex/consolidated-reviewed-20261102",
+        "tip": "6e82fd70f315b99c6798a42c9061a1424a02933e",
+        "blob": "b7e7ab57423eee0cf2fd2182e8857474ae044af0"
+      },
+      {
+        "branch": "codex/consolidation-evidence-20261102",
+        "tip": "44c320e37b84a38259f13fa8f0f444b542b96f2c",
+        "blob": "b7e7ab57423eee0cf2fd2182e8857474ae044af0"
+      },
+      {
+        "branch": "codex/consolidation-integrity-20261103",
+        "tip": "b58bb53debcb3323e5d8d634e09397cb7e02965f",
+        "blob": "b7e7ab57423eee0cf2fd2182e8857474ae044af0"
+      },
+      {
+        "branch": "codex/msrc-reconcile-integration-20261102",
+        "tip": "56374f867594dd923383c91ea71970cb7d24d173",
+        "blob": "b7e7ab57423eee0cf2fd2182e8857474ae044af0"
+      },
+      {
+        "branch": "codex/rzdiff-164-investigation",
+        "tip": "20ef68eaab59a2941bd2fb0db918eee36107c75f",
+        "blob": "b7e7ab57423eee0cf2fd2182e8857474ae044af0"
+      },
+      {
+        "branch": "repair/rzdiff-native-callback-size-20261103",
+        "tip": "edab7d916970144b33c98384834369773e5b0e62",
+        "blob": "b7e7ab57423eee0cf2fd2182e8857474ae044af0"
+      },
+      {
+        "branch": "repair/rzdiff-native-red-control-20261103",
+        "tip": "b304034e3c310528f7e0a3206eda48c94e0a6873",
+        "blob": "b7e7ab57423eee0cf2fd2182e8857474ae044af0"
+      },
+      {
+        "branch": "repair/rzdiff-producer-ownership",
+        "tip": "4d66af5577e6f6ad8f6e21440f6fe4187e0c8fe5",
+        "blob": "b7e7ab57423eee0cf2fd2182e8857474ae044af0"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  },
+  {
+    "path": "tools/windows_bindiff_network.py",
+    "candidate_blob": "e04615371afa5c1c0b04ff500ad7122d132c414c",
+    "status": "present-in-candidate",
+    "sources": [
+      {
+        "branch": "codex/patchtrace-stabilization-20261119",
+        "tip": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+        "blob": "e04615371afa5c1c0b04ff500ad7122d132c414c"
+      },
+      {
+        "branch": "codex/verified-followup-integration-20261118",
+        "tip": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+        "blob": "e04615371afa5c1c0b04ff500ad7122d132c414c"
+      }
+    ],
+    "qualification": "A missing named path is a triage signal; renamed/replaced behavior may already exist."
+  }
+]

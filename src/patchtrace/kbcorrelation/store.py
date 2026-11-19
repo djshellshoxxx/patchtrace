@@ -215,12 +215,14 @@ class WorkspaceStore:
             self._object_anchor = directory_anchor(self._object_root)
         except (OSError, OwnedPublicationError) as exc:
             raise KbcStoreError('PT-KBC-STORAGE', 'the workspace root cannot be held and verified') from exc
+        self.db = None
         try:
             self.db = sqlite3.connect(path, timeout=5, isolation_level=None)
             self.db.execute('PRAGMA busy_timeout=5000')
             version = self.db.execute('PRAGMA user_version').fetchone()[0]
             if version > SCHEMA_VERSION:
                 self.db.close()
+                self.db = None
                 self.db = sqlite3.connect(f'{path.resolve().as_uri()}?mode=ro', uri=True, timeout=5,
                                           isolation_level=None)   # resolve: a relative root has no file URI (#105)
                 self.read_only = True
@@ -228,14 +230,24 @@ class WorkspaceStore:
                 self._create()
             if not self.read_only:
                 self.db.execute('PRAGMA journal_mode=WAL')
-        except sqlite3.Error as exc:
-            raise KbcStoreError('PT-KBC-STORAGE', 'the workspace database cannot be opened',
-                                details={'sqlite': type(exc).__name__}) from exc
-        try:
-            verify_anchor(self._object_anchor)
-        except (OSError, OwnedPublicationError) as exc:
-            self.db.close()
-            raise KbcStoreError('PT-KBC-STORAGE', 'the workspace root changed while opening its database') from exc
+            try:
+                verify_anchor(self._object_anchor)
+            except (OSError, OwnedPublicationError) as exc:
+                raise KbcStoreError('PT-KBC-STORAGE',
+                                    'the workspace root changed while opening its database') from exc
+        except BaseException as exc:
+            failure = exc
+            if isinstance(exc, sqlite3.Error):
+                failure = KbcStoreError('PT-KBC-STORAGE', 'the workspace database cannot be opened',
+                                        details={'sqlite': type(exc).__name__})
+            if self.db is not None:
+                try:
+                    self.db.close()
+                except BaseException:
+                    failure.add_note('Workspace connection cleanup failed; resources may remain.')
+            if failure is not exc:
+                raise failure from exc
+            raise
 
     def _open_existing(self) -> None:
         try:
@@ -285,8 +297,12 @@ class WorkspaceStore:
                     self.db.execute(statement)
                 self.db.execute(f'PRAGMA user_version={SCHEMA_VERSION}')
             self.db.execute('COMMIT')
-        except BaseException:
-            self.db.execute('ROLLBACK')
+        except BaseException as exc:
+            try:
+                if self.db.in_transaction:
+                    self.db.execute('ROLLBACK')
+            except BaseException:
+                exc.add_note('Workspace initialization rollback failed; resources may remain.')
             raise
 
     def close(self) -> None:
@@ -319,9 +335,12 @@ class WorkspaceStore:
             result = work(self.db)
             self.db.execute('COMMIT')
             return result
-        except BaseException:
-            if self.db.in_transaction:
-                self.db.execute('ROLLBACK')
+        except BaseException as exc:
+            try:
+                if self.db.in_transaction:
+                    self.db.execute('ROLLBACK')
+            except BaseException:
+                exc.add_note('Workspace transaction rollback failed; close the workspace before reuse.')
             raise
 
     # ------------------------------------------------------------------------------------------ objects

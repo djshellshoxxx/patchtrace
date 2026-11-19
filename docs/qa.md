@@ -2663,3 +2663,7 @@ environment. Four regression controls fail before repair; the affected selection
 passes 73 with five explicitly blocked native-toolchain skips afterward. Actual
 Windows rerun remains required. Separate unmodified PR #317 source review and 91
 saved-scope/card-provenance controls pass. [Evidence and limits](qa/corpus-home-resolution-20261119.md).
+
+## Exhaustive consolidation checkpoint — 2026-11-19
+
+Combined #319 with #316/#318 on the isolated integration branch and opened draft #320. Recovered Calls layout and Tier-W CLI/runner; repaired SQLite and publication ownership failures with real red/green controls. Final Tier-W admission/schema selection:145 passed,2 expected failures. Frozen7dfba50f bounded all-file QA is in progress after an earlier exit137 aborted the full process. Native/platform/security/accuracy and semantic-exhaustion gates remain open. See [complete checkpoint](consolidation/HANDOFF.md) and [source-bound test results](consolidation/TEST_RESULTS.md).

@@ -1,0 +1,464 @@
+FFFFFFFFFFFF                                                             [100%]
+=================================== FAILURES ===================================
+_ test_existing_unproven_run_is_blocked_without_relabelling_or_execution[backend] _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-29/test_existing_unproven_run_is_0')
+fault = 'backend'
+
+    @pytest.mark.parametrize('fault', ['backend', 'missing-settings', 'policy', 'download-flag', 'input-hash'])
+    def test_existing_unproven_run_is_blocked_without_relabelling_or_execution(tmp_path, fault):
+        root = tmp_path / 'ptcal'
+        doc = corpus(root, names=('a',))
+        evidence = settings(doc)
+        updates = {'settings': evidence}
+        if fault == 'backend':
+            updates['backend'] = 'analyst-import'
+        elif fault == 'missing-settings':
+            updates['settings'] = {}
+        elif fault == 'policy':
+            evidence['symbol_policy'] = 'online'
+        elif fault == 'download-flag':
+            evidence['allow_symbol_downloads'] = 0  # bool identity, not truthiness
+        else:
+            evidence['older_sha256'] = '0' * 64
+        project = seed(root, doc, updates=updates)
+        with ProjectService.open(project, maintenance=False) as service:
+            before = service.project.model_dump(mode='json')
+        fake = FakeGhidriff()
+        record = run(root, doc, fake)
+>       assert cell(record).blocked == 1 and not fake.calls and not lines(root)
+E       AssertionError: assert (0 == 1)
+E        +  where 0 = RunCell(engine='ghidriff', condition='symbols-hidden', attempted=1, ok=1, failed=0, blocked=0, cancelled=0, matches=1, skipped={}).blocked
+E        +    where RunCell(engine='ghidriff', condition='symbols-hidden', attempted=1, ok=1, failed=0, blocked=0, cancelled=0, matches=1, skipped={}) = cell(RunRecord(contract='tier-w-run/1', tier='W', corpus_id='tier-w-t', status='ok', pairs=1, matches_sha256='7464601775fd0...condition='symbols-hidden', attempted=1, ok=1, failed=0, blocked=0, cancelled=0, matches=1, skipped={}),), problems=()))
+
+tests/test_tier_w_runner_admission.py:60: AssertionError
+_ test_existing_unproven_run_is_blocked_without_relabelling_or_execution[missing-settings] _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-29/test_existing_unproven_run_is_1')
+fault = 'missing-settings'
+
+    @pytest.mark.parametrize('fault', ['backend', 'missing-settings', 'policy', 'download-flag', 'input-hash'])
+    def test_existing_unproven_run_is_blocked_without_relabelling_or_execution(tmp_path, fault):
+        root = tmp_path / 'ptcal'
+        doc = corpus(root, names=('a',))
+        evidence = settings(doc)
+        updates = {'settings': evidence}
+        if fault == 'backend':
+            updates['backend'] = 'analyst-import'
+        elif fault == 'missing-settings':
+            updates['settings'] = {}
+        elif fault == 'policy':
+            evidence['symbol_policy'] = 'online'
+        elif fault == 'download-flag':
+            evidence['allow_symbol_downloads'] = 0  # bool identity, not truthiness
+        else:
+            evidence['older_sha256'] = '0' * 64
+        project = seed(root, doc, updates=updates)
+        with ProjectService.open(project, maintenance=False) as service:
+            before = service.project.model_dump(mode='json')
+        fake = FakeGhidriff()
+        record = run(root, doc, fake)
+>       assert cell(record).blocked == 1 and not fake.calls and not lines(root)
+E       AssertionError: assert (0 == 1)
+E        +  where 0 = RunCell(engine='ghidriff', condition='symbols-hidden', attempted=1, ok=1, failed=0, blocked=0, cancelled=0, matches=1, skipped={}).blocked
+E        +    where RunCell(engine='ghidriff', condition='symbols-hidden', attempted=1, ok=1, failed=0, blocked=0, cancelled=0, matches=1, skipped={}) = cell(RunRecord(contract='tier-w-run/1', tier='W', corpus_id='tier-w-t', status='ok', pairs=1, matches_sha256='7464601775fd0...condition='symbols-hidden', attempted=1, ok=1, failed=0, blocked=0, cancelled=0, matches=1, skipped={}),), problems=()))
+
+tests/test_tier_w_runner_admission.py:60: AssertionError
+_ test_existing_unproven_run_is_blocked_without_relabelling_or_execution[policy] _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-29/test_existing_unproven_run_is_2')
+fault = 'policy'
+
+    @pytest.mark.parametrize('fault', ['backend', 'missing-settings', 'policy', 'download-flag', 'input-hash'])
+    def test_existing_unproven_run_is_blocked_without_relabelling_or_execution(tmp_path, fault):
+        root = tmp_path / 'ptcal'
+        doc = corpus(root, names=('a',))
+        evidence = settings(doc)
+        updates = {'settings': evidence}
+        if fault == 'backend':
+            updates['backend'] = 'analyst-import'
+        elif fault == 'missing-settings':
+            updates['settings'] = {}
+        elif fault == 'policy':
+            evidence['symbol_policy'] = 'online'
+        elif fault == 'download-flag':
+            evidence['allow_symbol_downloads'] = 0  # bool identity, not truthiness
+        else:
+            evidence['older_sha256'] = '0' * 64
+        project = seed(root, doc, updates=updates)
+        with ProjectService.open(project, maintenance=False) as service:
+            before = service.project.model_dump(mode='json')
+        fake = FakeGhidriff()
+        record = run(root, doc, fake)
+>       assert cell(record).blocked == 1 and not fake.calls and not lines(root)
+E       AssertionError: assert (0 == 1)
+E        +  where 0 = RunCell(engine='ghidriff', condition='symbols-hidden', attempted=1, ok=1, failed=0, blocked=0, cancelled=0, matches=1, skipped={}).blocked
+E        +    where RunCell(engine='ghidriff', condition='symbols-hidden', attempted=1, ok=1, failed=0, blocked=0, cancelled=0, matches=1, skipped={}) = cell(RunRecord(contract='tier-w-run/1', tier='W', corpus_id='tier-w-t', status='ok', pairs=1, matches_sha256='7464601775fd0...condition='symbols-hidden', attempted=1, ok=1, failed=0, blocked=0, cancelled=0, matches=1, skipped={}),), problems=()))
+
+tests/test_tier_w_runner_admission.py:60: AssertionError
+_ test_existing_unproven_run_is_blocked_without_relabelling_or_execution[download-flag] _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-29/test_existing_unproven_run_is_3')
+fault = 'download-flag'
+
+    @pytest.mark.parametrize('fault', ['backend', 'missing-settings', 'policy', 'download-flag', 'input-hash'])
+    def test_existing_unproven_run_is_blocked_without_relabelling_or_execution(tmp_path, fault):
+        root = tmp_path / 'ptcal'
+        doc = corpus(root, names=('a',))
+        evidence = settings(doc)
+        updates = {'settings': evidence}
+        if fault == 'backend':
+            updates['backend'] = 'analyst-import'
+        elif fault == 'missing-settings':
+            updates['settings'] = {}
+        elif fault == 'policy':
+            evidence['symbol_policy'] = 'online'
+        elif fault == 'download-flag':
+            evidence['allow_symbol_downloads'] = 0  # bool identity, not truthiness
+        else:
+            evidence['older_sha256'] = '0' * 64
+        project = seed(root, doc, updates=updates)
+        with ProjectService.open(project, maintenance=False) as service:
+            before = service.project.model_dump(mode='json')
+        fake = FakeGhidriff()
+        record = run(root, doc, fake)
+>       assert cell(record).blocked == 1 and not fake.calls and not lines(root)
+E       AssertionError: assert (0 == 1)
+E        +  where 0 = RunCell(engine='ghidriff', condition='symbols-hidden', attempted=1, ok=1, failed=0, blocked=0, cancelled=0, matches=1, skipped={}).blocked
+E        +    where RunCell(engine='ghidriff', condition='symbols-hidden', attempted=1, ok=1, failed=0, blocked=0, cancelled=0, matches=1, skipped={}) = cell(RunRecord(contract='tier-w-run/1', tier='W', corpus_id='tier-w-t', status='ok', pairs=1, matches_sha256='7464601775fd0...condition='symbols-hidden', attempted=1, ok=1, failed=0, blocked=0, cancelled=0, matches=1, skipped={}),), problems=()))
+
+tests/test_tier_w_runner_admission.py:60: AssertionError
+_ test_existing_unproven_run_is_blocked_without_relabelling_or_execution[input-hash] _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-29/test_existing_unproven_run_is_4')
+fault = 'input-hash'
+
+    @pytest.mark.parametrize('fault', ['backend', 'missing-settings', 'policy', 'download-flag', 'input-hash'])
+    def test_existing_unproven_run_is_blocked_without_relabelling_or_execution(tmp_path, fault):
+        root = tmp_path / 'ptcal'
+        doc = corpus(root, names=('a',))
+        evidence = settings(doc)
+        updates = {'settings': evidence}
+        if fault == 'backend':
+            updates['backend'] = 'analyst-import'
+        elif fault == 'missing-settings':
+            updates['settings'] = {}
+        elif fault == 'policy':
+            evidence['symbol_policy'] = 'online'
+        elif fault == 'download-flag':
+            evidence['allow_symbol_downloads'] = 0  # bool identity, not truthiness
+        else:
+            evidence['older_sha256'] = '0' * 64
+        project = seed(root, doc, updates=updates)
+        with ProjectService.open(project, maintenance=False) as service:
+            before = service.project.model_dump(mode='json')
+        fake = FakeGhidriff()
+        record = run(root, doc, fake)
+>       assert cell(record).blocked == 1 and not fake.calls and not lines(root)
+E       AssertionError: assert (0 == 1)
+E        +  where 0 = RunCell(engine='ghidriff', condition='symbols-hidden', attempted=1, ok=1, failed=0, blocked=0, cancelled=0, matches=1, skipped={}).blocked
+E        +    where RunCell(engine='ghidriff', condition='symbols-hidden', attempted=1, ok=1, failed=0, blocked=0, cancelled=0, matches=1, skipped={}) = cell(RunRecord(contract='tier-w-run/1', tier='W', corpus_id='tier-w-t', status='ok', pairs=1, matches_sha256='7464601775fd0...condition='symbols-hidden', attempted=1, ok=1, failed=0, blocked=0, cancelled=0, matches=1, skipped={}),), problems=()))
+
+tests/test_tier_w_runner_admission.py:60: AssertionError
+_____________ test_only_latest_condition_eligible_run_is_credited ______________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-29/test_only_latest_condition_eli0')
+
+    def test_only_latest_condition_eligible_run_is_credited(tmp_path):
+        root = tmp_path / 'ptcal'
+        doc = corpus(root, names=('a',))
+        seed(root, doc, version='old-version')
+        seed(root, doc, rows=(([BASE + 0x1200], [BASE + 0x1220], 'modified'),), version='new-version')
+        fake = FakeGhidriff()
+        record = run(root, doc, fake)
+        assert cell(record).ok == 1 and not fake.calls
+>       assert [(row.older_rva, row.newer_rva, row.engine_version) for row in lines(root)] == [
+            (0x1200, 0x1220, 'new-version')]
+E       AssertionError: assert [(4096, 4112,...640, 'mixed')] == [(4608, 4640, 'new-version')]
+E         
+E         At index 0 diff: (4096, 4112, 'mixed') != (4608, 4640, 'new-version')
+E         Left contains one more item: (4608, 4640, 'mixed')
+E         Use -v to get more diff
+
+tests/test_tier_w_runner_admission.py:73: AssertionError
+_____ test_fresh_invocation_cannot_credit_an_unqualified_completed_result ______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-29/test_fresh_invocation_cannot_c0')
+
+    def test_fresh_invocation_cannot_credit_an_unqualified_completed_result(tmp_path):
+        root = tmp_path / 'ptcal'
+        doc = corpus(root, names=('a',))
+        calls = []
+    
+        def invalid(_config, project, _cancel):
+            calls.append(project)
+            seed(root, doc, updates={'backend': 'other-engine'})
+    
+        record = run(root, doc, invalid)
+>       assert len(calls) == 1 and cell(record).failed == 1 and not lines(root)
+E       AssertionError: assert (1 == 1 and 0 == 1)
+E        +  where 1 = len([PosixPath('/tmp/pytest-of-agent/pytest-29/test_fresh_invocation_cannot_c0/ptcal/tier-w/runs/tier-w-t/tw.a.dll.0000000000/h/project')])
+E        +  and   0 = RunCell(engine='ghidriff', condition='symbols-hidden', attempted=1, ok=1, failed=0, blocked=0, cancelled=0, matches=1, skipped={}).failed
+E        +    where RunCell(engine='ghidriff', condition='symbols-hidden', attempted=1, ok=1, failed=0, blocked=0, cancelled=0, matches=1, skipped={}) = cell(RunRecord(contract='tier-w-run/1', tier='W', corpus_id='tier-w-t', status='ok', pairs=1, matches_sha256='7464601775fd0...condition='symbols-hidden', attempted=1, ok=1, failed=0, blocked=0, cancelled=0, matches=1, skipped={}),), problems=()))
+
+tests/test_tier_w_runner_admission.py:87: AssertionError
+__ test_output_aliases_are_refused_before_factory_or_engine_work[run-record] ___
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-29/test_output_aliases_are_refuse0')
+destination = 'run-record'
+
+    @pytest.mark.parametrize('destination', ['run-record', 'binary', 'project-database', 'binary-hardlink'])
+    def test_output_aliases_are_refused_before_factory_or_engine_work(tmp_path, destination):
+        root = tmp_path / 'ptcal'
+        doc = corpus(root, names=('a',))
+        binary = doc.binaries[0]
+        source = root / 'binaries' / binary.sha256 / binary.file_name
+        before = source.read_bytes()
+        target = Layout(root).matches(CID)
+        if destination == 'run-record':
+            target = target.with_name('run.json')
+        elif destination == 'binary':
+            target = source
+        elif destination == 'project-database':
+            target = Layout(root).run_dir(CID, doc.pairs[0].id, H) / 'project' / 'project.sqlite3'
+        else:
+            target.parent.mkdir(parents=True)
+            os.link(source, target)
+        calls = []
+    
+        def factory(*args):
+            calls.append('factory')
+            pytest.fail('output admission must precede project creation')
+    
+        def invoker(*args):
+            calls.append('invoker')
+            pytest.fail('output admission must precede engine invocation')
+    
+        with pytest.raises(TierWError) as caught:
+>           R.run_corpus(Layout(root), doc, corpus_id=CID, config_factory=lambda condition: {}, factory=factory,
+                         invoker=invoker, matches_path=target)
+
+tests/test_tier_w_runner_admission.py:118: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/calibration/tier_w/runner.py:336: in run_corpus
+    state.pair(pair, older, newer)
+tools/calibration/tier_w/runner.py:249: in pair
+    version, rows = (self.ghidriff(pair, condition, files, images) if engine == GHIDRIFF
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/calibration/tier_w/runner.py:201: in ghidriff
+    project = self.project(pair, condition, files)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/calibration/tier_w/runner.py:197: in project
+    self.factory(files[0], files[1], f'{pair.id} {condition}', project)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (PosixPath('/tmp/pytest-of-agent/pytest-29/test_output_aliases_are_refuse0/ptcal/binaries/34bc7a2297947b3d723e00bd5074...p/pytest-of-agent/pytest-29/test_output_aliases_are_refuse0/ptcal/tier-w/runs/tier-w-t/tw.a.dll.0000000000/h/project'))
+
+    def factory(*args):
+        calls.append('factory')
+>       pytest.fail('output admission must precede project creation')
+E       Failed: output admission must precede project creation
+
+tests/test_tier_w_runner_admission.py:111: Failed
+____ test_output_aliases_are_refused_before_factory_or_engine_work[binary] _____
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-29/test_output_aliases_are_refuse1')
+destination = 'binary'
+
+    @pytest.mark.parametrize('destination', ['run-record', 'binary', 'project-database', 'binary-hardlink'])
+    def test_output_aliases_are_refused_before_factory_or_engine_work(tmp_path, destination):
+        root = tmp_path / 'ptcal'
+        doc = corpus(root, names=('a',))
+        binary = doc.binaries[0]
+        source = root / 'binaries' / binary.sha256 / binary.file_name
+        before = source.read_bytes()
+        target = Layout(root).matches(CID)
+        if destination == 'run-record':
+            target = target.with_name('run.json')
+        elif destination == 'binary':
+            target = source
+        elif destination == 'project-database':
+            target = Layout(root).run_dir(CID, doc.pairs[0].id, H) / 'project' / 'project.sqlite3'
+        else:
+            target.parent.mkdir(parents=True)
+            os.link(source, target)
+        calls = []
+    
+        def factory(*args):
+            calls.append('factory')
+            pytest.fail('output admission must precede project creation')
+    
+        def invoker(*args):
+            calls.append('invoker')
+            pytest.fail('output admission must precede engine invocation')
+    
+        with pytest.raises(TierWError) as caught:
+>           R.run_corpus(Layout(root), doc, corpus_id=CID, config_factory=lambda condition: {}, factory=factory,
+                         invoker=invoker, matches_path=target)
+
+tests/test_tier_w_runner_admission.py:118: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/calibration/tier_w/runner.py:336: in run_corpus
+    state.pair(pair, older, newer)
+tools/calibration/tier_w/runner.py:249: in pair
+    version, rows = (self.ghidriff(pair, condition, files, images) if engine == GHIDRIFF
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/calibration/tier_w/runner.py:201: in ghidriff
+    project = self.project(pair, condition, files)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/calibration/tier_w/runner.py:197: in project
+    self.factory(files[0], files[1], f'{pair.id} {condition}', project)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (PosixPath('/tmp/pytest-of-agent/pytest-29/test_output_aliases_are_refuse1/ptcal/binaries/34bc7a2297947b3d723e00bd5074...p/pytest-of-agent/pytest-29/test_output_aliases_are_refuse1/ptcal/tier-w/runs/tier-w-t/tw.a.dll.0000000000/h/project'))
+
+    def factory(*args):
+        calls.append('factory')
+>       pytest.fail('output admission must precede project creation')
+E       Failed: output admission must precede project creation
+
+tests/test_tier_w_runner_admission.py:111: Failed
+_ test_output_aliases_are_refused_before_factory_or_engine_work[project-database] _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-29/test_output_aliases_are_refuse2')
+destination = 'project-database'
+
+    @pytest.mark.parametrize('destination', ['run-record', 'binary', 'project-database', 'binary-hardlink'])
+    def test_output_aliases_are_refused_before_factory_or_engine_work(tmp_path, destination):
+        root = tmp_path / 'ptcal'
+        doc = corpus(root, names=('a',))
+        binary = doc.binaries[0]
+        source = root / 'binaries' / binary.sha256 / binary.file_name
+        before = source.read_bytes()
+        target = Layout(root).matches(CID)
+        if destination == 'run-record':
+            target = target.with_name('run.json')
+        elif destination == 'binary':
+            target = source
+        elif destination == 'project-database':
+            target = Layout(root).run_dir(CID, doc.pairs[0].id, H) / 'project' / 'project.sqlite3'
+        else:
+            target.parent.mkdir(parents=True)
+            os.link(source, target)
+        calls = []
+    
+        def factory(*args):
+            calls.append('factory')
+            pytest.fail('output admission must precede project creation')
+    
+        def invoker(*args):
+            calls.append('invoker')
+            pytest.fail('output admission must precede engine invocation')
+    
+        with pytest.raises(TierWError) as caught:
+>           R.run_corpus(Layout(root), doc, corpus_id=CID, config_factory=lambda condition: {}, factory=factory,
+                         invoker=invoker, matches_path=target)
+
+tests/test_tier_w_runner_admission.py:118: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/calibration/tier_w/runner.py:336: in run_corpus
+    state.pair(pair, older, newer)
+tools/calibration/tier_w/runner.py:249: in pair
+    version, rows = (self.ghidriff(pair, condition, files, images) if engine == GHIDRIFF
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/calibration/tier_w/runner.py:201: in ghidriff
+    project = self.project(pair, condition, files)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/calibration/tier_w/runner.py:197: in project
+    self.factory(files[0], files[1], f'{pair.id} {condition}', project)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (PosixPath('/tmp/pytest-of-agent/pytest-29/test_output_aliases_are_refuse2/ptcal/binaries/34bc7a2297947b3d723e00bd5074...p/pytest-of-agent/pytest-29/test_output_aliases_are_refuse2/ptcal/tier-w/runs/tier-w-t/tw.a.dll.0000000000/h/project'))
+
+    def factory(*args):
+        calls.append('factory')
+>       pytest.fail('output admission must precede project creation')
+E       Failed: output admission must precede project creation
+
+tests/test_tier_w_runner_admission.py:111: Failed
+_ test_output_aliases_are_refused_before_factory_or_engine_work[binary-hardlink] _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-29/test_output_aliases_are_refuse3')
+destination = 'binary-hardlink'
+
+    @pytest.mark.parametrize('destination', ['run-record', 'binary', 'project-database', 'binary-hardlink'])
+    def test_output_aliases_are_refused_before_factory_or_engine_work(tmp_path, destination):
+        root = tmp_path / 'ptcal'
+        doc = corpus(root, names=('a',))
+        binary = doc.binaries[0]
+        source = root / 'binaries' / binary.sha256 / binary.file_name
+        before = source.read_bytes()
+        target = Layout(root).matches(CID)
+        if destination == 'run-record':
+            target = target.with_name('run.json')
+        elif destination == 'binary':
+            target = source
+        elif destination == 'project-database':
+            target = Layout(root).run_dir(CID, doc.pairs[0].id, H) / 'project' / 'project.sqlite3'
+        else:
+            target.parent.mkdir(parents=True)
+            os.link(source, target)
+        calls = []
+    
+        def factory(*args):
+            calls.append('factory')
+            pytest.fail('output admission must precede project creation')
+    
+        def invoker(*args):
+            calls.append('invoker')
+            pytest.fail('output admission must precede engine invocation')
+    
+        with pytest.raises(TierWError) as caught:
+>           R.run_corpus(Layout(root), doc, corpus_id=CID, config_factory=lambda condition: {}, factory=factory,
+                         invoker=invoker, matches_path=target)
+
+tests/test_tier_w_runner_admission.py:118: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/calibration/tier_w/runner.py:336: in run_corpus
+    state.pair(pair, older, newer)
+tools/calibration/tier_w/runner.py:249: in pair
+    version, rows = (self.ghidriff(pair, condition, files, images) if engine == GHIDRIFF
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/calibration/tier_w/runner.py:201: in ghidriff
+    project = self.project(pair, condition, files)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/calibration/tier_w/runner.py:197: in project
+    self.factory(files[0], files[1], f'{pair.id} {condition}', project)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (PosixPath('/tmp/pytest-of-agent/pytest-29/test_output_aliases_are_refuse3/ptcal/binaries/34bc7a2297947b3d723e00bd5074...p/pytest-of-agent/pytest-29/test_output_aliases_are_refuse3/ptcal/tier-w/runs/tier-w-t/tw.a.dll.0000000000/h/project'))
+
+    def factory(*args):
+        calls.append('factory')
+>       pytest.fail('output admission must precede project creation')
+E       Failed: output admission must precede project creation
+
+tests/test_tier_w_runner_admission.py:111: Failed
+___ test_duplicate_binary_ids_and_empty_engine_selection_fail_before_writes ____
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-29/test_duplicate_binary_ids_and_0')
+
+    def test_duplicate_binary_ids_and_empty_engine_selection_fail_before_writes(tmp_path):
+        root = tmp_path / 'ptcal'
+        doc = corpus(root, names=('a',))
+        duplicate = doc.model_copy(update={'binaries': (*doc.binaries, doc.binaries[0])})
+        for value, kwargs in ((duplicate, {}), (doc, {'conditions': ()})):
+>           with pytest.raises(TierWError) as caught:
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE TierWError
+
+tests/test_tier_w_runner_admission.py:129: Failed
+=========================== short test summary info ============================
+FAILED tests/test_tier_w_runner_admission.py::test_existing_unproven_run_is_blocked_without_relabelling_or_execution[backend]
+FAILED tests/test_tier_w_runner_admission.py::test_existing_unproven_run_is_blocked_without_relabelling_or_execution[missing-settings]
+FAILED tests/test_tier_w_runner_admission.py::test_existing_unproven_run_is_blocked_without_relabelling_or_execution[policy]
+FAILED tests/test_tier_w_runner_admission.py::test_existing_unproven_run_is_blocked_without_relabelling_or_execution[download-flag]
+FAILED tests/test_tier_w_runner_admission.py::test_existing_unproven_run_is_blocked_without_relabelling_or_execution[input-hash]
+FAILED tests/test_tier_w_runner_admission.py::test_only_latest_condition_eligible_run_is_credited
+FAILED tests/test_tier_w_runner_admission.py::test_fresh_invocation_cannot_credit_an_unqualified_completed_result
+FAILED tests/test_tier_w_runner_admission.py::test_output_aliases_are_refused_before_factory_or_engine_work[run-record]
+FAILED tests/test_tier_w_runner_admission.py::test_output_aliases_are_refused_before_factory_or_engine_work[binary]
+FAILED tests/test_tier_w_runner_admission.py::test_output_aliases_are_refused_before_factory_or_engine_work[project-database]
+FAILED tests/test_tier_w_runner_admission.py::test_output_aliases_are_refused_before_factory_or_engine_work[binary-hardlink]
+FAILED tests/test_tier_w_runner_admission.py::test_duplicate_binary_ids_and_empty_engine_selection_fail_before_writes
+12 failed in 2.06s

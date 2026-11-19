@@ -268,6 +268,7 @@ Every substantial future module must be added here before implementation. UI mus
 | Module | Files | Responsibility | Depends on | Verification |
 |---|---|---|---|---|
 | tier-w foundations | tools/calibration/tier_w/{paths,contracts}.py | local layout under PATCHTRACE_CALIB_ROOT (refused in-tree), `tier: W` markers, strict bounded contracts | tools.calibration | tests/test_tier_w_corpus.py |
+| tier-w offline CLI and runner | tools/calibration/tier_w/{cli,__main__,runner}.py; docs/schemas/calibration/RunRecord.json | Offline catalogue/pairs/fetch preview, symbols, labels, evaluation, status and guard; bounded document admission with corpus/binary ownership. Library runner records per-engine/condition outcomes; CLI execution remains blocked until its provenance and publication gates pass. | tier_w contracts, fetch, labels, evaluate; patchtrace backends | tests/test_tier_w_{cli,cli_admission,read_bounds,runner}.py |
 | tier-w catalogue + pairs | tier_w/{catalogue,pairs}.py | Winbindex per-line KB catalogue, optional HEAD `resolve`, adjacent + cross-version pairs, `calibration-corpus/1` manifest + `tier-w-pairs/1` | acquisition.winbindex, lineage | afd.sys fixture + synthetic documents |
 | tier-w PDB/PE readers | tier_w/{msf,pe_tables}.py | stdlib MSF 7.00 reader (identity, publics, procs, OMAP); `.pdata`, base relocations, export RVAs, relocation-masked body hash | pe_overview, artifact_bytes | real self-made DLL+PDB fixtures, synthetic MSF/PE, hypothesis fuzz |
 | tier-w guard | tier_w/guard.py (+4-line hook in corpus.guard) | O1: blocks Microsoft images, PDBs (except SHA-listed self-made fixtures), Tier-W manifests/derived files/labels in git | corpus, msf | tests/test_tier_w_guard.py (repository-wide on every run) |
@@ -1540,6 +1541,13 @@ Wiring: `exchange.ALL_SOURCES`, `--sources diaphora`, `pipeline.capture_plan` (o
 ### [LBL-30:credited-output-replay]
 
 `tools/calibration/tier_r/output_store.py` owns exclusive normalized output retention, report-bound completion/credit receipts, bounded strict replay and explicit legacy compatibility. `evaluate.py` credits a successful answer only after normalization/retention; training verifies managed report credits before accepting replay. Tests: `tests/test_tier_r_{output_persistence,credited_replay,credit_completion,output_stat_compat}.py`. Native adapter compatibility and real calibration remain separate gates.
+
+### [LBL-31:training-artifact-transfer]
+
+| Part | Files | Contract and ownership | Dependencies | Verification |
+|---|---|---|---|---|
+| training artifact transfer | tools/calibration/tier_r/training_artifacts.py | Explicit builder/evaluator-owned Tier R transfer; managed credit preflight and finalization; exact bounded JSON and manifest-last shard/merge bundles. No automatic Tier W adoption. | tier_r.contracts, tier_r.output_store, calibration.common | tests/test_tier_r_training_artifacts.py |
+| training transfer schema | docs/schemas/corpus/TrainingManifest.json | Strict manifest for the verified builder/evaluator transfer; generated from the owning contract. | tier_r.training_artifacts | schema drift and transfer ownership controls |
 
 ### [KB-PRODUCT-START-20261106:local-product-catalogue]
 

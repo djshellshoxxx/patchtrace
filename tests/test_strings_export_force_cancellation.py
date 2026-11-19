@@ -2,16 +2,18 @@
 from __future__ import annotations
 
 import os
-from pathlib import Path
+import sys
 
 import pytest
 
 from patchtrace.strings import export
+from patchtrace.strings.contracts import StringsError
 
 
-@pytest.mark.parametrize('error_type', [KeyboardInterrupt, SystemExit, RuntimeError])
+@pytest.mark.parametrize('error_type', [KeyboardInterrupt, SystemExit, RuntimeError, OSError])
 @pytest.mark.parametrize('substitute', [False, True], ids=['owned-stage', 'foreign-replacement'])
-def test_non_io_force_failure_preserves_stage_and_destination(tmp_path, monkeypatch, error_type, substitute):
+@pytest.mark.skipif(not sys.platform.startswith('linux'), reason='Linux final pathname rename seam')
+def test_force_failure_preserves_stage_and_destination(tmp_path, monkeypatch, error_type, substitute):
     target = tmp_path / 'report.json'
     target.write_bytes(b'prior complete export')
     owned = tmp_path / 'moved-owned-stage'
@@ -19,22 +21,27 @@ def test_non_io_force_failure_preserves_stage_and_destination(tmp_path, monkeypa
     failure = error_type('authored force interruption')
     real_replace = os.replace
 
-    def interrupt(stage, destination):
-        stage = Path(stage)
-        assert Path(destination) == target
+    def interrupt(stage, destination, **kwargs):
+        stage = tmp_path / stage
+        assert tmp_path / destination == target
+        assert kwargs['src_dir_fd'] == kwargs['dst_dir_fd']
         stages.append(stage)
         if substitute:
             real_replace(stage, owned)
             stage.write_bytes(b'foreign replacement bytes')
         raise failure
 
-    # The source stream has closed before publication, so this authored seam
-    # tests cancellation ownership without depending on open-file rename rules.
+    # Linux still renames a linked name, so preserve every foreign replacement
+    # even when cancellation interrupts that final publication boundary.
     monkeypatch.setattr(export.os, 'replace', interrupt)
-    with pytest.raises(error_type) as caught:
+    expected_type = StringsError if error_type is OSError else error_type
+    with pytest.raises(expected_type) as caught:
         export.write_atomic(target, b'expected export bytes', force=True)
 
-    assert caught.value is failure
+    if error_type is OSError:
+        assert caught.value.code == 'PT-STR-EXPORT'
+    else:
+        assert caught.value is failure
     assert target.read_bytes() == b'prior complete export'
     assert len(stages) == 1
     if substitute:

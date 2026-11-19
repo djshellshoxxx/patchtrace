@@ -1,0 +1,287 @@
+[
+  {
+    "historical_path": "src/patchtrace/persistence.py",
+    "historical_marker": "def _publish_no_replace",
+    "interpretation": "The local definition moved to shared directory publication. Persistence imports it under the previous private name and invokes it for completed backups.",
+    "evidence": [
+      {
+        "path": "src/patchtrace/persistence.py",
+        "needle": "from .directory_publication import publish_directory_no_replace as _publish_no_replace",
+        "candidate_blob": "e41aa539d2a48d1d5c378d5fa7909949b27e1a1d",
+        "needle_present": true
+      },
+      {
+        "path": "src/patchtrace/persistence.py",
+        "needle": "_publish_no_replace(stage, destination)",
+        "candidate_blob": "e41aa539d2a48d1d5c378d5fa7909949b27e1a1d",
+        "needle_present": true
+      },
+      {
+        "path": "src/patchtrace/directory_publication.py",
+        "needle": "def publish_directory_no_replace",
+        "candidate_blob": "b9b4b12aa99325994cf7e2d051cc0e2a5cc7d89d",
+        "needle_present": true
+      },
+      {
+        "path": "src/patchtrace/directory_publication.py",
+        "needle": "RENAME_NOREPLACE",
+        "candidate_blob": "b9b4b12aa99325994cf7e2d051cc0e2a5cc7d89d",
+        "needle_present": true
+      }
+    ],
+    "candidate": "77204ef5c9623545d81b0eb73d5cd14f80b2d0e7",
+    "review_kind": "source interpretation; no new runtime test result"
+  },
+  {
+    "historical_path": "src/patchtrace/offline_bundle.py",
+    "historical_marker": "def _publish_no_replace(",
+    "interpretation": "Runtime installation now imports the shared no-replace directory helper. The historical scope also discussed producer archive output; that separate path still publishes with os.link(stage, destination), preserving exclusive final-name creation. These are distinct publication paths.",
+    "evidence": [
+      {
+        "path": "src/patchtrace/offline_bundle.py",
+        "needle": "from .directory_publication import publish_directory_no_replace as _publish_no_replace",
+        "candidate_blob": "567247732dc75ab42398922d9946ada5f886fb08",
+        "needle_present": true
+      },
+      {
+        "path": "src/patchtrace/offline_bundle.py",
+        "needle": "_publish_no_replace(stage, destination)",
+        "candidate_blob": "567247732dc75ab42398922d9946ada5f886fb08",
+        "needle_present": true
+      },
+      {
+        "path": "src/patchtrace/offline_bundle.py",
+        "needle": "os.link(stage, destination)",
+        "candidate_blob": "567247732dc75ab42398922d9946ada5f886fb08",
+        "needle_present": true
+      }
+    ],
+    "candidate": "77204ef5c9623545d81b0eb73d5cd14f80b2d0e7",
+    "review_kind": "source interpretation; no new runtime test result"
+  },
+  {
+    "historical_path": "src/patchtrace/__main__.py",
+    "historical_marker": "window.close()",
+    "interpretation": "The packaged self-test now delegates to run_selftest. Its _close_owned helper shuts down tasks and closes the owned window and service from finally blocks, with explicit retained-workspace handling on cleanup failure.",
+    "evidence": [
+      {
+        "path": "src/patchtrace/__main__.py",
+        "needle": "receipt = run_selftest(app, workspace)",
+        "candidate_blob": "fb69fda6c9b184d4b27605f24409e958a661d5e2",
+        "needle_present": true
+      },
+      {
+        "path": "src/patchtrace/gui/qt/kb_selftest.py",
+        "needle": "def _close_owned(",
+        "candidate_blob": "7ec08d6fc97ece9fc8843f9766a8252dd2a4b37f",
+        "needle_present": true
+      },
+      {
+        "path": "src/patchtrace/gui/qt/kb_selftest.py",
+        "needle": "((dialog, 'reject'), (tasks, 'shutdown'), (window, 'close'), (service, 'close'))",
+        "candidate_blob": "7ec08d6fc97ece9fc8843f9766a8252dd2a4b37f",
+        "needle_present": true
+      },
+      {
+        "path": "src/patchtrace/gui/qt/kb_selftest.py",
+        "needle": "_close_owned(window, dialog, service, owned, failure)",
+        "candidate_blob": "7ec08d6fc97ece9fc8843f9766a8252dd2a4b37f",
+        "needle_present": true
+      }
+    ],
+    "candidate": "77204ef5c9623545d81b0eb73d5cd14f80b2d0e7",
+    "review_kind": "source interpretation; no new runtime test result"
+  },
+  {
+    "historical_path": "src/patchtrace/ui_codetext.py",
+    "historical_marker": "self.setCurrentBlockState(-1)",
+    "interpretation": "The explicit block-state call was removed. highlightBlock still returns before dispatching spans outside the active window; current dedicated regression controls assert userState remains -1 after bulk installation and out-of-window rehighlighting. This record verifies those controls exist, not that they passed on this candidate.",
+    "evidence": [
+      {
+        "path": "src/patchtrace/ui_codetext.py",
+        "needle": "if not first <= row <= last:",
+        "candidate_blob": "d6f3371645c9482c349c904c380d9fbd9ec82d56",
+        "needle_present": true
+      },
+      {
+        "path": "tests/test_codetext_window_dispatch.py",
+        "needle": "def test_bulk_install_dispatches_only_active_window_on_both_sides",
+        "candidate_blob": "7bbb480dace2a473a1a679e766badebf2808f74a",
+        "needle_present": true
+      },
+      {
+        "path": "tests/test_codetext_window_dispatch.py",
+        "needle": "userState() for row in range(2000)} == {-1}",
+        "candidate_blob": "7bbb480dace2a473a1a679e766badebf2808f74a",
+        "needle_present": true
+      },
+      {
+        "path": "tests/test_codetext_window_dispatch.py",
+        "needle": "def test_now_outside_rehighlight_clears_formats_without_span_dispatch",
+        "candidate_blob": "7bbb480dace2a473a1a679e766badebf2808f74a",
+        "needle_present": true
+      }
+    ],
+    "candidate": "77204ef5c9623545d81b0eb73d5cd14f80b2d0e7",
+    "review_kind": "source interpretation; no new runtime test result"
+  },
+  {
+    "historical_path": "tests/test_codex_pkg_workflows.py",
+    "historical_marker": "@pytest.mark.xfail(strict=True, reason='CODEX-1')",
+    "interpretation": "The expected-failure decorator was removed; the immutable action revision assertion remains an ordinary required test. This is a stronger test gate, not lost coverage. Its result on the final integration head remains a separate CI claim.",
+    "evidence": [
+      {
+        "path": "tests/test_codex_pkg_workflows.py",
+        "needle": "def test_remote_actions_are_immutable():",
+        "candidate_blob": "b95f05d384665ad1db9628b08454bf3b038513cf",
+        "needle_present": true
+      },
+      {
+        "path": "tests/test_codex_pkg_workflows.py",
+        "needle": "assert not mutable",
+        "candidate_blob": "b95f05d384665ad1db9628b08454bf3b038513cf",
+        "needle_present": true
+      }
+    ],
+    "candidate": "77204ef5c9623545d81b0eb73d5cd14f80b2d0e7",
+    "review_kind": "source interpretation; no new runtime test result"
+  },
+  {
+    "historical_path": "tests/test_codex_pkg_workflows.py",
+    "historical_marker": "@pytest.mark.xfail(strict=True, reason='CODEX-6')",
+    "interpretation": "The expected-failure decorator was removed; the cache verification assertion remains an ordinary required test. Its result on the final integration head remains a separate CI claim.",
+    "evidence": [
+      {
+        "path": "tests/test_codex_pkg_workflows.py",
+        "needle": "def test_corpus_cache_does_not_skip_verification():",
+        "candidate_blob": "b95f05d384665ad1db9628b08454bf3b038513cf",
+        "needle_present": true
+      },
+      {
+        "path": "tests/test_codex_pkg_workflows.py",
+        "needle": "assert 'steps.ghidra-cache.outputs.cache-hit' not in scripts",
+        "candidate_blob": "b95f05d384665ad1db9628b08454bf3b038513cf",
+        "needle_present": true
+      }
+    ],
+    "candidate": "77204ef5c9623545d81b0eb73d5cd14f80b2d0e7",
+    "review_kind": "source interpretation; no new runtime test result"
+  },
+  {
+    "historical_path": "tests/test_codex_pkg_packaging.py",
+    "historical_marker": "@pytest.mark.xfail(strict=True, reason='CODEX-14')",
+    "interpretation": "The expected-failure decorator was removed; the packaged Linux CLI smoke assertion remains an ordinary required test. Its result on the final integration head remains a separate CI claim.",
+    "evidence": [
+      {
+        "path": "tests/test_codex_pkg_packaging.py",
+        "needle": "def test_linux_package_runs_full_cli_smoke():",
+        "candidate_blob": "57560ad2b327b9fbd2fcacff55150759136a3083",
+        "needle_present": true
+      },
+      {
+        "path": "tests/test_codex_pkg_packaging.py",
+        "needle": "assert 'frozen_smoke' in linux or 'frozen_smoke' in source('tools/build_linux.py')",
+        "candidate_blob": "57560ad2b327b9fbd2fcacff55150759136a3083",
+        "needle_present": true
+      }
+    ],
+    "candidate": "77204ef5c9623545d81b0eb73d5cd14f80b2d0e7",
+    "review_kind": "source interpretation; no new runtime test result"
+  },
+  {
+    "historical_path": "src/patchtrace/kbcorrelation/service.py",
+    "historical_marker": "if coverage is None or coverage.scope.kind == 'cached_corpus':",
+    "interpretation": "Independent source review found the historical substring already absent at source tip 0130bf81. The current _saved_search/_checked_index/_stored_scope flow uses shared saved_scope.resolve, binds recorded coverage IDs and bodies, validates saved selector/digest/readability and drift, and passes a finite selector into full-index lookups. Reintroducing the old branch would weaken saved-scope isolation.",
+    "independent_reviewer": "adapter_core_review",
+    "evidence": [
+      {
+        "path": "src/patchtrace/kbcorrelation/service.py",
+        "needle": "from .saved_scope import resolve as saved_scope",
+        "candidate_blob": "44f187d5cd50a39ced5084de8f4b668d0792521f",
+        "needle_present": true
+      },
+      {
+        "path": "src/patchtrace/kbcorrelation/service.py",
+        "needle": "coverage = tuple(ws.get_coverage(key) for key in rev.coverage_ids)",
+        "candidate_blob": "44f187d5cd50a39ced5084de8f4b668d0792521f",
+        "needle_present": true
+      },
+      {
+        "path": "src/patchtrace/kbcorrelation/service.py",
+        "needle": "scope = saved_scope(rev.lead, coverage, keys=rev.coverage_ids, index=index)",
+        "candidate_blob": "44f187d5cd50a39ced5084de8f4b668d0792521f",
+        "needle_present": true
+      },
+      {
+        "path": "src/patchtrace/kbcorrelation/service.py",
+        "needle": "self._saved_search(ws, revision, index, unreadable=unreadable)",
+        "candidate_blob": "44f187d5cd50a39ced5084de8f4b668d0792521f",
+        "needle_present": true
+      }
+    ],
+    "candidate": "77204ef5c9623545d81b0eb73d5cd14f80b2d0e7",
+    "review_kind": "source interpretation; no new runtime test result"
+  },
+  {
+    "historical_path": "src/patchtrace/kbcorrelation/index.py",
+    "historical_marker": "picked = docs",
+    "interpretation": "The cached-corpus branch now selects explicit saved document IDs. Saved-population accounting determines coverage while active revision identities and conflicts remain global for claim admission. Independent source review found this intentionally stronger than selecting the entire current cache.",
+    "independent_reviewer": "adapter_core_review",
+    "evidence": [
+      {
+        "path": "src/patchtrace/kbcorrelation/index.py",
+        "needle": "named = set(scope.doc_ids)",
+        "candidate_blob": "727317e0040598596cb98f64210de58a9dcda5d4",
+        "needle_present": true
+      },
+      {
+        "path": "src/patchtrace/kbcorrelation/index.py",
+        "needle": "picked = [d for d in docs if d.doc_id in named]",
+        "candidate_blob": "727317e0040598596cb98f64210de58a9dcda5d4",
+        "needle_present": true
+      },
+      {
+        "path": "src/patchtrace/kbcorrelation/index.py",
+        "needle": "conflicted_keys, ambiguous = self._revision_conflicts(active)",
+        "candidate_blob": "727317e0040598596cb98f64210de58a9dcda5d4",
+        "needle_present": true
+      }
+    ],
+    "candidate": "77204ef5c9623545d81b0eb73d5cd14f80b2d0e7",
+    "review_kind": "source interpretation; no new runtime test result"
+  },
+  {
+    "historical_path": "src/patchtrace/kbcorrelation/context.py",
+    "historical_marker": "edge_set_digest=index.edge_set_digest()",
+    "interpretation": "The context builder computes index.edge_set_digest(scope) once and uses the same digest for both the context key and returned bundle. Independent source review confirmed selected active edges retain global conflict admission; the scope parameter prevents unrelated cached sources from silently changing selected context identity.",
+    "independent_reviewer": "adapter_core_review",
+    "evidence": [
+      {
+        "path": "src/patchtrace/kbcorrelation/context.py",
+        "needle": "edge_digest = index.edge_set_digest(scope)",
+        "candidate_blob": "cee3b741af97bc50c000f1ae6314e77b72042525",
+        "needle_present": true
+      },
+      {
+        "path": "src/patchtrace/kbcorrelation/context.py",
+        "needle": "edge_set_digest=edge_digest",
+        "candidate_blob": "cee3b741af97bc50c000f1ae6314e77b72042525",
+        "needle_present": true
+      },
+      {
+        "path": "src/patchtrace/kbcorrelation/index.py",
+        "needle": "picked = self._docs.values() if scope is None else self._select(scope)[2]",
+        "candidate_blob": "727317e0040598596cb98f64210de58a9dcda5d4",
+        "needle_present": true
+      },
+      {
+        "path": "src/patchtrace/kbcorrelation/index.py",
+        "needle": "self._as_revision_disputed(e).edge_id",
+        "candidate_blob": "727317e0040598596cb98f64210de58a9dcda5d4",
+        "needle_present": true
+      }
+    ],
+    "candidate": "77204ef5c9623545d81b0eb73d5cd14f80b2d0e7",
+    "review_kind": "source interpretation; no new runtime test result"
+  }
+]

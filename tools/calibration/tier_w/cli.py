@@ -118,6 +118,10 @@ def _ratio_min(value: str) -> float:
 def _date(value: str) -> str:
     if not _DATE.fullmatch(value):
         raise argparse.ArgumentTypeError('expected YYYY-MM-DD')
+    try:
+        dt.date.fromisoformat(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError('expected a valid calendar date in YYYY-MM-DD') from None
     return value
 
 
@@ -138,13 +142,19 @@ def _sidecar(layout: Layout, corpus_id: str) -> PairsDoc:
     path = layout.pairs(corpus_id)
     if not path.is_file():
         raise TierWError('PT-TIERW-INPUT', 'no pairs document for this corpus id; run pairs first')
-    return load_pairs(read_bytes(path, DOC_LIMIT))
+    document = load_pairs(read_bytes(path, DOC_LIMIT))
+    if document.corpus_id != corpus_id:
+        raise TierWError('PT-TIERW-INPUT', 'the pairs document belongs to another corpus id')
+    return document
 
 
 def _manifest(layout: Layout, corpus_id: str) -> tuple[CorpusManifest, dict]:
     data = read_bytes(layout.manifest(corpus_id), DOC_LIMIT)
     try:
-        return load_manifest(data), json.loads(data)
+        document = load_manifest(data)
+        if document.corpus_id != corpus_id:
+            raise TierWError('PT-TIERW-INPUT', 'the manifest belongs to another corpus id')
+        return document, json.loads(data)
     except ContractError as exc:
         raise TierWError('PT-TIERW-INPUT', f'corpus manifest invalid: {str(exc)[:300]}') from None
 
@@ -294,7 +304,13 @@ def _symbols(args, layout: Layout, corpus_id: str) -> tuple[int, dict]:
 
 def _symbol_map(layout: Layout, binary: PairBinary, producer: str) -> SymbolMap | None:
     path = layout.symbols(binary.sha256, producer)
-    return load_symbol_map(read_bytes(path, SYMBOL_MAP_LIMIT)) if path.is_file() else None
+    if not path.is_file():
+        return None
+    document = load_symbol_map(read_bytes(path, SYMBOL_MAP_LIMIT))
+    if (document.image.sha256 != binary.sha256 or document.image.file_name != binary.file_name
+            or document.producer.tool != producer or document.tier not in {'W', 'test'}):
+        raise TierWError('PT-TIERW-INPUT', 'the symbol map does not belong to the selected binary and producer')
+    return document
 
 
 def _exports(root: Path, binary: PairBinary) -> frozenset[int] | None:
@@ -314,6 +330,14 @@ def _labels(args, layout: Layout, corpus_id: str) -> tuple[int, dict]:
     by_pair: dict[str, list[MatchLine]] = defaultdict(list)
     for match in _matches(layout, corpus_id):
         by_pair[match.pair].append(match)
+    # Admit every selected map before replacing any pair's previous labels.
+    # Discard each parsed map here so the preflight does not retain a corpus of
+    # large symbol maps; each pair rechecks its own inputs when deriving truth.
+    used = {binary_id for pair in sidecar.pairs for binary_id in (pair.older, pair.newer)}
+    for binary in sidecar.binaries:
+        if binary.id in used:
+            _check_cancel(layout)
+            _symbol_map(layout, binary, args.producer)
     folder = layout.labels_dir(corpus_id)
     counts: Counter = Counter()
     excluded: Counter = Counter()
@@ -396,11 +420,13 @@ def _evaluate(args, layout: Layout, corpus_id: str) -> tuple[int, dict]:
         return PARTIAL, {'matches': len(scored), 'reason': 'no symbol-derived labels for this corpus; run labels first'}
     lineage_of = {p.id: p.lineage for p in _manifest(layout, corpus_id)[0].pairs}
     evaluation = EV.evaluate(labels, scored, lineage_of)
-    write_json(layout.report(corpus_id), evaluation)
     doc = AG.aggregate(evaluation, classes=AG.class_counts(sidecar, candidates), audit=_audit_report(layout, corpus_id))
+    aggregate_json = AG.to_json(doc)
+    aggregate_markdown = AG.render_markdown(doc).encode('utf-8')
+    write_json(layout.report(corpus_id), evaluation)
     export = layout.base / 'export'
-    atomic_write(export / 'aggregate.json', AG.to_json(doc))
-    atomic_write(export / 'aggregate.md', AG.render_markdown(doc).encode('utf-8'))
+    atomic_write(export / 'aggregate.json', aggregate_json)
+    atomic_write(export / 'aggregate.md', aggregate_markdown)
     cells = Counter('scored' if c['status'] == 'scored' else 'circular'
                     for conditions in evaluation['cells'].values() for c in conditions.values())
     return OK, {'matches': len(scored), 'foreign_matches': len(matches) - len(scored), 'truth': len(labels),

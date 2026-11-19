@@ -71,7 +71,13 @@ def store_matches(project_dir: Path, rows, version: str = 'ghidriff-test') -> No
     service = ProjectService.open(project_dir, maintenance=False)
     try:
         project = service.project.model_copy(deep=True)
-        run = AnalysisRun(status='completed', backend='ghidriff', backend_version=version)
+        condition = project_dir.parent.name
+        by_side = {artifact.side: artifact for artifact in project.artifacts}
+        run = AnalysisRun(status='completed', backend='ghidriff', backend_version=version,
+                          settings={'older_sha256': by_side['older'].sha256,
+                                    'newer_sha256': by_side['newer'].sha256,
+                                    'allow_symbol_downloads': condition == 'v',
+                                    'symbol_policy': 'online' if condition == 'v' else 'disabled'})
         ids = {a.side: a.id for a in project.artifacts}
 
         def fn(side, va, n):

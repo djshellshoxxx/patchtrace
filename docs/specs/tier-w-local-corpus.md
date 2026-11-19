@@ -160,6 +160,33 @@ Secondary engines (`--engine rz-diff`) run once per pair in the `h` project thro
 
 The engine invoker is a Protocol, so tests run without Ghidra.
 
+### Runner admission and resume evidence (2026-11-19)
+
+Library entry revalidates the strict pairs document and requires unique binary
+ids, valid binary references and at least one selected engine/condition. Before
+creating projects or invoking an engine, the matches file and its sibling
+`run.json` must be distinct ordinary output paths under the corpus root. They
+must not alias each other, any input binary (including hard links), the binary
+tree or a selected project directory. This is observed local-path admission,
+not an atomic filesystem sandbox against later hostile path changes.
+
+A completed project is reusable only when its run records identify the
+`ghidriff` backend, exact older/newer input hashes and requested symbol policy:
+`disabled` plus boolean `allow_symbol_downloads=False` for hidden, `online`
+plus boolean `True` for visible. An optional `symbol_mode` must agree. A
+directory called `h` or `v`, or a bare completed status, is not provenance.
+Existing completed runs with missing or conflicting evidence are BLOCKED and
+retained without invoking an engine over them. A fresh invoker that returns
+unqualified completed data fails without credited rows. Among eligible runs,
+only the latest in persisted run order supplies matches and its exact engine
+version; historical engine generations are never pooled. Demonstration projects
+are not research evidence. A genuine equal-input `identical` marker produces
+zero engine rows and does not launch an engine.
+
+Synthetic test invokers record the same input and policy fields as the real
+backend. These controls verify admission mechanics only; they do not establish
+native Ghidriff compatibility, correct symbol loading or Tier-W accuracy.
+
 ## 10. Evaluation interface (shared with Tier R)
 ```python
 class TruthLabelLike(Protocol):  pair: str; older_rva: int | None; newer_rva: int | None; answer: str; source: str; tags: tuple[str, ...]
@@ -182,6 +209,26 @@ Reported: precision, recall over the truth pairs, F1, counts, and item-level Wil
 - 5: cancelled.
 
 The only network commands are `catalogue` (without `--from-file`), `resolve` and `fetch`, and each requires `--consent-hosts`.
+
+### CLI input admission (2026-11-19 consolidation)
+
+The recovered CLI validates calendar dates, the requested corpus identity of
+both the pairs sidecar and manifest, and each symbol map's exact binary digest,
+file name, producer and Tier-W/test marker before deriving labels. It preflights
+all selected symbol maps before the first label write. Evaluation validates its
+optional audit report and constructs aggregate bytes before publishing results.
+A foreign or malformed input discovered in that admission pass is an input
+error, never an empty successful result; previous output files remain unchanged.
+This does not make a multi-file output set transactional against concurrent
+input changes or publication failures.
+
+Tier-W document reads admit a regular file through its opened descriptor. The
+caller-supplied nonnegative integer byte limit is enforced before reading and
+again against the returned bytes and final descriptor size. Reads consume at
+most the initially admitted size plus one byte, capped at the limit plus one.
+Descriptor identity, size and modification observations must remain stable.
+Nonregular files are refused without waiting for FIFO input. These checks bound
+individual input reads; they do not certify a global corpus memory budget.
 
 ## 12. Repository guard (hook in `tools.calibration.corpus.guard`, logic in `tier_w/guard.py`)
 `guard` fails (and so does `tests/test_calibration_tools.py::test_repository_contains_no_executable_images_outside_fixtures`, plus the Tier-W repository test) when a tracked or untracked-not-ignored file is any of the following:
