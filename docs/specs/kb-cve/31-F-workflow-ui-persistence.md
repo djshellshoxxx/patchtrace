@@ -63,6 +63,25 @@ Plan example shape:
 ~~~
 Replace placeholder hash with real calculated value in code fixtures. The sample illustrates schema only.
 
+### Held local advisory-file input admission (2026-11-20, generation 24)
+
+The existing `kb index import` CVRF/CSAF file path and the investigation
+service's offline advisory import share `cli_index.read_input_file`.
+Admit the actual opened descriptor as a regular file before reading any
+data: a directory, FIFO, device, or other nonregular local input is not an
+advisory document and must fail with `PT-KBC-INPUT`, without publishing
+any document. Request a nonblocking read-only open on hosts exposing
+`O_NONBLOCK` so a FIFO without a writer cannot hang the importer before
+its limit check; on hosts without that capability do not claim guaranteed
+nonblocking opens. Ordinary symlinks that resolve to regular files remain
+allowed for compatibility. Keep a single held descriptor for verification
+and the `cvrf_doc_bytes + 1` bounded read; close the descriptor on every
+normal and exceptional path. Preserve `PT-KBC-LIMIT`, the strict JSON and
+CSAF parsing rules, multi-file all-or-nothing imports, and source-byte
+retention. Neither this held-open admission nor the Winbindex import
+repair authenticates a file against concurrent regular-file substitution,
+and neither closes the distinct Linux forced-export publication race.
+
 ## F5. CLI grammar, JSON and exit mapping
 
 Add 'kb' parser beneath current argparse subcommand tree with actions search, import, components, pairs, plan, acquire, attach, explain, export. Avoid nested duplicate --json declarations and argument shadowing. Search never implicitly fetches. Preserve current correlate as CVE-context-only. Use current CLI numeric exit-code meanings by inspecting tests before new command mapping; do not reinterpret code 3/4.
