@@ -32,7 +32,8 @@
     "Generation28 inherited hosted evidence: PR337 Linux QA passed 23,800/51 skips/six xfails but Ruff failed F401 (unused fixture import) plus an older I001 already fixed by generation27; PR338 Linux full QA had one failure in a newly authored selected-newer ambiguity integration fixture after 23,807 passes. The test injected the first SHA-matching body rather than the exact resolver-selected version/KB. Generation28 corrects only test fixture targeting and explicit fixture re-exports, not production source or consent. New source tests/whole-tree Ruff/CI and independent signoff remain pending.",
     "Generation29 PR339 exact-head Linux/Windows full pytest passed (23808/23694), but both combined jobs failed Ruff I001 in two fixture import blocks. A new isolated test-only successor split imports exactly per Ruff's diagnostic. PR339 five Qt gates passed; package/smoke skipped. New branch source-specific acceptance and independent review pending. No production or accuracy gain.",
     "Generation30: acquisition project preflight admitted a symlink to an empty directory and a dangling symlink. Isolated draft branch adds final-component symlink refusal, contract and four authored regression cases. Only stdlib filesystem controls ran; repository pytest/Ruff, independent review and hosted acceptance remain pending. This does not close parent path substitution or Linux forced export.",
-    "Generation31: second acquisition destination check before project import added on isolated branch to narrow the interval while staged downloads occur; two synthetic transport integration tests authored, not executed in a complete checkout. PR341 QA was still in progress, so no duplicate successor PR suite was triggered. Parent/commit ownership and remaining substitution interval in generation-31 handoff."
+    "Generation31: second acquisition destination check before project import added on isolated branch to narrow the interval while staged downloads occur; two synthetic transport integration tests authored, not executed in a complete checkout. PR341 QA was still in progress, so no duplicate successor PR suite was triggered. Parent/commit ownership and remaining substitution interval in generation-31 handoff.",
+    "Generation32 isolated acquisition destination Windows-junction guard: existing Path.is_symlink did not test the separate Python3.12 is_junction API. Contract-first, portable predicate/native-Windows/post-stage tests authored, one-condition production patch. Six copied-guard stdlib controls passed; full repo and native tests, Ruff and independent reviewer pending. No change to actively owned #342."
   ],
   "tasks": [
     {
@@ -410,6 +411,16 @@
       "source_commit": "9db4932a887aea1e42ff11be787a8f1743693494",
       "evidence": "docs/engineering-handoffs/generation-31-20261120.md",
       "result_or_next_action": "Wait for #341 exact-source QA terminal, independently review; open stacked draft and run new-source QA/Ruff/native/package only when prior full suite no longer ongoing. This is not an atomic TOCTOU solution."
+    },
+    {
+      "id": "acquisition-final-junction-g32",
+      "status": "implemented-draft-branch-source-qualification-and-independent-review-pending",
+      "owner": "generation32 isolated Windows junction acquisition worker; fresh independent reviewer not yet assigned",
+      "branch": "codex/patchtrace-acquire-windows-junction-20261120-g32",
+      "source_commit": "a6a17cfcd317f06a0bc48abfc2a53ab113870650",
+      "evidence": "docs/engineering-handoffs/generation-32-20261120.md",
+      "review_status": "author source inspection only, independent signoff pending",
+      "result_or_next_action": "Qualify exact g32 branch on native Windows, focused acquisition integration, full pytest/Ruff/Qt/native/package; do not launch duplicate while #342 full CI active. Separate same-user post-inspection substitution and Linux forced-export race remain open."
     }
   ],
   "aggregate_source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
