@@ -265,3 +265,17 @@ The new isolated generation-28 **test-only** candidate obtains the resolver's ex
 ## Generation 29 — PR339 hosted test acceptance, Ruff import repair (2026-11-20 UTC)
 
 PR339 exact `a5c6ff87` full Linux QA completed **23,808 passed/51 skipped/six xfailed** and Windows QA completed **23,694 passed/166 skipped/five xfailed**. Both then failed strict Ruff with the same two `I001` import-format errors in newly authored older/newer acquisition ambiguity test fixtures, so PR339 is **not** a green combined candidate. Five PR339 Qt gates succeeded; downstream Linux package/smoke skipped. New isolated generation-29 test-only correction splits the fixture self-alias imports per Ruff's exact patch suggestions, preserving names, test bodies and every security/acceptance rule. Test-code commit `981d41e3`, tree `aa8a96bd55e8`; final documentation head and its own CI must be resolved independently. New-source full QA/Ruff, native/Qt/package, independent review and all historical release blockers remain outstanding. Release-ready and main-merge eligible remain **false**. See [generation 29](../engineering-handoffs/generation-29-20261120.md) and the [hosted receipts](hosted-fixture-qa-20261120.md).
+
+
+## Generation 34 — Strings CSV prefix candidate (2026-11-20)
+
+A new branch stacked on PR342's later `5f34fb57` source contains a narrow
+CSV formula-like cell prefix guard with ten authored regression parameters.
+Local stdlib source-equivalent CSV controls passed, but repository-source
+pytest/Ruff, new-head hosted native/package/Qt and independent reviewer
+acceptance are **pending**. It preserves already-reviewed generation33
+UI/destination/native-cache work on the parent. The earlier generation33
+CSV experiment was based on obsolete parent source and is retained for
+provenance; it is not a competing integration candidate. Linux force-export
+visibility, raw Winbindex membership, Windows trust/accessibility and all
+accuracy/release blockers are still open. Do not merge or release.
