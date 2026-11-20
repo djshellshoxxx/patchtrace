@@ -2220,3 +2220,16 @@ Original BASE missing/nonobject metadata was accepted as an undated row. Contrac
 ## Generation 23: manual Winbindex import source admission (2026-11-20)
 
 Distinct new isolated source: `codex/patchtrace-offline-import-regular-source-20261120-g23`, parent PR333 exact head `543b0a6f1dd2e2ce2b53a7790b7e32ed77dcbd8f`. A standalone POSIX subprocess executing the original `open(FIFO, 'rb')` sequence remained blocked for 0.3 seconds until deliberately terminated; the nonblocking-open/fstat primitive returned a nonregular descriptor without waiting. This demonstrates an importer liveness flaw and a scoped primitive, **not** checked-out PatchTrace execution. SPEC-31-D, three authored source regression tests, and a narrow source patch retain original acceptance thresholds. Local full pytest and Ruff **not run**: github.com DNS unavailable and Ruff absent. Exact-source hosted Linux/Windows QA, Qt, Ghidriff native, packages and independent review **pending**. Original `bffcfa99` interrupted suite and inherited PR330/331 four-hosted-failure evidence remain unchanged; no tests marked passing without receipts. No releases, main merges or target execution.
+
+
+### Generation 33 — CSV formula-prefix guard candidate (2026-11-20)
+
+Frozen parent PR #342 source `5cc3f2a`; contract `36c9dfd`, tests `df23001`,
+source `6552b7e`, isolated branch `codex/patchtrace-csv-formula-prefix-20261120-g33`.
+A local stdlib replay of `_cell` and CSV round trips passed ten tests, but
+this does **not** import PatchTrace or execute its repository pytest tests.
+Local git access and Ruff installation failed on DNS; preserve this as an
+environment block. Parent-hosted Linux QA and native Ghidriff success do not
+qualify this candidate. Exact-head affected tests, full pytest, whole-tree Ruff,
+Windows/Qt/package and independent review are not accepted; see
+`docs/engineering-handoffs/generation-33-20261120.md`.
