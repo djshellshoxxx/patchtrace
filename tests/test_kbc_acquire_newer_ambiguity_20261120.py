@@ -3,10 +3,11 @@ from __future__ import annotations
 
 import pytest
 from kbc_k1_support import no_sockets  # noqa: F401
-from test_kbc_acquire_cli import SHA_N, ready
+from test_kbc_acquire_cli import NET, SHA_N, ready as ready
 
 from patchtrace.kbcorrelation import wiring
-from patchtrace.kbcorrelation.acquire import row_for
+from patchtrace.kbcorrelation.acquire import row_for, target_row_membership
+from patchtrace.kbcorrelation.service import KbService
 from patchtrace.kbcorrelation.store import KbcStoreError
 
 pytestmark = pytest.mark.usefixtures('no_sockets')
@@ -60,11 +61,16 @@ def test_unselected_kb_row_does_not_create_false_ambiguity():
 
 def test_acquire_preview_refuses_conflicting_newer_source_without_transport_or_project(ready, monkeypatch):
     kb, server, investigation, flags, destination = ready
+    # Select the same exact newer KB/version body as the resolver, not the
+    # first record with this SHA (which could be a BASE or propagated copy).
+    service = KbService(kb.workspace, kb.env)
+    _revision, resolutions, _skipped, _missing = service._resolve_pairs(investigation, flags[1], [NET])
+    target = target_row_membership(service._pick_pair(resolutions, None))
     original = wiring.WorkspaceFileIndex.rows_for
 
     def conflicting_newer(index, file_name, key):
         rows = original(index, file_name, key)
-        newer = next(row for row in rows if row['sha256'] == SHA_N)
+        newer = row_for(rows, SHA_N, NET, target=target)
         conflict = {**newer, 'heading': 'different same-window newer source body'}
         return [conflict, *rows]
 

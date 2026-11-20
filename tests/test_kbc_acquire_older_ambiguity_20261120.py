@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import pytest
 from kbc_k1_support import no_sockets  # noqa: F401
-from test_kbc_acquire_cli import SHA_O, ready
+from test_kbc_acquire_cli import SHA_O, ready as ready
 
 from patchtrace.kbcorrelation import wiring
 from patchtrace.kbcorrelation.acquire import row_for

@@ -235,3 +235,9 @@ formatting correction without changing the test assertion. Full current-source
 pytest/Ruff, hosted QA/Qt/native/package and independent review remain
 outstanding. This evidence does not qualify the later candidate. No main merge,
 release or deployment is eligible.
+
+## Generation 28 — real predecessor CI qualification blockers (2026-11-20 UTC)
+
+PR337 exact head `30a9c9da` [Linux QA](https://github.com/djshellshoxxx/PatchTrace/actions/runs/44735573991/job/136285974702) finished **23,800 passed, 51 skipped, six xfailed** before Ruff **F401** in `tests/test_kbc_acquire_older_ambiguity_20261120.py:6` (`ready` is a pytest fixture imported for registration rather than referenced as a Python variable). Its I001 in the prior row-membership test was addressed in PR338. PR338 exact head `9897ae5b` [Linux QA](https://github.com/djshellshoxxx/PatchTrace/actions/runs/44743849199/job/136313974974) finished **23,807 passed, 51 skipped, six xfailed, one failed**. The failing test is `test_acquire_preview_refuses_conflicting_newer_source_without_transport_or_project`: the fixture inserted a different row matching only SHA, not necessarily the selected version/KB; the returned error was `PT-KBC-CONSENT`, not `PT-KBC-INPUT`. Neither result is a passing full gate.
+
+The new isolated generation-28 **test-only** candidate obtains the resolver's exact newer target from the unmodified fixture, then injects a disagreement in that target tier. It also uses explicit self-alias imports for two pytest fixtures so the lint contract recognizes their intentional registration. No production, consent, security gate, package or schema behavior is changed. New-source tests, full offscreen suite, Ruff and independent review remain required; Qt/native/package/trust and broader release blockers are unchanged.
