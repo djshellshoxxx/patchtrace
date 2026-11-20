@@ -111,6 +111,29 @@ bytes, parser warnings, consent and provenance are unchanged. This is
 bounded gap accounting, **not** full raw entry/index persistence or replay
 of resolver input membership.
 
+### Generation 20: Winbindex entry container loss accounting (2026-11-20)
+
+For a top-level SHA entry whose `fileInfo` is already accepted by
+`parse_rows`, an absent `windowsVersions` field or a present
+`windowsVersions` value that is not a JSON object is **one
+unreadable source container**. Count that unit in `skipped_bodies`,
+even when another SHA entry in the same index produces valid rows.
+Do not silently make the surviving rows appear to cover the entire index.
+
+An explicitly present **empty object** `windowsVersions: {}` is an
+observed empty set, not a rejected body; its loss count stays zero.
+Do not infer a missing KB, version, fixed build, or a precise number of
+unobserved builds from this container gap. Do not count one loss per
+nonexistent version key. Malformed top-level entries remain counted once
+under `skipped`, not a second time under `skipped_bodies`.
+Keep `parse` (the separate acquisition candidate parser) unchanged.
+
+The existing workspace index gap forwarding, import receipt's distinct
+`skipped_bodies`, and conditional plain-text disclosure apply to this
+new container-loss unit. No change is authorized to raw index retention,
+resolver membership, binary confidence, native accuracy, consent,
+source authenticity, limits, or release gates.
+
 ## D3. Verification precedence and authenticity states
 
 Mandatory: stream to private non-executable staging, bounded size, SHA-256, final PE parse, supported architecture, filename identity, selected product/build association, chronology check, stable final bytes (no TOCTOU between verification and project copy). Promote only after re-opening/hash verification via existing ingestion path. Use private scratch names chosen by program; reject symlink traversal and path escape.
