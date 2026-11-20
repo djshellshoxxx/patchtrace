@@ -28,7 +28,8 @@
     "Generation23 local primitive reproduced a FIFO block using an isolated child (killed cleanly); O_NONBLOCK and descriptor fstat primitive then refused nonregular input. These are stdlib controls, not actual repository pytest. On hosts lacking O_NONBLOCK, no pre-open FIFO guarantee is claimed.",
     "Generation25 adds a narrowly anchored newer source KB/version selection; the normalized acquisition evidence is still not complete raw index or original older predecessor membership. Exact-source hosted and independent acceptance remain pending.",
     "Generation26 older Winbindex row ambiguity: distinct normalized source entries with same SHA/basename must fail before plan/network. Preserved reproduction and six isolated mirror checks; actual source tests/Ruff and independent signoff pending. No completeness or empirical accuracy claim.",
-    "Generation27: selected newer target priority tier must not have conflicting normalized source claims. Four pre-fix isolated selector-controls failed; six post-fix isolated controls passed. These are not repository-source tests. PR336 hosted Linux pytest passed 23,792 with 51 skips/six xfails but Ruff I001 failed; successor removes only redundant blank import separator. Independent review, exact-source CI, raw index retention and all release blockers remain."
+    "Generation27: selected newer target priority tier must not have conflicting normalized source claims. Four pre-fix isolated selector-controls failed; six post-fix isolated controls passed. These are not repository-source tests. PR336 hosted Linux pytest passed 23,792 with 51 skips/six xfails but Ruff I001 failed; successor removes only redundant blank import separator. Independent review, exact-source CI, raw index retention and all release blockers remain.",
+    "Generation28 inherited hosted evidence: PR337 Linux QA passed 23,800/51 skips/six xfails but Ruff failed F401 (unused fixture import) plus an older I001 already fixed by generation27; PR338 Linux full QA had one failure in a newly authored selected-newer ambiguity integration fixture after 23,807 passes. The test injected the first SHA-matching body rather than the exact resolver-selected version/KB. Generation28 corrects only test fixture targeting and explicit fixture re-exports, not production source or consent. New source tests/whole-tree Ruff/CI and independent signoff remain pending."
   ],
   "tasks": [
     {
@@ -370,6 +371,14 @@
       "evidence": "docs/engineering-handoffs/generation-27-20261120.md",
       "review_status": "coordinator-only adversarial inspection; independent signoff pending",
       "result_or_next_action": "SPEC-31-F first, 8 authored regression cases, selected newer native/copy priority-tier conflicts now PT-KBC-INPUT before plan/network; equal duplicates and single native precedence retained. Four red and six green isolated selector controls only. Inherited PR336 Linux Ruff I001 from one extra blank separator addressed in successor f4b6c71e. Run source-pinned hosted QA/Ruff/Qt/native/packages and independent adversarial review before merging. No full raw index or original older membership."
+    },
+    {
+      "id": "generation28-hosted-qa-fixture",
+      "status": "published-for-qualification",
+      "owner": "generation28-test-fixture-only",
+      "source_commit": null,
+      "evidence": "docs/engineering-handoffs/generation-28-20261120.md",
+      "result_or_next_action": "Source-pinned QA required to validate the selected newer-body integration test now injects into the actual resolver window and that both imports are recognized as pytest fixture exports; retain predecessor CI failures and the exact-source independent review gate."
     }
   ],
   "aggregate_source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",

@@ -1,3 +1,5 @@
+Start with [generation 28](generation-28-20261120.md) for a bounded correction of genuine PR337 Ruff F401 and PR338 hosted Linux pytest failure. The newer-source integration fixture had injected a conflicting SHA-only body outside the resolver-selected version/KB, so consent-preview correctly reported PT-KBC-CONSENT instead of the test's expected PT-KBC-INPUT. The corrected fixture chooses the exact resolver-selected body before injection; the production guard, consent rules and strict gates are unchanged. Current branch source-pinned CI and independent review remain pending.
+
 Start with [generation 27](generation-27-20261120.md) for the selected
 newer Winbindex source ambiguity guard and the confirmed PR336 hosted Linux
 Ruff I001 repair. Both are stacked on PR337 in a new isolated branch. The

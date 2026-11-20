@@ -1,0 +1,5 @@
+# Generation 28 hosted qualification receipts and limits
+
+- PR337 source `30a9c9da`, Linux QA job `136285974702`: 23,800 passed/51 skipped/six xfailed, later Ruff F401 in older ambiguity fixture and I001 in earlier membership fixture. Original terminal log preserved at https://github.com/djshellshoxxx/PatchTrace/actions/runs/44735573991/job/136285974702 .
+- PR338 source `9897ae5b`, Linux QA job `136313974974`: 23,807 passed/51 skipped/six xfailed, one failed `test_acquire_preview_refuses_conflicting_newer_source_without_transport_or_project`. Original discrepancy `PT-KBC-CONSENT` vs expected `PT-KBC-INPUT`; full terminal log https://github.com/djshellshoxxx/PatchTrace/actions/runs/44743849199/job/136313974974 .
+- Gen28 code changes: only two pytest files plus evidence. Exact source QA/Ruff/native/Qt/package and independent reviewer pending. GitHub DNS unavailable in container; Ruff missing. Do not count predecessor passes as new-source acceptance or claim that independently verified analysis accuracy changed.
