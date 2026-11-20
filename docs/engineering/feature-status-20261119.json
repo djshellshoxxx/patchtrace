@@ -1,6 +1,6 @@
 {
   "schema": "patchtrace-feature-status/1",
-  "updated_at": "2026-11-20T17:12:17.439744+00:00",
+  "updated_at": "2026-11-20T18:17:25+00:00",
   "checkpoint_local_commit": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
   "release_ready": false,
   "features": [
@@ -93,14 +93,14 @@
       "feature": "Reports and exports",
       "status": "partial",
       "implemented": "Structured reporting; held-source publication safeguards; CSV v2 metadata survives empty exports; cohort and repeated-project confidence reporting corrected.",
-      "remaining": "Final Linux forced replacement source-name race and native publication acceptance remain open. No new empirical accuracy evidence is claimed.",
+      "remaining": "Final Linux forced replacement source-name race and native publication acceptance remain open. No new empirical accuracy evidence is claimed. Corrected g35 control-character fixtures need source-pinned pytest and separate reviewer before parent integration.",
       "evidence": [
         "docs/engineering/security-force-recovery-20261119.md",
         "docs/engineering/strings-csv-peer-review.md",
         "docs/engineering/accuracy-peer-review-20261119.md",
         "docs/engineering-handoffs/generation-34-20261120.md"
       ],
-      "latest_verified_scope": "Linked-worktree receipt identity and current-artifact/cache-origin Strings binding are independently reviewed and included in the 606-case final selection. Forced-export race remains unresolved. Separate generation34 Strings CSV prefix protection has ten authored tests and ten source-equivalent local checks, not repository-source acceptance; all newer-head/independent and publication gates remain open."
+      "latest_verified_scope": "Linked-worktree receipt identity and current-artifact/cache-origin Strings binding are independently reviewed and included in the 606-case final selection. Forced-export race remains unresolved. Separate generation34 Strings CSV prefix protection has ten authored tests and ten source-equivalent local checks, not repository-source acceptance; all newer-head/independent and publication gates remain open. Independent generation35 review found five misencoded g34 CSV test literals; isolated g35 test-only fix has 13/13 source-equivalent stdlib controls, with actual repository tests, Ruff, full/native and independent post-fix acceptance pending."
     },
     {
       "feature": "Performance",
@@ -124,5 +124,5 @@
       "historical_qualification_notes": "Incomplete full-suite qualification; native Qt disposition; remaining Linux forced-source race; Windows/trust/clean-machine/native and layer-specific accuracy gates remain. PR339 Linux/Windows pytest and Qt successes were not combined acceptance because Ruff I001 failed; generation29 corrected source remains unqualified pending own hosted gates and review."
     }
   ],
-  "current_handoff": "docs/engineering-handoffs/generation-33-20261120.md"
+  "current_handoff": "docs/engineering-handoffs/generation-35-20261120.md"
 }
