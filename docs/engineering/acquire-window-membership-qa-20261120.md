@@ -1,0 +1,9 @@
+# Generation 25 acquisition-window QA boundary — 2026-11-20
+
+**Source:** `dfb0a240f19cae7d4fa11c69e1b96778a387a7b7`, tree `df5c1903bf79c5b61451b465dce63cb2a5610e4b` (runtime + authored tests, before docs). Parent PR335: `e08cc251814f53336db1eaf6bdbbe758f014502e`.
+
+Original minimal two-row control: both BASE and `KB5030500` have SHA `a` repeated 64 times and basename `afd.sys`. Older first-match selector returned `kb=None` even though the resolver-selected newer target was `index:10-22H2:KB5030500`. The target-anchored selection returned the KB row. This is authored synthetic evidence of a correctness invariant, not a real Winbindex corpus or empirical patch correlation.
+
+A minimal manually reconstructed Python algorithm module (not a full checked-out project) passed Python compile and 15 isolated runtime controls. Eight actual repository regression test functions were committed (the malformed-window test has five cases). They have **not yet executed against installed repository source**. The current container cannot resolve GitHub DNS; attempting `pip install ruff` also failed DNS, and Ruff is absent. Required whole-project offscreen pytest, `python -m ruff check src tests tools`, affected schema/dependency validation, full exact-head Linux and Windows QA, Qt, Windows native Ghidriff, package and smoke receipts are pending; no repeated full suite was started locally.
+
+At last prepublication CI inspection PR333 had successful Linux/Windows QA, all Qt and five native checks with Linux smoke queued; PR334 had successful Linux/Windows QA, Linux Qt and native with Windows Qt still running; PR335 had three successful native jobs, multiple active QA/Qt/native jobs and queued legs. These are **separate** source identities. No prior-source CI counts as generation25 acceptance, and there is no final source-specific CI receipt at this entry.

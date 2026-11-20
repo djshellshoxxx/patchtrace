@@ -1,3 +1,11 @@
+Start with [generation 25](generation-25-20261120.md) for resolver-window
+membership selection of the **newer** Winbindex acquisition evidence row on an
+isolated successor of PR335. The original SHA-only selection could bind a BASE
+body to a KB-target pair. Spec and regression tests precede the narrow repair;
+15 isolated algorithm replays pass, but source-pinned repository pytest/Ruff,
+CI and independent review remain pending. Full raw index/older predecessor
+membership, Linux forced-source publication and native release blockers remain.
+
 # PatchTrace engineering handoffs
 
 Start with [generation 24](generation-24-20261120.md) for distinct
