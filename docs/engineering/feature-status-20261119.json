@@ -88,9 +88,10 @@
       "evidence": [
         "docs/engineering/security-force-recovery-20261119.md",
         "docs/engineering/strings-csv-peer-review.md",
-        "docs/engineering/accuracy-peer-review-20261119.md"
+        "docs/engineering/accuracy-peer-review-20261119.md",
+        "docs/engineering-handoffs/generation-33-20261120.md"
       ],
-      "latest_verified_scope": "Receipt Git identity supports linked worktrees without subprocesses. Strings stored sources bind current artifact/side and retain cache-origin provenance; 102 affected tests and independent review pass. Linux forced-export race remains open."
+      "latest_verified_scope": "Receipt Git identity supports linked worktrees without subprocesses. Strings stored sources bind current artifact/side and retain cache-origin provenance; 102 affected tests and independent review pass. Linux forced-export race remains open. Generation33 CSV formula-prefix candidate authored and locally mirrored with 10/10 source-equivalent controls; repository-source pytest/Ruff, hosted new-head qualification and independent review pending. No merge or release claim."
     },
     {
       "feature": "Performance",
