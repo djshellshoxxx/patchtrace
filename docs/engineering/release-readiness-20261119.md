@@ -302,3 +302,20 @@ accuracy/release blockers are still open. Do not merge or release.
 PR342 exact final source `5f34fb57` full QA/Ruff on Linux and Windows, four Linux Qt shards and five native Windows Ghidriff scenarios passed their named jobs. However QA/Qt [workflow 44781838172](https://github.com/djshellshoxxx/PatchTrace/actions/runs/44781838172) **failed**: Windows Qt [job 136446431330](https://github.com/djshellshoxxx/PatchTrace/actions/runs/44781838172/job/136446431330) reported **two project-creation dialog timeouts and 10,423 passes** after 3,123.06 seconds in a fivefold repeat. Both waited 10,000 ms for `dialog._pending is None` after clicking Create. The original evidence does not show whether worker completion or GUI delivery was stalled. Do not infer OOM, deadlock, product defect, or success.
 
 An isolated generation38 **test-only diagnostic** preserves the same strict timeout and original exception and adds bounded worker-busy/operation/lifecycle context on timeout. Four source regression tests were authored, seven stand-alone synthetic controls passed, but actual repository pytest, whole-tree Ruff, native Windows Qt and independent post-change review are pending. This does not qualify g34–g37 CSV work or PR342. Full raw index/resolver membership, Linux forced export, Windows trust/manual accessibility and separate L1/L2/L3 remain open. No merge or release eligibility.
+
+
+## Generation 40 — advisory source-plan captured lead shape (2026-11-20)
+
+The isolated successor to generation39 hardens `investigation_service._source_plan`
+against non-plain-string captured leads before calling `strip`. A prior `None`
+or number raised an uncaught attribute error; bytes/custom stripping results
+were not admitted as typed user input. SPEC-31-F was updated before an
+existing hermetic source-plan suite received five malformed-lead inputs and a
+valid padded-text control. The exact runtime guard emits `PT-KBC-INPUT`
+without echoing arbitrary input. Six source-equivalent standalone controls
+passed, **not** checked-out tests. Separate independent review, whole-tree
+Ruff, full offscreen pytest and exact-head native/Qt/package gates have not
+qualified this branch; PR343 QA was active, so no overlapping full suite was
+started. Raw Winbindex, Linux forced-export, original SIGKILL/Qt/cache/ASM
+failures, Windows trust/manual and layered L1/L2/L3 remain open. Main/release
+eligibility stays false.
