@@ -11,6 +11,7 @@ service can persist them through its journal without advancing the comparison pr
 """
 from __future__ import annotations
 
+import re
 import threading
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
@@ -95,12 +96,38 @@ class AcquireResult:
     downloads: tuple[dict, ...]  # per side: sha256, size, format, source_url, redirect_host, retrieved_at
 
 
-def row_for(rows: Sequence[Mapping[str, Any]], sha256: str, file_name: str) -> Mapping[str, Any]:
-    """The first index row of this build; rows of one SHA share the file facts."""
-    found = next((r for r in rows if r.get('sha256') == sha256 and r.get('file_name') == file_name), None)
-    if found is None:
-        raise KbcStoreError('PT-KBC-INPUT', 'the file index has no row for one of the pair builds')
-    return found
+def target_row_membership(pair: PairProposal) -> tuple[str, str | None]:
+    """Selected newer body encoded by the resolver (BASE is the null-KB body)."""
+    match = re.fullmatch(r'index:([A-Za-z0-9][A-Za-z0-9._-]{0,39}):(BASE|KB[0-9]{4,10})',
+                         pair.window_id)
+    if match is None:
+        raise KbcStoreError('PT-KBC-INPUT', 'the selected index pair has no usable target body')
+    return match[1], None if match[2] == 'BASE' else match[2]
+
+
+def row_for(rows: Sequence[Mapping[str, Any]], sha256: str, file_name: str, *,
+            target: tuple[str, str | None] | None = None) -> Mapping[str, Any]:
+    """Select one delivery entry; the newer pair target must match its resolver KB/version body.
+
+    Native version bodies take precedence over copies through other_versions, as in index_rows.
+    The older predecessor's original body is not recoverable from PairProposal alone.
+    """
+    matching = [r for r in rows if r.get('sha256') == sha256 and r.get('file_name') == file_name]
+    if target is not None:
+        version_key, kb = target
+        own, copied = [], []
+        for entry in matching:
+            if entry.get('kb') != kb:
+                continue
+            if entry.get('version_key') == version_key:
+                own.append(entry)
+            elif isinstance(entry.get('other_versions'), (list, tuple)) and (
+                    version_key in entry['other_versions']):
+                copied.append(entry)
+        matching = own or copied
+    if not matching:
+        raise KbcStoreError('PT-KBC-INPUT', 'the file index lacks the selected pair source body')
+    return matching[0]
 
 
 def _acquisition_error(exc: Exception) -> KbcStoreError | None:
