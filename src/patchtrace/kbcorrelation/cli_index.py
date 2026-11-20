@@ -16,6 +16,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import stat
 import sys
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -183,12 +185,22 @@ def open_existing(root: Path) -> WorkspaceStore | None:
 
 
 def read_input_file(path: Path) -> bytes:
+    """Read an admitted local advisory file from one bounded, held regular descriptor."""
     cap = DEFAULT_LIMITS.cvrf_doc_bytes
+    descriptor = None
     try:
-        with open(path, 'rb') as handle:
+        flags = os.O_RDONLY | getattr(os, 'O_BINARY', 0) | getattr(os, 'O_NONBLOCK', 0)
+        descriptor = os.open(path, flags)
+        if not stat.S_ISREG(os.fstat(descriptor).st_mode):
+            raise SourceError('PT-KBC-INPUT', 'the source is not a regular file')
+        with os.fdopen(descriptor, 'rb') as handle:
+            descriptor = None  # the buffered stream now owns the descriptor
             data = handle.read(cap + 1)
     except OSError:
         raise SourceError('PT-KBC-INPUT', 'the file cannot be read') from None
+    finally:
+        if descriptor is not None:
+            os.close(descriptor)
     if len(data) > cap:
         raise SourceError('PT-KBC-LIMIT', f'the file is larger than the {cap} byte limit')
     return data
