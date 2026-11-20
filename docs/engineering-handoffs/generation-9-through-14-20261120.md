@@ -15,7 +15,7 @@ main merge, release or deployment is claimed.
 | PR324 exact tree | `59c37a3ba7f2c67607bbca60eeb7e683ef391e47`, equal to local publication `eb89c342fb9af9f7a647772aa559a408857b8dd0` and actual PR merge checkout `deab5a058da7814f6fbef9b108faa73695c3882e`. |
 | Original unsplit qualification source | `bffcfa99d6a5044024256edbc0457ab20c92cbae`; process killed, not a passing gate. |
 | Reviewed follow-up runtime/tests | `97ca0adfad5ea4e6cae0648a55529b9165a40b21`; 1,737 affected passes/one native skip. |
-| Follow-up publication branch | `codex/patchtrace-followup-20261120-4c8d`, based on PR324's exact remote head. Resolve its current PR/head from the task ledger and GitHub before selecting work. |
+| Published follow-up, draft PR325 | `codex/patchtrace-followup-20261120-4c8d`, based on PR324's exact remote head. Initial remote `4c9e2e8d65901fc192cf8f294cd1183e2d378048` equals local `666b4d71a086c6f77d7c69076ecaace25196377d` at complete tree `222a9bf78fc3337db1d700a810ec617171f3b296`. Resolve its current head before selecting work. |
 
 The follow-up is a separate stacked candidate so the initial PR324 CI can finish
 without cancellation by later source changes. The local integration branch stays
@@ -23,6 +23,17 @@ without cancellation by later source changes. The local integration branch stays
 commit identity. Verify complete tree equality and do not force-push or reset the
 local source graph to pretend these IDs are identical. Current publication and
 worker state are in [`task-ledger.json`](../engineering/task-ledger.json).
+Active drafts are [PR322](https://github.com/djshellshoxxx/patchtrace/pull/322),
+[PR324](https://github.com/djshellshoxxx/patchtrace/pull/324), and the new
+[PR325](https://github.com/djshellshoxxx/patchtrace/pull/325). Later evidence-only
+commits do not change the qualified runtime/test/tool identities.
+
+A fresh handoff auditor and separate archive verifier accepted documentation
+checkpoint `666b4d71` with zero unresolved findings after correcting two reporting
+issues. Source trees, both history bundles, scoped links, 26 distinct task IDs,
+archive hashes and raw test counts were checked. The audit is retained in
+[`evidence/handoff-audit-20261120.zip`](../engineering/evidence/handoff-audit-20261120.zip).
+It verifies evidence and reporting, not full-suite or release acceptance.
 
 ## Engineering completed in this checkpoint
 
@@ -105,6 +116,7 @@ candidate requiring design and review, not an implemented mitigation.
 | Combined follow-up `97ca0adf` | 1,737 passed/one native Windows skip in 98.56 s; Ruff, schema drift and whitespace pass | Affected selection only; separate current-source hosted gates required. |
 | PR324 native Windows Ghidriff | Both five-scenario workflows succeeded; clean fixture artifact digest verified; backend exit 0 in 93.953 s | Authored fixture compatibility on initial source, not general accuracy or follow-up acceptance. |
 | PR324 Qt at 00:53–00:54 UTC | Linux shard 2/4: 10,680 repeated passes; shard 3/4: 8,640 repeated passes | Repeated executions, not distinct cases. Other Qt legs and both full QA legs were running. |
+| PR324 refresh at 01:03:45 UTC | Linux full QA: 23,699 passed/51 skipped/six xfailed in 2,269.52 s; Linux Qt 4/4: 9,660 repeated passes | Initial source only. Windows QA/Qt and Linux Qt 1/4 still running; no completed failure. |
 
 The original AF_UNIX check fails with constructor `EPERM`, including an unguarded
 control. It fails before entering the project network guard. No permission,
@@ -118,11 +130,19 @@ Packages guidance requires the managed package helper, which is absent; sudo is
 also absent. No install, escalation or repeated known-skip test run occurred.
 The original blocked cases and exact replay selection remain preserved.
 
+The later hosted Linux full JUnit supplies exact passing results for all 32
+locally skipped fixture cases and both locally marker-mapped GUI/AF_UNIX cases.
+The source/runtime/test/tool identity is the initial PR324 candidate, equal in
+those trees to `bffcfa99`. This is supported-host acceptance of those cases, not
+a compiler-version assertion or acceptance of the later PR325 source. Original
+local failures, blocked capabilities and unknown SIGKILL cause remain recorded.
+
 The [aggregate qualification](../engineering/aggregate-qualification-20261119.md)
 links raw receipts. Additional immutable evidence is under
 `docs/engineering/evidence/`: `followup-combined-20261120`,
 `aggregate-remainder-20261120`, `gui-counter-root-review-20261120`,
 `pr324-ci-review-20261120`, and `pr324-native-patchtrace-clean`.
+The later full Linux result is in `pr324-ci-review-refresh-20261120.zip`.
 Do not sum overlapping selections or attribute earlier receipts to later source.
 
 ## Recovery and exact continuation
@@ -152,8 +172,8 @@ or turn blocked tests into passes. Windows packaging runs on Windows.
 
 ## Current blockers and next useful scopes
 
-1. Finish the original PR324 hosted Linux/Windows QA, remaining Qt and downstream
-   package checks; read actual terminal artifacts. Separately qualify the new
+1. Finish the original PR324 hosted Windows QA, remaining Qt and downstream
+   package checks; Linux full QA already passed. Read actual terminal artifacts. Separately qualify the new
    follow-up head. Refresh checks immediately before any eligible merge.
 2. Provide an evidenced repair or disposition for the remaining Linux forced
    replacement exposure. Preserve feature behavior and reject unverified rollback

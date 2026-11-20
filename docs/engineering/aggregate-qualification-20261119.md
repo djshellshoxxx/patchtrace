@@ -84,3 +84,29 @@ or identities. Later status/publication records remain ordinary repository files
 
 Native, Windows, manual, release and layer-specific accuracy gates remain
 separate; consult `release-readiness-20261119.md` and `task-ledger.json`.
+
+## Later hosted Linux qualification of the initial candidate
+
+PR324's Linux full QA job completed successfully at `2026-11-20T00:59:07Z`.
+Its actual checkout `deab5a058da7814f6fbef9b108faa73695c3882e` and PR head
+`3862cb5de3256efec8f6392a3b6fb4d9e600c377` share complete tree
+`59c37a3ba7f2c67607bbca60eeb7e683ef391e47`. The original local `bffcfa99`
+and this initial published candidate have identical `src`, `tests` and `tools`.
+
+The hosted full run reports **23,699 passed, 51 skipped and six xfailed in
+2,269.52 seconds**, with 23,756 JUnit cases and zero failures/errors. Both the
+table row-count case and AF_UNIX case associated with the local failure markers
+passed there. All **32 exact node IDs** skipped locally for the fixture toolchain
+also passed on that hosted source, with no missing or ambiguous reconciliation.
+Compiler versions are not inferred from these results; the local capability
+block and original skipped receipts remain unchanged.
+
+This supplies an actual passing Linux full-suite gate for the **initial**
+candidate. It does not establish the cause of the earlier local SIGKILL or
+table failure, and it does not qualify the later acquisition source in PR325.
+The additional native pair-publication selection was 108 passed/two native
+Windows skips. Linux Qt shard 4/4 subsequently reported 9,660 repeated passes.
+At the `2026-11-20T01:03:45Z` refresh, Windows QA, Windows Qt and Linux Qt shard
+1/4 were still running, with no completed failing job. Digest-verified artifacts,
+logs, source identities and exact node reconciliation are retained in
+[`evidence/pr324-ci-review-refresh-20261120.zip`](evidence/pr324-ci-review-refresh-20261120.zip).

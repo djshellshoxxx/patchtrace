@@ -1,6 +1,6 @@
 {
   "schema": "patchtrace-engineering-task-ledger/1",
-  "updated_at": "2026-11-20T00:56:14.492773+00:00",
+  "updated_at": "2026-11-20T01:07:04.142215+00:00",
   "repository": "https://github.com/djshellshoxxx/PatchTrace",
   "integration_branch": "codex/patchtrace-followup-20261120-4c8d",
   "checkpoint_local_commit": "97ca0adfad5ea4e6cae0648a55529b9165a40b21",
@@ -129,11 +129,11 @@
     },
     {
       "id": "combined-suite",
-      "status": "incomplete-sigkill",
+      "status": "local-incomplete-hosted-linux-passed-initial-source",
       "owner": "root",
       "source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
       "evidence": "docs/engineering/aggregate-qualification-20261119.md",
-      "result_or_next_action": "Required unsplit run ended SIGKILL after 1,729.332 seconds; no final traceback or JUnit. The log has 19,877 progress markers including two failures; cause unestablished. Separate remainder: 3,849 passes and 32 native-toolchain skips across 3,881 selected nodes. This is not a full-suite pass."
+      "result_or_next_action": "Original local unsplit run ended SIGKILL after 1,729.332 seconds with no final traceback/JUnit. Initial PR324 later passed hosted Linux full QA: 23,699 passed, 51 skipped, six xfailed. Windows and remaining Qt were running at refresh. PR325 needs separate current-source full gates."
     },
     {
       "id": "native-qt-remediation",
@@ -220,27 +220,27 @@
     },
     {
       "id": "unix-socket-local-acceptance",
-      "status": "blocked-environment",
+      "status": "passed-hosted-initial-source-local-environment-blocked",
       "owner": "next supported test environment",
       "source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
       "evidence": "docs/engineering/qa-diagnosis-20261120.md",
-      "result_or_next_action": "AF_UNIX constructor EPERM reproduced without an active guard. No guard, assertion, skip or policy changed. Obtain acceptance on an environment that ordinarily permits local Unix sockets."
+      "result_or_next_action": "The exact AF_UNIX test passed in hosted PR324 Linux full QA. Local construction still reproduces EPERM without an active guard. No guard, assertion, skip or policy changed; later source needs its own qualification."
     },
     {
       "id": "native-fixture-toolchain",
-      "status": "blocked-environment",
-      "owner": "next supported toolchain environment",
-      "source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
-      "evidence": "docs/engineering/evidence/native-fixture-qualification-20261120.zip",
-      "result_or_next_action": "Thirty-two preserved skips require clang, lld-link, llvm-pdbutil, llvm-objdump, llvm-nm and llvm-strip. Normal tools and the managed package installer are absent. No escalation or environment changes were performed."
+      "status": "passed-hosted-initial-source-local-environment-blocked",
+      "owner": "generation14_ci_receipts",
+      "source_commit": "3862cb5de3256efec8f6392a3b6fb4d9e600c377",
+      "evidence": "docs/engineering/evidence/pr324-ci-review-refresh-20261120.zip",
+      "result_or_next_action": "All 32 exact local native-fixture skip IDs passed in hosted PR324 Linux full JUnit, with no missing or ambiguous IDs. Local tools/managed installer remain absent; no compiler-version or later-source qualification is inferred."
     }
   ],
   "aggregate_source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
   "workers": [
     {
       "name": "root",
-      "scope": "Reviewed follow-up integration, public evidence and source mapping, final handoff",
-      "status": "active-checkpoint"
+      "scope": "Published reviewed PR325 and durable evidence; hourly successor owns the next cycle after fresh-head reconciliation.",
+      "status": "completed-source-checkpoint"
     },
     {
       "name": "generation14_ci_receipts",
@@ -251,14 +251,26 @@
       "name": "generation14_fixture_toolchain",
       "scope": "Normal installed-toolchain capability check for 32 preserved skips",
       "status": "completed-blocked-evidence"
+    },
+    {
+      "name": "generation14_handoff_audit",
+      "scope": "Independent source/count/archive/bundle and reporting audit at 666b4d71",
+      "status": "completed-no-unresolved-findings"
     }
   ],
   "local_integration_branch": "codex/maximum-completion-20261119-4c8d",
   "followup_publication": {
+    "state": "published-draft",
+    "pull_request": 325,
+    "url": "https://github.com/djshellshoxxx/patchtrace/pull/325",
     "branch": "codex/patchtrace-followup-20261120-4c8d",
     "base_branch": "codex/maximum-completion-20261119-4c8d",
     "base_commit": "3862cb5de3256efec8f6392a3b6fb4d9e600c377",
-    "state": "prepared-for-publication"
+    "initial_remote_commit": "4c9e2e8d65901fc192cf8f294cd1183e2d378048",
+    "initial_local_commit": "666b4d71a086c6f77d7c69076ecaace25196377d",
+    "initial_tree": "222a9bf78fc3337db1d700a810ec617171f3b296",
+    "tree_verified_equal": true,
+    "later_evidence_only_commits": "Resolve current PR head; runtime/test/tool identities remain the recorded 97ca0adf checkpoint."
   },
   "continuation": {
     "title": "Continue PatchTrace engineering",
@@ -268,5 +280,24 @@
     "timezone": "America/Vancouver",
     "environment_selection": "inherited",
     "environment_availability_verified": false
+  },
+  "hosted_initial_candidate": {
+    "head": "3862cb5de3256efec8f6392a3b6fb4d9e600c377",
+    "captured_at": "2026-11-20T01:03:45Z",
+    "linux_full_qa": {
+      "passed": 23699,
+      "skipped": 51,
+      "xfailed": 6,
+      "failed": 0,
+      "errors": 0,
+      "seconds": 2269.52
+    },
+    "remaining_at_capture": [
+      "Windows QA",
+      "Windows Qt",
+      "Linux Qt shard 1/4",
+      "downstream package checks"
+    ],
+    "evidence": "docs/engineering/evidence/pr324-ci-review-refresh-20261120.zip"
   }
 }

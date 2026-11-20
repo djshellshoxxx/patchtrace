@@ -35,5 +35,18 @@
     "verified": true
   },
   "full_qualification": "not-passed",
-  "release_ready": false
+  "release_ready": false,
+  "initial_followup_publication": {
+    "pull_request": 325,
+    "remote_commit": "4c9e2e8d65901fc192cf8f294cd1183e2d378048",
+    "local_commit": "666b4d71a086c6f77d7c69076ecaace25196377d",
+    "tree": "222a9bf78fc3337db1d700a810ec617171f3b296",
+    "verified_equal": true
+  },
+  "independent_handoff_audit": {
+    "commit": "666b4d71a086c6f77d7c69076ecaace25196377d",
+    "unresolved_findings": 0,
+    "archive": "docs/engineering/evidence/handoff-audit-20261120.zip",
+    "sha256": "7c226b54ba7bedbb6c84579076445c86817627ccbe2a099dd8c17613e1c3a372"
+  }
 }

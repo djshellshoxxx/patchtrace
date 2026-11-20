@@ -2174,3 +2174,17 @@ The new stacked follow-up keeps those original CI runs intact. See the current
 [release assessment](engineering/release-readiness-20261119.md). The hourly
 successor is actually enabled. Main, release, Windows/manual, Qt disposition,
 Linux forced-publication and separate empirical-accuracy gates remain open.
+
+### Later hosted Linux receipt for the initial candidate
+
+At the 01:03:45 UTC refresh, PR324's Linux QA job had completed successfully:
+**23,699 passed, 51 skipped and six xfailed in 2,269.52 seconds**, with 23,756
+JUnit cases and no failures/errors. Its actual checkout and source identities
+remain the initial candidate documented above. Both locally marker-mapped tests
+passed; all 32 exact locally skipped native-fixture cases also passed on that
+hosted source. Original local results and capability limitations are retained.
+The native pair-publication selection reports 108 passes/two native Windows
+skips. Linux Qt shard 4/4 adds 9,660 repeated passes. Windows QA/Qt and Linux Qt
+1/4 were still running; no completed failing job was observed. The refresh archive
+and node reconciliation are linked by the aggregate report. These gates do not
+qualify the later acquisition source in PR325.

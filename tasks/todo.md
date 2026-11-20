@@ -1508,6 +1508,7 @@ the queued aggregate and current PR319 `8d130aef` native results.
 - [x] Retain the fresh Linux primitive investigation: final forced-source substitution remains confirmed; no speculative repair or rollback claim.
 - [x] Check normal capabilities for the 32 native-toolchain skips and preserve the blocked result. No supported installed tools/managed installer are available here.
 - [x] Create the actual hourly Continue PatchTrace engineering successor and preserve a source-pinned handoff and local history bundles.
+- [x] Retain actual PR324 hosted Linux full QA: 23,699 passes/51 skips/six xfails; reconcile all 32 locally skipped fixture cases and both marker-mapped cases to hosted passes on that initial source.
 - [ ] Finish exact-head hosted QA/Qt/package qualification for PR324 and separately for the later follow-up; do not substitute focused or earlier-head results.
 - [ ] Resolve or evidence-disposition the remaining Linux force exposure and native Qt findings; retain Windows trust, packaging, clean-machine/accessibility and separate L1/L2/L3 gates.
 - [ ] Complete bounded raw-entry/index retention and resolver membership preservation beyond the normalized acquisition snapshot.
