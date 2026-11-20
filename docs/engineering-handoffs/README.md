@@ -2,8 +2,10 @@
 
 Repository: <https://github.com/djshellshoxxx/PatchTrace>.
 
-Start with [generation 15](generation-15-20261120.md) for the newest
-isolated offline Winbindex source-selection candidate, then read
+Start with [generation 16](generation-16-20261120.md) for the new
+bounded offline index-read and rejected-row freshness candidate, then
+[generation 15](generation-15-20261120.md) for the source-admission fixes,
+then read
 [generations 9–14](generation-9-through-14-20261120.md) and the
 [machine task ledger](../engineering/task-ledger.json) and
 [feature inventory](../engineering/feature-status-20261119.json). Refresh refs
