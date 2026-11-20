@@ -45,7 +45,6 @@ class WorkspaceFileIndex:
 
     def __init__(self, root: Path):
         self.directory = Path(root) / INDEX_DIR
-        self._skipped: dict[str, int] = {}
 
     def _check_directory(self) -> None:
         if self.directory.is_symlink() or self.directory.is_junction():
@@ -76,16 +75,17 @@ class WorkspaceFileIndex:
         self._check_directory()
         return self.directory.is_dir() and any(INDEX_RECORD.fullmatch(p.name) for p in self.directory.iterdir())
 
-    def rows_for(self, file_name: str, winbindex_key: str) -> list[dict]:
-        """Every row of the file's record; ``winbindex_key`` is applied later by ``lineage.timeline`` because shared
-        rows are copied between keys. A missing record is no rows."""
+    def _read_rows(self, file_name: str) -> tuple[list[dict], int]:
+        """Return mappings and rejected source units from one record read.
+
+        The rejection count travels with its rows, never through shared
+        adapter state that another read can change before conversion.
+        """
         from ..acquisition.contracts import AcquisitionError
         from ..acquisition.winbindex import MAX_COMPRESSED, parse_rows
-        # Counts describe this attempt only; a removed source has no historical gaps.
-        self._skipped.pop(file_name, None)
         found = self._record(file_name)
         if found is None:
-            return []
+            return [], 0
         path, date, compressed = found
         try:
             # A path-size probe can become stale between stat and read. Read no more
@@ -111,19 +111,23 @@ class WorkspaceFileIndex:
         except AcquisitionError as exc:
             raise KbcStoreError('PT-KBC-SOURCE', f'a Winbindex record in the workspace is unusable: {exc.message}'
                                 ) from None
-        # Both malformed SHA entries and unreadable version/KB bodies are
-        # unobserved source units; downstream lineage rejects add separately.
-        self._skipped[file_name] = parsed.skipped + parsed.skipped_bodies
-        return [row.as_mapping() for row in parsed.rows]
+        # Count malformed SHA entries and unreadable version/KB bodies only
+        # for this same held record. Lineage conversion may add later rejects.
+        return [row.as_mapping() for row in parsed.rows], parsed.skipped + parsed.skipped_bodies
+
+    def rows_for(self, file_name: str, winbindex_key: str) -> list[dict]:
+        """Every row of the file's record; downstream timeline chooses the version key."""
+        mappings, _skipped = self._read_rows(file_name)
+        return mappings
 
     def has_record(self, file_name: str) -> bool:
         return self._record(file_name) is not None
 
     def rows(self, file_name: str, winbindex_key: str) -> tuple[tuple[IndexRow, ...], int]:
         """Index rows and the number of index entries that could not become rows (a gap in coverage)."""
-        mappings = self.rows_for(file_name, winbindex_key)
+        mappings, skipped = self._read_rows(file_name)
         rows, rejected = index_rows(mappings, file_name=file_name)
-        return rows, self._skipped.get(file_name, 0) + rejected
+        return rows, skipped + rejected
 
 
 def save_winbindex_record(root: Path, source: Path, file_name: str, data_date: str) -> dict:

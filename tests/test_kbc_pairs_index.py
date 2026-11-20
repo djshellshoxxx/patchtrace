@@ -87,7 +87,7 @@ def test_mixed_native_wow64_rows_keep_native_pair_and_raw_record(ready):
     before = source.read_bytes()
     code, out, _ = kb('pairs', inv, '--product', scopes['client'], '--file', DRV)
     (pair,) = out['result']['pairs']
-    assert code == 3 and out['result']['skipped_rows'] == 3
+    assert code == 3 and out['result']['skipped_rows'] == 4
     assert pair['grade'] == 'A' and pair['changed_in_kb'] == 'yes'
     assert (pair['older_sha256'], pair['newer_sha256']) == ('c' * 64, 'd' * 64)
     assert source.read_bytes() == before
@@ -362,7 +362,7 @@ def test_workspace_file_index_is_an_index_port_returning_json_mappings(tmp_path)
     assert mappings and all(isinstance(m, dict) for m in mappings)
     json.dumps(mappings)  # JSON-compatible: no sibling type leaks across the port
     rows, skipped = index.rows(DRV, '11-24H2')
-    assert rows and skipped == 2
+    assert rows and skipped == 3
     assert index.rows_for(NET, '11-24H2') == [] and not index.has_record(NET)
 
 
