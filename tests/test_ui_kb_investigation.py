@@ -360,3 +360,42 @@ def test_settled_timeout_handles_unhashable_pending_operation():
         settled(TimeoutBot(), dialog)
     assert isinstance(raised.value.__cause__, pytestqt.exceptions.TimeoutError)
     assert 'PRIVATE SOURCE' not in str(raised.value)
+
+
+@pytest.mark.parametrize(
+    ('operation', 'busy_raises', 'expected_operation', 'expected_busy'),
+    [('create', True, 'create', 'unknown'),
+     ('PRIVATE OPERATION SOURCE', False, 'unknown', 'False')],
+    ids=['busy-read-fails', 'unknown-operation'],
+)
+def test_settled_timeout_handles_unavailable_busy_state_and_unknown_operation(
+        operation, busy_raises, expected_operation, expected_busy):
+    original_timeout = pytestqt.exceptions.TimeoutError('synthetic timeout')
+
+    class TimeoutBot:
+        def waitUntil(self, predicate, *, timeout):
+            assert timeout == 10000
+            assert not predicate()
+            raise original_timeout
+
+    class Tasks:
+        def busy(self, channel=None):
+            assert channel == 'private-dialog-channel'
+            if busy_raises:
+                raise RuntimeError('PRIVATE BUSY FAILURE')
+            return False
+
+    dialog = SimpleNamespace(
+        _pending=SimpleNamespace(operation=operation), tasks=Tasks(), _channel='private-dialog-channel',
+        _closed=False, _preview=None, _generation=11, _cancel_create=False, _close_after_create=False,
+        status=SimpleNamespace(text=lambda: 'PRIVATE STATUS SOURCE'),
+    )
+    with pytest.raises(AssertionError) as raised:
+        settled(TimeoutBot(), dialog)
+    message = str(raised.value)
+    assert raised.value.__cause__ is original_timeout
+    assert f'operation={expected_operation}' in message
+    assert f'worker_busy={expected_busy}' in message
+    assert 'generation=11' in message
+    assert 'PRIVATE' not in message
+    assert 'private-dialog-channel' not in message
