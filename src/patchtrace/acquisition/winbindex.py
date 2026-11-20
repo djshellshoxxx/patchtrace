@@ -332,7 +332,10 @@ def _body_facts(kb: str, body) -> tuple[str | None, str | None, str, tuple[str, 
         return None
     if kb == 'BASE':
         base = body.get('windowsVersionInfo')
-        return (_date(base.get('releaseDate')) if isinstance(base, dict) else None), None, '', ()
+        if not isinstance(base, dict):
+            # Do not manufacture an undated BASE row from unreadable metadata.
+            return None
+        return _date(base.get('releaseDate')), None, '', ()
     info = body.get('updateInfo')
     if not _KB.fullmatch(kb) or not isinstance(info, dict):
         return None
