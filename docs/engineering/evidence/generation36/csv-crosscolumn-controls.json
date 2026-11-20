@@ -1,0 +1,34 @@
+{
+  "schema": "patchtrace-generation36-csv-crosscolumn/1",
+  "date_utc": "2026-11-20",
+  "parent_branch": "codex/patchtrace-csv-fixture-escape-20261120-g35",
+  "parent_sha": "09af21b0419fe06cce6fdd031355e274e6deb5d0",
+  "production_path": "src/patchtrace/strings/export.py",
+  "production_blob_sha": "3b53c8a42460f55ab1c3d9bf77e966946d168527",
+  "contract_commit": "8493be958898d591d9ce57a56d700bc0878086d7",
+  "test_commit": "c3a60593d3f6d005ce056ce242765a664202a601",
+  "control_environment": "Python 3.13.5 stdlib on non-repository container",
+  "control_script_sha256": "e9a97885355297f8024109f7bb45d6a26dbd04567a4a6da3c20ce8f1fc69d17c",
+  "control_result": {
+    "passed": 2,
+    "failed": 0,
+    "cases": [
+      "guard-all-source-text-columns",
+      "preserve-benign-source-text-columns"
+    ],
+    "kind": "source-equivalent hermetic, not imported PatchTrace pytest"
+  },
+  "source_test_result": "not run: GitHub DNS unavailable; source runtime not available locally",
+  "full_pytest": "not run",
+  "whole_tree_ruff": "not run: ruff module unavailable",
+  "external_independent_review": "pending",
+  "source_acceptance": "not qualified",
+  "parent_exact_head_ci": {
+    "head": "5f34fb57267637b986814ddc81dba11550992fff",
+    "linux_qa": "23900 passed, 52 skipped, 6 xfailed; Ruff pass; job 136446430886",
+    "native_windows": "five scenarios passed on run 44781837860; does not erase prior native failure",
+    "live_intel": "run 44781837959 succeeded",
+    "windows_qa_and_other_qt": "running at inspection"
+  },
+  "note": "Preserve original native java=unverified, full-SIGKILL, and strict ASM failures; no claim of empirical accuracy, release or security closure."
+}
