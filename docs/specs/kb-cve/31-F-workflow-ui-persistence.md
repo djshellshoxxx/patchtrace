@@ -417,3 +417,21 @@ adversarial writers, or the separate Linux forced Strings export-source race.
 A native Windows junction integration regression remains necessary for Windows
 acceptance; a portable predicate-injection test only verifies that the guard
 consults the distinct junction API.
+
+
+### Generation 38: native Windows investigation UI timeout evidence (2026-11-20)
+
+The repeated offscreen Qt acceptance helper for the investigation dialog must
+preserve its strict **10,000 ms** wait and original timeout failure while making
+a stalled operation diagnosable. On timeout, report only bounded, non-sensitive
+state: pending operation (from the known request enum), the task runner's busy
+bit for this dialog's channel, preview presence, closed/cancellation/close-after
+flags, and the integer dialog generation. Keep the original Qt wait exception as
+cause. Do not include arbitrary label text, project paths, source strings,
+exception messages, full task objects, host information or binary contents.
+
+This is test-harness observability, **not** a product lifecycle change, an
+extension of the timing budget, a retry, or proof that a worker is deadlocked.
+Source-specific native Windows results determine whether the worker was still
+busy or whether completion delivery was missing. Preserve the actual PR342
+Windows Qt failure rather than converting it to a pass.

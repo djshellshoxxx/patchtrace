@@ -291,3 +291,10 @@ CSV experiment was based on obsolete parent source and is retained for
 provenance; it is not a competing integration candidate. Linux force-export
 visibility, raw Winbindex membership, Windows trust/accessibility and all
 accuracy/release blockers are still open. Do not merge or release.
+
+
+## Generation 38 — PR342 native Windows Qt repeated UI acceptance failure (2026-11-20)
+
+PR342 exact final source `5f34fb57` full QA/Ruff on Linux and Windows, four Linux Qt shards and five native Windows Ghidriff scenarios passed their named jobs. However QA/Qt [workflow 44781838172](https://github.com/djshellshoxxx/PatchTrace/actions/runs/44781838172) **failed**: Windows Qt [job 136446431330](https://github.com/djshellshoxxx/PatchTrace/actions/runs/44781838172/job/136446431330) reported **two project-creation dialog timeouts and 10,423 passes** after 3,123.06 seconds in a fivefold repeat. Both waited 10,000 ms for `dialog._pending is None` after clicking Create. The original evidence does not show whether worker completion or GUI delivery was stalled. Do not infer OOM, deadlock, product defect, or success.
+
+An isolated generation38 **test-only diagnostic** preserves the same strict timeout and original exception and adds bounded worker-busy/operation/lifecycle context on timeout. Four source regression tests were authored, seven stand-alone synthetic controls passed, but actual repository pytest, whole-tree Ruff, native Windows Qt and independent post-change review are pending. This does not qualify g34–g37 CSV work or PR342. Full raw index/resolver membership, Linux forced export, Windows trust/manual accessibility and separate L1/L2/L3 remain open. No merge or release eligibility.
