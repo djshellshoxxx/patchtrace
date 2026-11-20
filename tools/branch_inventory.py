@@ -72,8 +72,17 @@ def read_json(path: Path) -> Any:
 
 def branches(git: Git, remote: str, snapshot: Path | None = None) -> list[tuple[str, str]]:
     if snapshot is not None:
-        with snapshot.open(encoding="utf-8", newline="") as stream:
-            rows = list(csv.DictReader(stream, delimiter="\t"))
+        with snapshot.open("rb") as stream:
+            raw = stream.read(MAX_METADATA_BYTES + 1)
+        if len(raw) > MAX_METADATA_BYTES:
+            raise ValueError("branch snapshot exceeds the input byte limit")
+        previous_limit = csv.field_size_limit(MAX_METADATA_BYTES)
+        try:
+            rows = list(csv.DictReader(io.StringIO(raw.decode("utf-8"), newline=""), delimiter="\t"))
+        except csv.Error as exc:
+            raise ValueError("invalid branch snapshot TSV") from exc
+        finally:
+            csv.field_size_limit(previous_limit)
         result = [(row["branch"], git.commit(row["tip_sha"])) for row in rows]
     else:
         if not remote or any(char in remote for char in "\r\n\t ") or remote.startswith("-"):
