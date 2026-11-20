@@ -1,6 +1,6 @@
 {
   "schema": "patchtrace-feature-status/1",
-  "updated_at": "2026-11-20T00:56:14.492773+00:00",
+  "updated_at": "2026-11-20T01:27:01.678Z",
   "checkpoint_local_commit": "97ca0adfad5ea4e6cae0648a55529b9165a40b21",
   "release_ready": false,
   "features": [
@@ -37,12 +37,13 @@
     {
       "feature": "Winbindex and binary pairing",
       "status": "partial",
-      "implemented": "Validated URL/HTTP handling and persisted immutable source proposals, windows, normalized delivery rows, approved request plans and verified download receipts; consent binds source metadata and recovery preserves it.",
+      "implemented": "Validated URL/HTTP handling and persisted immutable source proposals, windows, normalized delivery rows, approved request plans and verified download receipts; consent binds source metadata and recovery preserves it. New isolated generation-15 candidate rejects ambiguous newest-date plain/gzip records and aliased offline index paths; local isolated method controls pass, full-source CI and independent review pending.",
       "remaining": "Complete raw entry/index retention, resolver-input reconstruction and native/live acquisition acceptance remain separate.",
       "evidence": [
         "docs/engineering/winpairs-url-boundary.md",
         "docs/engineering/winpairs-http-review.md",
-        "docs/engineering/acquisition-provenance-peer-review-20261120.md"
+        "docs/engineering/acquisition-provenance-peer-review-20261120.md",
+        "docs/engineering-handoffs/generation-15-20261120.md"
       ]
     },
     {

@@ -2,7 +2,9 @@
 
 Repository: <https://github.com/djshellshoxxx/PatchTrace>.
 
-Start with [generations 9–14](generation-9-through-14-20261120.md), then the
+Start with [generation 15](generation-15-20261120.md) for the newest
+isolated offline Winbindex source-selection candidate, then read
+[generations 9–14](generation-9-through-14-20261120.md) and the
 [machine task ledger](../engineering/task-ledger.json) and
 [feature inventory](../engineering/feature-status-20261119.json). Refresh refs
 and reconcile their exact source identities before choosing work.

@@ -44,19 +44,32 @@ class WorkspaceFileIndex:
         self.directory = Path(root) / INDEX_DIR
         self._skipped: dict[str, int] = {}
 
+    def _check_directory(self) -> None:
+        if self.directory.is_symlink() or self.directory.is_junction():
+            raise KbcStoreError('PT-KBC-SOURCE', 'the workspace Winbindex directory is an alias')
+
     def _record(self, file_name: str) -> tuple[Path, str, bool] | None:
+        self._check_directory()
         found = []
         if self.directory.is_dir():
             for path in self.directory.iterdir():
                 match = INDEX_RECORD.fullmatch(path.name)
-                if match and match['name'] == file_name and path.is_file():
-                    found.append((match['date'], path, bool(match['gz'])))
+                if match and match['name'] == file_name:
+                    if path.is_symlink() or path.is_junction():
+                        raise KbcStoreError('PT-KBC-SOURCE', 'the workspace Winbindex record is an alias')
+                    if path.is_file():
+                        found.append((match['date'], path, bool(match['gz'])))
         if not found:
             return None
-        date, path, gz = max(found, key=lambda f: f[0])
+        newest = max(item[0] for item in found)
+        selected = [item for item in found if item[0] == newest]
+        if len(selected) != 1:
+            raise KbcStoreError('PT-KBC-SOURCE', 'ambiguous same-date Winbindex records; remove the conflict')
+        date, path, gz = selected[0]
         return path, date, gz
 
     def available(self) -> bool:
+        self._check_directory()
         return self.directory.is_dir() and any(INDEX_RECORD.fullmatch(p.name) for p in self.directory.iterdir())
 
     def rows_for(self, file_name: str, winbindex_key: str) -> list[dict]:

@@ -30,6 +30,22 @@ publication refuses an observed symlink or Windows junction at the workspace's
 It does not promise a sandbox against a noncooperating writer replacing parent
 directories or stage/final pathnames after ownership checks.
 
+### Offline index reader source-identity admission (2026-11-20)
+
+An offline Winbindex record is identified by its file basename and data date,
+with exactly one of the plain JSON or gzip encodings present for the selected
+newest date. The reader must refuse simultaneous plain/gzip records of the same
+basename and newest data date as an ambiguous input, regardless of directory
+iteration order; it must not arbitrarily choose one claim source. Historical
+older dates are still ignored when a unique newer record exists. A matching
+record path that is a symbolic link or junction, or an aliased index directory,
+invalidates the lookup before parsing any bytes; a missing ordinary record still
+returns no rows. These are fail-closed input admission checks, not assertions
+that the content is official or that a noncooperating writer cannot replace a
+file between checks and read. Do not merge different raw records or fabricate
+resolver membership from conflicting sources. This bounded safety repair is
+**not** the outstanding full raw entry/index capture or resolver-input replay.
+
 ## D3. Verification precedence and authenticity states
 
 Mandatory: stream to private non-executable staging, bounded size, SHA-256, final PE parse, supported architecture, filename identity, selected product/build association, chronology check, stable final bytes (no TOCTOU between verification and project copy). Promote only after re-opening/hash verification via existing ingestion path. Use private scratch names chosen by program; reject symlink traversal and path escape.

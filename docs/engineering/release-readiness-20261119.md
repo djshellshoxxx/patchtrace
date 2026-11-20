@@ -24,3 +24,22 @@ No main merge, tag, release or deployment occurred in these slices. Draft PR324
 and an actual enabled hourly successor are recorded in the ledger. The reviewed
 acquisition/QA follow-up is kept separate so PR324's original-source CI can finish.
 Draft publication and scheduled continuation do not constitute release qualification.
+
+## Generation-15 source admission and source-pinned CI update (2026-11-20 UTC)
+
+The isolated draft successor `codex/patchtrace-index-source-identity-20261120-audit1`
+adds a fail-closed admission check for matching Winbindex plain/gzip records
+with the same newest data date and for aliased index paths. Its original
+synthetic failures are reproduced, and eight isolated method controls pass,
+but full checked-out-source pytest/Ruff, hosted CI and independent review are
+**not yet accepted**. It is not raw index retention or resolver membership
+reconstruction; these and the other release blockers above remain open.
+
+For PR #324 source `3862cb5d`, Linux and Windows full QA, four Linux
+Qt shards, the Windows Qt shard, ten native Ghidriff scenario jobs and
+Linux package had all reported success in the last read after 01:19 UTC;
+two downstream Linux smoke jobs were still queued. These facts qualify only
+that original head at those named gates. PR #325 head `4dfc0e49` had
+most full QA/Qt jobs queued and native jobs underway, with one native
+scenario successful. The later generation-15 code has no corresponding
+hosted qualification at this checkpoint. No main merge or release is eligible.
