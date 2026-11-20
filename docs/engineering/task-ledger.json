@@ -25,7 +25,8 @@
     "Generation20 independent source-level audit, full repository tests, native acceptance, schema impact and external review are NOT complete; this is one bounded parser source-loss fix, not final raw index retention or empirical accuracy.",
     "Generation21 same-call source gap isolation has isolated published spec/tests/source, but no source-pinned repository pytest, Ruff or independent reviewer acceptance yet; PR330 Linux/Windows full QA each failed four inherited assertions under the expanded skipped_bodies contract.",
     "Generation22 original BASE missing/nonobject metadata was counted as a successful undated row; source-level tests authored but no clone-backed pytest/Ruff available in this runtime. The eight local algorithm mirror controls do not qualify this candidate.",
-    "Generation23 local primitive reproduced a FIFO block using an isolated child (killed cleanly); O_NONBLOCK and descriptor fstat primitive then refused nonregular input. These are stdlib controls, not actual repository pytest. On hosts lacking O_NONBLOCK, no pre-open FIFO guarantee is claimed."
+    "Generation23 local primitive reproduced a FIFO block using an isolated child (killed cleanly); O_NONBLOCK and descriptor fstat primitive then refused nonregular input. These are stdlib controls, not actual repository pytest. On hosts lacking O_NONBLOCK, no pre-open FIFO guarantee is claimed.",
+    "Generation25 adds a narrowly anchored newer source KB/version selection; the normalized acquisition evidence is still not complete raw index or original older predecessor membership. Exact-source hosted and independent acceptance remain pending."
   ],
   "tasks": [
     {
@@ -339,6 +340,16 @@
       "evidence": "docs/engineering-handoffs/generation-24-20261120.md",
       "review_status": "author adversarial inspection only; independent signoff pending",
       "result_or_next_action": "Existing kb index and investigation offline advisory import shared blocking open(path, 'rb'). POSIX FIFO no-writer blocking reproduced with timeout exit 124; held O_NONBLOCK/fstat control and five stdlib algorithm mirrors passed. SPEC-31-F updated before five new repository regression tests and the narrow CLI reader change. Source uses single bounded regular descriptor; symlink-to-regular compatibility retained. Actual repo pytest/Ruff, exact-source Linux/Windows QA/Qt/native/package and independent reviewer remain pending; do not merge or release."
+    },
+    {
+      "id": "acquisition-newer-row-window-membership",
+      "status": "spec-tests-runtime-published-isolated-controls-only-hosted-review-pending",
+      "owner": "generation25 isolated acquisition membership worker; independent reviewer unassigned",
+      "branch": "codex/patchtrace-acquire-window-anchor-20261120-g25",
+      "source_commit": "dfb0a240f19cae7d4fa11c69e1b96778a387a7b7",
+      "evidence": "docs/engineering-handoffs/generation-25-20261120.md",
+      "review_status": "coordinator adversarial inspection; not independent reviewer signoff",
+      "result_or_next_action": "Prior SHA-only first row selected BASE for a KB-targeted newer build. SPEC-31-F updated before eight repository test functions and runtime, newer target now parses exact index window, prefers own body, accepts only explicit other_versions copies, refuses missing selected source before network. 15 isolated algorithm controls passed, not checked-out-source pytest. Run exact-source hosted QA/Ruff/Qt/native/package and independent review. Older predecessor/source membership and complete raw index retention remain open."
     }
   ],
   "aggregate_source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",

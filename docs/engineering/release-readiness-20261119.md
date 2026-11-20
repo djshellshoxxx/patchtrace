@@ -179,3 +179,23 @@ while PR334 checks were queued or running at inspection. Predecessors do
 not qualify this source. Raw Winbindex index/resolver membership, Linux
 forced export, Qt advisory disposition, Windows trust, historical reviews
 and verified L1/L2/L3 remain blocking. No main merge or release eligible.
+
+## Generation-25 resolver-window acquisition-source correction (2026-11-20 UTC)
+
+A new isolated draft successor of PR335 addresses a source-provenance mismatch:
+when one SHA has both BASE and KB bodies, the former SHA-only first-match
+selector could place the BASE body in evidence for the KB-targeted newer
+build. The contract now requires the newer row to match the resolver's
+`index:<version_key>:<KB or BASE>` anchor, with native-body precedence over
+an explicit `other_versions` copy. A missing target is refused before
+provider planning. This changes which normalized row is included in consent
+and may require new consent; it does not infer older predecessor row identity
+or retain the complete raw index/timeline.
+
+The pre-repair control reproduced BASE selection for a KB target. Fifteen
+isolated algorithm-copy replays and Python compile succeeded; these are
+not full repository tests. New actual repository-source regression tests were
+committed, but local GitHub DNS resolution and absent Ruff prevent executing
+checked-out-source pytest/ruff. Exact-head hosted QA, Qt, native, packaging,
+independent review and release acceptance remain pending. The earlier #333,
+#334 and #335 checks qualify only their own sources. No main merge or release.
