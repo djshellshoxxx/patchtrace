@@ -368,3 +368,15 @@ observation because the copied observation is not selected by the resolver.
 This does not authenticate source bodies, preserve original raw Winbindex
 entries or reconstruct predecessor membership. Do not infer an exact source
 from matching binary hashes alone.
+
+
+### Local acquisition project-path preflight (generation 30, 2026-11-20)
+
+The consented `kb acquire --project` destination must not be a final-component
+symbolic link, including a dangling link or a link to an otherwise empty
+regular directory. Refuse it as `PT-KBC-INPUT` before the acquisition port
+stages/downloads any bytes. Preserve support for an absent destination or an
+actual empty directory, and continue refusing an existing non-directory or
+nonempty directory. This is a preflight guard only: it does not anchor parent
+components, prevent a concurrent destination substitution after inspection,
+or close the separately recorded Linux forced-export source replacement race.

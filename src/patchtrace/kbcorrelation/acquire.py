@@ -192,7 +192,7 @@ def verify_consent(plan: AcquirePlan, *, consent_hosts: Sequence[str], consent_p
 
 def _check_directory(directory: str) -> None:
     root = Path(directory)
-    if root.exists() and (not root.is_dir() or any(root.iterdir())):
+    if root.is_symlink() or (root.exists() and (not root.is_dir() or any(root.iterdir()))):
         raise KbcStoreError('PT-KBC-INPUT', 'the project directory must be absent or empty')
 
 

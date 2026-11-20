@@ -245,3 +245,16 @@ The new isolated generation-28 **test-only** candidate obtains the resolver's ex
 ## Generation 29 — PR339 hosted test acceptance, Ruff import repair (2026-11-20 UTC)
 
 PR339 exact `a5c6ff87` full Linux QA completed **23,808 passed/51 skipped/six xfailed** and Windows QA completed **23,694 passed/166 skipped/five xfailed**. Both then failed strict Ruff with the same two `I001` import-format errors in newly authored older/newer acquisition ambiguity test fixtures, so PR339 is **not** a green combined candidate. Five PR339 Qt gates succeeded; downstream Linux package/smoke skipped. New isolated generation-29 test-only correction splits the fixture self-alias imports per Ruff's exact patch suggestions, preserving names, test bodies and every security/acceptance rule. Test-code commit `981d41e3`, tree `aa8a96bd55e8`; final documentation head and its own CI must be resolved independently. New-source full QA/Ruff, native/Qt/package, independent review and all historical release blockers remain outstanding. Release-ready and main-merge eligible remain **false**. See [generation 29](../engineering-handoffs/generation-29-20261120.md) and the [hosted receipts](hosted-fixture-qa-20261120.md).
+
+
+## Generation 30 — acquisition destination symlink preflight (2026-11-20)
+
+An isolated draft successor to PR340 adds a narrow refusal for a final-component
+symlink as the consented acquisition project directory, including dangling
+links. The original preflight admitted a link to an empty external directory.
+SPEC-31-F was updated first, and four regression cases were authored.
+The reproduced filesystem primitive and corrected standalone controls are not
+repository-source acceptance. The full offscreen pytest, strict Ruff, Qt,
+native/package/smoke and independent review remain unverified. Parent-directory
+substitution and the separate Linux forced-export race remain unresolved.
+No main merge or release eligibility is claimed.

@@ -108,5 +108,6 @@
         "docs/engineering/generation3-qualification-review.md"
       ]
     }
-  ]
+  ],
+  "generation30_note": "An isolated draft successor of PR340 prevents final-component symlink acquisition destinations (live or dangling) before staging, with four authored regression cases. Standalone filesystem controls only; source-specific pytest/Ruff/CI and independent signoff pending. No Linux forced-source race or full raw Winbindex retention closure."
 }
