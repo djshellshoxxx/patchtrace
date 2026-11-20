@@ -59,6 +59,15 @@ Where the host supports `O_NOFOLLOW`, open the record with that flag and
 refuse a final-component symlink substitution as `PT-KBC-SOURCE`. Request
 nonblocking open where supported, then confirm the **opened descriptor** is
 regular before reading bytes; do not risk blocking on a substituted FIFO.
+A regular record can also become a directory **after** `_record` selects it
+but **before** the held `open`. On POSIX this may raise `EISDIR` from the
+Python file-open wrapper before descriptor `fstat` runs. Classify that
+specific nonregular-source substitution as `PT-KBC-SOURCE`, matching the
+original admission contract; do not misreport it as a generic unreadable
+input. Ordinary permission and I/O failures retain `PT-KBC-INPUT`. This
+classification is not proof of source authenticity, does not make the
+replacement atomic, and provides no Windows path race guarantee.
+
 Continue to cap the descriptor read to `MAX_COMPRESSED + 1`, leave existing
 valid rows and rejected-row counts intact, and never read a nonregular handle.
 On hosts without `O_NOFOLLOW`, this does not provide the same final-component
