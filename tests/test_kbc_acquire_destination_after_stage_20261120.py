@@ -42,3 +42,24 @@ def test_link_inserted_during_stage_refuses_import_and_discards_downloads(tmp_pa
     assert project.is_symlink()
     assert list(external.iterdir()) == []
     assert list(stage_root.iterdir()) == []
+
+
+def test_nonempty_directory_introduced_during_stage_refuses_import(tmp_path, monkeypatch):
+    project = tmp_path / "proj"
+    project.mkdir()
+    stage_root = tmp_path / "staging"
+    stage_root.mkdir()
+    monkeypatch.setattr(tempfile, "tempdir", str(stage_root))
+
+    def populate_destination():
+        (project / "foreign.txt").write_bytes(b"existing user bytes")
+
+    server = Server(on_blob=populate_destination)
+    importer = Importer()
+    _plan, _importer, result = run(tmp_path, server, importer=importer)
+
+    assert server.calls
+    assert isinstance(result, KbcStoreError) and result.code == "PT-KBC-INPUT"
+    assert importer.seen == []
+    assert (project / "foreign.txt").read_bytes() == b"existing user bytes"
+    assert list(stage_root.iterdir()) == []
