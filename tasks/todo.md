@@ -1594,3 +1594,6 @@ for exact commits and limitations. No main merge/release.
 - [x] Ten authored CSV integration regression cases and ten bounded local source-equivalent Python controls, not repository pytest acceptance.
 - [ ] When PR342 active QA completes, submit stacked draft; verify exact-source tests, whole-tree Ruff, full offscreen pytest, native/Qt/package and dependencies; get independent code review.
 - [ ] No merge/release until exact-head gates and all unrelated release blockers are accepted.
+
+
+- [ ] Generation35 Strings CSV fixture source qualification: original g34 regression table had five literal-escape mismatches; g35 test-only source corrects them and passes 13/13 stdlib mirror controls. Run source-pinned `python -m pytest -q tests/test_strings_export.py`, whole-tree Ruff and full offscreen suite, get fresh independent post-fix review and hosted QA/native/package after PR342 activity concludes. Preserve g34, PR342 and original failures (see `docs/engineering-handoffs/generation-35-20261120.md`).
