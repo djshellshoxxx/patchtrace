@@ -1,0 +1,18 @@
+{
+  "schema": "patchtrace-engineering-primitive-evidence/1",
+  "date_utc": "2026-11-20",
+  "source_before": "543b0a6f1dd2e2ce2b53a7790b7e32ed77dcbd8f",
+  "source_change": "efc83cb1a4659a751d83b9f32a677269dbe4bc34",
+  "reproduction": "POSIX stdlib forkless subprocess blocked on open(FIFO,rb) with no writer until manually killed after 0.3s",
+  "held_descriptor": "os.open(O_NONBLOCK) returned promptly; stat.S_ISREG(os.fstat(fd).st_mode) false",
+  "killed_child_reaped": true,
+  "real_source_test_run": false,
+  "ruff_run": false,
+  "full_suite_run": false,
+  "independent_review": false,
+  "blocked_capabilities": [
+    "github.com DNS from container",
+    "ruff missing"
+  ],
+  "qa_receipts": "GitHub Actions to be inspected on exact published head; predecessor results never inherited"
+}
