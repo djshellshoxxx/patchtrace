@@ -24,7 +24,7 @@ from pydantic import ValidationError
 from . import components as comp
 from . import pairs as pr
 from . import resolver
-from .acquire import AcquirePlan, AcquirePort, build_plan, row_for, verify_consent
+from .acquire import AcquirePlan, AcquirePort, build_plan, row_for, target_row_membership, verify_consent
 from .acquire import acquire_pair as run_acquire
 from .acquisition_evidence import EvidenceLimitError, make_evidence
 from .cli_index import IndexPorts, load_index
@@ -649,10 +649,12 @@ class KbService:
         if pair is None:
             return Outcome(4, 'unavailable', result, 'There is no pair candidate to acquire; see "kb pairs".')
         result['pair'] = self._pair_dict(pair)
-        # the key only selects among shared copies of one record; row_for matches by SHA-256 and name
+        # The resolver window names the newer body, not just its binary hash.
+        # Preserve older legacy selection until exact predecessor membership is captured.
+        target = target_row_membership(pair)
         rows = self.env.file_index(self.root).rows_for(pair.older.basename, '')
         older_row = row_for(rows, pair.older.sha256, pair.older.basename)
-        newer_row = row_for(rows, pair.newer.sha256, pair.newer.basename)
+        newer_row = row_for(rows, pair.newer.sha256, pair.newer.basename, target=target)
         try:
             plan = build_plan(pair, older_row, newer_row, self.env.acquirer)
             result['plan'] = plan.as_dict()
