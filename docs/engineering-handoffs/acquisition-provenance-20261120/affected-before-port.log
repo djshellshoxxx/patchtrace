@@ -1,0 +1,50 @@
+........................................................................ [  4%]
+........................................................................ [  9%]
+........................................................................ [ 13%]
+........................................................................ [ 18%]
+.......F................................................................ [ 23%]
+........................................................................ [ 27%]
+........................................................................ [ 32%]
+........................................................................ [ 37%]
+........................................................................ [ 41%]
+........................................................................ [ 46%]
+........................................................................ [ 51%]
+........................................................................ [ 55%]
+........................................................................ [ 60%]
+........................................................................ [ 65%]
+........................................................................ [ 69%]
+........................................................................ [ 74%]
+........................................................................ [ 79%]
+........................................................................ [ 83%]
+........................................................................ [ 88%]
+........................................................................ [ 93%]
+........................................................................ [ 97%]
+...............................s                                         [100%]
+=================================== FAILURES ===================================
+________ test_domain_modules_import_no_qt_network_or_database[store.py] ________
+
+path = PosixPath('/workspace/scratch/4c8dc848d760/pt-acquisition/src/patchtrace/kbcorrelation/store.py')
+
+    @pytest.mark.parametrize('path', sorted(PKG.glob('*.py')), ids=lambda p: p.name)
+    def test_domain_modules_import_no_qt_network_or_database(path):
+        sibling_ok = ALLOWED_SIBLINGS.get(path.name, set())
+        for level, module in _imports(path):
+            top = module.split('.')[0]
+            if level == 0:
+                assert top not in FORBIDDEN - ALLOWED_FORBIDDEN.get(path.name, set()), f'{path.name} imports {module}'
+                assert top != 'patchtrace', f'{path.name} must use relative imports'
+            elif level == 2:  # `..x` is a sibling package
+                if path.name in {'investigation_service.py', 'store.py'} and module == 'persistence':
+                    nodes = [n for n in ast.walk(ast.parse(path.read_text(encoding='utf-8')))
+                             if isinstance(n, ast.ImportFrom) and n.level == 2 and n.module == 'persistence']
+                    assert all([(a.name, a.asname) for a in n.names] == [('creation_directory_available', None)]
+                               for n in nodes), f'{path.name} imports sibling persistence forbidden symbols'
+                else:
+>                   assert top in sibling_ok, f'{path.name} imports sibling {module}'
+E                   AssertionError: store.py imports sibling owned_publication
+E                   assert 'owned_publication' in set()
+
+tests/test_kbc_contracts.py:411: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_kbc_contracts.py::test_domain_modules_import_no_qt_network_or_database[store.py]
+1 failed, 1542 passed, 1 skipped in 42.55s

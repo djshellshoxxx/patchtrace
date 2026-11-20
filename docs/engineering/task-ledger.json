@@ -1,12 +1,20 @@
 {
   "schema": "patchtrace-engineering-task-ledger/1",
-  "updated_at": "2026-11-20T00:09:04.434945+00:00",
+  "updated_at": "2026-11-20T00:56:14.492773+00:00",
   "repository": "https://github.com/djshellshoxxx/PatchTrace",
-  "integration_branch": "codex/maximum-completion-20261119-4c8d",
-  "checkpoint_local_commit": "8cfda72b736ddbd704180dcf39e4a71a33fbc06f",
+  "integration_branch": "codex/patchtrace-followup-20261120-4c8d",
+  "checkpoint_local_commit": "97ca0adfad5ea4e6cae0648a55529b9165a40b21",
   "starting_candidate": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
   "main_at_discovery": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
-  "remote_publication": null,
+  "remote_publication": {
+    "pull_request": 324,
+    "url": "https://github.com/djshellshoxxx/patchtrace/pull/324",
+    "remote_commit": "3862cb5de3256efec8f6392a3b6fb4d9e600c377",
+    "local_commit": "eb89c342fb9af9f7a647772aa559a408857b8dd0",
+    "tree": "59c37a3ba7f2c67607bbca60eeb7e683ef391e47",
+    "base": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+    "branch": "codex/maximum-completion-20261119-4c8d"
+  },
   "release_ready": false,
   "main_merge_eligible": false,
   "notes": [
@@ -121,11 +129,11 @@
     },
     {
       "id": "combined-suite",
-      "status": "running",
+      "status": "incomplete-sigkill",
       "owner": "root",
       "source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
       "evidence": "docs/engineering/aggregate-qualification-20261119.md",
-      "result_or_next_action": "Unsplit pytest started from clean detached pt-final-qa. Preserve terminal result and compare runtime/test/source identities before attributing later documentation commits."
+      "result_or_next_action": "Required unsplit run ended SIGKILL after 1,729.332 seconds; no final traceback or JUnit. The log has 19,877 progress markers including two failures; cause unestablished. Separate remainder: 3,849 passes and 32 native-toolchain skips across 3,881 selected nodes. This is not a full-suite pass."
     },
     {
       "id": "native-qt-remediation",
@@ -138,10 +146,10 @@
     {
       "id": "linux-force-source-race",
       "status": "open-confirmed",
-      "owner": "generation10_force_design",
-      "source_commit": null,
-      "evidence": "docs/engineering/security-force-recovery-20261119.md",
-      "result_or_next_action": "Fresh worker is checking actual Linux primitive guarantees and bounded filesystem controls. Existing exposure remains open until a real repair or evidenced disposition is reviewed."
+      "owner": "next architecture/native worker",
+      "source_commit": "79f5abf0",
+      "evidence": "docs/engineering/linux-force-primitive-assessment-20261119.md",
+      "result_or_next_action": "Fourteen native primitive controls were replayed on tmpfs and overlayfs. Deterministic current publisher substitution remains observable. No current-primitive repair was verified; a broker is future architecture work."
     },
     {
       "id": "native-release-acceptance",
@@ -161,37 +169,104 @@
     },
     {
       "id": "index-acquisition-provenance",
-      "status": "in-progress-isolated",
-      "owner": "generation9_acquisition",
-      "source_commit": null,
-      "evidence": null,
-      "result_or_next_action": "Fresh worker is proving smallest missing proposal/window/source-entry persistence scope; no completed repair claimed yet."
+      "status": "implemented-reviewed-bounded-slice",
+      "owner": "acquisition authors + root independent review",
+      "source_commit": "fd886e194d8bd2ee346162017a8f0939310053f3",
+      "evidence": "docs/engineering/acquisition-provenance-peer-review-20261120.md",
+      "result_or_next_action": "Immutable proposal/window/normalized-row capture, source-bound consent, verified receipts, owner-checked sidecar and row, journal recovery and backup. Author affected run: 1,547 passes and one native skip. Four independent controls plus 27 author cases pass. Full raw index retention remains open.",
+      "review_status": "accepted-bounded-scope",
+      "integration_commit": "f5cebcbf"
     },
     {
       "id": "scheduled-continuation",
-      "status": "pending-publication",
-      "owner": "root",
+      "status": "enabled",
+      "owner": "scheduled successor",
       "source_commit": null,
-      "evidence": null,
-      "result_or_next_action": "Create actual hourly successor execution after the durable handoff and reviewed remote candidate exist; do not imply it is already active."
+      "evidence": "docs/engineering-handoffs/generation-9-through-14-20261120.md",
+      "result_or_next_action": "Actual hourly automation Continue PatchTrace engineering is enabled; first scheduled occurrence 2026-11-20T01:15:16Z. Environment is inherited and not guaranteed. Refresh head and CI, claim unowned work, and never imply a future run has already executed."
+    },
+    {
+      "id": "gui-table-counter-ownership",
+      "status": "implemented-reviewed",
+      "owner": "QA diagnosis + root",
+      "source_commit": "a7a4b2d8202dfd5de8fd15276c5aa88948b9079f",
+      "integration_commit": "f7aa36c3",
+      "evidence": "docs/engineering/qa-diagnosis-20261120.md",
+      "result_or_next_action": "Scope the test counter to the selected model. The 186 affected passes and 41 root replay passes overlap. Product source and thresholds are unchanged; original aggregate table failure remains unattributed."
+    },
+    {
+      "id": "aggregate-unreported-remainder",
+      "status": "completed-diagnostic-selection",
+      "owner": "generation13_remaining_coverage",
+      "source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
+      "evidence": "docs/engineering/evidence/aggregate-remainder-20261120.json",
+      "result_or_next_action": "Fourteen fresh processes covered 3,881 distinct nodes: 3,849 passed and 32 existing native fixture-toolchain skips. Selection contains 3,879 previously unreported nodes plus two overlaps; every ID reconciled. Original unsplit qualification remains incomplete."
+    },
+    {
+      "id": "followup-affected-qualification",
+      "status": "passed-bounded-selection",
+      "owner": "root",
+      "source_commit": "97ca0adfad5ea4e6cae0648a55529b9165a40b21",
+      "evidence": "docs/engineering/evidence/followup-combined-20261120.json",
+      "result_or_next_action": "1,737 passed and one native Windows held-source skip in 98.56 seconds, covering acquisition affected modules, every GUI counter caller and four independent controls. Ruff, schema drift and whitespace checks pass. New source still needs its own hosted full gates."
+    },
+    {
+      "id": "full-raw-index-retention",
+      "status": "open",
+      "owner": "next independently reviewed acquisition scope",
+      "source_commit": null,
+      "evidence": "docs/specs/kb-cve/31-F-workflow-ui-persistence.md",
+      "result_or_next_action": "Capture bounded original entry or whole-index bytes and explicit resolver input membership without fabricating historical provenance or reusing the advisory-only importer."
+    },
+    {
+      "id": "unix-socket-local-acceptance",
+      "status": "blocked-environment",
+      "owner": "next supported test environment",
+      "source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
+      "evidence": "docs/engineering/qa-diagnosis-20261120.md",
+      "result_or_next_action": "AF_UNIX constructor EPERM reproduced without an active guard. No guard, assertion, skip or policy changed. Obtain acceptance on an environment that ordinarily permits local Unix sockets."
+    },
+    {
+      "id": "native-fixture-toolchain",
+      "status": "blocked-environment",
+      "owner": "next supported toolchain environment",
+      "source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
+      "evidence": "docs/engineering/evidence/native-fixture-qualification-20261120.zip",
+      "result_or_next_action": "Thirty-two preserved skips require clang, lld-link, llvm-pdbutil, llvm-objdump, llvm-nm and llvm-strip. Normal tools and the managed package installer are absent. No escalation or environment changes were performed."
     }
   ],
   "aggregate_source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
   "workers": [
     {
       "name": "root",
-      "scope": "Frozen aggregate qualification, remote draft publication, durable handoff and actual scheduling",
-      "status": "active"
+      "scope": "Reviewed follow-up integration, public evidence and source mapping, final handoff",
+      "status": "active-checkpoint"
     },
     {
-      "name": "generation9_acquisition",
-      "scope": "Prove and complete a bounded index proposal/window/source-entry persistence slice",
-      "status": "active-isolated-follow-up"
+      "name": "generation14_ci_receipts",
+      "scope": "Read-only exact PR324 CI and artifact review",
+      "status": "completed-snapshot"
     },
     {
-      "name": "generation10_force_design",
-      "scope": "Investigate actual Linux primitive guarantees for the final forced-source race",
-      "status": "active-isolated-follow-up"
+      "name": "generation14_fixture_toolchain",
+      "scope": "Normal installed-toolchain capability check for 32 preserved skips",
+      "status": "completed-blocked-evidence"
     }
-  ]
+  ],
+  "local_integration_branch": "codex/maximum-completion-20261119-4c8d",
+  "followup_publication": {
+    "branch": "codex/patchtrace-followup-20261120-4c8d",
+    "base_branch": "codex/maximum-completion-20261119-4c8d",
+    "base_commit": "3862cb5de3256efec8f6392a3b6fb4d9e600c377",
+    "state": "prepared-for-publication"
+  },
+  "continuation": {
+    "title": "Continue PatchTrace engineering",
+    "enabled": true,
+    "rrule": "FREQ=HOURLY",
+    "first_scheduled_utc": "2026-11-20T01:15:16Z",
+    "timezone": "America/Vancouver",
+    "environment_selection": "inherited",
+    "environment_availability_verified": false
+  }
 }

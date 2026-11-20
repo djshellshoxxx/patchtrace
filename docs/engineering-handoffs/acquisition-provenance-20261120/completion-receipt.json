@@ -1,0 +1,221 @@
+{
+  "branch": "codex/acquisition-provenance-20261119-4c8d",
+  "command_scope_note": "The replay selection is reconstructed from every testcase classname in the retained final JUnit XML, not a claim that the original shell argv was retained.",
+  "continuation_checks": [
+    {
+      "command": [
+        "python",
+        "-m",
+        "ruff",
+        "check",
+        "src",
+        "tests",
+        "tools"
+      ],
+      "exit_code": 0,
+      "stdout": "All checks passed!\n"
+    },
+    {
+      "command": [
+        "python",
+        "tools/generate_kbc_schemas.py",
+        "--check"
+      ],
+      "environment": {
+        "PYTHONPATH": "src"
+      },
+      "exit_code": 0,
+      "stdout": ""
+    }
+  ],
+  "expanded_affected_result": {
+    "errors": 0,
+    "failed": 0,
+    "junit_suites": [
+      {
+        "errors": "0",
+        "failures": "0",
+        "hostname": "636643ecc05a",
+        "name": "pytest",
+        "skipped": "1",
+        "tests": "1548",
+        "time": "97.185",
+        "timestamp": "2026-11-19T16:36:27.845830-08:00"
+      }
+    ],
+    "passed": 1547,
+    "pytest_elapsed_seconds": 97.16,
+    "skipped": 1,
+    "skips": [
+      {
+        "classname": "tests.test_owned_publication_replace",
+        "name": "test_native_windows_force_replaces_existing_destination_while_source_denies_substitution",
+        "reason": "native Windows held-source replacement acceptance"
+      }
+    ]
+  },
+  "independent_review": "Root review pending; stopped prior reviewer is not counted as completed.",
+  "qualification_limits": [
+    "Authored fixture/provider responses; sockets denied and targets never executed.",
+    "Linux affected-suite result only; native Windows publisher test skipped.",
+    "No live provider, packaging, empirical accuracy or full aggregate acceptance.",
+    "Parent aggregate on bffcfa99 was SIGKILL after1729.332seconds without final JUnit; cause unknown."
+  ],
+  "recorded_at_utc": "2026-11-20T00:44:56.748531+00:00",
+  "reproduction_command": [
+    "python",
+    "-m",
+    "pytest",
+    "-q",
+    "tests/test_acquisition_workflow.py",
+    "tests/test_kb_acquire_lifecycle_20261105.py",
+    "tests/test_kb_product_start_20261106.py",
+    "tests/test_kbc_acquire_cli.py",
+    "tests/test_kbc_acquire_pair_binding.py",
+    "tests/test_kbc_acquisition_evidence.py",
+    "tests/test_kbc_audit_20261107.py",
+    "tests/test_kbc_bugfixes_20261029.py",
+    "tests/test_kbc_card_context_sources.py",
+    "tests/test_kbc_card_field_provenance.py",
+    "tests/test_kbc_cli.py",
+    "tests/test_kbc_components.py",
+    "tests/test_kbc_context.py",
+    "tests/test_kbc_contracts.py",
+    "tests/test_kbc_csaf_bridge.py",
+    "tests/test_kbc_cvrf.py",
+    "tests/test_kbc_cvrf_fetch.py",
+    "tests/test_kbc_e0_e2e.py",
+    "tests/test_kbc_fixtures.py",
+    "tests/test_kbc_ids.py",
+    "tests/test_kbc_index.py",
+    "tests/test_kbc_kev_explain_export.py",
+    "tests/test_kbc_leads.py",
+    "tests/test_kbc_lineage.py",
+    "tests/test_kbc_lineage_ambiguity.py",
+    "tests/test_kbc_lineage_certainty.py",
+    "tests/test_kbc_msrc_cvrf.py",
+    "tests/test_kbc_msrc_field_diagnostics.py",
+    "tests/test_kbc_msrc_provenance.py",
+    "tests/test_kbc_msrc_review_findings.py",
+    "tests/test_kbc_net_plan.py",
+    "tests/test_kbc_pairs.py",
+    "tests/test_kbc_pairs_index.py",
+    "tests/test_kbc_products.py",
+    "tests/test_kbc_recovery.py",
+    "tests/test_kbc_resolver.py",
+    "tests/test_kbc_resolver_architecture.py",
+    "tests/test_kbc_resolver_bounds.py",
+    "tests/test_kbc_saved_scope_flow.py",
+    "tests/test_kbc_saved_scope_revision_identity.py",
+    "tests/test_kbc_saved_scope_validation.py",
+    "tests/test_kbc_schemas.py",
+    "tests/test_kbc_scope.py",
+    "tests/test_kbc_scope_retained.py",
+    "tests/test_kbc_selection_guard.py",
+    "tests/test_kbc_service.py",
+    "tests/test_kbc_snapshot.py",
+    "tests/test_kbc_store.py",
+    "tests/test_kbc_synergy.py",
+    "tests/test_kbc_tsp_components.py",
+    "tests/test_kbc_view_model.py",
+    "tests/test_kbc_view_model_status.py",
+    "tests/test_kbc_workflow.py",
+    "tests/test_owned_publication.py",
+    "tests/test_owned_publication_integrity.py",
+    "tests/test_owned_publication_replace.py"
+  ],
+  "reproduction_environment": {
+    "PYTHONPATH": "src",
+    "QT_QPA_PLATFORM": "offscreen"
+  },
+  "retained_files": {
+    "affected-before-port.log": {
+      "bytes": 3659,
+      "sha256": "0719feea1a2b050d277561b3595edb3ea8d2951928dac9965d6bd4a1b0c34ebb"
+    },
+    "affected-before-port.xml": {
+      "bytes": 213977,
+      "sha256": "462b70042d1c42b62f03106bf60d44d39a0568a2454e568db859e87a39c8ff94"
+    },
+    "affected.log": {
+      "bytes": 1803,
+      "sha256": "f0442fb04034258200a04f690858c35e7fc696850b09d09a4c98c70c189e5239"
+    },
+    "affected.xml": {
+      "bytes": 212994,
+      "sha256": "82094d9989e8f77b7e4fc37499c0e920e67aed38bcbc667299c43445774e8bf8"
+    },
+    "baseline.log": {
+      "bytes": 3046,
+      "sha256": "eefcba40e72cfe7c83e3e3af7fe0ec8fad42b816ff67d57aa854521bd9f952e1"
+    },
+    "baseline.xml": {
+      "bytes": 3193,
+      "sha256": "ca12c59bd367c39db3e4d9be47ad750cb98494af27cdf3c072eb92213cc74356"
+    },
+    "focused.log": {
+      "bytes": 341,
+      "sha256": "439ec912b59a6b19437656394c81bb9b4a0330bae3244305273e7e3f64b978b9"
+    },
+    "focused.xml": {
+      "bytes": 31510,
+      "sha256": "655b309a5b309b54accd8443b48bb523ddce6f1445671177e7b4cbe53daade31"
+    },
+    "retained-scan.json": {
+      "bytes": 146224,
+      "sha256": "a50867cc8de4562269c37ecbd8a29f4851e841d4313ccda148961e2c2f476ef8"
+    }
+  },
+  "source_sha256": {
+    "src/patchtrace/enrichment/storage.py": {
+      "bytes": 30772,
+      "sha256": "b50848065f373900017a5026cabd6542d52a6d80559f0b3cdd4fcdadeb918375"
+    },
+    "src/patchtrace/kbcorrelation/acquire.py": {
+      "bytes": 10643,
+      "sha256": "521a71041d0c55951bff43085008f296378fb883bfe5ddf3057985873cbd1ec7"
+    },
+    "src/patchtrace/kbcorrelation/acquisition_evidence.py": {
+      "bytes": 10011,
+      "sha256": "670d9d38b52f9c67ebb3f6c17bc7148203ab3bc90f37ff7574caa1c6ae1c4a0b"
+    },
+    "src/patchtrace/kbcorrelation/ports.py": {
+      "bytes": 2442,
+      "sha256": "ba417c2f46cdcfa1f2bd065e3c76cfb4b594f9c4907c2ffc252c53030383acc0"
+    },
+    "src/patchtrace/kbcorrelation/recovery.py": {
+      "bytes": 3684,
+      "sha256": "80a76b50f44b1a0010a772e9d86181dfe4c056020949aded3f48babc4a048285"
+    },
+    "src/patchtrace/kbcorrelation/service.py": {
+      "bytes": 65510,
+      "sha256": "daf2c9bc02942a524d547dc4f0b61b21db958d1fcbca7a0700085c46bfd6b195"
+    },
+    "src/patchtrace/kbcorrelation/store.py": {
+      "bytes": 40637,
+      "sha256": "ec2f9f6e05df61855ffe4603362e24c3a62660e775cbdb28edf91b8e84ace0f0"
+    },
+    "src/patchtrace/kbcorrelation/wiring.py": {
+      "bytes": 23109,
+      "sha256": "78b779767890bef3117e8598a4cff50d8dac7162e11db31311219681ff016809"
+    },
+    "tests/test_kbc_acquisition_evidence.py": {
+      "bytes": 20588,
+      "sha256": "47ce4e8d131dd0336346a0e9f04f7fce99f1d069cc127238247c23acde56832c"
+    },
+    "tests/test_kbc_contracts.py": {
+      "bytes": 24664,
+      "sha256": "a852e109948f8df9026aa179dae837a662aaaefe574f7902575d136a55893334"
+    },
+    "tests/test_kbc_schemas.py": {
+      "bytes": 2032,
+      "sha256": "7f0d0b23dbf85a15c2aabe4519fb25f9677c919d730f3467f010d4ec0a79cdeb"
+    },
+    "tools/generate_kbc_schemas.py": {
+      "bytes": 13019,
+      "sha256": "02c0c3ce25f74205080440541c5d9972f87bbd6c89704e70125043af080f5be8"
+    }
+  },
+  "source_status": "Uncommitted candidate preserved from generation 9; continuation did not change runtime or tests before final validation.",
+  "worktree_base": "860fdf24d228fa49dd41d5cf7050b88048442f0e"
+}

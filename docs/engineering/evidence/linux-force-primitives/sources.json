@@ -1,0 +1,42 @@
+{
+  "retrieved_date_utc": "2026-11-20",
+  "kind": "primary_documentation",
+  "sources": [
+    {
+      "title": "rename(2)",
+      "url": "https://man7.org/linux/man-pages/man2/rename.2.html",
+      "relevance": "Source pathname relative to directory descriptor; atomic replacement/exchange; documented renameat2 flags."
+    },
+    {
+      "title": "link(2)",
+      "url": "https://man7.org/linux/man-pages/man2/link.2.html",
+      "relevance": "Descriptor selection through AT_EMPTY_PATH or proc-fd follow; existing-destination refusal; capability caveat."
+    },
+    {
+      "title": "open(2)",
+      "url": "https://man7.org/linux/man-pages/man2/open.2.html",
+      "relevance": "Open descriptor identity survives pathname changes; O_TMPFILE preparation and later linking."
+    },
+    {
+      "title": "F_SETLEASE",
+      "url": "https://man7.org/linux/man-pages/man2/F_SETLEASE.2const.html",
+      "relevance": "Open/truncate lease protocol; no documented source-name exclusion guarantee."
+    },
+    {
+      "title": "flock(2)",
+      "url": "https://man7.org/linux/man-pages/man2/flock.2.html",
+      "relevance": "Ordinary advisory locking and filesystem-specific differences."
+    },
+    {
+      "title": "path_resolution(7)",
+      "url": "https://man7.org/linux/man-pages/man7/path_resolution.7.html",
+      "relevance": "Identity-based pathname permissions; private directory is not a same-principal process boundary."
+    },
+    {
+      "title": "Kernel directory locking",
+      "url": "https://docs.kernel.org/filesystems/directory-locking.html",
+      "relevance": "Internal per-operation directory locks and source/target lookup; not a userspace lock spanning separate calls."
+    }
+  ],
+  "limits": "No direct current fs/namei.c source audit; native behavior separately recorded on Linux 6.18.57."
+}

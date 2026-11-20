@@ -1,0 +1,25 @@
+UP017 [*] Use `datetime.UTC` alias
+   --> docs/engineering/evidence/linux-force-primitives/probe.py:219:37
+    |
+217 |     report = {
+218 |         'schema': 'patchtrace-linux-force-primitive-probe/1',
+219 |         'observed_at': datetime.now(timezone.utc).isoformat(),
+    |                                     ^^^^^^^^^^^^
+220 |         'source_head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
+221 |         'source_export_sha256': hashlib.sha256(expected_module.read_bytes()).hexdigest(),
+    |
+help: Convert to `datetime.UTC` alias
+    |
+19  | from contextlib import contextmanager
+    - from datetime import datetime, timezone
+20  + from datetime import datetime, timezone, UTC
+21  | from pathlib import Path
+--------------------------------------------------------------------------------
+218 |         'schema': 'patchtrace-linux-force-primitive-probe/1',
+    -         'observed_at': datetime.now(timezone.utc).isoformat(),
+219 +         'observed_at': datetime.now(UTC).isoformat(),
+220 |         'source_head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
+    |
+
+Found 1 error.
+[*] 1 fixable with `--fix`.

@@ -1,0 +1,371 @@
+{
+  "schema": "patchtrace-qa-diagnosis/1",
+  "recorded_at_utc": "2026-11-20T00:44:07.246650+00:00",
+  "source_base": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
+  "branch": "codex/qa-diagnosis-20261120-4c8d",
+  "environment": {
+    "recorded_at_utc": "2026-11-20T00:35:18.788400+00:00",
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "executable": "/workspace/scratch/4c8dc848d760/venv/bin/python",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "packages": {
+      "PySide6": "6.12.0",
+      "shiboken6": "6.12.0",
+      "pytest": "9.2.0",
+      "pytest-qt": "4.5.0",
+      "ruff": "0.17.6"
+    },
+    "qt_platform_for_gui_runs": "offscreen",
+    "pythonpath_for_test_runs": "src:tests"
+  },
+  "scope": "Bounded local QA diagnosis and authorized test-harness correction. No application, network control, dependency, original assertion or threshold changes.",
+  "original_aggregate": {
+    "observed_at_utc": "2026-11-20T00:36:36.265694+00:00",
+    "source": "/workspace/scratch/4c8dc848d760/validation/aggregate-1/pytest.log",
+    "source_head": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
+    "snapshot_bytes": 22085,
+    "snapshot_sha256": "7573af16dce3f1e5469e2895a8b363f8f3a5dd42eaa0dbe4648bdc78f7fbf4e7",
+    "has_terminal_failure_traceback": false,
+    "final_summary_seen": false,
+    "disposition": "Unsplit run terminated by SIGKILL with no final traceback, summary, or JUnit. Original table failure remains unattributed and full-suite qualification incomplete.",
+    "ended_at_utc": "2026-11-20T00:32:03.102136+00:00",
+    "elapsed_seconds": 1729.332,
+    "exit_code": -9,
+    "termination_cause": "unestablished",
+    "receipt_archive_entry": "qa-diagnosis-20261120/aggregate-termination-receipt.json",
+    "receipt_sha256": "5146854f214a305d99e771ac142991d873cb16602fb7d8480bb2046d1f365663"
+  },
+  "helper_sources": {
+    "frozen_git_blob": "f3433aadd03fb80b42a466d4b71533afb921bd0e",
+    "fixed_git_blob": "1fd324c5097948e64e5ad61bc48a4718e35e71b2"
+  },
+  "source_final": {
+    "base": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
+    "files": {
+      "tests/qt_support.py": {
+        "bytes": 9207,
+        "sha256": "7b5284762a658bb39ec668ab4a0adb619ac2ed994e497a87156fa79d75566734",
+        "git_blob": "1fd324c5097948e64e5ad61bc48a4718e35e71b2"
+      },
+      "tests/test_gui_table_counter_scope.py": {
+        "bytes": 1568,
+        "sha256": "b4d0f67f43557ff33d5bed1f982f4b715c0f7157709490604ceb78e2b2a33a2f",
+        "git_blob": "b5b27ef212b9fee1c1ed821f4b91b943b2c0ee90"
+      },
+      "docs/specs/program-e/GUI-integration-plan.md": {
+        "bytes": 88469,
+        "sha256": "74cc8679607e18da3150aeaf9f73d03b50896459a7d85e11337e480e91d0bd1a",
+        "git_blob": "eaa6d4383a06d92f5810f88645a5c3273896d0d7"
+      },
+      "tests/test_gui_table.py": {
+        "bytes": 18771,
+        "sha256": "e4798495d5a8025897a371effb127ea34a07b3c9831726cbe4dbcd30cda75a2f",
+        "git_blob": "85363e6522da990e02ea0e67217137dc1da0d356"
+      },
+      "src/patchtrace/gui/qt/table.py": {
+        "bytes": 17522,
+        "sha256": "ab394b5d9ea3d93d1ed2e9921bb49b8fec918b495efa947d977c958adf4eafdb",
+        "git_blob": "94a97c73bb518e4d5c70b259bb9beafe3b399fb7"
+      },
+      "src/patchtrace/gui/table_spec.py": {
+        "bytes": 6064,
+        "sha256": "784125aaafdc1df2e52c39e2974697acb572baee43687f1d8781ca183ec40f47",
+        "git_blob": "9617938d25fc9483f3c29b99c4371963d85be6c7"
+      },
+      "tests/network_guard.py": {
+        "bytes": 7259,
+        "sha256": "238c3cc261eb38bffddc1502f868ca2ed988fb934b8be7de0d1d7289d6f94400",
+        "git_blob": "f686e57af5a6f431f81ab7ecceab1e846cb6e4fd"
+      },
+      "tests/test_network_consent_guard.py": {
+        "bytes": 8940,
+        "sha256": "13aaf81db021c2849834ef6e78bdc564c5a4383cf0e88dddb50de20d675f4a1a",
+        "git_blob": "e83b23ae12bc53bc24acac8441e0dc3482a29996"
+      }
+    }
+  },
+  "gui_records": [
+    {
+      "id": "gui-original-isolated",
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src:tests /workspace/scratch/4c8dc848d760/venv/bin/python -m pytest -q tests/test_gui_table.py::test_data_calls_are_independent_of_the_row_count --junitxml=docs/engineering/evidence/qa-diagnosis-20261120/gui-isolated.xml",
+      "exit_code": 0,
+      "result": "1 passed in 2.05s",
+      "helper": "frozen"
+    },
+    {
+      "id": "gui-independent-red",
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src:tests /workspace/scratch/4c8dc848d760/venv/bin/python docs/engineering/evidence/qa-diagnosis-20261120/gui-count-probe.py",
+      "exit_code": 1,
+      "result": "AssertionError: selected-instance ownership; reported 1092, selected 546, other 546, ceiling 672",
+      "helper": "frozen"
+    },
+    {
+      "id": "gui-initial-regression-crash",
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src:tests /workspace/scratch/4c8dc848d760/venv/bin/python -m pytest -q tests/test_gui_table_counter_scope.py --junitxml=docs/engineering/evidence/qa-diagnosis-20261120/gui-counter-red.xml",
+      "exit_code": null,
+      "result": "F followed by Fatal Python error: Segmentation fault in pytest-qt teardown event processing; no terminal assertion traceback or JUnit was emitted",
+      "helper": "frozen",
+      "regression_source": "gui-counter-regression-initial.py",
+      "limit": "Exact process exit status was not retained; the raw fatal-error log is retained."
+    },
+    {
+      "id": "gui-clean-regression-red",
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src:tests /workspace/scratch/4c8dc848d760/venv/bin/python -m pytest -q tests/test_gui_table_counter_scope.py --junitxml=docs/engineering/evidence/qa-diagnosis-20261120/gui-counter-red-clean.xml",
+      "exit_code": 1,
+      "result": "1 failed in 2.57s; reported 183 versus selected 91",
+      "helper": "frozen",
+      "regression_source": "gui-counter-regression-final.py"
+    },
+    {
+      "id": "gui-independent-green",
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src:tests /workspace/scratch/4c8dc848d760/venv/bin/python docs/engineering/evidence/qa-diagnosis-20261120/gui-count-probe.py",
+      "exit_code": 0,
+      "result": "Ownership assertion passes; selected count 546 in both scenarios; unrelated 546 calls remain executed",
+      "helper": "fixed"
+    },
+    {
+      "id": "gui-first-green",
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src:tests /workspace/scratch/4c8dc848d760/venv/bin/python -m pytest -q tests/test_gui_table_counter_scope.py tests/test_gui_table.py tests/test_ui_leads.py tests/test_ui_unified.py tests/test_ui_related_panel.py --junitxml=docs/engineering/evidence/qa-diagnosis-20261120/gui-counter-green.xml",
+      "exit_code": 0,
+      "result": "186 passed in 58.54s",
+      "helper": "fixed",
+      "regression_source": "gui-counter-regression-initial.py"
+    },
+    {
+      "id": "gui-final-green",
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src:tests /workspace/scratch/4c8dc848d760/venv/bin/python -m pytest -q tests/test_gui_table_counter_scope.py tests/test_gui_table.py tests/test_ui_leads.py tests/test_ui_unified.py tests/test_ui_related_panel.py --junitxml=docs/engineering/evidence/qa-diagnosis-20261120/gui-counter-final.xml",
+      "exit_code": 0,
+      "result": "186 passed in 97.65s",
+      "helper": "fixed",
+      "regression_source": "gui-counter-regression-final.py"
+    },
+    {
+      "id": "ruff-initial-source",
+      "command": "/workspace/scratch/4c8dc848d760/venv/bin/python -m ruff check src tests tools",
+      "exit_code": 0,
+      "result": "All checks passed!",
+      "output": "ruff-source.log"
+    },
+    {
+      "id": "ruff-final-source",
+      "command": "/workspace/scratch/4c8dc848d760/venv/bin/python -m ruff check src tests tools",
+      "exit_code": 0,
+      "result": "All checks passed!",
+      "output": "ruff-source-final.log"
+    },
+    {
+      "id": "ruff-probes",
+      "command": "/workspace/scratch/4c8dc848d760/venv/bin/python -m ruff check docs/engineering/evidence/qa-diagnosis-20261120/gui-count-probe.py docs/engineering/evidence/qa-diagnosis-20261120/unix-unguarded-probe.py",
+      "exit_code": 0,
+      "result": "All checks passed!",
+      "output": "ruff-probes.log"
+    }
+  ],
+  "unix_records": [
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src:tests /workspace/scratch/4c8dc848d760/venv/bin/python -m pytest -q tests/test_network_consent_guard.py::test_a_local_unix_socket_is_not_network --junitxml=docs/engineering/evidence/qa-diagnosis-20261120/unix-focused.xml",
+      "exit_code": 1,
+      "outcome": "1 failed in 0.50s; AF_UNIX constructor raises EPERM before NetworkGuard entry"
+    },
+    {
+      "command": "PYTHONPATH=src:tests /workspace/scratch/4c8dc848d760/venv/bin/python docs/engineering/evidence/qa-diagnosis-20261120/unix-unguarded-probe.py",
+      "initial_exit_code": 1,
+      "initial_outcome": "diagnostic __module__ introspection error before any socket call",
+      "corrected_exit_code": 0,
+      "corrected_outcome": "diagnostic records EPERM at AF_UNIX socket construction, with guard/audit hook inactive"
+    },
+    {
+      "command": "/workspace/scratch/4c8dc848d760/venv/bin/python -m ruff check docs/engineering/evidence/qa-diagnosis-20261120/unix-unguarded-probe.py",
+      "exit_code": 0
+    }
+  ],
+  "disposition": {
+    "counter": "Independently reproduced test-harness ownership defect; corrected and focused tests pass.",
+    "aggregate_table_failure": "Unattributed: original run terminated with SIGKILL before emitting a terminal traceback. A later reproduction would be new evidence.",
+    "unix_socket": "Focused acceptance fails at AF_UNIX construction before NetworkGuard; unguarded control records the same EPERM. Environment-blocked, not a passing acceptance result.",
+    "initial_regression_teardown": "Fatal native error retained; exact native cause unestablished. Final fixture explicitly detaches auxiliary model/view and uses established teardown fixture; clean red and final green complete.",
+    "review": "Read-only delegated review found no substantive issue; no additional test run by reviewer."
+  },
+  "archive": {
+    "file": "qa-diagnosis-20261120.zip",
+    "bytes": 39229,
+    "sha256": "43b61b3e27973de3bf351963ef5579a4bec0b1714d3a14cf3c9098759208314d",
+    "entry_count": 37
+  },
+  "entries": {
+    "qa-diagnosis-20261120/aggregate-progress-snapshot.json": {
+      "bytes": 507,
+      "sha256": "b175aeebb4a489ef483ada5f702e7308b224adb17ce4ca89c98d3304e39f700c"
+    },
+    "qa-diagnosis-20261120/aggregate-progress-snapshot.log": {
+      "bytes": 22085,
+      "sha256": "7573af16dce3f1e5469e2895a8b363f8f3a5dd42eaa0dbe4648bdc78f7fbf4e7"
+    },
+    "qa-diagnosis-20261120/environment.json": {
+      "bytes": 478,
+      "sha256": "47a3b224c07131d34909a4d4352b3bbd3be44089f721ca6a4c82daa7fd9b158c"
+    },
+    "qa-diagnosis-20261120/gui-count-probe-green.log": {
+      "bytes": 340,
+      "sha256": "2bcefe8e6f7ce3d663df896097f48a8844cdcc1d69d66c11585f3b36f2d2bfb7"
+    },
+    "qa-diagnosis-20261120/gui-count-probe.log": {
+      "bytes": 707,
+      "sha256": "cf09889f83442c9f4210109cf29b5be5b5463874e66df66a23cf5853d51cf63d"
+    },
+    "qa-diagnosis-20261120/gui-count-probe.py": {
+      "bytes": 1535,
+      "sha256": "5c78d2227342d00df34ba171656777732bc7cfb1a50a3d998480459d7989ba71"
+    },
+    "qa-diagnosis-20261120/gui-counter-final.log": {
+      "bytes": 271,
+      "sha256": "8bcba7f06b7431af2070f04305a2dab8e1876ace5fcf423d6534dcb4b9d995d7"
+    },
+    "qa-diagnosis-20261120/gui-counter-final.xml": {
+      "bytes": 22201,
+      "sha256": "1950df848f69c092e6398a3a7a6494b083e4bfccbe4dc3025ff4103d7c45240f"
+    },
+    "qa-diagnosis-20261120/gui-counter-green.log": {
+      "bytes": 261,
+      "sha256": "af33af29cbdda19dc19cbe139786821ea1586419ed4dd5199a94fbdcd2b00658"
+    },
+    "qa-diagnosis-20261120/gui-counter-green.xml": {
+      "bytes": 22201,
+      "sha256": "4e532043657aee499742d16e027558bd2367361816bb780fe90ec99998c8034a"
+    },
+    "qa-diagnosis-20261120/gui-counter-red-clean.log": {
+      "bytes": 1986,
+      "sha256": "c3dd9f6e691e7ddb97e711d049fe2ac6db54d7423ac7b1109b10b53adc467797"
+    },
+    "qa-diagnosis-20261120/gui-counter-red-clean.xml": {
+      "bytes": 2113,
+      "sha256": "07386f34f97ca0657c2a9d3a3ed12797c026bf678760a89846ed653ba3dbe39c"
+    },
+    "qa-diagnosis-20261120/gui-counter-red.log": {
+      "bytes": 3425,
+      "sha256": "46f96d37e6cad54bd9d7e5316a61eff9a62f0745aee848c05438682d66defa1b"
+    },
+    "qa-diagnosis-20261120/gui-counter-regression-final.py": {
+      "bytes": 1568,
+      "sha256": "b4d0f67f43557ff33d5bed1f982f4b715c0f7157709490604ceb78e2b2a33a2f"
+    },
+    "qa-diagnosis-20261120/gui-counter-regression-initial.py": {
+      "bytes": 1450,
+      "sha256": "c4a827a1e71638db383bbe3eaaeb392fd1760db988b7fd74b91e93fa97dafa23"
+    },
+    "qa-diagnosis-20261120/gui-isolated.log": {
+      "bytes": 98,
+      "sha256": "a564a9c89571adfb9d8eed4fb5c6512d523ff8ba55f083b662b778276ae458b1"
+    },
+    "qa-diagnosis-20261120/gui-isolated.xml": {
+      "bytes": 362,
+      "sha256": "8d69fb259b67b13dffafaffd0e41bfa32e7112cfea14d5289d06d6b711bebec7"
+    },
+    "qa-diagnosis-20261120/gui-source-identity.json": {
+      "bytes": 1311,
+      "sha256": "7d7094f9bfa43883d5fe4490130de1f0e04ad84204fba1fcac346e10dd217be4"
+    },
+    "qa-diagnosis-20261120/peer-review.md": {
+      "bytes": 1180,
+      "sha256": "0b528706fd031e7ab53117ee227e57fd8282cad58bbdbc2c78590d0457106a03"
+    },
+    "qa-diagnosis-20261120/qt-support-fixed.py": {
+      "bytes": 9207,
+      "sha256": "7b5284762a658bb39ec668ab4a0adb619ac2ed994e497a87156fa79d75566734"
+    },
+    "qa-diagnosis-20261120/qt-support-frozen.py": {
+      "bytes": 9177,
+      "sha256": "a901f4837896c32a9476eec3c2ec47faf1cb37687c7f5451bbdb088939b2b0cf"
+    },
+    "qa-diagnosis-20261120/ruff-probes.log": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "qa-diagnosis-20261120/ruff-source-final.log": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "qa-diagnosis-20261120/ruff-source.log": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "qa-diagnosis-20261120/source-final.json": {
+      "bytes": 1783,
+      "sha256": "ed8a69f9c8dd4713b7ca69b67b239e7fca03c84243930075603a226b66d0ef0e"
+    },
+    "qa-diagnosis-20261120/unix-assessment.md": {
+      "bytes": 3359,
+      "sha256": "452539e15ffd3bf8bee8a4672078a8f1dc2307db6dd0465153861c3287996e2b"
+    },
+    "qa-diagnosis-20261120/unix-focused.log": {
+      "bytes": 1893,
+      "sha256": "fca35aea193df63f9bcad5405f003b88f65c55c87a29144f07ec60d726f9f48b"
+    },
+    "qa-diagnosis-20261120/unix-focused.xml": {
+      "bytes": 1944,
+      "sha256": "b71c83805613de94a3d76adef063b9437905c634e21c147f303c6464b353939c"
+    },
+    "qa-diagnosis-20261120/unix-manifest.json": {
+      "bytes": 3198,
+      "sha256": "f7f4b7d080487c614ad5d4c27d60b5002ebef6ffd0f76d8ab0956af55ff45f5c"
+    },
+    "qa-diagnosis-20261120/unix-probe-ruff.txt": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "qa-diagnosis-20261120/unix-unguarded-initial-error.txt": {
+      "bytes": 1107,
+      "sha256": "9390c455ff67103733e9e7548a8f090a134b1b1832e7c589ec04c2a3257ebf1e"
+    },
+    "qa-diagnosis-20261120/unix-unguarded-probe-initial.py": {
+      "bytes": 2018,
+      "sha256": "3574807b204d4c6e10f429c7cef5780f7b21b715e203ac1e5a77b034009d6dfe"
+    },
+    "qa-diagnosis-20261120/unix-unguarded-probe.py": {
+      "bytes": 2133,
+      "sha256": "3cc0109dc03f74644980fcb539fa0360f60fa2045cad17fcb2a52cd8427bef75"
+    },
+    "qa-diagnosis-20261120/unix-unguarded-result.json": {
+      "bytes": 656,
+      "sha256": "c24c44c89b69996cf46eea5d423e929b29d410ebec36a3c580ab3e33e360a004"
+    },
+    "qa-diagnosis-20261120/aggregate-termination-receipt.json": {
+      "bytes": 2488,
+      "sha256": "5146854f214a305d99e771ac142991d873cb16602fb7d8480bb2046d1f365663"
+    },
+    "qa-diagnosis-20261120/continuation-regression.xml": {
+      "bytes": 392,
+      "sha256": "18fd810a6bd101b1c66fb168ad67729e99c562089d808fef972397c87d4a5eef"
+    },
+    "qa-diagnosis-20261120/continuation-validation.json": {
+      "bytes": 1191,
+      "sha256": "e790f05d7331f95655a1d4c3791462d60f2c160a597de4a1bc9202ad15777262"
+    }
+  },
+  "successor_verification": {
+    "recorded_at_utc": "2026-11-20T00:44:07.246650+00:00",
+    "source_base": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
+    "helper_git_blob": "1fd324c5097948e64e5ad61bc48a4718e35e71b2",
+    "regression_git_blob": "b5b27ef212b9fee1c1ed821f4b91b943b2c0ee90",
+    "checks": [
+      {
+        "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src:tests /workspace/scratch/4c8dc848d760/venv/bin/python -m pytest -q tests/test_gui_table_counter_scope.py --junitxml=/workspace/scratch/4c8dc848d760/validation/qa-counter-continuation.xml",
+        "exit_code": 0,
+        "reported_result": "1 passed in 1.01s",
+        "junit": "continuation-regression.xml"
+      },
+      {
+        "command": "/workspace/scratch/4c8dc848d760/venv/bin/python -m ruff check src tests tools",
+        "exit_code": 0,
+        "reported_result": "All checks passed!"
+      },
+      {
+        "command": "git diff --check",
+        "exit_code": 0,
+        "reported_result": "No whitespace errors."
+      }
+    ],
+    "archive_verification": "All 34 inherited archive entries matched their manifest sizes and SHA-256 hashes before additions.",
+    "test_scope": "Single final-regression successor sanity run. The inherited 186-test final run remains separate."
+  }
+}

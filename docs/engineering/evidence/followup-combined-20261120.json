@@ -1,0 +1,37 @@
+{
+  "schema": "patchtrace-followup-qualification/1",
+  "source_commit": "97ca0adfad5ea4e6cae0648a55529b9165a40b21",
+  "source_trees": {
+    "src": "fc8ac8b29a0b5cf78910b40ce6cd7ac38f3f94f6",
+    "tests": "8f6cece6ce6924fdb099dbfbc7e9522a0aeb35d1",
+    "tools": "4c4938769f167baee5059d0696722d9bebea7fc4"
+  },
+  "passed": 1737,
+  "skipped": 1,
+  "pytest_seconds": 98.56,
+  "skip_reason": "native Windows held-source replacement acceptance",
+  "full_suite": false,
+  "archive_sha256": "fa67f1900e59dde6e212ad2d262367639fc4776cc79804538f3e09ec3c52ef6f",
+  "files": {
+    "results.xml": {
+      "bytes": 235676,
+      "sha256": "b75ed3fe13c974e54d289634c061a535e8b1380d521a3eccb1d14509a7e52f8b"
+    },
+    "pytest.log": {
+      "bytes": 3063,
+      "sha256": "affb1d624b89013a9c1473cdcc0e210cfb435055b5962e89105ffa155750955a"
+    },
+    "receipt.json": {
+      "bytes": 3565,
+      "sha256": "0f574495ba004fa83e0f351e11859ca2f7a16172ccd58ece2334c02c766b2d37"
+    },
+    "runner.py": {
+      "bytes": 1982,
+      "sha256": "55ced72dd37e9a51bb65b6cac21a0ba524853164e9b78912eadabe205f0551ce"
+    },
+    "final-checks.json": {
+      "bytes": 434,
+      "sha256": "1138c9c0c276ee6feb31ae4adfb0f856b21adec0a0da345b781812ed2903d6a7"
+    }
+  }
+}

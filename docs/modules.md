@@ -515,6 +515,13 @@ K4a notes: `kbcorrelation/cli.py` gained `engine=` and `kev=` ports on `main`/`C
 ### [K5w:pairs-plan-glue]
 `kb pairs` and `kb plan` resolve candidates with `resolver.resolve` over Winbindex records saved in the offline workspace as `winbindex/<name>@YYYY-MM-DD.json[.gz]` (`wiring.WorkspaceFileIndex`: `rows_for` = `parse_rows(...).rows` -> `as_mapping()`; `rows` = `lineage.index_rows`, skipped entries become `skipped_rows`). Read-only; `kb plan` previews one pair and plans no request (network plan and consent stay with E1).
 
+### [K7:acquisition-evidence] Consented acquisition persistence (2026-11-20)
+
+| Module | Responsibility | Depends on | Tests |
+|---|---|---|---|
+| `kbcorrelation/acquisition_evidence.py` | Strict, bounded `AcquisitionEvidence` snapshot: full index proposal/window, two normalized delivery rows and entry hashes, v2 consent digest, conservative verified manual pair and download receipts; content identity and attachment ownership validation. No network or file access. | kbcorrelation contracts | `test_kbc_acquisition_evidence.py`, generated schema controls |
+| `kbcorrelation/{acquire,service,store,recovery,ports,wiring}.py` | Freeze approved source metadata before staging; carry optional evidence through existing two-phase attachment, immutable `kb/acquisitions/<id>.json` and `kb-acquisition:<id>` row; repair checks the journal's operation/content identity, backup uses existing `kb/` inclusion. `RealProjectPort.write_acquisition_sidecar` binds the owned publisher and validates project/artifact ownership. Legacy imports and journals remain valid. | acquisition ports, project enrichment port, owned_publication (wiring only) | `test_kbc_acquisition_evidence.py`, acquire CLI, pair binding, recovery |
+
 2026-11-18 certainty update: selected-machine timelines use valid UTC chronology;
 equal instants require stated builds from the same numeric family. Unordered
 observations at either endpoint remain in the confounding window. Resolutions
@@ -527,7 +534,7 @@ explicit pair when either ambiguity or truncation remains. Regression coverage:
 | capa hints | src/patchtrace/intelligence/tools/capa_hints.py, tools/capa_rules_inventory.py | `capability_context(HypothesisSet, PairChange rows, lineage=)` returns `MechanismContext(support='context')` per hypothesis and matched pair: exact API-hint join (`api_key`), else namespace tag via `FAMILY_TAGS` (only `path` and `search-path` today). Only clean gained/lost rows join (not moved, not-compared, noise, library). No score, no contradiction. `capa_rules_inventory.py --rules-dir DIR` builds a complete inventory (names, namespaces, scopes, lib, file sha256; no rule text) without PyYAML; `--from-results` builds a `derived-unverified` subset from capa results. |
 
 ### [K7:acquire-workflow]
-`acquisition/workflow.py` (Qt-free): `candidate_from_row`, `plan_requests` (pure consent preview), `stage` (resolve, download, verify, always removes staging on failure or cancel), `create_project` (cancel check, then `quarantine.promote`, staging always removed), `acquire_project`, `Acquirer` (mapping-level port implementation). `kbcorrelation/acquire.py`: `build_plan` (`plan_sha` over pair, hosts, requests), `verify_consent` (exact hosts and plan_sha, never offline), `acquire_pair` (stage, verify SHAs, `import_pair`, discard staging; errors as `KbcStoreError`, acquisition codes nested in `details`). `AcquisitionDialog` is unchanged. Download provenance is returned, not written into the project (an annotation would advance the revision the attach link records).
+`acquisition/workflow.py` (Qt-free): `candidate_from_row`, `plan_requests` (pure consent preview), `stage` (resolve, download, verify, always removes staging on failure or cancel), `create_project` (cancel check, then `quarantine.promote`, staging always removed), `acquire_project`, `Acquirer` (mapping-level port implementation). `kbcorrelation/acquire.py`: `build_plan` (`plan_sha` v2 over pair, full source snapshot, hosts and requests), `verify_consent` (exact hosts and plan_sha, never offline), `acquire_pair` (stage, verify SHAs, capture receipts, `import_pair`, discard staging; errors as `KbcStoreError`, acquisition codes nested in `details`). `AcquisitionDialog` is unchanged. The 2026-11-20 acquisition snapshot extension above persists provenance through attachment sidecars and enrichment rows without advancing the project revision.
 ### [S8:search-tool-advisory-sources]
 | part | files | what it does | tests |
 |---|---|---|---|

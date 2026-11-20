@@ -26,6 +26,7 @@ from . import pairs as pr
 from . import resolver
 from .acquire import AcquirePlan, AcquirePort, build_plan, row_for, verify_consent
 from .acquire import acquire_pair as run_acquire
+from .acquisition_evidence import EvidenceLimitError, make_evidence
 from .cli_index import IndexPorts, load_index
 from .context import ContextBundle, RulesPort, build_bundle, vulnerability_pointer
 from .contracts import (
@@ -662,6 +663,12 @@ class KbService:
             text = plan.text if result['plan'] else exc.message
             return Outcome(2, 'failed', result, text, error=f'{exc.code}: {exc.message}')
         try:
+            downloads = ()
+
+            def capture_downloads(receipts):
+                nonlocal downloads
+                downloads = receipts
+
             def check_current():
                 if cancel is not None and cancel.is_set():
                     raise _fail('PT-KBC-CANCEL', 'Acquisition cancelled; nothing was imported.')
@@ -673,18 +680,20 @@ class KbService:
                 check_current()
                 return self.import_pair(rev.investigation_id, older, newer, destination, name=name,
                                         expected_revision=owner[0], expected_source_snapshot=owner[2],
-                                        _acquired=(rev, plan))
+                                        _acquired=(rev, plan, downloads))
 
             check_current()
             done = run_acquire(
                 plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts,
-                consent_plan=consent_plan, offline=offline, cancel=cancel, import_pair=import_current)
+                consent_plan=consent_plan, offline=offline, cancel=cancel, import_pair=import_current,
+                on_verified=capture_downloads)
         except KbcStoreError as exc:
             if exc.code != 'PT-KBC-CANCEL':
                 raise
             return Outcome(5, 'cancelled', result, exc.message)
         return Outcome(done.outcome.exit, done.outcome.status,
-                       {**done.outcome.result, 'acquisition': {'plan_sha': done.plan_sha,
+                       {**done.outcome.result, 'acquisition': {**done.outcome.result.get('acquisition', {}),
+                                                               'plan_sha': done.plan_sha,
                                                                'source_pair_id': plan.pair_id,
                                                                'verified_pair_id': done.outcome.result['pair']['pair_id'],
                                                                'scope_id': rev.selected_scope_id,
@@ -698,7 +707,7 @@ class KbService:
                     expected_pair_id: str | None = None, expected_revision: int | None = None,
                     expected_source_snapshot: tuple[str, ...] | None = None,
                     selected_product: ProductScope | None = None,
-                    _acquired: tuple[InvestigationRevision, AcquirePlan] | None = None) -> Outcome:
+                    _acquired: tuple[InvestigationRevision, AcquirePlan, tuple[dict, ...]] | None = None) -> Outcome:
         if selected_product is not None and (investigation != 'new' or expected_revision is not None
                                              or expected_source_snapshot is None):
             raise _fail('PT-KBC-INPUT', 'A product-only pair needs a new investigation and captured source records.')
@@ -708,7 +717,7 @@ class KbService:
             if expected_revision is not None and (rev is None or rev.revision != expected_revision):
                 raise _fail('PT-KBC-STALE', 'the investigation changed after preview; review the pair again')
             if _acquired is not None:
-                captured, acquisition_plan = _acquired
+                captured, acquisition_plan, downloads = _acquired
                 if rev is None or (rev.investigation_id, rev.revision) != (captured.investigation_id,
                                                                         captured.revision):
                     raise _fail('PT-KBC-STALE', 'the acquisition belongs to another investigation revision')
@@ -759,6 +768,18 @@ class KbService:
                                                **({'selected_product': selected_product.model_dump(mode='json')}
                                                   if selected_product is not None else {}),
                                                'pair': self._pair_dict(pair)}, plan.text)
+            evidence = None
+            if _acquired is not None:
+                try:
+                    evidence = make_evidence(
+                        investigation_id=captured.investigation_id, preview_revision=captured.revision,
+                        plan_sha=acquisition_plan.plan_sha, source=acquisition_plan.source,
+                        hosts=acquisition_plan.hosts, requests=acquisition_plan.requests, verified_pair=pair,
+                        downloads=downloads)
+                except EvidenceLimitError as exc:
+                    raise _fail('PT-KBC-LIMIT', str(exc)) from None
+                except ValueError:
+                    raise _fail('PT-KBC-VERIFY', 'acquisition provenance does not match the approved pair') from None
             approval = ({'selected_product': selected_product,
                          'product_coverage': admitted_index.coverage(now=self._now())}
                         if selected_product is not None else {})
@@ -778,11 +799,16 @@ class KbService:
             request = AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer,
                                     older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory,
                                     source_shas=tuple(d.sha256 for d in bundle.sources), plan_sha=plan.plan_sha,
-                                    selected_product=selected_product)
+                                    selected_product=selected_product, acquisition_evidence=evidence)
             port = self.env.project(ws, clean_text(name or '', 200) or 'KB comparison')
             outcome = ProjectAttachment(ws, port).attach(request, ((bundle.context_key,
                                                                     bundle.model_dump_json().encode()),))
-        return self._attach_outcome(outcome, rev.investigation_id, pair, plan.plan_sha, bundle.context_key)
+        reported = self._attach_outcome(outcome, rev.investigation_id, pair, plan.plan_sha, bundle.context_key)
+        if evidence is not None:
+            reported.result['acquisition'] = {'evidence_id': evidence.evidence_id,
+                                               'evidence_path': evidence.relative_path,
+                                               'evidence_state': outcome.value.state}
+        return reported
 
     @staticmethod
     def _pair_dict(pair) -> dict:

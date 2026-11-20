@@ -44,7 +44,7 @@ KINDS = frozenset({'signals', 'ranking', 'wil', 'cve-snapshot', 'contextual', 'p
                    'patch-intent',
                    # Program E (KB integration plan A-5, KEV plan A4): append-only KB investigation revisions
                    # and the Guard-stale KB / KEV context pointers. Again none is in DERIVED_KINDS.
-                   'kb-investigation', 'kb-context', 'kev-context',
+                   'kb-investigation', 'kb-context', 'kb-acquisition', 'kev-context',
                    # Program E (integration owner, AM1): saved searches and the rule-authoring rows. Same rule:
                    # none is in DERIVED_KINDS, so retention never deletes them.
                    'search-saved', 'rule-candidate', 'rule-decision', 'rule-version', 'rule-test',

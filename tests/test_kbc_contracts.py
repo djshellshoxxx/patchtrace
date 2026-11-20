@@ -407,6 +407,12 @@ def test_domain_modules_import_no_qt_network_or_database(path):
                          if isinstance(n, ast.ImportFrom) and n.level == 2 and n.module == 'persistence']
                 assert all([(a.name, a.asname) for a in n.names] == [('creation_directory_available', None)]
                            for n in nodes), f'{path.name} imports sibling persistence forbidden symbols'
+            elif path.name == 'wiring.py' and module == 'owned_publication':
+                # Acquisition sidecars bind the existing publisher only at the composition root.
+                nodes = [n for n in ast.walk(ast.parse(path.read_text(encoding='utf-8')))
+                         if isinstance(n, ast.ImportFrom) and n.level == 2 and n.module == 'owned_publication']
+                expected = [('OwnedPublicationError', None), ('directory_anchor', None), ('publish_bytes', None)]
+                assert all([(a.name, a.asname) for a in n.names] == expected for n in nodes)
             else:
                 assert top in sibling_ok, f'{path.name} imports sibling {module}'
         # `.x` inside kbcorrelation is fine

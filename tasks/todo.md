@@ -1497,3 +1497,22 @@ the queued aggregate and current PR319 `8d130aef` native results.
 - [ ] Close/disposition final Linux forced-source race and native Qt findings; preserve native Windows/package/trust/manual and separate accuracy gates.
 - [ ] Complete isolated successor acquisition-provenance work after uniqueness proof and independent review.
 - [ ] Continue semantic review of retained history and actual scheduled successor execution; authoritative ownership/status is `docs/engineering/task-ledger.json`.
+
+## 2026-11-20 UTC — current generations 9–14 disposition
+
+- [x] Preserve the required unsplit `bffcfa99` SIGKILL, original progress/failures, environment and source receipt; explicitly leave full qualification incomplete.
+- [x] Finish and reconcile the unreported frozen-source remainder: 3,849 passes and 32 existing skips over 3,881 distinct nodes, including two overlaps.
+- [x] Reproduce and independently verify selected-model ownership in the GUI test counter without changing application code or original performance limits.
+- [x] Implement and independently review bounded acquisition evidence, source-bound consent, immutable owner-checked persistence and journal recovery; preserve all original failures.
+- [x] Verify the combined follow-up at `97ca0adf`: 1,737 affected passes, one native Windows skip, configured Ruff, KB schema drift and whitespace checks.
+- [x] Retain the fresh Linux primitive investigation: final forced-source substitution remains confirmed; no speculative repair or rollback claim.
+- [x] Check normal capabilities for the 32 native-toolchain skips and preserve the blocked result. No supported installed tools/managed installer are available here.
+- [x] Create the actual hourly Continue PatchTrace engineering successor and preserve a source-pinned handoff and local history bundles.
+- [ ] Finish exact-head hosted QA/Qt/package qualification for PR324 and separately for the later follow-up; do not substitute focused or earlier-head results.
+- [ ] Resolve or evidence-disposition the remaining Linux force exposure and native Qt findings; retain Windows trust, packaging, clean-machine/accessibility and separate L1/L2/L3 gates.
+- [ ] Complete bounded raw-entry/index retention and resolver membership preservation beyond the normalized acquisition snapshot.
+- [ ] Continue semantic review of the 154 retained heads and later ref/PR deltas. Merge only reviewed eligible work with fresh checks and an expected-head REST guard.
+
+The latest [handoff](../docs/engineering-handoffs/generation-9-through-14-20261120.md)
+and [ledger](../docs/engineering/task-ledger.json) supersede earlier running-state
+and worker-ownership notes. No full-suite pass, main merge or release is claimed.

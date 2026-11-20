@@ -298,14 +298,64 @@ class RealProjectPort:
         finally:
             service.close()
 
+    @staticmethod
+    def _owned_acquisition(service, project_id: str, body: bytes):
+        from .acquisition_evidence import read_evidence
+        try:
+            evidence = read_evidence(body)
+            sides = {a.side: a.sha256 for a in service.project.artifacts}
+            if service.store.project_id != project_id or (evidence.verified_pair.older.sha256,
+                                                          evidence.verified_pair.newer.sha256) != (
+                    sides.get('older'), sides.get('newer')):
+                raise ValueError('acquisition evidence belongs to another project pair')
+            return evidence
+        except (ValueError, TypeError):
+            raise KbcStoreError('PT-KBC-VERIFY', 'the acquisition row has invalid identity or ownership') from None
+
+    def write_acquisition_sidecar(self, project_id: str, body: bytes) -> None:
+        from ..owned_publication import OwnedPublicationError, directory_anchor, publish_bytes
+        from ..service import ProjectService
+        from .acquisition_evidence import MAX_EVIDENCE_BYTES
+        try:
+            root = self._directory(project_id)
+            anchor = directory_anchor(root)
+            with ProjectService.open(root, maintenance=False) as service:
+                evidence = self._owned_acquisition(service, project_id, body)
+                data = evidence.as_bytes()
+
+                def identical(prior):
+                    if prior != data:
+                        raise KbcStoreError('PT-KBC-STATE', 'the acquisition sidecar already holds different evidence')
+
+                publish_bytes(root / evidence.relative_path, data, validate_existing=identical,
+                              maximum=MAX_EVIDENCE_BYTES, anchor=anchor)
+        except (OwnedPublicationError, NotImplementedError):
+            raise KbcStoreError('PT-KBC-STORAGE', 'the acquisition sidecar cannot preserve publication ownership'
+                                ) from None
+
     def put_row(self, project_id: str, kind: str, key: str, body: bytes) -> None:
         from ..enrichment.storage import EnrichmentStore, Guard
         from ..service import ProjectService
+        from .acquisition_evidence import MAX_EVIDENCE_BYTES, read_evidence
         service = ProjectService.open(self._directory(project_id), maintenance=False)
         try:
+            storage = EnrichmentStore(service.store)
+            if kind == 'kb-acquisition':
+                try:
+                    evidence = self._owned_acquisition(service, project_id, body)
+                    if evidence.evidence_id != key:
+                        raise ValueError('acquisition row has another content identity')
+                    prior = storage.entry(kind, f'{kind}:{key}', max_bytes=MAX_EVIDENCE_BYTES)
+                    if prior is not None:
+                        if prior.guard.project_id != service.store.project_id or read_evidence(
+                                prior.body_json.encode('utf-8')) != evidence:
+                            raise ValueError('acquisition row already holds different evidence')
+                        return  # identical content is immutable; keep its original publication receipt
+                except (ValueError, TypeError):
+                    raise KbcStoreError('PT-KBC-VERIFY', 'the acquisition row has invalid identity or ownership'
+                                        ) from None
             guard = Guard(project_id, 'kb', hashlib.sha256(body).hexdigest(), f'{kind}:{key}')
-            EnrichmentStore(service.store).publish(kind, guard, guard, service.project.revision, 'ok',
-                                                   json.loads(body), f'{kind}:{key}')
+            storage.publish(kind, guard, guard, service.project.revision, 'ok', json.loads(body), f'{kind}:{key}')
         finally:
             service.close()
 
@@ -349,6 +399,9 @@ class SnapshotProjectPort:
         return self.list_rows(project_id, kind).get(key)
 
     def create_project(self, older_path: str, newer_path: str, *, directory: str) -> Mapping[str, Any]:
+        raise KbcStoreError('PT-KBC-UNSUPPORTED', 'a project snapshot is read-only')
+
+    def write_acquisition_sidecar(self, project_id: str, body: bytes) -> None:
         raise KbcStoreError('PT-KBC-UNSUPPORTED', 'a project snapshot is read-only')
 
     def put_row(self, project_id: str, kind: str, key: str, body: bytes) -> None:

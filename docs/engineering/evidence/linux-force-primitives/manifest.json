@@ -1,0 +1,103 @@
+{
+  "base_commit": "8cfda72b736ddbd704180dcf39e4a71a33fbc06f",
+  "capability_unavailable_outcomes": {
+    "overlayfs": 0,
+    "tmpfs": 0
+  },
+  "check_results": {
+    "existing_counterexample": "1 passed in 0.54 s; asserts unresolved exposure",
+    "native_initial_exit": 0,
+    "native_overlay_exit": 0,
+    "native_tmpfs_exit": 0,
+    "ruff_final_exit": 0,
+    "ruff_initial_exit": 1
+  },
+  "commands": [
+    "PYTHONPATH=src python docs/engineering/evidence/linux-force-primitives/probe.py docs/engineering/evidence/linux-force-primitives/results.json",
+    "PYTHONPATH=src python docs/engineering/evidence/linux-force-primitives/probe.py docs/engineering/evidence/linux-force-primitives/results-final.json",
+    "TMPDIR=<new private directory on overlayfs> PYTHONPATH=src python docs/engineering/evidence/linux-force-primitives/probe.py docs/engineering/evidence/linux-force-primitives/results-overlay.json",
+    "QT_QPA_PLATFORM=offscreen PYTHONPATH=src python -m pytest -q tests/test_strings_export_force_ownership.py::test_final_linux_source_race_is_reported_without_deleting_foreign_bytes",
+    "python -m ruff check src tests tools docs/engineering/evidence/linux-force-primitives/probe.py"
+  ],
+  "files": {
+    "docs/engineering/evidence/linux-force-primitives/existing-counterexample.log": {
+      "bytes": 98,
+      "sha256": "06254aecdf245cc6f8784e134e36703bcc595ac0578b8c5f7f3591bcb399781b"
+    },
+    "docs/engineering/evidence/linux-force-primitives/independent-review.md": {
+      "bytes": 2451,
+      "sha256": "c3890a7afd5364ff4b2389d0644ab06c1e2a9f3d020b646695cb277dae24d7f0"
+    },
+    "docs/engineering/evidence/linux-force-primitives/probe-executed.py.gz": {
+      "bytes": 3464,
+      "sha256": "fe959264435a73db081c2b8610de78dafe211f2617ae700d050a92504862adc1"
+    },
+    "docs/engineering/evidence/linux-force-primitives/probe-final.log": {
+      "bytes": 135,
+      "sha256": "9174c5e5e2f03f3d64e88034229c4cd5183387386c0508cb18a1dbb4c7c3a48d"
+    },
+    "docs/engineering/evidence/linux-force-primitives/probe-overlay.log": {
+      "bytes": 137,
+      "sha256": "ed70fe5b4374a1b9e5a68e10bf6f9cab9850655aca4a444772576e826a54a9b8"
+    },
+    "docs/engineering/evidence/linux-force-primitives/probe.log": {
+      "bytes": 129,
+      "sha256": "c8c5e04944d0bd2d35d14af7e6a06d39d82cf96992727002460160f969179383"
+    },
+    "docs/engineering/evidence/linux-force-primitives/probe.py": {
+      "bytes": 11943,
+      "sha256": "40791fc7ff7ea0f70e73d380d773f268e6c444da4304c0568ff187b893ca21e0"
+    },
+    "docs/engineering/evidence/linux-force-primitives/results-final.json": {
+      "bytes": 5314,
+      "sha256": "5728aa92d7f442d10f23c5ac36a49f1cbc44a6697b0c40cb11b6ee999db0a72e"
+    },
+    "docs/engineering/evidence/linux-force-primitives/results-overlay.json": {
+      "bytes": 5378,
+      "sha256": "f3b245c95efc6b12bfa9529847c6b45ca56350e91b4a2f648b060796e0890fc5"
+    },
+    "docs/engineering/evidence/linux-force-primitives/results.json": {
+      "bytes": 4689,
+      "sha256": "bd6be949920a67783cdda9dc3b29d819c9131e872132959ff927b6ba80bc59e8"
+    },
+    "docs/engineering/evidence/linux-force-primitives/ruff-final.log": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "docs/engineering/evidence/linux-force-primitives/ruff-initial.log": {
+      "bytes": 1178,
+      "sha256": "109d9af63f2cec74fcf5d1e552cdc6402e5c35e9ea6e687429e503c151c68cf8"
+    },
+    "docs/engineering/evidence/linux-force-primitives/ruff.log": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "docs/engineering/evidence/linux-force-primitives/sources.json": {
+      "bytes": 1816,
+      "sha256": "0ba2fa1980353afd4534a6a4a7b38666766f812ddeb6879d55cda7fd76e1e556"
+    },
+    "docs/engineering/linux-force-primitive-assessment-20261119.md": {
+      "bytes": 11903,
+      "sha256": "da51a769bb895d608db2c6cc90ef134ec1ee8a0b810a4040fe509cac1fb4aa55"
+    }
+  },
+  "initial_probe_uncompressed_sha256": "5454db2770e0948ebdb678e158eb21ed84bb2ca95fffb9884b5d78baf9d64617",
+  "limits": [
+    "Original filesystem field described checkout, not fixtures; retain but supersede that attribution.",
+    "Repeated native runs are not additional distinct controls.",
+    "Same EUID is observed; complete credential/capability equality is not asserted.",
+    "No Windows, release, empirical accuracy or current-kernel source-audit claim.",
+    "Root owns full aggregate qualification; this follow-up changes documentation and authored evidence only."
+  ],
+  "native_controls_per_filesystem": 14,
+  "production_changed": false,
+  "production_source_sha256": "32c6f01694268aa30b07d92d65bf66c65bb23881bcdb0969009f84c4b6be7cd0",
+  "observed_fixture_filesystems": [
+    "tmpfs",
+    "overlayfs"
+  ],
+  "recorded_at": "2026-11-20T00:19:41.589788+00:00",
+  "review": "independent-review.md",
+  "schema": "patchtrace-engineering-evidence/1",
+  "status": "open-residual-finding; no supported compatible runtime repair demonstrated"
+}

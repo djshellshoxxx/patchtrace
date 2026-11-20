@@ -19,7 +19,8 @@ OUT = ROOT / 'docs' / 'schemas' / 'kbcorrelation'
 
 CONTRACTS = ('SourceDoc', 'SourceRef', 'SearchScope', 'Coverage', 'ProductScope', 'KbCveEdge', 'ComponentHint',
              'BuildRow', 'BinaryRef', 'PairProposal', 'PairPlan', 'Attempt', 'AnalystDecision',
-             'InvestigationRevision', 'ProjectLink', 'ContextReport', 'LeadRow', 'KbcIssue', 'OperationResult')
+             'InvestigationRevision', 'ProjectLink', 'ContextReport', 'LeadRow', 'KbcIssue', 'OperationResult',
+             'AcquisitionEvidence')
 ERRORS_MODULE = frozenset({'KbcIssue', 'OperationResult'})
 
 A, B, C, D = 'a' * 64, 'b' * 64, 'c' * 64, 'd' * 64
@@ -36,6 +37,7 @@ def valid_records() -> dict:
     """One valid SYNTHETIC record per contract."""
     from patchtrace.kbcorrelation import contracts as c
     from patchtrace.kbcorrelation import errors as e
+    from patchtrace.kbcorrelation.acquisition_evidence import capture_source, make_evidence, plan_digest
     doc_id = _did('kbc.source', {'kind': 'cvrf-month', 'sha256': A})
     source = c.SourceDoc(doc_id=doc_id, kind='cvrf-month', sha256=A, size=1234, origin='local-import',
                          retrieved_at=STAMP, release_id='2099-Mar', dialect='cvrf-1.2-synthetic', parser_version=1,
@@ -90,11 +92,35 @@ def valid_records() -> dict:
                      hooks=('kb.next.run_comparison',))
     issue = e.KbcIssue(code='PT-KBC-SCOPE', message='a finite search scope is required', source_id=None)
     result = e.OperationResult(status='partial', issues=(issue,), warnings=('2 of 24 documents unreadable',))
+    entry = {'file_name': 'examplesvc.dll', 'sha256': A, 'version_key': '11-24H2', 'kb': 'KB5099001',
+             'release_date': '2099-03-01', 'release_version': '26100.5001', 'heading': 'Synthetic update',
+             'heading_class': 'standard', 'other_versions': [], 'variant': 'full', 'download': 'direct',
+             'size': 1000, 'machine_type': 0x8664, 'timestamp': 256, 'virtual_size': 4096,
+             'last_section_va': None, 'last_section_raw': None, 'file_version': '10.0.26100.5000',
+             'record_sha256': C, 'source': 'winbindex@2099-03-01'}
+    acquisition_source = capture_source(pair, entry, entry | {'sha256': B})
+    request_pairs = (('GET', 'https://example.invalid/older.dll'), ('GET', 'https://example.invalid/newer.dll'))
+    manual_key = pair_key | {'window_id': 'manual'}
+    manual = c.PairProposal(
+        pair_id=_did('kbc.pair', manual_key), older=older.model_copy(update={'origin': 'local-file',
+                                                                          'availability': 'local',
+                                                                          'authenticity': 'unverified-local-file'}),
+        newer=newer.model_copy(update={'origin': 'local-file', 'availability': 'local',
+                                       'authenticity': 'unverified-local-file'}), scope_id=C,
+        window_id='manual', bytes_state='verified', lineage_state='user-asserted', fix_boundary='unverified',
+        reason_codes=('ORDER_UNVERIFIED',), grade='B', tier='E')
+    downloads = tuple({'side': side, 'sha256': sha, 'size': 1000, 'format': 'PE32+', 'source_url': url,
+                       'redirect_host': None, 'retrieved_at': STAMP, 'winbindex_record_sha256': C}
+                      for side, sha, (_, url) in zip(('older', 'newer'), (A, B), request_pairs, strict=True))
+    evidence = make_evidence(investigation_id=UUID, preview_revision=2,
+                             plan_sha=plan_digest(acquisition_source, ('example.invalid',), request_pairs),
+                             source=acquisition_source, hosts=('example.invalid',), requests=request_pairs,
+                             verified_pair=manual, downloads=downloads)
     return {'SourceDoc': source, 'SourceRef': ref, 'SearchScope': scope, 'Coverage': coverage,
             'ProductScope': product, 'KbCveEdge': edge, 'ComponentHint': hint, 'BuildRow': row, 'BinaryRef': older,
             'PairProposal': pair, 'PairPlan': plan, 'Attempt': attempt, 'AnalystDecision': decision,
             'InvestigationRevision': revision, 'ProjectLink': link, 'ContextReport': context, 'LeadRow': lead,
-            'KbcIssue': issue, 'OperationResult': result}
+            'KbcIssue': issue, 'OperationResult': result, 'AcquisitionEvidence': evidence}
 
 
 SPECIFIC_INVALID = {
@@ -109,6 +135,7 @@ SPECIFIC_INVALID = {
     'InvestigationRevision': ({'parent': None}, 'a later revision needs a parent'),
     'ProjectLink': ({'state': 'stale'}, 'stale needs stale_reasons'),
     'OperationResult': ({'status': 'ok'}, 'an ok result carries no issues'),
+    'AcquisitionEvidence': ({'plan_sha': A}, 'acquisition plan does not bind this source snapshot and requests'),
 }
 
 
@@ -127,12 +154,18 @@ def build_examples() -> dict:
     return out
 
 
+def model_for(name: str):
+    from patchtrace.kbcorrelation import acquisition_evidence, context, contracts, errors
+    if name == 'AcquisitionEvidence':
+        return acquisition_evidence.AcquisitionEvidence
+    module = context if name == 'ContextBundle' else errors if name in ERRORS_MODULE else contracts
+    return getattr(module, name)
+
+
 def render_contract_schemas() -> dict[str, str]:
-    from patchtrace.kbcorrelation import context, contracts, errors
     out = {}
     for name in (*CONTRACTS, 'ContextBundle'):
-        module = context if name == 'ContextBundle' else errors if name in ERRORS_MODULE else contracts
-        model = getattr(module, name)
+        model = model_for(name)
         schema = model.model_json_schema()
         schema['$id'] = f'https://patchtrace.local/schemas/kbcorrelation/1/{name}.json'
         schema['$schema'] = 'https://json-schema.org/draft/2020-12/schema'

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="0.797" timestamp="2026-11-19T16:16:50.818297-08:00" hostname="636643ecc05a"><testcase classname="tests.test_kbc_acquisition_evidence" name="test_acquired_project_retains_complete_proposal_window_and_delivery_rows" time="0.153"><failure message="AssertionError: a completed acquisition must retain its source proposal and delivery entries&#10;assert 0 == 1&#10; +  where 0 = len([])">ready = (&lt;kbc_k3_support.Kb object at 0x7fe67b370680&gt;, &lt;test_kbc_acquire_cli.Server object at 0x7fe67b4e5ca0&gt;, 'bf0929c7-840a-...d8c9e5', '--file', 'examplenet.sys'), PosixPath('/tmp/pytest-of-agent/pytest-51/test_acquired_project_retains_0/proj'))
+staging_root = PosixPath('/tmp/pytest-of-agent/pytest-51/test_acquired_project_retains_0/tmp')
+
+    def test_acquired_project_retains_complete_proposal_window_and_delivery_rows(ready, staging_root):
+        kb, _server, inv, flags, project = ready
+        preview = plan_of(kb, inv, flags, project)
+        code, doc, _ = kb('acquire', inv, '--project', str(project), *flags,
+                         '--consent-hosts', HOSTS, '--consent-plan', preview['plan_sha'])
+        assert code == 0, doc
+        saved = list((project / 'kb' / 'acquisitions').glob('*.json'))
+&gt;       assert len(saved) == 1, 'a completed acquisition must retain its source proposal and delivery entries'
+E       AssertionError: a completed acquisition must retain its source proposal and delivery entries
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/test_kbc_acquisition_evidence.py:23: AssertionError</failure></testcase><testcase classname="tests.test_kbc_acquisition_evidence" name="test_same_binary_hashes_with_changed_source_entry_require_fresh_consent" time="0.035"><failure message="assert (0 == 2)">ready = (&lt;kbc_k3_support.Kb object at 0x7fe67b029b20&gt;, &lt;test_kbc_acquire_cli.Server object at 0x7fe67b029640&gt;, 'e0acb336-11d8-...d8c9e5', '--file', 'examplenet.sys'), PosixPath('/tmp/pytest-of-agent/pytest-51/test_same_binary_hashes_with_c0/proj'))
+staging_root = PosixPath('/tmp/pytest-of-agent/pytest-51/test_same_binary_hashes_with_c0/tmp')
+
+    def test_same_binary_hashes_with_changed_source_entry_require_fresh_consent(ready, staging_root):
+        kb, server, inv, flags, project = ready
+        preview = plan_of(kb, inv, flags, project)
+        saved_index = kb.workspace / 'winbindex' / f'{NET}@2099-02-12.json'
+        raw = json.loads(saved_index.read_bytes())
+        # This changes upstream entry identity while leaving chronology, file bytes and requests identical.
+        raw[SHA_O]['fileInfo']['description'] = 'Changed upstream documentary label'
+        saved_index.write_text(json.dumps(raw), encoding='utf-8')
+        code, doc, _ = kb('acquire', inv, '--project', str(project), *flags,
+                         '--consent-hosts', HOSTS, '--consent-plan', preview['plan_sha'])
+&gt;       assert code == 2 and 'PT-KBC-CONSENT' in doc['error']
+E       assert (0 == 2)
+
+tests/test_kbc_acquisition_evidence.py:46: AssertionError</failure></testcase></testsuite></testsuites>

@@ -208,7 +208,8 @@ def _paint_counting_data(model: QAbstractItemModel, calls_per_cell: int) -> tupl
 
     def counted(self, index, role=Qt.ItemDataRole.DisplayRole):
         nonlocal count
-        count += 1
+        if self is model:
+            count += 1
         return original(self, index, role)
     cls.data = counted
     try:
