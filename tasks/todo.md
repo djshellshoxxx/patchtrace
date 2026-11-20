@@ -1587,3 +1587,10 @@ for exact commits and limitations. No main merge/release.
   obtain independent review. Reconcile source identity before any merge; do
   not interpret six isolated controls as repository acceptance. Complete raw
   Winbindex entry/index retention and explicit predecessor membership remain.
+
+
+### Generation 34 — CSV cell formula-prefix candidate
+- [x] New branch from PR342 source `5f34fb57`; preserve prior g33 CSV experiment, adopt exact source/test blobs, update WB3 contract before code.
+- [x] Ten authored CSV integration regression cases and ten bounded local source-equivalent Python controls, not repository pytest acceptance.
+- [ ] When PR342 active QA completes, submit stacked draft; verify exact-source tests, whole-tree Ruff, full offscreen pytest, native/Qt/package and dependencies; get independent code review.
+- [ ] No merge/release until exact-head gates and all unrelated release blockers are accepted.
