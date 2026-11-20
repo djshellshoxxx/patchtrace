@@ -46,7 +46,8 @@
     "Generation37 read exact PR342 Windows native raw-cache artifact 14660100681 using stdlib only: first/second JSON hashes match, second has cache_origin, both probe Temurin Java 25.0.5 successfully, acceptance passed. Original initial-head job 136406567877 java=unverified failure had no retained raw-cache artifact and still has no verified cause. Receipt digests, original error and new success are preserved separately. No runtime change, release gate or speculative retry.",
     "Generation38: PR342 exact source Windows Qt shard job 136446431330 failed two real investigation create timeout cases after 10,423 passes; 10-second wait still strict. A source-level diagnostic review found a non-string/unhashable operation could mask the timeout; regression and type gate repaired. Test-only g38 adds bounded operation/runner-busy/lifecycle context with original exception as cause and 4 source regressions; 7 synthetic local controls passed. Windows native root cause not yet known, full/CI/independent review pending. Do not mark QA combined success or rerun blindly.",
     "Generation39 isolated direct KB investigation Create route from PR343 source: unlike the already integrated acquisition guard, _new_destination checked is_symlink but not is_junction before resolve/empty-target check. SPEC and portable/native regression tests precede one-condition fix. Initial Windows native case was strengthened to use empty target (original code would otherwise refuse for unrelated nonempty content). Three local source-equivalent conditions passed, not actual repo pytest/Ruff or Windows. PR343 CI still active; independent review and full gates pending.",
-    "Generation40 isolated source-plan admission on g39: _source_plan previously called lead.strip without runtime type check. Non-text types caused uncaught exceptions or invalid normalization; exact type gate returns PT-KBC-INPUT before network/workspace. SPEC-first, six repository test cases authored (five invalid including overridden subclass, one valid text). Six standalone source-equivalent expectations passed only; full checked-out tests/Ruff, CI and separate review pending. PR343 workflow active; no duplicate suite."
+    "Generation40 isolated source-plan admission on g39: _source_plan previously called lead.strip without runtime type check. Non-text types caused uncaught exceptions or invalid normalization; exact type gate returns PT-KBC-INPUT before network/workspace. SPEC-first, six repository test cases authored (five invalid including overridden subclass, one valid text). Six standalone source-equivalent expectations passed only; full checked-out tests/Ruff, CI and separate review pending. PR343 workflow active; no duplicate suite.",
+    "Generation41: offline saved-index candidate component_name.strip() was unguarded; null/integer raised AttributeError, non-text .strip objects could bypass a typed request boundary. SPEC-31-F, 6 regression cases and exact-str guard committed in isolated branch. Hand-copied algorithm controls only; checkout pytest/Ruff, source CI and independent signoff pending. No predecessor or main ref moved."
   ],
   "tasks": [
     {
@@ -645,6 +646,16 @@
       "evidence": "docs/engineering-handoffs/generation-40-20261120.md",
       "review_status": "second-pass author/source review corrected str-subclass bypass; independent reviewer signoff pending",
       "result_or_next_action": "On supported checkout run test_kb_online_investigation_20261105.py, whole-tree Ruff and full aggregate with termination receipts; independently review and consider stacked draft only after PR343 full QA no longer active. No raw index/forced export/Qt/release closure."
+    },
+    {
+      "id": "candidate-component-name-type-g41",
+      "status": "implemented-unqualified",
+      "owner": "generation41 isolated candidate input validation",
+      "branch": "codex/patchtrace-candidate-component-type-20261120-g41",
+      "source_commit": "67653265a713dcddb8fee903adcd2fef9c539989",
+      "evidence": "docs/engineering-handoffs/generation-41-20261120.md",
+      "review_status": "author-source-inspection-only",
+      "result_or_next_action": "Run six new tests plus saved-index candidate suite and whole-tree Ruff; obtain independent source review and exact-source CI. Do not infer full aggregate/native acceptance."
     }
   ],
   "aggregate_source_commit": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
