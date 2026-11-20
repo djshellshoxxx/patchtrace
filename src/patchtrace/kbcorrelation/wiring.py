@@ -140,7 +140,14 @@ def save_winbindex_record(root: Path, source: Path, file_name: str, data_date: s
     from ..acquisition.winbindex import MAX_COMPRESSED, parse_rows
     name = normalise_file(file_name)
     try:
-        with open(source, 'rb') as handle:
+        def source_open(path, flags):
+            # A user-selected local file must not block on a substituted FIFO.
+            # Keep existing symlink-to-regular-file import compatibility.
+            return os.open(path, flags | getattr(os, 'O_NONBLOCK', 0))
+
+        with open(source, 'rb', opener=source_open) as handle:
+            if not stat.S_ISREG(os.fstat(handle.fileno()).st_mode):
+                raise KbcStoreError('PT-KBC-INPUT', 'the Winbindex source is not a regular file')
             raw = handle.read(MAX_COMPRESSED + 1)
     except OSError:
         raise KbcStoreError('PT-KBC-INPUT', 'the Winbindex record cannot be read') from None
