@@ -300,3 +300,29 @@ def test_maximum_month_plan_remains_fully_visible_before_consent(qtbot, tmp_path
         assert dialog.buttons['sync_sources'].isEnabled() and opener.calls == []
     finally:
         dialog.reject()
+
+
+class _LooksLikeText:
+    """A non-text value with a .strip() method must not bypass lead admission."""
+
+    def strip(self):
+        return 'KB5099001'
+
+
+@pytest.mark.parametrize('lead', [None, 42, b'KB5099001', _LooksLikeText()],
+                         ids=['null-lead', 'integer-lead', 'bytes-lead', 'strip-capable-object'])
+def test_source_plan_refuses_non_text_leads_before_any_io(tmp_path, lead):
+    opener = Opener({})
+    request = plan_request(tmp_path, lead=lead)
+    result = worker(opener)(request, threading.Event())
+    assert not result.success and result.error_code == 'PT-KBC-INPUT'
+    assert opener.calls == [] and not request.workspace.exists()
+    assert 'KB5099001' not in result.text
+
+
+def test_source_plan_still_accepts_trimmed_text_lead(tmp_path):
+    opener = Opener({})
+    request = plan_request(tmp_path, lead='  KB5099001  ')
+    result = worker(opener)(request, threading.Event())
+    assert result.success, result.text
+    assert opener.calls == [] and not request.workspace.exists()
