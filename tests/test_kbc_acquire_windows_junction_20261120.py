@@ -3,9 +3,11 @@ from __future__ import annotations
 
 import os
 import subprocess
+import tempfile
 from pathlib import Path
 
 import pytest
+from test_acquisition_workflow import Importer, Server, run
 
 from patchtrace.kbcorrelation.acquire import _check_directory
 from patchtrace.kbcorrelation.store import KbcStoreError
@@ -48,3 +50,29 @@ def test_real_windows_junction_to_empty_directory_is_refused(tmp_path):
         _check_directory(str(junction))
     assert caught.value.code == 'PT-KBC-INPUT'
     assert list(target.iterdir()) == []
+
+
+def test_junction_reported_during_staging_is_refused_before_import(tmp_path, monkeypatch):
+    # Portable control of the second admission point; not native NTFS evidence.
+    project = tmp_path / 'proj'
+    stage_root = tmp_path / 'staging'
+    stage_root.mkdir()
+    monkeypatch.setattr(tempfile, 'tempdir', str(stage_root))
+    original = Path.is_junction
+    during_stage = [False]
+
+    def simulated_junction(path):
+        return (during_stage[0] and path == project) or original(path)
+
+    def stage_replaces_destination():
+        during_stage[0] = True
+
+    monkeypatch.setattr(Path, 'is_junction', simulated_junction)
+    server = Server(on_blob=stage_replaces_destination)
+    importer = Importer()
+    _plan, _importer, result = run(tmp_path, server, importer=importer)
+
+    assert during_stage[0] and server.calls
+    assert isinstance(result, KbcStoreError) and result.code == 'PT-KBC-INPUT'
+    assert importer.seen == []
+    assert list(stage_root.iterdir()) == []
