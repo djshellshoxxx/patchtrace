@@ -45,7 +45,8 @@
     "Generation36 source inspection confirms production CSV _cell already guards every column; g35 tests covered only display. On an isolated successor, WB3-S6 was updated first and two parametrized cross-column CSV/JSON source tests were added. Two source-equivalent stdlib controls passed, not repository pytest. Source unchanged. PR342 Linux QA/Ruff/native/live succeeded at inspected final source; Windows QA/other Qt still running, original native failure remains. External independent g36 signoff and exact-source full tests pending.",
     "Generation37 read exact PR342 Windows native raw-cache artifact 14660100681 using stdlib only: first/second JSON hashes match, second has cache_origin, both probe Temurin Java 25.0.5 successfully, acceptance passed. Original initial-head job 136406567877 java=unverified failure had no retained raw-cache artifact and still has no verified cause. Receipt digests, original error and new success are preserved separately. No runtime change, release gate or speculative retry.",
     "Generation38: PR342 exact source Windows Qt shard job 136446431330 failed two real investigation create timeout cases after 10,423 passes; 10-second wait still strict. A source-level diagnostic review found a non-string/unhashable operation could mask the timeout; regression and type gate repaired. Test-only g38 adds bounded operation/runner-busy/lifecycle context with original exception as cause and 4 source regressions; 7 synthetic local controls passed. Windows native root cause not yet known, full/CI/independent review pending. Do not mark QA combined success or rerun blindly.",
-    "Generation39 isolated direct KB investigation Create route from PR343 source: unlike the already integrated acquisition guard, _new_destination checked is_symlink but not is_junction before resolve/empty-target check. SPEC and portable/native regression tests precede one-condition fix. Initial Windows native case was strengthened to use empty target (original code would otherwise refuse for unrelated nonempty content). Three local source-equivalent conditions passed, not actual repo pytest/Ruff or Windows. PR343 CI still active; independent review and full gates pending."
+    "Generation39 isolated direct KB investigation Create route from PR343 source: unlike the already integrated acquisition guard, _new_destination checked is_symlink but not is_junction before resolve/empty-target check. SPEC and portable/native regression tests precede one-condition fix. Initial Windows native case was strengthened to use empty target (original code would otherwise refuse for unrelated nonempty content). Three local source-equivalent conditions passed, not actual repo pytest/Ruff or Windows. PR343 CI still active; independent review and full gates pending.",
+    "Generation40 isolated source-plan admission on g39: _source_plan previously called lead.strip without runtime type check. Non-text types caused uncaught exceptions or invalid normalization; exact type gate returns PT-KBC-INPUT before network/workspace. SPEC-first, six repository test cases authored (five invalid including overridden subclass, one valid text). Six standalone source-equivalent expectations passed only; full checked-out tests/Ruff, CI and separate review pending. PR343 workflow active; no duplicate suite."
   ],
   "tasks": [
     {
@@ -631,6 +632,19 @@
       "evidence": "docs/engineering-handoffs/generation-39-20261120.md",
       "review_status": "author source-aware fixture review only; external independent review pending",
       "result_or_next_action": "When PR343 hosted QA completes, run g39 focused actual repo tests and Ruff, full offscreen suite with termination evidence, native Windows junction, and external independent review. Open stacked draft only when active tests no longer overlap. No merge/release; postcheck/parent races remain."
+    },
+    {
+      "id": "advisory-source-plan-lead-type-g40",
+      "owner": "generation40 isolated defensive-validation worker; independent reviewer unassigned",
+      "status": "source-and-tests-published-standalone-controls-only",
+      "branch": "codex/patchtrace-advisory-lead-type-20261120-g40",
+      "base_commit": "fc2c038ad1c21ddfcdfb5cd943307c3195d631ec",
+      "spec_commit": "3aa0b85ce48a8c5ef79b304b39f734f78980c73b",
+      "source_commit": "2bcb4f4a7194dc7a73aac65a1b48e5b416972863",
+      "test_commit": "7fe79f17a1cb704e4d724da16d814c389d3ffb91",
+      "evidence": "docs/engineering-handoffs/generation-40-20261120.md",
+      "review_status": "second-pass author/source review corrected str-subclass bypass; independent reviewer signoff pending",
+      "result_or_next_action": "On supported checkout run test_kb_online_investigation_20261105.py, whole-tree Ruff and full aggregate with termination receipts; independently review and consider stacked draft only after PR343 full QA no longer active. No raw index/forced export/Qt/release closure."
     }
   ],
   "aggregate_source_commit": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
