@@ -273,3 +273,18 @@ branch-only candidate to avoid starting another overlapping full suite.
 Repository pytest/Ruff, exact-head hosted/native/package gates and independent
 adversarial review remain unverified. Raw Winbindex, Linux forced-export,
 Qt/Windows trust, historical reconciliation and L1/L2/L3 blockers remain.
+
+
+## Generation 32 — acquisition destination Windows junction admission
+
+On a separate unmerged successor of draft #341, the existing initial and
+post-stage acquisition checks now also consult Python 3.12+
+`Path.is_junction()`. The earlier symlink-only predicate could admit an NTFS
+junction resolving to an otherwise empty directory. Contract-first changes,
+portable and Windows-native regression tests, and a fake-transport post-stage
+regression are committed on the isolated branch. Six copied-guard stdlib
+admission controls passed, not checked-out repository tests. Native Windows,
+full pytest/Ruff/Qt/native/package gates and independent review remain pending;
+no main merge, release, full race closure, raw Winbindex retention, Linux
+forced-source publication repair, Windows trust/manual acceptance or empirical
+accuracy claim results. PR342's own live CI must be assessed on its own source.
