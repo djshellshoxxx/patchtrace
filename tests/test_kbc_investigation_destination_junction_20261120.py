@@ -42,8 +42,9 @@ def test_direct_create_still_accepts_real_empty_directory(tmp_path):
 @pytest.mark.skipif(os.name != 'nt', reason='requires an actual Windows NTFS junction')
 def test_direct_create_refuses_native_windows_junction(tmp_path):
     target = tmp_path / 'retained'
+    # Empty is essential: a foreign file would cause the old availability
+    # check to refuse too, hiding the missing junction admission guard.
     target.mkdir()
-    (target / 'foreign.txt').write_bytes(b'unchanged contributor data')
     junction = tmp_path / 'junction'
     result = subprocess.run(
         ['cmd.exe', '/c', 'mklink', '/J', str(junction), str(target)],
@@ -55,4 +56,4 @@ def test_direct_create_refuses_native_windows_junction(tmp_path):
     with pytest.raises(KbcStoreError) as error:
         _new_destination(request)
     assert error.value.code == 'PT-KBC-INPUT'
-    assert (target / 'foreign.txt').read_bytes() == b'unchanged contributor data'
+    assert list(target.iterdir()) == []
