@@ -78,3 +78,8 @@ The [integration queue](INTEGRATION_QUEUE.md) retains all full, native, manual a
 source-specific hosted gates. These scoped results do not qualify main promotion
 or a release. Original historical failures remain preserved separately even
 when a later, different source passes.
+
+Standalone [environment receipts](evidence/cycle95fe/environment-checks.json)
+record successful dependency consistency, protobuf pin/upb and headless CLI
+help checks on clean `ccc3664f`. These post-audit receipts supplement the frozen
+archive without replacing its original evidence.

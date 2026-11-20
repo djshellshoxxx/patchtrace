@@ -76,7 +76,7 @@
     {
       "feature": "GUI and CLI",
       "status": "partial",
-      "implemented": "Saved-query operations, draft-preserving Profiles navigation, and bounded raw-offset controls integrated with independent reviews. Generation-24 isolated local advisory-file input candidate performs held regular-descriptor admission and nonblocking opens where supported for CVRF/CSAF imports shared by the CLI and investigation service. Cycle95fe additionally recovers registered header tooltip support and Evidence shell announcements while preserving newer attempt-storage behavior.",
+      "implemented": "Saved-query operations, draft-preserving Profiles navigation, and bounded raw-offset controls integrated with independent reviews. Generation-24 isolated local advisory-file input candidate performs held regular-descriptor admission and nonblocking opens where supported for CVRF/CSAF imports shared by the CLI and investigation service. Cycle 95fe additionally recovers registered header tooltip support and Evidence shell announcements while preserving newer attempt-storage behavior.",
       "remaining": "Current-source full/native Windows, manual/accessibility and packaging gates remain; the earlier local full run ended SIGKILL with origin unestablished.",
       "evidence": [
         "docs/engineering/profile-draft-recovery.md",
@@ -86,21 +86,21 @@
         "docs/engineering/strings-shutdown-independent-review-20261120.md",
         "docs/engineering/generation33-qualification-20261120.md"
       ],
-      "latest_verified_scope": "Source reviewed against ccc3664f; independent GUI worker212 affected passes and admission worker183 related passes precede combination. See current cycle qualification; prior complete selections overlap.",
+      "latest_verified_scope": "Recovered GUI working diff passed 212 affected cases before combination; both recovered GUI regression cases pass on clean combined ccc3664f. Full/native acceptance remains separate. See current cycle qualification.",
       "historical_qualification_notes": "Original unsplit suite ended SIGKILL with two failure markers. The separately verified harness ownership repair retains all thresholds. Current-source full suite, native Windows, accessibility and manual desktop gates remain. Generation-24 actual source-pinned repository pytest/Ruff, hosted Linux/Windows QA, Qt/native/package, and genuinely independent review remain pending; this is not an empirical accuracy claim or Linux forced-export race fix."
     },
     {
       "feature": "Reports and exports",
       "status": "partial",
       "implemented": "Structured reporting; held-source publication safeguards; CSV v2 metadata survives empty exports; cohort and repeated-project confidence reporting corrected.",
-      "remaining": "Final Linux forced replacement source-name race and native publication acceptance remain open. No new empirical accuracy evidence is claimed. Corrected g35 control-character fixtures need source-pinned pytest and separate reviewer before parent integration.",
+      "remaining": "Final Linux forced replacement source-name race and native publication acceptance remain open and separately owned. Current-source full/hosted qualification remains required. No new empirical accuracy evidence is claimed.",
       "evidence": [
         "docs/engineering/security-force-recovery-20261119.md",
         "docs/engineering/strings-csv-peer-review.md",
         "docs/engineering/accuracy-peer-review-20261119.md",
         "docs/engineering-handoffs/generation-34-20261120.md"
       ],
-      "latest_verified_scope": "Late-stack serializer source independently reviewed; required real form-feed CSV/JSON and diagnostic fallback acceptance completed in c71d604e.47 cases passed before combination. Forced-export work remains externally owned."
+      "latest_verified_scope": "Late-stack serializer source independently reviewed. Required real form-feed CSV/JSON and diagnostic fallback coverage was committed in c71d604e; 47 cases passed on the tested worker diff before combination. Changed cases also pass in the combined 50-case selection. Forced-export work remains externally owned."
     },
     {
       "feature": "Performance",
@@ -120,7 +120,7 @@
         "docs/engineering/generation3-qualification-review.md",
         "docs/engineering/generation33-qualification-20261120.md"
       ],
-      "latest_verified_scope": "Combined ccc3664f whole-tree Ruff/dependencies/protobuf/CLI help passed. Full and27-file attempts endedSIGKILL; source stayed clean, cause unestablished. Hosted final-source/native/manual acceptance remains required.",
+      "latest_verified_scope": "Combined ccc3664f whole-tree Ruff/dependencies/protobuf/CLI help passed. Two bounded runs establish 212 distinct passing cases after reconciling overlap. Four broader attempts ended SIGKILL; source stayed clean and cause is unestablished. Full and hosted final-source/native/manual acceptance remain required.",
       "historical_qualification_notes": "Incomplete full-suite qualification; native Qt disposition; remaining Linux forced-source race; Windows/trust/clean-machine/native and layer-specific accuracy gates remain. PR339 Linux/Windows pytest and Qt successes were not combined acceptance because Ruff I001 failed; generation29 corrected source remains unqualified pending own hosted gates and review."
     }
   ],

@@ -35,3 +35,10 @@ acceptance. The earlier GUI worker's separate 212-case result is not added.
 23:53:17 UTC observation of PR #344. All five native jobs succeeded; QA and Qt
 jobs remained active. It does not qualify the later code or final publication.
 Resolve the publication branch and draft PR for their current exact head/checks.
+
+[environment-checks.json](environment-checks.json) separately preserves the
+post-audit dependency, protobuf pin/upb, and headless CLI-help receipts. All
+three exited zero on clean frozen `ccc3664f`. They were recorded after the ZIP
+was frozen and do not change its members or hashes. The runner helper is in the
+ZIP. [Publication audit](publication-audit.md) records the independent review
+and the corrected handoff-index finding.

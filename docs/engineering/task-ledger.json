@@ -1002,7 +1002,8 @@
         "seconds": 21.474
       }
     ],
-    "diagnosis": "SIGKILL sender/cause unestablished; no OOM, fixed timeout or GUI-causation claim"
+    "diagnosis": "SIGKILL sender/cause unestablished; no OOM, fixed timeout or GUI-causation claim",
+    "environment_receipts": "docs/engineering/evidence/cycle95fe/environment-checks.json"
   },
   "current_handoff": "docs/engineering/WORKER_HANDOFF.md",
   "parallel_continuation": {
@@ -1095,6 +1096,14 @@
       "five_native_jobs": "success",
       "linux_windows_qa_and_five_qt_jobs": "in_progress",
       "qualifies_current_source": false
+    },
+    "publication_audit": {
+      "reviewed_documentation_commit": "0ca89ab71711c127fa8f734f8e0e6f13aa2ab4dd",
+      "finding": "stale handoff README entry point",
+      "fix_commit": "27d55ab906e850171ec8c700b60c4017b3521ca4",
+      "independently_verified_closed": true,
+      "result": "suitable for draft publication; no additional blocker",
+      "record": "docs/engineering/evidence/cycle95fe/publication-audit.md"
     }
   },
   "publication_preparation_cycle95fe": {
