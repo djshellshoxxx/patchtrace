@@ -2188,3 +2188,20 @@ skips. Linux Qt shard 4/4 adds 9,660 repeated passes. Windows QA/Qt and Linux Qt
 1/4 were still running; no completed failing job was observed. The refresh archive
 and node reconciliation are linked by the aggregate report. These gates do not
 qualify the later acquisition source in PR325.
+
+
+## 2026-11-20 generation-16 offline index size and rejected-row integrity
+
+Contract-first draft successor to PR326 at initial parent `bddc09b4`.
+A standard-library reproduction of the original index method accepted
+25 bytes when a stale `stat` reported four against a synthetic cap of 16;
+its cached rejected-row count persisted after deleting that record. The
+isolated corrected algorithm rejects the over-limit stream and resets
+missing-source gaps to zero. The actual production wiring method was edited;
+regressions were added to
+`tests/test_kbc_winbindex_read_budget_20261120.py`, but **no actual
+repository pytest, whole-tree Ruff or independent review has run in this
+restricted local environment**. No existing tests/limits were weakened.
+Source and donor identities, pending exact-head CI, unresolved original
+aggregate SIGKILL and source-race limitations are in
+[the generation-16 handoff](engineering-handoffs/generation-16-20261120.md).

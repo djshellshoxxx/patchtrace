@@ -1,6 +1,6 @@
 {
   "schema": "patchtrace-feature-status/1",
-  "updated_at": "2026-11-20T01:27:01.678Z",
+  "updated_at": "2026-11-20T02:25:46.031Z",
   "checkpoint_local_commit": "97ca0adfad5ea4e6cae0648a55529b9165a40b21",
   "release_ready": false,
   "features": [
@@ -37,13 +37,14 @@
     {
       "feature": "Winbindex and binary pairing",
       "status": "partial",
-      "implemented": "Validated URL/HTTP handling and persisted immutable source proposals, windows, normalized delivery rows, approved request plans and verified download receipts; consent binds source metadata and recovery preserves it. New isolated generation-15 candidate rejects ambiguous newest-date plain/gzip records and aliased offline index paths; local isolated method controls pass, full-source CI and independent review pending.",
-      "remaining": "Complete raw entry/index retention, resolver-input reconstruction and native/live acquisition acceptance remain separate.",
+      "implemented": "Validated URL/HTTP handling and persisted immutable source proposals, windows, normalized delivery rows, approved request plans and verified download receipts; consent binds source metadata and recovery preserves it. New isolated generation-15 candidate rejects ambiguous newest-date plain/gzip records and aliased offline index paths; local isolated method controls pass, full-source CI and independent review pending. New isolated generation-16 candidate bounds the opened offline source read and resets skipped-entry counts when the source disappears; limited standard-library reproduction only.",
+      "remaining": "Complete raw entry/index retention, resolver-input reconstruction and native/live acquisition acceptance remain separate. Generation-16 actual repository tests/Ruff and independent review remain pending.",
       "evidence": [
         "docs/engineering/winpairs-url-boundary.md",
         "docs/engineering/winpairs-http-review.md",
         "docs/engineering/acquisition-provenance-peer-review-20261120.md",
-        "docs/engineering-handoffs/generation-15-20261120.md"
+        "docs/engineering-handoffs/generation-15-20261120.md",
+        "docs/engineering-handoffs/generation-16-20261120.md"
       ]
     },
     {
