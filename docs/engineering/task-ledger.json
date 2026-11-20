@@ -39,7 +39,8 @@
     "Generation29 PR339 exact-head Linux/Windows full pytest passed (23808/23694), but both combined jobs failed Ruff I001 in two fixture import blocks. A new isolated test-only successor split imports exactly per Ruff's diagnostic. PR339 five Qt gates passed; package/smoke skipped. New branch source-specific acceptance and independent review pending. No production or accuracy gain.",
     "Generation30/31 recovers two narrow donor scopes and one UI repair. Historical focused selections and independent replays overlap; never sum them into a full-suite result. Main is unchanged.",
     "Generation32 adds reviewed Strings shutdown admission. Clean combined source ad891694 passes 397 unique affected cases with no skips/failures; whole-tree Ruff and dependencies pass. Earlier full a024f9ec run remains incomplete after SIGKILL, cause unestablished. Original raw-log whitespace failure is retained and its exact payload compressed.",
-    "Final source bbdef5a6: 606 passes/1 native skip in 30 unique maintained files; peer replays and earlier 397/493 selections overlap. Diagnostic retention is fixed, original native Java/cache failure is not. Final publication metadata carries exact tree equality."
+    "Final source bbdef5a6: 606 passes/1 native skip in 30 unique maintained files; peer replays and earlier 397/493 selections overlap. Diagnostic retention is fixed, original native Java/cache failure is not. Final publication metadata carries exact tree equality.",
+    "Generation34: distinct Strings CSV formula-prefix guard extracted onto PR342's later g33 reviewed source 5f34fb57, preserving prior isolated CSV g33 branch and not overwriting active PR342. SPEC WB3 before tests/source, ten authored CSV serializer regressions, ten source-equivalent Python controls pass. Full repository pytest/Ruff, exact-head hosted QA, independent reviewer pending; no duplicate active parent runs."
   ],
   "tasks": [
     {
@@ -547,6 +548,18 @@
       "owner": "workflow_repair and independent ci_qualification; completed",
       "worker_commit": "8cff43a2fc78c2e150fbdbabc14a977c473811a4",
       "integration_commit": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b"
+    },
+    {
+      "id": "strings-csv-leading-formula-guard-g34",
+      "status": "source-and-regression-published-qualification-pending",
+      "owner": "generation34 isolated CSV serialization continuation; fresh independent reviewer not assigned",
+      "branch": "codex/patchtrace-csv-formula-prefix-20261120-g34",
+      "source_commit": "95072a309e1530e8595e2e13a3241381ec675669",
+      "spec_commit": "c88588d816420658ca8fcc812739b97a1ac7de89",
+      "test_commit": "bc2cc75b9d33d130137d03bf07ab2883438ad2ca",
+      "evidence": "docs/engineering-handoffs/generation-34-20261120.md",
+      "review_status": "author inspection only; genuinely independent signoff outstanding",
+      "result_or_next_action": "On terminal parent CI, qualify exact current-parent branch with pytest/Ruff/Qt/native/package and independent CSV review, then only guarded merge if all applicable gates and unrelated blockers cleared. Retain old g33 CSV branch and PR342 review history."
     }
   ],
   "aggregate_source_commit": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
