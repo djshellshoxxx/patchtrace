@@ -1,6 +1,6 @@
 {
   "schema": "patchtrace-engineering-task-ledger/1",
-  "updated_at": "2026-11-20T01:07:04.142215+00:00",
+  "updated_at": "2026-11-20T01:26:47.715Z",
   "repository": "https://github.com/djshellshoxxx/PatchTrace",
   "integration_branch": "codex/patchtrace-followup-20261120-4c8d",
   "checkpoint_local_commit": "97ca0adfad5ea4e6cae0648a55529b9165a40b21",
@@ -233,6 +233,14 @@
       "source_commit": "3862cb5de3256efec8f6392a3b6fb4d9e600c377",
       "evidence": "docs/engineering/evidence/pr324-ci-review-refresh-20261120.zip",
       "result_or_next_action": "All 32 exact local native-fixture skip IDs passed in hosted PR324 Linux full JUnit, with no missing or ambiguous IDs. Local tools/managed installer remain absent; no compiler-version or later-source qualification is inferred."
+    },
+    {
+      "id": "offline-winbindex-source-identity",
+      "status": "implemented-local-isolated-validated-hosted-pending",
+      "owner": "generation15 isolated follow-up, independent reviewer pending",
+      "source_commit": "ad42038480b799d024559e6ae9d18f1937dfccc6",
+      "evidence": "docs/engineering-handoffs/generation-15-20261120.md",
+      "result_or_next_action": "Spec-first repair refuses duplicate latest-date plain/gzip Winbindex records and aliased source files/directories before parsing. Baseline reproduced both faults. Eight isolated method controls pass; newly authored actual-repository regression file and full Ruff/QA need source-pinned hosted execution and independent review. This is not raw entry/index persistence or resolver membership replay."
     }
   ],
   "aggregate_source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
