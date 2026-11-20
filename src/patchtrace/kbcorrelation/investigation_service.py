@@ -278,6 +278,8 @@ def _candidate_snapshot(request, cancel, service):
         raise KbcStoreError('PT-KBC-INPUT', 'Saved-index pairing requires an explicit advisory product.')
     investigation = _required(request.investigation_id, 'an advisory search result')
     scope_id = _required(request.scope_id, 'an explicit product')
+    if type(request.component_name) is not str:
+        raise KbcStoreError('PT-KBC-INPUT', 'The component basename must be text.')
     name = normalise_name(_required(request.component_name.strip(), 'a component basename'))
     owner = _candidate_owner(service, investigation)
     if parse_lead(request.lead) != (owner['lead']['kind'], owner['lead']['value']):
