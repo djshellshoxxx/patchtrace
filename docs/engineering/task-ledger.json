@@ -329,6 +329,16 @@
       "evidence": "docs/engineering-handoffs/generation-23-20261120.md",
       "review_status": "coordinator adversarial inspection only; independent signoff pending",
       "result_or_next_action": "The local save_winbindex_record importer previously opened a FIFO without O_NONBLOCK before read; a bounded stdlib control confirmed blocking. Source now requests nonblocking open on supported hosts and fstat verifies a held regular descriptor before reading. Three repository tests are authored but not executed locally; exact-source pytest/Ruff/hosted QA/Qt/native/package and external review pending. Import-source mitigation does not solve full raw index/resolver membership or Linux forced-export publication."
+    },
+    {
+      "id": "advisory-local-held-input-admission",
+      "status": "spec-tests-source-published-standalone-controls-hosted-and-independent-review-pending",
+      "owner": "generation24 isolated local advisory input worker; independent reviewer unassigned",
+      "branch": "codex/patchtrace-advisory-held-input-20261120-g24",
+      "source_commit": "d44b658885635c8e55d6aa7872d03ccc4809ce1d",
+      "evidence": "docs/engineering-handoffs/generation-24-20261120.md",
+      "review_status": "author adversarial inspection only; independent signoff pending",
+      "result_or_next_action": "Existing kb index and investigation offline advisory import shared blocking open(path, 'rb'). POSIX FIFO no-writer blocking reproduced with timeout exit 124; held O_NONBLOCK/fstat control and five stdlib algorithm mirrors passed. SPEC-31-F updated before five new repository regression tests and the narrow CLI reader change. Source uses single bounded regular descriptor; symlink-to-regular compatibility retained. Actual repo pytest/Ruff, exact-source Linux/Windows QA/Qt/native/package and independent reviewer remain pending; do not merge or release."
     }
   ],
   "aggregate_source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
@@ -387,6 +397,11 @@
       "name": "generation23_offline_import_regular_source",
       "scope": "Isolated child of draft PR333: regular-source admission for offline Winbindex importer; earlier generations' branches and in-flight checks untouched",
       "status": "spec-tests-source-published; pending exact-source CI and external independent review"
+    },
+    {
+      "name": "generation24_advisory_local_held",
+      "scope": "Isolated successor of PR334: CVRF/CSAF held regular source admission shared by CLI and investigation service, disjoint from Winbindex importer",
+      "status": "spec-tests-code-committed-hosted-review-pending"
     }
   ],
   "local_integration_branch": "codex/maximum-completion-20261119-4c8d",

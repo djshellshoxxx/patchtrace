@@ -159,3 +159,23 @@ No source provenance or accuracy gain is asserted. Release readiness, main merge
 eligibility, full raw index/resolver membership, Linux force-export, official Qt
 advisory disposition, Windows trust/manual and L1/L2/L3 gates remain open.
 See [generation 23](../engineering-handoffs/generation-23-20261120.md).
+
+## Generation-24 held local advisory-file admission (2026-11-20 UTC)
+
+Separate isolated draft successor of #334. The shared CVRF/CSAF
+`cli_index.read_input_file` is also used by the investigation service and
+still used blocking `open(path, 'rb')` before checking source regularity.
+A bounded POSIX FIFO control exited 124 on a timeout; a nonblocking
+held-descriptor control rejected the FIFO before reading. SPEC-31-F was
+updated first, five repository regression cases were authored, and the
+source now verifies the opened regular descriptor and preserves the
+existing capped read and valid symlink inputs. Five local algorithm-copy
+controls passed; these are not repository-source tests. GitHub DNS checkout
+and Ruff availability remain blocked locally. Exact-source hosted Linux/
+Windows QA, Qt, native, package and independent review are not accepted.
+Predecessor PR332 had successful Linux/Windows QA, Qt and native checks,
+with downstream smoke pending; PR333 still had one Qt shard in progress,
+while PR334 checks were queued or running at inspection. Predecessors do
+not qualify this source. Raw Winbindex index/resolver membership, Linux
+forced export, Qt advisory disposition, Windows trust, historical reviews
+and verified L1/L2/L3 remain blocking. No main merge or release eligible.
