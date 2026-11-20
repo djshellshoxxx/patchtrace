@@ -97,9 +97,10 @@
       "evidence": [
         "docs/engineering/security-force-recovery-20261119.md",
         "docs/engineering/strings-csv-peer-review.md",
-        "docs/engineering/accuracy-peer-review-20261119.md"
+        "docs/engineering/accuracy-peer-review-20261119.md",
+        "docs/engineering-handoffs/generation-34-20261120.md"
       ],
-      "latest_verified_scope": "Linked-worktree receipt identity and current-artifact/cache-origin Strings binding are independently reviewed and included in the 606-case final selection. Forced-export race remains unresolved."
+      "latest_verified_scope": "Linked-worktree receipt identity and current-artifact/cache-origin Strings binding are independently reviewed and included in the 606-case final selection. Forced-export race remains unresolved. Separate generation34 Strings CSV prefix protection has ten authored tests and ten source-equivalent local checks, not repository-source acceptance; all newer-head/independent and publication gates remain open."
     },
     {
       "feature": "Performance",
