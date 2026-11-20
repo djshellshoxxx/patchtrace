@@ -50,3 +50,50 @@ def test_matching_record_swapped_to_symlink_after_scan_is_never_read(tmp_path, m
     assert "alias" in failed.value.message
     assert record.is_symlink()
     assert foreign.read_bytes() == b'{"foreign":true}'
+
+
+@pytest.mark.skipif(os.name == "nt", reason="POSIX EISDIR classification; Windows native replacement separate")
+def test_directory_substituted_after_record_selection_is_source_error(tmp_path, monkeypatch):
+    directory = tmp_path / "winbindex"
+    directory.mkdir()
+    record = directory / f"{NAME}@2099-02-12.json"
+    record.write_bytes(b"{}")
+    original_record = WorkspaceFileIndex._record
+
+    def substitute_after_admission(self, file_name):
+        selected = original_record(self, file_name)
+        assert selected is not None and selected[0] == record
+        record.unlink()
+        record.mkdir()
+        return selected
+
+    monkeypatch.setattr(WorkspaceFileIndex, "_record", substitute_after_admission)
+    with pytest.raises(KbcStoreError) as failed:
+        WorkspaceFileIndex(tmp_path).rows_for(NAME, KEY)
+    assert failed.value.code == "PT-KBC-SOURCE"
+    assert record.is_dir()
+
+
+@pytest.mark.skipif(
+    not hasattr(os, "mkfifo") or not hasattr(os, "O_NONBLOCK"),
+    reason="host cannot verify nonblocking FIFO descriptor admission",
+)
+def test_fifo_substituted_after_record_selection_is_rejected_without_read(tmp_path, monkeypatch):
+    directory = tmp_path / "winbindex"
+    directory.mkdir()
+    record = directory / f"{NAME}@2099-02-12.json"
+    record.write_bytes(b"{}")
+    original_record = WorkspaceFileIndex._record
+
+    def substitute_after_admission(self, file_name):
+        selected = original_record(self, file_name)
+        assert selected is not None and selected[0] == record
+        record.unlink()
+        os.mkfifo(record)
+        return selected
+
+    monkeypatch.setattr(WorkspaceFileIndex, "_record", substitute_after_admission)
+    with pytest.raises(KbcStoreError) as failed:
+        WorkspaceFileIndex(tmp_path).rows_for(NAME, KEY)
+    assert failed.value.code == "PT-KBC-SOURCE"
+    assert not record.is_symlink()
