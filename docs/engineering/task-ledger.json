@@ -1,19 +1,13 @@
 {
   "schema": "patchtrace-engineering-task-ledger/1",
-  "updated_at": "2026-11-20",
+  "updated_at": "2026-11-20T15:56:39.659034+00:00",
   "repository": "https://github.com/djshellshoxxx/PatchTrace",
-  "integration_branch": "codex/patchtrace-followup-20261120-4c8d",
-  "checkpoint_local_commit": "97ca0adfad5ea4e6cae0648a55529b9165a40b21",
-  "starting_candidate": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+  "integration_branch": "codex/patchtrace-verified-integration-20261120-g30",
+  "checkpoint_local_commit": "c0108749e8813dfa6165e953b1a2dc2ad736e982",
+  "starting_candidate": "6c8b33b851a22fb16d39b31693922359cd34ad12",
   "main_at_discovery": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
   "remote_publication": {
-    "pull_request": 324,
-    "url": "https://github.com/djshellshoxxx/patchtrace/pull/324",
-    "remote_commit": "3862cb5de3256efec8f6392a3b6fb4d9e600c377",
-    "local_commit": "eb89c342fb9af9f7a647772aa559a408857b8dd0",
-    "tree": "59c37a3ba7f2c67607bbca60eeb7e683ef391e47",
-    "base": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
-    "branch": "codex/maximum-completion-20261119-4c8d"
+    "status": "local-reviewed-checkpoint-not-yet-published"
   },
   "release_ready": false,
   "main_merge_eligible": false,
@@ -30,7 +24,8 @@
     "Generation26 older Winbindex row ambiguity: distinct normalized source entries with same SHA/basename must fail before plan/network. Preserved reproduction and six isolated mirror checks; actual source tests/Ruff and independent signoff pending. No completeness or empirical accuracy claim.",
     "Generation27: selected newer target priority tier must not have conflicting normalized source claims. Four pre-fix isolated selector-controls failed; six post-fix isolated controls passed. These are not repository-source tests. PR336 hosted Linux pytest passed 23,792 with 51 skips/six xfails but Ruff I001 failed; successor removes only redundant blank import separator. Independent review, exact-source CI, raw index retention and all release blockers remain.",
     "Generation28 inherited hosted evidence: PR337 Linux QA passed 23,800/51 skips/six xfails but Ruff failed F401 (unused fixture import) plus an older I001 already fixed by generation27; PR338 Linux full QA had one failure in a newly authored selected-newer ambiguity integration fixture after 23,807 passes. The test injected the first SHA-matching body rather than the exact resolver-selected version/KB. Generation28 corrects only test fixture targeting and explicit fixture re-exports, not production source or consent. New source tests/whole-tree Ruff/CI and independent signoff remain pending.",
-    "Generation29 PR339 exact-head Linux/Windows full pytest passed (23808/23694), but both combined jobs failed Ruff I001 in two fixture import blocks. A new isolated test-only successor split imports exactly per Ruff's diagnostic. PR339 five Qt gates passed; package/smoke skipped. New branch source-specific acceptance and independent review pending. No production or accuracy gain."
+    "Generation29 PR339 exact-head Linux/Windows full pytest passed (23808/23694), but both combined jobs failed Ruff I001 in two fixture import blocks. A new isolated test-only successor split imports exactly per Ruff's diagnostic. PR339 five Qt gates passed; package/smoke skipped. New branch source-specific acceptance and independent review pending. No production or accuracy gain.",
+    "Generation30/31 recovers two narrow donor scopes and one UI repair. Historical focused selections and independent replays overlap; never sum them into a full-suite result. Main is unchanged."
   ],
   "tasks": [
     {
@@ -38,8 +33,8 @@
       "status": "completed-snapshot",
       "owner": "archaeology",
       "source_commit": "52fa66e063689a790ea986f3ace5d7883efa2165",
-      "evidence": "docs/engineering/consolidation-inventory.md",
-      "result_or_next_action": "323 branch heads, 312 PR records, 59 tags/releases; 154 branch heads still need semantic review."
+      "evidence": "docs/engineering/consolidation-inventory-20261120-g30.json",
+      "result_or_next_action": "341 branches, 330 PRs, 59 tags/releases enumerated; all 330 PR head objects fetched. 146 branches contained by ancestry, 16 patch-equivalent with unreviewed semantics, one specifically equivalent (#323), 176 unknown. No deletion authorized."
     },
     {
       "id": "manifest-dtd",
@@ -143,7 +138,12 @@
       "owner": "root",
       "source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
       "evidence": "docs/engineering/aggregate-qualification-20261119.md",
-      "result_or_next_action": "Original local unsplit run ended SIGKILL after 1,729.332 seconds with no final traceback/JUnit. Initial PR324 later passed hosted Linux full QA: 23,699 passed, 51 skipped, six xfailed. Windows and remaining Qt were running at refresh. PR325 needs separate current-source full gates."
+      "result_or_next_action": "Original local unsplit run ended SIGKILL after 1,729.332 seconds with no final traceback/JUnit. Initial PR324 later passed hosted Linux full QA: 23,699 passed, 51 skipped, six xfailed. Windows and remaining Qt were running at refresh. PR325 needs separate current-source full gates.",
+      "latest_attempt": {
+        "source_commit": "c0108749e8813dfa6165e953b1a2dc2ad736e982",
+        "status": "pending-new-local-and-hosted-qualification",
+        "note": "Earlier receipts remain historical, source-specific evidence."
+      }
     },
     {
       "id": "native-qt-remediation",
@@ -151,7 +151,11 @@
       "owner": "next qualification worker",
       "source_commit": null,
       "evidence": "docs/engineering/generation3-qualification-review.md",
-      "result_or_next_action": "Official PyPI refresh still has no 6.12.1 binding wheels; seven earlier assessed ranges plus fresh QXmlSimpleReader advisory require component-specific disposition. Version matches alone do not prove application reachability."
+      "result_or_next_action": "Official PyPI refresh still has no 6.12.1 binding wheels; seven earlier assessed ranges plus fresh QXmlSimpleReader advisory require component-specific disposition. Version matches alone do not prove application reachability.",
+      "latest_refresh": {
+        "evidence": "docs/engineering/qt-disposition-refresh-20261120.md",
+        "status": "blocked-no-verified-6.12.1-wheels"
+      }
     },
     {
       "id": "linux-force-source-race",
@@ -343,7 +347,13 @@
       "source_commit": "d44b658885635c8e55d6aa7872d03ccc4809ce1d",
       "evidence": "docs/engineering-handoffs/generation-24-20261120.md",
       "review_status": "author adversarial inspection only; independent signoff pending",
-      "result_or_next_action": "Existing kb index and investigation offline advisory import shared blocking open(path, 'rb'). POSIX FIFO no-writer blocking reproduced with timeout exit 124; held O_NONBLOCK/fstat control and five stdlib algorithm mirrors passed. SPEC-31-F updated before five new repository regression tests and the narrow CLI reader change. Source uses single bounded regular descriptor; symlink-to-regular compatibility retained. Actual repo pytest/Ruff, exact-source Linux/Windows QA/Qt/native/package and independent reviewer remain pending; do not merge or release."
+      "result_or_next_action": "Existing kb index and investigation offline advisory import shared blocking open(path, 'rb'). POSIX FIFO no-writer blocking reproduced with timeout exit 124; held O_NONBLOCK/fstat control and five stdlib algorithm mirrors passed. SPEC-31-F updated before five new repository regression tests and the narrow CLI reader change. Source uses single bounded regular descriptor; symlink-to-regular compatibility retained. Actual repo pytest/Ruff, exact-source Linux/Windows QA/Qt/native/package and independent reviewer remain pending; do not merge or release.",
+      "latest_independent_review": {
+        "source_commit": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+        "evidence": "docs/engineering/generation30-independent-input-review.md",
+        "status": "bounded-review-and-focused-tests-pass",
+        "limits": "96 cases across two disjoint selections; this shared count is not a per-task count or whole-stack qualification."
+      }
     },
     {
       "id": "acquisition-newer-row-window-membership",
@@ -353,7 +363,13 @@
       "source_commit": "dfb0a240f19cae7d4fa11c69e1b96778a387a7b7",
       "evidence": "docs/engineering-handoffs/generation-25-20261120.md",
       "review_status": "coordinator adversarial inspection; not independent reviewer signoff",
-      "result_or_next_action": "Prior SHA-only first row selected BASE for a KB-targeted newer build. SPEC-31-F updated before eight repository test functions and runtime, newer target now parses exact index window, prefers own body, accepts only explicit other_versions copies, refuses missing selected source before network. 15 isolated algorithm controls passed, not checked-out-source pytest. Run exact-source hosted QA/Ruff/Qt/native/package and independent review. Older predecessor/source membership and complete raw index retention remain open."
+      "result_or_next_action": "Prior SHA-only first row selected BASE for a KB-targeted newer build. SPEC-31-F updated before eight repository test functions and runtime, newer target now parses exact index window, prefers own body, accepts only explicit other_versions copies, refuses missing selected source before network. 15 isolated algorithm controls passed, not checked-out-source pytest. Run exact-source hosted QA/Ruff/Qt/native/package and independent review. Older predecessor/source membership and complete raw index retention remain open.",
+      "latest_independent_review": {
+        "source_commit": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+        "evidence": "docs/engineering/generation30-independent-input-review.md",
+        "status": "bounded-review-and-focused-tests-pass",
+        "limits": "96 cases across two disjoint selections; this shared count is not a per-task count or whole-stack qualification."
+      }
     },
     {
       "id": "older-source-ambiguity-g26",
@@ -362,7 +378,13 @@
       "source_commit": "dc32a7cc81c92fc8a31d295838da34695ba5f82f",
       "evidence": "docs/engineering-handoffs/generation-26-20261120.md",
       "result_or_next_action": "Contract-first guard refuses distinct older normalized entries matching one SHA/basename before acquisition preview planning or any network. Eight authored repository test cases (including integration no-fetch); isolated algorithm copy 6 passed. Full checked-out-source pytest/Ruff, exact-head hosted QA/Qt/native/package, and genuinely independent reviewer acceptance outstanding. Not raw input retention or exact predecessor reconstruction.",
-      "review_status": "coordinator-adversarial-not-independent"
+      "review_status": "coordinator-adversarial-not-independent",
+      "latest_independent_review": {
+        "source_commit": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+        "evidence": "docs/engineering/generation30-independent-input-review.md",
+        "status": "bounded-review-and-focused-tests-pass",
+        "limits": "96 cases across two disjoint selections; this shared count is not a per-task count or whole-stack qualification."
+      }
     },
     {
       "id": "newer-source-ambiguity-g27",
@@ -371,7 +393,13 @@
       "source_commit": "750eb3ce906d3ffbec39e838f760045c9f8d89b3",
       "evidence": "docs/engineering-handoffs/generation-27-20261120.md",
       "review_status": "coordinator-only adversarial inspection; independent signoff pending",
-      "result_or_next_action": "SPEC-31-F first, 8 authored regression cases, selected newer native/copy priority-tier conflicts now PT-KBC-INPUT before plan/network; equal duplicates and single native precedence retained. Four red and six green isolated selector controls only. Inherited PR336 Linux Ruff I001 from one extra blank separator addressed in successor f4b6c71e. Run source-pinned hosted QA/Ruff/Qt/native/packages and independent adversarial review before merging. No full raw index or original older membership."
+      "result_or_next_action": "SPEC-31-F first, 8 authored regression cases, selected newer native/copy priority-tier conflicts now PT-KBC-INPUT before plan/network; equal duplicates and single native precedence retained. Four red and six green isolated selector controls only. Inherited PR336 Linux Ruff I001 from one extra blank separator addressed in successor f4b6c71e. Run source-pinned hosted QA/Ruff/Qt/native/packages and independent adversarial review before merging. No full raw index or original older membership.",
+      "latest_independent_review": {
+        "source_commit": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+        "evidence": "docs/engineering/generation30-independent-input-review.md",
+        "status": "bounded-review-and-focused-tests-pass",
+        "limits": "96 cases across two disjoint selections; this shared count is not a per-task count or whole-stack qualification."
+      }
     },
     {
       "id": "generation28-hosted-qa-fixture",
@@ -379,7 +407,13 @@
       "owner": "generation28-test-fixture-only",
       "source_commit": null,
       "evidence": "docs/engineering-handoffs/generation-28-20261120.md",
-      "result_or_next_action": "PR339 source a5c6ff87 complete-tree 93ab7f6c: hosted Linux 23808 pass/51 skip/6 xfail; Windows 23694 pass/166 skip/5 xfail; 5 Qt jobs successful. Both strict Ruff legs failed on two I001 fixture self-alias import blocks. Generation29 new isolated test-only source 981d41e3 splits two statements per exact Ruff suggestions. Require new-source CI, native/package and independent review; prior results are not full gate acceptance."
+      "result_or_next_action": "PR339 source a5c6ff87 complete-tree 93ab7f6c: hosted Linux 23808 pass/51 skip/6 xfail; Windows 23694 pass/166 skip/5 xfail; 5 Qt jobs successful. Both strict Ruff legs failed on two I001 fixture self-alias import blocks. Generation29 new isolated test-only source 981d41e3 splits two statements per exact Ruff suggestions. Require new-source CI, native/package and independent review; prior results are not full gate acceptance.",
+      "latest_independent_review": {
+        "source_commit": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+        "evidence": "docs/engineering/generation30-independent-input-review.md",
+        "status": "bounded-review-and-focused-tests-pass",
+        "limits": "96 cases across two disjoint selections; this shared count is not a per-task count or whole-stack qualification."
+      }
     },
     {
       "id": "generation29-hosted-ruff-imports",
@@ -390,73 +424,93 @@
       "code_tree": "aa8a96bd55e85d2ab11dd0c9b6b565778d05509b",
       "evidence": "docs/engineering-handoffs/generation-29-20261120.md",
       "review_status": "coordinator source-aware inspection only; independent signoff pending",
-      "result_or_next_action": "Preserved PR339 Linux/Windows full pytest passes and 5 Qt successes plus exact Ruff I001 failures. Split self-alias ready as ready imports in two tests per hosted Ruff diff. Exact new-head full QA/Ruff, Qt/native/package and adversarial independent review remain required. No production/contract change, no release or merge."
+      "result_or_next_action": "Preserved PR339 Linux/Windows full pytest passes and 5 Qt successes plus exact Ruff I001 failures. Split self-alias ready as ready imports in two tests per hosted Ruff diff. Exact new-head full QA/Ruff, Qt/native/package and adversarial independent review remain required. No production/contract change, no release or merge.",
+      "latest_independent_review": {
+        "source_commit": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+        "evidence": "docs/engineering/generation30-independent-input-review.md",
+        "status": "bounded-review-and-focused-tests-pass",
+        "limits": "96 cases across two disjoint selections; this shared count is not a per-task count or whole-stack qualification."
+      }
+    },
+    {
+      "id": "receipt-git-worktree-identity",
+      "owner": "implementation worker and fresh independent reviewer",
+      "status": "implemented-reviewed",
+      "branch": "codex/patchtrace-verified-integration-20261120-g30",
+      "source_commit": "0f63e0dcb6b53ef4b57550b183b42f80f376eaa8",
+      "integration_commit": "648e508961b4e38cc3a2a005808f6bf819ce0823",
+      "evidence": "docs/engineering/receipt-source-recovery-20261120.md",
+      "result_or_next_action": "18 baseline failures; 140 affected passes/one optional skip, later skipped control passes; six independent controls. SHA-1 file-backed metadata only. Combined/native gates remain pending."
+    },
+    {
+      "id": "search-cancel-pending-debounce",
+      "owner": "implementation worker and fresh independent reviewer",
+      "status": "implemented-reviewed",
+      "branch": "codex/patchtrace-verified-integration-20261120-g30",
+      "source_commit": "5d06ec7dd5ce8a75ef49d300a282fcf8b4955377",
+      "integration_commit": "c216df83",
+      "evidence": "docs/engineering/search-cancel-independent-review-20261120.md",
+      "result_or_next_action": "Real Qt baseline failure; 58 affected passes and independent 58 plus two task controls. Replay counts overlap. Combined/native gates remain pending."
+    },
+    {
+      "id": "strings-stored-source-admission",
+      "owner": "implementation worker and fresh independent reviewer",
+      "status": "implemented-reviewed",
+      "branch": "codex/patchtrace-verified-integration-20261120-g30",
+      "source_commit": "cf71c457665092b11448c6515c33360f68a590dd",
+      "integration_commit": "58d30fe6",
+      "evidence": "docs/engineering/strings-stored-source-recovery-20261120.md",
+      "result_or_next_action": "Eight baseline failures; 102 affected passes; independent selection: 87 of97 overlap, ten extra existing GUI cases, plus two additional history controls. Donor2042e24d extracted narrowly; forced-export race unchanged. Combined/native gates remain pending."
     }
   ],
-  "aggregate_source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
+  "aggregate_source_commit": "c0108749e8813dfa6165e953b1a2dc2ad736e982",
   "workers": [
     {
+      "name": "repository_inventory",
+      "status": "completed"
+    },
+    {
+      "name": "workflow_repair",
+      "status": "completed"
+    },
+    {
+      "name": "defensive_review",
+      "status": "completed"
+    },
+    {
+      "name": "generation30_search_review",
+      "status": "completed"
+    },
+    {
+      "name": "generation30_receipt_review",
+      "status": "completed"
+    },
+    {
+      "name": "generation31_donor_review",
+      "status": "completed"
+    },
+    {
+      "name": "generation31_strings_review",
+      "status": "completed"
+    },
+    {
+      "name": "ci_qualification",
+      "status": "completed"
+    },
+    {
+      "name": "native_qt_disposition",
+      "status": "completed"
+    },
+    {
       "name": "root",
-      "scope": "Published reviewed PR325 and durable evidence; hourly successor owns the next cycle after fresh-head reconciliation.",
-      "status": "completed-source-checkpoint"
+      "status": "integrating-and-qualifying"
     },
     {
-      "name": "generation14_ci_receipts",
-      "scope": "Read-only exact PR324 CI and artifact review",
-      "status": "completed-snapshot"
-    },
-    {
-      "name": "generation14_fixture_toolchain",
-      "scope": "Normal installed-toolchain capability check for 32 preserved skips",
-      "status": "completed-blocked-evidence"
-    },
-    {
-      "name": "generation14_handoff_audit",
-      "scope": "Independent source/count/archive/bundle and reporting audit at 666b4d71",
-      "status": "completed-no-unresolved-findings"
-    },
-    {
-      "name": "generation16_offline_index_read",
-      "scope": "Distinct adapter read-budget and skipped-row-freshness repair, stacked after generation15 without changing its branch",
-      "status": "implemented-on-isolated-branch-review-pending"
-    },
-    {
-      "name": "generation17_held_source_admission",
-      "scope": "Contract-first separate branch after draft PR327, held Winbindex record read and matching nonregular-file refusal",
-      "status": "source-implemented-isolated-mirror-reviewed-by-author-independent-review-pending"
-    },
-    {
-      "name": "generation18_late_directory_review",
-      "scope": "Independent post-generation17 adversarial inspection; isolated follow-up EISDIR source classification and synthetic FIFO control",
-      "status": "source-committed-stdlib-mirror-verified-hosted-and-external-review-pending"
-    },
-    {
-      "name": "generation19_winbindex_body_gap",
-      "scope": "New isolated successor of PR329: source body-gap accounting and plain import output; exact inherited Windows QA I001 style repair; no changes to predecessor refs",
-      "status": "source-implemented-pending-source-pinned-hosted-qa-and-external-independent-review"
-    },
-    {
-      "name": "generation21_same_read_gap",
-      "scope": "New isolated draft successor of PR331: call-local Winbindex row/gap accounting and inherited PR330 hosted QA fixture reconciliation; existing branches and CI untouched",
-      "status": "code-published-source-pinned-qa-independent-review-pending"
-    },
-    {
-      "name": "generation22_base_metadata",
-      "scope": "Isolated new BASE metadata structural admission and source-loss counter, stacked on PR332 without altering preceding CI",
-      "status": "source-implemented-hosted-and-independent-review-pending"
-    },
-    {
-      "name": "generation23_offline_import_regular_source",
-      "scope": "Isolated child of draft PR333: regular-source admission for offline Winbindex importer; earlier generations' branches and in-flight checks untouched",
-      "status": "spec-tests-source-published; pending exact-source CI and external independent review"
-    },
-    {
-      "name": "generation24_advisory_local_held",
-      "scope": "Isolated successor of PR334: CVRF/CSAF held regular source admission shared by CLI and investigation service, disjoint from Winbindex importer",
-      "status": "spec-tests-code-committed-hosted-review-pending"
+      "name": "generation31_integration_review",
+      "status": "completed-source-approved-documentation-corrections-applied"
     }
   ],
-  "local_integration_branch": "codex/maximum-completion-20261119-4c8d",
+  "local_integration_branch": "codex/patchtrace-verified-integration-20261120-g30",
   "followup_publication": {
     "state": "published-draft",
     "pull_request": 325,
@@ -497,5 +551,87 @@
       "downstream package checks"
     ],
     "evidence": "docs/engineering/evidence/pr324-ci-review-refresh-20261120.zip"
+  },
+  "previous_checkpoint": {
+    "integration_branch": "codex/patchtrace-followup-20261120-4c8d",
+    "checkpoint_local_commit": "97ca0adfad5ea4e6cae0648a55529b9165a40b21",
+    "remote_publication": {
+      "pull_request": 324,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/324",
+      "remote_commit": "3862cb5de3256efec8f6392a3b6fb4d9e600c377",
+      "local_commit": "eb89c342fb9af9f7a647772aa559a408857b8dd0",
+      "tree": "59c37a3ba7f2c67607bbca60eeb7e683ef391e47",
+      "base": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "branch": "codex/maximum-completion-20261119-4c8d"
+    },
+    "workers": [
+      {
+        "name": "root",
+        "scope": "Published reviewed PR325 and durable evidence; hourly successor owns the next cycle after fresh-head reconciliation.",
+        "status": "completed-source-checkpoint"
+      },
+      {
+        "name": "generation14_ci_receipts",
+        "scope": "Read-only exact PR324 CI and artifact review",
+        "status": "completed-snapshot"
+      },
+      {
+        "name": "generation14_fixture_toolchain",
+        "scope": "Normal installed-toolchain capability check for 32 preserved skips",
+        "status": "completed-blocked-evidence"
+      },
+      {
+        "name": "generation14_handoff_audit",
+        "scope": "Independent source/count/archive/bundle and reporting audit at 666b4d71",
+        "status": "completed-no-unresolved-findings"
+      },
+      {
+        "name": "generation16_offline_index_read",
+        "scope": "Distinct adapter read-budget and skipped-row-freshness repair, stacked after generation15 without changing its branch",
+        "status": "implemented-on-isolated-branch-review-pending"
+      },
+      {
+        "name": "generation17_held_source_admission",
+        "scope": "Contract-first separate branch after draft PR327, held Winbindex record read and matching nonregular-file refusal",
+        "status": "source-implemented-isolated-mirror-reviewed-by-author-independent-review-pending"
+      },
+      {
+        "name": "generation18_late_directory_review",
+        "scope": "Independent post-generation17 adversarial inspection; isolated follow-up EISDIR source classification and synthetic FIFO control",
+        "status": "source-committed-stdlib-mirror-verified-hosted-and-external-review-pending"
+      },
+      {
+        "name": "generation19_winbindex_body_gap",
+        "scope": "New isolated successor of PR329: source body-gap accounting and plain import output; exact inherited Windows QA I001 style repair; no changes to predecessor refs",
+        "status": "source-implemented-pending-source-pinned-hosted-qa-and-external-independent-review"
+      },
+      {
+        "name": "generation21_same_read_gap",
+        "scope": "New isolated draft successor of PR331: call-local Winbindex row/gap accounting and inherited PR330 hosted QA fixture reconciliation; existing branches and CI untouched",
+        "status": "code-published-source-pinned-qa-independent-review-pending"
+      },
+      {
+        "name": "generation22_base_metadata",
+        "scope": "Isolated new BASE metadata structural admission and source-loss counter, stacked on PR332 without altering preceding CI",
+        "status": "source-implemented-hosted-and-independent-review-pending"
+      },
+      {
+        "name": "generation23_offline_import_regular_source",
+        "scope": "Isolated child of draft PR333: regular-source admission for offline Winbindex importer; earlier generations' branches and in-flight checks untouched",
+        "status": "spec-tests-source-published; pending exact-source CI and external independent review"
+      },
+      {
+        "name": "generation24_advisory_local_held",
+        "scope": "Isolated successor of PR334: CVRF/CSAF held regular source admission shared by CLI and investigation service, disjoint from Winbindex importer",
+        "status": "spec-tests-code-committed-hosted-review-pending"
+      }
+    ]
+  },
+  "publication_preparation": {
+    "frozen_qualification_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+    "method": "authenticated GitHub Git Data API; CLI push had no credentials",
+    "local_history_bundle": "docs/engineering/evidence/generation30/local-history.bundle",
+    "census_replay": "docs/engineering/evidence/generation30/census-replay.zip",
+    "status": "tree-equivalent-publication-pending"
   }
 }

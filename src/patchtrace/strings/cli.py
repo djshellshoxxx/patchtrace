@@ -124,11 +124,16 @@ def _artifacts(service) -> dict:
 
 
 def _floss_source(store, artifact):
+    from ..intelligence.tools.admission import latest_admitted
+    from ..intelligence.tools.common import ToolError
     from .sources import FlossEvidenceSource
-    found = store.latest('floss', artifact.side)
-    if found is None or found[1] is None or not found[0].raw_sidecar:
+    try:
+        found = latest_admitted(store, engine='floss', side=artifact.side, artifact_sha256=artifact.sha256)
+    except ToolError:
         return None
-    run, evidence = found
+    if found is None or not found.evidence_run.raw_sidecar:
+        return None
+    run, evidence = found.evidence_run, found.evidence
     raw_sha = run.raw_sidecar.rsplit('-', 1)[-1].removesuffix('.json')
     return FlossEvidenceSource(
         evidence, executable_sha256=run.manifest.executable_sha256, source_version=run.manifest.version,

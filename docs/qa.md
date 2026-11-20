@@ -1,5 +1,12 @@
 # QA and audit record
 
+## 2026-11-20 generations 30–31
+
+Reviewed code checkpoint `c0108749e8813dfa6165e953b1a2dc2ad736e982` recovers two narrow donor scopes and one new UI repair. Receipt baseline: 18 failures/11 passes; affected recovery: 140 passes/one optional psutil skip, followed by a separate pass of that resource control. Search: 58 affected passes. Strings: 102 disjoint affected passes. Recent input guards: 96 disjoint focused passes. Independent replays overlap these numbers and must not be summed. Combined local and final-head hosted qualification remain pending at this checkpoint. Native Windows/FLOSS, Qt disposition and the forced-export race remain separate.
+
+See [handoff](engineering-handoffs/generation-30-31-20261120.md), [census](engineering/consolidation-inventory-20261120-g30.md), [receipt recovery](engineering/receipt-source-recovery-20261120.md), [Search review](engineering/search-cancel-independent-review-20261120.md), and [Strings recovery](engineering/strings-stored-source-recovery-20261120.md).
+
+
 ## 2026-11-18 advisory anchor compatibility and final frozen L1 evidence
 
 The current successor preserves actual #305/#306 heads and repairs the reproduced

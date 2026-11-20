@@ -68,6 +68,14 @@ combination exits 2; store failures exit 3. Delete is idempotent and reports
 `SearchResult` and existing search exit codes. Query/filter flags cannot silently
 override a saved run. Listing or editing saved data does not require FTS5.
 
+### Search cancellation amendment (2026-11-20)
+
+Cancel ends pending input debounce as well as active search, index-build and
+coverage tasks. Text already present in the editor stays available, but a timer
+scheduled before cancellation must not submit it afterward. A subsequent edit,
+Enter, or other explicit search action can start a new request normally. Earlier
+results remain available under the existing cancellation presentation.
+
 Acceptance requires mode/filter round trips, legacy/corrupt rows, actual
 owner-thread project save/reopen, stale-dialog and deleted-selection refusal,
 bounded long-query settings/clear, no accidental execution, a current-source

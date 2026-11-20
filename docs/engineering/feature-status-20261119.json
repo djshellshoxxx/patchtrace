@@ -1,7 +1,7 @@
 {
   "schema": "patchtrace-feature-status/1",
-  "updated_at": "2026-11-20",
-  "checkpoint_local_commit": "97ca0adfad5ea4e6cae0648a55529b9165a40b21",
+  "updated_at": "2026-11-20T15:56:39.659034+00:00",
+  "checkpoint_local_commit": "c0108749e8813dfa6165e953b1a2dc2ad736e982",
   "release_ready": false,
   "features": [
     {
@@ -77,7 +77,8 @@
         "docs/engineering/saved-search-peer-review.md",
         "docs/engineering/raw-alignment-peer-review.md",
         "docs/engineering-handoffs/generation-24-20261120.md"
-      ]
+      ],
+      "latest_verified_scope": "Generation30 Search Cancel stops pending debounce while preserving later search. 58 affected tests and fresh review pass; recent input guards have 96 bounded test passes and independent review. Full/native qualification remains separate."
     },
     {
       "feature": "Reports and exports",
@@ -88,7 +89,8 @@
         "docs/engineering/security-force-recovery-20261119.md",
         "docs/engineering/strings-csv-peer-review.md",
         "docs/engineering/accuracy-peer-review-20261119.md"
-      ]
+      ],
+      "latest_verified_scope": "Receipt Git identity supports linked worktrees without subprocesses. Strings stored sources bind current artifact/side and retain cache-origin provenance; 102 affected tests and independent review pass. Linux forced-export race remains open."
     },
     {
       "feature": "Performance",
@@ -106,7 +108,8 @@
       "remaining": "Incomplete full-suite qualification; native Qt disposition; remaining Linux forced-source race; Windows/trust/clean-machine/native and layer-specific accuracy gates remain. PR339 Linux/Windows pytest and Qt successes were not combined acceptance because Ruff I001 failed; generation29 corrected source remains unqualified pending own hosted gates and review.",
       "evidence": [
         "docs/engineering/generation3-qualification-review.md"
-      ]
+      ],
+      "latest_verified_scope": "Generation30/31 has bounded independent reviews. Combined local/hosted and native acceptance remain pending. Qt6.12.1 wheels were not published at official refresh; earlier main Linux package failure was an apt transport prerequisite failure."
     }
   ]
 }

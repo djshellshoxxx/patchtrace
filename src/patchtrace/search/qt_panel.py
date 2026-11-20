@@ -390,6 +390,7 @@ class SearchController(ControllerBase):
         self.panel.detail.setPlainText('Coverage\n' + ('\n'.join(lines) or 'No search has run yet.'))
 
     def cancel(self) -> None:
+        self.debounce.stop()
         self._cancel_all()
         self.progress, self.fetching, self.cancelled = None, False, True
         self._render()

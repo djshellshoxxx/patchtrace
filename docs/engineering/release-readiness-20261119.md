@@ -1,5 +1,10 @@
 # Release readiness after the multi-generation integration
 
+## Current generation 30–31 checkpoint
+
+The [current handoff](../engineering-handoffs/generation-30-31-20261120.md) records independently reviewed receipt identity, Search cancellation and stored Strings source-admission repairs. These are bounded candidate improvements, not release qualification. Combined/current-head hosted gates and the existing forced-export, native Qt, raw-input membership, Windows/trust/manual and accuracy blockers remain open. The [official Qt refresh](qt-disposition-refresh-20261120.md) found no verified 6.12.1-family wheel update. Earlier results below remain historical and source-specific.
+
+
 **Blocked: reviewable engineering candidate only.**
 
 The [task ledger](task-ledger.json) records exact source and verification state.

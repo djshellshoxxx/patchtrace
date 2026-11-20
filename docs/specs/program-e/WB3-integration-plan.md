@@ -247,6 +247,15 @@ scope selection, returned row count and SHA-256 of the complete file are unchang
 
 ### File publication
 
+Stored-source admission (2026-11-20): the Strings CLI must bind stored FLOSS
+results to the current project, artifact hash and side through SPEC-36 T14's
+opt-in admission helper. Swapping orientation must not relabel an earlier
+artifact's results. Auto falls back to verified built-in scanning when stored
+evidence is unavailable; explicit FLOSS selection refuses. Legitimate cached
+results retain their admitted originating run's recorded raw provenance even
+when the cache-hit run has no raw sidecar. This amendment changes no comparison,
+cue, ranking, function-linking, export, or dock behavior.
+
 Publication has two explicit paths:
 
 - Without `--force`, the selected parent must already exist. Publication holds the source bytes and

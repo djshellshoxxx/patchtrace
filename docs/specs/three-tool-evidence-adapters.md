@@ -134,3 +134,44 @@ Additive to T1-T10; where a line below differs from T1-T10, this block wins.
 - **T13.5 T7 runner and cache (CAP-4).** The cache is raw-first: `DerivedCache` in `enrichment/cache.py`, stage `capa-raw`, key = existing `cache_key(artifact_sha256, manifest, options)`, payload = zlib-compressed raw stdout. A hit is re-parsed by the current parser, so parser changes never invalidate raw output; an option token `argv: capa/2` marks a change of argv or parse semantics. Admission failure is a soft miss, never an analysis failure. Cross-project reuse requires an explicit profile `cache_dir`. A rules or capa change is a cache miss and a new run, never a rewrite of stored evidence. Default rules are the built-in pack of the pinned exe (identity `embedded:<executable_sha256>`, labelled "built-in rules of capa 9.4.0 (Apache-2.0)"); the embedded pack is not byte-compared with the upstream tag [unverified].
 - **T13.6 T1 pin and T10 open items.** Pin rows 3-4 (capa and capa-rules pins) carry executable members, `trust: trust-on-first-use`, and a comparison with GitHub's per-asset digest when reachable. Open after CAP-0: `intel-tools pairs` (CAP-5); capa rule inventory (CAP-7, names and scopes only, no rule text); live Linux required leg and Windows advisory leg (CAP-8, `live-capa.yml`); extent attribution through the unified IR (CAP-9, deferred); BinExport2 backend (CAP-10, deferred); consented in-app download (CAP-11, owner decision). No CAP item changes the T10 items above.
 - **Scope of T13.** Only the amendments above are specified here. No item in T13 is implemented by CAP-0; a slice that implements one updates its own status line and tests.
+
+### T14. Opt-in stored-tool admission (recovered 2026-11-20)
+
+The Strings CLI uses
+`intelligence/tools/admission.py::latest_admitted(store, *, engine, side,
+artifact_sha256)` to admit stored results against the current project and
+artifact. The immutable result is `AdmittedToolEvidence(run, evidence,
+evidence_run)`, or `None` when no produced run exists. Invalid selected metadata
+or identity raises a bounded `ToolError`; it must not silently select an older
+produced run. Existing `ToolStore` methods and other consumers remain unchanged.
+Search and Strings dock integration are separate scopes.
+
+Read through the existing owner-thread `EnrichmentStore` API and retain Entry
+metadata and original `body_json` for strict JSON admission. Select the newest
+produced matching engine/side run in existing store order. Ordinary unsuccessful
+attempts do not replace that selection. The selected row must match its body
+run ID and status, be current, and carry guard `(current project ID,
+'intel-tools', current artifact SHA-256, cache key)`. Its body must name the
+requested engine, side and artifact. Unreadable or unclassifiable potential
+selections refuse; unrelated groups and older unselected history are not selected.
+
+The evidence row must have its content-derived identity, status `ok`, the same
+guard and no stale flag. Its contract, engine, side, artifact, cache key,
+configuration, evidence count and produced status must agree with the selected
+run. A sidecar pointer's identity fields must agree with the loaded evidence.
+The existing sidecar loader and its I/O behavior are unchanged.
+
+A direct run owns its evidence. A cache hit may have no new raw sidecar or stdout
+digest: fully admit the originating run named by `evidence.run_id` and return it
+as `evidence_run`. Select matching engine, side and cache key before admission,
+because retained orientation history can share an artifact/cache key across
+sides. Missing, stale, foreign or inconsistent origins refuse explicitly.
+The originating raw sidecar and digest are recorded provenance, not proof that
+raw bytes were reread. The helper performs no writes or tool execution.
+
+Strings maps refusal to an unavailable stored source. Auto may use the verified
+built-in scan; explicit FLOSS selection refuses. Artifact-byte verification stays
+with the existing consumer. Tests must cover orientation changes, actual authored
+runner fresh-to-cache reuse, selected/evidence/origin metadata refusal and
+preservation of original provenance. Synthetic fake-tool tests do not qualify
+native FLOSS or establish an empirical accuracy result.

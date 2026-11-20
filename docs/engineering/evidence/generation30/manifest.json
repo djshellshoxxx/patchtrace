@@ -1,0 +1,32 @@
+{
+  "schema": "patchtrace-engineering-evidence/1",
+  "created_at_utc": "2026-11-20T15:56:39.659034+00:00",
+  "source_notes": "Each receipt records its own source. Overlapping runs are not a combined-suite result.",
+  "files": {
+    "census-replay-check.json": "5ca780dbf164743ad05894b9ce82cee511cf4cd78393184fb133e24e912a74ab",
+    "census-replay.zip": "e32f5dc05e45d3247b49a77bc2bf5bfe664a6453747b446347434ba7a775085b",
+    "generation31-document-checks.json": "99683c9f900902fbb67a9031e2fa2c8ae85c317c51747d280f24119c17f953c8",
+    "generation31-evidence-check.json": "e29428f1a3cf78bb23ccc972150f24d9a17358d58740461e63f713bcd4792f07",
+    "generation31-integration-review.json": "0bbb4a79667b97214aa22446348e6a2c78f1a8c088447c4d1129922375c9a39b",
+    "generation31-source-comparisons.json": "3849fd4f3cfe310293095a8d3580f82480ba885085ae52d9bf7623923f7c0972",
+    "local-history.bundle": "c6506b8fd87ff0a4b614ae34615bab1555583c75484ce105b057c452069bba3d",
+    "main-package-prerequisite.log.gz": "6acb3050f503c1e06bdba59685c454e65c3e835c41d8228f3a751b8d281d5576",
+    "patchtrace-ci-current.json": "b94d8ec8ed3e52b6d6c1585c39b6c0ca53c8d64da5d551ac711722940201a2d5",
+    "qt-disposition-refresh.json": "3352ef7d3cb33ff9217314d269b3c28883f1f2eb2ffc7ef6e944ad4c33806bd9",
+    "qt-package-refresh-20261120.json": "d1b3b906c6da99e6a6e9f9a41ea8adecf0d120b529cce530da6a19e7d0b0a220",
+    "receipt-baseline.log.gz": "5985c948181a25283152bbfb4e96e070f32c83dbb093a778fbb2a85d21e9be55",
+    "receipt-baseline.xml": "54b00e1a64d851b9cfe0a851a943b24f2caebb10dba6f7f6b7a2ba1c77e67abc",
+    "receipt-peer-direct-identity.json": "662e725ee723276e9ffccb502ae195cb2d9dcfa1bcc9aaa52f7df6fb2e5c9fd4",
+    "receipt-peer-layout.xml": "315067ddc9b6d1719b9e7a93a7c12f48f3f871613ce3f77d769e794533cacc75",
+    "receipt-recovery.log.gz": "1bce89f1cda4431c6dcae7694e54a71c6b0e01d77176c47c44976c9afa727647",
+    "receipt-recovery.xml": "d96e1c0a5573b5dc5f9a033dab9b35a8938d02196dd137ea45bfbc8178e9f201",
+    "receipt-resource-measurement.xml": "2a1994d6b357c660b4c4ed81727e35f722520d26dd7be13a4ddad658d4d666ce",
+    "search-independent-suite.xml": "e3d9ded95b9b62e5e84b76ab37378949b23b11924ff887b1cd4138577165dec8",
+    "search-independent-task-controls.xml": "708c86e935ca61afb29de805fd75910472cd6d129b1a37de5551d14b7a0fa685",
+    "strings-independent-review-source.json": "db483a5dfe3f22b3454367bd43d92ae70be82ab991739e744c67b6f4c62537bc",
+    "strings-peer-history.xml": "583b66cb3425c223b56aab6f9fea39852d58150c24e4badca962d58c2c6c2081",
+    "strings-peer-suite.xml": "98374487823ec34eff368d6e59b0df4b677348f0b3377bc1016ce07c45997c4d",
+    "test_receipt_peer_layout.py": "38a15c3b71c43289a6ea7057793137b8c4ca0404bd6f5762318be16d782688e9",
+    "test_strings_peer_history.py": "3417bbc34df90c018abc8f9be74a731322c1a240baf26638885b818ef4b1fe0e"
+  }
+}

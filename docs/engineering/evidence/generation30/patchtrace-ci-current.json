@@ -1,0 +1,716 @@
+{
+  "schema": "patchtrace-ci-diagnosis/1",
+  "observed_at_utc": "2026-11-20T15:48:55Z",
+  "repository": "https://github.com/djshellshoxxx/patchtrace",
+  "main": {
+    "sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+    "qa_run": 44489196124,
+    "qa_run_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124",
+    "jobs": [
+      {
+        "id": 135440201420,
+        "name": "qa (ubuntu-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135440201420",
+        "started_at": "2026-11-19T09:32:30Z",
+        "completed_at": "2026-11-19T10:10:34Z"
+      },
+      {
+        "id": 135440201818,
+        "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135440201818",
+        "started_at": "2026-11-19T09:43:34Z",
+        "completed_at": "2026-11-19T10:14:37Z"
+      },
+      {
+        "id": 135440201840,
+        "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135440201840",
+        "started_at": "2026-11-19T09:58:44Z",
+        "completed_at": "2026-11-19T10:31:38Z"
+      },
+      {
+        "id": 135440201850,
+        "name": "qt-gate (windows-latest, 5, 1/1)",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135440201850",
+        "started_at": "2026-11-19T09:44:15Z",
+        "completed_at": "2026-11-19T10:32:28Z"
+      },
+      {
+        "id": 135440201914,
+        "name": "release-gate",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135440201914",
+        "started_at": "2026-11-19T09:52:30Z",
+        "completed_at": "2026-11-19T09:52:47Z"
+      },
+      {
+        "id": 135440201942,
+        "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135440201942",
+        "started_at": "2026-11-19T10:03:48Z",
+        "completed_at": "2026-11-19T10:31:55Z"
+      },
+      {
+        "id": 135440202267,
+        "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135440202267",
+        "started_at": "2026-11-19T10:14:03Z",
+        "completed_at": "2026-11-19T10:48:34Z"
+      },
+      {
+        "id": 135440204383,
+        "name": "qa (windows-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135440204383",
+        "started_at": "2026-11-19T10:06:17Z",
+        "completed_at": "2026-11-19T11:01:25Z"
+      },
+      {
+        "id": 135514886000,
+        "name": "linux-package",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135514886000",
+        "started_at": "2026-11-19T12:18:24Z",
+        "completed_at": "2026-11-19T12:25:27Z"
+      },
+      {
+        "id": 135558754887,
+        "name": "linux-smoke",
+        "status": "completed",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135558754887",
+        "started_at": "2026-11-19T12:25:28Z",
+        "completed_at": "2026-11-19T12:25:28Z"
+      },
+      {
+        "id": 135558756040,
+        "name": "release",
+        "status": "completed",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135558756040",
+        "started_at": "2026-11-19T12:25:28Z",
+        "completed_at": "2026-11-19T12:25:28Z"
+      }
+    ]
+  },
+  "candidate": {
+    "pr": 340,
+    "url": "https://github.com/djshellshoxxx/patchtrace/pull/340",
+    "state": "open",
+    "draft": true,
+    "head": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+    "base": "a5c6ff87ececcaffce01404f723aac455ee17e0c",
+    "proposed_merge": "f904062a23951db87568fd717b31fef6b8004e0a",
+    "head_tree": "b4eb779a6e4ddc7082dc12e87aec850d9b3e213f",
+    "proposed_merge_tree": "b4eb779a6e4ddc7082dc12e87aec850d9b3e213f",
+    "proposed_merge_parents": [
+      "a5c6ff87ececcaffce01404f723aac455ee17e0c",
+      "6c8b33b851a22fb16d39b31693922359cd34ad12"
+    ],
+    "tree_equal": true,
+    "actual_running_checkout_log_verified": false,
+    "qa_run": {
+      "id": 44763480171,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44763480171",
+      "status": "in_progress",
+      "conclusion": null,
+      "head_sha": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+      "created_at": "2026-11-20T15:27:37Z",
+      "attempt": 1
+    },
+    "jobs": [
+      {
+        "id": 136381847791,
+        "name": "qa (ubuntu-latest)",
+        "status": "in_progress",
+        "conclusion": null,
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44763480171/job/136381847791",
+        "head_sha": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+        "started_at": "2026-11-20T15:27:52Z",
+        "completed_at": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run python -m pip check",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "protobuf equals the pin and runs the upb backend (SPEC-10b)",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Native pair-publication boundary controls",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run python -m pytest -q --junitxml=qa-results.xml",
+            "status": "in_progress",
+            "conclusion": null
+          },
+          {
+            "name": "Run python -m ruff check src tests tools",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "BinExport worker memory cap measurement (SPEC-10b U7, non-gating)",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "Run python tools/build_windows.py",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "Frozen EXE headless smoke (A1-A4) and self-test",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "Extract and run portable Windows ZIP outside checkout",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "Install pinned NSIS compiler",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "Build per-user Windows installer",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "Install, launch, and uninstall the setup package",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "Record this matrix leg's own result for the release notes",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "Post Run actions/setup-python@v5",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "pending",
+            "conclusion": null
+          }
+        ]
+      },
+      {
+        "id": 136381848237,
+        "name": "qa (windows-latest)",
+        "status": "in_progress",
+        "conclusion": null,
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44763480171/job/136381848237",
+        "head_sha": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+        "started_at": "2026-11-20T15:28:44Z",
+        "completed_at": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run python -m pip check",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "protobuf equals the pin and runs the upb backend (SPEC-10b)",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Native pair-publication boundary controls",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run python -m pytest -q --junitxml=qa-results.xml",
+            "status": "in_progress",
+            "conclusion": null
+          },
+          {
+            "name": "Run python -m ruff check src tests tools",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "BinExport worker memory cap measurement (SPEC-10b U7, non-gating)",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "Run python tools/build_windows.py",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "Frozen EXE headless smoke (A1-A4) and self-test",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "Extract and run portable Windows ZIP outside checkout",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "Install pinned NSIS compiler",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "Build per-user Windows installer",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "Install, launch, and uninstall the setup package",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "Record this matrix leg's own result for the release notes",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "Post Run actions/setup-python@v5",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "pending",
+            "conclusion": null
+          }
+        ]
+      },
+      {
+        "id": 136381848312,
+        "name": "qt-gate (windows-latest, 5, 1/1)",
+        "status": "in_progress",
+        "conclusion": null,
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44763480171/job/136381848312",
+        "head_sha": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+        "started_at": "2026-11-20T15:30:32Z",
+        "completed_at": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+            "status": "completed",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run python tools/qt_gate.py --repeat 5 --shard 1/1",
+            "status": "in_progress",
+            "conclusion": null
+          },
+          {
+            "name": "Post Run actions/setup-python@v5",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "pending",
+            "conclusion": null
+          }
+        ]
+      },
+      {
+        "id": 136381848447,
+        "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+        "status": "in_progress",
+        "conclusion": null,
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44763480171/job/136381848447",
+        "head_sha": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+        "started_at": "2026-11-20T15:28:14Z",
+        "completed_at": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run python tools/qt_gate.py --repeat 20 --shard 2/4",
+            "status": "in_progress",
+            "conclusion": null
+          },
+          {
+            "name": "Post Run actions/setup-python@v5",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "pending",
+            "conclusion": null
+          }
+        ]
+      },
+      {
+        "id": 136381848469,
+        "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+        "status": "in_progress",
+        "conclusion": null,
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44763480171/job/136381848469",
+        "head_sha": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+        "started_at": "2026-11-20T15:33:08Z",
+        "completed_at": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run python tools/qt_gate.py --repeat 20 --shard 4/4",
+            "status": "in_progress",
+            "conclusion": null
+          },
+          {
+            "name": "Post Run actions/setup-python@v5",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "pending",
+            "conclusion": null
+          }
+        ]
+      },
+      {
+        "id": 136381848578,
+        "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+        "status": "in_progress",
+        "conclusion": null,
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44763480171/job/136381848578",
+        "head_sha": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+        "started_at": "2026-11-20T15:32:29Z",
+        "completed_at": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run python tools/qt_gate.py --repeat 20 --shard 1/4",
+            "status": "in_progress",
+            "conclusion": null
+          },
+          {
+            "name": "Post Run actions/setup-python@v5",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "pending",
+            "conclusion": null
+          }
+        ]
+      },
+      {
+        "id": 136381848581,
+        "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+        "status": "in_progress",
+        "conclusion": null,
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44763480171/job/136381848581",
+        "head_sha": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+        "started_at": "2026-11-20T15:30:38Z",
+        "completed_at": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run python tools/qt_gate.py --repeat 20 --shard 3/4",
+            "status": "in_progress",
+            "conclusion": null
+          },
+          {
+            "name": "Post Run actions/setup-python@v5",
+            "status": "pending",
+            "conclusion": null
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "pending",
+            "conclusion": null
+          }
+        ]
+      },
+      {
+        "id": 136381851015,
+        "name": "release-gate",
+        "status": "completed",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44763480171/job/136381851015",
+        "head_sha": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+        "started_at": "2026-11-20T15:27:38Z",
+        "completed_at": "2026-11-20T15:27:38Z",
+        "steps": []
+      }
+    ],
+    "all_head_workflow_runs": [
+      {
+        "id": 44763480171,
+        "name": "QA and Windows standalone",
+        "status": "in_progress",
+        "conclusion": null,
+        "event": "pull_request",
+        "head_sha": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44763480171"
+      }
+    ],
+    "external_statuses": [
+      {
+        "context": "security/snyk (djshellshoxxx)",
+        "state": "success",
+        "target_url": "https://app.snyk.io/org/djshellshoxxx/pr-checks/ab5bada6-4410-4711-be28-cd7690a29566"
+      }
+    ]
+  },
+  "main_failure": {
+    "job_id": 135514886000,
+    "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135514886000",
+    "step": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1 libxcb-cursor0 libxkbcommon-x11-0 xvfb",
+    "exit_code": 100,
+    "classification": "system-package download prerequisite failure",
+    "observed_cause": "Ubuntu mirror connections to azure.archive.ubuntu.com:80 timed out or failed while apt updated indexes and downloaded required graphics/X11 packages.",
+    "product_build_reached": false,
+    "linux_smoke": "skipped",
+    "workflow_blob_main": "4f40db05893e436230d2f739efe2d3ca87e5e8aa",
+    "workflow_blob_g29": "4f40db05893e436230d2f739efe2d3ca87e5e8aa",
+    "repair_present_in_candidate": false,
+    "source_change_justified_by_this_log": false,
+    "raw_log_file": "patchtrace-main-package.log",
+    "decisive_lines": [
+      "2026-11-19T12:21:22.6431302Z   Could not connect to azure.archive.ubuntu.com:80 (52.250.76.244), connection timed out [IP: 52.250.76.244 80]",
+      "2026-11-19T12:21:46.7460304Z W: Failed to fetch mirror+file:/etc/apt/apt-mirrors.txt/dists/jammy-backports/InRelease  Could not connect to azure.archive.ubuntu.com:80 (52.250.76.244), connection timed out [IP: 52.250.76.244 80]",
+      "2026-11-19T12:22:34.1506370Z   Could not connect to azure.archive.ubuntu.com:80 (52.250.76.244), connection timed out",
+      "2026-11-19T12:25:20.1654814Z E: Failed to fetch mirror+file:/etc/apt/apt-mirrors.txt/pool/main/m/mesa/libegl-mesa0_23.2.1-1ubuntu3.1%7e22.04.4_amd64.deb  Could not connect to azure.archive.ubuntu.com:80 (52.250.76.244), connection timed out",
+      "2026-11-19T12:25:20.1663171Z E: Unable to fetch some archives, maybe run apt-get update or try with --fix-missing?",
+      "2026-11-19T12:25:20.1689559Z ##[error]Process completed with exit code 100."
+    ]
+  },
+  "limits": [
+    "Pending jobs are not passes.",
+    "Current g29 has one observed QA workflow and no current-head native Ghidriff/rz-diff/unified workflow receipts; relevant native workflows use path filters.",
+    "The proposed PR merge tree equals the head tree, but actual checkout logs for the running jobs were not yet available/verified.",
+    "Earlier exact-main successes do not qualify generation 29 or the coordinator's later local repairs.",
+    "No jobs triggered, rerun or cancelled; no repository state mutated; no tests duplicated."
+  ],
+  "next_action": "Inspect current generation-29 final QA/Qt and downstream package/smoke results when complete. Preserve the original main apt failure; do not attribute it to product code or count skipped smoke as passed. If a new candidate encounters the same prerequisite issue, retain its exact run evidence before considering a narrow runner/package-download resilience change.",
+  "sources": {
+    "pr": "https://api.github.com/repos/djshellshoxxx/patchtrace/pulls/340",
+    "main": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/ref/heads/main",
+    "run": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44763480171",
+    "jobs": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44763480171/jobs?per_page=100",
+    "mainruns": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs?head_sha=fdc2696c23bdbfe7668348f25e3b336ce33039f7&per_page=100",
+    "mainjobs": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44489196124/jobs?per_page=100",
+    "candidateruns": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs?head_sha=6c8b33b851a22fb16d39b31693922359cd34ad12&per_page=100",
+    "checks": "https://api.github.com/repos/djshellshoxxx/patchtrace/commits/6c8b33b851a22fb16d39b31693922359cd34ad12/check-runs?per_page=100",
+    "merge": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/f904062a23951db87568fd717b31fef6b8004e0a",
+    "head": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/6c8b33b851a22fb16d39b31693922359cd34ad12"
+  }
+}
+

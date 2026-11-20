@@ -1,5 +1,19 @@
 # PatchTrace delivery tracker
 
+## 2026-11-20 generations 30–31: reviewed candidate repairs
+
+Candidate-only continuation from `6c8b33b8`; main remains `fdc2696c`.
+
+- [x] Enumerate 341 branches, all 330 PRs and 59 tags/releases; fetch every PR head. Semantic review remains incomplete.
+- [x] Recover worktree-aware receipt identity with original donor attribution, red/green evidence and independent review (`648e5089`).
+- [x] Repair pending Search debounce cancellation with real Qt regression and fresh review (`c216df83`).
+- [x] Recover stored Strings artifact/side admission and valid cache-origin provenance with eight baseline failures and 102 affected passes (`58d30fe6`).
+- [x] Independently verify recent g24–g29 input guards and fixture corrections: 96 focused passes.
+- [ ] Complete combined local and final-head hosted qualification before reassessing integration eligibility.
+- [ ] Retain Linux forced-export race, native Qt, raw-input membership, Windows/manual/trust and historical donor-review blockers.
+
+[Generation handoff](../docs/engineering-handoffs/generation-30-31-20261120.md). No main merge, release, or whole-product completion is claimed.
+
 ## 2026-11-19 continuation consolidation
 
 This checkpoint starts at accepted main `fdc2696c`. The listed implementation

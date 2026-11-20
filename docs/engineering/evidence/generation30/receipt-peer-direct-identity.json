@@ -1,0 +1,13 @@
+{
+  "head_before": "9fdb518f2b322f784fe389b7856a299023f1d901",
+  "helper_result": "9fdb518f2b322f784fe389b7856a299023f1d901",
+  "head_after": "9fdb518f2b322f784fe389b7856a299023f1d901",
+  "receipt_blob": "6b826bd41bec664506b10217b867a1bc7cb8bb02",
+  "status": "PASS",
+  "prior_stale_expectation": {
+    "expected": "648e508961b4e38cc3a2a005808f6bf819ce0823",
+    "observed": "9fdb518f2b322f784fe389b7856a299023f1d901",
+    "status": "FAIL",
+    "reason": "coordinator advanced HEAD between observations; not a helper defect"
+  }
+}
