@@ -464,9 +464,9 @@ claim atomic publication, parent-anchored isolation or release acceptance.
 
 The offline KB/CVE investigation's opt-in advisory source-plan preview takes a
 captured `lead` field. Treat it as untrusted even though the normal Qt widget
-produces a string: require an actual text value **before** trimming it or
-passing it to `parse_lead`. Null, integer, byte-string, and objects exposing a
-`strip()` method must be refused with the existing `PT-KBC-INPUT` category,
+produces a string: require a plain Python `str` value **before** trimming it or
+passing it to `parse_lead`. Null, integer, byte-string, custom `str` subclasses
+with overridden `strip`, and objects exposing a `strip()` method must be refused with the existing `PT-KBC-INPUT` category,
 without attempting an advisory request or creating a workspace. Error text
 must not echo submitted input. Whitespace surrounding a valid textual KB/CVE
 lead remains accepted, and existing identifier syntax and month-scope policy
