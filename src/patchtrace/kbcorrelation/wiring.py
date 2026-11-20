@@ -14,9 +14,12 @@ by ``SnapshotProjectPort`` (store-threading-spec section 4a).
 """
 from __future__ import annotations
 
+import errno
 import hashlib
 import json
+import os
 import re
+import stat
 import struct
 from collections.abc import Mapping, Sequence
 from pathlib import Path
@@ -57,8 +60,9 @@ class WorkspaceFileIndex:
                 if match and match['name'] == file_name:
                     if path.is_symlink() or path.is_junction():
                         raise KbcStoreError('PT-KBC-SOURCE', 'the workspace Winbindex record is an alias')
-                    if path.is_file():
-                        found.append((match['date'], path, bool(match['gz'])))
+                    if not path.is_file():
+                        raise KbcStoreError('PT-KBC-SOURCE', 'the workspace Winbindex record is not regular')
+                    found.append((match['date'], path, bool(match['gz'])))
         if not found:
             return None
         newest = max(item[0] for item in found)
@@ -86,12 +90,21 @@ class WorkspaceFileIndex:
         try:
             # A path-size probe can become stale between stat and read. Read no more
             # than the accepted budget plus one sentinel byte from the opened file.
-            with path.open('rb') as handle:
+            def no_follow_open(name, flags):
+                # The post-scan path may now be an alias or a FIFO. Use the host's
+                # no-follow admission when available and never wait on a FIFO open.
+                return os.open(name, flags | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0))
+
+            with open(path, 'rb', opener=no_follow_open) as handle:
+                if not stat.S_ISREG(os.fstat(handle.fileno()).st_mode):
+                    raise KbcStoreError('PT-KBC-SOURCE', 'the opened Winbindex record is not regular')
                 raw = handle.read(MAX_COMPRESSED + 1)
             if len(raw) > MAX_COMPRESSED:
                 raise KbcStoreError('PT-KBC-LIMIT', 'a Winbindex record in the workspace exceeds its size limit')
             parsed = parse_rows(raw, file_name, date, compressed=compressed)
-        except OSError:
+        except OSError as exc:
+            if exc.errno == errno.ELOOP:
+                raise KbcStoreError('PT-KBC-SOURCE', 'the Winbindex record changed into an alias') from None
             raise KbcStoreError('PT-KBC-INPUT', 'a Winbindex record in the workspace cannot be read') from None
         except AcquisitionError as exc:
             raise KbcStoreError('PT-KBC-SOURCE', f'a Winbindex record in the workspace is unusable: {exc.message}'
