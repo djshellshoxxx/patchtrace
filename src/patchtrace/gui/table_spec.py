@@ -25,7 +25,7 @@ class ColumnSpec:
     """One column. `text(row)` is the display string; `sort_key(row)` orders the column (None sorts last in both
     directions; omitted = the display text, case-folded); `chip(row)` is an opaque value for a chip delegate;
     `accessible(row)` replaces the default "{title}: {text}, {unit}" accessible text; `tooltip(row)` replaces the
-    default tooltip (the cell text) and must return escaped rich text."""
+    default tooltip (the cell text) and must return escaped rich text; `tip_id` names the header tooltip."""
 
     key: str
     title: str
@@ -36,6 +36,7 @@ class ColumnSpec:
     chip: Callable[[Row], Any] | None = None
     accessible: Callable[[Row], str] | None = None
     tooltip: Callable[[Row], str] | None = None
+    tip_id: str = ''  # registered tooltip id served as the column header's tooltip (unknown id: plain title)
 
 
 @dataclass(frozen=True, slots=True)

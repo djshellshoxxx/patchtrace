@@ -181,6 +181,10 @@ class VirtualTableModel(QAbstractTableModel):
         column = self._p.columns[section]
         if role == _DISPLAY:
             return f'{column.title}\n{column.unit}' if column.unit else column.title
+        if role == _TOOLTIP and column.tip_id:
+            registered = _header_tip(column.tip_id)
+            if registered:
+                return registered
         if role in (_TOOLTIP, _ACCESSIBLE):
             return f'{column.title} ({column.unit})' if column.unit else column.title
         return None
@@ -221,6 +225,15 @@ class VirtualTableModel(QAbstractTableModel):
         if index.isValid() and row < len(self._view) and column < len(self._p.columns):
             return self._p.texts[self._view[row]][column]
         return None
+
+
+def _header_tip(tip_id: str) -> str:
+    """The registered tooltip, or '' when the id is not registered (a column may name a tip before it lands)."""
+    from ... import tooltips
+    try:
+        return tooltips.tooltip(tip_id)
+    except KeyError:
+        return ''
 
 
 class VirtualTable(QTableView):
