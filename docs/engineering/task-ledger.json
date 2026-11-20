@@ -27,7 +27,8 @@
     "Generation22 original BASE missing/nonobject metadata was counted as a successful undated row; source-level tests authored but no clone-backed pytest/Ruff available in this runtime. The eight local algorithm mirror controls do not qualify this candidate.",
     "Generation23 local primitive reproduced a FIFO block using an isolated child (killed cleanly); O_NONBLOCK and descriptor fstat primitive then refused nonregular input. These are stdlib controls, not actual repository pytest. On hosts lacking O_NONBLOCK, no pre-open FIFO guarantee is claimed.",
     "Generation25 adds a narrowly anchored newer source KB/version selection; the normalized acquisition evidence is still not complete raw index or original older predecessor membership. Exact-source hosted and independent acceptance remain pending.",
-    "Generation26 older Winbindex row ambiguity: distinct normalized source entries with same SHA/basename must fail before plan/network. Preserved reproduction and six isolated mirror checks; actual source tests/Ruff and independent signoff pending. No completeness or empirical accuracy claim."
+    "Generation26 older Winbindex row ambiguity: distinct normalized source entries with same SHA/basename must fail before plan/network. Preserved reproduction and six isolated mirror checks; actual source tests/Ruff and independent signoff pending. No completeness or empirical accuracy claim.",
+    "Generation27: selected newer target priority tier must not have conflicting normalized source claims. Four pre-fix isolated selector-controls failed; six post-fix isolated controls passed. These are not repository-source tests. PR336 hosted Linux pytest passed 23,792 with 51 skips/six xfails but Ruff I001 failed; successor removes only redundant blank import separator. Independent review, exact-source CI, raw index retention and all release blockers remain."
   ],
   "tasks": [
     {
@@ -360,6 +361,15 @@
       "evidence": "docs/engineering-handoffs/generation-26-20261120.md",
       "result_or_next_action": "Contract-first guard refuses distinct older normalized entries matching one SHA/basename before acquisition preview planning or any network. Eight authored repository test cases (including integration no-fetch); isolated algorithm copy 6 passed. Full checked-out-source pytest/Ruff, exact-head hosted QA/Qt/native/package, and genuinely independent reviewer acceptance outstanding. Not raw input retention or exact predecessor reconstruction.",
       "review_status": "coordinator-adversarial-not-independent"
+    },
+    {
+      "id": "newer-source-ambiguity-g27",
+      "status": "implementation-published-independent-and-hosted-qualification-pending",
+      "owner": "generation27 isolated successor; independent reviewer unassigned",
+      "source_commit": "750eb3ce906d3ffbec39e838f760045c9f8d89b3",
+      "evidence": "docs/engineering-handoffs/generation-27-20261120.md",
+      "review_status": "coordinator-only adversarial inspection; independent signoff pending",
+      "result_or_next_action": "SPEC-31-F first, 8 authored regression cases, selected newer native/copy priority-tier conflicts now PT-KBC-INPUT before plan/network; equal duplicates and single native precedence retained. Four red and six green isolated selector controls only. Inherited PR336 Linux Ruff I001 from one extra blank separator addressed in successor f4b6c71e. Run source-pinned hosted QA/Ruff/Qt/native/packages and independent adversarial review before merging. No full raw index or original older membership."
     }
   ],
   "aggregate_source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",

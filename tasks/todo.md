@@ -1545,3 +1545,10 @@ for exact commits and limitations. No main merge/release.
   Ruff and hosted package/native/Qt; obtain independent adversarial review.
   Distinct older source bodies now refuse preview rather than first-match, but
   complete raw resolver membership and index retention still need engineering.
+
+- [ ] Generation27 source at `750eb3ce`, inherited Ruff repair `f4b6c71e`:
+  run eight new target-ambiguity regression cases, full offscreen pytest and
+  Ruff, verify Windows/Linux/native/package/Qt on exact final source, and
+  obtain independent review. Reconcile source identity before any merge; do
+  not interpret six isolated controls as repository acceptance. Complete raw
+  Winbindex entry/index retention and explicit predecessor membership remain.
