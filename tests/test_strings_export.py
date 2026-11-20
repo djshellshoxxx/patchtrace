@@ -117,13 +117,16 @@ def test_not_comparable_delta_is_refused(tmp_path):
     ('\tordinary', "'\tordinary"),
     ('\rordinary', "'\rordinary"),
     ('\v@cmd', "'\v@cmd"),
+    ('\f=1+1', "'\f=1+1"),
+    ('\fordinary', '\fordinary'),
     ('\\n=1+1', '\\n=1+1'),
     ('   ordinary', '   ordinary'),
     ('\ufeffordinary', '\ufeffordinary'),
     ('-7', "'-7"),
 ], ids=['direct-formula', 'space-formula', 'line-formula', 'bom-formula',
         'space-tab-formula', 'line-control', 'tab-control', 'carriage-control',
-        'vertical-tab-formula', 'literal-backslash-prose', 'ordinary-space',
+        'vertical-tab-formula', 'form-feed-formula', 'ordinary-form-feed',
+        'literal-backslash-prose', 'ordinary-space',
         'ordinary-bom', 'direct-minus'])
 def test_csv_formula_guard_considers_leading_ignorable_prefixes(delta, display, expected):
     doc = export.document(delta)
@@ -135,6 +138,7 @@ def test_csv_formula_guard_considers_leading_ignorable_prefixes(delta, display, 
     assert json.loads(metadata)['contract'] == export.EXPORT_CONTRACT
     assert next(rows) == list(export.CSV_COLUMNS)
     assert next(rows)[3] == expected
+    assert json.loads(export.render(doc, 'json'))['changes'][0]['display'] == display
 
 
 @pytest.mark.parametrize(
