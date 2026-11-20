@@ -1,0 +1,34 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+_________ test_empty_csv_preserves_distinct_document_provenance[basis] _________
+docs/engineering/evidence/test_strings_csv_metadata_gap.py:38: in test_empty_csv_preserves_distinct_document_provenance
+    assert first.read_bytes() != second.read_bytes(), (
+E   AssertionError: CSV dropped document-level basis; both published files have SHA-256 59737cc7ddb7efc6fc89018083bd5170d25b04e74724d32b1d0c14aab784b8cc
+E   assert b'id,status,review_tier,display,length,cues,older_offsets,newer_offsets,functions,lineage_groups,reasons\n' != b'id,status,review_tier,display,length,cues,older_offsets,newer_offsets,functions,lineage_groups,reasons\n'
+E    +  where b'id,status,review_tier,display,length,cues,older_offsets,newer_offsets,functions,lineage_groups,reasons\n' = read_bytes()
+E    +    where read_bytes = PosixPath('/tmp/pytest-of-agent/pytest-34/test_empty_csv_preserves_disti0/first.csv').read_bytes
+E    +  and   b'id,status,review_tier,display,length,cues,older_offsets,newer_offsets,functions,lineage_groups,reasons\n' = read_bytes()
+E    +    where read_bytes = PosixPath('/tmp/pytest-of-agent/pytest-34/test_empty_csv_preserves_disti0/second.csv').read_bytes
+_______ test_empty_csv_preserves_distinct_document_provenance[truncated] _______
+docs/engineering/evidence/test_strings_csv_metadata_gap.py:38: in test_empty_csv_preserves_distinct_document_provenance
+    assert first.read_bytes() != second.read_bytes(), (
+E   AssertionError: CSV dropped document-level truncated; both published files have SHA-256 59737cc7ddb7efc6fc89018083bd5170d25b04e74724d32b1d0c14aab784b8cc
+E   assert b'id,status,review_tier,display,length,cues,older_offsets,newer_offsets,functions,lineage_groups,reasons\n' != b'id,status,review_tier,display,length,cues,older_offsets,newer_offsets,functions,lineage_groups,reasons\n'
+E    +  where b'id,status,review_tier,display,length,cues,older_offsets,newer_offsets,functions,lineage_groups,reasons\n' = read_bytes()
+E    +    where read_bytes = PosixPath('/tmp/pytest-of-agent/pytest-34/test_empty_csv_preserves_disti1/first.csv').read_bytes
+E    +  and   b'id,status,review_tier,display,length,cues,older_offsets,newer_offsets,functions,lineage_groups,reasons\n' = read_bytes()
+E    +    where read_bytes = PosixPath('/tmp/pytest-of-agent/pytest-34/test_empty_csv_preserves_disti1/second.csv').read_bytes
+_______ test_empty_csv_preserves_distinct_document_provenance[redaction] _______
+docs/engineering/evidence/test_strings_csv_metadata_gap.py:38: in test_empty_csv_preserves_distinct_document_provenance
+    assert first.read_bytes() != second.read_bytes(), (
+E   AssertionError: CSV dropped document-level redaction; both published files have SHA-256 59737cc7ddb7efc6fc89018083bd5170d25b04e74724d32b1d0c14aab784b8cc
+E   assert b'id,status,review_tier,display,length,cues,older_offsets,newer_offsets,functions,lineage_groups,reasons\n' != b'id,status,review_tier,display,length,cues,older_offsets,newer_offsets,functions,lineage_groups,reasons\n'
+E    +  where b'id,status,review_tier,display,length,cues,older_offsets,newer_offsets,functions,lineage_groups,reasons\n' = read_bytes()
+E    +    where read_bytes = PosixPath('/tmp/pytest-of-agent/pytest-34/test_empty_csv_preserves_disti2/first.csv').read_bytes
+E    +  and   b'id,status,review_tier,display,length,cues,older_offsets,newer_offsets,functions,lineage_groups,reasons\n' = read_bytes()
+E    +    where read_bytes = PosixPath('/tmp/pytest-of-agent/pytest-34/test_empty_csv_preserves_disti2/second.csv').read_bytes
+=========================== short test summary info ============================
+FAILED docs/engineering/evidence/test_strings_csv_metadata_gap.py::test_empty_csv_preserves_distinct_document_provenance[basis]
+FAILED docs/engineering/evidence/test_strings_csv_metadata_gap.py::test_empty_csv_preserves_distinct_document_provenance[truncated]
+FAILED docs/engineering/evidence/test_strings_csv_metadata_gap.py::test_empty_csv_preserves_distinct_document_provenance[redaction]
+3 failed in 0.46s

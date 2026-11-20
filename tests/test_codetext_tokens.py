@@ -541,8 +541,12 @@ def test_hostile_text_is_covered_within_a_loose_time_bound(text, language):
 def test_200k_characters_tokenize_within_the_budget(language, sample):
     """CI gate 150 ms (3x the 50 ms measured for 200,000 characters); best of five absorbs a busy runner."""
     text = sample()[:200_000]
-    best = min(_elapsed(lambda: tokenize(text, language)) for _ in range(5))
-    assert best < 0.150
+    samples = tuple(_elapsed(lambda: tokenize(text, language)) for _ in range(5))
+    best = min(samples)
+    assert best < 0.150, (
+        f'{language}: {len(text)} characters; samples_seconds={samples!r}; '
+        f'best_seconds={best!r}; budget_seconds=0.150'
+    )
 
 
 def _elapsed(call) -> float:

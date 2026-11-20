@@ -31,7 +31,43 @@ Code-line evidence navigation (next/previous hunk, evidence jump, line anchors) 
 This is an opt-in backend API in `representations/alignment.py`; `byte_diff_mask` and all existing consumers
 retain their equal-logical-offset behavior. It uses only stdlib and original byte sequences, with no external
 engine, disassembler, function matching, cache or persisted schema. D-24/D-25/D-26 remain unchanged.
-Native performance acceptance remains separate work. Ported 2026-11-18 from the unmerged `repair/rzdiff-native-red-control-20261103` chain (commits 953c0e9a, 51a9b4af) together with the Qt-free row model `raw_alignment_view.py` (paired windows, display-only gaps, exact original-window copy). The desktop controls (`ui_raw_alignment.py`, Hex/Binary paired mode) are **not yet wired**; their contract is retained on that branch for a later UI slice.
+Native performance acceptance remains separate work. The core was ported 2026-11-18 from the unmerged `repair/rzdiff-native-red-control-20261103` chain (commits 953c0e9a, 51a9b4af) together with the Qt-free row model `raw_alignment_view.py` (paired windows, display-only gaps, exact original-window copy). The desktop continuation selectively recovers `ui_raw_alignment.py` from source `b304034e3c310528f7e0a3206eda48c94e0a6873`, following the contract below without adopting the branch's native research tools.
+
+### RD-F03 desktop integration contract (2026-11-18 continuation)
+
+The existing Hex and Binary viewer offers an opt-in paired physical-window mode.
+Default fixed-offset rendering, Base64, evidence navigation restrictions and
+project persistence remain unchanged. The existing raw navigation widgets are
+constructed by the UI adapter; no new project service or persistence schema is
+introduced, and the existing `ui.py` line/host seam ceilings remain unchanged.
+
+- Older/newer offsets are explicit independent hexadecimal physical file offsets,
+  not RVAs or inferred continuation. Each is bounded by its verified reader size,
+  allowing exactly EOF. Window size is 16..4096 bytes per side, in multiples of 16.
+- Only the existing verified readers and immutable scalar request values cross
+  into the existing `TaskRunner`. Workers use `build_alignment_view`; no Qt,
+  project service or SQLite object is passed to the worker.
+- Results expose byte-equality, ambiguity, limits, EOF clipping and unresolved
+  spans. Paired rows retain each original physical offset. Gaps have an explicit
+  display-only label and never become bytes or semantic/function correspondence.
+- Span selection navigates both current displays without changing offsets or
+  inferring a next window. Copy buttons, Ctrl+C and the paired-view context menu
+  copy the exact original window text with artifact/window hashes and project
+  provenance, excluding alignment labels and display-only gaps.
+- Editing either offset/window, changing match/project/revision/orientation or
+  representation, replacing/clearing inspection, hiding the pane or closing the
+  window cancels the active generation and clears copy eligibility. Late results
+  and errors are ignored unless their complete context still matches.
+- Turning off paired mode restores existing fixed-offset rendering. Public raw
+  offset navigation exits paired mode before selecting the requested normal page.
+  Closing the window/application cancels work through the existing task owner.
+- All controls have registered tooltips and accessible names/descriptions. Status
+  text remains readable at the supported minimum window size and larger fonts.
+
+Acceptance covers repeated real offscreen Qt execution, worker cancellation,
+stale-result refusal, exact copy provenance, independent offsets, EOF/ambiguity,
+unchanged fixed-offset/Base64 behavior, tooltip coverage and the unchanged host
+seam. Offscreen checks are not native manual or assistive-technology acceptance.
 
 * `align_bytes(older: bytes, newer: bytes, *, older_offset=0, newer_offset=0, limits=AlignmentLimits(), cancel=None)`
   returns frozen `ByteAlignment(policy, status, reason, spans, work_used)`. Both inputs must be immutable `bytes`,

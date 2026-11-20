@@ -1,0 +1,6 @@
+$ /workspace/scratch/4c8dc848d760/venv/bin/python -m ruff check src tests tools
+All checks passed!
+Exit code: 0
+$ git diff --cached --check
+Exit code: 0
+ui.py lines: 3072; unchanged ceiling: 3077

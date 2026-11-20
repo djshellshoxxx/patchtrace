@@ -1,0 +1,110 @@
+{
+  "recorded_at": "2026-11-19T23:57:59.933600+00:00",
+  "base": "e36b83be1ef86d28a58318cc601a35f20b22bf06",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "source_blobs": {
+    "src/patchtrace/strings/export.py": "f78dc3a529a654a5a34fc3c02c280b62241b173c",
+    "tests/test_strings_export_metadata.py": "321e1be494fe5b722405229c4ea7442ba07203d0",
+    "tests/test_strings_export.py": "3489a6a3e6d6d31c2279689a3118eb6fcb0ba866",
+    "tests/test_strings_cli.py": "bf69ea56a5b74bbf059d13b5a03b7539a05fad37"
+  },
+  "refs": {
+    "total_including_remote_HEAD_alias": 637,
+    "origin_entries": 325,
+    "pull_entries": 312,
+    "with_export": 508
+  },
+  "commands": [
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src python -m pytest -q --tb=short docs/engineering/evidence/test_strings_csv_metadata_gap.py",
+      "result": "3 failed in 0.36s on unchanged runtime"
+    },
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src python -m pytest -q --tb=short tests/test_strings_export_metadata.py",
+      "result": "17 failed, 1 passed in 0.75s on unchanged runtime"
+    },
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src python -m pytest -q --tb=short tests/test_strings_export_metadata.py tests/test_strings_export.py docs/engineering/evidence/test_strings_csv_metadata_gap.py",
+      "result": "32 passed in 1.15s"
+    },
+    {
+      "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src python -m pytest -q tests/test_strings*.py tests/test_ui_strings*.py tests/test_owned_publication*.py",
+      "result": "575 passed, 1 skipped in 23.12s"
+    },
+    {
+      "command": "python -m ruff check src tests tools",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONPATH=src python tools/generate_strings_schemas.py",
+      "exit_code": 0,
+      "schema_diff": "none"
+    },
+    {
+      "command": "PYTHONPATH=src python tools/generate_strings_schemas.py --check",
+      "exit_code": 0
+    }
+  ],
+  "skips": [
+    {
+      "test": "tests.test_owned_publication_replace::test_native_windows_force_replaces_existing_destination_while_source_denies_substitution",
+      "reason": {
+        "type": "pytest.skip",
+        "message": "native Windows held-source replacement acceptance"
+      }
+    }
+  ],
+  "artifacts": {
+    "docs/engineering/evidence/csv-metadata/focused-green.log": {
+      "bytes": 99,
+      "sha256": "c1ba6da32609abd298a51e5e0f37a28418b3526a0bb8cb85aa0c7669d36f6541"
+    },
+    "docs/engineering/evidence/csv-metadata/focused-green.xml": {
+      "bytes": 4696,
+      "sha256": "d0cf45b50e29c63a909200dd46b562b1af54a6b619dd5b4382245ae43e4c4129"
+    },
+    "docs/engineering/evidence/csv-metadata/inherited-red.log": {
+      "bytes": 4161,
+      "sha256": "52c5af2b448e6e3060796fe0b7f3357a8855b0d2ec7a73a44f881e5d2d431813"
+    },
+    "docs/engineering/evidence/csv-metadata/inherited-red.xml": {
+      "bytes": 5408,
+      "sha256": "316e61a205fc04c0895e87caa4e3be27ae368568eea0f3c06d4aec5ceae8a08c"
+    },
+    "docs/engineering/evidence/csv-metadata/integration.log": {
+      "bytes": 672,
+      "sha256": "c0738300e4bea652f7677074e8f58de3492d3130371b495dada26e4b291b9d8c"
+    },
+    "docs/engineering/evidence/csv-metadata/integration.xml": {
+      "bytes": 70153,
+      "sha256": "fa418d8883a7c06c541c776b2f163065be5b1b567fdb3612408eea41997d999e"
+    },
+    "docs/engineering/evidence/csv-metadata/new-controls-red.log.gz": {
+      "bytes": 1012,
+      "sha256": "f08b60c4f17de12fd5de5a6484251a9d144067bc34913d9bfdd1005c309e8017"
+    },
+    "docs/engineering/evidence/csv-metadata/new-controls-red.xml.gz": {
+      "bytes": 1169,
+      "sha256": "2b991d246b0430d5e717fe293d494982d11dacbdfe076af8fb40c4648228207f"
+    },
+    "docs/engineering/evidence/csv-metadata/retained-formatters.json": {
+      "bytes": 92376,
+      "sha256": "1a8b29c60a40c6563cab9e02ba403f4e007351e24482203987a8c907f48db93c"
+    },
+    "docs/engineering/evidence/csv-metadata/ruff.log": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "docs/engineering/evidence/csv-metadata/schema-check.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "limits": [
+    "Focused synthetic/offscreen tests are not real-tool or native Windows qualification.",
+    "Full combined repository suite and independent review belong to root.",
+    "Existing Linux forced-publication source-name race remains open."
+  ],
+  "preservation": "The original new-controls-red log and JUnit payloads are gzip-compressed without changing their content; pytest included trailing-whitespace diagnostic lines."
+}

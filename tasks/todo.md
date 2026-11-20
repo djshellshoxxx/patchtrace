@@ -1485,3 +1485,15 @@ the queued aggregate and current PR319 `8d130aef` native results.
 - [x] Restore exact source/Python/dependency identities after executor reset; remove only this task's reproducible bytecode caches.
 - [ ] Complete original groups 026–111 and node-ID reconciliation; obtain actual final-head hosted/native qualification.
 - [ ] Qualify the separately reproduced WinPairs malformed-URL/error-routing correction before accepting its source.
+
+
+## 2026-11-19 — continuous engineering generations 1–8
+
+- [x] Inventory 323 branch heads, 312 PR records and 59 tags/releases; preserve 154 semantic-review dispositions without blanket supersession.
+- [x] Integrate independently reviewed manifest/cache, WinPairs, partial publication, Profiles, saved Search, raw-offset, accuracy-report and CSV metadata repairs; retain original failures and bounded evidence.
+- [x] Preserve ASM failure and reject unverified optimizations; retain five-sample diagnostics without changing production lexer or gate.
+- [x] Verify configured Ruff, pip check and 16 unchanged schema generators.
+- [ ] Finish the unsplit aggregate at bffcfa99 and inspect terminal failures/skips; publish a draft with exact tree identity and current CI evidence.
+- [ ] Close/disposition final Linux forced-source race and native Qt findings; preserve native Windows/package/trust/manual and separate accuracy gates.
+- [ ] Complete isolated successor acquisition-provenance work after uniqueness proof and independent review.
+- [ ] Continue semantic review of retained history and actual scheduled successor execution; authoritative ownership/status is `docs/engineering/task-ledger.json`.

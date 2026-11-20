@@ -209,7 +209,7 @@ def test_cache_key_covers_every_input():
                   cache_key('a' * 64, Limits(), 'cache', 'portable'),
                   cache_key('a' * 64, Limits(), 'offline', 'win32:22631')):
         assert other != base
-    assert OVERVIEW_VERSION == 2 and KIND == 'pe-metadata'
+    assert OVERVIEW_VERSION == 3 and KIND == 'pe-metadata'
 
 
 def test_load_or_compute_hits_the_sidecar_once(tmp_path):
@@ -225,7 +225,7 @@ def test_load_or_compute_hits_the_sidecar_once(tmp_path):
     second = load_or_compute(port, key, compute, {'trust_mode': 'offline'})
     assert first == second and len(calls) == 1 and port.puts == 1
     stored = port.rows[(KIND, key)]
-    assert stored['overview_version'] == 2 and stored['consent'] == {'trust_mode': 'offline'}
+    assert stored['overview_version'] == 3 and stored['consent'] == {'trust_mode': 'offline'}
 
 
 def test_a_portable_result_is_not_reused_as_a_windows_result(tmp_path):
@@ -236,10 +236,11 @@ def test_a_portable_result_is_not_reused_as_a_windows_result(tmp_path):
     assert port.get(KIND, windows) is None
 
 
-def test_a_damaged_sidecar_row_is_recomputed():
+@pytest.mark.parametrize('version', [1, 2])
+def test_a_damaged_sidecar_row_is_recomputed(version):
     port = FakePort()
     key = cache_key('a' * 64, Limits(), 'offline', 'portable')
-    port.put(KIND, key, {'overview_version': 1, 'result': {'old': True}, 'consent': {}})
+    port.put(KIND, key, {'overview_version': version, 'result': {'old': True}, 'consent': {}})
     assert load_or_compute(port, key, lambda: {'new': True}, {}) == {'new': True}
 
 

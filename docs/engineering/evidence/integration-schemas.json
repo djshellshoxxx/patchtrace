@@ -1,0 +1,86 @@
+{
+  "source_head": "e36b83be1ef86d28a58318cc601a35f20b22bf06",
+  "generators": [
+    {
+      "module": "tools.generate_buildenv_schemas",
+      "exit_code": 0,
+      "duration_seconds": 0.318
+    },
+    {
+      "module": "tools.generate_callgraph_schemas",
+      "exit_code": 0,
+      "duration_seconds": 0.26
+    },
+    {
+      "module": "tools.generate_corrections_schemas",
+      "exit_code": 0,
+      "duration_seconds": 0.258
+    },
+    {
+      "module": "tools.generate_diaphora_schemas",
+      "exit_code": 0,
+      "duration_seconds": 0.209
+    },
+    {
+      "module": "tools.generate_fabric_schemas",
+      "exit_code": 0,
+      "duration_seconds": 0.212
+    },
+    {
+      "module": "tools.generate_intel_tools_schemas",
+      "exit_code": 0,
+      "duration_seconds": 0.257
+    },
+    {
+      "module": "tools.generate_intelligence_schemas",
+      "exit_code": 0,
+      "duration_seconds": 0.299
+    },
+    {
+      "module": "tools.generate_kbc_schemas",
+      "exit_code": 0,
+      "duration_seconds": 0.291
+    },
+    {
+      "module": "tools.generate_kev_schemas",
+      "exit_code": 0,
+      "duration_seconds": 0.16
+    },
+    {
+      "module": "tools.generate_pilot_schemas",
+      "exit_code": 0,
+      "duration_seconds": 0.266
+    },
+    {
+      "module": "tools.generate_rules_schemas",
+      "exit_code": 0,
+      "duration_seconds": 0.311
+    },
+    {
+      "module": "tools.generate_schemas",
+      "exit_code": 0,
+      "duration_seconds": 0.333
+    },
+    {
+      "module": "tools.generate_strings_schemas",
+      "exit_code": 0,
+      "duration_seconds": 0.164
+    },
+    {
+      "module": "tools.calibration.schemas",
+      "exit_code": 0,
+      "duration_seconds": 0.531
+    },
+    {
+      "module": "tools.calibration.tier_r.schemas",
+      "exit_code": 0,
+      "duration_seconds": 0.285
+    },
+    {
+      "module": "tools.calibration.tier_r.report_schemas",
+      "exit_code": 0,
+      "duration_seconds": 0.463
+    }
+  ],
+  "generated_changes": []
+}

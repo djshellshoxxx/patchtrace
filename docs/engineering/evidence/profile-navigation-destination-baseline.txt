@@ -1,0 +1,108 @@
+.............FFFF                                                        [100%]
+=================================== FAILURES ===================================
+__ test_unavailable_destination_preserves_editor_and_selection[missing-False] __
+
+panel = <patchtrace.ui.ProfilesPanel(0x1fc665e0) at 0x7f3797c21980>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f3797e96900>
+dirty = False, failure = 'missing'
+
+    @pytest.mark.parametrize('dirty', [False, True])
+    @pytest.mark.parametrize('failure', ['missing', 'malformed'])
+    def test_unavailable_destination_preserves_editor_and_selection(panel, monkeypatch, dirty, failure):
+        if dirty:
+            panel.max_age.setValue(30)
+        if failure == 'missing':
+            panel.store.delete('beta')
+        else:
+            (panel.store.directory / 'beta.json').write_text('{broken', encoding='utf-8')
+        asked = answer(monkeypatch, QMessageBox.StandardButton.Discard)
+        choose(panel, 'beta')
+        assert len(asked) == int(dirty)
+>       assert panel.selected_name() == panel.name.text() == 'alpha'
+E       AssertionError: assert 'beta' == 'alpha'
+E         
+E         - alpha
+E         + beta
+
+tests/test_ui_profile_navigation.py:144: AssertionError
+__ test_unavailable_destination_preserves_editor_and_selection[missing-True] ___
+
+panel = <patchtrace.ui.ProfilesPanel(0x1fc6b1f0) at 0x7f37960df000>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f3797e96bd0>
+dirty = True, failure = 'missing'
+
+    @pytest.mark.parametrize('dirty', [False, True])
+    @pytest.mark.parametrize('failure', ['missing', 'malformed'])
+    def test_unavailable_destination_preserves_editor_and_selection(panel, monkeypatch, dirty, failure):
+        if dirty:
+            panel.max_age.setValue(30)
+        if failure == 'missing':
+            panel.store.delete('beta')
+        else:
+            (panel.store.directory / 'beta.json').write_text('{broken', encoding='utf-8')
+        asked = answer(monkeypatch, QMessageBox.StandardButton.Discard)
+        choose(panel, 'beta')
+        assert len(asked) == int(dirty)
+>       assert panel.selected_name() == panel.name.text() == 'alpha'
+E       AssertionError: assert 'beta' == 'alpha'
+E         
+E         - alpha
+E         + beta
+
+tests/test_ui_profile_navigation.py:144: AssertionError
+_ test_unavailable_destination_preserves_editor_and_selection[malformed-False] _
+
+panel = <patchtrace.ui.ProfilesPanel(0x1fd65bb0) at 0x7f3797bed4c0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f3797e97290>
+dirty = False, failure = 'malformed'
+
+    @pytest.mark.parametrize('dirty', [False, True])
+    @pytest.mark.parametrize('failure', ['missing', 'malformed'])
+    def test_unavailable_destination_preserves_editor_and_selection(panel, monkeypatch, dirty, failure):
+        if dirty:
+            panel.max_age.setValue(30)
+        if failure == 'missing':
+            panel.store.delete('beta')
+        else:
+            (panel.store.directory / 'beta.json').write_text('{broken', encoding='utf-8')
+        asked = answer(monkeypatch, QMessageBox.StandardButton.Discard)
+        choose(panel, 'beta')
+        assert len(asked) == int(dirty)
+>       assert panel.selected_name() == panel.name.text() == 'alpha'
+E       AssertionError: assert 'beta' == 'alpha'
+E         
+E         - alpha
+E         + beta
+
+tests/test_ui_profile_navigation.py:144: AssertionError
+_ test_unavailable_destination_preserves_editor_and_selection[malformed-True] __
+
+panel = <patchtrace.ui.ProfilesPanel(0x1fdd3520) at 0x7f3797bef080>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f3797e947a0>
+dirty = True, failure = 'malformed'
+
+    @pytest.mark.parametrize('dirty', [False, True])
+    @pytest.mark.parametrize('failure', ['missing', 'malformed'])
+    def test_unavailable_destination_preserves_editor_and_selection(panel, monkeypatch, dirty, failure):
+        if dirty:
+            panel.max_age.setValue(30)
+        if failure == 'missing':
+            panel.store.delete('beta')
+        else:
+            (panel.store.directory / 'beta.json').write_text('{broken', encoding='utf-8')
+        asked = answer(monkeypatch, QMessageBox.StandardButton.Discard)
+        choose(panel, 'beta')
+        assert len(asked) == int(dirty)
+>       assert panel.selected_name() == panel.name.text() == 'alpha'
+E       AssertionError: assert 'beta' == 'alpha'
+E         
+E         - alpha
+E         + beta
+
+tests/test_ui_profile_navigation.py:144: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_ui_profile_navigation.py::test_unavailable_destination_preserves_editor_and_selection[missing-False]
+FAILED tests/test_ui_profile_navigation.py::test_unavailable_destination_preserves_editor_and_selection[missing-True]
+FAILED tests/test_ui_profile_navigation.py::test_unavailable_destination_preserves_editor_and_selection[malformed-False]
+FAILED tests/test_ui_profile_navigation.py::test_unavailable_destination_preserves_editor_and_selection[malformed-True]
+4 failed, 13 passed in 2.04s

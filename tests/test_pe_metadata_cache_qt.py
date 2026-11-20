@@ -37,6 +37,7 @@ class Owner(QObject):
         self._inspection = self._inspection_key = self._inspection_thread = self._inspection_error = None
         self._inspection_threads = []
         self._raw_sides = {}
+        self.raw_alignment = SimpleNamespace(invalidate=lambda: None)
         self.logs = SimpleNamespace(appendPlainText=lambda text: None)
 
     _project_inspection_key = MainWindow._project_inspection_key

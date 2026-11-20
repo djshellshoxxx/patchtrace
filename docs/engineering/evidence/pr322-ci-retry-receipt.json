@@ -1,0 +1,319 @@
+{
+  "schema": "patchtrace-engineering-ci/1",
+  "repository": "djshellshoxxx/PatchTrace",
+  "subject_pr": 322,
+  "qualification": "Earlier PR 322 head only; not qualification of the current integration.",
+  "check_count": 28,
+  "checks": [
+    {
+      "id": 135963979611,
+      "name": "live rz-diff (windows-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T15:30:33Z",
+      "completed_at": "2026-11-19T15:31:40Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539958966/job/135963979611"
+    },
+    {
+      "id": 135963976564,
+      "name": "live rz-diff (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T23:34:10Z",
+      "completed_at": "2026-11-19T23:34:54Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539958966/job/135963976564"
+    },
+    {
+      "id": 135736806544,
+      "name": "release",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T17:09:34Z",
+      "completed_at": "2026-11-19T17:09:34Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539958881/job/135736806544"
+    },
+    {
+      "id": 135732771058,
+      "name": "linux-smoke (ubuntu-22.04)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T17:04:22Z",
+      "completed_at": "2026-11-19T17:04:46Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539958881/job/135732771058"
+    },
+    {
+      "id": 135732771038,
+      "name": "linux-smoke (ubuntu-24.04)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T17:04:49Z",
+      "completed_at": "2026-11-19T17:09:34Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539958881/job/135732771038"
+    },
+    {
+      "id": 135729591655,
+      "name": "linux-package",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T17:02:01Z",
+      "completed_at": "2026-11-19T17:03:27Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539958881/job/135729591655"
+    },
+    {
+      "id": 135615328787,
+      "name": "release-gate",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T14:05:14Z",
+      "completed_at": "2026-11-19T14:05:14Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539958881/job/135615328787"
+    },
+    {
+      "id": 135615328161,
+      "name": "native (patchtrace-seeded-store)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T15:50:09Z",
+      "completed_at": "2026-11-19T15:55:26Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539958972/job/135615328161"
+    },
+    {
+      "id": 135615328108,
+      "name": "native (patchtrace-clean)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T15:47:48Z",
+      "completed_at": "2026-11-19T15:50:53Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539958972/job/135615328108"
+    },
+    {
+      "id": 135615328064,
+      "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T15:36:55Z",
+      "completed_at": "2026-11-19T15:42:27Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539958972/job/135615328064"
+    },
+    {
+      "id": 135615327981,
+      "name": "native (raw-cache-hit)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T15:42:21Z",
+      "completed_at": "2026-11-19T15:46:02Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539958972/job/135615327981"
+    },
+    {
+      "id": 135615327600,
+      "name": "native (repro-plain-ghidriff)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T15:43:47Z",
+      "completed_at": "2026-11-19T15:46:53Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539958972/job/135615327600"
+    },
+    {
+      "id": 135615327530,
+      "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T15:37:53Z",
+      "completed_at": "2026-11-19T16:24:13Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539958881/job/135615327530"
+    },
+    {
+      "id": 135615327418,
+      "name": "qa (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T15:50:49Z",
+      "completed_at": "2026-11-19T16:30:44Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539958881/job/135615327418"
+    },
+    {
+      "id": 135615327316,
+      "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T15:59:40Z",
+      "completed_at": "2026-11-19T16:25:35Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539958881/job/135615327316"
+    },
+    {
+      "id": 135615327239,
+      "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T15:49:15Z",
+      "completed_at": "2026-11-19T16:27:34Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539958881/job/135615327239"
+    },
+    {
+      "id": 135615327219,
+      "name": "qt-gate (windows-latest, 5, 1/1)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T15:38:34Z",
+      "completed_at": "2026-11-19T16:28:19Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539958881/job/135615327219"
+    },
+    {
+      "id": 135615327198,
+      "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T15:33:15Z",
+      "completed_at": "2026-11-19T15:54:25Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539958881/job/135615327198"
+    },
+    {
+      "id": 135615326819,
+      "name": "qa (windows-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T15:55:59Z",
+      "completed_at": "2026-11-19T16:58:37Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539958881/job/135615326819"
+    },
+    {
+      "id": 135615324794,
+      "name": "live BinDiff (ubuntu-22.04)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T14:47:18Z",
+      "completed_at": "2026-11-19T14:48:32Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539958917/job/135615324794"
+    },
+    {
+      "id": 135615324773,
+      "name": "live BinDiff (windows-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T15:34:32Z",
+      "completed_at": "2026-11-19T15:35:59Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539958917/job/135615324773"
+    },
+    {
+      "id": 135615324328,
+      "name": "probe (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T15:35:48Z",
+      "completed_at": "2026-11-19T15:36:08Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539959022/job/135615324328"
+    },
+    {
+      "id": 135615323813,
+      "name": "probe (windows-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T15:32:15Z",
+      "completed_at": "2026-11-19T15:33:09Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539959022/job/135615323813"
+    },
+    {
+      "id": 135615288814,
+      "name": "native (repro-plain-ghidriff)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T15:56:09Z",
+      "completed_at": "2026-11-19T15:58:48Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539947564/job/135615288814"
+    },
+    {
+      "id": 135615288562,
+      "name": "native (patchtrace-clean)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T15:42:33Z",
+      "completed_at": "2026-11-19T15:46:36Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539947564/job/135615288562"
+    },
+    {
+      "id": 135615288376,
+      "name": "native (patchtrace-seeded-store)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T15:50:55Z",
+      "completed_at": "2026-11-19T15:54:19Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539947564/job/135615288376"
+    },
+    {
+      "id": 135615288154,
+      "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T15:37:45Z",
+      "completed_at": "2026-11-19T15:42:56Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539947564/job/135615288154"
+    },
+    {
+      "id": 135615287900,
+      "name": "native (raw-cache-hit)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "started_at": "2026-11-19T15:39:08Z",
+      "completed_at": "2026-11-19T15:42:11Z",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44539947564/job/135615287900"
+    }
+  ],
+  "native_receipts": [
+    {
+      "platform": "Linux",
+      "run_id": 44539958966,
+      "job_id": 135963976564,
+      "artifact_id": 14583569213,
+      "zip_sha256": "f1463f72f2a9db8346b91187de31106dc9f98874d753a0f494bea8c5b7f2c1e8",
+      "receipt": "pr322-rzdiff-linux.json",
+      "mocked": false,
+      "status": "passed",
+      "engine": "Rizin 0.9.1",
+      "scope": "Authored native fixture, not achieved general binary-diff accuracy"
+    },
+    {
+      "platform": "Windows",
+      "run_id": 44539958966,
+      "job_id": 135963979611,
+      "artifact_id": 14545611199,
+      "zip_sha256": "e3164584c5d64377c7e9d94759c8a019c5c2c23da4bd693363482419a2847919",
+      "receipt": "pr322-rzdiff-windows.json",
+      "mocked": false,
+      "status": "passed",
+      "engine": "Rizin 0.9.1",
+      "scope": "Original completed Windows receipt reused by selective retry; no new native run claimed"
+    }
+  ],
+  "cancelled_attempt": {
+    "job_id": 135615324659,
+    "observation": "Cancelled during MinGW package installation before a receipt existed. Targeted retry succeeded; the original failed/cancelled attempt is not erased."
+  }
+}

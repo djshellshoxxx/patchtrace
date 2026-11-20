@@ -1,0 +1,26 @@
+{
+  "schema": "patchtrace-integration-checkpoint/1",
+  "recorded_at": "2026-11-20T00:09:04.434945+00:00",
+  "local_review_checkpoint": "8cfda72b736ddbd704180dcf39e4a71a33fbc06f",
+  "aggregate_source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
+  "source_trees": {
+    "src": "ab46758d190a67de2ff09c4f110d73b2fb91a9a3",
+    "tests": "473862e459a494adf5ba89398f3e55925229d6b0",
+    "tools": "2518670883a5f1174ab07e56836d8bf273d47f0c"
+  },
+  "aggregate_vs_review_runtime_diff": [],
+  "source_history_bundle": {
+    "path": "docs/engineering/evidence/integration-history-20261119.bundle",
+    "bytes": 688190,
+    "sha256": "c8846b4b2ded9085ae06c1c6e2a1c3c56fe0b97a98abd83c654a99e629266cd0",
+    "tip": "8cfda72b736ddbd704180dcf39e4a71a33fbc06f",
+    "prerequisite": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+    "verified": true
+  },
+  "ruff_exit_code": 0,
+  "pip_check_exit_code": 0,
+  "schema_generators_succeeded": 16,
+  "generated_schema_drift": false,
+  "aggregate_status": "running",
+  "remote_mapping": null
+}

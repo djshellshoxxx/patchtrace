@@ -1,0 +1,96 @@
+{
+  "schema": "patchtrace-feature-status/1",
+  "updated_at": "2026-11-20T00:09:04.434945+00:00",
+  "checkpoint_local_commit": "8cfda72b736ddbd704180dcf39e4a71a33fbc06f",
+  "release_ready": false,
+  "features": [
+    {
+      "feature": "CVE-to-patch correlation",
+      "status": "partial",
+      "implemented": "Existing validated advisory/product/evidence services and provenance-preserving bindings.",
+      "remaining": "Frozen L1 remains 73 pass, 6 fail, 8 excluded; no new achieved accuracy claim.",
+      "evidence": [
+        "docs/consolidation/FEATURE_MATRIX.md",
+        "docs/plans/accuracy-program-handoff-20261107.md"
+      ]
+    },
+    {
+      "feature": "Binary comparison and matching",
+      "status": "partial",
+      "implemented": "Existing normalization, unified matching, ambiguity and one-sided results; paired physical byte windows are now integrated.",
+      "remaining": "Independent real-project L2/L3 labels and producer qualification remain required; physical alignment is not function equivalence.",
+      "evidence": [
+        "docs/engineering/raw-alignment-recovery.md",
+        "docs/specs/byte-representations.md"
+      ]
+    },
+    {
+      "feature": "Analysis adapters",
+      "status": "partial",
+      "implemented": "Typed BinExport2/rz-diff boundaries already present; earlier-head live rz-diff retry completed on Linux and Windows.",
+      "remaining": "Current integration still requires its own CI/native receipts; authored native fixtures are not achieved general accuracy.",
+      "evidence": [
+        "docs/engineering/evidence/pr322-ci-retry-receipt.json"
+      ]
+    },
+    {
+      "feature": "Winbindex and binary pairing",
+      "status": "partial",
+      "implemented": "Raw URL/redirect/HTTP failure handling now preserves healthy sides and redacted typed errors.",
+      "remaining": "Full proposal/window/source-entry provenance and native acquisition acceptance remain open.",
+      "evidence": [
+        "docs/engineering/winpairs-url-boundary.md",
+        "docs/engineering/winpairs-http-review.md"
+      ]
+    },
+    {
+      "feature": "Persistence and analysis history",
+      "status": "partial",
+      "implemented": "Existing validated runs/history and metadata cache; unsafe v2 facts now miss and are reparsed under cache v3.",
+      "remaining": "Broader run-to-run comparison and native lifecycle acceptance remain separate.",
+      "evidence": [
+        "docs/engineering/manifest-dtd-recovery.md"
+      ]
+    },
+    {
+      "feature": "GUI and CLI",
+      "status": "partial",
+      "implemented": "Saved-query operations, draft-preserving Profiles navigation, and bounded raw-offset controls integrated with independent reviews.",
+      "remaining": "Combined full suite, native Windows, accessibility and manual desktop gates remain separate.",
+      "evidence": [
+        "docs/engineering/profile-draft-recovery.md",
+        "docs/engineering/saved-search-peer-review.md",
+        "docs/engineering/raw-alignment-peer-review.md"
+      ]
+    },
+    {
+      "feature": "Reports and exports",
+      "status": "partial",
+      "implemented": "Structured reporting; held-source publication safeguards; CSV v2 metadata survives empty exports; cohort and repeated-project confidence reporting corrected.",
+      "remaining": "Final Linux forced replacement source-name race and native publication acceptance remain open. No new empirical accuracy evidence is claimed.",
+      "evidence": [
+        "docs/engineering/security-force-recovery-20261119.md",
+        "docs/engineering/strings-csv-peer-review.md",
+        "docs/engineering/accuracy-peer-review-20261119.md"
+      ]
+    },
+    {
+      "feature": "Performance",
+      "status": "partial",
+      "implemented": "ASM investigation retained original failure and rejected unsupported optimizations; improved future failure diagnostics.",
+      "remaining": "No runtime lexer speedup or universal timing stability claimed; unchanged acceptance gate must pass combined verification.",
+      "evidence": [
+        "docs/consolidation/ASM_LEXER_PERFORMANCE_20261119.md"
+      ]
+    },
+    {
+      "feature": "Release qualification",
+      "status": "blocked",
+      "implemented": "Focused code repairs and reviews provide bounded evidence only.",
+      "remaining": "Qt native advisories, supported patched artifacts/dispositions, Windows/trust/clean-machine/native and layer-specific accuracy gates remain.",
+      "evidence": [
+        "docs/engineering/generation3-qualification-review.md"
+      ]
+    }
+  ]
+}

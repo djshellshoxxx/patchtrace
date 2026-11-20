@@ -28,6 +28,7 @@ def _side(row: dict[str, Any]) -> dict[str, Any]:
 def compare_runs(
     manifest: dict[str, Any], a: dict[str, Any], b: dict[str, Any], k: int = 5
 ) -> dict[str, Any]:
+    cohort = SC.require_cohort(manifest["cases"])
     if k < 1:
         raise ValueError("k must be >= 1")
     if not isinstance(a, dict) or not isinstance(b, dict):
@@ -73,6 +74,7 @@ def compare_runs(
     compared = len(rows) - counts["blocked"]
     disagreements = [r["id"] for r in rows if r["outcome"] in _DISAGREE]
     return {
+        **cohort,
         "k": k,
         "cases": len(rows),
         "compared": compared,

@@ -16,7 +16,9 @@ from .models import Limits
 from .resources import DEFAULT_RESOURCE_LIMITS
 
 KIND = 'pe-metadata'
-OVERVIEW_VERSION = 2
+# Version 2 may contain entity-expanded facts from the former manifest parser.
+# Preserve those historical rows, but never reuse them after the DTD boundary repair.
+OVERVIEW_VERSION = 3
 TRUST_MODES = ('offline', 'cache', 'online')
 
 

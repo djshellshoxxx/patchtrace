@@ -148,6 +148,21 @@ Status: implemented 2026-10-12 and extended 2026-10-22 (`enrichment/profiles.py`
 
 Behavior: Setup gains a Profiles tab (create/duplicate/edit/delete non-default; validation errors shown inline; incompatible combinations — e.g. all detectors disabled — rejected). Rank changes uses the selected profile; when it is not `default` the navigator header shows the profile name and the ranking rows are published under their own stage IDs, so `load_default` remains correct; the desktop loads the selected profile's rows by `config_digest`. CLI gains `--profile NAME|FILE` (mutually exclusive with `--weights`/`--disable`). Exports record the profile digest and name. Acceptance: round-trip, strict rejection (bools, extra keys, unknown IDs), digest invariance under presentation edits, GUI/CLI/report agreement for a non-default profile, no secret persisted.
 
+Dirty profile navigation amendment (2026-11-19 UTC, audit #116): selecting another
+profile or creating/duplicating one must resolve the current editable draft with
+Save, Discard or Cancel. Save validates and commits before continuing; validation
+or storage failure retains the draft, previous selection and inline error. Cancel
+retains the draft and selection without writing. Discard is the explicit choice
+to continue without committing the draft. A save that renames the current profile
+must still navigate to the originally requested destination. Internal successful
+save/reload does not re-enter the navigation prompt. Unchanged/read-only profiles
+navigate without a prompt. Existing Setup acceptance and delete confirmations
+retain their separate semantics. No profile/schema or provider-consent change.
+If the requested destination disappears or becomes invalid before it is loaded,
+retain the previous selection and editor contents, including a still-uncommitted
+draft, and show the read failure inline. Never display one profile as selected
+while editing another.
+
 ## 13. Raw output cache integration
 
 Status: implemented 2026-10-12 in `backend.run_comparison`; enabled only when the selected profile sets `cache_dir`. Java is now probed (`java -version` on the child's JDK); any unparseable version makes the run ineligible. Fingerprint `adapter_version` is `patchtrace-ghidriff-adapter/1` and must change whenever PatchTrace changes Ghidriff argv/options. Hits are labelled in the match tooltip.

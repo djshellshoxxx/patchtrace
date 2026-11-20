@@ -1,0 +1,131 @@
+{
+  "format": "patchtrace-recovery-evidence/1",
+  "slice": "saved-search-workflow",
+  "generated_at_utc": "2026-11-19T23:44:47.934464+00:00",
+  "tested_base_commit": "c9fd07798fa1cead691776512eb619eb464b768d",
+  "working_tree_contains_uncommitted_recovery": true,
+  "donor_heads": {
+    "pr310": "26558cd0723aa5fa6d883f2935ad3c43cef94a86",
+    "pr319": "8d130aefe1be6e737cff1d90d2a5b1658d60a3a6"
+  },
+  "source_commits": [
+    "20a61fc747a452fb8a21ab34d1a146daa620e9a0",
+    "1de7d8df40661eaf61197310d5d123c3b4159edf",
+    "90d032041de2cee5046cb1ea5f0ad458bcb5e9b2"
+  ],
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "QT_QPA_PLATFORM": "offscreen",
+    "packages": {
+      "PySide6": "6.12.0",
+      "pytest": "9.2.0",
+      "pydantic": "2.14.2",
+      "ruff": "0.17.6"
+    }
+  },
+  "runs": [
+    {
+      "id": "baseline",
+      "exit_code": 1,
+      "command": "QT_QPA_PLATFORM=offscreen /workspace/scratch/4c8dc848d760/venv/bin/python -m pytest -q tests/test_search_saved_workflow.py tests/test_ui_search_saved.py --junitxml=/workspace/scratch/4c8dc848d760/saved-search-evidence/baseline.xml > /workspace/scratch/4c8dc848d760/saved-search-evidence/baseline.log 2>&1",
+      "phase": "unchanged base source with donor regression files only",
+      "junit_suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "20",
+          "skipped": "0",
+          "tests": "28",
+          "time": "5.630",
+          "timestamp": "2026-11-19T15:40:34.711236-08:00",
+          "hostname": "636643ecc05a"
+        }
+      ]
+    },
+    {
+      "id": "recovered",
+      "exit_code": 4,
+      "command": null,
+      "phase": "incorrect selection; nonexistent tests/test_ui_search.py; no tests run",
+      "junit_suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "0",
+          "time": "0.014",
+          "timestamp": "2026-11-19T15:41:01.764059-08:00",
+          "hostname": "636643ecc05a"
+        }
+      ],
+      "exact_command_retained": false,
+      "known_missing_argument": "tests/test_ui_search.py",
+      "note": "The original stdout/stderr and JUnit are retained. The full mistaken selection was not separately recorded, so it is not reconstructed as an exact command."
+    },
+    {
+      "id": "affected",
+      "exit_code": 0,
+      "command": "QT_QPA_PLATFORM=offscreen /workspace/scratch/4c8dc848d760/venv/bin/python -m pytest -q tests/test_search_*.py tests/test_ui_search_panel.py tests/test_ui_search_saved.py tests/test_gui_settings.py tests/test_tooltips.py tests/test_strings_search_rows.py --junitxml=/workspace/scratch/4c8dc848d760/saved-search-evidence/affected.xml > /workspace/scratch/4c8dc848d760/saved-search-evidence/affected.log 2>&1",
+      "phase": "recovered six-file source slice",
+      "junit_suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "961",
+          "time": "47.068",
+          "timestamp": "2026-11-19T15:41:13.207089-08:00",
+          "hostname": "636643ecc05a"
+        }
+      ]
+    },
+    {
+      "id": "ruff",
+      "exit_code": 0,
+      "command": "/workspace/scratch/4c8dc848d760/venv/bin/python -m ruff check src tests tools",
+      "phase": "recovered source"
+    },
+    {
+      "id": "diff-check",
+      "exit_code": 0,
+      "command": "git diff --check",
+      "phase": "recovered source"
+    }
+  ],
+  "tested_file_sha256": {
+    "src/patchtrace/search/saved.py": "a2c526ecb5872bade06da380747ed5a8a2ee5bcf76496554a92fd70994f0aeab",
+    "src/patchtrace/search/saved_actions.py": "5a8aa3f5e4ad797c15b638a09a0b49bb149219832b06e605708ded5616ae2bd6",
+    "src/patchtrace/search/qt_saved.py": "2ebe256b90074a59c4a2cff2d282e7b359118376cf668e49805bb74b80afd36f",
+    "src/patchtrace/search/qt_panel.py": "19641eed39b116ee00169cef1f28b0d58ca4b51a73a61cd06473b2780d7b4fdd",
+    "src/patchtrace/search/cli.py": "9401e3ee48b4a279dd074439999b86c8f0ad0b764582885626de6f07aacec252",
+    "src/patchtrace/search/tooltip_entries.py": "1450cde4e442bf65e519b577952ec88d34fd1ed0cad29d43280d84ac16666ca8",
+    "tests/test_search_saved_workflow.py": "d84a390753b5e35ddb479bd40bc69ec7afdc08ab2d635afa777a6fd3fb2decb9",
+    "tests/test_ui_search_saved.py": "d01c2add72d575ccebe7f412c2352a405fa7da34ebc10aafd7276bf4f41c0ffd",
+    "docs/specs/program-e/WB1-integration-plan.md": "22a9a3ede885cd85f40d13147a7d3f686ee8131f86b8ff3ab0aaaa3111813976",
+    "docs/modules.md": "6062e75a0ead5ef9163a141f3313b755387c7a6b4675d4d5958f036e613317ab",
+    "docs/engineering/saved-search-recovery-20261119.md": "f4c25f0816f5f8c23f3fa656c3a3f19fc2b131b42af78fa82024b0550865dcaa"
+  },
+  "not_qualified": [
+    "full repository pytest on combined head",
+    "native Windows/manual accessibility",
+    "packaging or release gates",
+    "external backend compatibility"
+  ],
+  "member_sha256": {
+    "baseline.log": "d238171b44276aae9850454eb76e685a542ebb966f4023a65c5378267cd5825e",
+    "baseline.xml": "d2206714e49b7167a629d43e915681eb862952cf294fff59c1b27198e4311ab7",
+    "recovered.log": "8317193955fd89d0ed974fdccdaebaf3c8d15de84f38a6ae660e0d083226c377",
+    "recovered.xml": "95fad758dd6f880636c0a152476570222fcaf006454ddd38a45fdcc8c730ae0c",
+    "affected.log": "95c7d7c75bd2360f92cdca3005906b5099b9f6d96066b547de1930a07f6c63da",
+    "affected.xml": "82a1475007cc90a5041d6b6fcf77a16154537dbcd7727dd80011fb1ba7abffbb",
+    "ruff.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "diff-check.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "run-metadata.json": "b59bd4636708c165e93a532bac7bce55222719714010d1104252f4d351b4f34e"
+  },
+  "archive": "saved-search-recovery-20261119.zip",
+  "archive_sha256": "bb578bb211964bb40d69d764d9290ff663401df12ddf42ac0118532576503740",
+  "archive_bytes": 26103
+}
