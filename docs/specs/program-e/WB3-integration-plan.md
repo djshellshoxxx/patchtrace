@@ -397,3 +397,16 @@ This is a conservative text-export guard, not proof of universal spreadsheet
 import behavior for every application/version or safe rendering of a malicious
 spreadsheet file. Tests must round-trip through the real CSV serializer and
 include both guarded formula-like prefixes and unchanged controls.
+
+
+### WB3-S6 source-literal regression control (generation 35, 2026-11-20)
+
+Tests asserting the CSV prefix guard MUST pass actual leading control
+characters (LF, CR, tab, vertical tab, form feed) and U+FEFF to the real
+serializer, not literal backslash-letter spellings such as the two-character
+string consisting of a backslash and "n". Python source fixtures should use
+single backslash escapes (`\n`, `\t`, `\ufeff`) and assert the corresponding
+decoded CSV values. Keep non-formula prose and JSON behavior unchanged.
+A literal backslash before "n" is benign prose, not a newline and not a
+basis for inserting an apostrophe. This clarifies the test fixture only;
+the production policy in the preceding section remains unchanged.
