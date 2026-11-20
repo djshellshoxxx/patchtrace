@@ -112,3 +112,29 @@ resolver membership, fix the Linux forced-export source replacement interval,
 dispose of Qt advisories, complete Windows trust/manual testing, or satisfy
 layer-specific L1/L2/L3 accuracy gates. `release_ready` and main merge
 eligibility remain false. See [generation 20](../engineering-handoffs/generation-20-20261120.md).
+
+## Generation-21 offline index gap isolation and confirmed PR330 hosted failures
+
+Generation-21's isolated branch `codex/patchtrace-index-gap-isolation-20261120-g21` is stacked on PR331 at
+`3359c846f8608522b90225dbcdab2c66a8754afe`. The spec-first
+implementation binds parser and downstream rejection counts to the same record
+read, removing re-entrant mutable state. Three repository regressions are authored;
+no source-pinned repository pytest, Ruff, Qt, native or package gate has been
+reported against this new code. A standalone algorithm reproduction gives the
+original mismatched count 0 and intended count 1; it is **not production-source
+verification**. External independent reviewer signoff is pending.
+
+Real PR330 hosted Linux and Windows full QA **failed**, four tests each. Linux
+QA job [136104316334](https://github.com/djshellshoxxx/PatchTrace/actions/runs/44681066815/job/136104316334)
+reported 23,748 passed/51 skipped/6 xfailed and four failed. Windows job
+[136104316166](https://github.com/djshellshoxxx/PatchTrace/actions/runs/44681066815/job/136104316166)
+reported 23,636 passed/164 skipped/5 xfailed and four failed. These assertions
+compared old top-level `skipped` counts with a new total including an observed
+unreadable body: refresh 2 vs 3 (both plain/gzip), existing synthetic pair 3 vs 4,
+and adapter fixture 2 vs 3. The exact original failures remain retained in
+CI; this isolated successor updates those *assertions* to the previously amended
+SPEC-31-D semantics, not application thresholds or parser logic. This does **not**
+make PR330 green or the generation21 source qualified. PR331's separate QA remains
+in progress at the last source-specific inspection. All original release blockers
+remain, particularly missing raw index/resolver membership, Linux forced export,
+Qt disposition, Windows trust and L1/L2/L3 evidence. No main merge or release.

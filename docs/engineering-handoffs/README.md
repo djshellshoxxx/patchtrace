@@ -2,7 +2,9 @@
 
 Repository: <https://github.com/djshellshoxxx/PatchTrace>.
 
-Start with [generation 20](generation-20-20261120.md) for the missing/nonobject Winbindex entry-container source-loss accounting candidate (exact-source tests and independent review pending). Then read [generation 19](generation-19-20261120.md) for the bounded Winbindex unreadable-body accounting, CLI source-gap disclosure, and inherited hosted Ruff repair (exact-source QA and independent review pending). Then read [generation 18](generation-18-20261120.md) for the latest
+Start with [generation 21](generation-21-20261120.md) for the isolated same-read Winbindex gap accounting repair and source-specific inherited PR330 QA failure evidence. Its source-level tests, full hosted gates and independent reviewer signoff are pending.
+
+Then read [generation 20](generation-20-20261120.md) for the missing/nonobject Winbindex entry-container source-loss accounting candidate (exact-source tests and independent review pending). Then read [generation 19](generation-19-20261120.md) for the bounded Winbindex unreadable-body accounting, CLI source-gap disclosure, and inherited hosted Ruff repair (exact-source QA and independent review pending). Then read [generation 18](generation-18-20261120.md) for the latest
 post-admission directory substitution regression and its limited controls, then
 [generation 17](generation-17-20261120.md) for the earlier held offline source
 admission repair. Then read

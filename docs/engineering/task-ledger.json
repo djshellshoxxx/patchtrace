@@ -22,7 +22,8 @@
     "Local commit IDs are local source identities until a publication mapping is recorded.",
     "Completed-snapshot and implemented-reviewed refer only to the named scope, not whole-product completion.",
     "Generation19 implementation is an isolated draft-source candidate. Original local parser-gap mirror intentionally failed, fixed algorithm mirror passed; actual repository tests, full offscreen QA, Ruff and external reviewer signoff pending.",
-    "Generation20 independent source-level audit, full repository tests, native acceptance, schema impact and external review are NOT complete; this is one bounded parser source-loss fix, not final raw index retention or empirical accuracy."
+    "Generation20 independent source-level audit, full repository tests, native acceptance, schema impact and external review are NOT complete; this is one bounded parser source-loss fix, not final raw index retention or empirical accuracy.",
+    "Generation21 same-call source gap isolation has isolated published spec/tests/source, but no source-pinned repository pytest, Ruff or independent reviewer acceptance yet; PR330 Linux/Windows full QA each failed four inherited assertions under the expanded skipped_bodies contract."
   ],
   "tasks": [
     {
@@ -287,6 +288,25 @@
       "evidence": "docs/engineering-handoffs/generation-20-20261120.md",
       "review_status": "coordinator-adversarial-only; independent worker not available",
       "result_or_next_action": "A valid-SHA Winbindex entry with missing or nonobject windowsVersions was silently discarded with zero parser losses. SPEC-31-D now counts one unreadable container unit; explicit {} remains an observed empty container; distinct top-level skips unchanged. Eight isolated stdlib algorithm-mirror tests pass (not repository source). Eight new real-repository tests committed, not executed locally. Preserve parent PR330 CI; qualify this exact successor with Linux/Windows QA+Ruff, Qt, native and package gates, obtain independent reviewer signoff, then pursue full raw index retention/resolver membership."
+    },
+    {
+      "id": "offline-index-same-read-gap-isolation",
+      "status": "contract-tests-code-published-exact-source-ci-and-review-pending",
+      "owner": "generation21 isolated counter ownership worker; independent reviewer unassigned",
+      "branch": "codex/patchtrace-index-gap-isolation-20261120-g21",
+      "source_commit": "ac75fa4013498397e361de2ec9a9f67aade150ee",
+      "evidence": "docs/engineering-handoffs/generation-21-20261120.md",
+      "review_status": "coordinator-adversarial-only; external reviewer pending",
+      "result_or_next_action": "Previously WorkspaceFileIndex.rows() could return first read's rows with second reentrant read's rejected-unit count. Removed mutable adapter gap cache, keep mappings and skipped parser units from a single held record call, add downstream conversion rejects. Three repository regression tests authored but unexecuted locally; standalone reentrancy mirror showed original 0 vs repaired 1. Exact source full Linux/Windows QA+Ruff, native/Qt/package and independent review required."
+    },
+    {
+      "id": "pr330-hosted-four-qa-failures",
+      "status": "confirmed-hosted-failures-fixture-reconciliation-published-in-generation21-unqualified",
+      "owner": "generation21 isolated inherited QA correction",
+      "branch": "codex/patchtrace-index-gap-isolation-20261120-g21",
+      "source_commit": "b362d5286bb610310db5bfee10793a1c5887510b",
+      "evidence": "docs/engineering/offline-index-gap-isolation-review-20261120.md",
+      "result_or_next_action": "PR330 original head e428a5bd Linux job136104316334 had 4 failed/23748 passed/51 skipped/6 xfailed; Windows job136104316166 had 4 failed/23636 passed/164 skipped/5 xfailed. Three legacy assertion sites (four parameterized failures) did not include accepted body-gap accounting. Preserved original logs and adjusted refresh assertion to skipped+skipped_bodies, and two fixture expected gap values 3->4 and 2->3. Requalify on exact newest generation21 source; no suite acceptance yet."
     }
   ],
   "aggregate_source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
@@ -330,6 +350,11 @@
       "name": "generation19_winbindex_body_gap",
       "scope": "New isolated successor of PR329: source body-gap accounting and plain import output; exact inherited Windows QA I001 style repair; no changes to predecessor refs",
       "status": "source-implemented-pending-source-pinned-hosted-qa-and-external-independent-review"
+    },
+    {
+      "name": "generation21_same_read_gap",
+      "scope": "New isolated draft successor of PR331: call-local Winbindex row/gap accounting and inherited PR330 hosted QA fixture reconciliation; existing branches and CI untouched",
+      "status": "code-published-source-pinned-qa-independent-review-pending"
     }
   ],
   "local_integration_branch": "codex/maximum-completion-20261119-4c8d",
