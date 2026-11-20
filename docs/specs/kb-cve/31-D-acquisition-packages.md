@@ -152,6 +152,26 @@ No source byte retention, resolver membership replay, new serialization,
 source authenticity, cross-process snapshot, or Linux forced-export race
 closure is inferred from this narrower same-call accounting guarantee.
 
+### Generation 22: malformed BASE body loss accounting (2026-11-20)
+
+A `BASE` body is readable only when it is a JSON object with a
+`windowsVersionInfo` JSON object. If `BASE` has no
+`windowsVersionInfo` member or that member is not an object, count this
+as **one unreadable source body** in `skipped_bodies` and do not emit an
+apparently valid undated baseline row. The next valid sibling rows are
+preserved. This is independent of top-level SHA and version-container
+losses, and a rejected body must not also be counted as a successful row.
+
+An explicitly present `windowsVersionInfo: {}` is structurally readable
+but has no known release date; keep its baseline row with
+`release_date=None` and do not invent a date. Malformed or absent
+`releaseDate` inside a valid object also remains an unknown date, not
+a fabricated chronology fact. The ordinary KB `updateInfo` contract,
+separate acquisition `parse` API, raw source bytes, resolver membership,
+limits and existing public return shapes remain unchanged. This is only a
+source-loss accounting repair; not complete raw retention, provenance
+authentication, verified accuracy or release qualification.
+
 ## D3. Verification precedence and authenticity states
 
 Mandatory: stream to private non-executable staging, bounded size, SHA-256, final PE parse, supported architecture, filename identity, selected product/build association, chronology check, stable final bytes (no TOCTOU between verification and project copy). Promote only after re-opening/hash verification via existing ingestion path. Use private scratch names chosen by program; reject symlink traversal and path escape.
