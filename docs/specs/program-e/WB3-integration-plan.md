@@ -410,3 +410,17 @@ decoded CSV values. Keep non-formula prose and JSON behavior unchanged.
 A literal backslash before "n" is benign prose, not a newline and not a
 basis for inserting an apostrophe. This clarifies the test fixture only;
 the production policy in the preceding section remains unchanged.
+
+
+### WB3-S6 cross-column CSV admission regression (generation 36, 2026-11-20)
+
+The same existing `_cell` formula-prefix contract applies to **every** of
+`CSV_COLUMNS`, not solely the visible string-display column. In particular,
+`cues`, `functions`, `lineage_groups` and `reasons` can include source-derived
+free text after aggregation; the serializer must guard formula-leading text
+in those columns without modifying benign prose or the underlying JSON
+export's original values. Regression tests must exercise these fields through
+`render(document, 'csv')` and a real Python CSV round trip, and must compare
+`render(document, 'json')` as an unchanged control. These tests assert the
+existing protection boundary; no new prefix policy, data model, analysis,
+external transmission or publication semantics are authorized.
