@@ -274,12 +274,8 @@ def _candidate_snapshot(request, cancel, service):
     from .contracts import domain_id
     from .service import KbService, parse_lead
 
-    if request.manual_pair_start:
-        raise KbcStoreError('PT-KBC-INPUT', 'Saved-index pairing requires an explicit advisory product.')
     investigation = _required(request.investigation_id, 'an advisory search result')
     scope_id = _required(request.scope_id, 'an explicit product')
-    if type(request.component_name) is not str:
-        raise KbcStoreError('PT-KBC-INPUT', 'The component basename must be text.')
     name = normalise_name(_required(request.component_name.strip(), 'a component basename'))
     owner = _candidate_owner(service, investigation)
     if parse_lead(request.lead) != (owner['lead']['kind'], owner['lead']['value']):
@@ -416,6 +412,11 @@ def _execute(request: InvestigationRequest, cancel, service_factory, source_fetc
     if request.manual_pair_start and (request.investigation_id is not None or request.scope_id is not None
                                       or request.expected_revision is not None):
         raise KbcStoreError('PT-KBC-INPUT', 'A binary-only start cannot reuse an advisory investigation or product.')
+    if request.operation in {'candidate_pairs', 'candidate_preview'}:
+        if request.manual_pair_start:
+            raise KbcStoreError('PT-KBC-INPUT', 'Saved-index pairing requires an explicit advisory product.')
+        if type(request.component_name) is not str:
+            raise KbcStoreError('PT-KBC-INPUT', 'The component basename must be text.')
     origin = None
     if request.current_inputs is not None:
         paths, origin = _verified_current(request.current_inputs, cancel)
