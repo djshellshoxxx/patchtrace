@@ -66,12 +66,13 @@
     {
       "feature": "GUI and CLI",
       "status": "partial",
-      "implemented": "Saved-query operations, draft-preserving Profiles navigation, and bounded raw-offset controls integrated with independent reviews.",
-      "remaining": "Original unsplit suite ended SIGKILL with two failure markers. The separately verified harness ownership repair retains all thresholds. Current-source full suite, native Windows, accessibility and manual desktop gates remain.",
+      "implemented": "Saved-query operations, draft-preserving Profiles navigation, and bounded raw-offset controls integrated with independent reviews. Generation-24 isolated local advisory-file input candidate performs held regular-descriptor admission and nonblocking opens where supported for CVRF/CSAF imports shared by the CLI and investigation service.",
+      "remaining": "Original unsplit suite ended SIGKILL with two failure markers. The separately verified harness ownership repair retains all thresholds. Current-source full suite, native Windows, accessibility and manual desktop gates remain. Generation-24 actual source-pinned repository pytest/Ruff, hosted Linux/Windows QA, Qt/native/package, and genuinely independent review remain pending; this is not an empirical accuracy claim or Linux forced-export race fix.",
       "evidence": [
         "docs/engineering/profile-draft-recovery.md",
         "docs/engineering/saved-search-peer-review.md",
-        "docs/engineering/raw-alignment-peer-review.md"
+        "docs/engineering/raw-alignment-peer-review.md",
+        "docs/engineering-handoffs/generation-24-20261120.md"
       ]
     },
     {

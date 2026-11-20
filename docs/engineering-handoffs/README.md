@@ -1,5 +1,12 @@
 # PatchTrace engineering handoffs
 
+Start with [generation 24](generation-24-20261120.md) for distinct
+held-descriptor admission of local CVRF/CSAF advisory input across CLI and
+investigation imports. This is an isolated draft successor of #334.
+Five standalone algorithm controls passed; actual repository pytest, Ruff,
+hosted CI and independent review remain pending. The older Winbindex importer
+and its source-specific checks are not modified by this branch.
+
 Repository: <https://github.com/djshellshoxxx/PatchTrace>.
 
 Start with [generation 23](generation-23-20261120.md) for held regular-file admission of offline Winbindex manual import sources, including a bounded FIFO nonblocking reproduction. The new branch is a draft-only successor of #333; actual repository tests, hosted CI and external review are not yet accepted.\n\nThen read [generation 22](generation-22-20261120.md) for malformed BASE record loss accounting on a separate draft successor of PR332. This is a narrow parser repair, not full raw index/resolver input retention. Source-specific hosted CI and independent review are pending.
