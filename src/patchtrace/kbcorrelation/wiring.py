@@ -105,6 +105,8 @@ class WorkspaceFileIndex:
         except OSError as exc:
             if exc.errno == errno.ELOOP:
                 raise KbcStoreError('PT-KBC-SOURCE', 'the Winbindex record changed into an alias') from None
+            if exc.errno == errno.EISDIR:
+                raise KbcStoreError('PT-KBC-SOURCE', 'the opened Winbindex record is not regular') from None
             raise KbcStoreError('PT-KBC-INPUT', 'a Winbindex record in the workspace cannot be read') from None
         except AcquisitionError as exc:
             raise KbcStoreError('PT-KBC-SOURCE', f'a Winbindex record in the workspace is unusable: {exc.message}'
