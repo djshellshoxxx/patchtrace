@@ -2266,3 +2266,17 @@ On the isolated g36 successor, two authored `test_csv_formula_guard_covers_aggre
 ### PR342 native Windows Qt five-repeat result (2026-11-20)
 
 Latest completed [QA workflow 44781838172](https://github.com/djshellshoxxx/PatchTrace/actions/runs/44781838172) failed because the Windows native Qt five-repeat shard [job 136446431330](https://github.com/djshellshoxxx/PatchTrace/actions/runs/44781838172/job/136446431330) recorded two `test_real_offline_dialog_journey_creates_and_opens_only_new_project` timeouts (CVE and KB variants), **10,423 passes**, elapsed 3,123.06 seconds. `settled()` waited its original 10,000 ms for `_pending` to clear; no original worker-state evidence exists. Linux/Windows QA and four Linux Qt shards in the same run were successful, but overall workflow **failed**. This is distinct from the older unqualified full local SIGKILL and native raw-cache Java probe failure. Generation38 isolated test-only diagnostics preserve the timeout and add safely bounded operation/worker state. No source-specific native g38 rerun or accepted root cause yet. See [generation38](engineering-handoffs/generation-38-20261120.md).
+
+
+### 2026-11-20 generation 40 — source-plan malformed lead shape
+
+Isolated spec/test/code repair on g39. Reproduction of the original standalone
+lead-normalization algorithm: None/int caused AttributeError; bytes and an
+object with a custom `strip` could supply non-plain text; a str subclass could
+override `strip`. The revised exact-str guard produced five typed refusals,
+and accepted one ordinary padded-text control in bounded Python 3.13.5
+source-equivalent checks. The six authored repository regression cases and
+whole-tree Ruff/full offscreen suite were not run in this inaccessible
+checkout; no independent review was recorded. Native Windows Qt PR343 run
+44810716926 was active. Preserve its actual results, do not credit predecessor
+checks or close original blocker receipts.
