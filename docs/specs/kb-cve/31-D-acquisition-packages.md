@@ -103,8 +103,10 @@ version/body cannot silently disappear and make an otherwise usable index
 appear complete. Do not add successful normalized rows to the gap count,
 count a rejected input twice, or call these rejected *units* the exact
 number of missing builds. A missing current record still resets the count
-to zero. File import receipts may report a separate `skipped_bodies`
-field, preserving the existing meaning of `skipped`. Existing source
+to zero. File import receipts must report a separate `skipped_bodies`
+field, preserving the existing meaning of `skipped`; human-readable import
+output must also show nonzero unreadable version/KB body counts without
+relabeling them as invalid top-level entries. Existing source
 bytes, parser warnings, consent and provenance are unchanged. This is
 bounded gap accounting, **not** full raw entry/index persistence or replay
 of resolver input membership.
