@@ -2,7 +2,7 @@
 
 Repository: <https://github.com/djshellshoxxx/PatchTrace>.
 
-Start with [generation 18](generation-18-20261120.md) for the latest
+Start with [generation 19](generation-19-20261120.md) for the bounded Winbindex unreadable-body accounting, CLI source-gap disclosure, and inherited hosted Ruff repair (exact-source QA and independent review pending). Then read [generation 18](generation-18-20261120.md) for the latest
 post-admission directory substitution regression and its limited controls, then
 [generation 17](generation-17-20261120.md) for the earlier held offline source
 admission repair. Then read

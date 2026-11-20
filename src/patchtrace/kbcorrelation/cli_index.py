@@ -244,8 +244,10 @@ def _import_winbindex(args, ports: IndexPorts, out) -> int:
               error=f'{exc.code}: {exc.message}')
         print(f'error: {exc.code}: {exc.message}', file=sys.stderr)
         return ENVIRONMENT if exc.code in (*ARGUMENT_CODES, 'PT-KBC-LIMIT') else RUNTIME
+    unreadable_bodies = summary.get('skipped_bodies', 0)
+    body_note = f', {unreadable_bodies} version/KB body unit(s) unreadable' if unreadable_bodies else ''
     text = (f'{summary["stored_as"]}: {summary["rows"]} build row(s), {summary["skipped"]} entr(ies) skipped'
-            + (' (replaced)' if summary['replaced'] else '') + '.')
+            + body_note + (' (replaced)' if summary['replaced'] else '') + '.')
     _emit(out, args, 'complete', {'contract': CONTRACT, 'winbindex': summary, 'index_changed': True},
           summary['warnings'], text)
     return OK

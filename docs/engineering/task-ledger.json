@@ -20,7 +20,8 @@
   "notes": [
     "Focused test selections overlap and must not be summed.",
     "Local commit IDs are local source identities until a publication mapping is recorded.",
-    "Completed-snapshot and implemented-reviewed refer only to the named scope, not whole-product completion."
+    "Completed-snapshot and implemented-reviewed refer only to the named scope, not whole-product completion.",
+    "Generation19 implementation is an isolated draft-source candidate. Original local parser-gap mirror intentionally failed, fixed algorithm mirror passed; actual repository tests, full offscreen QA, Ruff and external reviewer signoff pending."
   ],
   "tasks": [
     {
@@ -265,6 +266,16 @@
       "source_commit": "4d5e7d4ce4f1f9d1e027a4ed5ec5da657abe803a",
       "evidence": "docs/engineering/held-source-directory-review-20261120.md",
       "result_or_next_action": "POSIX EISDIR raised before descriptor fstat caused late-directory substitutions to be misclassified PT-KBC-INPUT. Contract-first mapping to PT-KBC-SOURCE; two repository tests added, five stdlib mirror controls pass. Actual whole-source pytest/Ruff, Windows native semantics and independent signoff pending; no regular-source race closure."
+    },
+    {
+      "id": "offline-winbindex-version-body-gaps",
+      "status": "contract-test-code-published-source-ci-independent-review-pending",
+      "owner": "generation19 isolated Winbindex coverage worker",
+      "branch": "codex/patchtrace-winbindex-body-gap-20261120-g19",
+      "source_commit": "699d1633048a2f737fdac15d8ab8eff1874eb50d",
+      "evidence": "docs/engineering-handoffs/generation-19-20261120.md",
+      "review_status": "author-adversarial-inspection-only-external-independent-review-pending",
+      "result_or_next_action": "WorkspaceIndex gap totals now include skipped top-level entries, unreadable version/KB bodies and downstream conversion rejects. Four new repository tests plus two updated existing fixture expectations committed but unexecuted locally. Import receipt and text expose body losses separately. Inherited Windows QA Ruff I001 corrected in isolated successor. Qualify exact source on hosted Windows/Linux QA, Qt, native/package, and independent review; do not merge/release."
     }
   ],
   "aggregate_source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
@@ -303,6 +314,11 @@
       "name": "generation18_late_directory_review",
       "scope": "Independent post-generation17 adversarial inspection; isolated follow-up EISDIR source classification and synthetic FIFO control",
       "status": "source-committed-stdlib-mirror-verified-hosted-and-external-review-pending"
+    },
+    {
+      "name": "generation19_winbindex_body_gap",
+      "scope": "New isolated successor of PR329: source body-gap accounting and plain import output; exact inherited Windows QA I001 style repair; no changes to predecessor refs",
+      "status": "source-implemented-pending-source-pinned-hosted-qa-and-external-independent-review"
     }
   ],
   "local_integration_branch": "codex/maximum-completion-20261119-4c8d",

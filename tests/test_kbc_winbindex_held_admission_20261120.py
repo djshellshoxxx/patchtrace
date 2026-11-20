@@ -8,7 +8,6 @@ import pytest
 from patchtrace.kbcorrelation.store import KbcStoreError
 from patchtrace.kbcorrelation.wiring import WorkspaceFileIndex
 
-
 NAME = "exampledrv.sys"
 KEY = "11-24H2"
 
