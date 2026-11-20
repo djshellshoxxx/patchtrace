@@ -71,3 +71,18 @@ review of this newer exact source are still pending. This does not fix ordinary
 file substitution, ancestor-path attacks, the distinct Linux force-publish
 race, or missing raw Winbindex index/resolver membership persistence. Release
 readiness and main-merge eligibility remain **false**.
+
+
+## Generation-18 selected-source directory replacement classification
+
+Successor adversarial review reproduced a source-error classification gap in
+the generation-17 held reader: an admitted regular file replaced by a directory
+can raise POSIX `EISDIR` before descriptor `fstat`, yielding `PT-KBC-INPUT`
+instead of the nonregular-object contract `PT-KBC-SOURCE`. Contract-first
+correction and two repository regression tests are isolated in the
+generation-18 candidate. A separate standard-library mirror has five passes;
+**actual repository pytest, Ruff, new exact-source hosted QA/Qt/native/package
+and independent worker signoff remain pending**. There is no Windows native
+directory-classification claim and no closure of ordinary-file substitution,
+raw-index retention, resolver input membership or the Linux forced-export
+race. No release or main merge is eligible.
