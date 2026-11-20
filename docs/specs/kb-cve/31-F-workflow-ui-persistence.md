@@ -199,6 +199,22 @@ receive invented provenance. Advisory `ContextBundle` JSON export stays byte-for
 byte unchanged. UI rendering, full raw-index retention and reconstruction of the
 entire resolver timeline remain outside this bounded persistence slice.
 
+### Acquisition newer-row membership (2026-11-20, generation 25)
+
+For a resolver-produced `PairProposal` whose `window_id` is
+`index:<version_key>:<KB or BASE>`, the **newer** normalized delivery entry used
+for a consented `kb acquire` preview must match the selected key and KB body
+(`BASE` means a null KB), not merely the binary SHA-256 and basename.
+A body copied through `other_versions` is eligible only if that exact key is
+listed there. If both the native version-key body and a propagated copy match,
+choose the native body, in accordance with the lineage own-body precedence.
+A missing or malformed target anchor is a `PT-KBC-INPUT` refusal before
+provider planning, consent, downloading or project creation; never substitute
+an arbitrary BASE or unrelated KB body. The approved source digest binds the
+chosen normalized entry as before. This is a provenance/membership correction,
+**not** authentication of Winbindex facts, complete raw-index preservation,
+or recovery of the older predecessor's exact original body (still separate).
+
 ## Offline desktop implementation seam (2026-11-05)
 
 The bounded first desktop journey imports a supported local advisory, searches a stored KB/CVE, requires explicit product selection, previews two analyst-selected AMD64 PE files, then creates and opens a separate project. Product-only starts use the separate local catalogue route below; binary-only manual pair starts also have the explicit desktop route below; online discovery/download remains the existing consented acquisition route. The offline dialog never starts downloads or analysis. Pair previews retain advisory source references, hashes, lineage and attribution limitations.
