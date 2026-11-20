@@ -138,3 +138,7 @@ make PR330 green or the generation21 source qualified. PR331's separate QA remai
 in progress at the last source-specific inspection. All original release blockers
 remain, particularly missing raw index/resolver membership, Linux forced export,
 Qt disposition, Windows trust and L1/L2/L3 evidence. No main merge or release.
+
+## Generation-22 malformed BASE metadata loss (2026-11-20 UTC)
+
+An isolated child of draft PR332 adds a specification-first parser correction: missing or nonobject `BASE.windowsVersionInfo` no longer fabricates an undated baseline and is counted as one unreadable body. Nine synthetic repository pytest cases are authored and an eight-case standalone algorithm mirror passed. The actual repository tests, Ruff, Linux/Windows QA, Qt/native/package, independent review and complete raw index/resolver membership remain **pending**. Parent PR331's four real full-QA fixture failures per host are preserved; PR332's correction has not yet been accepted on this new child. Release readiness and main merge eligibility remain **false**. See [generation 22](../engineering-handoffs/generation-22-20261120.md).
