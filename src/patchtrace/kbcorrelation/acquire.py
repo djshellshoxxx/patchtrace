@@ -234,6 +234,9 @@ def acquire_pair(plan: AcquirePlan, older_row: Mapping[str, Any], newer_row: Map
         downloads = _provenance(staged)
         if on_verified is not None:
             on_verified(downloads)
+        # The destination may have changed while both consented downloads were staged.
+        # Recheck before import; the project publisher must still defend its own races.
+        _check_directory(directory)
         outcome = import_pair(staged.older_path, staged.newer_path, directory)
         if outcome.exit not in IMPORT_OK:
             raise KbcStoreError('PT-KBC-ACQUIRE', 'The files were verified but the comparison project was not created.',
