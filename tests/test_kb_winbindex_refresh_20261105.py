@@ -61,7 +61,7 @@ def test_consented_refresh_reuses_real_saved_index_and_preserves_exact_raw_bytes
     assert result.source_kind == 'third-party-index' and result.authenticity == 'tls-allowlisted-host'
     assert (asked.workspace / result.stored_as).read_bytes() == body
     rows, skipped = WorkspaceFileIndex(asked.workspace).rows(NAME, '11-24H2')
-    assert rows and result.rows > 0 and skipped == result.skipped
+    assert rows and result.rows > 0 and skipped == result.skipped + result.skipped_bodies
     assert opener.calls == [('GET', build_plan(NAME).url, {'User-Agent': 'PatchTrace'})]
 
 
