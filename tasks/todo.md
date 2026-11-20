@@ -1566,3 +1566,10 @@ for exact commits and limitations. No main merge/release.
   obtain independent review. Reconcile source identity before any merge; do
   not interpret six isolated controls as repository acceptance. Complete raw
   Winbindex entry/index retention and explicit predecessor membership remain.
+
+
+### Generation 33 — Strings CSV prefix hardening (unqualified, 2026-11-20)
+- [x] Isolated contract-first and test-first implementation for formula-like CSV cells after ASCII whitespace/BOM; preserve original contents and output version.
+- [x] Ten source-equivalent stdlib CSV round-trip controls; record pre-fix uncovered prefixes.
+- [ ] Qualify exact branch source: focused repository pytest, whole-tree Ruff, offscreen full pytest, supported Windows/Qt/package checks after active parent CI reaches terminal status.
+- [ ] Obtain independent adversarial review; then submit as a stacked draft PR. Do not merge with remaining forced-export, release or review blockers.
