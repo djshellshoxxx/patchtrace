@@ -111,7 +111,9 @@ class WorkspaceFileIndex:
         except AcquisitionError as exc:
             raise KbcStoreError('PT-KBC-SOURCE', f'a Winbindex record in the workspace is unusable: {exc.message}'
                                 ) from None
-        self._skipped[file_name] = parsed.skipped
+        # Both malformed SHA entries and unreadable version/KB bodies are
+        # unobserved source units; downstream lineage rejects add separately.
+        self._skipped[file_name] = parsed.skipped + parsed.skipped_bodies
         return [row.as_mapping() for row in parsed.rows]
 
     def has_record(self, file_name: str) -> bool:
@@ -161,7 +163,8 @@ def save_winbindex_record(root: Path, source: Path, file_name: str, data_date: s
         raise KbcStoreError('PT-KBC-STORAGE', 'the workspace cannot be written') from None
     return {'file_name': name, 'data_date': data_date, 'stored_as': f'{INDEX_DIR}/{target.name}',
             'sha256': hashlib.sha256(raw).hexdigest(), 'bytes': len(raw), 'rows': len(parsed.rows),
-            'skipped': parsed.skipped, 'warnings': list(parsed.warnings), 'replaced': replaced}
+            'skipped': parsed.skipped, 'skipped_bodies': parsed.skipped_bodies,
+            'warnings': list(parsed.warnings), 'replaced': replaced}
 
 
 class IntelligenceAdvisory:
