@@ -56,3 +56,18 @@ whole-tree Ruff, independent review and hosted QA/Qt/native checks are
 **pending**. This is not raw index retention or a closure of source-name
 replacement races. No release, main merge or deployment is eligible.
 See [generation 16](../engineering-handoffs/generation-16-20261120.md).
+
+## Generation-17 held-source admission candidate (2026-11-20 UTC)
+
+Stacked in an isolated branch after draft PR327. A matching newer index pathname
+that is a directory or other non-regular object is now refused instead of
+allowing an older record to become the selected source. An `O_NOFOLLOW` capable
+host refuses a final-component symlink introduced after the scan; the opened
+file descriptor must be regular and is opened nonblocking where supported.
+Two baseline behaviors were reproduced and four amended controls passed in
+**isolated standard-library algorithm mirrors**, not repository pytest, Ruff,
+Windows/native, or empirical-accuracy acceptance. Full CI and independent
+review of this newer exact source are still pending. This does not fix ordinary
+file substitution, ancestor-path attacks, the distinct Linux force-publish
+race, or missing raw Winbindex index/resolver membership persistence. Release
+readiness and main-merge eligibility remain **false**.

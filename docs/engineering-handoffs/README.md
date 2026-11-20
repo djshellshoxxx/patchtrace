@@ -2,14 +2,15 @@
 
 Repository: <https://github.com/djshellshoxxx/PatchTrace>.
 
-Start with [generation 16](generation-16-20261120.md) for the new
-bounded offline index-read and rejected-row freshness candidate, then
-[generation 15](generation-15-20261120.md) for the source-admission fixes,
-then read
-[generations 9–14](generation-9-through-14-20261120.md) and the
-[machine task ledger](../engineering/task-ledger.json) and
-[feature inventory](../engineering/feature-status-20261119.json). Refresh refs
-and reconcile their exact source identities before choosing work.
+Start with [generation 17](generation-17-20261120.md) for the held offline
+source admission repair and its limited reproducible controls, then read
+[generation 16](generation-16-20261120.md) for the preceding read budget and
+rejected-row fix and [generation 15](generation-15-20261120.md) for original
+source selection. These successors remain distinct draft-only candidates.
+Then read [generations 9–14](generation-9-through-14-20261120.md), the
+[machine task ledger](../engineering/task-ledger.json), and the
+[feature inventory](../engineering/feature-status-20261119.json). Resolve
+current refs and CI before claiming any new ownership.
 
 The [master directive](master-directive.md) preserves the authorized scope.
 [Generations 2–8](generation-2-through-8-20261119.md) retain the initial integration.
