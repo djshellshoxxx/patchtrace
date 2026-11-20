@@ -214,3 +214,24 @@ schema/dependency checks, independent review and exact-source hosted/native
 qualification remain unverified. Full raw index capture/older membership,
 Linux forced-publish exposure, native Qt disposition, Windows trust, accuracy
 layers and historical consolidation remain blocking. No main merge or release.
+
+## Generation-27 selected newer source ambiguity and inherited I001 (2026-11-20 UTC)
+
+On a separate successor to draft PR337, SPEC-31-F now requires that the
+native-first matching newer source tier contain only equal normalized source
+mappings. Distinct native or, in the absence of native, copied source bodies
+for the resolver-selected KB/version must refuse `PT-KBC-INPUT` before any
+plan, consent, fetch or project creation. Four red isolated selector cases
+reproduced order-dependent admission; six green cases passed after the repair.
+Eight actual repository test cases were authored but not executed in a checkout.
+This is not authenticated source evidence, a raw Winbindex snapshot, exact
+predecessor membership or empirical L1/L2/L3 accuracy.
+
+PR336's Linux QA on exact `c02e316a` logged **23,792 passed, 51 skipped,
+6 xfailed** and then failed Ruff `I001` at
+`tests/test_kbc_acquire_row_membership_20261120.py:2` because of a redundant
+empty line after the import block. The isolated successor makes the narrow
+formatting correction without changing the test assertion. Full current-source
+pytest/Ruff, hosted QA/Qt/native/package and independent review remain
+outstanding. This evidence does not qualify the later candidate. No main merge,
+release or deployment is eligible.

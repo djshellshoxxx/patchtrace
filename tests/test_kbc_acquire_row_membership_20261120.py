@@ -8,7 +8,6 @@ import pytest
 from patchtrace.kbcorrelation.acquire import row_for, target_row_membership
 from patchtrace.kbcorrelation.store import KbcStoreError
 
-
 SHA = 'a' * 64
 NAME = 'afd.sys'
 KEY = '10-22H2'

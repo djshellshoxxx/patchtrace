@@ -1,3 +1,11 @@
+Start with [generation 27](generation-27-20261120.md) for the selected
+newer Winbindex source ambiguity guard and the confirmed PR336 hosted Linux
+Ruff I001 repair. Both are stacked on PR337 in a new isolated branch. The
+original four duplicate-target mirror failures and repaired six controls are
+not repository-source test acceptance. Its eight authored source tests,
+exact-head CI, full suite and independent review remain pending. No raw index,
+predecessor membership or Linux forced-export race closure is claimed.
+
 Start with [generation 26](generation-26-20261120.md) for the distinct
 older Winbindex source-body ambiguity safeguard, stacked on draft #336.
 A SHA/basename alone cannot distinguish predecessor KB/version source claims;

@@ -352,3 +352,19 @@ version-body precedence. This refusal is a conservative provenance safeguard,
 not reconstruction of original older membership, raw index preservation,
 proof of vendor authority, or verified L1/L2/L3 accuracy. Historical evidence
 must never be retroactively inferred from a SHA-256 alone.
+
+
+### Duplicate selected newer source bodies (2026-11-20, generation 27)
+
+After resolving the selected newer `index:<version_key>:<KB or BASE>`
+window, acquisition must not silently choose the first of **distinct** matching
+source claims. The native-body preference over `other_versions` copies remains
+unchanged: compare only eligible native records if any exist, otherwise the
+eligible copied records. Multiple equal normalized mappings for the selected
+priority tier remain admissible, but conflicting mappings in that tier must
+refuse with `PT-KBC-INPUT` before planning, consent, network access or project
+creation. A single native match is still preferred over a conflicting copied
+observation because the copied observation is not selected by the resolver.
+This does not authenticate source bodies, preserve original raw Winbindex
+entries or reconstruct predecessor membership. Do not infer an exact source
+from matching binary hashes alone.
