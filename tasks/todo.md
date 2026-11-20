@@ -1,3 +1,11 @@
+## Generation 39 — direct investigation Create junction follow-up (2026-11-20)
+
+- [ ] On an actual checkout, run `tests/test_kbc_investigation_destination_junction_20261120.py`, adjacent creation/UI regressions and whole-tree Ruff; record source identity and pass/fail evidence.
+- [ ] Obtain native Windows NTFS junction test results. A skip (unavailable permissions/filesystem) does not qualify Windows.
+- [ ] Run full offscreen suite with termination evidence, after active PR343 QA terminates; do not repeat frozen local SIGKILL blindly.
+- [ ] Obtain genuine independent reviewer signoff on direct Create junction check and native fixture; retain parent-path and after-preflight race limits.
+- [ ] Preserve existing Linux forced-export/raw Winbindex/native Qt/Windows trust and layered acceptance blockers, plus PR342's real failure receipts.
+
 # PatchTrace delivery tracker
 
 ## Final reviewed checkpoint — generation33
