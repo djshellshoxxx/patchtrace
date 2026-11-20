@@ -46,6 +46,23 @@ file between checks and read. Do not merge different raw records or fabricate
 resolver membership from conflicting sources. This bounded safety repair is
 **not** the outstanding full raw entry/index capture or resolver-input replay.
 
+### Offline index reader read budget and rejected-row freshness (2026-11-20)
+
+The selected workspace record is untrusted and mutable. Once admitted, each
+read must take **at most MAX_COMPRESSED + 1 bytes** from the opened stream,
+refusing an over-budget body with `PT-KBC-LIMIT` before parsing; a preceding
+pathname size check is advisory and may be stale. Do not allocate the complete
+file via an unbounded read based only on an earlier `stat`. This guard does
+not authenticate the source, pin its pathname through a competing replacement,
+or close the Linux forced-export race in a separate publisher.
+
+The index adapter's `skipped_rows` is scoped to the **current read of that
+filename**, not to earlier records read by the same adapter instance. A missing
+record has no rows and **zero** rejected entries, even when a prior record was
+partially parsed; an unusable record reports its error rather than reusing an
+older count. Preserve valid current-record skipped counts and existing
+`index_rows` rejection accounting without inventing historical coverage.
+
 ## D3. Verification precedence and authenticity states
 
 Mandatory: stream to private non-executable staging, bounded size, SHA-256, final PE parse, supported architecture, filename identity, selected product/build association, chronology check, stable final bytes (no TOCTOU between verification and project copy). Promote only after re-opening/hash verification via existing ingestion path. Use private scratch names chosen by program; reject symlink traversal and path escape.
