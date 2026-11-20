@@ -41,7 +41,8 @@
     "Generation32 adds reviewed Strings shutdown admission. Clean combined source ad891694 passes 397 unique affected cases with no skips/failures; whole-tree Ruff and dependencies pass. Earlier full a024f9ec run remains incomplete after SIGKILL, cause unestablished. Original raw-log whitespace failure is retained and its exact payload compressed.",
     "Final source bbdef5a6: 606 passes/1 native skip in 30 unique maintained files; peer replays and earlier 397/493 selections overlap. Diagnostic retention is fixed, original native Java/cache failure is not. Final publication metadata carries exact tree equality.",
     "Generation34: distinct Strings CSV formula-prefix guard extracted onto PR342's later g33 reviewed source 5f34fb57, preserving prior isolated CSV g33 branch and not overwriting active PR342. SPEC WB3 before tests/source, ten authored CSV serializer regressions, ten source-equivalent Python controls pass. Full repository pytest/Ruff, exact-head hosted QA, independent reviewer pending; no duplicate active parent runs.",
-    "Generation35 independent review of generation34 source found five of ten CSV parameter fixture expectations contradict the Python literal-escape code points. Original stdlib replay 5 failures; source-equivalent corrected 13/13 controls pass after test-only edits. Exact repository pytest/Ruff and independently reviewed new head unverified. Parent PR342 CI active; no duplicate PR/full suite."
+    "Generation35 independent review of generation34 source found five of ten CSV parameter fixture expectations contradict the Python literal-escape code points. Original stdlib replay 5 failures; source-equivalent corrected 13/13 controls pass after test-only edits. Exact repository pytest/Ruff and independently reviewed new head unverified. Parent PR342 CI active; no duplicate PR/full suite.",
+    "Generation36 source inspection confirms production CSV _cell already guards every column; g35 tests covered only display. On an isolated successor, WB3-S6 was updated first and two parametrized cross-column CSV/JSON source tests were added. Two source-equivalent stdlib controls passed, not repository pytest. Source unchanged. PR342 Linux QA/Ruff/native/live succeeded at inspected final source; Windows QA/other Qt still running, original native failure remains. External independent g36 signoff and exact-source full tests pending."
   ],
   "tasks": [
     {
@@ -574,6 +575,18 @@
       "evidence": "docs/engineering/csv-prefix-fixture-review-20261120.md",
       "receipt": "docs/engineering/evidence/generation35/csv-fixture-controls.json",
       "result_or_next_action": "On supported checkout run tests/test_strings_export.py, full offscreen pytest and whole-tree Ruff; capture exact SHA and seek separate independent post-fix reviewer. On parent CI terminal, open stacked draft only if nonoverlapping. Retain original g34 and PR342 heads."
+    },
+    {
+      "id": "strings-csv-crosscolumn-regression-g36",
+      "status": "tests-published-local-mirror-passed-unqualified",
+      "owner": "generation36 successor source inspection; external independent post-change review unassigned",
+      "branch": "codex/patchtrace-csv-crosscolumn-review-20261120-g36",
+      "base_commit": "09af21b0419fe06cce6fdd031355e274e6deb5d0",
+      "spec_commit": "8493be958898d591d9ce57a56d700bc0878086d7",
+      "test_commit": "c3a60593d3f6d005ce056ce242765a664202a601",
+      "evidence": "docs/engineering/generation36-csv-crosscolumn-review-20261120.md",
+      "receipt": "docs/engineering/evidence/generation36/csv-crosscolumn-controls.json",
+      "result_or_next_action": "Two extra test parameters cover source-derived cues, reasons, functions, lineage_groups and JSON control; production code unchanged; 2 source-equivalent stand-alone cases pass. Get exact new-head full pytest/Ruff and independent reviewer; do not infer release readiness or erase original native errors."
     }
   ],
   "aggregate_source_commit": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
