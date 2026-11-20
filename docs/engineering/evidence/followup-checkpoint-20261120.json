@@ -1,0 +1,52 @@
+{
+  "schema": "patchtrace-followup-checkpoint/1",
+  "recorded_at": "2026-11-20T00:56:14.492773+00:00",
+  "local_source_checkpoint": "97ca0adfad5ea4e6cae0648a55529b9165a40b21",
+  "source_trees": {
+    "src": "fc8ac8b29a0b5cf78910b40ce6cd7ac38f3f94f6",
+    "tests": "8f6cece6ce6924fdb099dbfbc7e9522a0aeb35d1",
+    "tools": "4c4938769f167baee5059d0696722d9bebea7fc4"
+  },
+  "initial_remote_publication": {
+    "pull_request": 324,
+    "remote_commit": "3862cb5de3256efec8f6392a3b6fb4d9e600c377",
+    "local_commit": "eb89c342fb9af9f7a647772aa559a408857b8dd0",
+    "tree": "59c37a3ba7f2c67607bbca60eeb7e683ef391e47",
+    "base": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+    "branch": "codex/maximum-completion-20261119-4c8d"
+  },
+  "followup_branch": "codex/patchtrace-followup-20261120-4c8d",
+  "followup_base": "3862cb5de3256efec8f6392a3b6fb4d9e600c377",
+  "affected_result": {
+    "passed": 1737,
+    "skipped": 1,
+    "seconds": 98.56,
+    "full_suite": false
+  },
+  "source_history_bundle": {
+    "path": "docs/engineering/evidence/integration-history-20261120.bundle",
+    "bytes": 938150,
+    "sha256": "805eabdb3c6dd71d367028f90b58211a34e09d94d2fa02873da3786dde55bd40",
+    "prerequisites": [
+      "8cfda72b736ddbd704180dcf39e4a71a33fbc06f",
+      "860fdf24d228fa49dd41d5cf7050b88048442f0e",
+      "bffcfa99d6a5044024256edbc0457ab20c92cbae"
+    ],
+    "verified": true
+  },
+  "full_qualification": "not-passed",
+  "release_ready": false,
+  "initial_followup_publication": {
+    "pull_request": 325,
+    "remote_commit": "4c9e2e8d65901fc192cf8f294cd1183e2d378048",
+    "local_commit": "666b4d71a086c6f77d7c69076ecaace25196377d",
+    "tree": "222a9bf78fc3337db1d700a810ec617171f3b296",
+    "verified_equal": true
+  },
+  "independent_handoff_audit": {
+    "commit": "666b4d71a086c6f77d7c69076ecaace25196377d",
+    "unresolved_findings": 0,
+    "archive": "docs/engineering/evidence/handoff-audit-20261120.zip",
+    "sha256": "7c226b54ba7bedbb6c84579076445c86817627ccbe2a099dd8c17613e1c3a372"
+  }
+}

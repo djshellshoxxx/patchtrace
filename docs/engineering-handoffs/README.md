@@ -2,12 +2,13 @@
 
 Repository: <https://github.com/djshellshoxxx/PatchTrace>.
 
-Start with [generations 2–8](generation-2-through-8-20261119.md), then the
+Start with [generations 9–14](generation-9-through-14-20261120.md), then the
 [machine task ledger](../engineering/task-ledger.json) and
 [feature inventory](../engineering/feature-status-20261119.json). Refresh refs
 and reconcile their exact source identities before choosing work.
 
 The [master directive](master-directive.md) preserves the authorized scope.
+[Generations 2–8](generation-2-through-8-20261119.md) retain the initial integration.
 [Generation 1](generation-1-20261119.md) is historical; its assignments do not
 imply those workers are still running. The frozen
 [reference census](../engineering/consolidation-inventory.json) and

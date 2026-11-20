@@ -1,0 +1,197 @@
+{
+  "checkout_filesystem": "overlayfs",
+  "conclusion": "No tested primitive provides source-descriptor-bound atomic replacement of an existing name.",
+  "controls": [
+    {
+      "destination_exists": false,
+      "destination_identity": [
+        40,
+        293759
+      ],
+      "errno": 0,
+      "errno_name": null,
+      "fixture_filesystem": "tmpfs",
+      "held_identity": [
+        40,
+        293759
+      ],
+      "observed": "held_inode_published",
+      "operation": "linkat",
+      "return_value": 0,
+      "source": "empty_path_fd"
+    },
+    {
+      "destination_exists": true,
+      "destination_identity": [
+        40,
+        293763
+      ],
+      "errno": 17,
+      "errno_name": "EEXIST",
+      "fixture_filesystem": "tmpfs",
+      "held_identity": [
+        40,
+        293762
+      ],
+      "observed": "collision_preserved",
+      "operation": "linkat",
+      "return_value": -1,
+      "source": "empty_path_fd"
+    },
+    {
+      "destination_exists": false,
+      "destination_identity": [
+        40,
+        293765
+      ],
+      "errno": 0,
+      "errno_name": null,
+      "fixture_filesystem": "tmpfs",
+      "held_identity": [
+        40,
+        293765
+      ],
+      "observed": "held_inode_published",
+      "operation": "linkat",
+      "return_value": 0,
+      "source": "proc_fd_follow"
+    },
+    {
+      "destination_exists": true,
+      "destination_identity": [
+        40,
+        293769
+      ],
+      "errno": 17,
+      "errno_name": "EEXIST",
+      "fixture_filesystem": "tmpfs",
+      "held_identity": [
+        40,
+        293768
+      ],
+      "observed": "collision_preserved",
+      "operation": "linkat",
+      "return_value": -1,
+      "source": "proc_fd_follow"
+    },
+    {
+      "errno": 2,
+      "errno_name": "ENOENT",
+      "fixture_filesystem": "tmpfs",
+      "flags": 0,
+      "observed": "no_fd_bound_replacement",
+      "operation": "renameat2",
+      "return_value": -1,
+      "source": "empty_path"
+    },
+    {
+      "errno": 22,
+      "errno_name": "EINVAL",
+      "fixture_filesystem": "tmpfs",
+      "flags": 4096,
+      "observed": "no_fd_bound_replacement",
+      "operation": "renameat2",
+      "return_value": -1,
+      "source": "empty_path_flag"
+    },
+    {
+      "errno": 18,
+      "errno_name": "EXDEV",
+      "fixture_filesystem": "tmpfs",
+      "flags": 0,
+      "observed": "no_fd_bound_replacement",
+      "operation": "renameat2",
+      "return_value": -1,
+      "source": "proc_fd"
+    },
+    {
+      "errno": 17,
+      "errno_name": "EEXIST",
+      "fixture_filesystem": "tmpfs",
+      "observed": "collision_preserved_not_replaced",
+      "operation": "renameat2_noreplace",
+      "return_value": -1
+    },
+    {
+      "blind_rollback": "displaced_later_writer_from_destination",
+      "child_exit_code": 0,
+      "errno": 0,
+      "errno_name": null,
+      "fixture_filesystem": "tmpfs",
+      "later_publication_actor": "probe_parent",
+      "observed": "substitute_published_despite_atomic_exchange",
+      "operation": "renameat2_exchange",
+      "return_value": 0,
+      "rollback_call": {
+        "errno": 0,
+        "errno_name": null,
+        "return_value": 0
+      },
+      "same_euid": true
+    },
+    {
+      "child_exit_code": 0,
+      "fixture_filesystem": "tmpfs",
+      "observed": "source_name_substituted_and_published",
+      "operation": "file_flock",
+      "private_directory_mode": "0o700",
+      "same_euid": true,
+      "sigio_received": []
+    },
+    {
+      "child_exit_code": 0,
+      "fixture_filesystem": "tmpfs",
+      "observed": "source_name_substituted_and_published",
+      "operation": "directory_flock",
+      "private_directory_mode": "0o700",
+      "same_euid": true,
+      "sigio_received": []
+    },
+    {
+      "child_exit_code": 0,
+      "fixture_filesystem": "tmpfs",
+      "lease_after": 1,
+      "lease_before": 1,
+      "observed": "source_name_substituted_and_published",
+      "operation": "write_lease",
+      "private_directory_mode": "0o700",
+      "same_euid": true,
+      "sigio_received": []
+    },
+    {
+      "child_exit_code": 0,
+      "fixture_filesystem": "tmpfs",
+      "observed": "source_name_substituted_and_published",
+      "operation": "private_directory",
+      "private_directory_mode": "0o700",
+      "same_euid": true,
+      "sigio_received": []
+    },
+    {
+      "error_code": "PT-STR-EXPORT",
+      "error_message": "could not write target: forced export destination identity changed",
+      "fixture_filesystem": "tmpfs",
+      "observed": "refused_receipt_after_foreign_bytes_visible",
+      "operation": "current_production_final_boundary",
+      "schedule": [
+        {
+          "child_exit_code": 0,
+          "same_euid": true
+        }
+      ]
+    }
+  ],
+  "euid": 1000,
+  "libc": [
+    "glibc",
+    "2.41"
+  ],
+  "observed_at": "2026-11-20T00:16:15.694294+00:00",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "production_changed": false,
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "schema": "patchtrace-linux-force-primitive-probe/1",
+  "scope": "Authored bytes, real Linux syscalls, deterministic same-principal child schedules; no target execution.",
+  "source_export_sha256": "32c6f01694268aa30b07d92d65bf66c65bb23881bcdb0969009f84c4b6be7cd0",
+  "source_head": "8cfda72b736ddbd704180dcf39e4a71a33fbc06f"
+}

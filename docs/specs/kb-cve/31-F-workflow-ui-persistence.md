@@ -123,11 +123,62 @@ Freshly inspected staged hashes must match the captured acquisition plan before
 any selection, approval, journal or project mutation. Existing source admission
 continues to reuse its exact admitted index and captured advisory coverage.
 
-This bounded recovery uses the existing decision record and attachment storage;
-it introduces no schema change. It does not persist the complete index proposal,
-its release window or source-entry metadata in the project. Those provenance
-requirements remain a separate follow-up. Ordinary local/manual imports and
-product-only starts retain their existing behavior.
+The initial bounded recovery used the existing decision record and attachment
+storage without a schema change. The separate acquisition snapshot below retains
+the complete index proposal, its release window and selected source-entry
+metadata. Ordinary local/manual imports and product-only starts retain their
+existing behavior.
+
+### Persisted acquisition snapshot (2026-11-20)
+
+An acquired comparison retains one strict, frozen `AcquisitionEvidence` record
+(`kbcorrelation/1`, `evidence_version=1`). It records the preview investigation
+and revision, the complete original `PairProposal` (including window completeness,
+reasons and pending-byte assessment), the two normalized Winbindex delivery rows
+including their canonical source-entry hashes and data-date labels, the approved
+request list and hosts, the complete inspected manual pair, and two download
+receipts. Source rows are index claims. Their `record_sha256` identifies the
+upstream entry; the normalized row is not the raw entry, the complete index, or
+an authenticated vendor statement. The original proposal stays separate from the
+verified manual pair. This does not raise grade, tier, lineage or fix certainty.
+
+The source snapshot and every request contribute to the version-2 acquisition
+plan digest. A changed window, entry hash, normalized metadata, host or request
+requires a new preview/consent, even when ordered binary hashes and source pair
+ID are unchanged. Preview JSON exposes the exact source snapshot. Freeze it
+before passing copies of the delivery rows to acquisition ports; caller or port
+mutation cannot rewrite the approved record. Mismatched source rows, receipts,
+ordered hashes or product scopes are refused before investigation approval or
+project creation. Capture a maximum of two delivery rows, 4,096 shared version
+keys per row, 514 planned requests (the existing 256 probes plus one GET per
+side) and 1 MiB of canonical evidence JSON; reject
+oversize evidence explicitly, never silently truncate it.
+
+Carry optional evidence through `AttachRequest` and the existing attachment
+journal. Validate its digest, investigation, preview revision, verified pair,
+scope, ordered hashes and the journal's content identity on resume. A legacy
+journal without the optional record retains its existing behavior. After project
+creation, write `kb/acquisitions/<evidence_id>.json` and the append-only
+`kb-acquisition:<evidence_id>` enrichment row during the existing sidecar/row
+phases. Existing content must be identical; conflicting content or malformed
+evidence leaves attachment incomplete and cannot be overwritten. The evidence
+ID covers the entire record apart from itself. Sidecar publication reuses
+`owned_publication.publish_bytes` with an anchored project directory, held source
+identity, exclusive creation and bounded exact-content reuse; it never replaces
+an existing sidecar or cleans up a mutable temporary pathname. The sibling helper
+is bound in `wiring.RealProjectPort.write_acquisition_sidecar`; the project port
+checks the actual project ID and ordered artifacts under its owner service before
+publication. The journal operation key includes the evidence ID and is rechecked
+before resuming or marking a captured acquisition interrupted. No project-revision or SQL-version
+bump is required, and imported evidence is outside retention-derived kinds.
+
+Acquisition completion reports the evidence ID and relative sidecar path.
+`kb attach --repair` restores the captured record from its journal without reading
+the mutable Winbindex workspace again. `ProjectStore.backup` copies the row and
+the existing `kb/` tree. Historical local imports and old acquisitions do not
+receive invented provenance. Advisory `ContextBundle` JSON export stays byte-for-
+byte unchanged. UI rendering, full raw-index retention and reconstruction of the
+entire resolver timeline remain outside this bounded persistence slice.
 
 ## Offline desktop implementation seam (2026-11-05)
 

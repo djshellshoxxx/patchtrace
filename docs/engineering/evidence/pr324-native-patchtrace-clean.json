@@ -1,0 +1,35 @@
+{
+  "schema": "patchtrace-native-artifact-receipt/1",
+  "repository": "djshellshoxxx/patchtrace",
+  "pull_request": 324,
+  "head_commit": "3862cb5de3256efec8f6392a3b6fb4d9e600c377",
+  "merge_ref_commit": "deab5a058da7814f6fbef9b108faa73695c3882e",
+  "head_and_merge_tree": "59c37a3ba7f2c67607bbca60eeb7e683ef391e47",
+  "workflow_run": 44644147564,
+  "artifact_id": 14587409583,
+  "artifact_bytes": 96580,
+  "github_digest": "sha256:1d1ea1d90856a31d9ee0c49e0af7cb8df09f8e9163aa3a3badc2a853ba029343",
+  "download_digest_matches": true,
+  "backend_execution": {
+    "contract": "patchtrace-backend-execution/1",
+    "elapsed_seconds": 93.953,
+    "last_observed_stage": "enhancing function/symbol details",
+    "last_output_age_seconds": 0.5,
+    "process_state": "stopped",
+    "returncode": 0,
+    "run_id": "7b3c5c13-07c8-4935-b939-bda53c86e8e1",
+    "runtime_versions": {
+      "ghidra": "12.0.4",
+      "ghidriff": "1.0.0",
+      "jvm": "unverified",
+      "patchtrace": "0.1.0",
+      "pyghidra": "3.2.0",
+      "python": "3.12.10"
+    },
+    "started_at": "2026-11-20T00:26:18.323329+00:00",
+    "stop_reason": "exited",
+    "stopped_at": "2026-11-20T00:27:52.283819+00:00",
+    "timeout_seconds": 900
+  },
+  "scope": "Native Windows static analysis of authored compiled fixtures. No general binary-analysis accuracy, target execution, new follow-up source, or release acceptance claim."
+}

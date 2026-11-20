@@ -30,6 +30,7 @@ from pathlib import Path
 from typing import Any
 
 from ..persistence import creation_directory_available
+from .acquisition_evidence import AcquisitionEvidence, canonical, read_evidence
 from .contracts import (
     AnalystDecision,
     Attempt,
@@ -473,6 +474,7 @@ class AttachRequest:
     source_shas: tuple[str, ...] = ()
     plan_sha: str | None = None
     selected_product: ProductScope | None = None
+    acquisition_evidence: AcquisitionEvidence | None = None
 
 
 def _file_sha(path: str) -> str:
@@ -519,6 +521,7 @@ class ProjectAttachment:
                 code='PT-KBC-STATE', message='there is no such attach operation'),))
         state, body = found
         try:
+            self._acquisition(body, op_id=op_id)  # validate optional evidence before any resume mutation
             if state == 'done':
                 if body['link_state'] == 'context-pending' and context:
                     body = self._attach_context(op_id, body, context)
@@ -537,7 +540,35 @@ class ProjectAttachment:
         r = request.revision
         return domain_id('kbc.attach', 1, {
             'inv': r.investigation_id, 'revision': r.revision, 'pair': request.pair_id, 'older': request.older_sha,
-            'newer': request.newer_sha, 'directory': Path(request.directory).resolve().as_posix()})
+            'newer': request.newer_sha, 'directory': Path(request.directory).resolve().as_posix(),
+            **({'acquisition_id': request.acquisition_evidence.evidence_id}
+               if request.acquisition_evidence is not None else {})})
+
+    @staticmethod
+    def _acquisition(body: dict, *, op_id: str | None = None) -> AcquisitionEvidence | None:
+        if 'acquisition_evidence' not in body and 'acquisition_id' not in body:
+            return None  # legacy journals and ordinary local imports have no acquisition provenance
+        try:
+            evidence = read_evidence(canonical(body['acquisition_evidence']))
+            if evidence.evidence_id != body['acquisition_id']:
+                raise ValueError('journal acquisition identity differs')
+            revision = _revision_of(body)
+            if type(body['base']) is not int or not 1 <= body['base'] <= revision.revision or (
+                    revision.selected_pair_id != body['pair_id']):
+                raise ValueError('journal acquisition revision differs')
+            evidence.check_owner(investigation_id=revision.investigation_id, base_revision=body['base'],
+                                 pair_id=body['pair_id'], older_sha=body['older_sha'], newer_sha=body['newer_sha'],
+                                 scope_id=revision.selected_scope_id)
+            expected_operation = domain_id('kbc.attach', 1, {
+                'inv': revision.investigation_id, 'revision': body['base'], 'pair': body['pair_id'],
+                'older': body['older_sha'], 'newer': body['newer_sha'], 'directory': body['directory'],
+                'acquisition_id': evidence.evidence_id})
+            if op_id is not None and op_id != expected_operation:
+                raise ValueError('journal operation does not bind this acquisition evidence')
+            return evidence
+        except (ValueError, KeyError, TypeError, RecursionError):
+            raise KbcStoreError('PT-KBC-VERIFY', 'the journal acquisition evidence is invalid or belongs elsewhere'
+                                ) from None
 
     def _begin(self, op_id: str, request: AttachRequest) -> None:
         current = self.ws.current_revision(request.revision.investigation_id)
@@ -557,15 +588,20 @@ class ProjectAttachment:
             raise KbcStoreError('PT-KBC-STORAGE', 'the project directory exists and is not empty')
         for sha in request.source_shas:
             self.ws.read_object(sha)  # fail before any side effect if a source object is damaged
-        self.ws.journal_put(op_id, 'intent', {
+        body = {
             'state': 'intent', 'directory': directory.resolve().as_posix(), 'older_path': request.older_path,
             'newer_path': request.newer_path, 'older_sha': request.older_sha, 'newer_sha': request.newer_sha,
             'pair_id': request.pair_id, 'plan_sha': request.plan_sha, 'source_shas': list(request.source_shas),
             **({'selected_product': request.selected_product.model_dump(mode='json')}
                if request.selected_product is not None else {}),
+            **({'acquisition_id': request.acquisition_evidence.evidence_id,
+                'acquisition_evidence': request.acquisition_evidence.model_dump(mode='json')}
+               if request.acquisition_evidence is not None else {}),
             'revision': request.revision.model_dump(mode='json'), 'base': request.revision.revision,
             'cas_created': False, 'cas_final': False, 'project_id': None, 'project_revision': None,
-            'link_state': None, 'interrupted': False})
+            'link_state': None, 'interrupted': False}
+        self._acquisition(body, op_id=op_id)
+        self.ws.journal_put(op_id, 'intent', body)
 
     def _create(self, op_id: str, body: dict) -> dict:
         # Re-verify: a resume may run long after the intent was written.
@@ -658,6 +694,9 @@ class ProjectAttachment:
     def _write_sidecars(self, body: dict) -> None:
         directory = Path(body['directory'])
         rev = _revision_of(body)
+        evidence = self._acquisition(body)
+        if evidence is not None:
+            self.project.write_acquisition_sidecar(body['project_id'], evidence.as_bytes())
         budget = self.ws.limits.project_sources_bytes
         sources = directory / 'kb' / 'sources'
         used = sum(p.stat().st_size for p in sources.glob('*.json.gz')) if sources.is_dir() else 0
@@ -688,6 +727,10 @@ class ProjectAttachment:
             self.fault('attach_before_row')
             self.project.put_row(body['project_id'], 'kb-investigation', f'{rev.investigation_id}:{rev.revision}',
                                  _json(rev).encode())
+            evidence = self._acquisition(body)
+            if evidence is not None:
+                self.fault('attach_before_row')
+                self.project.put_row(body['project_id'], 'kb-acquisition', evidence.evidence_id, evidence.as_bytes())
             for key, data in context:
                 self.fault('attach_before_row')
                 self.project.put_row(body['project_id'], 'kb-context', key, data)

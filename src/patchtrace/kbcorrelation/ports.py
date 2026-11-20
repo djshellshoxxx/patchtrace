@@ -44,6 +44,10 @@ class ProjectPort(Protocol):
 
     def get_row(self, project_id: str, kind: str, key: str) -> bytes | None: ...
 
+    def write_acquisition_sidecar(self, project_id: str, body: bytes) -> None:
+        """Validate project/pair ownership and exclusively publish bounded acquisition evidence."""
+        ...
+
 
 @runtime_checkable
 class EvidencePort(Protocol):

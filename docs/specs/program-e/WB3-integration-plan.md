@@ -274,6 +274,9 @@ Publication has two explicit paths:
   Do not claim rollback, guaranteed prior-destination preservation for that interval, or complete
   Linux forced-publication ownership. Ordinary forced replacement stays available; no-force
   publication retains its stronger source-ownership contract.
+  The [native primitive assessment](../../engineering/linux-force-primitive-assessment-20261119.md)
+  records why descriptor linking, exchange, ordinary locks, a write lease and private-directory
+  permissions did not close this interval. It is evidence of the open capability gap, not a waiver.
 - On forced failure, close only owned descriptors and preserve the original exception if close
   also fails. Anonymous failures leave no stage name. After the Linux source is linked, do not
   unlink its mutable pathname: it may now name a foreign entry. A complete or modified stage

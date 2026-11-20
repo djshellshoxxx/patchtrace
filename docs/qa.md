@@ -2123,3 +2123,68 @@ failure remains recorded; production lexer and strict 150ms budget are unchanged
 Linux forced-source replacement, native Qt disposition, native Windows/trust/
 clean-machine/manual gates, acquisition provenance and separate L1/L2/L3 empirical
 accuracy remain open. See `docs/engineering-handoffs/README.md` and the task ledger.
+
+## 2026-11-20 UTC — generations 9–14 qualification checkpoint
+
+This supersedes the earlier running-state statements for the maximum-completion
+candidate, while retaining their historical evidence. The required unsplit run at
+`bffcfa99d6a5044024256edbc0457ab20c92cbae` ended **SIGKILL after 1,729.332 seconds**.
+There is no terminal failure traceback, summary or JUnit file. Its log retains
+19,877 progress markers including two failures. Cause is unestablished; no OOM
+or host-load explanation is claimed. Qualification remains incomplete.
+
+The same-source unreported remainder is separately complete: **3,849 passed and
+32 existing native-toolchain skips** across 14 fresh processes and 3,881 distinct
+reconciled nodes. This includes 3,879 unreported nodes and two overlaps. It does
+not convert the original unsplit run into a pass. The 32 blocked cases and exact
+missing LLVM/tool-install capabilities are preserved without assertion, policy,
+dependency or skip changes. AF_UNIX construction independently returns EPERM
+before the project's guard, including an unguarded control.
+
+The separately reproduced GUI measurement defect is repaired: only the selected
+model instance's data calls count. All original limits and product code are
+unchanged. Its 186-case affected run and independent 41-case replay pass; those
+counts overlap. The original aggregate table failure remains unattributed.
+
+The acquisition follow-up now retains immutable original proposal/window and
+normalized delivery metadata, approved requests, and inspected receipts. Consent
+binds source claims; owner-checked sidecar/row persistence and journal recovery
+preserve them. Root independent review passed four new controls plus 27 author
+cases. Original two red controls, the first architecture failure and the peer
+test's incorrect exit-code expectation remain archived. The later 1-failed/
+205-passed whitelist outcome is separately documented from tool output; its raw
+receipt is unavailable. Complete raw index retention, live providers and native
+qualification are still separate.
+
+Combined follow-up source `97ca0adfad5ea4e6cae0648a55529b9165a40b21` passes
+**1,737 affected tests with one native Windows skip in 98.56 seconds**. Ruff,
+schema drift and whitespace checks pass. This is not a full current-source suite.
+
+Initial draft PR324's exact remote head is `3862cb5d`; its actual merge checkout
+`deab5a05` has the same complete tree. At the retained 00:53–00:54 UTC snapshot,
+both five-scenario native Ghidriff workflows passed, two Linux Qt shards passed,
+and full Linux/Windows QA plus remaining Qt legs were running. The digest-verified
+native clean fixture receipt records backend exit zero in 93.953 seconds. These
+receipts apply to that initial source, not the later acquisition follow-up.
+
+The new stacked follow-up keeps those original CI runs intact. See the current
+[handoff](engineering-handoffs/generation-9-through-14-20261120.md),
+[aggregate report](engineering/aggregate-qualification-20261119.md),
+[task ledger](engineering/task-ledger.json) and
+[release assessment](engineering/release-readiness-20261119.md). The hourly
+successor is actually enabled. Main, release, Windows/manual, Qt disposition,
+Linux forced-publication and separate empirical-accuracy gates remain open.
+
+### Later hosted Linux receipt for the initial candidate
+
+At the 01:03:45 UTC refresh, PR324's Linux QA job had completed successfully:
+**23,699 passed, 51 skipped and six xfailed in 2,269.52 seconds**, with 23,756
+JUnit cases and no failures/errors. Its actual checkout and source identities
+remain the initial candidate documented above. Both locally marker-mapped tests
+passed; all 32 exact locally skipped native-fixture cases also passed on that
+hosted source. Original local results and capability limitations are retained.
+The native pair-publication selection reports 108 passes/two native Windows
+skips. Linux Qt shard 4/4 adds 9,660 repeated passes. Windows QA/Qt and Linux Qt
+1/4 were still running; no completed failing job was observed. The refresh archive
+and node reconciliation are linked by the aggregate report. These gates do not
+qualify the later acquisition source in PR325.

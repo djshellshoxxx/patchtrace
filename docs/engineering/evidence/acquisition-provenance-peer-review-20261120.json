@@ -1,0 +1,49 @@
+{
+  "schema": "patchtrace-acquisition-peer-review/1",
+  "implementation_commit": "fd886e194d8bd2ee346162017a8f0939310053f3",
+  "independent_cases": 4,
+  "combined_replay": {
+    "passed": 31,
+    "seconds": 2.06
+  },
+  "initial_review_outcome": {
+    "passed": 29,
+    "failed": 2,
+    "reason": "Review expectation used exit2; unchanged PT-KBC-VERIFY contract specifies exit3."
+  },
+  "archive_sha256": "125bab61077e6a5f0b5e2424b0b0dc1dbc49f62030ea23192a90ca2c82cf0b2d",
+  "files": {
+    "acquisition-root-review/peer-control-initial.py": {
+      "bytes": 4401,
+      "sha256": "a3f9b4bb29aa37882343c288737a2d66e9862960ebdc32c62eac22b04be128ba"
+    },
+    "acquisition-root-review/pytest.log": {
+      "bytes": 5756,
+      "sha256": "0dd8ec3fca056fa563c84a39e1fcb8254d62a843d194625ecd78223fe8c672be"
+    },
+    "acquisition-root-review/receipt.json": {
+      "bytes": 1389,
+      "sha256": "d142f836b8c8062a093b76fe76063efd79ce9dcb563326d45fc25403480c9cf0"
+    },
+    "acquisition-root-review/results.xml": {
+      "bytes": 8834,
+      "sha256": "e04483beca0256247b9efa294b52f708e89d1a7c72266bf5b4bf9c4a12ff2cbc"
+    },
+    "acquisition-root-review-corrected/pytest.log": {
+      "bytes": 1533,
+      "sha256": "b733732960886ff8324b686bad34f3cec5b8bb6ccee36dbf44d417e72785ae72"
+    },
+    "acquisition-root-review-corrected/receipt.json": {
+      "bytes": 1399,
+      "sha256": "aa037e51a57261ed36dcd34652367b74ec4210bade8c64804d98bf555502c5c6"
+    },
+    "acquisition-root-review-corrected/results.xml": {
+      "bytes": 5232,
+      "sha256": "3911c673e09b9f79da56f401d19c6ee2e29fb4bf1b5729ba5a206fa39c0e6d91"
+    },
+    "final-peer-control.py": {
+      "bytes": 4401,
+      "sha256": "5769e5692dcac39c296cbab6e4f8e67aa55041d7f64c59f284f3f659f9599aef"
+    }
+  }
+}

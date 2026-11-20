@@ -1,7 +1,7 @@
 {
   "schema": "patchtrace-feature-status/1",
-  "updated_at": "2026-11-20T00:09:04.434945+00:00",
-  "checkpoint_local_commit": "8cfda72b736ddbd704180dcf39e4a71a33fbc06f",
+  "updated_at": "2026-11-20T00:56:14.492773+00:00",
+  "checkpoint_local_commit": "97ca0adfad5ea4e6cae0648a55529b9165a40b21",
   "release_ready": false,
   "features": [
     {
@@ -27,20 +27,22 @@
     {
       "feature": "Analysis adapters",
       "status": "partial",
-      "implemented": "Typed BinExport2/rz-diff boundaries already present; earlier-head live rz-diff retry completed on Linux and Windows.",
-      "remaining": "Current integration still requires its own CI/native receipts; authored native fixtures are not achieved general accuracy.",
+      "implemented": "Earlier rz-diff native receipts and PR324 native Windows Ghidriff workflow success are retained, including a digest-verified authored-fixture execution receipt.",
+      "remaining": "Later acquisition follow-up needs its own exact-source hosted gates; authored native fixtures are not achieved general accuracy.",
       "evidence": [
-        "docs/engineering/evidence/pr322-ci-retry-receipt.json"
+        "docs/engineering/evidence/pr322-ci-retry-receipt.json",
+        "docs/engineering/evidence/pr324-native-patchtrace-clean.json"
       ]
     },
     {
       "feature": "Winbindex and binary pairing",
       "status": "partial",
-      "implemented": "Raw URL/redirect/HTTP failure handling now preserves healthy sides and redacted typed errors.",
-      "remaining": "Full proposal/window/source-entry provenance and native acquisition acceptance remain open.",
+      "implemented": "Validated URL/HTTP handling and persisted immutable source proposals, windows, normalized delivery rows, approved request plans and verified download receipts; consent binds source metadata and recovery preserves it.",
+      "remaining": "Complete raw entry/index retention, resolver-input reconstruction and native/live acquisition acceptance remain separate.",
       "evidence": [
         "docs/engineering/winpairs-url-boundary.md",
-        "docs/engineering/winpairs-http-review.md"
+        "docs/engineering/winpairs-http-review.md",
+        "docs/engineering/acquisition-provenance-peer-review-20261120.md"
       ]
     },
     {
@@ -56,7 +58,7 @@
       "feature": "GUI and CLI",
       "status": "partial",
       "implemented": "Saved-query operations, draft-preserving Profiles navigation, and bounded raw-offset controls integrated with independent reviews.",
-      "remaining": "Combined full suite, native Windows, accessibility and manual desktop gates remain separate.",
+      "remaining": "Original unsplit suite ended SIGKILL with two failure markers. The separately verified harness ownership repair retains all thresholds. Current-source full suite, native Windows, accessibility and manual desktop gates remain.",
       "evidence": [
         "docs/engineering/profile-draft-recovery.md",
         "docs/engineering/saved-search-peer-review.md",
@@ -87,7 +89,7 @@
       "feature": "Release qualification",
       "status": "blocked",
       "implemented": "Focused code repairs and reviews provide bounded evidence only.",
-      "remaining": "Qt native advisories, supported patched artifacts/dispositions, Windows/trust/clean-machine/native and layer-specific accuracy gates remain.",
+      "remaining": "Incomplete full-suite qualification; native Qt disposition; remaining Linux forced-source race; Windows/trust/clean-machine/native and layer-specific accuracy gates remain.",
       "evidence": [
         "docs/engineering/generation3-qualification-review.md"
       ]
