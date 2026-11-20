@@ -13,7 +13,8 @@ from patchtrace.strings.contracts import StringsError
 @pytest.mark.parametrize('failure', [False, True], ids=['publish', 'io-failure'])
 def test_force_sync_cannot_publish_or_remove_a_substituted_source(tmp_path, monkeypatch, failure):
     target = tmp_path / 'report.json'
-    target.write_bytes(b'prior complete export')
+    prior = target if os.name == 'nt' else tmp_path / 'prior.json'
+    prior.write_bytes(b'prior complete export')
     sync = os.fsync
     replaced = []
     descriptors = []
@@ -41,7 +42,9 @@ def test_force_sync_cannot_publish_or_remove_a_substituted_source(tmp_path, monk
     if failure:
         with pytest.raises(StringsError, match='authored sync failure'):
             export.write_atomic(target, b'expected export', force=True)
-        assert target.read_bytes() == b'prior complete export'
+        assert prior.read_bytes() == b'prior complete export'
+        if prior != target:
+            assert not target.exists()
     else:
         export.write_atomic(target, b'expected export', force=True)
         assert target.read_bytes() == b'expected export'
@@ -52,89 +55,81 @@ def test_force_sync_cannot_publish_or_remove_a_substituted_source(tmp_path, monk
             os.fstat(fd)
 
 
-@pytest.mark.skipif(not sys.platform.startswith('linux'), reason='Linux linked-stage admission boundary')
+@pytest.mark.skipif(not sys.platform.startswith('linux'), reason='Linux exclusive-link boundary')
 @pytest.mark.parametrize('replacement', ['ordinary', 'symlink'])
-def test_force_refuses_a_source_substituted_before_rename_admission(tmp_path, monkeypatch, replacement):
+def test_force_preserves_a_destination_arriving_before_link(tmp_path, monkeypatch, replacement):
     target = tmp_path / 'report.json'
-    target.write_bytes(b'prior complete export')
     foreign = tmp_path / 'foreign'
     foreign.write_bytes(b'foreign bytes')
     link = os.link
-    stages = []
+    sources = []
 
     def substitute(source, name, **kwargs):
-        link(source, name, **kwargs)
-        stage = tmp_path / name
-        stages.append(stage)
-        stage.rename(tmp_path / 'held-original')
+        assert name == target.name
+        descriptor = int(str(source).rsplit('/', 1)[-1])
+        assert os.fstat(descriptor).st_nlink == 0
+        sources.append(descriptor)
         if replacement == 'ordinary':
-            stage.write_bytes(b'foreign bytes')
+            target.write_bytes(b'foreign bytes')
         else:
-            stage.symlink_to(foreign)
+            target.symlink_to(foreign)
+        return link(source, name, **kwargs)
 
     monkeypatch.setattr(os, 'link', substitute)
-    with pytest.raises(StringsError, match='staging identity changed'):
+    with pytest.raises(StringsError, match='replacement is unavailable on Linux'):
+        export.write_atomic(target, b'expected export', force=True)
+    assert target.read_bytes() == b'foreign bytes'
+    assert foreign.read_bytes() == b'foreign bytes'
+    assert target.is_symlink() == (replacement == 'symlink')
+    assert set(tmp_path.iterdir()) == {target, foreign}
+    assert len(sources) == 1
+    with pytest.raises(OSError):
+        os.fstat(sources[0])
+
+
+@pytest.mark.skipif(not sys.platform.startswith('linux'), reason='Linux replacement is unavailable')
+def test_linux_existing_destination_never_reaches_the_historical_rename_boundary(tmp_path, monkeypatch):
+    """The original vulnerable receipt remains in the historical evidence archive."""
+    target = tmp_path / 'report.json'
+    target.write_bytes(b'prior complete export')
+
+    def forbidden(*_args, **_kwargs):
+        pytest.fail('existing Linux destination must not reach pathname replacement')
+
+    monkeypatch.setattr(os, 'replace', forbidden)
+    monkeypatch.setattr(os, 'rename', forbidden)
+    monkeypatch.setattr(os, 'unlink', forbidden)
+    with pytest.raises(StringsError, match='replacement is unavailable on Linux'):
         export.write_atomic(target, b'expected export', force=True)
     assert target.read_bytes() == b'prior complete export'
-    assert (tmp_path / 'held-original').read_bytes() == b'expected export'
-    assert foreign.read_bytes() == b'foreign bytes'
-    assert len(stages) == 1 and stages[0].read_bytes() == b'foreign bytes'
-    assert stages[0].is_symlink() == (replacement == 'symlink')
+    assert list(tmp_path.iterdir()) == [target]
 
 
-@pytest.mark.skipif(not sys.platform.startswith('linux'), reason='Linux pathname race remains detectable only after rename')
-def test_final_linux_source_race_is_reported_without_deleting_foreign_bytes(tmp_path, monkeypatch):
-    """Receipt refusal is not a claim that foreign bytes were never visible."""
-    target = tmp_path / 'report.json'
-    target.write_bytes(b'prior complete export')
-    replace = os.replace
-    displaced = tmp_path / 'held-original'
-
-    def substitute(source, destination, **kwargs):
-        stage = tmp_path / source
-        stage.rename(displaced)
-        stage.write_bytes(b'foreign bytes')
-        replace(source, destination, **kwargs)
-
-    monkeypatch.setattr(os, 'replace', substitute)
-    with pytest.raises(StringsError, match='destination identity changed'):
-        export.write_atomic(target, b'expected export', force=True)
-    assert target.read_bytes() == b'foreign bytes'  # known final pathname race, not ownership qualification
-    assert displaced.read_bytes() == b'expected export'
-
-
-@pytest.mark.skipif(not sys.platform.startswith('linux'), reason='Linux linked-stage content admission')
-@pytest.mark.parametrize('boundary', ['link', 'replace'])
+@pytest.mark.skipif(not sys.platform.startswith('linux'), reason='Linux exclusive-publication content admission')
+@pytest.mark.parametrize('force', [False, True])
 @pytest.mark.parametrize('replacement', [b'foreign content', b'longer foreign bytes', b''])
-def test_force_same_inode_mutation_cannot_return_a_false_digest(tmp_path, monkeypatch, boundary, replacement):
+def test_same_inode_mutation_cannot_return_a_false_digest(tmp_path, monkeypatch, force, replacement):
     target = tmp_path / 'report.json'
-    target.write_bytes(b'prior complete export')
-    real = getattr(os, boundary)
-    stages = []
+    link = os.link
+    modified = []
 
     def mutate(source, destination, **kwargs):
-        stage = tmp_path / (destination if boundary == 'link' else source)
-        if boundary == 'link':
-            real(source, destination, **kwargs)
-        original = stage.stat()
-        stage.write_bytes(replacement)
+        assert destination == target.name
+        link(source, destination, **kwargs)
+        original = target.stat()
+        target.write_bytes(replacement)
         # Same-length content with restored mtime still requires byte verification.
-        os.utime(stage, ns=(original.st_atime_ns, original.st_mtime_ns))
-        assert stage.stat().st_ino == original.st_ino
-        stages.append(stage)
-        if boundary == 'replace':
-            real(source, destination, **kwargs)
+        os.utime(target, ns=(original.st_atime_ns, original.st_mtime_ns))
+        assert target.stat().st_ino == original.st_ino
+        modified.append(target)
 
-    monkeypatch.setattr(os, boundary, mutate)
+    monkeypatch.setattr(os, 'link', mutate)
     with pytest.raises(StringsError, match='bytes changed'):
-        export.write_atomic(target, b'expected export', force=True)
-    assert len(stages) == 1
-    if boundary == 'link':
-        assert target.read_bytes() == b'prior complete export'
-        assert stages[0].read_bytes() == replacement
-    else:
-        # Postpublication refusal cannot undo visible writes; no rollback claim.
-        assert target.read_bytes() == replacement
+        export.write_atomic(target, b'expected export', force=force)
+    assert modified == [target]
+    # Exclusive publication does not make a later external edit immutable.
+    assert target.read_bytes() == replacement
+    assert list(tmp_path.iterdir()) == [target]
 
 
 @pytest.mark.skipif(not sys.platform.startswith('linux'), reason='Linux directory-descriptor publication')
@@ -161,31 +156,29 @@ def test_force_parent_change_before_publication_preserves_both_directories(tmp_p
     assert list(moved.iterdir()) == [moved / target.name]
 
 
-@pytest.mark.skipif(not sys.platform.startswith('linux'), reason='Linux rooted final rename boundary')
+@pytest.mark.skipif(not sys.platform.startswith('linux'), reason='Linux rooted final link boundary')
 def test_force_final_parent_substitution_cannot_redirect_writes_or_cleanup(tmp_path, monkeypatch):
     parent = tmp_path / 'selected'
     parent.mkdir()
     target = parent / 'report.json'
-    target.write_bytes(b'prior complete export')
     moved = tmp_path / 'moved'
-    replace = os.replace
-    foreign_stages = []
+    link = os.link
+    foreign = parent / 'foreign'
 
     def substitute(source, destination, **kwargs):
+        assert destination == target.name
         parent.rename(moved)
         parent.mkdir()
         target.write_bytes(b'foreign destination')
-        foreign_stage = parent / os.path.basename(source)
-        foreign_stage.write_bytes(b'foreign staging bytes')
-        foreign_stages.append(foreign_stage)
-        replace(source, destination, **kwargs)
+        foreign.write_bytes(b'foreign contents')
+        return link(source, destination, **kwargs)
 
-    monkeypatch.setattr(os, 'replace', substitute)
+    monkeypatch.setattr(os, 'link', substitute)
     with pytest.raises(StringsError, match='identity changed'):
         export.write_atomic(target, b'expected export', force=True)
     assert target.read_bytes() == b'foreign destination'
-    assert foreign_stages[0].read_bytes() == b'foreign staging bytes'
-    # Replacement used the held original directory, and the receipt was refused
+    assert foreign.read_bytes() == b'foreign contents'
+    # Publication used the held original directory, and the receipt was refused
     # because that directory no longer occupies the selected path. No rollback.
     assert (moved / target.name).read_bytes() == b'expected export'
 
@@ -202,7 +195,7 @@ def test_force_missing_anonymous_staging_support_preserves_the_destination(tmp_p
     assert list(tmp_path.iterdir()) == [target]
 
 
-@pytest.mark.parametrize('boundary', ['directory_anchor', '_replace_linux'])
+@pytest.mark.parametrize('boundary', ['directory_anchor', 'publish_bytes'])
 @pytest.mark.skipif(not sys.platform.startswith('linux'), reason='Linux force dispatch')
 def test_force_unsupported_capability_is_typed_and_path_free(tmp_path, monkeypatch, boundary):
     target = tmp_path / 'report.json'
@@ -221,7 +214,8 @@ def test_force_unsupported_capability_is_typed_and_path_free(tmp_path, monkeypat
 
 
 @pytest.mark.skipif(not sys.platform.startswith('linux'), reason='Linux descriptor cleanup boundary')
-def test_force_cleanup_failure_preserves_primary_interrupt_and_closes_its_descriptor(tmp_path, monkeypatch):
+@pytest.mark.parametrize('force', [False, True])
+def test_cleanup_failure_preserves_primary_interrupt_and_closes_its_descriptor(tmp_path, monkeypatch, force):
     target = tmp_path / 'report.json'
     target.write_bytes(b'prior complete export')
     original = KeyboardInterrupt('authored interruption')
@@ -240,9 +234,9 @@ def test_force_cleanup_failure_preserves_primary_interrupt_and_closes_its_descri
     monkeypatch.setattr(os, 'fsync', interrupt)
     monkeypatch.setattr(os, 'close', close_then_fail)
     with pytest.raises(KeyboardInterrupt) as caught:
-        export.write_atomic(target, b'new export', force=True)
+        export.write_atomic(target, b'new export', force=force)
     assert caught.value is original
-    assert original.__notes__ == ['Export descriptor cleanup also failed: OSError']
+    assert original.__notes__ == ['Publication descriptor cleanup also failed: OSError']
     with pytest.raises(OSError):
         os.fstat(descriptor[0])
     assert target.read_bytes() == b'prior complete export'
@@ -250,8 +244,9 @@ def test_force_cleanup_failure_preserves_primary_interrupt_and_closes_its_descri
 
 
 @pytest.mark.skipif(not sys.platform.startswith('linux'), reason='Linux explicit cleanup exception ownership')
+@pytest.mark.parametrize('force', [False, True])
 @pytest.mark.parametrize('kind', ['io', 'interrupt', 'exit'])
-def test_successful_force_cleanup_does_not_hide_fresh_failure_behind_caller_exception(tmp_path, monkeypatch, kind):
+def test_successful_cleanup_does_not_hide_fresh_failure_behind_caller_exception(tmp_path, monkeypatch, kind, force):
     target = tmp_path / 'report.json'
     caller = ValueError('unrelated caller exception')
     failure = {'io': OSError(5, 'authored close failure'),
@@ -274,7 +269,7 @@ def test_successful_force_cleanup_does_not_hide_fresh_failure_behind_caller_exce
         raise caller
     except ValueError:
         with pytest.raises(StringsError if kind == 'io' else type(failure)) as caught:
-            export.write_atomic(target, b'new export', force=True)
+            export.write_atomic(target, b'new export', force=force)
         if kind == 'io':
             assert caught.value.code == 'PT-STR-EXPORT' and 'authored close failure' in str(caught.value)
         else:

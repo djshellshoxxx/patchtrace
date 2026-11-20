@@ -1402,3 +1402,14 @@ unchanged. Tests: `test_kb_product_start_20261106.py`,
 | timeout setup UI | src/patchtrace/ui_timeout.py | Preserved-text 10..86400-second validation, explicit 1h/2h/4h presets and inline errors for Setup; no backend execution or settings writes | PySide6, tooltip registry | tests/test_ui_timeout.py; SPEC-01a docs/specs/ghidriff-timeout-progress.md |
 
 | saved advisory scope | src/patchtrace/kbcorrelation/saved_scope.py | Pure validation of one KB/CVE search coverage identity, coherent finite selection and detectable current coverage drift; shared service/context boundary. Full-index admission remains in `index.py`; cached coverage bookkeeping does not determine claims. No storage, schema, Qt or network ownership. | contracts, sources.scope, index | tests/test_kbc_saved_scope_validation.py, test_kbc_saved_scope_flow.py, test_kbc_saved_scope_revision_identity.py |
+
+## Reviewed desktop and export consolidation — 20 November 2026
+
+| Existing module | Updated responsibility | Verification |
+| --- | --- | --- |
+| `reports.py` | Preserve outcomes when staging cleanup fails; never unlink a consumed stage | Report cleanup, backup and destination controls |
+| `gui/qt/tasks.py` | Recheck ownership after final progress; discard or park outcomes correctly | TaskRunner and maintained GUI consumers |
+| `strings/export.py`, `owned_publication.py` | Linux exclusive creation/refusal and exception-aware close; Windows replacement retained | Capability and shared publisher controls |
+| `gui/table_spec.py`, `gui/qt/table.py`, `ui_evidence.py` | Optional registered header help and host state announcements; column mapping pending | Table, tooltip and Evidence host/state tests |
+
+Evidence: [current report](engineering/session-20261120-2bad.md).

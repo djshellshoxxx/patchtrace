@@ -5,6 +5,7 @@ import csv
 import hashlib
 import io
 import json
+import sys
 import threading
 
 import pytest
@@ -140,8 +141,22 @@ def test_export_writes_atomically_and_refuses_to_clobber(root, tmp_path, capsys,
         assert metadata['scope'] == result['scope'] and len(records) == result['rows'] + 2
     code, out, _err = invoke(capsys, 'export', str(root), '--out', str(target), '--format', fmt, '--json')
     assert code == 2 and document(out)['status'] == 'failed'
-    code, _out, _err = invoke(capsys, 'export', str(root), '--out', str(target), '--format', fmt, '--force')
-    assert code == 0 and [p.name for p in tmp_path.iterdir()] == [target.name]
+    original = target.read_bytes()
+    code, out, err = invoke(capsys, 'export', str(root), '--out', str(target), '--format', fmt, '--force', '--json')
+    if sys.platform.startswith('linux'):
+        assert code == 2 and document(out)['status'] == 'failed'
+        assert 'replacement is unavailable on Linux' in err and 'choose a new destination' in err
+        assert target.read_bytes() == original
+    else:
+        assert code == 0
+    assert [p.name for p in tmp_path.iterdir()] == [target.name]
+
+
+def test_export_help_states_platform_replacement_capability(capsys):
+    assert cli.main(['strings', 'export', '--help']) == 0
+    out, _err = capsys.readouterr()
+    help_text = ' '.join(out.split())
+    assert 'replace an existing file on Windows; Linux requires a new destination' in help_text
 
 
 def test_cancelled_scan_is_exit_5(root):

@@ -256,7 +256,7 @@ results retain their admitted originating run's recorded raw provenance even
 when the cache-hit run has no raw sidecar. This amendment changes no comparison,
 cue, ranking, function-linking, export, or dock behavior.
 
-Publication has two explicit paths:
+Publication has explicit platform capabilities (2026-11-20 safety amendment):
 
 - Without `--force`, the selected parent must already exist. Publication holds the source bytes and
   the selected parent identity, creates the destination exclusively, and refuses any existing or
@@ -269,29 +269,32 @@ Publication has two explicit paths:
   `ReplaceIfExists=True`. Its default remains no-replace; forced replacement cannot be combined
   with immutable-evidence reuse. Cleanup discards only the held source handle. Native Windows
   filesystem qualification remains separate from portable call assertions.
-- With `--force`, Linux writes, flushes and verifies an anonymous source in the existing selected
-  directory, then links that exact descriptor to an unpredictable, exclusive staging name. Before
-  the final rename, verify the named source type, identity and change metadata against the held
-  descriptor; recheck the selected parent, and use held directory descriptors for both rename
-  arguments. Verify source bytes and destination identity after rename before returning success.
-  Byte verification reads at most the expected length plus one byte and checks stable metadata;
-  same-inode edits must not yield a successful receipt with an incorrect digest. The shared
-  no-replace Linux publisher performs the same byte verification after linking.
-- The Linux final check-to-rename source substitution race remains **OPEN**. The available
-  rename operation names its source rather than accepting a held source descriptor. A substitute
-  introduced after the final check can be published before the post-rename check rejects it.
-  Do not claim rollback, guaranteed prior-destination preservation for that interval, or complete
-  Linux forced-publication ownership. Ordinary forced replacement stays available; no-force
-  publication retains its stronger source-ownership contract.
+- On Linux, `--force` can create a new destination but **cannot replace an existing destination**.
+  It uses the same held-descriptor exclusive publisher as the default path. Any existing or
+  concurrently arriving name, including a regular file with identical bytes, directory, live
+  symlink or dangling symlink, is refused with `PT-STR-EXPORT`. The error directs the caller to
+  choose a new destination; it must not suggest retrying with `--force`. There is no named source
+  stage, final pathname rename, pre-deletion, rollback or destructive fallback. The CLI help
+  states that replacement is available on Windows and Linux requires a new destination.
+  This is an explicit reduction of the previously supported Linux overwrite capability, not a
+  claim that Linux gained a held-inode replacement primitive. Exporting to a new filename
+  remains available with either flag value. Byte verification still reads at most the expected
+  length plus one byte and checks stable metadata before a successful digest receipt.
+- The historical Linux final check-to-rename source substitution finding is mitigated in the
+  exported operation by refusing replacement. A compatible, strongly owned Linux replacement
+  capability remains **UNIMPLEMENTED**. Do not restore the pathname implementation, or mark
+  native/platform acceptance complete, merely because the refusal controls pass.
   The [native primitive assessment](../../engineering/linux-force-primitive-assessment-20261119.md)
   records why descriptor linking, exchange, ordinary locks, a write lease and private-directory
-  permissions did not close this interval. It is evidence of the open capability gap, not a waiver.
+  permissions did not close this interval. Its original failure evidence is retained unchanged.
 - On forced failure, close only owned descriptors and preserve the original exception if close
-  also fails. Anonymous failures leave no stage name. After the Linux source is linked, do not
-  unlink its mutable pathname: it may now name a foreign entry. A complete or modified stage
-  can remain for inspection. Windows cleanup addresses only the held source handle. Ordinary
+  also fails. The shared Linux publisher preserves this rule for both flag values. A cleanup
+  failure without an active operation failure still propagates, including when the caller is
+  handling an unrelated exception. Anonymous failures leave no stage name. After exclusive
+  publication, never unlink the destination on a later verification failure: it may now name a
+  foreign entry. Windows cleanup addresses only the held source handle. Ordinary
   I/O and unsupported-capability failures retain `PT-STR-EXPORT`; cancellation and other
-  non-I/O exceptions propagate unchanged. Successful replacement normally consumes its stage.
+  non-I/O exceptions propagate unchanged.
 
 These publication rules are independent of the encodings above and retain the redaction,
 basis, lineage and export-digest semantics. Verification includes concurrent destinations, substituted source/parent names,

@@ -420,12 +420,19 @@ def export_project(project: ComparisonProject, format: str, destination: Path, i
             os.fsync(stream.fileno())
         _keep_previous(destination, content)  # before the replace: a failed backup leaves the old file in place
         os.replace(staged, destination)
-    except OSError:
-        raise ExportError(('PT-EXPORT-IO' if v2 else 'PT-EXPORT')
-                          + ': cannot write report; check destination permissions and free space') from None
-    finally:
+    except BaseException as exc:
+        failure = (ExportError(('PT-EXPORT-IO' if v2 else 'PT-EXPORT')
+                               + ': cannot write report; check destination permissions and free space')
+                   if isinstance(exc, OSError) else exc)
         if staged is not None:
-            staged.unlink(missing_ok=True)
+            try:
+                staged.unlink(missing_ok=True)
+            except OSError:
+                failure.add_note('PT-EXPORT: temporary report cleanup failed; '
+                                 'a staging file may remain beside the destination')
+        if failure is exc:
+            raise
+        raise failure from None
     v2_fields = {} if v2 is None else {'report_version': 2, 'content_digest': v2['content_digest'],
                                        'sections': v2['sections_present'], 'redaction_profile': profile.name}
     return ExportManifest(project_id=project.id, revision=project.revision, format=format,

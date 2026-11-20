@@ -240,6 +240,15 @@ Rules:
 7. GIL [M]: a CPU-bound pure-Python worker made a 1,218-call table repaint go from 6.5 ms to 274 ms median (max 565) at the default 5 ms switch interval; GIL-releasing work (sqlite3, hashlib) did not (6.7 ms). Mitigations measured: `token.checkpoint()` sleeping 1 ms after every 2 ms of CPU work gives repaint median 11 ms, p95 20 ms at about 78% worker throughput (unthrottled p95 was 210 ms); `sys.setswitchinterval(0.001)` alone gives p95 81 ms at 73%; both together add nothing. So: heavy Python work runs in a subprocess or calls `checkpoint()` in its loop, and `runtime.install()` sets the 1 ms switch interval once as insurance.
 8. Long-lived readers (WB1's search reader owns read-only SQLite segment connections): `TaskRunner.lane(name, init, close)` starts one daemon thread whose `init()` runs on that thread, so the state never crosses threads (`sqlite3` raises `ProgrammingError` on a connection used from another thread [M]). Requests run FIFO, or latest-only with `coalesce=True`; generations, tokens, the bridge and `shutdown()` (which closes the state on the lane thread after the running request) follow rules 2-6. [M] 1,000 point queries: 149 us per request, delivered on the GUI thread (thread per task: 181 us at 300 tasks, 1.5 ms per task when 1,000 are started back to back).
 
+**Final-progress lifecycle amendment (2026-11-20):** final progress is a GUI-thread callback and can synchronously
+cancel or replace its channel, hide its panel, shut down the runner, or destroy its bridge. Before applying the
+following result or error, delivery must recheck the channel generation, runner/bridge lifetime and applying state.
+A cancelled or superseded outcome is released on the GUI thread without changing a replacement task's busy state.
+An outcome whose channel became hidden is parked until applying resumes, with its already delivered final progress
+kept at most once. A progress callback that raises must still release the undelivered event and captured callbacks.
+These rules preserve cooperative token cancellation: setting a returned token alone can still deliver a worker's
+cancelled outcome; `TaskRunner.cancel(channel)` invalidates the channel generation and drops its outcome.
+
 ### 8.6 Theming
 - `ThemeTokens` (frozen): surface, surface_alt, text, text_muted, accent, focus_ring, border, chip fills. Variants: `dark` (default; stylesheet text byte-identical to `ui.DARK_STYLE`, golden test) and `system` (no stylesheet, platform palette; follows OS light or dark only when the active style supports it [U F16]).
 - High contrast is automatic: when `styleHints().accessibility().contrastPreference() == HighContrast` (F11; `contrastPreferenceChanged` is handled) the stylesheet is removed, tokens come from `QPalette`, custom painting uses `option.palette`, chip fills are dropped and state is carried by text, glyph and border style. `PaletteChange` and `ThemeChange` re-emit `theme_changed`.

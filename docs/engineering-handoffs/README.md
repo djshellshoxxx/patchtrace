@@ -1,3 +1,7 @@
+# Current handoff — 20 November 2026, session 2bad
+
+Start with [the consolidated handoff](session-20261120-2bad.md). The task ledger is authoritative. Four reviewed repair/recovery areas are integrated; hosted/full/native qualification remains pending. All generation narratives below are historical source-specific checkpoints.
+
 Current isolated [generation 41](generation-41-20261120.md) repairs saved-index candidate component-name request type admission, distinct from g40's lead guard. A contract amendment and six repository regression cases precede the one-condition production fix. Six stand-alone algorithm controls passed; actual checkout pytest/Ruff, CI/native checks and independent review remain pending. Parent PR343 QA/Qt successes are source-specific, packaging queued. No merge or release.
 
 Current isolated [generation 40](generation-40-20261120.md) amends SPEC-31-F, tests and repairs defensive advisory source-plan lead type admission. Five malformed lead shapes (including overridden string trim) must produce typed PT-KBC-INPUT before network or workspace creation; padded legitimate text remains supported. Six standalone source-equivalent expectations passed; checked-out pytest/Ruff, native Qt and genuinely independent reviewer signoff remain pending. Parent PR343 full QA was active and not duplicated. No merge or release.

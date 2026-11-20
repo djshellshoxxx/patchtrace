@@ -73,7 +73,8 @@ def register(sub, common, handlers: dict | None = None) -> None:
     export.add_argument('--out', type=Path, required=True, metavar='FILE')
     export.add_argument('--format', choices=('json', 'csv'), required=True, dest='fmt')
     export.add_argument('--scope', choices=('changed', 'all'), default='changed')
-    export.add_argument('--force', action='store_true', help='replace an existing file')
+    export.add_argument('--force', action='store_true',
+                        help='replace an existing file on Windows; Linux requires a new destination')
 
 
 @dataclass

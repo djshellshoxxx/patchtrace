@@ -1,3 +1,16 @@
+## Current authoritative continuation — 20 November 2026
+
+- [x] Recover reviewed report and accessibility donor slices.
+- [x] Repair and independently review TaskRunner final-progress ownership and Linux replacement refusal.
+- [x] Refresh the 354-branch census; retain histories and failures.
+- [x] Bind isolated test subprocesses to the current checkout.
+- [ ] Obtain final-source hosted QA, repeated Qt and native/package results; local aggregate runs remain incomplete.
+- [ ] Assign registered help IDs to appropriate table columns; verify native screen-reader behavior.
+- [ ] Continue semantic review of 181 unmatched and 16 patch-equivalent-but-unreviewed heads.
+- [ ] Resolve remaining provenance, native Qt, Windows trust/manual and separate accuracy gates.
+
+Use [the authoritative ledger](../docs/engineering/task-ledger.json) and [current handoff](../docs/engineering-handoffs/session-20261120-2bad.md). Older generation lists below are historical.
+
 ## Generation 40 — advisory source-plan input validation (2026-11-20)
 
 - [ ] On supported checkout verify new six `test_kb_online_investigation_20261105.py` cases and neighboring offline source/UI tests.

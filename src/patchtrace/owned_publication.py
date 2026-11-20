@@ -365,13 +365,23 @@ def _reuse(reader: Callable[[], bytes], require_existing: bool) -> bool:
         return False
 
 
+def _close_owned(descriptor: int, primary: BaseException | None) -> None:
+    """Close exactly this descriptor without replacing an active operation failure."""
+    try:
+        os.close(descriptor)
+    except BaseException as exc:
+        if primary is None:
+            raise
+        primary.add_note(f'Publication descriptor cleanup also failed: {type(exc).__name__}'[:160])
+
+
 def publish_linux(target: Path, data: bytes, *, validate_existing: Callable[[bytes], None] | None = None,
                   maximum: int = 0, require_existing: bool = False,
                   stage_writer: Callable[[int, bytes], Any] | None = None,
                   anchor: DirectoryAnchor | None = None) -> bool:
     with ExitStack() as stack:
         parent = linux_directory(target.parent, create=not require_existing, anchor=anchor)
-        stack.callback(os.close, parent)
+        stack.push(lambda _type, error, _trace: _close_owned(parent, error))
         def read_existing() -> bytes:
             return _read_linux(target, parent, maximum, validate_existing, anchor)
 
@@ -381,7 +391,7 @@ def publish_linux(target: Path, data: bytes, *, validate_existing: Callable[[byt
             raise OwnedPublicationError('safe publication requires Linux anonymous staging support')
         # There is no staging pathname to replace or to unlink on failure.
         fd = os.open('.', os.O_TMPFILE | os.O_RDWR | os.O_CLOEXEC, 0o600, dir_fd=parent)
-        stack.callback(os.close, fd)
+        stack.push(lambda _type, error, _trace: _close_owned(fd, error))
         identity = (stage_writer or write_stage)(fd, data)
         check_linux_parent(target.parent, parent, anchor=anchor)
         try:

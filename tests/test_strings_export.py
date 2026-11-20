@@ -4,6 +4,7 @@ from __future__ import annotations
 import csv
 import io
 import json
+import sys
 
 import pytest
 from test_strings_delta import PAIRING, sha, table
@@ -71,8 +72,13 @@ def test_never_overwrites_without_force(delta, tmp_path):
     with pytest.raises(StringsError) as raised:
         export.export_delta(delta, target, fmt='json')
     assert raised.value.code == 'PT-STR-EXPORT' and read(target) == 'precious'
-    export.export_delta(delta, target, fmt='json', force=True)
-    assert json.loads(read(target))['contract'] == 'strings-export/1'
+    if sys.platform.startswith('linux'):
+        with pytest.raises(StringsError, match='replacement is unavailable on Linux'):
+            export.export_delta(delta, target, fmt='json', force=True)
+        assert read(target) == 'precious'
+    else:
+        export.export_delta(delta, target, fmt='json', force=True)
+        assert json.loads(read(target))['contract'] == 'strings-export/1'
 
 
 def test_failed_no_force_write_leaves_no_partial_file(delta, tmp_path, monkeypatch):

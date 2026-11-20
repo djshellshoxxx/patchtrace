@@ -11,6 +11,7 @@ patchtrace strings export ...    # write the delta to a JSON or CSV file (redact
 ```
 
 - Strings that look like secrets are redacted unless you pass `--show-secrets`.
+- Export to a new filename to preserve an existing report. On Linux, an existing or concurrently created destination is refused even with `--force`; the command returns an error and leaves that destination intact. On Windows, `--force` requests replacement through the held-source publisher.
 - Compare the extraction settings of both sides before you call a string added or removed. Incompatible settings leave the comparison unknown.
 - A string in a file is not proof that a function uses it.
 

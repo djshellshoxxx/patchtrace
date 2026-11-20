@@ -113,6 +113,10 @@ One **Strings** tab/dock, ideally shared with Search and Call Graph, not another
 
 Proposed `patchtrace strings probe --json`, `patchtrace strings scan PROJECT --side both --floss-bin PATH --json`, `patchtrace strings list PROJECT --status only-newer --json`, `patchtrace strings export PROJECT --format json --redact --json`. CLI registration must preserve current commands and exit semantics. If SPEC-29 lands its own `intel-tools` command first, use `patchtrace intel-tools ...` as the *canonical execution verb* and keep `strings` for read-only viewing/delta: there must not be two independent execution paths. All commands are offline by default.
 
+The implemented export publication contract is maintained in [WB3 File publication](../program-e/WB3-integration-plan.md#file-publication).
+Linux requires a new destination even with `--force`; Windows retains explicit held-source replacement.
+An existing Linux destination is refused with `PT-STR-EXPORT`, preserving its contents.
+
 ## 9. TDD and acceptance
 
 Tests `test_floss_probe.py`, `test_floss_results_contract.py`, `test_string_delta.py`, `test_strings_search_index.py`, `test_strings_ui.py`, `test_floss_cli.py`.

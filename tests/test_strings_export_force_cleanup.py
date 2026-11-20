@@ -1,4 +1,4 @@
-"""Forced failures discard anonymous/held sources and retain mutable Linux stage names."""
+"""Forced failures close anonymous/held sources and preserve unrelated pathnames."""
 from __future__ import annotations
 
 import os
@@ -11,42 +11,42 @@ from patchtrace.strings.contracts import StringsError
 
 
 @pytest.mark.parametrize('prior_target', [False, True], ids=['new-target', 'prior-export'])
-@pytest.mark.parametrize('substitute', [False, True], ids=['owned-stage', 'foreign-replacement'])
-@pytest.mark.skipif(not sys.platform.startswith('linux'), reason='Linux linked-stage rename boundary')
-def test_force_io_failure_preserves_stage_and_previous_target(tmp_path, monkeypatch, prior_target, substitute):
+@pytest.mark.parametrize('foreign_entry', [False, True], ids=['no-foreign-entry', 'foreign-entry'])
+@pytest.mark.skipif(not sys.platform.startswith('linux'), reason='Linux exclusive-link boundary')
+def test_force_io_failure_preserves_prior_target_and_foreign_entry(tmp_path, monkeypatch, prior_target, foreign_entry):
     target = tmp_path / 'report.json'
     if prior_target:
         target.write_bytes(b'prior complete export')
-    owned = tmp_path / 'moved-owned-stage'
-    stages = []
-    real_replace = os.replace
+    foreign = tmp_path / '.report.foreign.tmp'
+    descriptors = []
 
-    def refuse(stage, destination, **kwargs):
-        stage = tmp_path / stage
-        assert tmp_path / destination == target
-        assert kwargs['src_dir_fd'] == kwargs['dst_dir_fd']
-        stages.append(stage)
-        if substitute:
-            real_replace(stage, owned)
-            stage.write_bytes(b'foreign replacement bytes')
-        raise OSError(13, 'authored replacement refusal')
+    def refuse(source, destination, **kwargs):
+        assert destination == target.name and kwargs['follow_symlinks'] is True
+        descriptor = int(str(source).rsplit('/', 1)[-1])
+        assert os.fstat(descriptor).st_nlink == 0
+        descriptors.append(descriptor)
+        if foreign_entry:
+            foreign.write_bytes(b'foreign contents')
+        raise OSError(13, 'authored publication refusal')
 
-    monkeypatch.setattr(export.os, 'replace', refuse)
+    monkeypatch.setattr(export.os, 'link', refuse)
     with pytest.raises(StringsError) as caught:
         export.write_atomic(target, b'expected export bytes', force=True)
     assert caught.value.code == 'PT-STR-EXPORT'
-    assert 'authored replacement refusal' in caught.value.message
+    assert 'authored publication refusal' in caught.value.message
     assert str(tmp_path) not in caught.value.message
-    assert len(stages) == 1
+    assert len(descriptors) == 1
+    with pytest.raises(OSError):
+        os.fstat(descriptors[0])
     if prior_target:
         assert target.read_bytes() == b'prior complete export'
     else:
         assert not target.exists()
-    assert stages[0].read_bytes() == (b'foreign replacement bytes' if substitute else b'expected export bytes')
-    if substitute:
-        assert owned.read_bytes() == b'expected export bytes'
-    elif os.name != 'nt':
-        assert stages[0].stat().st_mode & 0o777 == 0o600
+    expected = {target} if prior_target else set()
+    if foreign_entry:
+        assert foreign.read_bytes() == b'foreign contents'
+        expected.add(foreign)
+    assert set(tmp_path.iterdir()) == expected
 
 
 @pytest.mark.parametrize('error_type', [OSError, KeyboardInterrupt, RuntimeError])

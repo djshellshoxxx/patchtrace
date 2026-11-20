@@ -1,7 +1,7 @@
 {
   "schema": "patchtrace-feature-status/1",
-  "updated_at": "2026-11-20T18:17:25+00:00",
-  "checkpoint_local_commit": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
+  "updated_at": "2026-11-20T23:55:22.940937+00:00",
+  "checkpoint_local_commit": "1d0f60f3004db9e32f314518d5be661b85ef4d71",
   "release_ready": false,
   "features": [
     {
@@ -86,21 +86,22 @@
         "docs/engineering/strings-shutdown-independent-review-20261120.md",
         "docs/engineering/generation33-qualification-20261120.md"
       ],
-      "latest_verified_scope": "Search cancellation and Strings shutdown independently reviewed. Final 606-case maintained selection includes both plus receipt identity, stored-source binding, destination admission and cache diagnostics. Full/native/manual gates remain separate.",
+      "latest_verified_scope": "TaskRunner progress ownership repaired; Evidence announcements connected; header-help framework recovered. Per-column IDs and native screen-reader qualification remain open.",
       "historical_qualification_notes": "Original unsplit suite ended SIGKILL with two failure markers. The separately verified harness ownership repair retains all thresholds. Current-source full suite, native Windows, accessibility and manual desktop gates remain. Generation-24 actual source-pinned repository pytest/Ruff, hosted Linux/Windows QA, Qt/native/package, and genuinely independent review remain pending; this is not an empirical accuracy claim or Linux forced-export race fix."
     },
     {
       "feature": "Reports and exports",
       "status": "partial",
       "implemented": "Structured reporting; held-source publication safeguards; CSV v2 metadata survives empty exports; cohort and repeated-project confidence reporting corrected.",
-      "remaining": "Final Linux forced replacement source-name race and native publication acceptance remain open. No new empirical accuracy evidence is claimed. Corrected g35 control-character fixtures need source-pinned pytest and separate reviewer before parent integration.",
+      "remaining": "Strong Linux overwrite unavailable. Final-source hosted/full/native publication gates pending; no universal spreadsheet-client or empirical accuracy claim.",
       "evidence": [
         "docs/engineering/security-force-recovery-20261119.md",
         "docs/engineering/strings-csv-peer-review.md",
         "docs/engineering/accuracy-peer-review-20261119.md",
         "docs/engineering-handoffs/generation-34-20261120.md"
       ],
-      "latest_verified_scope": "Linked-worktree receipt identity and current-artifact/cache-origin Strings binding are independently reviewed and included in the 606-case final selection. Forced-export race remains unresolved. Separate generation34 Strings CSV prefix protection has ten authored tests and ten source-equivalent local checks, not repository-source acceptance; all newer-head/independent and publication gates remain open. Independent generation35 review found five misencoded g34 CSV test literals; isolated g35 test-only fix has 13/13 source-equivalent stdlib controls, with actual repository tests, Ruff, full/native and independent post-fix acceptance pending."
+      "latest_verified_scope": "Report cleanup outcomes preserved; Linux unsafe overwrite removed and Windows replacement retained. Existing CSV-prefix controls now have source-pinned focused repository evidence.",
+      "previous_remaining_snapshot": "Final Linux forced replacement source-name race and native publication acceptance remain open. No new empirical accuracy evidence is claimed. Corrected g35 control-character fixtures need source-pinned pytest and separate reviewer before parent integration."
     },
     {
       "feature": "Performance",
@@ -115,20 +116,22 @@
       "feature": "Release qualification",
       "status": "blocked",
       "implemented": "Focused code repairs and reviews provide bounded evidence only.",
-      "remaining": "Exact final-head full QA/Qt/package/native acceptance, native Qt disposition, Linux forced-export race, full raw-input membership, Windows trust/manual and separate accuracy gates remain open.",
+      "remaining": "Final-source hosted QA/Qt/package/native, unexplained local SIGKILL, Qt disposition, complete raw-input membership, Windows trust/manual/accessibility and separate accuracy gates remain. Linux race mitigated by refusal.",
       "evidence": [
         "docs/engineering/generation3-qualification-review.md",
         "docs/engineering/generation33-qualification-20261120.md"
       ],
       "latest_verified_scope": "bbdef5a6 passes 606 affected cases with 1 native Windows skip; Ruff/dependencies/whitespace pass. Original full-suite SIGKILL and native java=unverified gate remain open. Bounded diagnostic retention has independent fake-based acceptance, not native acceptance.",
-      "historical_qualification_notes": "Incomplete full-suite qualification; native Qt disposition; remaining Linux forced-source race; Windows/trust/clean-machine/native and layer-specific accuracy gates remain. PR339 Linux/Windows pytest and Qt successes were not combined acceptance because Ruff I001 failed; generation29 corrected source remains unqualified pending own hosted gates and review."
+      "historical_qualification_notes": "Incomplete full-suite qualification; native Qt disposition; remaining Linux forced-source race; Windows/trust/clean-machine/native and layer-specific accuracy gates remain. PR339 Linux/Windows pytest and Qt successes were not combined acceptance because Ruff I001 failed; generation29 corrected source remains unqualified pending own hosted gates and review.",
+      "previous_remaining_snapshot": "Exact final-head full QA/Qt/package/native acceptance, native Qt disposition, Linux forced-export race, full raw-input membership, Windows trust/manual and separate accuracy gates remain open."
     }
   ],
-  "current_handoff": "docs/engineering-handoffs/generation-40-20261120.md",
+  "current_handoff": "docs/engineering-handoffs/session-20261120-2bad.md",
   "generation36_note": "Isolated, test-only cross-column Strings CSV regression extension: source-level review found prior 13 cases checked display only; two additional parameterized cases guard cues, functions, lineage_groups, reasons and assert JSON remains unchanged. Two stand-alone source-equivalent controls passed, repository pytest/Ruff and external independent review pending. PR342 source-specific native/live/Linux QA success does not qualify g36 or erase initial native cache failure.",
   "generation37_note": "Evidence-only successor parsed PR342 exact-head successful Windows native raw-cache artifact: both Java 25.0.5 probes returned 0, raw hashes matched, second run contains cache-origin and recorded reuse, acceptance result passed. Original 5cc java=unverified failure remained without diagnostic artifact and unexplained; no runtime/cache rule change or release gate closure. G36 CSV tests remain independent, unqualified.",
   "generation38_note": "Exact PR342 Windows Qt 5x repeat shard failed 2 investigation project create waitUntil timeouts after 10,423 passed. Generation38 isolated test-only diagnostics preserve original 10000ms and cause while recording safe pending operation/worker busy/flags. Four regression cases authored; seven synthetic controls pass, not native Qt/repository source. A review-found unhashable operation masking path was corrected. Full QA/Ruff and independent post-change review pending; original failure and release blockers retained.",
   "generation39_note": "Isolated direct KB/CVE investigation Create destination now refuses observed final-component Windows junctions before resolution, distinct from previously integrated acquisition guard. Four regression functions authored; one native empty-target fixture corrected to expose the original defect. Three source-equivalent controls passed, not repository checkout pytest/Ruff, native Windows or independent review. PR343 full QA remains in progress and no duplicate suite started. No parent path/TOCTOU/forced-export closure; no release promotion.",
   "generation40_note": "Unqualified isolated source-plan input type guard: SPEC/test before runtime; five malformed captured lead types including adversarial str subclass now PT-KBC-INPUT before network/workspace, valid whitespace text still accepted. Five old algorithm mismatches and six stand-alone source-equivalent expectations; actual repo pytest/Ruff, independent review, native/Qt and release gates remain pending. Parent PR343 CI active.",
-  "generation41_note": "Isolated source-plan-adjacent candidate basename type admission fix: invalid null/number/bytes/custom strip or overridden-str inputs now typed PT-KBC-INPUT before index lookup. Contract and 6 authored cases; 6 hand-copied Python controls passed only. Actual checked-out pytest, Ruff, hosted source qualification and independent signoff pending; no provenance/accuracy gain claimed."
+  "generation41_note": "Isolated source-plan-adjacent candidate basename type admission fix: invalid null/number/bytes/custom strip or overridden-str inputs now typed PT-KBC-INPUT before index lookup. Contract and 6 authored cases; 6 hand-copied Python controls passed only. Actual checked-out pytest, Ruff, hosted source qualification and independent signoff pending; no provenance/accuracy gain claimed.",
+  "authoritative_task_ledger": "docs/engineering/task-ledger.json"
 }

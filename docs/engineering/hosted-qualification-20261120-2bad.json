@@ -1,0 +1,457 @@
+{
+  "schema": "patchtrace-hosted-qualification/1",
+  "observed_at": "2026-11-20T23:36:29Z",
+  "coordinator_source": "84798a04da9bc6a823b4b2d7802ea08a322c5367",
+  "source_qualified_by_this_review": false,
+  "pr344": {
+    "head": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+    "base": "371b067068da3c4898ebb7b6eae5d0dd13ebea00",
+    "draft": true,
+    "merged": false,
+    "actual_native_checkout": "bb66f1de2a7de3dd4623ae472890411cdabdb1f7",
+    "head_tree": "0ba9b19fd69cc4c6ec59938e5d99d7628f0a53ca",
+    "checkout_tree": "0ba9b19fd69cc4c6ec59938e5d99d7628f0a53ca",
+    "tree_equality_verified": true,
+    "qa": {
+      "run_id": 44835855059,
+      "jobs": [
+        {
+          "id": 136631954709,
+          "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+          "status": "in_progress",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44835855059/job/136631954709"
+        },
+        {
+          "id": 136631954851,
+          "name": "qa (ubuntu-latest)",
+          "status": "queued",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44835855059/job/136631954851"
+        },
+        {
+          "id": 136631954922,
+          "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+          "status": "in_progress",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44835855059/job/136631954922"
+        },
+        {
+          "id": 136631954959,
+          "name": "qt-gate (windows-latest, 5, 1/1)",
+          "status": "in_progress",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44835855059/job/136631954959"
+        },
+        {
+          "id": 136631955050,
+          "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+          "status": "queued",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44835855059/job/136631955050"
+        },
+        {
+          "id": 136631955131,
+          "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+          "status": "queued",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44835855059/job/136631955131"
+        },
+        {
+          "id": 136631955235,
+          "name": "qa (windows-latest)",
+          "status": "queued",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44835855059/job/136631955235"
+        },
+        {
+          "id": 136631956937,
+          "name": "release-gate",
+          "status": "completed",
+          "conclusion": "skipped",
+          "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44835855059/job/136631956937"
+        }
+      ]
+    },
+    "native": {
+      "run_id": 44835855078,
+      "jobs": [
+        {
+          "id": 136631954576,
+          "name": "native (patchtrace-seeded-store)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44835855078/job/136631954576"
+        },
+        {
+          "id": 136631954930,
+          "name": "native (raw-cache-hit)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44835855078/job/136631954930"
+        },
+        {
+          "id": 136631955027,
+          "name": "native (patchtrace-clean)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44835855078/job/136631955027"
+        },
+        {
+          "id": 136631955030,
+          "name": "native (repro-plain-ghidriff)",
+          "status": "queued",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44835855078/job/136631955030"
+        },
+        {
+          "id": 136631955244,
+          "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+          "status": "queued",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44835855078/job/136631955244"
+        }
+      ]
+    }
+  },
+  "pr343": {
+    "head": "1c60d91ab1d2038ba481d21d58611137f21b8454",
+    "base": "fc641a97846c03ebdbf70b5c8248e5685e4853b2",
+    "draft": true,
+    "merged": false,
+    "qa": {
+      "run_id": 44810716926,
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 136546262952,
+          "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44810716926/job/136546262952"
+        },
+        {
+          "id": 136546263164,
+          "name": "qa (windows-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44810716926/job/136546263164"
+        },
+        {
+          "id": 136546263234,
+          "name": "qa (ubuntu-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44810716926/job/136546263234"
+        },
+        {
+          "id": 136546263279,
+          "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44810716926/job/136546263279"
+        },
+        {
+          "id": 136546263391,
+          "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44810716926/job/136546263391"
+        },
+        {
+          "id": 136546263476,
+          "name": "qt-gate (windows-latest, 5, 1/1)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44810716926/job/136546263476"
+        },
+        {
+          "id": 136546263500,
+          "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44810716926/job/136546263500"
+        },
+        {
+          "id": 136546265293,
+          "name": "release-gate",
+          "status": "completed",
+          "conclusion": "skipped",
+          "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44810716926/job/136546265293"
+        },
+        {
+          "id": 136606995381,
+          "name": "linux-package",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44810716926/job/136606995381"
+        },
+        {
+          "id": 136626004249,
+          "name": "linux-smoke (ubuntu-24.04)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44810716926/job/136626004249"
+        },
+        {
+          "id": 136626004286,
+          "name": "linux-smoke (ubuntu-22.04)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44810716926/job/136626004286"
+        },
+        {
+          "id": 136631114255,
+          "name": "release",
+          "status": "completed",
+          "conclusion": "skipped",
+          "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44810716926/job/136631114255"
+        }
+      ]
+    },
+    "windows_qa_steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1
+      },
+      {
+        "name": "Run actions/checkout@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 2
+      },
+      {
+        "name": "Run actions/setup-python@v5",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3
+      },
+      {
+        "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 4
+      },
+      {
+        "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5
+      },
+      {
+        "name": "Run python -m pip check",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 6
+      },
+      {
+        "name": "protobuf equals the pin and runs the upb backend (SPEC-10b)",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7
+      },
+      {
+        "name": "Native pair-publication boundary controls",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8
+      },
+      {
+        "name": "Run python -m pytest -q --junitxml=qa-results.xml",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9
+      },
+      {
+        "name": "Run python -m ruff check src tests tools",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 10
+      },
+      {
+        "name": "BinExport worker memory cap measurement (SPEC-10b U7, non-gating)",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 11
+      },
+      {
+        "name": "Run python tools/build_windows.py",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 12
+      },
+      {
+        "name": "Frozen EXE headless smoke (A1-A4) and self-test",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 13
+      },
+      {
+        "name": "Extract and run portable Windows ZIP outside checkout",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 14
+      },
+      {
+        "name": "Install pinned NSIS compiler",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 15
+      },
+      {
+        "name": "Build per-user Windows installer",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 16
+      },
+      {
+        "name": "Install, launch, and uninstall the setup package",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 17
+      },
+      {
+        "name": "Record this matrix leg's own result for the release notes",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 18
+      },
+      {
+        "name": "Run actions/upload-artifact@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 19
+      },
+      {
+        "name": "Run actions/upload-artifact@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 20
+      },
+      {
+        "name": "Post Run actions/setup-python@v5",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 39
+      },
+      {
+        "name": "Post Run actions/checkout@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 40
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 41
+      }
+    ]
+  },
+  "raw_cache_artifact": {
+    "id": 14678947527,
+    "name": "native-static-acceptance-raw-cache-hit",
+    "size_in_bytes": 2950,
+    "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14678947527",
+    "archive_download_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14678947527/zip",
+    "expired": false,
+    "created_at": "2026-11-20T23:31:36Z",
+    "expires_at": "2027-02-18T23:18:49Z",
+    "updated_at": "2026-11-20T23:31:36Z",
+    "digest": "sha256:3209f24adcdf74cf1a82bca50e6490bfb39874e960c2ae7c7d19e26c9b3d9e88",
+    "workflow_run": {
+      "id": 44835855078,
+      "repository_id": 1413730581,
+      "head_repository_id": 1413730581,
+      "head_branch": "codex/patchtrace-candidate-component-type-20261120-g41",
+      "head_sha": "67f7e08ea9bee61653f8ab5ad66048d3e7141810"
+    }
+  },
+  "raw_cache_log_excerpt": [
+    "2026-11-20T23:29:23.4358335Z HEAD is now at bb66f1d Merge 67f7e08ea9bee61653f8ab5ad66048d3e7141810 into 371b067068da3c4898ebb7b6eae5d0dd13ebea00",
+    "2026-11-20T23:31:35.7656086Z Raw cache hit verified: sha256 f244a0e2bb1862bd..., 1 matches identical"
+  ],
+  "historical_failures": [
+    {
+      "head": "5cc3f2a540f2e49e8b86e20decf7d4f62ce89d0a",
+      "run_id": 44770501981,
+      "job_id": 136406567877,
+      "error": "second run was not a cache hit; java=unverified",
+      "diagnostic_artifact_retained": false,
+      "cause": "unestablished"
+    },
+    {
+      "head": "5f34fb57267637b986814ddc81dba11550992fff",
+      "run_id": 44781838172,
+      "job_id": 136446431330,
+      "error": "two investigation-dialog create waits timed out at the original 10000 ms limit",
+      "cause": "unestablished"
+    }
+  ],
+  "limits": [
+    "Read-only GitHub connector snapshot; no dispatch, rerun, merge, release or deployment.",
+    "PR343 and PR344 evidence does not qualify later coordinator source84798a04.",
+    "First-page workflow lists contain 12, 8 and 5 jobs; future downstream jobs are not assumed completed.",
+    "Run-summary queued states conflicted with completed/running jobs; preserve job states without promoting the overall run.",
+    "Successful cache diagnostics do not reconstruct the original failed Java probe.",
+    "Manual Windows trust/clean-machine/accessibility, historical full-suite termination, independent accuracy layers and raw provenance gates remain separate."
+  ],
+  "raw_cache_verified": {
+    "archive_sha256": "3209f24adcdf74cf1a82bca50e6490bfb39874e960c2ae7c7d19e26c9b3d9e88",
+    "archive_base64": "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",
+    "entries_sha256": {
+      "live-cache-diagnostics/first.json": "7e9a27766fc2ae6345b95c39205c962b88bfc6f26f58de6dfc6d37b9b1c7890e",
+      "live-cache-diagnostics/result.json": "641dac5aba235a8a2125c49f86f254ca1029999f07af0e3aa5a98692322fc4d6",
+      "live-cache-diagnostics/second.json": "c2217553ef2f146282acecab944c06c2af14cb4388690b84655597ed62aa487d"
+    },
+    "first_and_second_raw_sha256": "f244a0e2bb1862bd366309a24544d41df895f47bda56eaadcc2760f627f6bb82",
+    "first_match_count": 1,
+    "second_match_count": 1,
+    "first_java_probe": {
+      "executable": "C:\\hostedtoolcache\\windows\\Java_Temurin-Hotspot_jdk\\25.0.5-8.0\\x64\\bin\\java.exe",
+      "argument": "-version",
+      "timeout_seconds": 15,
+      "returncode": 0,
+      "reason": null,
+      "log_tail": "openjdk version \"25.0.5\" 2026-10-20 LTS\r\nOpenJDK Runtime Environment Temurin-25.0.5+8 (build 25.0.5+8-LTS)\r\nOpenJDK 64-Bit Server VM Temurin-25.0.5+8 (build 25.0.5+8-LTS, mixed mode, sharing)\r\n",
+      "elapsed_seconds": 1.5929999999999893
+    },
+    "second_java_probe": {
+      "executable": "C:\\hostedtoolcache\\windows\\Java_Temurin-Hotspot_jdk\\25.0.5-8.0\\x64\\bin\\java.exe",
+      "argument": "-version",
+      "timeout_seconds": 15,
+      "returncode": 0,
+      "reason": null,
+      "log_tail": "openjdk version \"25.0.5\" 2026-10-20 LTS\r\nOpenJDK Runtime Environment Temurin-25.0.5+8 (build 25.0.5+8-LTS)\r\nOpenJDK 64-Bit Server VM Temurin-25.0.5+8 (build 25.0.5+8-LTS, mixed mode, sharing)\r\n",
+      "elapsed_seconds": 0.0619999999999834
+    },
+    "second_cache_origin": {
+      "key": "d9232073bb5b7000c91c5148c9550b94fa86c573adfebbd353a616de5edd242d",
+      "created": "2026-11-20T23:31:35.272390+00:00"
+    },
+    "second_events": [
+      {
+        "stage": "preflight",
+        "message": "Checking copied input hashes and external analysis runtime"
+      },
+      {
+        "stage": "cache",
+        "message": "raw output reused from cache"
+      },
+      {
+        "stage": "completed",
+        "message": "Raw static analysis saved; normalization is ready"
+      }
+    ],
+    "acceptance": {
+      "contract": "native-cache-diagnostics/1",
+      "phase": "acceptance",
+      "status": "passed"
+    },
+    "first_events_omitted": 19,
+    "second_events_omitted": 0
+  }
+}

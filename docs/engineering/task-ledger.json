@@ -1,24 +1,19 @@
 {
   "schema": "patchtrace-engineering-task-ledger/1",
-  "updated_at": "2026-11-20T18:17:25+00:00",
+  "updated_at": "2026-11-20T23:55:22.940937+00:00",
   "repository": "https://github.com/djshellshoxxx/PatchTrace",
-  "integration_branch": "codex/patchtrace-verified-integration-20261120-g30",
-  "checkpoint_local_commit": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
-  "starting_candidate": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+  "integration_branch": "codex/autonomous-consolidation-20261120-2bad",
+  "checkpoint_local_commit": "1d0f60f3004db9e32f314518d5be661b85ef4d71",
+  "starting_candidate": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
   "main_at_discovery": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
   "remote_publication": {
-    "status": "published-draft-with-final-reviewed-source",
-    "pull_request": 342,
-    "url": "https://github.com/djshellshoxxx/PatchTrace/pull/342",
-    "branch": "codex/patchtrace-verified-integration-20261120-g30",
-    "base_branch": "codex/patchtrace-qa-ruff-imports-20261120-g29",
-    "base_commit": "6c8b33b851a22fb16d39b31693922359cd34ad12",
-    "initial_remote_commit": "5cc3f2a540f2e49e8b86e20decf7d4f62ce89d0a",
-    "initial_local_commit": "9fdb02abd3ec9353102ce4fe5df30f953d290d14",
-    "initial_tree": "559c18105a2a79960811f4f6f2c011c0bf15cc7c",
-    "initial_tree_equality_verified": true,
-    "reviewed_runtime_test_tool_checkpoint": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
-    "latest_head_rule": "Resolve live PR342; its current body and publication commit contain the final local/remote tree mapping. This record does not assign the initial head to later source."
+    "status": "reviewable-consolidation-candidate",
+    "branch": "codex/autonomous-consolidation-20261120-2bad",
+    "base_branch": "codex/patchtrace-candidate-component-type-20261120-g41",
+    "base_commit": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+    "head_rule": "Resolve the live branch and matching draft PR. Its body records exact local/remote tree equality.",
+    "publication_transport": "connected GitHub Git Data API; CLI push has no credentials",
+    "history_bundle": "docs/engineering/evidence/session-20261120-2bad-history.bundle"
   },
   "release_ready": false,
   "main_merge_eligible": false,
@@ -47,17 +42,19 @@
     "Generation38: PR342 exact source Windows Qt shard job 136446431330 failed two real investigation create timeout cases after 10,423 passes; 10-second wait still strict. A source-level diagnostic review found a non-string/unhashable operation could mask the timeout; regression and type gate repaired. Test-only g38 adds bounded operation/runner-busy/lifecycle context with original exception as cause and 4 source regressions; 7 synthetic local controls passed. Windows native root cause not yet known, full/CI/independent review pending. Do not mark QA combined success or rerun blindly.",
     "Generation39 isolated direct KB investigation Create route from PR343 source: unlike the already integrated acquisition guard, _new_destination checked is_symlink but not is_junction before resolve/empty-target check. SPEC and portable/native regression tests precede one-condition fix. Initial Windows native case was strengthened to use empty target (original code would otherwise refuse for unrelated nonempty content). Three local source-equivalent conditions passed, not actual repo pytest/Ruff or Windows. PR343 CI still active; independent review and full gates pending.",
     "Generation40 isolated source-plan admission on g39: _source_plan previously called lead.strip without runtime type check. Non-text types caused uncaught exceptions or invalid normalization; exact type gate returns PT-KBC-INPUT before network/workspace. SPEC-first, six repository test cases authored (five invalid including overridden subclass, one valid text). Six standalone source-equivalent expectations passed only; full checked-out tests/Ruff, CI and separate review pending. PR343 workflow active; no duplicate suite.",
-    "Generation41: offline saved-index candidate component_name.strip() was unguarded; null/integer raised AttributeError, non-text .strip objects could bypass a typed request boundary. SPEC-31-F, 6 regression cases and exact-str guard committed in isolated branch. Hand-copied algorithm controls only; checkout pytest/Ruff, source CI and independent signoff pending. No predecessor or main ref moved."
+    "Generation41: offline saved-index candidate component_name.strip() was unguarded; null/integer raised AttributeError, non-text .strip objects could bypass a typed request boundary. SPEC-31-F, 6 regression cases and exact-str guard committed in isolated branch. Hand-copied algorithm controls only; checkout pytest/Ruff, source CI and independent signoff pending. No predecessor or main ref moved.",
+    "Current session distinguishes completed selections from interrupted runs. Missing summaries and dot counts are not passes. This ledger is authoritative; prior generation narratives retain historical source-specific claims."
   ],
   "tasks": [
     {
       "id": "reference-census",
       "status": "completed-snapshot",
-      "owner": "archaeology",
+      "owner": "root and completed independent workers",
       "source_commit": "52fa66e063689a790ea986f3ace5d7883efa2165",
       "evidence": "docs/engineering/consolidation-inventory-20261120-g30.json",
-      "result_or_next_action": "341 branches, 330 PRs, 59 tags/releases enumerated; all 330 PR head objects fetched. 146 branches contained by ancestry, 16 patch-equivalent with unreviewed semantics, one specifically equivalent (#323), 176 unknown. No deletion authorized.",
-      "snapshot_note": "Frozen 341-branch / 330-PR observation predates PR342 publication; all 671 recorded branch/PR SHAs resolve. Classification is not full semantic verification."
+      "result_or_next_action": "354 remote branches; 59 tags. 128 topic heads in main, 27 additional candidate ancestors, 16 patch-equivalent with semantics unreviewed, 181 unmatched, plus main/current. 13 new names since g30; no earlier recorded head moved. Local report/accessibility donors additionally recovered.",
+      "snapshot_note": "Frozen 341-branch / 330-PR observation predates PR342 publication; all 671 recorded branch/PR SHAs resolve. Classification is not full semantic verification.",
+      "latest_evidence": "docs/engineering/session-20261120-2bad.md"
     },
     {
       "id": "manifest-dtd",
@@ -93,11 +90,12 @@
     },
     {
       "id": "strings-publication",
-      "status": "partially-repaired",
-      "owner": "security + root",
+      "status": "reviewed-mitigated-by-refusal",
+      "owner": "root and completed independent workers",
       "source_commit": "c9fd0779",
       "evidence": "docs/engineering/security-force-recovery-20261119.md",
-      "result_or_next_action": "264 affected passes/three native skips; final Linux named-source replacement interval remains open."
+      "result_or_next_action": "Linux both force values create exclusively and preserve existing destinations; Windows replacement retained. Strong Linux overwrite unavailable. Independent review passed; final hosted/native gates pending.",
+      "latest_evidence": "docs/engineering/session-20261120-2bad.md"
     },
     {
       "id": "profile-drafts",
@@ -157,11 +155,11 @@
     },
     {
       "id": "combined-suite",
-      "status": "focused-integration-pass-full-suite-incomplete-hosted-pending",
-      "owner": "root",
+      "status": "incomplete-local-SIGKILL-hosted-required",
+      "owner": "root and completed independent workers",
       "source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
       "evidence": "docs/engineering/aggregate-qualification-20261119.md",
-      "result_or_next_action": "bbdef5a6: 606 affected passes/1 native Windows skip; Ruff, dependencies and complete-range whitespace pass. Earlier a024 full run remains incomplete SIGKILL, cause unestablished. Initial remote 5cc native cache gate failed with unknown Java identity. Exact final-source full/hosted/native acceptance remains required.",
+      "result_or_next_action": "Final 1d0f60f3: 43-file run and two bounded batches ended SIGKILL/no JUnit. Third 16-file batch completed 429 passed/2 native skips. Earlier full 84798a04 collected 24029 then SIGKILL. No full or all-affected pass.",
       "latest_attempt": {
         "source_commit": "c0108749e8813dfa6165e953b1a2dc2ad736e982",
         "status": "pending-new-local-and-hosted-qualification",
@@ -171,7 +169,7 @@
         "status": "local-incomplete-hosted-linux-passed-initial-source",
         "result_or_next_action": "Original local unsplit run ended SIGKILL after 1,729.332 seconds with no final traceback/JUnit. Initial PR324 later passed hosted Linux full QA: 23,699 passed, 51 skipped, six xfailed. Windows and remaining Qt were running at refresh. PR325 needs separate current-source full gates."
       },
-      "latest_evidence": "docs/engineering/generation33-qualification-20261120.md"
+      "latest_evidence": "docs/engineering/session-20261120-2bad.md"
     },
     {
       "id": "native-qt-remediation",
@@ -187,11 +185,12 @@
     },
     {
       "id": "linux-force-source-race",
-      "status": "open-confirmed",
-      "owner": "next architecture/native worker",
+      "status": "mitigated-by-replacement-refusal",
+      "owner": "root and completed independent workers",
       "source_commit": "79f5abf0",
       "evidence": "docs/engineering/linux-force-primitive-assessment-20261119.md",
-      "result_or_next_action": "Fourteen native primitive controls were replayed on tmpfs and overlayfs. Deterministic current publisher substitution remains observable. No current-primitive repair was verified; a broker is future architecture work."
+      "result_or_next_action": "Unsafe Linux named-source replacement removed. Existing/concurrent destinations refused including --force. Compatible strong overwrite remains unimplemented; historical race receipts unchanged.",
+      "latest_evidence": "docs/engineering/session-20261120-2bad.md"
     },
     {
       "id": "native-release-acceptance",
@@ -204,10 +203,11 @@
     {
       "id": "historical-semantic-review",
       "status": "open",
-      "owner": "successive archaeology workers",
+      "owner": "root and completed independent workers",
       "source_commit": null,
       "evidence": "docs/engineering/consolidation-inventory.md",
-      "result_or_next_action": "154 retained heads require semantic review at the frozen census. Do not infer uniqueness from history or mark superseded without behavioral proof."
+      "result_or_next_action": "181 unmatched and 16 patch-equivalent-but-unreviewed heads in the frozen snapshot. History alone is not behavioral uniqueness. No retained ref deleted.",
+      "latest_evidence": "docs/engineering/session-20261120-2bad.md"
     },
     {
       "id": "index-acquisition-provenance",
@@ -221,11 +221,12 @@
     },
     {
       "id": "scheduled-continuation",
-      "status": "enabled",
-      "owner": "scheduled successor",
+      "status": "enabled-handoff",
+      "owner": "root and completed independent workers",
       "source_commit": null,
       "evidence": "docs/engineering-handoffs/generation-9-through-14-20261120.md",
-      "result_or_next_action": "Existing hourly automation enabled; checkpoint updated to current PR342 generation32 handoff after publication. Refresh ownership/ref/CI first; do not duplicate a recorded in-progress run."
+      "result_or_next_action": "Resume from current branch, matching draft PR and authoritative ledger. Foreground implementation/review workers completed; refresh live CI/ownership before new work.",
+      "latest_evidence": "docs/engineering/session-20261120-2bad.md"
     },
     {
       "id": "gui-table-counter-ownership",
@@ -566,7 +567,13 @@
       "test_commit": "bc2cc75b9d33d130137d03bf07ab2883438ad2ca",
       "evidence": "docs/engineering-handoffs/generation-34-20261120.md",
       "review_status": "Independent generation35 source review found five authored fixture literal-escape mismatches; successor test-only correction published, post-fix signoff/pytest outstanding",
-      "result_or_next_action": "DO NOT qualify the original g34 ten fixture cases as passing repository pytest: five use literal backslash-letter values and would contradict expected outputs. g35 isolated successor fixes fixture source, adds three cases, has 13/13 stdlib mirror controls only. Run exact source tests/whole-tree Ruff/independent post-fix and hosted checks; no unsafe merge."
+      "result_or_next_action": "DO NOT qualify the original g34 ten fixture cases as passing repository pytest: five use literal backslash-letter values and would contradict expected outputs. g35 isolated successor fixes fixture source, adds three cases, has 13/13 stdlib mirror controls only. Run exact source tests/whole-tree Ruff/independent post-fix and hosted checks; no unsafe merge.",
+      "latest_scoped_qualification": {
+        "source": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+        "status": "reviewed-repository-focused-pass-full-native-separate",
+        "evidence": "docs/engineering/session-20261120-2bad.md",
+        "note": "Root 86-pass/1-native-skip and independent g41 36-pass selections are source-bound; do not add overlapping counts."
+      }
     },
     {
       "id": "strings-csv-literal-fixtures-g35",
@@ -579,7 +586,13 @@
       "test_blob": "a4d3956400740e0486612fbb67b35675ce406198",
       "evidence": "docs/engineering/csv-prefix-fixture-review-20261120.md",
       "receipt": "docs/engineering/evidence/generation35/csv-fixture-controls.json",
-      "result_or_next_action": "On supported checkout run tests/test_strings_export.py, full offscreen pytest and whole-tree Ruff; capture exact SHA and seek separate independent post-fix reviewer. On parent CI terminal, open stacked draft only if nonoverlapping. Retain original g34 and PR342 heads."
+      "result_or_next_action": "On supported checkout run tests/test_strings_export.py, full offscreen pytest and whole-tree Ruff; capture exact SHA and seek separate independent post-fix reviewer. On parent CI terminal, open stacked draft only if nonoverlapping. Retain original g34 and PR342 heads.",
+      "latest_scoped_qualification": {
+        "source": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+        "status": "reviewed-repository-focused-pass-full-native-separate",
+        "evidence": "docs/engineering/session-20261120-2bad.md",
+        "note": "Root 86-pass/1-native-skip and independent g41 36-pass selections are source-bound; do not add overlapping counts."
+      }
     },
     {
       "id": "strings-csv-crosscolumn-regression-g36",
@@ -591,7 +604,13 @@
       "test_commit": "c3a60593d3f6d005ce056ce242765a664202a601",
       "evidence": "docs/engineering/generation36-csv-crosscolumn-review-20261120.md",
       "receipt": "docs/engineering/evidence/generation36/csv-crosscolumn-controls.json",
-      "result_or_next_action": "Two extra test parameters cover source-derived cues, reasons, functions, lineage_groups and JSON control; production code unchanged; 2 source-equivalent stand-alone cases pass. Get exact new-head full pytest/Ruff and independent reviewer; do not infer release readiness or erase original native errors."
+      "result_or_next_action": "Two extra test parameters cover source-derived cues, reasons, functions, lineage_groups and JSON control; production code unchanged; 2 source-equivalent stand-alone cases pass. Get exact new-head full pytest/Ruff and independent reviewer; do not infer release readiness or erase original native errors.",
+      "latest_scoped_qualification": {
+        "source": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+        "status": "reviewed-repository-focused-pass-full-native-separate",
+        "evidence": "docs/engineering/session-20261120-2bad.md",
+        "note": "Root 86-pass/1-native-skip and independent g41 36-pass selections are source-bound; do not add overlapping counts."
+      }
     },
     {
       "id": "native-cache-supported-runner-evidence-g37",
@@ -619,7 +638,13 @@
       "evidence": "docs/engineering-handoffs/generation-38-20261120.md",
       "result_or_next_action": "Four focused tests now authored; seven local synthetic controls passed. Separate reviewer still pending. Use supported Windows runner to capture strict 10-second worker_busy status at reproduction without weakening gate; run new tests, full pytest/Ruff/Qt native and independent review. Original 2 failed/10,423 passed and prior SIGKILL remain distinct; no cause established.",
       "pr_number": 343,
-      "review_status": "source-level adversarial self-review corrected unhashable-operation masking; genuinely independent reviewer pending"
+      "review_status": "source-level adversarial self-review corrected unhashable-operation masking; genuinely independent reviewer pending",
+      "latest_scoped_qualification": {
+        "source": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+        "status": "reviewed-repository-focused-pass-full-native-separate",
+        "evidence": "docs/engineering/session-20261120-2bad.md",
+        "note": "Root 86-pass/1-native-skip and independent g41 36-pass selections are source-bound; do not add overlapping counts."
+      }
     },
     {
       "id": "direct-investigation-create-junction-g39",
@@ -632,7 +657,13 @@
       "test_commit": "fc8fe102c91dd702d0ee750476106b5182985a21",
       "evidence": "docs/engineering-handoffs/generation-39-20261120.md",
       "review_status": "author source-aware fixture review only; external independent review pending",
-      "result_or_next_action": "When PR343 hosted QA completes, run g39 focused actual repo tests and Ruff, full offscreen suite with termination evidence, native Windows junction, and external independent review. Open stacked draft only when active tests no longer overlap. No merge/release; postcheck/parent races remain."
+      "result_or_next_action": "When PR343 hosted QA completes, run g39 focused actual repo tests and Ruff, full offscreen suite with termination evidence, native Windows junction, and external independent review. Open stacked draft only when active tests no longer overlap. No merge/release; postcheck/parent races remain.",
+      "latest_scoped_qualification": {
+        "source": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+        "status": "reviewed-repository-focused-pass-full-native-separate",
+        "evidence": "docs/engineering/session-20261120-2bad.md",
+        "note": "Root 86-pass/1-native-skip and independent g41 36-pass selections are source-bound; do not add overlapping counts."
+      }
     },
     {
       "id": "advisory-source-plan-lead-type-g40",
@@ -645,7 +676,13 @@
       "test_commit": "7fe79f17a1cb704e4d724da16d814c389d3ffb91",
       "evidence": "docs/engineering-handoffs/generation-40-20261120.md",
       "review_status": "second-pass author/source review corrected str-subclass bypass; independent reviewer signoff pending",
-      "result_or_next_action": "On supported checkout run test_kb_online_investigation_20261105.py, whole-tree Ruff and full aggregate with termination receipts; independently review and consider stacked draft only after PR343 full QA no longer active. No raw index/forced export/Qt/release closure."
+      "result_or_next_action": "On supported checkout run test_kb_online_investigation_20261105.py, whole-tree Ruff and full aggregate with termination receipts; independently review and consider stacked draft only after PR343 full QA no longer active. No raw index/forced export/Qt/release closure.",
+      "latest_scoped_qualification": {
+        "source": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+        "status": "reviewed-repository-focused-pass-full-native-separate",
+        "evidence": "docs/engineering/session-20261120-2bad.md",
+        "note": "Root 86-pass/1-native-skip and independent g41 36-pass selections are source-bound; do not add overlapping counts."
+      }
     },
     {
       "id": "candidate-component-name-type-g41",
@@ -655,10 +692,56 @@
       "source_commit": "67653265a713dcddb8fee903adcd2fef9c539989",
       "evidence": "docs/engineering-handoffs/generation-41-20261120.md",
       "review_status": "author-source-inspection-only",
-      "result_or_next_action": "Run six new tests plus saved-index candidate suite and whole-tree Ruff; obtain independent source review and exact-source CI. Do not infer full aggregate/native acceptance."
+      "result_or_next_action": "Run six new tests plus saved-index candidate suite and whole-tree Ruff; obtain independent source review and exact-source CI. Do not infer full aggregate/native acceptance.",
+      "latest_scoped_qualification": {
+        "source": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+        "status": "reviewed-repository-focused-pass-full-native-separate",
+        "evidence": "docs/engineering/session-20261120-2bad.md",
+        "note": "Root 86-pass/1-native-skip and independent g41 36-pass selections are source-bound; do not add overlapping counts."
+      }
+    },
+    {
+      "id": "report-staging-cleanup-outcomes",
+      "status": "recovered-reviewed",
+      "owner": "completed workers + root",
+      "source_commit": "1d0f60f3004db9e32f314518d5be661b85ef4d71",
+      "evidence": "docs/engineering/review-integration-20261120-2bad.md",
+      "result_or_next_action": "Recovered only donor ddbcacf4/b3d7d399; seven baseline failures, expanded repaired report selection 101 passed."
+    },
+    {
+      "id": "gui-final-progress-ownership",
+      "status": "implemented-reviewed",
+      "owner": "completed workers + root",
+      "source_commit": "1d0f60f3004db9e32f314518d5be661b85ef4d71",
+      "evidence": "docs/engineering/ui-progress-reentrancy-20261120.md",
+      "result_or_next_action": "Recheck generation/lifetime/visibility after final progress; discard or park correctly. 195 unique author affected cases and fresh independent review."
+    },
+    {
+      "id": "evidence-state-announcements",
+      "status": "recovered-reviewed-native-pending",
+      "owner": "completed workers + root",
+      "source_commit": "1d0f60f3004db9e32f314518d5be661b85ef4d71",
+      "evidence": "docs/engineering/accessibility-recovery-20261120-2bad.md",
+      "result_or_next_action": "Host announcements wired; repeated/blank states suppressed. Native screen-reader output unverified."
+    },
+    {
+      "id": "registered-header-help",
+      "status": "framework-recovered-column-mapping-open",
+      "owner": "completed workers + root",
+      "source_commit": "1d0f60f3004db9e32f314518d5be661b85ef4d71",
+      "evidence": "docs/engineering/accessibility-independent-review-20261120-2bad.md",
+      "result_or_next_action": "Header-help API recovered. Independent scan found 90 direct application ColumnSpec constructions without tip_id assignment; individual column wiring remains open."
+    },
+    {
+      "id": "isolated-test-source-binding",
+      "status": "repaired-for-final-source-environment",
+      "owner": "completed workers + root",
+      "source_commit": "1d0f60f3004db9e32f314518d5be661b85ef4d71",
+      "evidence": "docs/engineering/session-20261120-2bad.md",
+      "result_or_next_action": "Dedicated editable environment binds python -I to the current checkout; dependencies reused read-only. Full/native acceptance remains separate."
     }
   ],
-  "aggregate_source_commit": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
+  "aggregate_source_commit": "1d0f60f3004db9e32f314518d5be661b85ef4d71",
   "workers": [
     {
       "name": "repository_inventory",
@@ -703,23 +786,54 @@
     {
       "name": "generation31_integration_review",
       "status": "completed"
+    },
+    {
+      "name": "branch_recovery",
+      "status": "completed",
+      "session": "20261120-2bad"
+    },
+    {
+      "name": "ui_completion",
+      "status": "completed",
+      "session": "20261120-2bad"
+    },
+    {
+      "name": "publication_safety",
+      "status": "completed",
+      "session": "20261120-2bad"
+    },
+    {
+      "name": "review_integrated_fixes",
+      "status": "completed",
+      "session": "20261120-2bad"
+    },
+    {
+      "name": "review_publication",
+      "status": "completed",
+      "session": "20261120-2bad"
+    },
+    {
+      "name": "hosted_qualification",
+      "status": "completed",
+      "session": "20261120-2bad"
+    },
+    {
+      "name": "recover_accessibility",
+      "status": "completed",
+      "session": "20261120-2bad"
+    },
+    {
+      "name": "diagnose_full_suite_stop",
+      "status": "completed",
+      "session": "20261120-2bad"
+    },
+    {
+      "name": "review_accessibility",
+      "status": "completed",
+      "session": "20261120-2bad"
     }
   ],
-  "local_integration_branch": "codex/patchtrace-verified-integration-20261120-g30",
-  "continuation": {
-    "title": "Continue PatchTrace engineering",
-    "enabled": true,
-    "rrule": "FREQ=HOURLY",
-    "first_scheduled_utc": "2026-11-20T01:15:16Z",
-    "timezone": "America/Vancouver",
-    "environment_selection": "inherited",
-    "environment_availability_verified": false,
-    "automation_id": "Automation_8671977e1a1081919d2b8650cf5a1c1c",
-    "checkpoint": "PR342; generation33; final reviewed source bbdef5a6",
-    "last_observed_run_state": "completed at2026-11-20T16:25:26.023415Z; verified2026-11-20T16:31:57Z",
-    "handoff": "docs/engineering-handoffs/generation-33-20261120.md",
-    "prompt_update_rule": "After verified publication, save exact final head/tree without changing cadence, timezone or environment selection."
-  },
+  "local_integration_branch": "codex/autonomous-consolidation-20261120-2bad",
   "hosted_initial_candidate": {
     "head": "3862cb5de3256efec8f6392a3b6fb4d9e600c377",
     "captured_at": "2026-11-20T01:03:45Z",
@@ -837,20 +951,85 @@
       "later_evidence_only_commits": "Resolve current PR head; runtime/test/tool identities remain the recorded 97ca0adf checkpoint."
     }
   },
-  "publication_preparation": {
-    "status": "initial-tree-equivalent-publication-verified-followup-reviewed",
-    "frozen_first_qualification_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
-    "current_qualification_commit": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
-    "method": "GitHub Git Data API; CLI push had no credentials",
-    "local_history_bundle": "docs/engineering/evidence/generation30/local-history.bundle",
-    "local_history_commits": 6,
-    "additional_worker_bundle": "docs/engineering/evidence/generation32/strings-shutdown-worker.bundle",
-    "census_replay": "docs/engineering/evidence/generation30/census-replay.zip",
-    "complete_local_history_bundle": "docs/engineering/evidence/generation33/local-continuation-history.bundle",
-    "complete_local_history_commits": 13
-  },
-  "aggregate_source_tree": "a8ef4316a88ab58619d966744e26b0067d66ff33",
+  "aggregate_source_tree": "9d0fdec1a0f88920f1c3786cb9bbcfd6b87ccfae",
   "current_qualification": {
+    "source_commit": "1d0f60f3004db9e32f314518d5be661b85ef4d71",
+    "source_tree": "9d0fdec1a0f88920f1c3786cb9bbcfd6b87ccfae",
+    "runtime_blob_comparisons": [
+      {
+        "path": "src/patchtrace/reports.py",
+        "reviewed_source": "b3d7d3999370b09f9c6c061680e12026ba36d8bf",
+        "blob": "d3450d7610593ea89294fc59ce73a5c40db08e92",
+        "equal": true
+      },
+      {
+        "path": "src/patchtrace/gui/qt/tasks.py",
+        "reviewed_source": "ffd50497b184aa81d908f9686d10f9720948daf6",
+        "blob": "0b08892fd383d91a5f4d1766ba932adc9c92507b",
+        "equal": true
+      },
+      {
+        "path": "src/patchtrace/owned_publication.py",
+        "reviewed_source": "7f0af7cb4f6b5b0e9bd0f6a2f8af92ed365e2411",
+        "blob": "16e1ae354662d88fbe10ed5793b6049e512f0950",
+        "equal": true
+      },
+      {
+        "path": "src/patchtrace/strings/export.py",
+        "reviewed_source": "7f0af7cb4f6b5b0e9bd0f6a2f8af92ed365e2411",
+        "blob": "9929e08b56498beb06f3dadd070100816e54ba64",
+        "equal": true
+      },
+      {
+        "path": "src/patchtrace/strings/cli.py",
+        "reviewed_source": "7f0af7cb4f6b5b0e9bd0f6a2f8af92ed365e2411",
+        "blob": "14203c901d6ec36c0563b2cdca1d821f9c819dfc",
+        "equal": true
+      },
+      {
+        "path": "src/patchtrace/gui/table_spec.py",
+        "reviewed_source": "83ed3471569f01a273c429fb055a0d27ec0fe3a8",
+        "blob": "4bab0fb8013bbb32a3e5c0b58ac5bc02d8fade89",
+        "equal": true
+      },
+      {
+        "path": "src/patchtrace/gui/qt/table.py",
+        "reviewed_source": "83ed3471569f01a273c429fb055a0d27ec0fe3a8",
+        "blob": "e90b3acd981fa7045b370a080b7e27694f4e01d9",
+        "equal": true
+      },
+      {
+        "path": "src/patchtrace/ui_evidence.py",
+        "reviewed_source": "83ed3471569f01a273c429fb055a0d27ec0fe3a8",
+        "blob": "a97f981594e755f2dba42c8c220aaebb61732970",
+        "equal": true
+      }
+    ],
+    "whole_tree_ruff": "passed",
+    "dependency_validation": "passed",
+    "isolated_source_binding": "dedicated editable environment verified current checkout under python -I",
+    "completed_final_selection": {
+      "passed": 429,
+      "skipped": 2,
+      "cases": 431,
+      "files": 16
+    },
+    "full_suite": "incomplete-earlier-source-SIGKILL",
+    "combined_43_files": "incomplete-SIGKILL",
+    "bounded_batches": [
+      "incomplete-SIGKILL",
+      "incomplete-SIGKILL",
+      "429-passed-2-skipped"
+    ],
+    "history_tip": "9d357e542721308b48d10923b4e7c2d11e6d1573",
+    "history_bundle_sha256": "81a8d6e7a9e11258d5f7aff192f1f3dcd3772f075fb2e9a3378efd80b2aa8ef0",
+    "history_verify": "The bundle contains this ref:\n9d357e542721308b48d10923b4e7c2d11e6d1573 HEAD\nThe bundle requires this ref:\n67f7e08ea9bee61653f8ab5ad66048d3e7141810 \nThe bundle uses this hash algorithm: sha1\n/workspace/scratch/2bade0b323c3/PatchTrace/docs/engineering/evidence/session-20261120-2bad-history.bundle is okay\n",
+    "main_merge_eligible": false,
+    "release_ready": false,
+    "coordinator_archive_sha256": "961d81699d1ce25d212708028f4274978aad536a424b44a5711cfb57955479f6"
+  },
+  "current_handoff": "docs/engineering-handoffs/session-20261120-2bad.md",
+  "previous_session_qualification": {
     "source_commit": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
     "source_tree": "a8ef4316a88ab58619d966744e26b0067d66ff33",
     "affected_passed": 606,
@@ -869,8 +1048,47 @@
     "unique_collected_cases": 607,
     "source_review": "35 blob-and-mode comparisons passed"
   },
-  "current_handoff": "docs/engineering-handoffs/generation-35-20261120.md",
-  "parallel_continuation": {
+  "previous_remote_publication": {
+    "status": "published-draft-with-final-reviewed-source",
+    "pull_request": 342,
+    "url": "https://github.com/djshellshoxxx/PatchTrace/pull/342",
+    "branch": "codex/patchtrace-verified-integration-20261120-g30",
+    "base_branch": "codex/patchtrace-qa-ruff-imports-20261120-g29",
+    "base_commit": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+    "initial_remote_commit": "5cc3f2a540f2e49e8b86e20decf7d4f62ce89d0a",
+    "initial_local_commit": "9fdb02abd3ec9353102ce4fe5df30f953d290d14",
+    "initial_tree": "559c18105a2a79960811f4f6f2c011c0bf15cc7c",
+    "initial_tree_equality_verified": true,
+    "reviewed_runtime_test_tool_checkpoint": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
+    "latest_head_rule": "Resolve live PR342; its current body and publication commit contain the final local/remote tree mapping. This record does not assign the initial head to later source."
+  },
+  "historical_continuation": {
+    "title": "Continue PatchTrace engineering",
+    "enabled": true,
+    "rrule": "FREQ=HOURLY",
+    "first_scheduled_utc": "2026-11-20T01:15:16Z",
+    "timezone": "America/Vancouver",
+    "environment_selection": "inherited",
+    "environment_availability_verified": false,
+    "automation_id": "Automation_8671977e1a1081919d2b8650cf5a1c1c",
+    "checkpoint": "PR342; generation33; final reviewed source bbdef5a6",
+    "last_observed_run_state": "completed at2026-11-20T16:25:26.023415Z; verified2026-11-20T16:31:57Z",
+    "handoff": "docs/engineering-handoffs/generation-33-20261120.md",
+    "prompt_update_rule": "After verified publication, save exact final head/tree without changing cadence, timezone or environment selection."
+  },
+  "historical_publication_preparation": {
+    "status": "initial-tree-equivalent-publication-verified-followup-reviewed",
+    "frozen_first_qualification_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+    "current_qualification_commit": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
+    "method": "GitHub Git Data API; CLI push had no credentials",
+    "local_history_bundle": "docs/engineering/evidence/generation30/local-history.bundle",
+    "local_history_commits": 6,
+    "additional_worker_bundle": "docs/engineering/evidence/generation32/strings-shutdown-worker.bundle",
+    "census_replay": "docs/engineering/evidence/generation30/census-replay.zip",
+    "complete_local_history_bundle": "docs/engineering/evidence/generation33/local-continuation-history.bundle",
+    "complete_local_history_commits": 13
+  },
+  "historical_parallel_continuation": {
     "branch": "codex/patchtrace-acquire-windows-junction-20261120-g32",
     "head": "ae67122c69f05715afa622b7e4050b73ca155967",
     "tree": "8540ad1b31dd0e9859770b7146ef66dcd23a67d3",
@@ -878,5 +1096,10 @@
     "owner": "completed independent defensive review and root integration",
     "overwrites_active_pr342": false,
     "integration_commit": "71b535cc5c1ca0ccc6762831a5d8a137644d14fc"
+  },
+  "continuation": {
+    "status": "foreground-workers-completed-handoff-ready",
+    "handoff": "docs/engineering-handoffs/session-20261120-2bad.md",
+    "next_action": "Inspect current branch/PR and final-source hosted gates; do not repeat the four recovered/repaired scopes or infer aggregate passes. Continue unowned column-help mapping and evidence-backed donor review."
   }
 }

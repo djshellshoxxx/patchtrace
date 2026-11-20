@@ -1,0 +1,76 @@
+{
+  "source_commit": "1d0f60f3004db9e32f314518d5be661b85ef4d71",
+  "source_tree": "9d0fdec1a0f88920f1c3786cb9bbcfd6b87ccfae",
+  "runtime_blob_comparisons": [
+    {
+      "path": "src/patchtrace/reports.py",
+      "reviewed_source": "b3d7d3999370b09f9c6c061680e12026ba36d8bf",
+      "blob": "d3450d7610593ea89294fc59ce73a5c40db08e92",
+      "equal": true
+    },
+    {
+      "path": "src/patchtrace/gui/qt/tasks.py",
+      "reviewed_source": "ffd50497b184aa81d908f9686d10f9720948daf6",
+      "blob": "0b08892fd383d91a5f4d1766ba932adc9c92507b",
+      "equal": true
+    },
+    {
+      "path": "src/patchtrace/owned_publication.py",
+      "reviewed_source": "7f0af7cb4f6b5b0e9bd0f6a2f8af92ed365e2411",
+      "blob": "16e1ae354662d88fbe10ed5793b6049e512f0950",
+      "equal": true
+    },
+    {
+      "path": "src/patchtrace/strings/export.py",
+      "reviewed_source": "7f0af7cb4f6b5b0e9bd0f6a2f8af92ed365e2411",
+      "blob": "9929e08b56498beb06f3dadd070100816e54ba64",
+      "equal": true
+    },
+    {
+      "path": "src/patchtrace/strings/cli.py",
+      "reviewed_source": "7f0af7cb4f6b5b0e9bd0f6a2f8af92ed365e2411",
+      "blob": "14203c901d6ec36c0563b2cdca1d821f9c819dfc",
+      "equal": true
+    },
+    {
+      "path": "src/patchtrace/gui/table_spec.py",
+      "reviewed_source": "83ed3471569f01a273c429fb055a0d27ec0fe3a8",
+      "blob": "4bab0fb8013bbb32a3e5c0b58ac5bc02d8fade89",
+      "equal": true
+    },
+    {
+      "path": "src/patchtrace/gui/qt/table.py",
+      "reviewed_source": "83ed3471569f01a273c429fb055a0d27ec0fe3a8",
+      "blob": "e90b3acd981fa7045b370a080b7e27694f4e01d9",
+      "equal": true
+    },
+    {
+      "path": "src/patchtrace/ui_evidence.py",
+      "reviewed_source": "83ed3471569f01a273c429fb055a0d27ec0fe3a8",
+      "blob": "a97f981594e755f2dba42c8c220aaebb61732970",
+      "equal": true
+    }
+  ],
+  "whole_tree_ruff": "passed",
+  "dependency_validation": "passed",
+  "isolated_source_binding": "dedicated editable environment verified current checkout under python -I",
+  "completed_final_selection": {
+    "passed": 429,
+    "skipped": 2,
+    "cases": 431,
+    "files": 16
+  },
+  "full_suite": "incomplete-earlier-source-SIGKILL",
+  "combined_43_files": "incomplete-SIGKILL",
+  "bounded_batches": [
+    "incomplete-SIGKILL",
+    "incomplete-SIGKILL",
+    "429-passed-2-skipped"
+  ],
+  "history_tip": "9d357e542721308b48d10923b4e7c2d11e6d1573",
+  "history_bundle_sha256": "81a8d6e7a9e11258d5f7aff192f1f3dcd3772f075fb2e9a3378efd80b2aa8ef0",
+  "history_verify": "The bundle contains this ref:\n9d357e542721308b48d10923b4e7c2d11e6d1573 HEAD\nThe bundle requires this ref:\n67f7e08ea9bee61653f8ab5ad66048d3e7141810 \nThe bundle uses this hash algorithm: sha1\n/workspace/scratch/2bade0b323c3/PatchTrace/docs/engineering/evidence/session-20261120-2bad-history.bundle is okay\n",
+  "main_merge_eligible": false,
+  "release_ready": false,
+  "coordinator_archive_sha256": "961d81699d1ce25d212708028f4274978aad536a424b44a5711cfb57955479f6"
+}
