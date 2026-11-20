@@ -135,3 +135,37 @@ def test_csv_formula_guard_considers_leading_ignorable_prefixes(delta, display, 
     assert json.loads(metadata)['contract'] == export.EXPORT_CONTRACT
     assert next(rows) == list(export.CSV_COLUMNS)
     assert next(rows)[3] == expected
+
+
+@pytest.mark.parametrize(
+    ('cue', 'reason', 'function', 'lineage', 'expected'),
+    [
+        (' \t=cue', '\n@reason', '\ufeff+call', '\v-lineage',
+         ("' \t=cue", "'\n@reason", "'\ufeff+call", "'\v-lineage")),
+        ('  ordinary', '\ufeffordinary', '\\n=literal', 'group',
+         ('  ordinary', '\ufeffordinary', '\\n=literal', 'group')),
+    ],
+    ids=['guard-all-source-text-columns', 'preserve-benign-source-text-columns'],
+)
+def test_csv_formula_guard_covers_aggregated_source_columns(delta, cue, reason, function, lineage, expected):
+    doc = export.document(delta)
+    entry = doc['changes'][0]
+    entry['cues'] = [cue]
+    entry['reasons'] = [reason]
+    entry['links'] = [{'function': {'name': function}, 'lineage_group': lineage}]
+
+    reader = csv.reader(io.StringIO(export.render(doc, 'csv').decode('utf-8'), newline=''))
+    marker, metadata = next(reader)
+    assert marker == export.CSV_CONTRACT
+    assert json.loads(metadata)['contract'] == export.EXPORT_CONTRACT
+    assert next(reader) == list(export.CSV_COLUMNS)
+    found = dict(zip(export.CSV_COLUMNS, next(reader), strict=True))
+    assert tuple(found[key] for key in ('cues', 'reasons', 'functions', 'lineage_groups')) == (
+        expected[0], expected[1], expected[2], expected[3])
+
+    # The CSV protection is presentation-only: JSON retains the exact source-derived text.
+    json_entry = json.loads(export.render(doc, 'json'))['changes'][0]
+    assert json_entry['cues'] == [cue]
+    assert json_entry['reasons'] == [reason]
+    assert json_entry['links'][0]['function']['name'] == function
+    assert json_entry['links'][0]['lineage_group'] == lineage
