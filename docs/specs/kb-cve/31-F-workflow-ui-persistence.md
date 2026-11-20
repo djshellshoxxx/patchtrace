@@ -336,3 +336,19 @@ intact. Legacy journals remain readable and generic KB/CVE repair behavior is
 unchanged. Older readers ignore unknown journal members and do not enforce this
 new product-snapshot binding; repair of product-start attachments requires a
 build implementing these journal semantics.
+
+### Ambiguous predecessor provenance (2026-11-20, generation 26)
+
+A resolver-produced pair retains the newer body identity in `window_id`, but
+`PairProposal.older` does not encode the older version/KB source-body identity.
+Until exact predecessor membership and bounded raw resolver inputs are persisted,
+consented `kb acquire` must **refuse** rather than arbitrarily choose between
+distinct normalized older index bodies with the same SHA-256 and basename.
+Use `PT-KBC-INPUT` before acquisition planning, consent, network requests or
+project mutation. Byte-for-byte/equal mapping duplicates represent one source
+claim and remain admissible; a unique matching older row remains supported.
+The newer selector continues to require its resolver window target and native
+version-body precedence. This refusal is a conservative provenance safeguard,
+not reconstruction of original older membership, raw index preservation,
+proof of vendor authority, or verified L1/L2/L3 accuracy. Historical evidence
+must never be retroactively inferred from a SHA-256 alone.
