@@ -1,6 +1,6 @@
 {
   "schema": "patchtrace-engineering-task-ledger/1",
-  "updated_at": "2026-11-20T02:25:46.031Z",
+  "updated_at": "2026-11-20T03:11:00Z",
   "repository": "https://github.com/djshellshoxxx/PatchTrace",
   "integration_branch": "codex/patchtrace-followup-20261120-4c8d",
   "checkpoint_local_commit": "97ca0adfad5ea4e6cae0648a55529b9165a40b21",
@@ -249,6 +249,14 @@
       "source_commit": "2c991c5b3eeff1fdd4040016ad9e74c8ff920de6",
       "evidence": "docs/engineering-handoffs/generation-16-20261120.md",
       "result_or_next_action": "Contract-first change caps one opened Winbindex record read to MAX_COMPRESSED + 1 and clears stale rejected-row counts on missing sources. Both original behaviors reproduced in an isolated stdlib mirror; a matching repaired mirror passed. Actual repository pytest/Ruff and independent signoff pending. Later PR326/PR325 QA is source-specific; no main merge/release."
+    },
+    {
+      "id": "offline-held-source-admission",
+      "status": "implementation-published-branch-review-and-hosted-qa-pending",
+      "owner": "generation17 isolated bounded-source worker",
+      "source_commit": "386ae84e7e4c6ea15378de93290b2006a9ac5e71",
+      "evidence": "docs/engineering-handoffs/generation-17-20261120.md",
+      "result_or_next_action": "Refuses matching nonregular newest records and O_NOFOLLOW final-symlink substitutions where supported; descriptor fstat rejects FIFOs and other nonregular handles. Original 2 failures and repaired 4 controls reproduced only as isolated stdlib mirrors; repository tests/Ruff/CI and independent review still required. Ordinary regular-file substitution, parent-directory races, Linux forced-export publisher remain open."
     }
   ],
   "aggregate_source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
@@ -277,6 +285,11 @@
       "name": "generation16_offline_index_read",
       "scope": "Distinct adapter read-budget and skipped-row-freshness repair, stacked after generation15 without changing its branch",
       "status": "implemented-on-isolated-branch-review-pending"
+    },
+    {
+      "name": "generation17_held_source_admission",
+      "scope": "Contract-first separate branch after draft PR327, held Winbindex record read and matching nonregular-file refusal",
+      "status": "source-implemented-isolated-mirror-reviewed-by-author-independent-review-pending"
     }
   ],
   "local_integration_branch": "codex/maximum-completion-20261119-4c8d",

@@ -46,6 +46,26 @@ file between checks and read. Do not merge different raw records or fabricate
 resolver membership from conflicting sources. This bounded safety repair is
 **not** the outstanding full raw entry/index capture or resolver-input replay.
 
+### Held offline reader and nonregular-source admission (2026-11-20, generation 17)
+
+A name/date-matching workspace record that is a directory, FIFO, device or
+other non-regular object is **not an absent record** and cannot silently make
+a prior dated record appear newest. Refuse it with `PT-KBC-SOURCE` before
+choosing any date. Ordinary absent filenames still return no rows; an alias
+remains rejected under the earlier source-identity contract.
+
+The selected record's prior pathname admission can become stale before open.
+Where the host supports `O_NOFOLLOW`, open the record with that flag and
+refuse a final-component symlink substitution as `PT-KBC-SOURCE`. Request
+nonblocking open where supported, then confirm the **opened descriptor** is
+regular before reading bytes; do not risk blocking on a substituted FIFO.
+Continue to cap the descriptor read to `MAX_COMPRESSED + 1`, leave existing
+valid rows and rejected-row counts intact, and never read a nonregular handle.
+On hosts without `O_NOFOLLOW`, this does not provide the same final-component
+race protection. No claim is made for parent-directory replacement, a swapped
+ordinary regular file, source authenticity, full raw-index retention or the
+separate Linux forced-export publisher race. The latter remains open.
+
 ### Offline index reader read budget and rejected-row freshness (2026-11-20)
 
 The selected workspace record is untrusted and mutable. Once admitted, each
