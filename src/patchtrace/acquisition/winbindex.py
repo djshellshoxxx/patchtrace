@@ -362,7 +362,11 @@ def _entry_rows(file_name: str, key: str, entry: dict, info: dict, source: str):
         record_sha256=hashlib.sha256(_canonical(entry)).hexdigest(), source=source)
     rows, bad = [], 0
     windows = entry.get('windowsVersions')
-    for version_key, updates in (windows.items() if isinstance(windows, dict) else ()):
+    if not isinstance(windows, dict):
+        # A valid SHA entry with an unreadable or absent version container
+        # must not disappear from coverage when sibling entries are usable.
+        return rows, 1
+    for version_key, updates in windows.items():
         if not isinstance(updates, dict) or not _VERSION_KEY.fullmatch(version_key):
             bad += 1
             continue
