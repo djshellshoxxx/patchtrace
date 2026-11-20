@@ -1,3 +1,7 @@
+## Generation 39 — KB investigation Create junction preflight (2026-11-20)
+
+Four repository regression functions authored on isolated g39: mocked final-component junction, ordinary empty destination, preserved symlink refusal and native Windows junction to a real empty target. A hand-copied Python 3.13.5 source-equivalent control reproduced prior admission, corrected refusal and unchanged ordinary acceptance (three expectations passed). It is **not** a repository-source pytest run; no full pytest, Ruff, native Windows, separate review or exact-head hosted QA was performed. PR343 full QA remained active, so no duplicate job was launched. No false-passing nonempty-junction fixture is retained. See [g39](engineering-handoffs/generation-39-20261120.md). The earlier Windows Qt, SIGKILL and native Java failure receipts remain unchanged.
+
 # QA and audit record
 
 ## Final reviewed checkpoint — generation33
