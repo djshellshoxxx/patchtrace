@@ -2247,3 +2247,8 @@ Parent's old Windows QA/Qt jobs were cancelled on new publication, not
 successful; current parent head requires fresh CI and this later source has
 no hosted acceptance. Fresh independent review is pending. Prior source,
 logs and unresolved forced-export/native/accuracy gates remain intact.
+
+
+### 2026-11-20 generation 35 — Strings CSV fixture literal-escape review
+
+A fresh reviewer found generation34's ten-case test parameter table encoded intended `\\n`, `\\t` and `\\ufeff` control/BOM values with **doubled source backslashes**. The resulting Python values are literal backslash-letter text; five expectations contradict the production helper. A Python 3.13.5 stdlib algorithm replay failed five of ten original cases. New isolated g35 source uses actual Python escaped control characters, includes CR/vertical-tab and literal-backslash negative controls, and passed thirteen source-equivalent CSV writer/reader checks. Real `tests/test_strings_export.py`, full offscreen pytest, Ruff and desktop/Qt/native jobs were not run; they remain mandatory. Details: `docs/engineering/evidence/generation35/csv-fixture-controls.json`, handoff generation35. No previous failure changed status.
