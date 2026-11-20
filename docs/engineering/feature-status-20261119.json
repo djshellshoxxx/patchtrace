@@ -124,5 +124,6 @@
       "historical_qualification_notes": "Incomplete full-suite qualification; native Qt disposition; remaining Linux forced-source race; Windows/trust/clean-machine/native and layer-specific accuracy gates remain. PR339 Linux/Windows pytest and Qt successes were not combined acceptance because Ruff I001 failed; generation29 corrected source remains unqualified pending own hosted gates and review."
     }
   ],
-  "current_handoff": "docs/engineering-handoffs/generation-35-20261120.md"
+  "current_handoff": "docs/engineering-handoffs/generation-36-20261120.md",
+  "generation36_note": "Isolated, test-only cross-column Strings CSV regression extension: source-level review found prior 13 cases checked display only; two additional parameterized cases guard cues, functions, lineage_groups, reasons and assert JSON remains unchanged. Two stand-alone source-equivalent controls passed, repository pytest/Ruff and external independent review pending. PR342 source-specific native/live/Linux QA success does not qualify g36 or erase initial native cache failure."
 }
