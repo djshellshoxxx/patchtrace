@@ -1,0 +1,197 @@
+{
+  "schema": "patchtrace-engineering-task-ledger/1",
+  "updated_at": "2026-11-20T00:09:04.434945+00:00",
+  "repository": "https://github.com/djshellshoxxx/PatchTrace",
+  "integration_branch": "codex/maximum-completion-20261119-4c8d",
+  "checkpoint_local_commit": "8cfda72b736ddbd704180dcf39e4a71a33fbc06f",
+  "starting_candidate": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+  "main_at_discovery": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+  "remote_publication": null,
+  "release_ready": false,
+  "main_merge_eligible": false,
+  "notes": [
+    "Focused test selections overlap and must not be summed.",
+    "Local commit IDs are local source identities until a publication mapping is recorded.",
+    "Completed-snapshot and implemented-reviewed refer only to the named scope, not whole-product completion."
+  ],
+  "tasks": [
+    {
+      "id": "reference-census",
+      "status": "completed-snapshot",
+      "owner": "archaeology",
+      "source_commit": "52fa66e063689a790ea986f3ace5d7883efa2165",
+      "evidence": "docs/engineering/consolidation-inventory.md",
+      "result_or_next_action": "323 branch heads, 312 PR records, 59 tags/releases; 154 branch heads still need semantic review."
+    },
+    {
+      "id": "manifest-dtd",
+      "status": "implemented-reviewed",
+      "owner": "root + independent bug review",
+      "source_commit": "0ac15cbc",
+      "evidence": "docs/engineering/manifest-dtd-recovery.md",
+      "result_or_next_action": "Parser-level refusal; original eight recovered failures retained; 126 additional parser variants in independent review."
+    },
+    {
+      "id": "metadata-cache-version",
+      "status": "implemented-reviewed",
+      "owner": "root + independent bug review",
+      "source_commit": "0ac15cbc",
+      "evidence": "docs/engineering/manifest-dtd-peer-review.md",
+      "result_or_next_action": "Real persisted version-2 cache bypass reproduced; version-3 keys and envelopes refuse old facts while historical rows survive."
+    },
+    {
+      "id": "winpairs-url",
+      "status": "implemented-reviewed",
+      "owner": "bugfix + security",
+      "source_commit": "40a1f976",
+      "evidence": "docs/engineering/winpairs-url-boundary.md",
+      "result_or_next_action": "Raw URL and authority validation; response closure; 153 affected passes and two native skips."
+    },
+    {
+      "id": "winpairs-http",
+      "status": "implemented-reviewed",
+      "owner": "security + root",
+      "source_commit": "afa1af3c",
+      "evidence": "docs/engineering/winpairs-http-review.md",
+      "result_or_next_action": "Nine malformed-HTTP failures repaired; 162 affected passes and two native skips."
+    },
+    {
+      "id": "strings-publication",
+      "status": "partially-repaired",
+      "owner": "security + root",
+      "source_commit": "c9fd0779",
+      "evidence": "docs/engineering/security-force-recovery-20261119.md",
+      "result_or_next_action": "264 affected passes/three native skips; final Linux named-source replacement interval remains open."
+    },
+    {
+      "id": "profile-drafts",
+      "status": "implemented-reviewed",
+      "owner": "generation2_profiles + generation3_qualification",
+      "source_commit": "31052db31054590c75c6c636c2ac49cc934f0668",
+      "evidence": "docs/engineering/profile-draft-recovery.md",
+      "result_or_next_action": "Save/Discard/Cancel and destination rollback; 221 affected passes and six independent controls."
+    },
+    {
+      "id": "saved-search",
+      "status": "implemented-reviewed",
+      "owner": "generation2_search + root",
+      "source_commit": "f632e50655b47a71aff314cdba941641356d16a3",
+      "evidence": "docs/engineering/saved-search-recovery-20261119.md",
+      "result_or_next_action": "GUI/CLI save/list/run/delete with all six modes; 961 affected passes and five independent controls."
+    },
+    {
+      "id": "paired-raw-offsets",
+      "status": "implemented-reviewed",
+      "owner": "generation3_raw_alignment + generation4_adversarial",
+      "source_commit": "46afcb216ef2b9430ce95b32e00944e7eaaa99ac",
+      "evidence": "docs/engineering/raw-alignment-recovery.md",
+      "result_or_next_action": "191 affected passes and six independent TaskRunner/copy controls; source inspection paths preserved."
+    },
+    {
+      "id": "asm-budget",
+      "status": "investigated-diagnostic-recovered",
+      "owner": "separate ASM session + root",
+      "source_commit": "ef6f7a33",
+      "evidence": "docs/engineering/asm-diagnostics-recovery.md",
+      "result_or_next_action": "Original 156.169465 ms failure preserved; unchanged lexer later passes; only five-sample failure diagnostics recovered."
+    },
+    {
+      "id": "native-rzdiff-retry",
+      "status": "completed-earlier-head",
+      "owner": "root",
+      "source_commit": null,
+      "evidence": "docs/engineering/evidence/pr322-ci-retry-receipt.json",
+      "result_or_next_action": "Earlier PR322 Linux cancelled installation retried successfully; actual Linux/Windows nonmocked fixture receipts retained."
+    },
+    {
+      "id": "accuracy-report-boundaries",
+      "status": "implemented-reviewed",
+      "owner": "generation5_accuracy + generation6_accuracy_review",
+      "source_commit": "776695170bc0a526951075e3744bcc684035cfcc",
+      "evidence": "docs/engineering/accuracy-peer-review-20261119.md",
+      "result_or_next_action": "495 affected passes/three historical skips and 48 independent passes; no empirical accuracy claim. psutil subsequently installed for the aggregate."
+    },
+    {
+      "id": "csv-document-provenance",
+      "status": "implemented-reviewed",
+      "owner": "generation7_csv_metadata",
+      "source_commit": "9308cef64592a5a7e7d7fb051cffa68464277c31",
+      "evidence": "docs/engineering/strings-csv-peer-review.md",
+      "result_or_next_action": "CSV v2 metadata preamble preserves empty/nonempty provenance; 575 affected passes/one native skip and ten independent passes. Reader budget documentation corrected without runtime changes."
+    },
+    {
+      "id": "combined-suite",
+      "status": "running",
+      "owner": "root",
+      "source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
+      "evidence": "docs/engineering/aggregate-qualification-20261119.md",
+      "result_or_next_action": "Unsplit pytest started from clean detached pt-final-qa. Preserve terminal result and compare runtime/test/source identities before attributing later documentation commits."
+    },
+    {
+      "id": "native-qt-remediation",
+      "status": "blocked",
+      "owner": "next qualification worker",
+      "source_commit": null,
+      "evidence": "docs/engineering/generation3-qualification-review.md",
+      "result_or_next_action": "Official PyPI refresh still has no 6.12.1 binding wheels; seven earlier assessed ranges plus fresh QXmlSimpleReader advisory require component-specific disposition. Version matches alone do not prove application reachability."
+    },
+    {
+      "id": "linux-force-source-race",
+      "status": "open-confirmed",
+      "owner": "generation10_force_design",
+      "source_commit": null,
+      "evidence": "docs/engineering/security-force-recovery-20261119.md",
+      "result_or_next_action": "Fresh worker is checking actual Linux primitive guarantees and bounded filesystem controls. Existing exposure remains open until a real repair or evidenced disposition is reviewed."
+    },
+    {
+      "id": "native-release-acceptance",
+      "status": "blocked",
+      "owner": "next native Windows worker",
+      "source_commit": null,
+      "evidence": null,
+      "result_or_next_action": "Windows trust, clean-machine desktop/accessibility, package/frozen acceptance and source-pinned native receipts remain separate."
+    },
+    {
+      "id": "historical-semantic-review",
+      "status": "open",
+      "owner": "successive archaeology workers",
+      "source_commit": null,
+      "evidence": "docs/engineering/consolidation-inventory.md",
+      "result_or_next_action": "154 retained heads require semantic review at the frozen census. Do not infer uniqueness from history or mark superseded without behavioral proof."
+    },
+    {
+      "id": "index-acquisition-provenance",
+      "status": "in-progress-isolated",
+      "owner": "generation9_acquisition",
+      "source_commit": null,
+      "evidence": null,
+      "result_or_next_action": "Fresh worker is proving smallest missing proposal/window/source-entry persistence scope; no completed repair claimed yet."
+    },
+    {
+      "id": "scheduled-continuation",
+      "status": "pending-publication",
+      "owner": "root",
+      "source_commit": null,
+      "evidence": null,
+      "result_or_next_action": "Create actual hourly successor execution after the durable handoff and reviewed remote candidate exist; do not imply it is already active."
+    }
+  ],
+  "aggregate_source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
+  "workers": [
+    {
+      "name": "root",
+      "scope": "Frozen aggregate qualification, remote draft publication, durable handoff and actual scheduling",
+      "status": "active"
+    },
+    {
+      "name": "generation9_acquisition",
+      "scope": "Prove and complete a bounded index proposal/window/source-entry persistence slice",
+      "status": "active-isolated-follow-up"
+    },
+    {
+      "name": "generation10_force_design",
+      "scope": "Investigate actual Linux primitive guarantees for the final forced-source race",
+      "status": "active-isolated-follow-up"
+    }
+  ]
+}

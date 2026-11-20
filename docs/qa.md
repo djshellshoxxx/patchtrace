@@ -2097,3 +2097,29 @@ The original `8efb7a45` diagnostic stopped at its storage reserve after groups 0
 A subsequent executor outage removed `/tmp`; all saved logs/XML/manifests and committed source survived. At 13:59:05 UTC the frozen `8efb7a45` worktree and lightweight interpreter were restored, with identical Python, dependency versions, source path/hash and source/test/tool fingerprint `b34db9a597ddc8c3074bea1d017ddf5702b7ed438146b55eec5e9e61a12efdc1`. Only this task's untracked Python bytecode caches were removed to recover 55,900,712 bytes. The separate continuation is running original groups 026–111 without changed assertions or exclusions. Its `continuation-manifest.json` binds the unchanged original and setup-replay manifests; no terminal continuation result is claimed here.
 
 The original collection remains 866 files/23,529 nodes. Coverage reconciliation treats parameter text containing `::` as opaque; that corrects diagnostic bookkeeping for 48 IDs without changing pytest selection. The first 200 files account for 4,655 distinct XML cases, with no extra IDs. Original storage stop, setup errors, ASM timing failure, environment restoration and continuation keep separate identities under `verification/combined-current-20261119/`.
+
+
+## 2026-11-19 — maximum-completion generations 1–8
+
+Reviewed combined runtime/test checkpoint: `bffcfa99d6a5044024256edbc0457ab20c92cbae`.
+Manifest DTD and v3 cache admission, WinPairs URL/HTTP handling, partial held-source
+publication recovery, profile drafts, saved queries, paired physical windows,
+accuracy cohort/confidence guards, CSV document metadata and ASM failure diagnostics
+are integrated. Reports preserve unique-source proof and original failed controls
+under `docs/engineering/`; independent controls accompany each recovery.
+
+The repository-required unsplit pytest run is active in a separate clean checkout
+at that checkpoint. Its actual terminal result will be recorded in
+`docs/engineering/aggregate-qualification-20261119.md`; no full pass is claimed here.
+Whole configured Ruff and pip check pass; 16 schema generators completed without
+drift. Later CSV reader-example and peer-evidence commits leave src/tests/tools
+identical. Historical focused selections overlap and must not be summed.
+
+PR322's earlier Linux rz-diff cancellation was retried successfully; actual
+Linux/Windows nonmocked fixture receipts and digest-verified artifact records
+are retained. This does not qualify the new source. The original ASM 156.169465ms
+failure remains recorded; production lexer and strict 150ms budget are unchanged.
+
+Linux forced-source replacement, native Qt disposition, native Windows/trust/
+clean-machine/manual gates, acquisition provenance and separate L1/L2/L3 empirical
+accuracy remain open. See `docs/engineering-handoffs/README.md` and the task ledger.

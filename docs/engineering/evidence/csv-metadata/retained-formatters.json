@@ -1,0 +1,2666 @@
+{
+  "base": "e36b83be1ef86d28a58318cc601a35f20b22bf06",
+  "refs_examined": 637,
+  "refs_without_export": [
+    {
+      "ref": "refs/remotes/origin/access-test-noprefix",
+      "head": "726a371ab34d4589b0456d059865ade6b82fac88"
+    },
+    {
+      "ref": "refs/remotes/origin/audit/ai-reports",
+      "head": "dd6402b9c00d5aae79f152f4fe5ce0fa8597dc24"
+    },
+    {
+      "ref": "refs/remotes/origin/audit/core",
+      "head": "fae13b2ed3043ddce00bbf387e386e93e7b3ee06"
+    },
+    {
+      "ref": "refs/remotes/origin/audit/desktop",
+      "head": "4d5e48ab7df30f6318a8f3177b37ac98741e2b1f"
+    },
+    {
+      "ref": "refs/remotes/origin/audit/enrichment",
+      "head": "cbc5b079ad2c8cdea4ec161b1afe9ac554b8ed39"
+    },
+    {
+      "ref": "refs/remotes/origin/audit/integration",
+      "head": "f6505928d8264343caa33f878deb253626752944"
+    },
+    {
+      "ref": "refs/remotes/origin/audit/runtime",
+      "head": "9f32a6ecbd056249373b82bc1e814bd938da8c70"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/corpus-1",
+      "head": "b7a0f0a45d2de1462367d877b7386091b4d275ce"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/deferred-audit-fixes-1",
+      "head": "2174837f3172c3ff2a3c676da106f42b55648a70"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/help-docs-1",
+      "head": "e5bee6fe157c90a40f2d9f458768e2169ce123e5"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/kb-fixtures-1",
+      "head": "781b36fb60e775ce01bf0c114e6a17b609fdb475"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/panels-1",
+      "head": "cfd7cfff52f4f9b8b1264e8b7d70ef1bbef2d63f"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/unified-fixture-collection-fix-20261016",
+      "head": "941c617b6854291e2448cad6d7d5710a24a8543d"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/unified-fixtures-1",
+      "head": "161a88345efc6484f4d7809fc6963a0193bd0057"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/access-test-1791773355",
+      "head": "726a371ab34d4589b0456d059865ade6b82fac88"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/audit-beta",
+      "head": "c93ff945b9b523abe0b829247137105788a5ea27"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/bundle-license-gate",
+      "head": "d3617acf9af7834582b4962a8c149969a7d55a22"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/clever-clarke-s4nhi6",
+      "head": "502402684b0d0aa35d7719bb5a3467de035982bc"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/patchtrace-cli-dotpath-spec-er6hha",
+      "head": "62b9a3de4d1036a6e4b9bd2618372f4042b15f7f"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/symbol-policy-isolated-settings",
+      "head": "5db597257decc219db520c0dab8369b4d4e2ea5e"
+    },
+    {
+      "ref": "refs/remotes/origin/codex/agent-skills-spec56-20261014",
+      "head": "4467d1f3c6e113a7da808a67e8dee9d4aa5083d8"
+    },
+    {
+      "ref": "refs/remotes/origin/codex/audit-1",
+      "head": "c2070cf8b4e7b0ade76cb000a5805009754eec55"
+    },
+    {
+      "ref": "refs/remotes/origin/codex/audit-2",
+      "head": "08b12f1b279d917736cfc17d4b8e447c8f552616"
+    },
+    {
+      "ref": "refs/remotes/origin/codex/patchtrace-beta",
+      "head": "c7937246a5bf3f1a09c7d121c0d438088b02040c"
+    },
+    {
+      "ref": "refs/remotes/origin/docs/claude-autonomous-alpha-handoff-20261013",
+      "head": "1038d3f13f214d55c28ceeb51c1c13c9b43b1d3f"
+    },
+    {
+      "ref": "refs/remotes/origin/docs/csaf-patch-intelligence-specs",
+      "head": "24244831ec443fa19555586835e71da6dd4aac98"
+    },
+    {
+      "ref": "refs/remotes/origin/docs/diaphora-optional-engine-20261014",
+      "head": "b75ac57d85c75e8d61c61af8d104119bb1c65587"
+    },
+    {
+      "ref": "refs/remotes/origin/docs/nway-matches",
+      "head": "f748cc48ea07b9af189d967979aa078610550eea"
+    },
+    {
+      "ref": "refs/remotes/origin/docs/semantic-ghidra-roadmap",
+      "head": "8b9ebc01bb221a60ee65838dfdafd59d66e15f5d"
+    },
+    {
+      "ref": "refs/remotes/origin/docs/spec-31-kb-cve-correlation-20261014",
+      "head": "9088bf0e2e452c5d792f2a9e6e879f417e9fc120"
+    },
+    {
+      "ref": "refs/remotes/origin/docs/spec-32-kb-patch-search-20261014",
+      "head": "d0ceb56f30f81f881f1f25fb4d1dba772ff476b9"
+    },
+    {
+      "ref": "refs/remotes/origin/docs/specs-plan",
+      "head": "a5194581396b67395a0ae8453d73eec5ab024e54"
+    },
+    {
+      "ref": "refs/remotes/origin/docs/workbench-search-graph-floss-20261014",
+      "head": "af15701d13b516662a36f20a00ece01b8462160f"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/acquisition",
+      "head": "293362a2d8cee7d5cc373439436945888b3b805a"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/acquisition-gui",
+      "head": "7ae34d8fa26a6b6c8b7acf40f5c16d99643151ce"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/alpha-ui-integration",
+      "head": "c7ed1d90a890afa9eb67c238f9f52f458db96432"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/artifact-bytes-seam",
+      "head": "91b35d09afd29e9c78169a3b095d9ea3be6c31b1"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/byte-representations",
+      "head": "303bc452d0bb6cd46ee67f731f64ec951e1ee215"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/enrichment-cache",
+      "head": "0368fd9b5453ab50166c08cf8dfc493e57b0ee52"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/enrichment-contracts",
+      "head": "010d809d2581d3a8ed8208e83325ba29f91b2419"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/enrichment-cve",
+      "head": "49bf245583d040a8b29d80daee8666d8c7f7b8d4"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/enrichment-signals",
+      "head": "e96441a1a90478d5b06e7b0d9b4320695a2018ed"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/enrichment-wil",
+      "head": "9a6999a0e644ef03670d10fc0b08524345c6c709"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/local-runtime-discovery",
+      "head": "b9198705ab4c144746214c1e42c15b6098063009"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/nway",
+      "head": "44d431788bcc55429a033049ed997fa33c92289b"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/pe-overview",
+      "head": "4b78a6d3c0015a5fd46d557cde6cc8f0a583795b"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/phase2-finish",
+      "head": "86afe3f6563b71e1fff5ed56a907f29c6703b96e"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/phase3-batch",
+      "head": "3581b520207b464b35a7baa39d188fb4f2a08cf1"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/profiles",
+      "head": "d21b5917a66041cb1ffa4f46931e551e55f3165a"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/raw-cache",
+      "head": "28bc476713fc9b77b876cfc8f5454760ea23d4e0"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/secondary",
+      "head": "b932ae1a1c8916aeac7be2d49ce27c24717f2846"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/tooltip-registry",
+      "head": "0a3843ea2abe37d42ff0291d621fa9a7c9744bbc"
+    },
+    {
+      "ref": "refs/remotes/origin/feat/verified-offline-runtime-bundle",
+      "head": "1724503d01be7aee13cb43a3a7a28b8a9ff54ece"
+    },
+    {
+      "ref": "refs/remotes/origin/feature/alpha-file-overview-20261013",
+      "head": "476016590be5cd1315613759af18ff61c7c27851"
+    },
+    {
+      "ref": "refs/remotes/origin/feature/evidence-reconciliation-confidence",
+      "head": "ddda35f40b94c145b2a9a9b68509b4ddb76a090a"
+    },
+    {
+      "ref": "refs/remotes/origin/feature/gui-inspection-preview",
+      "head": "8b94227a81b71841c65783c775f704a538d35710"
+    },
+    {
+      "ref": "refs/remotes/origin/fix/backend-exit-diagnostics",
+      "head": "bc00a6912dde57482a301bf64ef6fbc3f324cb92"
+    },
+    {
+      "ref": "refs/remotes/origin/fix/explicit-offline-symbol-policy",
+      "head": "2e6618762ab6e15e5be0be60aec3fb8f56af44f3"
+    },
+    {
+      "ref": "refs/remotes/origin/fix/ghidra-dot-paths",
+      "head": "5c3b1df94c0d2a908bb0459caceb336912527555"
+    },
+    {
+      "ref": "refs/remotes/origin/fix/isolate-ghidra-scratch",
+      "head": "7ea7272311271a540a188e5d0de6d3aaa8864611"
+    },
+    {
+      "ref": "refs/remotes/origin/fix/pe-inspection-row-tooltips-20261013",
+      "head": "0182a8035d64071fc88b5f299edc3ef3760946b5"
+    },
+    {
+      "ref": "refs/remotes/origin/security/offline-bundle-no-overwrite-20261013",
+      "head": "a39cab81de3e0eeadf57e6255d2fe3e131b3294a"
+    },
+    {
+      "ref": "refs/remotes/pull/1",
+      "head": "c7937246a5bf3f1a09c7d121c0d438088b02040c"
+    },
+    {
+      "ref": "refs/remotes/pull/10",
+      "head": "010d809d2581d3a8ed8208e83325ba29f91b2419"
+    },
+    {
+      "ref": "refs/remotes/pull/11",
+      "head": "f6505928d8264343caa33f878deb253626752944"
+    },
+    {
+      "ref": "refs/remotes/pull/12",
+      "head": "86afe3f6563b71e1fff5ed56a907f29c6703b96e"
+    },
+    {
+      "ref": "refs/remotes/pull/13",
+      "head": "3581b520207b464b35a7baa39d188fb4f2a08cf1"
+    },
+    {
+      "ref": "refs/remotes/pull/14",
+      "head": "8b9ebc01bb221a60ee65838dfdafd59d66e15f5d"
+    },
+    {
+      "ref": "refs/remotes/pull/15",
+      "head": "8b94227a81b71841c65783c775f704a538d35710"
+    },
+    {
+      "ref": "refs/remotes/pull/16",
+      "head": "ddda35f40b94c145b2a9a9b68509b4ddb76a090a"
+    },
+    {
+      "ref": "refs/remotes/pull/17",
+      "head": "24244831ec443fa19555586835e71da6dd4aac98"
+    },
+    {
+      "ref": "refs/remotes/pull/18",
+      "head": "a39cab81de3e0eeadf57e6255d2fe3e131b3294a"
+    },
+    {
+      "ref": "refs/remotes/pull/19",
+      "head": "476016590be5cd1315613759af18ff61c7c27851"
+    },
+    {
+      "ref": "refs/remotes/pull/2",
+      "head": "5c3b1df94c0d2a908bb0459caceb336912527555"
+    },
+    {
+      "ref": "refs/remotes/pull/20",
+      "head": "1038d3f13f214d55c28ceeb51c1c13c9b43b1d3f"
+    },
+    {
+      "ref": "refs/remotes/pull/21",
+      "head": "91b35d09afd29e9c78169a3b095d9ea3be6c31b1"
+    },
+    {
+      "ref": "refs/remotes/pull/22",
+      "head": "4b78a6d3c0015a5fd46d557cde6cc8f0a583795b"
+    },
+    {
+      "ref": "refs/remotes/pull/23",
+      "head": "303bc452d0bb6cd46ee67f731f64ec951e1ee215"
+    },
+    {
+      "ref": "refs/remotes/pull/24",
+      "head": "0a3843ea2abe37d42ff0291d621fa9a7c9744bbc"
+    },
+    {
+      "ref": "refs/remotes/pull/25",
+      "head": "c7ed1d90a890afa9eb67c238f9f52f458db96432"
+    },
+    {
+      "ref": "refs/remotes/pull/26",
+      "head": "0182a8035d64071fc88b5f299edc3ef3760946b5"
+    },
+    {
+      "ref": "refs/remotes/pull/27",
+      "head": "da32cf0a4028e7a6fb33a172f41c9c9937c6486f"
+    },
+    {
+      "ref": "refs/remotes/pull/28",
+      "head": "f75723672ee382a9dc7683bd00c5bb1a24fc1f24"
+    },
+    {
+      "ref": "refs/remotes/pull/29",
+      "head": "8c78d9479e89f4760546594a16418fd23fa317a1"
+    },
+    {
+      "ref": "refs/remotes/pull/3",
+      "head": "7ea7272311271a540a188e5d0de6d3aaa8864611"
+    },
+    {
+      "ref": "refs/remotes/pull/30",
+      "head": "15d8ce87b10ce94a828e6ec4ddf16462596c5ec8"
+    },
+    {
+      "ref": "refs/remotes/pull/31",
+      "head": "6e8edb67c21ca7a2a6ed5363fceb79ac3227ece4"
+    },
+    {
+      "ref": "refs/remotes/pull/32",
+      "head": "2e9c3d70ed77cd5a6e7d16f1fa33983e282b0124"
+    },
+    {
+      "ref": "refs/remotes/pull/33",
+      "head": "655ecc400123400801078412da5faec46a16740c"
+    },
+    {
+      "ref": "refs/remotes/pull/34",
+      "head": "302387f28b3a6792f331af109311d0a237024ca2"
+    },
+    {
+      "ref": "refs/remotes/pull/37",
+      "head": "b75ac57d85c75e8d61c61af8d104119bb1c65587"
+    },
+    {
+      "ref": "refs/remotes/pull/38",
+      "head": "ce108cd8a98095e0b28257ef9f94e1fd1fd36005"
+    },
+    {
+      "ref": "refs/remotes/pull/4",
+      "head": "2e6618762ab6e15e5be0be60aec3fb8f56af44f3"
+    },
+    {
+      "ref": "refs/remotes/pull/40",
+      "head": "9088bf0e2e452c5d792f2a9e6e879f417e9fc120"
+    },
+    {
+      "ref": "refs/remotes/pull/41",
+      "head": "d0ceb56f30f81f881f1f25fb4d1dba772ff476b9"
+    },
+    {
+      "ref": "refs/remotes/pull/42",
+      "head": "2a5b2fb8d240f558ede688984bfe7f53e1f287a3"
+    },
+    {
+      "ref": "refs/remotes/pull/43",
+      "head": "af15701d13b516662a36f20a00ece01b8462160f"
+    },
+    {
+      "ref": "refs/remotes/pull/44",
+      "head": "48f2eed37bcedaed4d871e42af2a6a7ab4c0f773"
+    },
+    {
+      "ref": "refs/remotes/pull/45",
+      "head": "a20e067d66b906e7f8985f9df38a5ff130e56eab"
+    },
+    {
+      "ref": "refs/remotes/pull/46",
+      "head": "7dc64e5ce70d66590061d9c962dd9c1a11c9fb22"
+    },
+    {
+      "ref": "refs/remotes/pull/47",
+      "head": "37920a005eeb63e1cb49c6c4c265751c2beb3aca"
+    },
+    {
+      "ref": "refs/remotes/pull/48",
+      "head": "24b72112ca3a658d32972d924f83e43247953f1d"
+    },
+    {
+      "ref": "refs/remotes/pull/49",
+      "head": "70be874a3447c379f71e6e81b69674e3e6b581a2"
+    },
+    {
+      "ref": "refs/remotes/pull/5",
+      "head": "b9198705ab4c144746214c1e42c15b6098063009"
+    },
+    {
+      "ref": "refs/remotes/pull/50",
+      "head": "5c0ccdcc06c0661c65be9ca6328f8650a1adaa67"
+    },
+    {
+      "ref": "refs/remotes/pull/51",
+      "head": "42b75e938b4e8f6271118eeaaa712bd649d4fce8"
+    },
+    {
+      "ref": "refs/remotes/pull/52",
+      "head": "166c426102ee62002a7d253d6e42fc0858141ceb"
+    },
+    {
+      "ref": "refs/remotes/pull/53",
+      "head": "697018f6d3a1f31b3a15f92d72a976eb21b5a923"
+    },
+    {
+      "ref": "refs/remotes/pull/54",
+      "head": "24a38ded19a1c19382d47f887d90c8be7721a598"
+    },
+    {
+      "ref": "refs/remotes/pull/55",
+      "head": "86614baeccdaa89d67773ab1a7bdbf0769c4e0fb"
+    },
+    {
+      "ref": "refs/remotes/pull/56",
+      "head": "08b12f1b279d917736cfc17d4b8e447c8f552616"
+    },
+    {
+      "ref": "refs/remotes/pull/57",
+      "head": "d6bd42b509470ab5953af19196aa5ad9c79fa740"
+    },
+    {
+      "ref": "refs/remotes/pull/58",
+      "head": "b93a6adbb1a191f1ac50aa0a840e31a9bc1cc69b"
+    },
+    {
+      "ref": "refs/remotes/pull/6",
+      "head": "bc00a6912dde57482a301bf64ef6fbc3f324cb92"
+    },
+    {
+      "ref": "refs/remotes/pull/60",
+      "head": "785998a0a9c1c6dda46d81097ce861fb5cd648e4"
+    },
+    {
+      "ref": "refs/remotes/pull/61",
+      "head": "4467d1f3c6e113a7da808a67e8dee9d4aa5083d8"
+    },
+    {
+      "ref": "refs/remotes/pull/62",
+      "head": "b18a12db7ff6d41d931c0e6e810601a48504d852"
+    },
+    {
+      "ref": "refs/remotes/pull/63",
+      "head": "502402684b0d0aa35d7719bb5a3467de035982bc"
+    },
+    {
+      "ref": "refs/remotes/pull/65",
+      "head": "d3617acf9af7834582b4962a8c149969a7d55a22"
+    },
+    {
+      "ref": "refs/remotes/pull/67",
+      "head": "2174837f3172c3ff2a3c676da106f42b55648a70"
+    },
+    {
+      "ref": "refs/remotes/pull/68",
+      "head": "b7a0f0a45d2de1462367d877b7386091b4d275ce"
+    },
+    {
+      "ref": "refs/remotes/pull/69",
+      "head": "781b36fb60e775ce01bf0c114e6a17b609fdb475"
+    },
+    {
+      "ref": "refs/remotes/pull/7",
+      "head": "1724503d01be7aee13cb43a3a7a28b8a9ff54ece"
+    },
+    {
+      "ref": "refs/remotes/pull/70",
+      "head": "e5bee6fe157c90a40f2d9f458768e2169ce123e5"
+    },
+    {
+      "ref": "refs/remotes/pull/71",
+      "head": "161a88345efc6484f4d7809fc6963a0193bd0057"
+    },
+    {
+      "ref": "refs/remotes/pull/72",
+      "head": "cfd7cfff52f4f9b8b1264e8b7d70ef1bbef2d63f"
+    },
+    {
+      "ref": "refs/remotes/pull/8",
+      "head": "48b944fa09c5e1f4946a7f38a4b54e521b4b1eeb"
+    },
+    {
+      "ref": "refs/remotes/pull/9",
+      "head": "5db597257decc219db520c0dab8369b4d4e2ea5e"
+    },
+    {
+      "ref": "refs/remotes/pull/90",
+      "head": "941c617b6854291e2448cad6d7d5710a24a8543d"
+    }
+  ],
+  "export_versions": [
+    {
+      "blob": "28a79b13e0ae70d158a5ac2c3494311f9717bfdb",
+      "refs": [
+        {
+          "ref": "refs/remotes/origin/consolidation/patchtrace-continuation-20261119",
+          "head": "f851d74d134a09cb9b12013d2c1adba1fde0c24f"
+        },
+        {
+          "ref": "refs/remotes/origin/consolidation/patchtrace-reviewed-20261119",
+          "head": "8d130aefe1be6e737cff1d90d2a5b1658d60a3a6"
+        },
+        {
+          "ref": "refs/remotes/pull/319",
+          "head": "8d130aefe1be6e737cff1d90d2a5b1658d60a3a6"
+        },
+        {
+          "ref": "refs/remotes/pull/321",
+          "head": "f851d74d134a09cb9b12013d2c1adba1fde0c24f"
+        }
+      ],
+      "render": "def render(doc: dict, fmt: Format) -> bytes:\n    if fmt == 'json':\n        return (json.dumps(doc, sort_keys=True, indent=2) + '\\n').encode('utf-8')\n    out = io.StringIO(newline='')\n    writer = csv.writer(out, lineterminator='\\n')\n    writer.writerow(CSV_COLUMNS)\n    writer.writerows(_csv_row(r) for r in doc['changes'])\n    return out.getvalue().encode('utf-8')",
+      "render_ast_sha256": "c9c63aa1d39b4fc5416fc96160d373baa8b162d9f512ef81806b4bea7ba6a243",
+      "row_ast_sha256": "3879fa229c24ed71587120ab8a768dd63bd0d010afc53aebfa913fab3773b3b6",
+      "columns": [
+        "id",
+        "status",
+        "review_tier",
+        "display",
+        "length",
+        "cues",
+        "older_offsets",
+        "newer_offsets",
+        "functions",
+        "lineage_groups",
+        "reasons"
+      ]
+    },
+    {
+      "blob": "3896fce5d973f93a1149d59da920471a8fa0ed9d",
+      "refs": [
+        {
+          "ref": "refs/remotes/origin/integration/exhaustive-patchtrace-consolidation-20261119",
+          "head": "6096e64d4e7b8f0ecc6af884f7d220e07790d85a"
+        },
+        {
+          "ref": "refs/remotes/pull/320",
+          "head": "6096e64d4e7b8f0ecc6af884f7d220e07790d85a"
+        }
+      ],
+      "render": "def render(doc: dict, fmt: Format) -> bytes:\n    if fmt == 'json':\n        return (json.dumps(doc, sort_keys=True, indent=2) + '\\n').encode('utf-8')\n    out = io.StringIO(newline='')\n    writer = csv.writer(out, lineterminator='\\n')\n    writer.writerow(CSV_COLUMNS)\n    writer.writerows(_csv_row(r) for r in doc['changes'])\n    return out.getvalue().encode('utf-8')",
+      "render_ast_sha256": "c9c63aa1d39b4fc5416fc96160d373baa8b162d9f512ef81806b4bea7ba6a243",
+      "row_ast_sha256": "3879fa229c24ed71587120ab8a768dd63bd0d010afc53aebfa913fab3773b3b6",
+      "columns": [
+        "id",
+        "status",
+        "review_tier",
+        "display",
+        "length",
+        "cues",
+        "older_offsets",
+        "newer_offsets",
+        "functions",
+        "lineage_groups",
+        "reasons"
+      ]
+    },
+    {
+      "blob": "b6d7b2942afdeaac187fbdb9b2c031cdc92401bf",
+      "refs": [
+        {
+          "ref": "refs/remotes/origin/codex/patchtrace-stabilization-20261119",
+          "head": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/strings-export-publication-20261118",
+          "head": "92a411bf02fc8beb00b7a148e39db2bf68efa061"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/verified-followup-integration-20261118",
+          "head": "f2b6827fc6270b96fb241b0722f2878de5a17361"
+        },
+        {
+          "ref": "refs/remotes/pull/308",
+          "head": "92a411bf02fc8beb00b7a148e39db2bf68efa061"
+        },
+        {
+          "ref": "refs/remotes/pull/316",
+          "head": "f2b6827fc6270b96fb241b0722f2878de5a17361"
+        },
+        {
+          "ref": "refs/remotes/pull/318",
+          "head": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5"
+        }
+      ],
+      "render": "def render(doc: dict, fmt: Format) -> bytes:\n    if fmt == 'json':\n        return (json.dumps(doc, sort_keys=True, indent=2) + '\\n').encode('utf-8')\n    out = io.StringIO(newline='')\n    writer = csv.writer(out, lineterminator='\\n')\n    writer.writerow(CSV_COLUMNS)\n    writer.writerows(_csv_row(r) for r in doc['changes'])\n    return out.getvalue().encode('utf-8')",
+      "render_ast_sha256": "c9c63aa1d39b4fc5416fc96160d373baa8b162d9f512ef81806b4bea7ba6a243",
+      "row_ast_sha256": "3879fa229c24ed71587120ab8a768dd63bd0d010afc53aebfa913fab3773b3b6",
+      "columns": [
+        "id",
+        "status",
+        "review_tier",
+        "display",
+        "length",
+        "cues",
+        "older_offsets",
+        "newer_offsets",
+        "functions",
+        "lineage_groups",
+        "reasons"
+      ]
+    },
+    {
+      "blob": "c642cc148f9f8d90373e679f81f46f8976c72537",
+      "refs": [
+        {
+          "ref": "refs/remotes/origin/audit/kb-correlation-20261107",
+          "head": "c760e6ccea0d3e4df04bf76e58139d9a7fc9e9e6"
+        },
+        {
+          "ref": "refs/remotes/origin/audit/random-boundaries-20261105",
+          "head": "802b5b1bb5f5e64118256e75414b7ca74ad61fcc"
+        },
+        {
+          "ref": "refs/remotes/origin/audit/random-invariants-20261105",
+          "head": "7716e2b02feaa04e59dce302c1c6cacbe800634b"
+        },
+        {
+          "ref": "refs/remotes/origin/audit/random-lifecycle-20261105",
+          "head": "f2b7d1786f60df27b0228f247aab9a00bd7c1078"
+        },
+        {
+          "ref": "refs/remotes/origin/audit/trust-boundaries-20261107",
+          "head": "d75c0490aa0109e3a983c5e6baea2cea1855f956"
+        },
+        {
+          "ref": "refs/remotes/origin/automation/api-funded-persistent-codex-20261103",
+          "head": "6fe6c4b1be060eb6e9d5208a68f0d68e1082b59c"
+        },
+        {
+          "ref": "refs/remotes/origin/automation/parallel-api-eight-agents-20261103",
+          "head": "f8050a1fef23b71fd3a02b216c5035bcac3f4889"
+        },
+        {
+          "ref": "refs/remotes/origin/automation/patchtrace-api-agent-pilot-20261103",
+          "head": "def36c822a80c77ae94b8e9a77da6f1ee9de1160"
+        },
+        {
+          "ref": "refs/remotes/origin/chatgpt/ghidriff-sequential-lock-fix-20261017",
+          "head": "f6b7545bcc7a161440ab7119233c204510571370"
+        },
+        {
+          "ref": "refs/remotes/origin/chatgpt/java-probe-boundaries-20261016",
+          "head": "09bb4519d7d8e9ff8f40abcba7e11cb297d8b61e"
+        },
+        {
+          "ref": "refs/remotes/origin/chatgpt/java-probe-ci-fix-20261016",
+          "head": "0254841e3e635ed717e35abcf83021f001d7df29"
+        },
+        {
+          "ref": "refs/remotes/origin/chatgpt/java-probe-qa-fix-20261016",
+          "head": "89500e12068656fa1958443ef634064effcbc40b"
+        },
+        {
+          "ref": "refs/remotes/origin/chatgpt/lbl30-prereg-guard-20261016",
+          "head": "6ae2c079e6cafa2b7bd5396cac443cd34ba7138a"
+        },
+        {
+          "ref": "refs/remotes/origin/chatgpt/lbl31-coff-quoted-rip-20261016",
+          "head": "6e71bfabbf5ef75449b46981e9e822f7e555a6bf"
+        },
+        {
+          "ref": "refs/remotes/origin/chatgpt/lbl31-coff-symbol-mask-20261016",
+          "head": "9622704d5c751d55700c4b642111131a7135d139"
+        },
+        {
+          "ref": "refs/remotes/origin/chatgpt/lbl31-output-persistence-20261015",
+          "head": "2019a37fa65fc37f4758469143c2daadc07e0098"
+        },
+        {
+          "ref": "refs/remotes/origin/chatgpt/lbl31-windows-qa-fixes-20261016-a",
+          "head": "ddb2ff077a21c1f0053ba8079564f6f86c3e155f"
+        },
+        {
+          "ref": "refs/remotes/origin/chatgpt/lbl32-card-controls-20261016",
+          "head": "9513bc05229dd7a8460fc229d7420154d61498db"
+        },
+        {
+          "ref": "refs/remotes/origin/chatgpt/lbl32-recipe-aa-noise-20261016",
+          "head": "eaa30013794a9bd0fedc9ec34bbe374d6db0cfc9"
+        },
+        {
+          "ref": "refs/remotes/origin/chatgpt/merge-first-handoff-20261016",
+          "head": "19153f10780e783bc931739dd26db97d8eaf2b92"
+        },
+        {
+          "ref": "refs/remotes/origin/chatgpt/nway-external-note-qa-20261016",
+          "head": "8c7288276d3e49b7794b7fd80db4b02d5891cf00"
+        },
+        {
+          "ref": "refs/remotes/origin/chatgpt/patchwatch-reuse-roadmap-20261026",
+          "head": "4eabf8dff2c4094681da70c7bd85ecd0da5aed9f"
+        },
+        {
+          "ref": "refs/remotes/origin/chatgpt/r5-calibration-research-20261030",
+          "head": "4d9d9051aea87319847a0b321a14d37b95cb8abd"
+        },
+        {
+          "ref": "refs/remotes/origin/chatgpt/semantic-analysis-r3-20261030",
+          "head": "2698b9a04d33b2d04f49c1ab737636539c6ef6f7"
+        },
+        {
+          "ref": "refs/remotes/origin/chatgpt/ue-r3-retain-decompiled-20261016",
+          "head": "ebbd621d4f557905892aee5f7cf8cb7b0e2addc2"
+        },
+        {
+          "ref": "refs/remotes/origin/chatgpt/ue-r7-p15-unresolved-20261016-a",
+          "head": "292dc3953dd2b8f157752d12251aff68b6e5bda5"
+        },
+        {
+          "ref": "refs/remotes/origin/chatgpt/ue-r7-strict-worker-report-20261016-a",
+          "head": "9c5f9a42b499133b842b14b9619bf8390010e1ff"
+        },
+        {
+          "ref": "refs/remotes/origin/chatgpt/unified-sort-perf-qa-20261016",
+          "head": "27b0a48bb8007f504b4a127a099136a6ea5c00b7"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/affectionate-galileo-bqd3tw",
+          "head": "b29351d41060f8e9330fc9673457d835e188f993"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/autonomous-finish-20261104",
+          "head": "ad4c49282a65d17d2ef23dfcc03e82be065c9021"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/awesome-ramanujan-o3pxx3-ci",
+          "head": "0bf1f8309e8425ba34199657009d3055215336f1"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/awesome-ramanujan-o3pxx3-hostile",
+          "head": "077b04e681ac74b20c0ff8bf367aa720c277f2d2"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/awesome-ramanujan-o3pxx3-win1",
+          "head": "7ac57759f3b9b332eaafb48c82f366566892f1b1"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/bugfix-kbc-20261029",
+          "head": "653f384d1ca60b7e943bd658698e0989d826b696"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/bugfix-kev-acq-20261029",
+          "head": "fbe58d800da27aff2544c6a478f0a591ff7dad3b"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/bugfix-rules-cg-20261029",
+          "head": "78d48cf80bf9a8c698e604dc1ce58e8aecedca45"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/bugfix-rules-cg-rest-20261111",
+          "head": "67b2bc456c59a510b854b0cdd9e85ed29d00b17d"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/bugfix-search-pilot-20261111",
+          "head": "d1f7d9aa64b28c8a8ca0a1065bb88e1e2f15b7f0"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/bugfix-strings-pe-20261029",
+          "head": "7ae041e79e419159299c32df98b8e69ab176e859"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/compassionate-goldberg-5uuqks",
+          "head": "198eb21e8813b28de361422cfe3c002bdb9e3970"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/fix-deadline-test",
+          "head": "22ff025a7710d07d7ad74be2c8f7cc0b4db0daf7"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/funny-feynman-d2m0b5",
+          "head": "770c11f40ef70e11dfeb3fbc2f5646cc2b4b97b9"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/gallant-knuth-8gxuzd",
+          "head": "f249edc8ee70ae003a1478eae5418d85ed629d87"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/instance-b-features",
+          "head": "9237c2601c0f25d306b51883875c339bab8ed82b"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/instance-c-research",
+          "head": "6f767ccef8ebfffd1d2373c5124d8a961dc54b41"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/instance-d-gui",
+          "head": "2fa113889d1ffee6b68496993d3b3b6ebb0ba035"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/java-version-retry-integration",
+          "head": "45fa67ad7e924cb4e2df1cd487c04a2c0ddab381"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/jolly-fermi-eghaxy",
+          "head": "99f8328ce89d02f200cf9fbc5852d9801761af28"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/live-harness-infra-20261111",
+          "head": "c59ccada97b649366af808a6d83bb465078c9011"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/live-proof-20261111",
+          "head": "18efb7ef6d196775645f195552a32ad08e277459"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/modest-hamilton-kz2gta",
+          "head": "280bf05856eb60f4ddb0d58210616f65a3735816"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/patchtrace-features",
+          "head": "66e9adc50fb118c04e5e24eacd0c221ca483a130"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/patchtrace-haiku-agent-motpbx",
+          "head": "cbabc09e9df8a8190c769164ef0fae44f9c5cb1b"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/patchtrace-kbf04-fp-tests-20261118",
+          "head": "16ab88b0626ef05700c4199e926103932312e5c7"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/patchtrace-multi-worker-consolidate-24ct7v",
+          "head": "ca10acb506fbf61db8142a836acfbd1e50a2aeb3"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/patchtrace-search-anchors-circularity-20261118",
+          "head": "f6ef1528c15b2281ee7b6f32625d02a5211c926d"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/patchtraces-consolidation-trngn0",
+          "head": "faddea300daf4058d38d24ff04a270be6f3d832b"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/quirky-curie-n5pxf5",
+          "head": "a5593fa58b2ead6ecf6adfe045db242232cd52a3"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/serene-heisenberg-2y5kz6",
+          "head": "7ed5cebfdaee4dc508b0cc739e86c18c1ff34a97"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/sleepy-fermi-cli-parity-1",
+          "head": "cf50b4e8725cb1291ac6150667f2e136f023aff3"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/sleepy-fermi-kbc-1",
+          "head": "53f5dd2611b38e3f69f8d72c3ca7cf73e9e896ab"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/sleepy-fermi-na-rzdiff-ownership",
+          "head": "aacb984e9d627be051ca8c8c3b88d5ceca0ff505"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/sleepy-fermi-rq-l1-runner",
+          "head": "e88d748cf9846e04c0c81449976f530519da83a9"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/sleepy-fermi-security-1",
+          "head": "1d5a022d2840c5c071ccece503664c8c961d63f1"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/sleepy-fermi-test-reliability",
+          "head": "37d9e47ca202b33f737b15f7af724649db8c3e15"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/sleepy-fermi-y3z4yj",
+          "head": "160a60e838742b21f70effedb8e7bb48886d9266"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/spec53-diagnose-launcher",
+          "head": "a00fcc14ea11751ce5ca05271e2be32d06dd4535"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/ws-a-20261104",
+          "head": "dabba4aea4ba0fa19e71ede05ce4fb8ab6741942"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/ws-a2-ci-speed-20261104",
+          "head": "bef720fdd50c0ab7c93a10955b3e5ec7d2a5f992"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/ws-bc-20261104",
+          "head": "e1193c8896e009930dae4edec974d9795876f0e0"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/ws-i-20261104",
+          "head": "b03a77b8a2fe9e4fa65fbe43889e06f4e68180e9"
+        },
+        {
+          "ref": "refs/remotes/origin/claude/ws-p-20261104",
+          "head": "597a8b106491cd587cedf1273ee5ef6d56d71508"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/advisory-read-bounds-20261118",
+          "head": "a4061979547ef88855fbdb085228a42c3be21603"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/analyst-accessibility-20261109",
+          "head": "b90a2cd49fa4ba71050a378abc753fe8c90733fd"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/autonomous-checkpoint-20261102-0945",
+          "head": "d038ddea43182b8709afd447140dc74fded487c5"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/autonomous-checkpoint-20261102-1020",
+          "head": "c13d3257c88140c23fb585a8a59a4dce81e81928"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/autonomous-reconcile-20261101",
+          "head": "0130bf81e2fe3154f30af7b68a0e6ab197946040"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/codespaces-cs1-20261109",
+          "head": "a5f049cd777d3d885ec8e1572f94ea8935c9cbb6"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/consolidate-backup-stability-20261102",
+          "head": "f1a55c4cf21ddb0dea243bd417b74f86caaed142"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/consolidate-prereg-prefix-20261102",
+          "head": "9b9452b4677ee3809a6e0f43d49567a8d15602e6"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/consolidate-replay-schema-20261102",
+          "head": "ca411e77f43a9fd95ca5e0bcc7d2b58071ccae37"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/consolidated-reviewed-20261102",
+          "head": "6e82fd70f315b99c6798a42c9061a1424a02933e"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/consolidation-audit-20261104",
+          "head": "fbd9595351bf50217402b7a62b3e057de79f45f0"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/consolidation-cve-reviewed-20261118",
+          "head": "d8c02caea407f6d323eecd636735849c1eb31a2d"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/consolidation-evidence-20261102",
+          "head": "44c320e37b84a38259f13fa8f0f444b542b96f2c"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/consolidation-integrity-20261103",
+          "head": "b58bb53debcb3323e5d8d634e09397cb7e02965f"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/consolidation-reviewed-20261118",
+          "head": "121ffb0bcdd6af4f24e5035389d4709dffddf263"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/coordinator-rule-repairs-20261031",
+          "head": "798e11ef345ed7a7a65508a466eaf77ee85ef77c"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/corpus-integrity-20261116",
+          "head": "6a5b6f2609604fe34a8da9cf347c713b21578834"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/corpus-output-main-20261101",
+          "head": "874e9a267fdc589a796ce573f2958e1aa84ea0f6"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/deep-review-consolidation-20261030",
+          "head": "95e09548a82202ae4cfd9380522f36513da87a66"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/essential-combined-verification-20261030",
+          "head": "a7f13e13ffb512f8e9621753a0ae162d78942f3b"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/essential-integration-20261029",
+          "head": "5ed624e91468c410f2cf738ed4e36c2be3e0201d"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/essential-project-safety-20261031",
+          "head": "c3868d8335a8f32f676905032dc1a6d0e9f22fd6"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/fix-pr110-ci-gates-20261029",
+          "head": "c0d1c38aee74461969ff0a8b4d61179c3dbb9b0b"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/gt01-extraction-recovery-20261030",
+          "head": "d76d23372acef4049115e9ae176acbeb538a82e5"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/gui-bounded-ambiguous-candidates-20261029",
+          "head": "3287cb3d36052bd6e44420f631ed033baf939d64"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/identity-main-repair-20261101",
+          "head": "4eebea4a5389af16bffe32a2bf9285c406d95fb1"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/java-version-retry-20261015",
+          "head": "8ee61c623fa37c5a219f912cf7870bfeddcb1f70"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/kb-explicit-filename-selection-20261104",
+          "head": "761b6b885f00143597c74f0457b1165a144fbdd4"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/kb-fixture-contract-repairs-20261030",
+          "head": "a4d1e6a38c34d1952584aa65d7f5f908c45547b3"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/manifest-dtd-reviewed-20261118",
+          "head": "23fbe4a54880319f62f40f3196794f85b6cdaec5"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/manual-correction-completeness-20261104",
+          "head": "65f979a163a88ec5b32b3eb4173fa4a50ee9c920"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/master-foundation-scope-20261118-4a7",
+          "head": "88b0b52281dd314aa72f93819145a73135618bc4"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/msrc-mixed-format-revision-20261102",
+          "head": "e1b79e048d3963d747bc9f07448b039a250180ed"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/msrc-reconcile-integration-20261102",
+          "head": "56374f867594dd923383c91ea71970cb7d24d173"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/parser-test-cpu-budget-20261104",
+          "head": "cb204f7625d4de496642926bbda37d07e2888131"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/patchtrace-checkpoint-20261119-81e4",
+          "head": "bdc929ebd3c6aaa2563c758936beb315a10eeea0"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/pilot-current-evidence-reviewed-20261118",
+          "head": "b41d6631e679ad2777d248fa087ea71582a5bf63"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/post-consolidation-20261116",
+          "head": "2d330075fbe00209fbe096ee29b60dcfd0e347b4"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/pr110-ci-repairs-20261029",
+          "head": "bb42828d05b775c59b73a7bbd02c0113b9b9bb3b"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/pr110-kb-arch-scope-20261029",
+          "head": "40e02daf93c8e13a94b74f5b80d86c1680fea7ad"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/pr110-persistence-feedback-20261029",
+          "head": "3e9cedb012b4c82da3b0e5f9bc977ecd7313b64c"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/pr110-qa-wbjson-diaphora-help-20261029",
+          "head": "aba4c2001a6b093f7f8cdc8b0ac20ab074ed57b8"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/pr111-bounded-nav-into-integration-20261029",
+          "head": "025300f8e169556f84b6a8cfed20413e0a26b019"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/primary-environment-20261118",
+          "head": "09b032f205f4ffa1838bef56007ebdb7a2308420"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/project-safe-export-20261101",
+          "head": "e90254424c26ecd00e4c10c3c638e76d11b35841"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/pw01-kb-inventory-20261118",
+          "head": "2b697222b34359bb46adc90aad69fd0a12708601"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/pw01-retained-source-pages-20261118",
+          "head": "58fc130631f602b6e907bb054d30c21d810551d4"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/r1-ground-truth-research-20261030",
+          "head": "10856edf05afae8166291f09fb3ead92f297360d"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/r1-receipt-publication-20261031",
+          "head": "8c9eafc79b007a963453d8edf6cb40c804c9bc3d"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/r2-unified-matching-research-20261030",
+          "head": "b3ceb8b30d7a83da5e22c231c3b8c28179246816"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/raw-alignment-reviewed-20261118",
+          "head": "3c9d3f074481b2f609330fa49ab9019eb6637849"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/real-msrc-adapter-20261101",
+          "head": "d99cd7712b76e9e42661ef0b268417d7ca322d3e"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/receipt-parent-race-20261101",
+          "head": "2fdac2ea9042985ac3c98545d38ac3461d00f4cc"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/release-integration-20261116",
+          "head": "95db052a11cce162d2d633cae805f28119f783a1"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/release-qualification-reviewed-20261118",
+          "head": "573829f33c84e9b2d53ba51ebd7f699e39f406fe"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/repair-openai-agent-20261104",
+          "head": "f019606665a740dc252e745913924debf73adc48"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/rzdiff-164-investigation",
+          "head": "20ef68eaab59a2941bd2fb0db918eee36107c75f"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/saved-search-reviewed-20261118",
+          "head": "26558cd0723aa5fa6d883f2935ad3c43cef94a86"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/semantic-proof-reconciliation-20261031",
+          "head": "745e93426a16e0a91a961b6e0bbcb71be69f2a7e"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/storage-integrity-20261101",
+          "head": "9911af4d9130b81b1875f82179e03e0a89e89794"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/t9-qa-20261020",
+          "head": "ecc4f2054c00dc2b324bb71134595c48dc4b6a18"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/tier-w-fetch-20261015",
+          "head": "5b7b2591e616e8c28c05c7070661b33e2ca0435c"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/training-prereg-identity-20261101",
+          "head": "dfe8f421db390ccd3158393a60205fa5dd25df0b"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/windows-branding-reconcile-20261030",
+          "head": "8f4c4a2e0021d424d403317c6780b6db026ad76b"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/windows-setup-installer-20261017",
+          "head": "9c5fe67bd10a5d1342440bb8ea6a524cca3ce1f2"
+        },
+        {
+          "ref": "refs/remotes/origin/consolidate/docs-20261104",
+          "head": "ed70e6ddac449a42f843f1c60aa878416ab31727"
+        },
+        {
+          "ref": "refs/remotes/origin/consolidate/kb-fixtures-20261104",
+          "head": "820d70744dff58ef484299791d073b2e712f0524"
+        },
+        {
+          "ref": "refs/remotes/origin/consolidate/research-r7-20261104",
+          "head": "552c29453c5de93e22c65e47ad4187ded91e993a"
+        },
+        {
+          "ref": "refs/remotes/origin/consolidate/rules-callgraph-20261104",
+          "head": "7b3fcbaca88256971eafd55b8fb8fe9f44634a9e"
+        },
+        {
+          "ref": "refs/remotes/origin/consolidate/test-stability-20261104",
+          "head": "64e8374d5d3ae97a719a2bb3ac800497c50892af"
+        },
+        {
+          "ref": "refs/remotes/origin/consolidation/desktop-keyboard-accessibility-20261116",
+          "head": "45997cfc997b06996a982705e6cd60dc73a8fae1"
+        },
+        {
+          "ref": "refs/remotes/origin/docs/codespaces-plan-20261107",
+          "head": "c3536288ee3745826be814afb4d8fd07a53c526b"
+        },
+        {
+          "ref": "refs/remotes/origin/docs/dockable-workspace-spec-20261030",
+          "head": "6a1e3ce348a7e5f67bbabfe388315812cc830b03"
+        },
+        {
+          "ref": "refs/remotes/origin/docs/findings-20261107",
+          "head": "9d72402cc3fd884203c7a759f714fd0a4bd2c51f"
+        },
+        {
+          "ref": "refs/remotes/origin/docs/handoff-20261107",
+          "head": "39db34c5beaaf16cc60fec30f084acfde4035316"
+        },
+        {
+          "ref": "refs/remotes/origin/docs/kbc-live-probe-result-20261107",
+          "head": "c21d0ab8471ac1a541eb6d2ff929cce1fb34a2fd"
+        },
+        {
+          "ref": "refs/remotes/origin/docs/post-consolidation-gap-analysis-20261030",
+          "head": "61b5c2bade71a8cec58ca9e1514141f4508b7c79"
+        },
+        {
+          "ref": "refs/remotes/origin/docs/r8-reconciliation-20261106",
+          "head": "5e1e19828b3801a2f0f7d50b4250ff9a273264ef"
+        },
+        {
+          "ref": "refs/remotes/origin/docs/ranking-reuse-20261105",
+          "head": "bc52940fb32d5b5f6d1a58a860062ec60d423d1e"
+        },
+        {
+          "ref": "refs/remotes/origin/docs/readme-and-wiki",
+          "head": "ad8fbe9f2f041653760c02e9d18a91a66dd11c39"
+        },
+        {
+          "ref": "refs/remotes/origin/docs/refresh-accuracy-handoff-20261109",
+          "head": "2e408e3c24c2efad6144bf8953d639edcf9fc489"
+        },
+        {
+          "ref": "refs/remotes/origin/docs/research-reconciliation-20261105",
+          "head": "febc9de57e61162da12fb1cc9280aef9b3ec2a99"
+        },
+        {
+          "ref": "refs/remotes/origin/docs/research-tools-execution-plan-20261106",
+          "head": "40da817650498eb7b87502016d2be90062467c50"
+        },
+        {
+          "ref": "refs/remotes/origin/docs/sonar235-package-path-20261105",
+          "head": "c30f11fb6f94ab3325e3bf6252326004f792294d"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/diffscore-workflow-20261107",
+          "head": "a3aa53744006845e782c154ca6b51eb4ffcb6e1e"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/rq-engine-adapters-20261107",
+          "head": "b561ed60db9e9bed77b37faa76d875c93e7f3364"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/rq-parity-20261107",
+          "head": "f8806bb7210793efdc8d0e2f8848c3452afd5d69"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/winpairs-workflow-20261107",
+          "head": "2e43d3f4d7ee6327f1f95e20c5f5b505bcd8b624"
+        },
+        {
+          "ref": "refs/remotes/origin/feature/current-project-investigation-20261105",
+          "head": "ef70e0bdf02a202cf7ce4780da37bba8ed63fafd"
+        },
+        {
+          "ref": "refs/remotes/origin/fix/codetext-budget-wave3",
+          "head": "c7fb422c750f1d0e5591277b91492874afd79af7"
+        },
+        {
+          "ref": "refs/remotes/origin/fix/codex-cloud-secret-preflight-20261103",
+          "head": "bd3dbcae9254853f534b735864c0709f6766ced3"
+        },
+        {
+          "ref": "refs/remotes/origin/fix/ghidriff-timeout-progress-20261106",
+          "head": "7e5d981935e2f8190790de90c2cc261834f9b519"
+        },
+        {
+          "ref": "refs/remotes/origin/fix/pr110-ci-regressions-20261029",
+          "head": "979ddfad860c95ceabeb5b670b771900b5617098"
+        },
+        {
+          "ref": "refs/remotes/origin/fix/pr205-partial-pe-inspect-20261106",
+          "head": "cce47934dfc4184bc33df63b712e188e9bca25ac"
+        },
+        {
+          "ref": "refs/remotes/origin/fix/pr205-review-contracts-20261106",
+          "head": "4f3e62c4f130227b6ff1201f798b3f449ab89c60"
+        },
+        {
+          "ref": "refs/remotes/origin/fix/pr205-ui-seam-help-extraction-20261106",
+          "head": "a53c7d1bd360f2dbc3c75ead8da8e978cbb4c314"
+        },
+        {
+          "ref": "refs/remotes/origin/fix/remediation-53088704-982db3",
+          "head": "15370a0bf690ea65f49d1f6cc67c40f73fd3d77c"
+        },
+        {
+          "ref": "refs/remotes/origin/fix/remediation-a58defa8-139db0",
+          "head": "6d9c06c2d82cb778712cf2e3c963b63c6363f7c9"
+        },
+        {
+          "ref": "refs/remotes/origin/fix/remediation-b1ab7332-a8fac4",
+          "head": "3feec96f6546e755061a458ce0dc6e8ee0fab640"
+        },
+        {
+          "ref": "refs/remotes/origin/fix/windows-posix-mingw-workflow-20261115",
+          "head": "3b3ad32f60df9fd6994e25a8920cfb335cc3d602"
+        },
+        {
+          "ref": "refs/remotes/origin/haiku/cli-help-suppress-20261027",
+          "head": "37940b706f117f9786109433aed7751eca4e52a6"
+        },
+        {
+          "ref": "refs/remotes/origin/haiku/phase2-handoff-import-20261027",
+          "head": "4522030ff3ff76d720a5efc33953aaa5e5837398"
+        },
+        {
+          "ref": "refs/remotes/origin/haiku/skills-manifest-import-20261027",
+          "head": "039b0ef8a5d0cb5136aca72be5c65d11867c19af"
+        },
+        {
+          "ref": "refs/remotes/origin/integrate/autonomous-20261105",
+          "head": "3d6c37e665bd3039aa374dbb58e1dde4e8dd7d0e"
+        },
+        {
+          "ref": "refs/remotes/origin/integrate/calibration-prereg-20261105",
+          "head": "57f95e09d8a924b8469490cfa08387b849065179"
+        },
+        {
+          "ref": "refs/remotes/origin/integrate/calibration-replay-20261105",
+          "head": "f8ed23564166f1952512ae004543c91e85c4a6ee"
+        },
+        {
+          "ref": "refs/remotes/origin/integrate/continuation-20261106",
+          "head": "37b771300053e8872febead1fc384fea9126ae90"
+        },
+        {
+          "ref": "refs/remotes/origin/integrate/gui-inspection-20261105",
+          "head": "3fa22c611697d7593755c329fd762bfb47b39b84"
+        },
+        {
+          "ref": "refs/remotes/origin/integrate/independent-wave4-20261105",
+          "head": "6e9f4524776abb95a7da7f4f49de01483a2c5330"
+        },
+        {
+          "ref": "refs/remotes/origin/integrate/kb-20261105",
+          "head": "75c01a29ea791a2a5859d18d54f8e6db06f255b8"
+        },
+        {
+          "ref": "refs/remotes/origin/integrate/kb-investigation-20261105",
+          "head": "bdbfd7dc45083dd7439f4591f17724b6de651412"
+        },
+        {
+          "ref": "refs/remotes/origin/integrate/merge-readiness-20261106",
+          "head": "f393bb68ddc11eabb95a6598aa6f86650bd9aa37"
+        },
+        {
+          "ref": "refs/remotes/origin/integrate/native-controls-20261105",
+          "head": "a0f417466da80ddc18ee05cc31b8d3492e7cb98b"
+        },
+        {
+          "ref": "refs/remotes/origin/integrate/project-adoption-20261105",
+          "head": "1c97defacd54a593a8ecdcda2b9c11c85b073791"
+        },
+        {
+          "ref": "refs/remotes/origin/integrate/recovery-forward-wave3-20261106",
+          "head": "a1ed8c9167529fbf855d7dc088132379ee385cf4"
+        },
+        {
+          "ref": "refs/remotes/origin/integrate/rules-20261105",
+          "head": "c849d0087b7dbb647d887a2501259a87c79579f4"
+        },
+        {
+          "ref": "refs/remotes/origin/integrate/secondary-prep-20261105",
+          "head": "b6b5bf6c65611f50b9fa6524ce980a0ff07511ee"
+        },
+        {
+          "ref": "refs/remotes/origin/integrate/swarm-followups-20261105",
+          "head": "c6691ab1ca143930f746f5c5087d3f492fd544d1"
+        },
+        {
+          "ref": "refs/remotes/origin/integrate/swarm-qualified-20261105",
+          "head": "4e9f1d5d71cf1f193fb7ed500daf852e5156304f"
+        },
+        {
+          "ref": "refs/remotes/origin/integrate/swarm-wave3-20261105",
+          "head": "a0e2c80eda74b70be370bf5f6a93424365230b89"
+        },
+        {
+          "ref": "refs/remotes/origin/integration/controlled-consolidation-20261030",
+          "head": "f18687fd035b67961c1072af84f8c2b3442979e0"
+        },
+        {
+          "ref": "refs/remotes/origin/integration/kb-fixtures-pr69-20261030",
+          "head": "2fcd627e52a6d784d5c2e5b4ea8105e90b8589b3"
+        },
+        {
+          "ref": "refs/remotes/origin/main",
+          "head": "fdc2696c23bdbfe7668348f25e3b336ce33039f7"
+        },
+        {
+          "ref": "refs/remotes/origin/qualify/native-cli-seeding-20261105",
+          "head": "8fae317bcac6cb125956965cd3ebbb39e9f9bbd2"
+        },
+        {
+          "ref": "refs/remotes/origin/qualify/native-controls-20261105",
+          "head": "dc3bf773fead3f10d3e825d56ccf035741f29c28"
+        },
+        {
+          "ref": "refs/remotes/origin/qualify/native-provision-20261105",
+          "head": "c50ab287de13982b132716d67f9e5fabe22799cb"
+        },
+        {
+          "ref": "refs/remotes/origin/qualify/offline-tooling-20261105",
+          "head": "c3370578086cbfda7b971a031d173b82e860a1f5"
+        },
+        {
+          "ref": "refs/remotes/origin/repair/gt01-consolidated-native-evidence-20261030",
+          "head": "c04ad725551fe8daa139b37aa2cdf46d6d161b65"
+        },
+        {
+          "ref": "refs/remotes/origin/repair/gt01-native-identical-controls-20261030",
+          "head": "fb91cff6d91c77a2c539c896b670d81180dcc637"
+        },
+        {
+          "ref": "refs/remotes/origin/repair/gt01-unified-live-gates-20261030",
+          "head": "ca1a36c0caea44a9225e487f3ba7b0828c90a567"
+        },
+        {
+          "ref": "refs/remotes/origin/repair/kb-ui-import-boundary-20261105",
+          "head": "226ac7e514fd90ddb71ec7e3d295bb4aa5bc06b6"
+        },
+        {
+          "ref": "refs/remotes/origin/repair/native-input-open-20261105",
+          "head": "0526d546a247f47411b088ac083d6f1fe1e10781"
+        },
+        {
+          "ref": "refs/remotes/origin/repair/native-normalizer-wave3-20261105",
+          "head": "cf9cefff88b71dbae6af9131b8f59a1fbb82c894"
+        },
+        {
+          "ref": "refs/remotes/origin/repair/native-source-identity-20261105",
+          "head": "c3be348b544b5022b3f92858923d6d890538aa53"
+        },
+        {
+          "ref": "refs/remotes/origin/repair/normalizer-address-identity-20261105",
+          "head": "631b5e919699e722e0ce3e3dee11b29c9c40ce10"
+        },
+        {
+          "ref": "refs/remotes/origin/repair/parity-parser-budget-20261105",
+          "head": "c923039bd311449d8c97bee8ed09e97b339b6653"
+        },
+        {
+          "ref": "refs/remotes/origin/repair/pr205-main-reconciliation-20261106",
+          "head": "96e8e085cb95f2b75bd75b63c8ede436e2152499"
+        },
+        {
+          "ref": "refs/remotes/origin/repair/pr205-qualification-20261106",
+          "head": "4465a0492367d08f324e80b290a594791921691c"
+        },
+        {
+          "ref": "refs/remotes/origin/repair/project-create-rollback-20261105",
+          "head": "2a3639adde50585dd7ac6dbcb029f085ac0856c6"
+        },
+        {
+          "ref": "refs/remotes/origin/repair/rzdiff-native-callback-size-20261103",
+          "head": "edab7d916970144b33c98384834369773e5b0e62"
+        },
+        {
+          "ref": "refs/remotes/origin/repair/rzdiff-native-red-control-20261103",
+          "head": "b304034e3c310528f7e0a3206eda48c94e0a6873"
+        },
+        {
+          "ref": "refs/remotes/origin/repair/rzdiff-producer-ownership",
+          "head": "4d66af5577e6f6ad8f6e21440f6fe4187e0c8fe5"
+        },
+        {
+          "ref": "refs/remotes/origin/repair/streamed-series-recovery-20261105",
+          "head": "20a60f9d12d75b8df9d4f70f96a0fd27bd038331"
+        },
+        {
+          "ref": "refs/remotes/origin/repair/subprocess-venv-20261106",
+          "head": "c804e4d94430368c0eafe1da899493a8cf6520aa"
+        },
+        {
+          "ref": "refs/remotes/origin/repair/unified-ci-20261105",
+          "head": "b5f6e1381dfbe98ccc71d1e126a6fd02fc95aa81"
+        },
+        {
+          "ref": "refs/remotes/origin/repair/unified-support-evidence-20261105",
+          "head": "95749419783e6be7548be613e1000113497c6d2a"
+        },
+        {
+          "ref": "refs/remotes/origin/repair/verified-bytes-20261105",
+          "head": "e5f9302e20ee37e8e3323a8d8b177fd8b0649e6a"
+        },
+        {
+          "ref": "refs/remotes/origin/repair/winbindex-metadata-budget-20261105",
+          "head": "64eb58ece2f44914e8f94135ab1caefbb5a83f6b"
+        },
+        {
+          "ref": "refs/remotes/origin/repair/wizard-lock-retry-20261105",
+          "head": "38be184cda6fbe6f79a6f265b04e2efc6a2688dd"
+        },
+        {
+          "ref": "refs/remotes/origin/repair/workflow-fragment-20261105",
+          "head": "1229ca3bba6bc099d040c279ed9ebc8b91ae913e"
+        },
+        {
+          "ref": "refs/remotes/origin/research/additional-reuse-claude-20261103",
+          "head": "be4a58ff7d8facc57e99faac9c743cb8d60b36f4"
+        },
+        {
+          "ref": "refs/remotes/origin/research/kbc-live-probe-20261106",
+          "head": "3839f3b62c923a80340c40c44855305890604f78"
+        },
+        {
+          "ref": "refs/remotes/origin/research/l1-join-corpus-20261107",
+          "head": "ca3572e7d7a5cf78d45732c18af7ebfe4922d350"
+        },
+        {
+          "ref": "refs/remotes/origin/research/qualification-tools-rq00-rq01-20261106",
+          "head": "941c0da4431f682537e99aa230df0da04013b4e1"
+        },
+        {
+          "ref": "refs/remotes/origin/research/r4-vulnerability-correlation-20261030",
+          "head": "ff570bdd784d02f745e4ad21d8aa7b4f1f776344"
+        },
+        {
+          "ref": "refs/remotes/origin/research/r6-final-integration-engineering-notes-20261030",
+          "head": "3010f289dbb46a1db62218a35cca03420090e306"
+        },
+        {
+          "ref": "refs/remotes/origin/research/r7-advanced-binary-analysis-20261030",
+          "head": "c9d1aab6a78847ce1632fe833d15af2e3b9c6e9b"
+        },
+        {
+          "ref": "refs/remotes/origin/research/r8-deep-uncertainty-20261030",
+          "head": "12dd4f2b41b468b0eb566bd502219daa821012df"
+        },
+        {
+          "ref": "refs/remotes/origin/research/windows-candidates-gaps-20261107",
+          "head": "1f11a43ba1904e5c6c9d5d4f261fa606347da6ca"
+        },
+        {
+          "ref": "refs/remotes/origin/research/windows-candidates-github-20261107",
+          "head": "35d7e3c980c0e04c7b6319bfd8fc6c7898c31226"
+        },
+        {
+          "ref": "refs/remotes/origin/research/windows-candidates-sources-20261107",
+          "head": "740961828e22ca8048cd881f21ef9c028955ab73"
+        },
+        {
+          "ref": "refs/remotes/origin/research/windows-pair-candidates-20261107",
+          "head": "e5e783f6b8ffae83341092f5915ba02b9856ecc1"
+        },
+        {
+          "ref": "refs/remotes/origin/research/windows-pins-20261107",
+          "head": "ac826a2efe428de7dbf290aa5894a2d357d7da0c"
+        },
+        {
+          "ref": "refs/remotes/origin/resume/desktop-index-refresh-20261106",
+          "head": "c9cea0671442a6051b068acfb69d17aabcf674ae"
+        },
+        {
+          "ref": "refs/remotes/origin/resume/kb-acquire-lifecycle-20261106",
+          "head": "b8bda98452b2f742ad55064aa2e1452700658a33"
+        },
+        {
+          "ref": "refs/remotes/origin/test/advisory-acceptance-20261105",
+          "head": "69c705d052e6b6fb3c96ea49062d6a207829c1b8"
+        },
+        {
+          "ref": "refs/remotes/origin/test/product-acceptance-20261106",
+          "head": "81825ee9638454737d3fb7efa3e6c73b8f3eb105"
+        },
+        {
+          "ref": "refs/remotes/origin/test/recovery-diagnostics-20261106",
+          "head": "064f1c0075a4cfe5ec1eba2f9a04d3f1058ecf0c"
+        },
+        {
+          "ref": "refs/remotes/origin/work/calibration-invariants-20261105",
+          "head": "a6948be8049591247f0bc19a601645b85bc03eb7"
+        },
+        {
+          "ref": "refs/remotes/origin/work/candidate-correlation-20261105",
+          "head": "fee7c3664a2050aed30a3c3d43ea28c0c3621ee3"
+        },
+        {
+          "ref": "refs/remotes/origin/work/consented-winbindex-refresh-20261105",
+          "head": "83320a32c7249f92a1d7ba708c8fc8e12e4aa15c"
+        },
+        {
+          "ref": "refs/remotes/origin/work/investigation-accessibility-20261105",
+          "head": "b5d4bceabdc34f520120d9dc336d975768e20483"
+        },
+        {
+          "ref": "refs/remotes/origin/work/investigation-candidates-20261105",
+          "head": "bf3661966785a971f484b6339af81274278d1434"
+        },
+        {
+          "ref": "refs/remotes/origin/work/online-adapter-20261105",
+          "head": "e14b4445fd0705e2ecffa1bc4842ab73bce373e9"
+        },
+        {
+          "ref": "refs/remotes/origin/work/online-investigation-20261105",
+          "head": "bf46954ef2c6c9a278d9b78f5b4274242e617e09"
+        },
+        {
+          "ref": "refs/remotes/origin/work/pe-parser-security-20261105",
+          "head": "8975c517af22aca0c0f90eb931b8a06ab18687b5"
+        },
+        {
+          "ref": "refs/remotes/origin/work/persistence-security-20261105",
+          "head": "1a1e1951c55cdef46ff248145031639674ce1c63"
+        },
+        {
+          "ref": "refs/remotes/origin/work/product-start-20261106",
+          "head": "0b7d858149db0c88ffcf8f3e6ba474d99f39afeb"
+        },
+        {
+          "ref": "refs/remotes/origin/work/product-start-wave3",
+          "head": "7e7a52ebf4de1529cfc5da7274820a5e955126fc"
+        },
+        {
+          "ref": "refs/remotes/origin/work/winbindex-publication-20261105",
+          "head": "2afe874d6be17a4596d3955b71b493d5e0e4ed00"
+        },
+        {
+          "ref": "refs/remotes/origin/work/windows-package-preflight-20261105",
+          "head": "93b4b9a80d31c97659269429e0b680c9218fdf70"
+        },
+        {
+          "ref": "refs/remotes/origin/worker/patchtrace-cli-help-20261104",
+          "head": "81a9fb28f30630e2fd168422dc4672af3a34aa52"
+        },
+        {
+          "ref": "refs/remotes/pull/100",
+          "head": "66e9adc50fb118c04e5e24eacd0c221ca483a130"
+        },
+        {
+          "ref": "refs/remotes/pull/101",
+          "head": "4eabf8dff2c4094681da70c7bd85ecd0da5aed9f"
+        },
+        {
+          "ref": "refs/remotes/pull/102",
+          "head": "9fddf99e2635e28129b2deda0ff155b00d9ba471"
+        },
+        {
+          "ref": "refs/remotes/pull/103",
+          "head": "a5593fa58b2ead6ecf6adfe045db242232cd52a3"
+        },
+        {
+          "ref": "refs/remotes/pull/106",
+          "head": "45fa67ad7e924cb4e2df1cd487c04a2c0ddab381"
+        },
+        {
+          "ref": "refs/remotes/pull/107",
+          "head": "fbe58d800da27aff2544c6a478f0a591ff7dad3b"
+        },
+        {
+          "ref": "refs/remotes/pull/108",
+          "head": "7ae041e79e419159299c32df98b8e69ab176e859"
+        },
+        {
+          "ref": "refs/remotes/pull/109",
+          "head": "653f384d1ca60b7e943bd658698e0989d826b696"
+        },
+        {
+          "ref": "refs/remotes/pull/110",
+          "head": "5ed624e91468c410f2cf738ed4e36c2be3e0201d"
+        },
+        {
+          "ref": "refs/remotes/pull/111",
+          "head": "3287cb3d36052bd6e44420f631ed033baf939d64"
+        },
+        {
+          "ref": "refs/remotes/pull/112",
+          "head": "aba4c2001a6b093f7f8cdc8b0ac20ab074ed57b8"
+        },
+        {
+          "ref": "refs/remotes/pull/113",
+          "head": "979ddfad860c95ceabeb5b670b771900b5617098"
+        },
+        {
+          "ref": "refs/remotes/pull/114",
+          "head": "c0d1c38aee74461969ff0a8b4d61179c3dbb9b0b"
+        },
+        {
+          "ref": "refs/remotes/pull/115",
+          "head": "bb42828d05b775c59b73a7bbd02c0113b9b9bb3b"
+        },
+        {
+          "ref": "refs/remotes/pull/117",
+          "head": "025300f8e169556f84b6a8cfed20413e0a26b019"
+        },
+        {
+          "ref": "refs/remotes/pull/119",
+          "head": "3e9cedb012b4c82da3b0e5f9bc977ecd7313b64c"
+        },
+        {
+          "ref": "refs/remotes/pull/122",
+          "head": "40e02daf93c8e13a94b74f5b80d86c1680fea7ad"
+        },
+        {
+          "ref": "refs/remotes/pull/123",
+          "head": "99f8328ce89d02f200cf9fbc5852d9801761af28"
+        },
+        {
+          "ref": "refs/remotes/pull/124",
+          "head": "95e09548a82202ae4cfd9380522f36513da87a66"
+        },
+        {
+          "ref": "refs/remotes/pull/125",
+          "head": "198eb21e8813b28de361422cfe3c002bdb9e3970"
+        },
+        {
+          "ref": "refs/remotes/pull/126",
+          "head": "280bf05856eb60f4ddb0d58210616f65a3735816"
+        },
+        {
+          "ref": "refs/remotes/pull/127",
+          "head": "6a1e3ce348a7e5f67bbabfe388315812cc830b03"
+        },
+        {
+          "ref": "refs/remotes/pull/128",
+          "head": "10856edf05afae8166291f09fb3ead92f297360d"
+        },
+        {
+          "ref": "refs/remotes/pull/129",
+          "head": "2698b9a04d33b2d04f49c1ab737636539c6ef6f7"
+        },
+        {
+          "ref": "refs/remotes/pull/130",
+          "head": "ff570bdd784d02f745e4ad21d8aa7b4f1f776344"
+        },
+        {
+          "ref": "refs/remotes/pull/131",
+          "head": "b3ceb8b30d7a83da5e22c231c3b8c28179246816"
+        },
+        {
+          "ref": "refs/remotes/pull/132",
+          "head": "4d9d9051aea87319847a0b321a14d37b95cb8abd"
+        },
+        {
+          "ref": "refs/remotes/pull/133",
+          "head": "3010f289dbb46a1db62218a35cca03420090e306"
+        },
+        {
+          "ref": "refs/remotes/pull/134",
+          "head": "c9d1aab6a78847ce1632fe833d15af2e3b9c6e9b"
+        },
+        {
+          "ref": "refs/remotes/pull/135",
+          "head": "12dd4f2b41b468b0eb566bd502219daa821012df"
+        },
+        {
+          "ref": "refs/remotes/pull/136",
+          "head": "2fcd627e52a6d784d5c2e5b4ea8105e90b8589b3"
+        },
+        {
+          "ref": "refs/remotes/pull/137",
+          "head": "61b5c2bade71a8cec58ca9e1514141f4508b7c79"
+        },
+        {
+          "ref": "refs/remotes/pull/138",
+          "head": "ca1a36c0caea44a9225e487f3ba7b0828c90a567"
+        },
+        {
+          "ref": "refs/remotes/pull/139",
+          "head": "c04ad725551fe8daa139b37aa2cdf46d6d161b65"
+        },
+        {
+          "ref": "refs/remotes/pull/140",
+          "head": "fb91cff6d91c77a2c539c896b670d81180dcc637"
+        },
+        {
+          "ref": "refs/remotes/pull/141",
+          "head": "d76d23372acef4049115e9ae176acbeb538a82e5"
+        },
+        {
+          "ref": "refs/remotes/pull/142",
+          "head": "a4d1e6a38c34d1952584aa65d7f5f908c45547b3"
+        },
+        {
+          "ref": "refs/remotes/pull/143",
+          "head": "a7f13e13ffb512f8e9621753a0ae162d78942f3b"
+        },
+        {
+          "ref": "refs/remotes/pull/144",
+          "head": "745e93426a16e0a91a961b6e0bbcb71be69f2a7e"
+        },
+        {
+          "ref": "refs/remotes/pull/145",
+          "head": "8c9eafc79b007a963453d8edf6cb40c804c9bc3d"
+        },
+        {
+          "ref": "refs/remotes/pull/146",
+          "head": "798e11ef345ed7a7a65508a466eaf77ee85ef77c"
+        },
+        {
+          "ref": "refs/remotes/pull/147",
+          "head": "8f4c4a2e0021d424d403317c6780b6db026ad76b"
+        },
+        {
+          "ref": "refs/remotes/pull/148",
+          "head": "c3868d8335a8f32f676905032dc1a6d0e9f22fd6"
+        },
+        {
+          "ref": "refs/remotes/pull/149",
+          "head": "e90254424c26ecd00e4c10c3c638e76d11b35841"
+        },
+        {
+          "ref": "refs/remotes/pull/150",
+          "head": "2fdac2ea9042985ac3c98545d38ac3461d00f4cc"
+        },
+        {
+          "ref": "refs/remotes/pull/151",
+          "head": "9911af4d9130b81b1875f82179e03e0a89e89794"
+        },
+        {
+          "ref": "refs/remotes/pull/152",
+          "head": "0130bf81e2fe3154f30af7b68a0e6ab197946040"
+        },
+        {
+          "ref": "refs/remotes/pull/153",
+          "head": "d99cd7712b76e9e42661ef0b268417d7ca322d3e"
+        },
+        {
+          "ref": "refs/remotes/pull/154",
+          "head": "dfe8f421db390ccd3158393a60205fa5dd25df0b"
+        },
+        {
+          "ref": "refs/remotes/pull/155",
+          "head": "15370a0bf690ea65f49d1f6cc67c40f73fd3d77c"
+        },
+        {
+          "ref": "refs/remotes/pull/156",
+          "head": "4eebea4a5389af16bffe32a2bf9285c406d95fb1"
+        },
+        {
+          "ref": "refs/remotes/pull/157",
+          "head": "874e9a267fdc589a796ce573f2958e1aa84ea0f6"
+        },
+        {
+          "ref": "refs/remotes/pull/158",
+          "head": "e1b79e048d3963d747bc9f07448b039a250180ed"
+        },
+        {
+          "ref": "refs/remotes/pull/159",
+          "head": "56374f867594dd923383c91ea71970cb7d24d173"
+        },
+        {
+          "ref": "refs/remotes/pull/160",
+          "head": "ca411e77f43a9fd95ca5e0bcc7d2b58071ccae37"
+        },
+        {
+          "ref": "refs/remotes/pull/161",
+          "head": "9b9452b4677ee3809a6e0f43d49567a8d15602e6"
+        },
+        {
+          "ref": "refs/remotes/pull/162",
+          "head": "f1a55c4cf21ddb0dea243bd417b74f86caaed142"
+        },
+        {
+          "ref": "refs/remotes/pull/163",
+          "head": "6e82fd70f315b99c6798a42c9061a1424a02933e"
+        },
+        {
+          "ref": "refs/remotes/pull/164",
+          "head": "b58bb53debcb3323e5d8d634e09397cb7e02965f"
+        },
+        {
+          "ref": "refs/remotes/pull/165",
+          "head": "4d66af5577e6f6ad8f6e21440f6fe4187e0c8fe5"
+        },
+        {
+          "ref": "refs/remotes/pull/166",
+          "head": "edab7d916970144b33c98384834369773e5b0e62"
+        },
+        {
+          "ref": "refs/remotes/pull/167",
+          "head": "def36c822a80c77ae94b8e9a77da6f1ee9de1160"
+        },
+        {
+          "ref": "refs/remotes/pull/168",
+          "head": "b304034e3c310528f7e0a3206eda48c94e0a6873"
+        },
+        {
+          "ref": "refs/remotes/pull/169",
+          "head": "bd3dbcae9254853f534b735864c0709f6766ced3"
+        },
+        {
+          "ref": "refs/remotes/pull/170",
+          "head": "6fe6c4b1be060eb6e9d5208a68f0d68e1082b59c"
+        },
+        {
+          "ref": "refs/remotes/pull/171",
+          "head": "f8050a1fef23b71fd3a02b216c5035bcac3f4889"
+        },
+        {
+          "ref": "refs/remotes/pull/172",
+          "head": "7ed5cebfdaee4dc508b0cc739e86c18c1ff34a97"
+        },
+        {
+          "ref": "refs/remotes/pull/173",
+          "head": "b03a77b8a2fe9e4fa65fbe43889e06f4e68180e9"
+        },
+        {
+          "ref": "refs/remotes/pull/174",
+          "head": "e1193c8896e009930dae4edec974d9795876f0e0"
+        },
+        {
+          "ref": "refs/remotes/pull/175",
+          "head": "dabba4aea4ba0fa19e71ede05ce4fb8ab6741942"
+        },
+        {
+          "ref": "refs/remotes/pull/176",
+          "head": "597a8b106491cd587cedf1273ee5ef6d56d71508"
+        },
+        {
+          "ref": "refs/remotes/pull/177",
+          "head": "bef720fdd50c0ab7c93a10955b3e5ec7d2a5f992"
+        },
+        {
+          "ref": "refs/remotes/pull/178",
+          "head": "be4a58ff7d8facc57e99faac9c743cb8d60b36f4"
+        },
+        {
+          "ref": "refs/remotes/pull/179",
+          "head": "ca10acb506fbf61db8142a836acfbd1e50a2aeb3"
+        },
+        {
+          "ref": "refs/remotes/pull/180",
+          "head": "a7689119fc25be61a4ac1b65619d6968859a136f"
+        },
+        {
+          "ref": "refs/remotes/pull/181",
+          "head": "7b3fcbaca88256971eafd55b8fb8fe9f44634a9e"
+        },
+        {
+          "ref": "refs/remotes/pull/182",
+          "head": "820d70744dff58ef484299791d073b2e712f0524"
+        },
+        {
+          "ref": "refs/remotes/pull/183",
+          "head": "ed70e6ddac449a42f843f1c60aa878416ab31727"
+        },
+        {
+          "ref": "refs/remotes/pull/184",
+          "head": "64e8374d5d3ae97a719a2bb3ac800497c50892af"
+        },
+        {
+          "ref": "refs/remotes/pull/185",
+          "head": "81a9fb28f30630e2fd168422dc4672af3a34aa52"
+        },
+        {
+          "ref": "refs/remotes/pull/186",
+          "head": "f019606665a740dc252e745913924debf73adc48"
+        },
+        {
+          "ref": "refs/remotes/pull/187",
+          "head": "fbd9595351bf50217402b7a62b3e057de79f45f0"
+        },
+        {
+          "ref": "refs/remotes/pull/188",
+          "head": "65f979a163a88ec5b32b3eb4173fa4a50ee9c920"
+        },
+        {
+          "ref": "refs/remotes/pull/189",
+          "head": "cb204f7625d4de496642926bbda37d07e2888131"
+        },
+        {
+          "ref": "refs/remotes/pull/190",
+          "head": "761b6b885f00143597c74f0457b1165a144fbdd4"
+        },
+        {
+          "ref": "refs/remotes/pull/191",
+          "head": "c849d0087b7dbb647d887a2501259a87c79579f4"
+        },
+        {
+          "ref": "refs/remotes/pull/192",
+          "head": "b5f6e1381dfbe98ccc71d1e126a6fd02fc95aa81"
+        },
+        {
+          "ref": "refs/remotes/pull/193",
+          "head": "75c01a29ea791a2a5859d18d54f8e6db06f255b8"
+        },
+        {
+          "ref": "refs/remotes/pull/194",
+          "head": "3d6c37e665bd3039aa374dbb58e1dde4e8dd7d0e"
+        },
+        {
+          "ref": "refs/remotes/pull/195",
+          "head": "a0f417466da80ddc18ee05cc31b8d3492e7cb98b"
+        },
+        {
+          "ref": "refs/remotes/pull/196",
+          "head": "3fa22c611697d7593755c329fd762bfb47b39b84"
+        },
+        {
+          "ref": "refs/remotes/pull/197",
+          "head": "b6b5bf6c65611f50b9fa6524ce980a0ff07511ee"
+        },
+        {
+          "ref": "refs/remotes/pull/198",
+          "head": "1c97defacd54a593a8ecdcda2b9c11c85b073791"
+        },
+        {
+          "ref": "refs/remotes/pull/199",
+          "head": "e5f9302e20ee37e8e3323a8d8b177fd8b0649e6a"
+        },
+        {
+          "ref": "refs/remotes/pull/200",
+          "head": "802b5b1bb5f5e64118256e75414b7ca74ad61fcc"
+        },
+        {
+          "ref": "refs/remotes/pull/201",
+          "head": "bdbfd7dc45083dd7439f4591f17724b6de651412"
+        },
+        {
+          "ref": "refs/remotes/pull/202",
+          "head": "f2b7d1786f60df27b0228f247aab9a00bd7c1078"
+        },
+        {
+          "ref": "refs/remotes/pull/203",
+          "head": "95749419783e6be7548be613e1000113497c6d2a"
+        },
+        {
+          "ref": "refs/remotes/pull/204",
+          "head": "1229ca3bba6bc099d040c279ed9ebc8b91ae913e"
+        },
+        {
+          "ref": "refs/remotes/pull/205",
+          "head": "4e9f1d5d71cf1f193fb7ed500daf852e5156304f"
+        },
+        {
+          "ref": "refs/remotes/pull/206",
+          "head": "0526d546a247f47411b088ac083d6f1fe1e10781"
+        },
+        {
+          "ref": "refs/remotes/pull/207",
+          "head": "20a60f9d12d75b8df9d4f70f96a0fd27bd038331"
+        },
+        {
+          "ref": "refs/remotes/pull/208",
+          "head": "dc3bf773fead3f10d3e825d56ccf035741f29c28"
+        },
+        {
+          "ref": "refs/remotes/pull/209",
+          "head": "c3370578086cbfda7b971a031d173b82e860a1f5"
+        },
+        {
+          "ref": "refs/remotes/pull/210",
+          "head": "2a3639adde50585dd7ac6dbcb029f085ac0856c6"
+        },
+        {
+          "ref": "refs/remotes/pull/211",
+          "head": "c923039bd311449d8c97bee8ed09e97b339b6653"
+        },
+        {
+          "ref": "refs/remotes/pull/212",
+          "head": "c3be348b544b5022b3f92858923d6d890538aa53"
+        },
+        {
+          "ref": "refs/remotes/pull/213",
+          "head": "c6691ab1ca143930f746f5c5087d3f492fd544d1"
+        },
+        {
+          "ref": "refs/remotes/pull/214",
+          "head": "ef70e0bdf02a202cf7ce4780da37bba8ed63fafd"
+        },
+        {
+          "ref": "refs/remotes/pull/215",
+          "head": "57f95e09d8a924b8469490cfa08387b849065179"
+        },
+        {
+          "ref": "refs/remotes/pull/216",
+          "head": "7716e2b02feaa04e59dce302c1c6cacbe800634b"
+        },
+        {
+          "ref": "refs/remotes/pull/217",
+          "head": "f8ed23564166f1952512ae004543c91e85c4a6ee"
+        },
+        {
+          "ref": "refs/remotes/pull/218",
+          "head": "a0e2c80eda74b70be370bf5f6a93424365230b89"
+        },
+        {
+          "ref": "refs/remotes/pull/219",
+          "head": "38be184cda6fbe6f79a6f265b04e2efc6a2688dd"
+        },
+        {
+          "ref": "refs/remotes/pull/220",
+          "head": "cf9cefff88b71dbae6af9131b8f59a1fbb82c894"
+        },
+        {
+          "ref": "refs/remotes/pull/221",
+          "head": "7e7a52ebf4de1529cfc5da7274820a5e955126fc"
+        },
+        {
+          "ref": "refs/remotes/pull/222",
+          "head": "c50ab287de13982b132716d67f9e5fabe22799cb"
+        },
+        {
+          "ref": "refs/remotes/pull/223",
+          "head": "631b5e919699e722e0ce3e3dee11b29c9c40ce10"
+        },
+        {
+          "ref": "refs/remotes/pull/224",
+          "head": "8fae317bcac6cb125956965cd3ebbb39e9f9bbd2"
+        },
+        {
+          "ref": "refs/remotes/pull/225",
+          "head": "e14b4445fd0705e2ecffa1bc4842ab73bce373e9"
+        },
+        {
+          "ref": "refs/remotes/pull/226",
+          "head": "b5d4bceabdc34f520120d9dc336d975768e20483"
+        },
+        {
+          "ref": "refs/remotes/pull/227",
+          "head": "1a1e1951c55cdef46ff248145031639674ce1c63"
+        },
+        {
+          "ref": "refs/remotes/pull/228",
+          "head": "93b4b9a80d31c97659269429e0b680c9218fdf70"
+        },
+        {
+          "ref": "refs/remotes/pull/229",
+          "head": "fee7c3664a2050aed30a3c3d43ea28c0c3621ee3"
+        },
+        {
+          "ref": "refs/remotes/pull/230",
+          "head": "a6948be8049591247f0bc19a601645b85bc03eb7"
+        },
+        {
+          "ref": "refs/remotes/pull/231",
+          "head": "febc9de57e61162da12fb1cc9280aef9b3ec2a99"
+        },
+        {
+          "ref": "refs/remotes/pull/232",
+          "head": "bc52940fb32d5b5f6d1a58a860062ec60d423d1e"
+        },
+        {
+          "ref": "refs/remotes/pull/233",
+          "head": "69c705d052e6b6fb3c96ea49062d6a207829c1b8"
+        },
+        {
+          "ref": "refs/remotes/pull/234",
+          "head": "bf46954ef2c6c9a278d9b78f5b4274242e617e09"
+        },
+        {
+          "ref": "refs/remotes/pull/235",
+          "head": "6e9f4524776abb95a7da7f4f49de01483a2c5330"
+        },
+        {
+          "ref": "refs/remotes/pull/236",
+          "head": "8975c517af22aca0c0f90eb931b8a06ab18687b5"
+        },
+        {
+          "ref": "refs/remotes/pull/237",
+          "head": "64eb58ece2f44914e8f94135ab1caefbb5a83f6b"
+        },
+        {
+          "ref": "refs/remotes/pull/238",
+          "head": "2afe874d6be17a4596d3955b71b493d5e0e4ed00"
+        },
+        {
+          "ref": "refs/remotes/pull/239",
+          "head": "83320a32c7249f92a1d7ba708c8fc8e12e4aa15c"
+        },
+        {
+          "ref": "refs/remotes/pull/240",
+          "head": "bf3661966785a971f484b6339af81274278d1434"
+        },
+        {
+          "ref": "refs/remotes/pull/241",
+          "head": "c30f11fb6f94ab3325e3bf6252326004f792294d"
+        },
+        {
+          "ref": "refs/remotes/pull/242",
+          "head": "b8bda98452b2f742ad55064aa2e1452700658a33"
+        },
+        {
+          "ref": "refs/remotes/pull/243",
+          "head": "c9cea0671442a6051b068acfb69d17aabcf674ae"
+        },
+        {
+          "ref": "refs/remotes/pull/244",
+          "head": "f393bb68ddc11eabb95a6598aa6f86650bd9aa37"
+        },
+        {
+          "ref": "refs/remotes/pull/245",
+          "head": "4465a0492367d08f324e80b290a594791921691c"
+        },
+        {
+          "ref": "refs/remotes/pull/246",
+          "head": "c804e4d94430368c0eafe1da899493a8cf6520aa"
+        },
+        {
+          "ref": "refs/remotes/pull/247",
+          "head": "37b771300053e8872febead1fc384fea9126ae90"
+        },
+        {
+          "ref": "refs/remotes/pull/248",
+          "head": "a1ed8c9167529fbf855d7dc088132379ee385cf4"
+        },
+        {
+          "ref": "refs/remotes/pull/249",
+          "head": "5e1e19828b3801a2f0f7d50b4250ff9a273264ef"
+        },
+        {
+          "ref": "refs/remotes/pull/250",
+          "head": "96e8e085cb95f2b75bd75b63c8ede436e2152499"
+        },
+        {
+          "ref": "refs/remotes/pull/251",
+          "head": "7e5d981935e2f8190790de90c2cc261834f9b519"
+        },
+        {
+          "ref": "refs/remotes/pull/252",
+          "head": "4f3e62c4f130227b6ff1201f798b3f449ab89c60"
+        },
+        {
+          "ref": "refs/remotes/pull/253",
+          "head": "cce47934dfc4184bc33df63b712e188e9bca25ac"
+        },
+        {
+          "ref": "refs/remotes/pull/254",
+          "head": "a53c7d1bd360f2dbc3c75ead8da8e978cbb4c314"
+        },
+        {
+          "ref": "refs/remotes/pull/256",
+          "head": "941c0da4431f682537e99aa230df0da04013b4e1"
+        },
+        {
+          "ref": "refs/remotes/pull/257",
+          "head": "3839f3b62c923a80340c40c44855305890604f78"
+        },
+        {
+          "ref": "refs/remotes/pull/258",
+          "head": "c21d0ab8471ac1a541eb6d2ff929cce1fb34a2fd"
+        },
+        {
+          "ref": "refs/remotes/pull/259",
+          "head": "f249edc8ee70ae003a1478eae5418d85ed629d87"
+        },
+        {
+          "ref": "refs/remotes/pull/260",
+          "head": "e5e783f6b8ffae83341092f5915ba02b9856ecc1"
+        },
+        {
+          "ref": "refs/remotes/pull/261",
+          "head": "6d9c06c2d82cb778712cf2e3c963b63c6363f7c9"
+        },
+        {
+          "ref": "refs/remotes/pull/262",
+          "head": "9d72402cc3fd884203c7a759f714fd0a4bd2c51f"
+        },
+        {
+          "ref": "refs/remotes/pull/263",
+          "head": "f8806bb7210793efdc8d0e2f8848c3452afd5d69"
+        },
+        {
+          "ref": "refs/remotes/pull/264",
+          "head": "740961828e22ca8048cd881f21ef9c028955ab73"
+        },
+        {
+          "ref": "refs/remotes/pull/265",
+          "head": "b561ed60db9e9bed77b37faa76d875c93e7f3364"
+        },
+        {
+          "ref": "refs/remotes/pull/266",
+          "head": "35d7e3c980c0e04c7b6319bfd8fc6c7898c31226"
+        },
+        {
+          "ref": "refs/remotes/pull/267",
+          "head": "3feec96f6546e755061a458ce0dc6e8ee0fab640"
+        },
+        {
+          "ref": "refs/remotes/pull/268",
+          "head": "b29351d41060f8e9330fc9673457d835e188f993"
+        },
+        {
+          "ref": "refs/remotes/pull/269",
+          "head": "ca3572e7d7a5cf78d45732c18af7ebfe4922d350"
+        },
+        {
+          "ref": "refs/remotes/pull/270",
+          "head": "39db34c5beaaf16cc60fec30f084acfde4035316"
+        },
+        {
+          "ref": "refs/remotes/pull/271",
+          "head": "2e43d3f4d7ee6327f1f95e20c5f5b505bcd8b624"
+        },
+        {
+          "ref": "refs/remotes/pull/272",
+          "head": "a3aa53744006845e782c154ca6b51eb4ffcb6e1e"
+        },
+        {
+          "ref": "refs/remotes/pull/273",
+          "head": "c3536288ee3745826be814afb4d8fd07a53c526b"
+        },
+        {
+          "ref": "refs/remotes/pull/274",
+          "head": "1f11a43ba1904e5c6c9d5d4f261fa606347da6ca"
+        },
+        {
+          "ref": "refs/remotes/pull/275",
+          "head": "d75c0490aa0109e3a983c5e6baea2cea1855f956"
+        },
+        {
+          "ref": "refs/remotes/pull/276",
+          "head": "c760e6ccea0d3e4df04bf76e58139d9a7fc9e9e6"
+        },
+        {
+          "ref": "refs/remotes/pull/277",
+          "head": "ac826a2efe428de7dbf290aa5894a2d357d7da0c"
+        },
+        {
+          "ref": "refs/remotes/pull/278",
+          "head": "2e408e3c24c2efad6144bf8953d639edcf9fc489"
+        },
+        {
+          "ref": "refs/remotes/pull/279",
+          "head": "a5f049cd777d3d885ec8e1572f94ea8935c9cbb6"
+        },
+        {
+          "ref": "refs/remotes/pull/280",
+          "head": "a00fcc14ea11751ce5ca05271e2be32d06dd4535"
+        },
+        {
+          "ref": "refs/remotes/pull/281",
+          "head": "cbabc09e9df8a8190c769164ef0fae44f9c5cb1b"
+        },
+        {
+          "ref": "refs/remotes/pull/282",
+          "head": "552c29453c5de93e22c65e47ad4187ded91e993a"
+        },
+        {
+          "ref": "refs/remotes/pull/283",
+          "head": "6f767ccef8ebfffd1d2373c5124d8a961dc54b41"
+        },
+        {
+          "ref": "refs/remotes/pull/284",
+          "head": "160a60e838742b21f70effedb8e7bb48886d9266"
+        },
+        {
+          "ref": "refs/remotes/pull/285",
+          "head": "67b2bc456c59a510b854b0cdd9e85ed29d00b17d"
+        },
+        {
+          "ref": "refs/remotes/pull/286",
+          "head": "c59ccada97b649366af808a6d83bb465078c9011"
+        },
+        {
+          "ref": "refs/remotes/pull/287",
+          "head": "770c11f40ef70e11dfeb3fbc2f5646cc2b4b97b9"
+        },
+        {
+          "ref": "refs/remotes/pull/288",
+          "head": "d1f7d9aa64b28c8a8ca0a1065bb88e1e2f15b7f0"
+        },
+        {
+          "ref": "refs/remotes/pull/289",
+          "head": "ad4c49282a65d17d2ef23dfcc03e82be065c9021"
+        },
+        {
+          "ref": "refs/remotes/pull/290",
+          "head": "1d5a022d2840c5c071ccece503664c8c961d63f1"
+        },
+        {
+          "ref": "refs/remotes/pull/291",
+          "head": "53f5dd2611b38e3f69f8d72c3ca7cf73e9e896ab"
+        },
+        {
+          "ref": "refs/remotes/pull/292",
+          "head": "cf50b4e8725cb1291ac6150667f2e136f023aff3"
+        },
+        {
+          "ref": "refs/remotes/pull/293",
+          "head": "aacb984e9d627be051ca8c8c3b88d5ceca0ff505"
+        },
+        {
+          "ref": "refs/remotes/pull/294",
+          "head": "e88d748cf9846e04c0c81449976f530519da83a9"
+        },
+        {
+          "ref": "refs/remotes/pull/295",
+          "head": "37d9e47ca202b33f737b15f7af724649db8c3e15"
+        },
+        {
+          "ref": "refs/remotes/pull/296",
+          "head": "3b3ad32f60df9fd6994e25a8920cfb335cc3d602"
+        },
+        {
+          "ref": "refs/remotes/pull/297",
+          "head": "95db052a11cce162d2d633cae805f28119f783a1"
+        },
+        {
+          "ref": "refs/remotes/pull/298",
+          "head": "2d330075fbe00209fbe096ee29b60dcfd0e347b4"
+        },
+        {
+          "ref": "refs/remotes/pull/299",
+          "head": "6a5b6f2609604fe34a8da9cf347c713b21578834"
+        },
+        {
+          "ref": "refs/remotes/pull/300",
+          "head": "45997cfc997b06996a982705e6cd60dc73a8fae1"
+        },
+        {
+          "ref": "refs/remotes/pull/301",
+          "head": "faddea300daf4058d38d24ff04a270be6f3d832b"
+        },
+        {
+          "ref": "refs/remotes/pull/302",
+          "head": "121ffb0bcdd6af4f24e5035389d4709dffddf263"
+        },
+        {
+          "ref": "refs/remotes/pull/303",
+          "head": "2b697222b34359bb46adc90aad69fd0a12708601"
+        },
+        {
+          "ref": "refs/remotes/pull/304",
+          "head": "d8c02caea407f6d323eecd636735849c1eb31a2d"
+        },
+        {
+          "ref": "refs/remotes/pull/305",
+          "head": "16ab88b0626ef05700c4199e926103932312e5c7"
+        },
+        {
+          "ref": "refs/remotes/pull/306",
+          "head": "f6ef1528c15b2281ee7b6f32625d02a5211c926d"
+        },
+        {
+          "ref": "refs/remotes/pull/307",
+          "head": "58fc130631f602b6e907bb054d30c21d810551d4"
+        },
+        {
+          "ref": "refs/remotes/pull/309",
+          "head": "3c9d3f074481b2f609330fa49ab9019eb6637849"
+        },
+        {
+          "ref": "refs/remotes/pull/310",
+          "head": "26558cd0723aa5fa6d883f2935ad3c43cef94a86"
+        },
+        {
+          "ref": "refs/remotes/pull/311",
+          "head": "09b032f205f4ffa1838bef56007ebdb7a2308420"
+        },
+        {
+          "ref": "refs/remotes/pull/312",
+          "head": "573829f33c84e9b2d53ba51ebd7f699e39f406fe"
+        },
+        {
+          "ref": "refs/remotes/pull/313",
+          "head": "a4061979547ef88855fbdb085228a42c3be21603"
+        },
+        {
+          "ref": "refs/remotes/pull/314",
+          "head": "b41d6631e679ad2777d248fa087ea71582a5bf63"
+        },
+        {
+          "ref": "refs/remotes/pull/315",
+          "head": "23fbe4a54880319f62f40f3196794f85b6cdaec5"
+        },
+        {
+          "ref": "refs/remotes/pull/317",
+          "head": "88b0b52281dd314aa72f93819145a73135618bc4"
+        },
+        {
+          "ref": "refs/remotes/pull/59",
+          "head": "a51d97fc7d3848c6fec48b4f63b609757b1d32a1"
+        },
+        {
+          "ref": "refs/remotes/pull/64",
+          "head": "2fa113889d1ffee6b68496993d3b3b6ebb0ba035"
+        },
+        {
+          "ref": "refs/remotes/pull/66",
+          "head": "393d09b6533e2ae1c2bb4f84b18591feef5611a7"
+        },
+        {
+          "ref": "refs/remotes/pull/73",
+          "head": "974e2696b692e7d03389f2b9d41f3db008184848"
+        },
+        {
+          "ref": "refs/remotes/pull/74",
+          "head": "0500a78b0d96e54c083613c50a3bacdb8aeecb1c"
+        },
+        {
+          "ref": "refs/remotes/pull/75",
+          "head": "5b9cd96119966c421f9a7f140c1dd8b1211bddb9"
+        },
+        {
+          "ref": "refs/remotes/pull/76",
+          "head": "8ee61c623fa37c5a219f912cf7870bfeddcb1f70"
+        },
+        {
+          "ref": "refs/remotes/pull/77",
+          "head": "cebf38a30ce3d4967ed00a4773f8f9898a9ea708"
+        },
+        {
+          "ref": "refs/remotes/pull/78",
+          "head": "2019a37fa65fc37f4758469143c2daadc07e0098"
+        },
+        {
+          "ref": "refs/remotes/pull/79",
+          "head": "9513bc05229dd7a8460fc229d7420154d61498db"
+        },
+        {
+          "ref": "refs/remotes/pull/80",
+          "head": "89500e12068656fa1958443ef634064effcbc40b"
+        },
+        {
+          "ref": "refs/remotes/pull/81",
+          "head": "0254841e3e635ed717e35abcf83021f001d7df29"
+        },
+        {
+          "ref": "refs/remotes/pull/82",
+          "head": "eaa30013794a9bd0fedc9ec34bbe374d6db0cfc9"
+        },
+        {
+          "ref": "refs/remotes/pull/83",
+          "head": "292dc3953dd2b8f157752d12251aff68b6e5bda5"
+        },
+        {
+          "ref": "refs/remotes/pull/84",
+          "head": "09bb4519d7d8e9ff8f40abcba7e11cb297d8b61e"
+        },
+        {
+          "ref": "refs/remotes/pull/85",
+          "head": "6ae2c079e6cafa2b7bd5396cac443cd34ba7138a"
+        },
+        {
+          "ref": "refs/remotes/pull/86",
+          "head": "ebbd621d4f557905892aee5f7cf8cb7b0e2addc2"
+        },
+        {
+          "ref": "refs/remotes/pull/87",
+          "head": "19153f10780e783bc931739dd26db97d8eaf2b92"
+        },
+        {
+          "ref": "refs/remotes/pull/88",
+          "head": "9c5f9a42b499133b842b14b9619bf8390010e1ff"
+        },
+        {
+          "ref": "refs/remotes/pull/89",
+          "head": "8c7288276d3e49b7794b7fd80db4b02d5891cf00"
+        },
+        {
+          "ref": "refs/remotes/pull/91",
+          "head": "9622704d5c751d55700c4b642111131a7135d139"
+        },
+        {
+          "ref": "refs/remotes/pull/92",
+          "head": "6e71bfabbf5ef75449b46981e9e822f7e555a6bf"
+        },
+        {
+          "ref": "refs/remotes/pull/93",
+          "head": "ddb2ff077a21c1f0053ba8079564f6f86c3e155f"
+        },
+        {
+          "ref": "refs/remotes/pull/94",
+          "head": "27b0a48bb8007f504b4a127a099136a6ea5c00b7"
+        },
+        {
+          "ref": "refs/remotes/pull/95",
+          "head": "9c5fe67bd10a5d1342440bb8ea6a524cca3ce1f2"
+        },
+        {
+          "ref": "refs/remotes/pull/96",
+          "head": "f6b7545bcc7a161440ab7119233c204510571370"
+        },
+        {
+          "ref": "refs/remotes/pull/97",
+          "head": "ecc4f2054c00dc2b324bb71134595c48dc4b6a18"
+        },
+        {
+          "ref": "refs/remotes/pull/98",
+          "head": "ad8fbe9f2f041653760c02e9d18a91a66dd11c39"
+        },
+        {
+          "ref": "refs/remotes/pull/99",
+          "head": "22ff025a7710d07d7ad74be2c8f7cc0b4db0daf7"
+        }
+      ],
+      "render": "def render(doc: dict, fmt: Format) -> bytes:\n    if fmt == 'json':\n        return (json.dumps(doc, sort_keys=True, indent=2) + '\\n').encode('utf-8')\n    out = io.StringIO(newline='')\n    writer = csv.writer(out, lineterminator='\\n')\n    writer.writerow(CSV_COLUMNS)\n    writer.writerows(_csv_row(r) for r in doc['changes'])\n    return out.getvalue().encode('utf-8')",
+      "render_ast_sha256": "c9c63aa1d39b4fc5416fc96160d373baa8b162d9f512ef81806b4bea7ba6a243",
+      "row_ast_sha256": "3879fa229c24ed71587120ab8a768dd63bd0d010afc53aebfa913fab3773b3b6",
+      "columns": [
+        "id",
+        "status",
+        "review_tier",
+        "display",
+        "length",
+        "cues",
+        "older_offsets",
+        "newer_offsets",
+        "functions",
+        "lineage_groups",
+        "reasons"
+      ]
+    },
+    {
+      "blob": "d31789af27098afb2191aeda4eaf1e2d2bd0b63e",
+      "refs": [
+        {
+          "ref": "refs/remotes/origin/HEAD",
+          "head": "4c96c483295e8a43ea58ab8c5689f8c9eb40de4d"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/asm-lexer-performance-20261119",
+          "head": "4c96c483295e8a43ea58ab8c5689f8c9eb40de4d"
+        },
+        {
+          "ref": "refs/remotes/origin/codex/patchtrace-completion-20261119-81e4",
+          "head": "f2458aae22ea6177be64cfc2fb439a79950f00ff"
+        },
+        {
+          "ref": "refs/remotes/pull/322",
+          "head": "f2458aae22ea6177be64cfc2fb439a79950f00ff"
+        }
+      ],
+      "render": "def render(doc: dict, fmt: Format) -> bytes:\n    if fmt == 'json':\n        return (json.dumps(doc, sort_keys=True, indent=2) + '\\n').encode('utf-8')\n    out = io.StringIO(newline='')\n    writer = csv.writer(out, lineterminator='\\n')\n    writer.writerow(CSV_COLUMNS)\n    writer.writerows(_csv_row(r) for r in doc['changes'])\n    return out.getvalue().encode('utf-8')",
+      "render_ast_sha256": "c9c63aa1d39b4fc5416fc96160d373baa8b162d9f512ef81806b4bea7ba6a243",
+      "row_ast_sha256": "3879fa229c24ed71587120ab8a768dd63bd0d010afc53aebfa913fab3773b3b6",
+      "columns": [
+        "id",
+        "status",
+        "review_tier",
+        "display",
+        "length",
+        "cues",
+        "older_offsets",
+        "newer_offsets",
+        "functions",
+        "lineage_groups",
+        "reasons"
+      ]
+    }
+  ],
+  "formatter_variants": 1,
+  "base_export_blob": "6191d24744362c36401f6f68f33b75ef7b749e4a",
+  "base_render_ast_sha256": "c9c63aa1d39b4fc5416fc96160d373baa8b162d9f512ef81806b4bea7ba6a243",
+  "row_variants": 1,
+  "column_variants": 1
+}

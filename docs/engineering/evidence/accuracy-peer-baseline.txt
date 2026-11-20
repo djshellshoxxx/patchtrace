@@ -1,0 +1,741 @@
+FFFFFFFFFFFFFFFFFFFF.....FF.FFFFFF.                                      [100%]
+=================================== FAILURES ===================================
+_________ test_generic_boundaries_refuse_mixed_cohort[layer-L3-score] __________
+
+api = 'score', field = 'layer', value = 'L3'
+
+    @pytest.mark.parametrize('api', ['score', 'parity'])
+    @pytest.mark.parametrize(('field', 'value'), [('layer', 'L3'), ('stratum', 'authored-mingw'), ('holdout', True)])
+    def test_generic_boundaries_refuse_mixed_cohort(api, field, value):
+        records = [case('one'), case('two', **{field: value})]
+        data, candidates = manifest(*records), results(records)
+>       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:39: Failed
+_________ test_generic_boundaries_refuse_mixed_cohort[layer-L3-parity] _________
+
+api = 'parity', field = 'layer', value = 'L3'
+
+    @pytest.mark.parametrize('api', ['score', 'parity'])
+    @pytest.mark.parametrize(('field', 'value'), [('layer', 'L3'), ('stratum', 'authored-mingw'), ('holdout', True)])
+    def test_generic_boundaries_refuse_mixed_cohort(api, field, value):
+        records = [case('one'), case('two', **{field: value})]
+        data, candidates = manifest(*records), results(records)
+>       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:39: Failed
+__ test_generic_boundaries_refuse_mixed_cohort[stratum-authored-mingw-score] ___
+
+api = 'score', field = 'stratum', value = 'authored-mingw'
+
+    @pytest.mark.parametrize('api', ['score', 'parity'])
+    @pytest.mark.parametrize(('field', 'value'), [('layer', 'L3'), ('stratum', 'authored-mingw'), ('holdout', True)])
+    def test_generic_boundaries_refuse_mixed_cohort(api, field, value):
+        records = [case('one'), case('two', **{field: value})]
+        data, candidates = manifest(*records), results(records)
+>       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:39: Failed
+__ test_generic_boundaries_refuse_mixed_cohort[stratum-authored-mingw-parity] __
+
+api = 'parity', field = 'stratum', value = 'authored-mingw'
+
+    @pytest.mark.parametrize('api', ['score', 'parity'])
+    @pytest.mark.parametrize(('field', 'value'), [('layer', 'L3'), ('stratum', 'authored-mingw'), ('holdout', True)])
+    def test_generic_boundaries_refuse_mixed_cohort(api, field, value):
+        records = [case('one'), case('two', **{field: value})]
+        data, candidates = manifest(*records), results(records)
+>       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:39: Failed
+_______ test_generic_boundaries_refuse_mixed_cohort[holdout-True-score] ________
+
+api = 'score', field = 'holdout', value = True
+
+    @pytest.mark.parametrize('api', ['score', 'parity'])
+    @pytest.mark.parametrize(('field', 'value'), [('layer', 'L3'), ('stratum', 'authored-mingw'), ('holdout', True)])
+    def test_generic_boundaries_refuse_mixed_cohort(api, field, value):
+        records = [case('one'), case('two', **{field: value})]
+        data, candidates = manifest(*records), results(records)
+>       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:39: Failed
+_______ test_generic_boundaries_refuse_mixed_cohort[holdout-True-parity] _______
+
+api = 'parity', field = 'holdout', value = True
+
+    @pytest.mark.parametrize('api', ['score', 'parity'])
+    @pytest.mark.parametrize(('field', 'value'), [('layer', 'L3'), ('stratum', 'authored-mingw'), ('holdout', True)])
+    def test_generic_boundaries_refuse_mixed_cohort(api, field, value):
+        records = [case('one'), case('two', **{field: value})]
+        data, candidates = manifest(*records), results(records)
+>       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:39: Failed
+_____ test_generic_boundary_requires_explicit_cohort_metadata[layer-score] _____
+
+api = 'score', field = 'layer'
+
+    @pytest.mark.parametrize('api', ['score', 'parity'])
+    @pytest.mark.parametrize('field', ['layer', 'stratum', 'holdout'])
+    def test_generic_boundary_requires_explicit_cohort_metadata(api, field):
+        record = case('one')
+        del record[field]
+        data, candidates = manifest(record), results([record])
+>       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:52: Failed
+____ test_generic_boundary_requires_explicit_cohort_metadata[layer-parity] _____
+
+api = 'parity', field = 'layer'
+
+    @pytest.mark.parametrize('api', ['score', 'parity'])
+    @pytest.mark.parametrize('field', ['layer', 'stratum', 'holdout'])
+    def test_generic_boundary_requires_explicit_cohort_metadata(api, field):
+        record = case('one')
+        del record[field]
+        data, candidates = manifest(record), results([record])
+>       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:52: Failed
+____ test_generic_boundary_requires_explicit_cohort_metadata[stratum-score] ____
+
+api = 'score', field = 'stratum'
+
+    @pytest.mark.parametrize('api', ['score', 'parity'])
+    @pytest.mark.parametrize('field', ['layer', 'stratum', 'holdout'])
+    def test_generic_boundary_requires_explicit_cohort_metadata(api, field):
+        record = case('one')
+        del record[field]
+        data, candidates = manifest(record), results([record])
+>       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:52: Failed
+___ test_generic_boundary_requires_explicit_cohort_metadata[stratum-parity] ____
+
+api = 'parity', field = 'stratum'
+
+    @pytest.mark.parametrize('api', ['score', 'parity'])
+    @pytest.mark.parametrize('field', ['layer', 'stratum', 'holdout'])
+    def test_generic_boundary_requires_explicit_cohort_metadata(api, field):
+        record = case('one')
+        del record[field]
+        data, candidates = manifest(record), results([record])
+>       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:52: Failed
+____ test_generic_boundary_requires_explicit_cohort_metadata[holdout-score] ____
+
+api = 'score', field = 'holdout'
+
+    @pytest.mark.parametrize('api', ['score', 'parity'])
+    @pytest.mark.parametrize('field', ['layer', 'stratum', 'holdout'])
+    def test_generic_boundary_requires_explicit_cohort_metadata(api, field):
+        record = case('one')
+        del record[field]
+        data, candidates = manifest(record), results([record])
+>       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:52: Failed
+___ test_generic_boundary_requires_explicit_cohort_metadata[holdout-parity] ____
+
+api = 'parity', field = 'holdout'
+
+    @pytest.mark.parametrize('api', ['score', 'parity'])
+    @pytest.mark.parametrize('field', ['layer', 'stratum', 'holdout'])
+    def test_generic_boundary_requires_explicit_cohort_metadata(api, field):
+        record = case('one')
+        del record[field]
+        data, candidates = manifest(record), results([record])
+>       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:52: Failed
+_______ test_repeated_project_hits_do_not_receive_case_binomial_bound[2] _______
+
+count = 2
+
+    @pytest.mark.parametrize('count', [2, 29])
+    def test_repeated_project_hits_do_not_receive_case_binomial_bound(count):
+        records = [case(f'case-{i}', project='one-authored-project') for i in range(count)]
+        report = scoring.score_run(manifest(*records), results(records))
+        assert report['scored'] == report['hits'] == count
+>       assert report['lower_bound'] is None
+E       assert 0.224 is None
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:64: AssertionError
+______ test_repeated_project_hits_do_not_receive_case_binomial_bound[29] _______
+
+count = 29
+
+    @pytest.mark.parametrize('count', [2, 29])
+    def test_repeated_project_hits_do_not_receive_case_binomial_bound(count):
+        records = [case(f'case-{i}', project='one-authored-project') for i in range(count)]
+        report = scoring.score_run(manifest(*records), results(records))
+        assert report['scored'] == report['hits'] == count
+>       assert report['lower_bound'] is None
+E       assert 0.902 is None
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:64: AssertionError
+________ test_repeated_project_preserves_miss_and_false_positive_counts ________
+
+    def test_repeated_project_preserves_miss_and_false_positive_counts():
+        records = [case('hit', project='same'), case('miss', project='same'),
+                   case('nochange', project='same', expected={'no_change': True})]
+        report = scoring.score_run(manifest(*records),
+                                   {'hit': ['PatchedFunction'], 'miss': ['Other'], 'nochange': ['Unexpected']})
+        assert (report['scored'], report['hits'], report['misses'], report['false_positives']) == (3, 1, 1, 1)
+>       assert report['lower_bound'] is None
+E       assert 0.017 is None
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:73: AssertionError
+_____ test_missing_or_invalid_project_identity_never_receives_bound[None] ______
+
+project = None
+
+    @pytest.mark.parametrize('project', [None, '', '   ', 17])
+    def test_missing_or_invalid_project_identity_never_receives_bound(project):
+        record = case('one', project=project)
+        try:
+            report = scoring.score_run(manifest(record), results([record]))
+        except ValueError:
+            return  # An explicit typed refusal also satisfies the boundary.
+>       assert report['lower_bound'] is None
+E       assert 0.05 is None
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:83: AssertionError
+_______ test_missing_or_invalid_project_identity_never_receives_bound[] ________
+
+project = ''
+
+    @pytest.mark.parametrize('project', [None, '', '   ', 17])
+    def test_missing_or_invalid_project_identity_never_receives_bound(project):
+        record = case('one', project=project)
+        try:
+            report = scoring.score_run(manifest(record), results([record]))
+        except ValueError:
+            return  # An explicit typed refusal also satisfies the boundary.
+>       assert report['lower_bound'] is None
+E       assert 0.05 is None
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:83: AssertionError
+______ test_missing_or_invalid_project_identity_never_receives_bound[   ] ______
+
+project = '   '
+
+    @pytest.mark.parametrize('project', [None, '', '   ', 17])
+    def test_missing_or_invalid_project_identity_never_receives_bound(project):
+        record = case('one', project=project)
+        try:
+            report = scoring.score_run(manifest(record), results([record]))
+        except ValueError:
+            return  # An explicit typed refusal also satisfies the boundary.
+>       assert report['lower_bound'] is None
+E       assert 0.05 is None
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:83: AssertionError
+______ test_missing_or_invalid_project_identity_never_receives_bound[17] _______
+
+project = 17
+
+    @pytest.mark.parametrize('project', [None, '', '   ', 17])
+    def test_missing_or_invalid_project_identity_never_receives_bound(project):
+        record = case('one', project=project)
+        try:
+            report = scoring.score_run(manifest(record), results([record]))
+        except ValueError:
+            return  # An explicit typed refusal also satisfies the boundary.
+>       assert report['lower_bound'] is None
+E       assert 0.05 is None
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:83: AssertionError
+______________ test_absent_project_identity_never_receives_bound _______________
+
+    def test_absent_project_identity_never_receives_bound():
+        record = case('one')
+        del record['project']
+        try:
+            report = scoring.score_run(manifest(record), results([record]))
+        except ValueError:
+            return
+>       assert report['lower_bound'] is None
+E       assert 0.05 is None
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:93: AssertionError
+_______________ test_l3_mixed_strata_never_receive_pooled_bound ________________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-35/test_l3_mixed_strata_never_rec0')
+
+    def test_l3_mixed_strata_never_receive_pooled_bound(tmp_path):
+        records = [case('one', layer='L3'), case('two', layer='L3', stratum='authored-mingw')]
+        reports = tmp_path / 'reports'
+        pairs = {c['id']: write_l3(reports, c) for c in records}
+        report = scorerun.score_all(pairs, manifest(*records), reports, 5, 'ghidriff')
+        assert report['development']['scored'] == 2
+>       assert report['development']['lower_bound'] is None
+E       assert 0.224 is None
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:145: AssertionError
+______________ test_l3_repeated_projects_withhold_each_set_bound _______________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-35/test_l3_repeated_projects_with0')
+
+    def test_l3_repeated_projects_withhold_each_set_bound(tmp_path):
+        records = [case(f'case-{i}', layer='L3', project='same', holdout=i >= 2) for i in range(4)]
+        reports = tmp_path / 'reports'
+        pairs = {c['id']: write_l3(reports, c) for c in records}
+        report = scorerun.score_all(pairs, manifest(*records), reports, 5, 'ghidriff')
+        assert report['development']['scored'] == report['holdout']['scored'] == 2
+>       assert report['development']['lower_bound'] is report['holdout']['lower_bound'] is None
+E       assert 0.224 is 0.224
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:155: AssertionError
+____________ test_cli_mixed_cohort_is_usage_refusal[layer-L3-score] ____________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-35/test_cli_mixed_cohort_is_usage0')
+capsys = <_pytest.capture.CaptureFixture object at 0x7f94d8447ec0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f94d84441a0>
+command = 'score', field = 'layer', value = 'L3'
+
+    @pytest.mark.parametrize('command', ['score', 'parity'])
+    @pytest.mark.parametrize(('field', 'value'), [('layer', 'L3'), ('stratum', 'other'), ('holdout', True)])
+    def test_cli_mixed_cohort_is_usage_refusal(tmp_path, capsys, monkeypatch, command, field, value):
+        monkeypatch.delenv('RQ_ALLOWED_DIRS', raising=False)
+        records = [case('one'), case('two', **{field: value})]
+        mpath, rpath = tmp_path / 'manifest.json', tmp_path / 'results.json'
+        mpath.write_text(json.dumps(manifest(*records)), encoding='utf-8')
+        rpath.write_text(json.dumps(results(records)), encoding='utf-8')
+        args = [command, str(mpath), str(rpath)]
+        if command == 'parity':
+            args.append(str(rpath))
+>       assert main(args) == 2
+E       AssertionError: assert 0 == 2
+E        +  where 0 = main(['score', '/tmp/pytest-of-agent/pytest-35/test_cli_mixed_cohort_is_usage0/manifest.json', '/tmp/pytest-of-agent/pytest-35/test_cli_mixed_cohort_is_usage0/results.json'])
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:180: AssertionError
+----------------------------- Captured stdout call -----------------------------
+{
+  "blocked": 0,
+  "cases": 2,
+  "caveat": "bound assumes the scored cases are independent; blocked cases are not counted as hits",
+  "false_positives": 0,
+  "hits": 2,
+  "k": 5,
+  "lower_bound": 0.224,
+  "misses": 0,
+  "rows": [
+    {
+      "id": "one",
+      "outcome": "HIT",
+      "rank": 1
+    },
+    {
+      "id": "two",
+      "outcome": "HIT",
+      "rank": 1
+    }
+  ],
+  "scored": 2,
+  "top1": 2
+}
+___________ test_cli_mixed_cohort_is_usage_refusal[layer-L3-parity] ____________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-35/test_cli_mixed_cohort_is_usage1')
+capsys = <_pytest.capture.CaptureFixture object at 0x7f94d848a7e0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f94d848b800>
+command = 'parity', field = 'layer', value = 'L3'
+
+    @pytest.mark.parametrize('command', ['score', 'parity'])
+    @pytest.mark.parametrize(('field', 'value'), [('layer', 'L3'), ('stratum', 'other'), ('holdout', True)])
+    def test_cli_mixed_cohort_is_usage_refusal(tmp_path, capsys, monkeypatch, command, field, value):
+        monkeypatch.delenv('RQ_ALLOWED_DIRS', raising=False)
+        records = [case('one'), case('two', **{field: value})]
+        mpath, rpath = tmp_path / 'manifest.json', tmp_path / 'results.json'
+        mpath.write_text(json.dumps(manifest(*records)), encoding='utf-8')
+        rpath.write_text(json.dumps(results(records)), encoding='utf-8')
+        args = [command, str(mpath), str(rpath)]
+        if command == 'parity':
+            args.append(str(rpath))
+>       assert main(args) == 2
+E       AssertionError: assert 0 == 2
+E        +  where 0 = main(['parity', '/tmp/pytest-of-agent/pytest-35/test_cli_mixed_cohort_is_usage1/manifest.json', '/tmp/pytest-of-agent/pytes...li_mixed_cohort_is_usage1/results.json', '/tmp/pytest-of-agent/pytest-35/test_cli_mixed_cohort_is_usage1/results.json'])
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:180: AssertionError
+----------------------------- Captured stdout call -----------------------------
+{
+  "blocked": 0,
+  "cases": 2,
+  "caveat": "blocked cases are excluded from comparison and never counted as hits; compared cases only show that the engines agree or differ, not which one is right",
+  "compared": 2,
+  "disagreements": [],
+  "identical": true,
+  "k": 5,
+  "mean_jaccard_at_k": 1.0,
+  "mean_overlap_at_k": 1.0,
+  "outcomes": {
+    "a-only": 0,
+    "b-only": 0,
+    "blocked": 0,
+    "both-hit": 2,
+    "both-miss": 0
+  },
+  "rows": [
+    {
+      "a": {
+        "rank": 1,
+        "top_k": [
+          "PatchedFunction"
+        ],
+        "verdict": "HIT"
+      },
+      "b": {
+        "rank": 1,
+        "top_k": [
+          "PatchedFunction"
+        ],
+        "verdict": "HIT"
+      },
+      "id": "one",
+      "jaccard_at_k": 1.0,
+      "outcome": "both-hit",
+      "overlap_at_k": 1
+    },
+    {
+      "a": {
+        "rank": 1,
+        "top_k": [
+          "PatchedFunction"
+        ],
+        "verdict": "HIT"
+      },
+      "b": {
+        "rank": 1,
+        "top_k": [
+          "PatchedFunction"
+        ],
+        "verdict": "HIT"
+      },
+      "id": "two",
+      "jaccard_at_k": 1.0,
+      "outcome": "both-hit",
+      "overlap_at_k": 1
+    }
+  ]
+}
+_________ test_cli_mixed_cohort_is_usage_refusal[stratum-other-score] __________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-35/test_cli_mixed_cohort_is_usage2')
+capsys = <_pytest.capture.CaptureFixture object at 0x7f94d85b1d90>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f94d8444050>
+command = 'score', field = 'stratum', value = 'other'
+
+    @pytest.mark.parametrize('command', ['score', 'parity'])
+    @pytest.mark.parametrize(('field', 'value'), [('layer', 'L3'), ('stratum', 'other'), ('holdout', True)])
+    def test_cli_mixed_cohort_is_usage_refusal(tmp_path, capsys, monkeypatch, command, field, value):
+        monkeypatch.delenv('RQ_ALLOWED_DIRS', raising=False)
+        records = [case('one'), case('two', **{field: value})]
+        mpath, rpath = tmp_path / 'manifest.json', tmp_path / 'results.json'
+        mpath.write_text(json.dumps(manifest(*records)), encoding='utf-8')
+        rpath.write_text(json.dumps(results(records)), encoding='utf-8')
+        args = [command, str(mpath), str(rpath)]
+        if command == 'parity':
+            args.append(str(rpath))
+>       assert main(args) == 2
+E       AssertionError: assert 0 == 2
+E        +  where 0 = main(['score', '/tmp/pytest-of-agent/pytest-35/test_cli_mixed_cohort_is_usage2/manifest.json', '/tmp/pytest-of-agent/pytest-35/test_cli_mixed_cohort_is_usage2/results.json'])
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:180: AssertionError
+----------------------------- Captured stdout call -----------------------------
+{
+  "blocked": 0,
+  "cases": 2,
+  "caveat": "bound assumes the scored cases are independent; blocked cases are not counted as hits",
+  "false_positives": 0,
+  "hits": 2,
+  "k": 5,
+  "lower_bound": 0.224,
+  "misses": 0,
+  "rows": [
+    {
+      "id": "one",
+      "outcome": "HIT",
+      "rank": 1
+    },
+    {
+      "id": "two",
+      "outcome": "HIT",
+      "rank": 1
+    }
+  ],
+  "scored": 2,
+  "top1": 2
+}
+_________ test_cli_mixed_cohort_is_usage_refusal[stratum-other-parity] _________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-35/test_cli_mixed_cohort_is_usage3')
+capsys = <_pytest.capture.CaptureFixture object at 0x7f94d87eca10>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f94d87efbc0>
+command = 'parity', field = 'stratum', value = 'other'
+
+    @pytest.mark.parametrize('command', ['score', 'parity'])
+    @pytest.mark.parametrize(('field', 'value'), [('layer', 'L3'), ('stratum', 'other'), ('holdout', True)])
+    def test_cli_mixed_cohort_is_usage_refusal(tmp_path, capsys, monkeypatch, command, field, value):
+        monkeypatch.delenv('RQ_ALLOWED_DIRS', raising=False)
+        records = [case('one'), case('two', **{field: value})]
+        mpath, rpath = tmp_path / 'manifest.json', tmp_path / 'results.json'
+        mpath.write_text(json.dumps(manifest(*records)), encoding='utf-8')
+        rpath.write_text(json.dumps(results(records)), encoding='utf-8')
+        args = [command, str(mpath), str(rpath)]
+        if command == 'parity':
+            args.append(str(rpath))
+>       assert main(args) == 2
+E       AssertionError: assert 0 == 2
+E        +  where 0 = main(['parity', '/tmp/pytest-of-agent/pytest-35/test_cli_mixed_cohort_is_usage3/manifest.json', '/tmp/pytest-of-agent/pytes...li_mixed_cohort_is_usage3/results.json', '/tmp/pytest-of-agent/pytest-35/test_cli_mixed_cohort_is_usage3/results.json'])
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:180: AssertionError
+----------------------------- Captured stdout call -----------------------------
+{
+  "blocked": 0,
+  "cases": 2,
+  "caveat": "blocked cases are excluded from comparison and never counted as hits; compared cases only show that the engines agree or differ, not which one is right",
+  "compared": 2,
+  "disagreements": [],
+  "identical": true,
+  "k": 5,
+  "mean_jaccard_at_k": 1.0,
+  "mean_overlap_at_k": 1.0,
+  "outcomes": {
+    "a-only": 0,
+    "b-only": 0,
+    "blocked": 0,
+    "both-hit": 2,
+    "both-miss": 0
+  },
+  "rows": [
+    {
+      "a": {
+        "rank": 1,
+        "top_k": [
+          "PatchedFunction"
+        ],
+        "verdict": "HIT"
+      },
+      "b": {
+        "rank": 1,
+        "top_k": [
+          "PatchedFunction"
+        ],
+        "verdict": "HIT"
+      },
+      "id": "one",
+      "jaccard_at_k": 1.0,
+      "outcome": "both-hit",
+      "overlap_at_k": 1
+    },
+    {
+      "a": {
+        "rank": 1,
+        "top_k": [
+          "PatchedFunction"
+        ],
+        "verdict": "HIT"
+      },
+      "b": {
+        "rank": 1,
+        "top_k": [
+          "PatchedFunction"
+        ],
+        "verdict": "HIT"
+      },
+      "id": "two",
+      "jaccard_at_k": 1.0,
+      "outcome": "both-hit",
+      "overlap_at_k": 1
+    }
+  ]
+}
+__________ test_cli_mixed_cohort_is_usage_refusal[holdout-True-score] __________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-35/test_cli_mixed_cohort_is_usage4')
+capsys = <_pytest.capture.CaptureFixture object at 0x7f94d87f0080>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f94d8445760>
+command = 'score', field = 'holdout', value = True
+
+    @pytest.mark.parametrize('command', ['score', 'parity'])
+    @pytest.mark.parametrize(('field', 'value'), [('layer', 'L3'), ('stratum', 'other'), ('holdout', True)])
+    def test_cli_mixed_cohort_is_usage_refusal(tmp_path, capsys, monkeypatch, command, field, value):
+        monkeypatch.delenv('RQ_ALLOWED_DIRS', raising=False)
+        records = [case('one'), case('two', **{field: value})]
+        mpath, rpath = tmp_path / 'manifest.json', tmp_path / 'results.json'
+        mpath.write_text(json.dumps(manifest(*records)), encoding='utf-8')
+        rpath.write_text(json.dumps(results(records)), encoding='utf-8')
+        args = [command, str(mpath), str(rpath)]
+        if command == 'parity':
+            args.append(str(rpath))
+>       assert main(args) == 2
+E       AssertionError: assert 0 == 2
+E        +  where 0 = main(['score', '/tmp/pytest-of-agent/pytest-35/test_cli_mixed_cohort_is_usage4/manifest.json', '/tmp/pytest-of-agent/pytest-35/test_cli_mixed_cohort_is_usage4/results.json'])
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:180: AssertionError
+----------------------------- Captured stdout call -----------------------------
+{
+  "blocked": 0,
+  "cases": 2,
+  "caveat": "bound assumes the scored cases are independent; blocked cases are not counted as hits",
+  "false_positives": 0,
+  "hits": 2,
+  "k": 5,
+  "lower_bound": 0.224,
+  "misses": 0,
+  "rows": [
+    {
+      "id": "one",
+      "outcome": "HIT",
+      "rank": 1
+    },
+    {
+      "id": "two",
+      "outcome": "HIT",
+      "rank": 1
+    }
+  ],
+  "scored": 2,
+  "top1": 2
+}
+_________ test_cli_mixed_cohort_is_usage_refusal[holdout-True-parity] __________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-35/test_cli_mixed_cohort_is_usage5')
+capsys = <_pytest.capture.CaptureFixture object at 0x7f94d87ee180>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f94d87ed4f0>
+command = 'parity', field = 'holdout', value = True
+
+    @pytest.mark.parametrize('command', ['score', 'parity'])
+    @pytest.mark.parametrize(('field', 'value'), [('layer', 'L3'), ('stratum', 'other'), ('holdout', True)])
+    def test_cli_mixed_cohort_is_usage_refusal(tmp_path, capsys, monkeypatch, command, field, value):
+        monkeypatch.delenv('RQ_ALLOWED_DIRS', raising=False)
+        records = [case('one'), case('two', **{field: value})]
+        mpath, rpath = tmp_path / 'manifest.json', tmp_path / 'results.json'
+        mpath.write_text(json.dumps(manifest(*records)), encoding='utf-8')
+        rpath.write_text(json.dumps(results(records)), encoding='utf-8')
+        args = [command, str(mpath), str(rpath)]
+        if command == 'parity':
+            args.append(str(rpath))
+>       assert main(args) == 2
+E       AssertionError: assert 0 == 2
+E        +  where 0 = main(['parity', '/tmp/pytest-of-agent/pytest-35/test_cli_mixed_cohort_is_usage5/manifest.json', '/tmp/pytest-of-agent/pytes...li_mixed_cohort_is_usage5/results.json', '/tmp/pytest-of-agent/pytest-35/test_cli_mixed_cohort_is_usage5/results.json'])
+
+docs/engineering/evidence/test_accuracy_peer_controls.py:180: AssertionError
+----------------------------- Captured stdout call -----------------------------
+{
+  "blocked": 0,
+  "cases": 2,
+  "caveat": "blocked cases are excluded from comparison and never counted as hits; compared cases only show that the engines agree or differ, not which one is right",
+  "compared": 2,
+  "disagreements": [],
+  "identical": true,
+  "k": 5,
+  "mean_jaccard_at_k": 1.0,
+  "mean_overlap_at_k": 1.0,
+  "outcomes": {
+    "a-only": 0,
+    "b-only": 0,
+    "blocked": 0,
+    "both-hit": 2,
+    "both-miss": 0
+  },
+  "rows": [
+    {
+      "a": {
+        "rank": 1,
+        "top_k": [
+          "PatchedFunction"
+        ],
+        "verdict": "HIT"
+      },
+      "b": {
+        "rank": 1,
+        "top_k": [
+          "PatchedFunction"
+        ],
+        "verdict": "HIT"
+      },
+      "id": "one",
+      "jaccard_at_k": 1.0,
+      "outcome": "both-hit",
+      "overlap_at_k": 1
+    },
+    {
+      "a": {
+        "rank": 1,
+        "top_k": [
+          "PatchedFunction"
+        ],
+        "verdict": "HIT"
+      },
+      "b": {
+        "rank": 1,
+        "top_k": [
+          "PatchedFunction"
+        ],
+        "verdict": "HIT"
+      },
+      "id": "two",
+      "jaccard_at_k": 1.0,
+      "outcome": "both-hit",
+      "overlap_at_k": 1
+    }
+  ]
+}
+=========================== short test summary info ============================
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_generic_boundaries_refuse_mixed_cohort[layer-L3-score]
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_generic_boundaries_refuse_mixed_cohort[layer-L3-parity]
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_generic_boundaries_refuse_mixed_cohort[stratum-authored-mingw-score]
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_generic_boundaries_refuse_mixed_cohort[stratum-authored-mingw-parity]
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_generic_boundaries_refuse_mixed_cohort[holdout-True-score]
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_generic_boundaries_refuse_mixed_cohort[holdout-True-parity]
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_generic_boundary_requires_explicit_cohort_metadata[layer-score]
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_generic_boundary_requires_explicit_cohort_metadata[layer-parity]
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_generic_boundary_requires_explicit_cohort_metadata[stratum-score]
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_generic_boundary_requires_explicit_cohort_metadata[stratum-parity]
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_generic_boundary_requires_explicit_cohort_metadata[holdout-score]
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_generic_boundary_requires_explicit_cohort_metadata[holdout-parity]
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_repeated_project_hits_do_not_receive_case_binomial_bound[2]
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_repeated_project_hits_do_not_receive_case_binomial_bound[29]
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_repeated_project_preserves_miss_and_false_positive_counts
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_missing_or_invalid_project_identity_never_receives_bound[None]
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_missing_or_invalid_project_identity_never_receives_bound[]
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_missing_or_invalid_project_identity_never_receives_bound[   ]
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_missing_or_invalid_project_identity_never_receives_bound[17]
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_absent_project_identity_never_receives_bound
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_l3_mixed_strata_never_receive_pooled_bound
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_l3_repeated_projects_withhold_each_set_bound
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_cli_mixed_cohort_is_usage_refusal[layer-L3-score]
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_cli_mixed_cohort_is_usage_refusal[layer-L3-parity]
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_cli_mixed_cohort_is_usage_refusal[stratum-other-score]
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_cli_mixed_cohort_is_usage_refusal[stratum-other-parity]
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_cli_mixed_cohort_is_usage_refusal[holdout-True-score]
+FAILED docs/engineering/evidence/test_accuracy_peer_controls.py::test_cli_mixed_cohort_is_usage_refusal[holdout-True-parity]
+28 failed, 7 passed in 0.59s

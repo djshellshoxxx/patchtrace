@@ -1,0 +1,153 @@
+FFFFFF...........FF                                                      [100%]
+=================================== FAILURES ===================================
+___ test_leading_utf16be_doctype_is_refused_by_the_parser[internal-entity- ] ___
+
+prefix = ' '
+document = '<!DOCTYPE assembly [<!ENTITY proof "AUTHORED_ENTITY_MARKER">]><assembly xmlns="urn:schemas-microsoft-com:asm.v1"><assemblyIdentity name="&proof;"/></assembly>'
+
+    @pytest.mark.parametrize('prefix', [' ', '\n', '\t'])
+    @pytest.mark.parametrize('document', [ENTITY, EMPTY_DTD], ids=['internal-entity', 'doctype-only'])
+    def test_leading_utf16be_doctype_is_refused_by_the_parser(prefix, document):
+        raw = (prefix + document).encode('utf-16-be')
+        result = observe(raw)
+>       assert result.identity is None
+E       AssertionError: assert AssemblyIdentity(name='AUTHORED_ENTITY_MARKER', version=None, arch=None, token=None, type=None) is None
+E        +  where AssemblyIdentity(name='AUTHORED_ENTITY_MARKER', version=None, arch=None, token=None, type=None) = ManifestObservation(leaf=ResourceLeaf(type_id=24, type_label='RT_MANIFEST', name=1, lang=1033, rva=8192, size=318, cod...name='AUTHORED_ENTITY_MARKER', version=None, arch=None, token=None, type=None), dependencies=(), files=(), warnings=()).identity
+
+tests/test_pe_manifest_dtd_boundary.py:37: AssertionError
+__ test_leading_utf16be_doctype_is_refused_by_the_parser[internal-entity-\n] ___
+
+prefix = '\n'
+document = '<!DOCTYPE assembly [<!ENTITY proof "AUTHORED_ENTITY_MARKER">]><assembly xmlns="urn:schemas-microsoft-com:asm.v1"><assemblyIdentity name="&proof;"/></assembly>'
+
+    @pytest.mark.parametrize('prefix', [' ', '\n', '\t'])
+    @pytest.mark.parametrize('document', [ENTITY, EMPTY_DTD], ids=['internal-entity', 'doctype-only'])
+    def test_leading_utf16be_doctype_is_refused_by_the_parser(prefix, document):
+        raw = (prefix + document).encode('utf-16-be')
+        result = observe(raw)
+>       assert result.identity is None
+E       AssertionError: assert AssemblyIdentity(name='AUTHORED_ENTITY_MARKER', version=None, arch=None, token=None, type=None) is None
+E        +  where AssemblyIdentity(name='AUTHORED_ENTITY_MARKER', version=None, arch=None, token=None, type=None) = ManifestObservation(leaf=ResourceLeaf(type_id=24, type_label='RT_MANIFEST', name=1, lang=1033, rva=8192, size=318, cod...name='AUTHORED_ENTITY_MARKER', version=None, arch=None, token=None, type=None), dependencies=(), files=(), warnings=()).identity
+
+tests/test_pe_manifest_dtd_boundary.py:37: AssertionError
+__ test_leading_utf16be_doctype_is_refused_by_the_parser[internal-entity-\t] ___
+
+prefix = '\t'
+document = '<!DOCTYPE assembly [<!ENTITY proof "AUTHORED_ENTITY_MARKER">]><assembly xmlns="urn:schemas-microsoft-com:asm.v1"><assemblyIdentity name="&proof;"/></assembly>'
+
+    @pytest.mark.parametrize('prefix', [' ', '\n', '\t'])
+    @pytest.mark.parametrize('document', [ENTITY, EMPTY_DTD], ids=['internal-entity', 'doctype-only'])
+    def test_leading_utf16be_doctype_is_refused_by_the_parser(prefix, document):
+        raw = (prefix + document).encode('utf-16-be')
+        result = observe(raw)
+>       assert result.identity is None
+E       AssertionError: assert AssemblyIdentity(name='AUTHORED_ENTITY_MARKER', version=None, arch=None, token=None, type=None) is None
+E        +  where AssemblyIdentity(name='AUTHORED_ENTITY_MARKER', version=None, arch=None, token=None, type=None) = ManifestObservation(leaf=ResourceLeaf(type_id=24, type_label='RT_MANIFEST', name=1, lang=1033, rva=8192, size=318, cod...name='AUTHORED_ENTITY_MARKER', version=None, arch=None, token=None, type=None), dependencies=(), files=(), warnings=()).identity
+
+tests/test_pe_manifest_dtd_boundary.py:37: AssertionError
+____ test_leading_utf16be_doctype_is_refused_by_the_parser[doctype-only- ] _____
+
+prefix = ' '
+document = '<!DOCTYPE assembly><assembly xmlns="urn:schemas-microsoft-com:asm.v1"><assemblyIdentity name="Authored.Normal"/></assembly>'
+
+    @pytest.mark.parametrize('prefix', [' ', '\n', '\t'])
+    @pytest.mark.parametrize('document', [ENTITY, EMPTY_DTD], ids=['internal-entity', 'doctype-only'])
+    def test_leading_utf16be_doctype_is_refused_by_the_parser(prefix, document):
+        raw = (prefix + document).encode('utf-16-be')
+        result = observe(raw)
+>       assert result.identity is None
+E       AssertionError: assert AssemblyIdentity(name='Authored.Normal', version=None, arch=None, token=None, type=None) is None
+E        +  where AssemblyIdentity(name='Authored.Normal', version=None, arch=None, token=None, type=None) = ManifestObservation(leaf=ResourceLeaf(type_id=24, type_label='RT_MANIFEST', name=1, lang=1033, rva=8192, size=248, cod...entity(name='Authored.Normal', version=None, arch=None, token=None, type=None), dependencies=(), files=(), warnings=()).identity
+
+tests/test_pe_manifest_dtd_boundary.py:37: AssertionError
+____ test_leading_utf16be_doctype_is_refused_by_the_parser[doctype-only-\n] ____
+
+prefix = '\n'
+document = '<!DOCTYPE assembly><assembly xmlns="urn:schemas-microsoft-com:asm.v1"><assemblyIdentity name="Authored.Normal"/></assembly>'
+
+    @pytest.mark.parametrize('prefix', [' ', '\n', '\t'])
+    @pytest.mark.parametrize('document', [ENTITY, EMPTY_DTD], ids=['internal-entity', 'doctype-only'])
+    def test_leading_utf16be_doctype_is_refused_by_the_parser(prefix, document):
+        raw = (prefix + document).encode('utf-16-be')
+        result = observe(raw)
+>       assert result.identity is None
+E       AssertionError: assert AssemblyIdentity(name='Authored.Normal', version=None, arch=None, token=None, type=None) is None
+E        +  where AssemblyIdentity(name='Authored.Normal', version=None, arch=None, token=None, type=None) = ManifestObservation(leaf=ResourceLeaf(type_id=24, type_label='RT_MANIFEST', name=1, lang=1033, rva=8192, size=248, cod...entity(name='Authored.Normal', version=None, arch=None, token=None, type=None), dependencies=(), files=(), warnings=()).identity
+
+tests/test_pe_manifest_dtd_boundary.py:37: AssertionError
+____ test_leading_utf16be_doctype_is_refused_by_the_parser[doctype-only-\t] ____
+
+prefix = '\t'
+document = '<!DOCTYPE assembly><assembly xmlns="urn:schemas-microsoft-com:asm.v1"><assemblyIdentity name="Authored.Normal"/></assembly>'
+
+    @pytest.mark.parametrize('prefix', [' ', '\n', '\t'])
+    @pytest.mark.parametrize('document', [ENTITY, EMPTY_DTD], ids=['internal-entity', 'doctype-only'])
+    def test_leading_utf16be_doctype_is_refused_by_the_parser(prefix, document):
+        raw = (prefix + document).encode('utf-16-be')
+        result = observe(raw)
+>       assert result.identity is None
+E       AssertionError: assert AssemblyIdentity(name='Authored.Normal', version=None, arch=None, token=None, type=None) is None
+E        +  where AssemblyIdentity(name='Authored.Normal', version=None, arch=None, token=None, type=None) = ManifestObservation(leaf=ResourceLeaf(type_id=24, type_label='RT_MANIFEST', name=1, lang=1033, rva=8192, size=248, cod...entity(name='Authored.Normal', version=None, arch=None, token=None, type=None), dependencies=(), files=(), warnings=()).identity
+
+tests/test_pe_manifest_dtd_boundary.py:37: AssertionError
+_________ test_the_production_metadata_reader_refuses_a_hidden_doctype _________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-1/test_the_production_metadata_r0')
+
+    def test_the_production_metadata_reader_refuses_a_hidden_doctype(tmp_path):
+        raw = (' ' + ENTITY).encode('utf-16-be')
+        data, _ = rsrc_pe(tree({RT_MANIFEST: {1: {LANG_EN_US: raw}}}))
+        with open_pe(tmp_path, data) as pe:
+            result = inspect_metadata(pe.reader, pe.overview)
+>       assert result.status == 'partial'
+E       AssertionError: assert 'ok' == 'partial'
+E         
+E         - partial
+E         + ok
+
+tests/test_pe_manifest_dtd_boundary.py:63: AssertionError
+_______ test_python_elementtree_fallback_also_refuses_internal_only_dtds _______
+
+    def test_python_elementtree_fallback_also_refuses_internal_only_dtds():
+        child = '''
+    import codecs, json, os, pathlib, sys
+    sys.modules['_elementtree'] = None
+    from patchtrace.pe_overview import manifest
+    from patchtrace.pe_overview.resources import ResourceLeaf
+    assert str(pathlib.Path(manifest.__file__).resolve().parents[2]) == os.environ['PYTHONPATH']
+    assert hasattr(manifest.ET.XMLParser(), 'parser')
+    normal = '<assembly xmlns="urn:schemas-microsoft-com:asm.v1"><assemblyIdentity name="Authored.Normal"/></assembly>'
+    entity = '<!DOCTYPE assembly [<!ENTITY proof "AUTHORED_ENTITY_MARKER">]>' + normal.replace('Authored.Normal', '&proof;')
+    values = [(' ' + entity).encode('utf-16-be'), ('\\n<!DOCTYPE assembly>' + normal).encode('utf-16-be'),
+              normal.encode(), codecs.BOM_UTF16_LE + (' ' + normal).encode('utf-16-le'),
+              codecs.BOM_UTF16_BE + (' ' + normal).encode('utf-16-be')]
+    found = []
+    for raw in values:
+        leaf = ResourceLeaf(24, 'RT_MANIFEST', 1, 1033, 0x2000, len(raw), 0, 0x400)
+        result = manifest.observe_manifest(leaf, raw)
+        found.append({'warnings': result.warnings, 'identity': result.identity.name if result.identity else None})
+    assert not [m for m in sys.modules if m.startswith(('PySide6', 'shiboken6', 'patchtrace.ui'))]
+    print(json.dumps(found))
+    '''
+        environment = dict(os.environ, PYTHONPATH=SRC, QT_QPA_PLATFORM='offscreen')
+        completed = subprocess.run([sys.executable, '-c', child], env=environment, capture_output=True,
+                                   text=True, timeout=15)
+        assert completed.returncode == 0, completed.stderr
+        rows = json.loads(completed.stdout)
+>       assert rows[:2] == [{'warnings': ['manifest_dtd_rejected'], 'identity': None}] * 2
+E       AssertionError: assert [{'warnings':...ored.Normal'}] == [{'warnings':...ntity': None}]
+E         
+E         At index 0 diff: {'warnings': [], 'identity': 'AUTHORED_ENTITY_MARKER'} != {'warnings': ['manifest_dtd_rejected'], 'identity': None}
+E         Use -v to get more diff
+
+tests/test_pe_manifest_dtd_boundary.py:96: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_pe_manifest_dtd_boundary.py::test_leading_utf16be_doctype_is_refused_by_the_parser[internal-entity- ]
+FAILED tests/test_pe_manifest_dtd_boundary.py::test_leading_utf16be_doctype_is_refused_by_the_parser[internal-entity-\n]
+FAILED tests/test_pe_manifest_dtd_boundary.py::test_leading_utf16be_doctype_is_refused_by_the_parser[internal-entity-\t]
+FAILED tests/test_pe_manifest_dtd_boundary.py::test_leading_utf16be_doctype_is_refused_by_the_parser[doctype-only- ]
+FAILED tests/test_pe_manifest_dtd_boundary.py::test_leading_utf16be_doctype_is_refused_by_the_parser[doctype-only-\n]
+FAILED tests/test_pe_manifest_dtd_boundary.py::test_leading_utf16be_doctype_is_refused_by_the_parser[doctype-only-\t]
+FAILED tests/test_pe_manifest_dtd_boundary.py::test_the_production_metadata_reader_refuses_a_hidden_doctype
+FAILED tests/test_pe_manifest_dtd_boundary.py::test_python_elementtree_fallback_also_refuses_internal_only_dtds
+8 failed, 11 passed in 0.96s

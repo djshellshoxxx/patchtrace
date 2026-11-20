@@ -1,0 +1,23 @@
+{
+  "files": [
+    {
+      "display_path": "docs/engineering-handoffs/master-directive.md",
+      "original_gzip_path": "docs/engineering-handoffs/master-directive-original.txt.gz",
+      "original_bytes": 35137,
+      "original_sha256": "6a0f8498b9b0791d309235494de775e6d45f2a3ecc9ad84bad9dc63c478c85d6",
+      "gzip_sha256": "18d8b41376749db800f97e66c1e66883e34b00f73e916b4ed8f46f5349b34e1b",
+      "display_sha256": "9f97ef9faa72244826367196b4aa5befd709d2e29afd8560f491c8a5aa89641e",
+      "normalization": "LF line endings and trailing Markdown whitespace removed"
+    },
+    {
+      "display_path": "docs/engineering/evidence/pr322-rzdiff-windows.json",
+      "original_gzip_path": "docs/engineering/evidence/pr322-rzdiff-windows-original.json.gz",
+      "original_bytes": 811,
+      "original_sha256": "3e763947848a5af9df42fdfab2206126cc12b1e9a3df3155f5cecc066940737c",
+      "gzip_sha256": "d8dac1909d8984f90d3fba052d33851b29daa462539b49a55995987f1e775cc7",
+      "display_sha256": "05fc2c93c2adec552d78766c22a0dd4d91ace602c977dca8fc9fcd9728420d0e",
+      "normalization": "CRLF converted to LF; JSON values unchanged"
+    }
+  ],
+  "reason": "Preserve exact raw bytes losslessly while satisfying repository whitespace checks."
+}

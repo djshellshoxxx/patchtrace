@@ -50,6 +50,30 @@ def file_identity(info: os.stat_result) -> tuple[int, int]:
     return info.st_dev, info.st_ino
 
 
+def verify_stage(fd: int, data: bytes, identity: tuple[int, int]) -> os.stat_result:
+    """Verify the held source with reads bounded by the expected length plus one."""
+    before = os.fstat(fd)
+    if (not stat.S_ISREG(before.st_mode) or file_identity(before) != identity or
+            before.st_size != len(data)):
+        raise OwnedPublicationError('safe publication staging identity or bytes changed')
+    digest = hashlib.sha256()
+    with os.fdopen(fd, 'rb', buffering=0, closefd=False) as handle:
+        handle.seek(0)
+        remaining = len(data)
+        while remaining:
+            chunk = handle.read(min(1024 * 1024, remaining))
+            if not chunk:
+                raise OwnedPublicationError('safe publication staging identity or bytes changed')
+            digest.update(chunk)
+            remaining -= len(chunk)
+        if handle.read(1):
+            raise OwnedPublicationError('safe publication staging identity or bytes changed')
+    after = os.fstat(fd)
+    if (_observation(before) != _observation(after) or digest.digest() != hashlib.sha256(data).digest()):
+        raise OwnedPublicationError('safe publication staging identity or bytes changed')
+    return after
+
+
 def write_stage(fd: int, data: bytes) -> tuple[int, int]:
     """Keep the exact source open; verify the flushed bytes through that descriptor."""
     before = os.fstat(fd)
@@ -59,13 +83,9 @@ def write_stage(fd: int, data: bytes) -> tuple[int, int]:
         handle.write(data)
         handle.flush()
         os.fsync(fd)
-        handle.seek(0)
-        digest = hashlib.file_digest(handle, 'sha256').digest()
-    after = os.fstat(fd)
-    if (file_identity(before) != file_identity(after) or after.st_size != len(data) or
-            digest != hashlib.sha256(data).digest()):
-        raise OwnedPublicationError('safe publication staging identity or bytes changed')
-    return file_identity(after)
+    identity = file_identity(before)
+    verify_stage(fd, data, identity)
+    return identity
 
 
 def linux_directory(path: Path, *, create: bool, anchor: DirectoryAnchor | None = None) -> int:
@@ -256,11 +276,11 @@ class WindowsPublication:
             # credit STATUS_PENDING or an unexpected informational return as done.
             raise self.blocked_error('safe publication information call did not complete synchronously')
 
-    def rename(self, source: int, parent: int, name: str) -> None:
+    def rename(self, source: int, parent: int, name: str, *, replace: bool = False) -> None:
         encoded = name.encode('utf-16-le')
         buffer = self.ct.create_string_buffer(self.ct.sizeof(self.RenameInfo) + len(encoded))
         info = self.RenameInfo.from_buffer(buffer)
-        info.ReplaceIfExists, info.RootDirectory, info.FileNameLength = False, parent, len(encoded)
+        info.ReplaceIfExists, info.RootDirectory, info.FileNameLength = replace, parent, len(encoded)
         self.ct.memmove(self.ct.addressof(buffer) + self.RenameInfo.FileName.offset, encoded, len(encoded))
         self._set_information(source, buffer, len(buffer), 10)  # FileRenameInformation
 
@@ -375,6 +395,7 @@ def publish_linux(target: Path, data: bytes, *, validate_existing: Callable[[byt
             return False
         if file_identity(os.stat(target.name, dir_fd=parent, follow_symlinks=False)) != identity:
             raise OwnedPublicationError('safe publication destination identity changed')
+        verify_stage(fd, data, identity)
         check_linux_parent(target.parent, parent, anchor=anchor)
         return True
 
@@ -383,9 +404,12 @@ def publish_windows(target: Path, data: bytes, *, validate_existing: Callable[[b
                     maximum: int = 0, require_existing: bool = False,
                     windows_factory: Callable[[], WindowsPublication] = WindowsPublication,
                     stage_writer: Callable[[int, bytes], Any] | None = None,
-                    os_api: Any = os, prefix: str = '.owned-', anchor: DirectoryAnchor | None = None) -> bool:
+                    os_api: Any = os, prefix: str = '.owned-', anchor: DirectoryAnchor | None = None,
+                    replace: bool = False) -> bool:
     import msvcrt
 
+    if replace and (validate_existing is not None or require_existing):
+        raise ValueError('forced replacement cannot reuse immutable evidence')
     win = windows_factory()
     anchor_options = {'anchor': anchor} if anchor is not None else {}
     with ExitStack() as stack:
@@ -406,7 +430,10 @@ def publish_windows(target: Path, data: bytes, *, validate_existing: Callable[[b
             if win.identity(source) != identity:
                 raise win.blocked_error('safe publication staging identity changed')
             try:
-                win.rename(source, parent, target.name)
+                if replace:
+                    win.rename(source, parent, target.name, replace=True)
+                else:
+                    win.rename(source, parent, target.name)
             except FileExistsError:
                 if validate_existing is None:
                     raise

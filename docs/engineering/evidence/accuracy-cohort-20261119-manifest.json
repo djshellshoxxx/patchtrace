@@ -1,0 +1,68 @@
+{
+  "archive": "accuracy-cohort-20261119.zip",
+  "archive_sha256": "c7bef22a32138e826be3795a1a6e942b342dbc82c4b4a0b92f2db39a8939d21c",
+  "base": "f4503de37bb94b1449118f23709e647ea55dd944",
+  "evidence_class": "authored controls; no real accuracy or live engine claim",
+  "members": {
+    "all-research.txt": {
+      "bytes": 592,
+      "sha256": "39a2267bd79b57fc78064f48d34d249d73e7b3c594f77fad026aea1f684bdef9"
+    },
+    "all-research.xml": {
+      "bytes": 73484,
+      "sha256": "d09c9564697ae73f9ff160c4ea975c28338b7bb2830de154c14d2f67f3fcfa83"
+    },
+    "baseline.txt": {
+      "bytes": 26561,
+      "sha256": "a8b3607e1bb474dd61e022e0920cdcd00f4992e1274118cf125ad03f49fbeee1"
+    },
+    "baseline.xml": {
+      "bytes": 23298,
+      "sha256": "22ebd93b36da1562aa8e4230d0b8cc6e944fa47f91a1a6134f73a56816edf3db"
+    },
+    "direct-api-intermediate-red.txt": {
+      "bytes": 4734,
+      "sha256": "b2595ee2c15e3f9d5747a613a2cab7289e9cab6aa05730f0769c332185339bd8"
+    },
+    "donor-scan.json": {
+      "bytes": 51492,
+      "sha256": "591344c16767ee2da48d7676db7a4e5d468e3cb209d6bdb215909a933de2371e"
+    },
+    "final-research.txt": {
+      "bytes": 592,
+      "sha256": "7a78346b4001f9db2eda13bf5232944189788e9a6fec169197486ba1670c28b2"
+    },
+    "final-research.xml": {
+      "bytes": 73647,
+      "sha256": "f07818ff3ef8aa631a6c2204a4877705e0fbb350ea4d5e283c0ca3aeb43028af"
+    },
+    "final-ruff.txt": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "focused.txt": {
+      "bytes": 180,
+      "sha256": "1ef807078c9d838d5c8798eb5053350be9739ec7d25c8a6447c748f0d9fa689e"
+    },
+    "focused.xml": {
+      "bytes": 19683,
+      "sha256": "f3fa427d62bcddc2f1b7a02592dd9341d1126e5bd230a6c07ea7899293c30da4"
+    },
+    "missing-project-intermediate-red.txt": {
+      "bytes": 2262,
+      "sha256": "c67793beddfa88cfa1f493910a11199e3881bf052c0cf645adb1f945c1d64a9a"
+    },
+    "ruff.txt": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    }
+  },
+  "schema": "engineering-evidence/1",
+  "source_sha256": {
+    "tests/test_research_qualification_adapters.py": "378f268f841b650140ffaa6859e21d69cfaa9a6c5ef59134c307022665820464",
+    "tests/test_research_qualification_cohort_boundaries.py": "0a8b3691a65a47c18263be29c6250008a8adabd76f42e1a0989fa89df2a062a1",
+    "tools/research_qualification/parity.py": "e4103aebae91708c4bd64c1cf191b6aaa60eafe85a39b80e4a978792a1e7aa22",
+    "tools/research_qualification/scorerun.py": "37c1c5de724f6f5908ab38131195dbba959f1a28faf7e741e1ad89ba296fd780",
+    "tools/research_qualification/scoring.py": "d5570909eef7caf70d08980c075021ff12969903dbaf3c788b59799ed963495c"
+  }
+}

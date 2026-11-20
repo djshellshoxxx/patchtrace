@@ -178,7 +178,76 @@ patchtrace strings explain PROJECT --id STRING_ID --json                        
 patchtrace strings scan    PROJECT --builtin [--min-length N] --json            # in-process scan, no FLOSS
 patchtrace strings export  PROJECT --out FILE --format json|csv [--scope changed|all] [--show-secrets] [--force]
 ```
-Export is redacted by default and records basis and lineage. Publication has two explicit paths:
+Export is redacted by default and records basis and lineage.
+
+### Export encoding (CSV metadata repair, 2026-11-19)
+
+JSON retains `strings-export/1` unchanged. CSV uses `strings-export-csv/2`:
+
+1. The first CSV record has exactly two fields: the literal `strings-export-csv/2`
+   and a JSON object containing every document member except `changes`. This includes
+   the document contract, selected scope, redaction policy, extraction basis and
+   harmonized settings, basis notes, delta counts, truncation, anchor digest/hit count,
+   and the selected rows' lineage groups. JSON uses sorted keys, compact separators,
+   and escaped control/non-ASCII characters; it is one CSV field beginning with `{`,
+   so a formula-like value inside metadata cannot become a spreadsheet formula.
+2. The next CSV record is the existing eleven-column header, unchanged in names and
+   order: `id,status,review_tier,display,length,cues,older_offsets,newer_offsets,functions,lineage_groups,reasons`.
+3. Remaining records are selected string rows, with the existing cell meanings and
+   formula-prefix neutralization. No metadata record is a string finding. An empty
+   export contains the metadata record and column header only; its returned row
+   count remains zero. Delta `counts` retain their existing meaning and need not
+   equal the number of selected/exported rows.
+
+This deliberately replaces the older, unversioned header-first CSV encoding, which
+could not preserve document metadata. Consumers must validate and consume the first
+CSV record before reading the table. Existing column-oriented processing can then
+continue over the unchanged table; a header-first consumer needs this migration.
+Do not infer completeness from an older CSV without its missing metadata. For example:
+
+```python
+import csv
+import io
+import json
+
+MAX_EXPORT_BYTES = 8 * 1024 * 1024  # This reader's explicit policy, not an exporter limit.
+with open(path, 'rb') as source:
+    payload = source.read(MAX_EXPORT_BYTES + 1)
+if len(payload) > MAX_EXPORT_BYTES:
+    raise ValueError('Strings CSV exceeds this reader\'s 8 MiB budget')
+source = io.StringIO(payload.decode('utf-8'), newline='')
+previous_field_limit = csv.field_size_limit(MAX_EXPORT_BYTES)
+try:
+    marker, encoded_metadata = next(csv.reader(source))
+    if marker != 'strings-export-csv/2':
+        raise ValueError('Unsupported strings CSV encoding')
+    metadata = json.loads(encoded_metadata)
+    if not isinstance(metadata, dict) or metadata.get('contract') != 'strings-export/1':
+        raise ValueError('Unsupported strings export document')
+    rows = list(csv.DictReader(source))
+finally:
+    csv.field_size_limit(previous_field_limit)
+```
+
+This standalone reader assumes a locally produced export and accepts at most
+8 MiB of UTF-8 file bytes. It reads a bounded snapshot with a one-byte overflow
+sentinel; larger files are refused before decoding or CSV parsing. Its field
+limit is 8,388,608 characters, an upper bound for any field in that UTF-8 byte budget,
+and the previous process-global CSV limit is restored on success or failure.
+Run the example in its own process, or serialize changes to that global limit
+against other CSV readers when embedding it. Larger valid exports require a
+deliberately chosen reader budget; this policy does not cap the exporter or
+silently truncate metadata. Spreadsheet display/cell limits may hide a large
+metadata field, but do not truncate the bytes emitted in the CSV file.
+Importing untrusted files still requires the repository's strict JSON and
+resource-budget admission rules.
+The metadata does not include `changes` or revealed row values. Revealed values,
+when explicitly requested, remain only in their existing row cells. Publication,
+scope selection, returned row count and SHA-256 of the complete file are unchanged.
+
+### File publication
+
+Publication has two explicit paths:
 
 - Without `--force`, the selected parent must already exist. Publication holds the source bytes and
   the selected parent identity, creates the destination exclusively, and refuses any existing or
@@ -187,18 +256,33 @@ Export is redacted by default and records basis and lineage. Publication has two
   fallback. The reusable runtime boundary is `owned_publication.py`, recovered from the existing
   PW-01 publication design. Linux and Windows implementations require their own qualification;
   Linux results do not qualify Windows.
-- With `--force`, create an exclusive random stage, write and flush its bytes, then perform the
-  existing pathname-based replacement. This is atomic namespace replacement under stable path
-  ownership, but it does not bind the successful replacement to the originally opened source or
-  parent if another actor substitutes those names. That forced-replacement guarantee remains
-  unresolved and must not be inferred from the no-force implementation.
-- On forced failure, close only handles owned by the attempt. Do not unlink the stage through its
-  mutable pathname: it may name a foreign entry by then. A complete or partial stage can remain
-  for inspection. Ordinary I/O failures retain `PT-STR-EXPORT`; cancellation and other non-I/O
-  exceptions propagate unchanged. Successful replacement normally consumes its stage.
+- With `--force`, Windows uses the same rooted, held-source publisher with explicit native
+  `ReplaceIfExists=True`. Its default remains no-replace; forced replacement cannot be combined
+  with immutable-evidence reuse. Cleanup discards only the held source handle. Native Windows
+  filesystem qualification remains separate from portable call assertions.
+- With `--force`, Linux writes, flushes and verifies an anonymous source in the existing selected
+  directory, then links that exact descriptor to an unpredictable, exclusive staging name. Before
+  the final rename, verify the named source type, identity and change metadata against the held
+  descriptor; recheck the selected parent, and use held directory descriptors for both rename
+  arguments. Verify source bytes and destination identity after rename before returning success.
+  Byte verification reads at most the expected length plus one byte and checks stable metadata;
+  same-inode edits must not yield a successful receipt with an incorrect digest. The shared
+  no-replace Linux publisher performs the same byte verification after linking.
+- The Linux final check-to-rename source substitution race remains **OPEN**. The available
+  rename operation names its source rather than accepting a held source descriptor. A substitute
+  introduced after the final check can be published before the post-rename check rejects it.
+  Do not claim rollback, guaranteed prior-destination preservation for that interval, or complete
+  Linux forced-publication ownership. Ordinary forced replacement stays available; no-force
+  publication retains its stronger source-ownership contract.
+- On forced failure, close only owned descriptors and preserve the original exception if close
+  also fails. Anonymous failures leave no stage name. After the Linux source is linked, do not
+  unlink its mutable pathname: it may now name a foreign entry. A complete or modified stage
+  can remain for inspection. Windows cleanup addresses only the held source handle. Ordinary
+  I/O and unsupported-capability failures retain `PT-STR-EXPORT`; cancellation and other
+  non-I/O exceptions propagate unchanged. Successful replacement normally consumes its stage.
 
-These publication rules leave the JSON/CSV formats, redaction, basis, lineage and export digest
-unchanged. Verification includes concurrent destinations, substituted source/parent names,
+These publication rules are independent of the encodings above and retain the redaction,
+basis, lineage and export-digest semantics. Verification includes concurrent destinations, substituted source/parent names,
 unsupported capabilities, descriptor-transfer failures and primary-exception preservation.
 
 GUI (`ui_strings.py`, Qt only; logic in `strings/view_model.py`). **Where**: dock `strings.dock` (objectName), tabified with the Evidence dock on the right (`tabifyDockWidget`), action in the Analysis menu, `Ctrl+Shift+T` (free: used are Ctrl+N O I E S R, Ctrl+Shift+E, planned Ctrl+Shift+F/G); uses the E-2 panel registry when merged, else the `EvidenceController` pattern (own controller, generation counters, unparented registered threads, `WindowPort` for project and `select_match`).

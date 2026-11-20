@@ -1,0 +1,56 @@
+{
+  "schema": "patchtrace-review-evidence/1",
+  "runtime_candidate": "9308cef64592a5a7e7d7fb051cffa68464277c31",
+  "documentation_tip": "53d9b33da5081bb080623049a2f1759522461188",
+  "runtime_import_path": "/workspace/scratch/4c8dc848d760/pt-csv-review/src/patchtrace/strings/export.py",
+  "runtime_export_blob": "f78dc3a529a654a5a34fc3c02c280b62241b173c",
+  "initial_result": {
+    "passed": 6,
+    "failed": 1,
+    "duration_seconds": 0.75
+  },
+  "final_result": {
+    "passed": 10,
+    "failed": 0,
+    "duration_seconds": 0.6
+  },
+  "payloads": [
+    {
+      "path": "docs/engineering/evidence/csv-metadata-peer-final.txt",
+      "bytes": 99,
+      "sha256": "50ce3e9bdb5664e02c4683036289014fcdc331ad420afd89c1d7243c53c3bbf3"
+    },
+    {
+      "path": "docs/engineering/evidence/csv-metadata-peer-initial.txt.gz",
+      "bytes": 615,
+      "sha256": "65bdc49467e7b97bf0ce5b5bfe3fa788f0c7f16fee1afaaccd31498278dcdd29",
+      "uncompressed_bytes": 1489,
+      "uncompressed_sha256": "7682224a74ba9b83d53299b36557070b3dc28355bfe8a0c2afd6c2b227f8545f"
+    },
+    {
+      "path": "docs/engineering/evidence/csv-metadata-peer-large-reproduction.json",
+      "bytes": 159,
+      "sha256": "88c9ca3ee1f0f843357bc4ba3b22a3576dc7764233b6f901871acf254c29e583"
+    },
+    {
+      "path": "docs/engineering/evidence/csv-metadata-peer-ruff.txt",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "docs/engineering/evidence/csv-metadata-peer-source.json",
+      "bytes": 2844,
+      "sha256": "c983602f7c83c8e2b8479a2f643e7a4a9113e61f007353734c6b1991c413be6f"
+    },
+    {
+      "path": "docs/engineering/evidence/test_csv_metadata_peer_controls.py",
+      "bytes": 6419,
+      "sha256": "13f944b120b5b2873b9376ffc2a8729a064719f9d32931b0e94ccf1c4f6d5760"
+    },
+    {
+      "path": "docs/engineering/strings-csv-peer-review.md",
+      "bytes": 5287,
+      "sha256": "fa4fbea196a2809bd3be99967652677078b790f9cec89acbf12846e7f745132d"
+    }
+  ]
+}

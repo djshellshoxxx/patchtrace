@@ -1,7 +1,9 @@
 """`patchtrace strings` through the real `cli.main` on the synthetic SYN-WB3-1 pair (built-in scan; no FLOSS)."""
 from __future__ import annotations
 
+import csv
 import hashlib
+import io
 import json
 import threading
 
@@ -130,6 +132,12 @@ def test_export_writes_atomically_and_refuses_to_clobber(root, tmp_path, capsys,
     result = document(out)['result']
     assert code == 0 and result['file'] == target.name and result['redacted'] and result['rows'] > 0
     assert hashlib.sha256(target.read_bytes()).hexdigest() == result['sha256'] and str(tmp_path) not in out
+    if fmt == 'csv':
+        records = list(csv.reader(io.StringIO(target.read_text(encoding='utf-8'), newline='')))
+        assert records[0][0] == 'strings-export-csv/2'
+        metadata = json.loads(records[0][1])
+        assert metadata['contract'] == 'strings-export/1' and metadata['redacted'] is True
+        assert metadata['scope'] == result['scope'] and len(records) == result['rows'] + 2
     code, out, _err = invoke(capsys, 'export', str(root), '--out', str(target), '--format', fmt, '--json')
     assert code == 2 and document(out)['status'] == 'failed'
     code, _out, _err = invoke(capsys, 'export', str(root), '--out', str(target), '--format', fmt, '--force')

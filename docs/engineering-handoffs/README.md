@@ -1,0 +1,33 @@
+# PatchTrace engineering handoffs
+
+Repository: <https://github.com/djshellshoxxx/PatchTrace>.
+
+Start with [generations 2–8](generation-2-through-8-20261119.md), then the
+[machine task ledger](../engineering/task-ledger.json) and
+[feature inventory](../engineering/feature-status-20261119.json). Refresh refs
+and reconcile their exact source identities before choosing work.
+
+The [master directive](master-directive.md) preserves the authorized scope.
+[Generation 1](generation-1-20261119.md) is historical; its assignments do not
+imply those workers are still running. The frozen
+[reference census](../engineering/consolidation-inventory.json) and
+[human interpretation](../engineering/consolidation-inventory.md) retain
+unreviewed work explicitly. Later refs need a delta inventory.
+
+## Successor bootstrap
+
+1. Read the current handoff, task ledger and `AGENTS.md`.
+2. Fetch heads, tags and pull heads; check current main/candidate, open PRs and
+   active worker ownership against recorded identities.
+3. Claim an unowned bounded scope in an isolated branch. Prove semantic and
+   behavioral uniqueness before editing; unmatched history is insufficient.
+4. Preserve a failing reproduction, update contracts first, implement and obtain
+   independent review. Retain failures and exact source/test evidence.
+5. Run meaningful affected checks and required combined gates. Keep native,
+   mocked, offscreen and empirical-accuracy evidence distinct.
+6. Publish a reviewable result, update this index and ledger, then transfer the
+   next actionable scope to an actual worker or scheduled execution.
+
+Focused passes do not authorize main promotion. Applicable checks must be green,
+with no blocker and a fresh expected-head REST merge guard. Release publication
+remains a separate process.

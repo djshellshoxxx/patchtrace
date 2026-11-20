@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import http.client
 import json
 import os
 import re
@@ -66,12 +67,24 @@ class Fetcher(Protocol):
 
 
 # ---------------------------------------------------------------- pure functions
+def _check_url_text(url: str) -> None:
+    # urlsplit/urljoin strip controls; inspect the supplied bytes before either
+    # operation. Keep encoded signed-query octets untouched and out of errors.
+    if not isinstance(url, str) or not url or not url.isascii() or any(ord(c) <= 32 or ord(c) == 127 for c in url):
+        raise WinpairsError('blocked URL (invalid URL text)')
+
+
 def check_url(url: str, redirect: bool = False) -> str:
-    p = urllib.parse.urlsplit(url)
-    host = (p.hostname or '').lower()
-    ok = host in ALLOWED_HOSTS or (redirect and any(host.endswith(s) for s in REDIRECT_HOST_SUFFIXES))
-    if p.scheme != 'https' or not ok or p.username or p.password or (p.port not in (None, 443)):
-        raise WinpairsError(f'blocked URL (https and allowlisted host only): {p.scheme}://{host}')
+    _check_url_text(url)
+    try:
+        p = urllib.parse.urlsplit(url)
+        host = (p.hostname or '').lower()
+        ok = host in ALLOWED_HOSTS or (redirect and any(host.endswith(s) for s in REDIRECT_HOST_SUFFIXES))
+        allowed = p.scheme == 'https' and ok and p.username is None and p.password is None and p.port in (None, 443)
+    except ValueError:
+        raise WinpairsError('blocked URL (malformed authority)') from None
+    if not allowed:
+        raise WinpairsError('blocked URL (https and allowlisted host only)')
     return url
 
 
@@ -180,15 +193,18 @@ class _NoRedirect(urllib.request.HTTPRedirectHandler):
 
 
 def urllib_fetcher(url: str, max_bytes: int, timeout: float) -> Response:
-    """One hop, no auto-redirect, streamed with a hard byte cap. Callers allowlist-check every URL."""
-    opener = urllib.request.build_opener(_NoRedirect)
-    req = urllib.request.Request(url, headers={'User-Agent': 'patchtrace-winpairs/1'})
+    """One checked hop, no auto-redirect, streamed with a hard byte cap."""
+    check_url(url, redirect=True)  # fetch_checked applies the narrower initial-host policy.
     try:
-        with opener.open(req, timeout=timeout) as r:
-            return Response(r.status, _read_capped(r, max_bytes))
-    except urllib.error.HTTPError as e:
-        return Response(e.code, b'', e.headers.get('Location', '') or '')
-    except (urllib.error.URLError, TimeoutError, OSError) as e:
+        opener = urllib.request.build_opener(_NoRedirect)
+        req = urllib.request.Request(url, headers={'User-Agent': 'patchtrace-winpairs/1'})
+        try:
+            with opener.open(req, timeout=timeout) as r:
+                return Response(r.status, _read_capped(r, max_bytes))
+        except urllib.error.HTTPError as e:
+            with e:
+                return Response(e.code, b'', e.headers.get('Location', '') or '')
+    except (urllib.error.URLError, TimeoutError, OSError, http.client.HTTPException, ValueError) as e:
         raise WinpairsError(f'network error: {type(e).__name__}') from None
 
 
@@ -208,7 +224,12 @@ def fetch_checked(fetch: Fetcher, url: str, max_bytes: int, timeout: float = TIM
     for _ in range(MAX_REDIRECTS + 1):
         resp = fetch(hop, max_bytes, timeout)
         if resp.status in (301, 302, 303, 307, 308) and resp.location:
-            hop = check_url(urllib.parse.urljoin(hop, resp.location), redirect=True)
+            _check_url_text(resp.location)
+            try:
+                target = urllib.parse.urljoin(hop, resp.location)
+            except ValueError:
+                raise WinpairsError('blocked URL (malformed redirect)') from None
+            hop = check_url(target, redirect=True)
             continue
         if resp.status != 200:
             raise WinpairsError(f'HTTP {resp.status}')

@@ -1,12 +1,8 @@
-"""Forced failures retain mutable stage names and close only their own handles.
-
-Successful forced replacement is still pathname-based. These controls do not
-assert that forced publication is bound to the originally written source.
-"""
+"""Forced failures discard anonymous/held sources and retain mutable Linux stage names."""
 from __future__ import annotations
 
 import os
-from pathlib import Path
+import sys
 
 import pytest
 
@@ -16,6 +12,7 @@ from patchtrace.strings.contracts import StringsError
 
 @pytest.mark.parametrize('prior_target', [False, True], ids=['new-target', 'prior-export'])
 @pytest.mark.parametrize('substitute', [False, True], ids=['owned-stage', 'foreign-replacement'])
+@pytest.mark.skipif(not sys.platform.startswith('linux'), reason='Linux linked-stage rename boundary')
 def test_force_io_failure_preserves_stage_and_previous_target(tmp_path, monkeypatch, prior_target, substitute):
     target = tmp_path / 'report.json'
     if prior_target:
@@ -24,9 +21,10 @@ def test_force_io_failure_preserves_stage_and_previous_target(tmp_path, monkeypa
     stages = []
     real_replace = os.replace
 
-    def refuse(stage, destination):
-        stage = Path(stage)
-        assert Path(destination) == target
+    def refuse(stage, destination, **kwargs):
+        stage = tmp_path / stage
+        assert tmp_path / destination == target
+        assert kwargs['src_dir_fd'] == kwargs['dst_dir_fd']
         stages.append(stage)
         if substitute:
             real_replace(stage, owned)
@@ -55,43 +53,37 @@ def test_force_io_failure_preserves_stage_and_previous_target(tmp_path, monkeypa
 def test_force_fdopen_failure_closes_the_owned_descriptor_without_unlink(tmp_path, monkeypatch, error_type):
     target = tmp_path / 'report.json'
     target.write_bytes(b'prior export')
-    created = []
-    real_mkstemp = export.tempfile.mkstemp
+    descriptors = []
     failure = OSError(5, 'authored fdopen refusal') if error_type is OSError else error_type('authored interruption')
 
-    def stage(*args, **kwargs):
-        descriptor, name = real_mkstemp(*args, **kwargs)
-        created.append((descriptor, Path(name)))
-        return descriptor, name
-
-    def refuse(descriptor, _mode):
-        assert descriptor == created[0][0]
+    def refuse(descriptor, _mode, **kwargs):
+        assert kwargs['closefd'] is False
+        descriptors.append(descriptor)
         raise failure
 
-    monkeypatch.setattr(export.tempfile, 'mkstemp', stage)
     monkeypatch.setattr(export.os, 'fdopen', refuse)
     with pytest.raises(StringsError if error_type is OSError else error_type) as caught:
         export.write_atomic(target, b'never written', force=True)
-    assert len(created) == 1 and target.read_bytes() == b'prior export'
-    assert created[0][1].read_bytes() == b''
+    assert len(descriptors) == 1 and target.read_bytes() == b'prior export'
+    assert list(tmp_path.iterdir()) == [target]
     with pytest.raises(OSError):
-        os.fstat(created[0][0])
+        os.fstat(descriptors[0])
     if error_type is OSError:
         assert caught.value.code == 'PT-STR-EXPORT' and 'authored fdopen refusal' in caught.value.message
     else:
         assert caught.value is failure
 
 
-def test_force_partial_write_failure_retains_partial_stage_and_closes_descriptor(tmp_path, monkeypatch):
+def test_force_partial_write_failure_discards_owned_source_and_closes_descriptor(tmp_path, monkeypatch):
     target = tmp_path / 'report.json'
     target.write_bytes(b'prior export')
     descriptors = []
     real_fdopen = os.fdopen
 
     class PartialWriter:
-        def __init__(self, descriptor, mode):
+        def __init__(self, descriptor, mode, **kwargs):
             descriptors.append(descriptor)
-            self.stream = real_fdopen(descriptor, mode)
+            self.stream = real_fdopen(descriptor, mode, **kwargs)
 
         def __enter__(self):
             return self
@@ -109,8 +101,7 @@ def test_force_partial_write_failure_retains_partial_stage_and_closes_descriptor
         export.write_atomic(target, b'partial export bytes', force=True)
     assert caught.value.code == 'PT-STR-EXPORT' and 'authored partial-write failure' in caught.value.message
     assert target.read_bytes() == b'prior export'
-    stages = list(tmp_path.glob('.report.json.*.tmp'))
-    assert len(stages) == 1 and stages[0].read_bytes() == b'partial'
+    assert list(tmp_path.iterdir()) == [target]
     assert len(descriptors) == 1
     with pytest.raises(OSError):
         os.fstat(descriptors[0])

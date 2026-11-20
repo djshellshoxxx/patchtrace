@@ -1,0 +1,53 @@
+["/workspace/scratch/4c8dc848d760/venv/bin/python", "-B", "-m", "tools.generate_buildenv_schemas"]
+["/workspace/scratch/4c8dc848d760/venv/bin/python", "-B", "-m", "tools.generate_callgraph_schemas"]
+["/workspace/scratch/4c8dc848d760/venv/bin/python", "-B", "-m", "tools.generate_corrections_schemas"]
+["/workspace/scratch/4c8dc848d760/venv/bin/python", "-B", "-m", "tools.generate_diaphora_schemas"]
+["/workspace/scratch/4c8dc848d760/venv/bin/python", "-B", "-m", "tools.generate_fabric_schemas"]
+["/workspace/scratch/4c8dc848d760/venv/bin/python", "-B", "-m", "tools.generate_intel_tools_schemas"]
+["/workspace/scratch/4c8dc848d760/venv/bin/python", "-B", "-m", "tools.generate_intelligence_schemas"]
+["/workspace/scratch/4c8dc848d760/venv/bin/python", "-B", "-m", "tools.generate_kbc_schemas"]
+["/workspace/scratch/4c8dc848d760/venv/bin/python", "-B", "-m", "tools.generate_kev_schemas"]
+["/workspace/scratch/4c8dc848d760/venv/bin/python", "-B", "-m", "tools.generate_pilot_schemas"]
+["/workspace/scratch/4c8dc848d760/venv/bin/python", "-B", "-m", "tools.generate_rules_schemas"]
+["/workspace/scratch/4c8dc848d760/venv/bin/python", "-B", "-m", "tools.generate_schemas"]
+["/workspace/scratch/4c8dc848d760/venv/bin/python", "-B", "-m", "tools.generate_strings_schemas"]
+["/workspace/scratch/4c8dc848d760/venv/bin/python", "-B", "-m", "tools.calibration.schemas"]
+["/workspace/scratch/4c8dc848d760/venv/bin/python", "-B", "-m", "tools.calibration.tier_r.schemas"]
+docs/schemas/corpus/KnownAnswerLabels.json
+docs/schemas/corpus/RecipeBook.json
+docs/schemas/corpus/Recipe.json
+docs/schemas/corpus/MutationCase.json
+docs/schemas/corpus/TierRReport.json
+docs/schemas/corpus/examples/valid-labels-template.json
+docs/schemas/corpus/examples/valid-recipes-zlib.json
+docs/schemas/corpus/examples/valid-mutation-cmp-flip.json
+docs/schemas/corpus/examples/valid-report-template.json
+docs/schemas/corpus/examples/valid-report-extended.json
+docs/schemas/corpus/examples/valid-recipes-libs.json
+docs/schemas/corpus/examples/valid-mutation-opt-mergefunc.json
+docs/schemas/corpus/examples/invalid-labels-tampered.json
+docs/schemas/corpus/examples/invalid-labels-nocounterpart-two-sides.json
+docs/schemas/corpus/examples/invalid-labels-changed-without-kind.json
+docs/schemas/corpus/examples/invalid-labels-unknown-field.json
+docs/schemas/corpus/examples/invalid-recipes-gpl.json
+docs/schemas/corpus/examples/invalid-recipes-shell-define.json
+docs/schemas/corpus/examples/invalid-mutation-kind.json
+docs/schemas/corpus/examples/invalid-recipes-lib-path.json
+docs/schemas/corpus/examples/invalid-mutation-layer-mismatch.json
+docs/schemas/corpus/examples/invalid-mutation-new-operator-kind.json
+docs/schemas/corpus/examples/invalid-report-engine.json
+docs/schemas/corpus/examples/invalid-report-hitat-keys.json
+docs/schemas/corpus/examples/invalid-report-interval.json
+docs/schemas/corpus/examples/invalid-report-digest.json
+["/workspace/scratch/4c8dc848d760/venv/bin/python", "-B", "-m", "tools.calibration.tier_r.report_schemas"]
+docs/schemas/corpus/EngineOutputDoc.json
+docs/schemas/corpus/OutputCredits.json
+docs/schemas/corpus/OutputCompletion.json
+docs/schemas/corpus/EvaluationFailure.json
+docs/schemas/corpus/report-examples/valid-report-synthetic.json
+docs/schemas/corpus/report-examples/valid-engine-output-rz-diff.json
+docs/schemas/corpus/report-examples/valid-engine-output-attention.json
+docs/schemas/corpus/report-examples/invalid-report-metric-negative.json
+docs/schemas/corpus/report-examples/invalid-report-unknown-engine.json
+docs/schemas/corpus/report-examples/invalid-engine-output-rva-range.json
+docs/schemas/corpus/report-examples/invalid-engine-output-unknown-field.json

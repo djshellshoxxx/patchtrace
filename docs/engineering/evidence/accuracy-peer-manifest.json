@@ -1,0 +1,49 @@
+{
+  "candidate_result": {
+    "duration_seconds": 0.6,
+    "failed": 0,
+    "passed": 48,
+    "skipped": 0
+  },
+  "documentation_followup": "eed3ddbbd69f5675c2f0ebf0bdabe01cea868db8",
+  "files": {
+    "accuracy-peer-baseline-manifest.json": {
+      "bytes": 978,
+      "sha256": "6c337dd45eb0e5aa298394cf34171d9d31f8f71ccfba3be5a8a3527b30012bbd"
+    },
+    "accuracy-peer-baseline.txt": {
+      "bytes": 32428,
+      "sha256": "123909f7a787ae557c8be9f4ac555ebb840d1ab7798c3116b90730c0a754de51"
+    },
+    "accuracy-peer-candidate.txt": {
+      "bytes": 99,
+      "sha256": "05b8f4b42ae4d3fd9d61b32662166367b5f93e72e05376c279709cefab8f2a63"
+    },
+    "accuracy-peer-candidate.xml": {
+      "bytes": 8093,
+      "sha256": "a54d8e70ea27515d21a5ae5d1c4cb9bbddc5f35a2b936c64b89628dc38328168"
+    },
+    "accuracy-peer-quality.txt": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "test_accuracy_peer_controls.py": {
+      "bytes": 8649,
+      "sha256": "df61591462c9afab7383a392473711ef4cfe008554588529c82bb6336f3299b9"
+    },
+    "test_accuracy_peer_extra_controls.py": {
+      "bytes": 3642,
+      "sha256": "7a222c0b81466842db0c84a5f236ca5ef4822709eb951ba7f1731af19ddf5add"
+    }
+  },
+  "initial_controls_unchanged": true,
+  "production_blobs": {
+    "parity": "9eb025108d08892e493ffe6492a05b3aaf6d4c32",
+    "scorerun": "1d3a7a94411f77dbee8a211c52b2dec97a697198",
+    "scoring": "c344e6e8c46a0f4500ac2211471570e414cb63a3"
+  },
+  "purpose": "Independent synthetic mechanics review; no empirical accuracy or native qualification",
+  "quality_result": "whole-tree Ruff and both independent control files passed",
+  "review_worktree_commit_before_report": "cf7e2f42dfc087119979336d4fa594db67f0a7c6",
+  "reviewed_code_commit": "776695170bc0a526951075e3744bcc684035cfcc"
+}

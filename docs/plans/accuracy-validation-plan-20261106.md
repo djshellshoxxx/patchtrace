@@ -36,6 +36,32 @@ evidence. L1/L2/L3 and native acceptance remain separate.
 Cases from one project or release are not independent; count distinct projects. Report per stratum
 (compiler family, release-vs-own-build), never pooled.
 
+### Cohort and confidence-bound admission (2026-11-19)
+
+The generic `score` and `parity` commands aggregate exactly one explicit
+`(layer, stratum, holdout)` cohort. Mixed cohorts or missing/invalid cohort
+metadata are usage errors (exit 2), including when a different cohort contains
+only blocked cases. A successful result identifies its layer, stratum and
+holdout flag. An empty manifest has null cohort fields and no scored result.
+Keep frozen manifests intact; establish separate cohorts before running an
+accuracy experiment, rather than pooling incompatible evidence afterward.
+
+Per-case verdicts are not independent statistical trials when several scored
+cases share a project. The generic scorer and L3 `scorerun` retain every
+per-case verdict and descriptive count, but set `lower_bound` to null when
+scored project identities are missing or repeated. They report
+`scored_projects` and an explicit `bound_reason`; they do not invent a rule for
+combining several case outcomes into one project outcome. Blocked and
+unverified cases do not enter this decision. A bound for distinct project
+labels remains conditional on justified independence under the frozen
+protocol; the labels alone do not establish it.
+
+L3 `scorerun` continues to separate development and holdout results and reject
+non-L3 cases individually. It reports each stratum separately and withholds a
+pooled bound across different scored strata. The markdown summary presents the
+bound reason alongside each count. These are reporting safeguards, not new
+ground truth, live tool qualification, or a real-pair accuracy result.
+
 ## Case sources (cheapest first)
 
 1. **S0 self-compiled fixtures** (built: `fixture_pairs.py`). Engine-bug detector only; says nothing about Windows.

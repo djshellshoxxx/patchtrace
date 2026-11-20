@@ -216,6 +216,16 @@ def test_every_registry_id_is_applied_somewhere(window, qtbot, tmp_path, setting
               ExportDialog(window.project, window.service.root, [], window)]
     for root in roots[1:]:
         qtbot.addWidget(root)
+    # Dirty navigation builds a real confirmation with three registry-backed buttons.
+    profiles_panel = next(root.profiles for root in roots if isinstance(root, SetupDialog))
+    profiles_panel.new_profile()
+    profiles_panel.max_age.setValue(profiles_panel.max_age.value() + 1)
+    confirmations = []
+    monkeypatch.setattr(QMessageBox, 'exec',
+                        lambda box: confirmations.append(box) or QMessageBox.StandardButton.Cancel)
+    profiles_panel.list.setCurrentRow(0)
+    assert len(confirmations) == 1
+    roots.extend(confirmations)
     window.show_file_overview()
     series = window.panels.show_panel('series') and window.panels.controller('series').open_series(
         tmp_path / 'no-series.json')

@@ -1,5 +1,11 @@
 # PatchTrace feature and qualification matrix — 2026-11-19
 
+This is the historical Phase 7 matrix. Later integration status is recorded in
+the [current feature inventory](../engineering/feature-status-20261119.json),
+[task ledger](../engineering/task-ledger.json), and
+[handoff index](../engineering-handoffs/README.md). The source identities and
+results below remain evidence for their original checkpoints.
+
 This matrix distinguishes implemented product paths, reviewed continuation slices,
 and their remaining acceptance gates. The starting main is
 `fdc2696c23bdbfe7668348f25e3b336ce33039f7`; the local branch is

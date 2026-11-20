@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="8" skipped="0" tests="9" time="1.005" timestamp="2026-11-19T15:34:42.022492-08:00" hostname="636643ecc05a"><testcase classname="archaeology-evidence.test_ui_profile_navigation" name="test_cancel_selection_preserves_edit_and_previous_selection" time="0.028"><failure message="assert ([])">panel = &lt;patchtrace.ui.ProfilesPanel(0x3634e70) at 0x7f0faa4a4880&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f0faa4f3da0&gt;
+
+    def test_cancel_selection_preserves_edit_and_previous_selection(panel, monkeypatch):
+        panel.max_age.setValue(30)
+        asked = answer(monkeypatch, QMessageBox.StandardButton.Cancel)
+        choose(panel, 'beta')
+&gt;       assert asked and 'alpha' in asked[0]
+E       assert ([])
+
+../archaeology-evidence/test_ui_profile_navigation.py:44: AssertionError</failure></testcase><testcase classname="archaeology-evidence.test_ui_profile_navigation" name="test_save_selection_commits_then_moves_to_requested_profile" time="0.006"><failure message="assert 0 == 1&#10; +  where 0 = len([])">panel = &lt;patchtrace.ui.ProfilesPanel(0x3680620) at 0x7f0faa36fb40&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f0faa5559a0&gt;
+
+    def test_save_selection_commits_then_moves_to_requested_profile(panel, monkeypatch):
+        panel.max_age.setValue(30)
+        asked = answer(monkeypatch, QMessageBox.StandardButton.Save)
+        choose(panel, 'beta')
+&gt;       assert len(asked) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+../archaeology-evidence/test_ui_profile_navigation.py:54: AssertionError</failure></testcase><testcase classname="archaeology-evidence.test_ui_profile_navigation" name="test_save_with_rename_preserves_requested_destination" time="0.006"><failure message="assert 0 == 1&#10; +  where 0 = len([])">panel = &lt;patchtrace.ui.ProfilesPanel(0x370f430) at 0x7f0faa397680&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f0faa556720&gt;
+
+    def test_save_with_rename_preserves_requested_destination(panel, monkeypatch):
+        panel.name.setText('renamed')
+        panel.max_age.setValue(30)
+        asked = answer(monkeypatch, QMessageBox.StandardButton.Save)
+        choose(panel, 'beta')
+&gt;       assert len(asked) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+../archaeology-evidence/test_ui_profile_navigation.py:65: AssertionError</failure></testcase><testcase classname="archaeology-evidence.test_ui_profile_navigation" name="test_discard_selection_is_explicit_and_keeps_saved_bytes" time="0.006"><failure message="assert 0 == 1&#10; +  where 0 = len([])">panel = &lt;patchtrace.ui.ProfilesPanel(0x3d32b90) at 0x7f0faa39a540&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f0faa554f20&gt;
+
+    def test_discard_selection_is_explicit_and_keeps_saved_bytes(panel, monkeypatch):
+        panel.max_age.setValue(30)
+        asked = answer(monkeypatch, QMessageBox.StandardButton.Discard)
+        choose(panel, 'beta')
+&gt;       assert len(asked) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+../archaeology-evidence/test_ui_profile_navigation.py:75: AssertionError</failure></testcase><testcase classname="archaeology-evidence.test_ui_profile_navigation" name="test_failed_navigation_save_keeps_draft_and_selection[invalid]" time="0.005"><failure message="assert 0 == 1&#10; +  where 0 = len([])">panel = &lt;patchtrace.ui.ProfilesPanel(0x3d9f300) at 0x7f0faa377b40&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f0faa5c4a40&gt;
+failure = 'invalid'
+
+    @pytest.mark.parametrize('failure', ['invalid', 'storage'])
+    def test_failed_navigation_save_keeps_draft_and_selection(panel, monkeypatch, failure):
+        panel.max_age.setValue(30)
+        if failure == 'invalid':
+            panel.feature_ids.setText('not a feature ID')
+        else:
+            def fail(*args, **kwargs):
+                raise OSError('authored write failure')
+            monkeypatch.setattr(panel.store, 'save', fail)
+        asked = answer(monkeypatch, QMessageBox.StandardButton.Save)
+        choose(panel, 'beta')
+&gt;       assert len(asked) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+../archaeology-evidence/test_ui_profile_navigation.py:91: AssertionError</failure></testcase><testcase classname="archaeology-evidence.test_ui_profile_navigation" name="test_failed_navigation_save_keeps_draft_and_selection[storage]" time="0.004"><failure message="assert 0 == 1&#10; +  where 0 = len([])">panel = &lt;patchtrace.ui.ProfilesPanel(0x3e0c2a0) at 0x7f0faa3d2e00&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f0faa5c56d0&gt;
+failure = 'storage'
+
+    @pytest.mark.parametrize('failure', ['invalid', 'storage'])
+    def test_failed_navigation_save_keeps_draft_and_selection(panel, monkeypatch, failure):
+        panel.max_age.setValue(30)
+        if failure == 'invalid':
+            panel.feature_ids.setText('not a feature ID')
+        else:
+            def fail(*args, **kwargs):
+                raise OSError('authored write failure')
+            monkeypatch.setattr(panel.store, 'save', fail)
+        asked = answer(monkeypatch, QMessageBox.StandardButton.Save)
+        choose(panel, 'beta')
+&gt;       assert len(asked) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+../archaeology-evidence/test_ui_profile_navigation.py:91: AssertionError</failure></testcase><testcase classname="archaeology-evidence.test_ui_profile_navigation" name="test_cancel_creation_navigation_keeps_current_draft[new_profile]" time="0.005"><failure message="assert 0 == 1&#10; +  where 0 = len([])">panel = &lt;patchtrace.ui.ProfilesPanel(0x3e78d70) at 0x7f0faa3b4740&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f0faa5c65d0&gt;
+action = 'new_profile'
+
+    @pytest.mark.parametrize('action', ['new_profile', 'duplicate_profile'])
+    def test_cancel_creation_navigation_keeps_current_draft(panel, monkeypatch, action):
+        panel.max_age.setValue(30)
+        asked = answer(monkeypatch, QMessageBox.StandardButton.Cancel)
+        getattr(panel, action)()
+&gt;       assert len(asked) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+../archaeology-evidence/test_ui_profile_navigation.py:103: AssertionError</failure></testcase><testcase classname="archaeology-evidence.test_ui_profile_navigation" name="test_cancel_creation_navigation_keeps_current_draft[duplicate_profile]" time="0.006"><failure message="assert 0 == 1&#10; +  where 0 = len([])">panel = &lt;patchtrace.ui.ProfilesPanel(0x3ee5ac0) at 0x7f0faa3c4d40&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f0faa5c6ba0&gt;
+action = 'duplicate_profile'
+
+    @pytest.mark.parametrize('action', ['new_profile', 'duplicate_profile'])
+    def test_cancel_creation_navigation_keeps_current_draft(panel, monkeypatch, action):
+        panel.max_age.setValue(30)
+        asked = answer(monkeypatch, QMessageBox.StandardButton.Cancel)
+        getattr(panel, action)()
+&gt;       assert len(asked) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+../archaeology-evidence/test_ui_profile_navigation.py:103: AssertionError</failure></testcase><testcase classname="archaeology-evidence.test_ui_profile_navigation" name="test_unchanged_selection_does_not_prompt" time="0.005" /></testsuite></testsuites>

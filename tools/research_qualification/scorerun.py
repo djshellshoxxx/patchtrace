@@ -28,7 +28,6 @@ from . import receipt as R
 from . import scoring as SC
 from .adapters import PARSERS
 from .pathguard import PathGuardError, confine
-from .sample_size import lower_bound
 
 PAIR_SCHEMA = 'rq-pair-manifest/1'
 STATUS_FILE = 'pt-run-status.json'
@@ -140,7 +139,7 @@ def _run_status(case_dir: Path) -> str | None:
 
 
 def _row(c: dict[str, Any], outcome: str, reason: str = '', **extra: Any) -> dict[str, Any]:
-    return {'id': c['id'], 'project': c['project'], 'stratum': c['stratum'], 'holdout': c['holdout'],
+    return {'id': c['id'], 'project': c.get('project'), 'stratum': c['stratum'], 'holdout': c['holdout'],
             'verdict': outcome, 'reason': reason, **extra}
 
 
@@ -169,7 +168,7 @@ def judge_case(c: dict[str, Any], pair: dict[str, Any] | None, reports: Path, k:
                 candidates=len(names))
 
 
-def _aggregate(rows: list[dict[str, Any]]) -> dict[str, Any]:
+def _counts_and_bound(rows: list[dict[str, Any]]) -> dict[str, Any]:
     n = {v: sum(r['verdict'] == v for r in rows) for v in ('PASS', 'FAIL', 'BLOCKED')}
     scored = n['PASS'] + n['FAIL']
     reasons: dict[str, int] = {}
@@ -178,7 +177,15 @@ def _aggregate(rows: list[dict[str, Any]]) -> dict[str, Any]:
             reasons[r['reason']] = reasons.get(r['reason'], 0) + 1
     return {'cases': len(rows), 'scored': scored, 'pass': n['PASS'], 'fail': n['FAIL'], 'blocked': n['BLOCKED'],
             'blocked_reasons': dict(sorted(reasons.items())),
-            'lower_bound': round(lower_bound(n['PASS'], scored), 3) if scored else None}
+            **SC.conditional_bound([r for r in rows if r['verdict'] != 'BLOCKED'], n['PASS'])}
+
+
+def _aggregate(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    strata: dict[str, list[dict[str, Any]]] = {}
+    for row in rows:
+        strata.setdefault(row['stratum'], []).append(row)
+    return {**_counts_and_bound(rows),
+            'by_stratum': {s: _counts_and_bound(rs) for s, rs in sorted(strata.items())}}
 
 
 def score_all(pairs: dict[str, dict[str, Any]], manifest: dict[str, Any], reports: Path, k: int, engine: str
@@ -187,6 +194,11 @@ def score_all(pairs: dict[str, dict[str, Any]], manifest: dict[str, Any], report
         raise ScoreRunError('k must be >= 1')
     if engine not in PARSERS:
         raise ScoreRunError(f'unknown engine {engine!r}')
+    for case in manifest['cases']:
+        try:
+            SC.require_cohort([case])
+        except ValueError as exc:
+            raise ScoreRunError(str(exc)) from exc
     rows = [judge_case(c, pairs.get(c['id']), reports, k, engine) for c in manifest['cases']]
     return {'schema': 'rq-scorerun/1', 'layer': LAYER, 'engine': engine, 'k': k,
             'manifest_sha256': CS.canonical_hash(manifest),
@@ -194,7 +206,9 @@ def score_all(pairs: dict[str, dict[str, Any]], manifest: dict[str, Any], report
             'holdout': _aggregate([r for r in rows if r['holdout']]),
             'rows': rows,
             'caveat': 'L3 only. BLOCKED cases are excluded from the score and are never misses. The bound assumes '
-                      'scored cases are independent (distinct projects); holdout is reported separately.'}
+                      'scored projects are independent under the frozen protocol; distinct labels alone do not '
+                      'prove independence. Repeated/missing projects and mixed strata withhold the pooled bound. '
+                      'Holdout and per-stratum results are reported separately.'}
 
 
 def exit_for(result: dict[str, Any]) -> int:
@@ -242,14 +256,22 @@ def write_outputs(result: dict[str, Any], out: Path, started: str) -> tuple[Path
 
 def summary_markdown(result: dict[str, Any]) -> str:
     lines = [f'### L3 diff and score ({result["engine"]}, k={result["k"]})', '',
-             '| set | cases | scored | pass | fail | blocked | lower bound |', '|---|---|---|---|---|---|---|']
+             '| set | stratum | cases | scored | pass | fail | blocked | scored projects | lower bound | bound reason |',
+             '|---|---|---|---|---|---|---|---|---|---|']
     for name in ('development', 'holdout'):
         a = result[name]
-        lines.append(f'| {name} | {a["cases"]} | {a["scored"]} | {a["pass"]} | {a["fail"]} | {a["blocked"]} | '
-                     f'{a["lower_bound"]} |')
+        groups = [('all (descriptive)', a), *a['by_stratum'].items()] if len(a['by_stratum']) > 1 else [
+            (next(iter(a['by_stratum']), 'none'), a)]
+        for stratum, counts in groups:
+            label = stratum.replace('\\', '\\\\').replace('|', '\\|').replace('\r', ' ').replace('\n', ' ')
+            lines.append(f'| {name} | {label} | {counts["cases"]} | {counts["scored"]} | {counts["pass"]} | '
+                         f'{counts["fail"]} | {counts["blocked"]} | {counts["scored_projects"]} | '
+                         f'{counts["lower_bound"]} | {counts["bound_reason"]} |')
     lines += ['', '| case | holdout | verdict | reason |', '|---|---|---|---|']
     lines += [f'| {r["id"]} | {r["holdout"]} | {r["verdict"]} | {r["reason"]} |' for r in result['rows']]
-    lines += ['', 'BLOCKED cases are excluded from the score and are not misses. L3 claim only.']
+    lines += ['', 'BLOCKED cases are excluded from the score and are not misses. L3 claim only. '
+              'Distinct project labels alone do not prove independence; bounds remain conditional on the frozen '
+              'sampling protocol.']
     return '\n'.join(lines) + '\n'
 
 

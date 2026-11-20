@@ -50,7 +50,10 @@ def test_json_records_basis_and_lineage(delta, tmp_path):
 
 def test_csv_neutralises_formulas_and_round_trips(delta, tmp_path):
     export.export_delta(delta, tmp_path / 'out.csv', fmt='csv')
-    rows = list(csv.DictReader(io.StringIO(read(tmp_path / 'out.csv'), newline='')))
+    source = io.StringIO(read(tmp_path / 'out.csv'), newline='')
+    marker, metadata = next(csv.reader(source))
+    assert marker == 'strings-export-csv/2' and json.loads(metadata)['redacted'] is True
+    rows = list(csv.DictReader(source))
     shown = {r['display'] for r in rows}
     assert "'=cmd|calc!A1 injected" in shown and 'Old message here' in shown
     assert list(rows[0]) == list(export.CSV_COLUMNS) and b'\r\n' not in (tmp_path / 'out.csv').read_bytes()

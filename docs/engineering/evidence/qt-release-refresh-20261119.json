@@ -1,0 +1,1721 @@
+{
+  "source_commit": "afa1af3c",
+  "records": [
+    {
+      "package": "PySide6",
+      "url": "https://pypi.org/pypi/PySide6/json",
+      "retrieved_utc": "2026-11-19T23:40:56.095608+00:00",
+      "http_status": 200,
+      "response_sha256": "c90ca12c7c01581d31df40f4e2c1ee32a956269eeb88ef02b1c19f358ab3ee39",
+      "advertised_version": "6.12.0",
+      "requires_dist": [
+        "PySide6_Essentials==6.12.0",
+        "PySide6_Addons==6.12.0",
+        "PySide6_WebEngine==6.12.0.140",
+        "PySide6_Pdf==6.12.0.140",
+        "tomli>=2.0.1; python_version < \"3.11\"",
+        "PySide6_Examples==6.12.0; extra == \"full\"",
+        "shiboken6_generator==6.12.0; extra == \"full\""
+      ],
+      "versions_with_files_latest": [
+        [
+          "6.9.3",
+          5
+        ],
+        [
+          "6.10.0",
+          5
+        ],
+        [
+          "6.10.1",
+          5
+        ],
+        [
+          "6.10.2",
+          5
+        ],
+        [
+          "6.10.3",
+          5
+        ],
+        [
+          "6.11.0",
+          5
+        ],
+        [
+          "6.11.1",
+          5
+        ],
+        [
+          "6.11.2",
+          5
+        ],
+        [
+          "6.11.3",
+          5
+        ],
+        [
+          "6.12.0",
+          5
+        ]
+      ],
+      "releases": {
+        "6.10.3": [
+          {
+            "filename": "pyside6-6.10.3-cp39-abi3-macosx_13_0_universal2.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.9",
+            "upload_time_iso_8601": "2026-04-02T08:51:11.566760Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "dc7a0423ed0ac2794ae082c2cb303490cde245c880df6d6e4bd2f42633cb97e7",
+              "md5": "9d104e6897c46d589b3fbf0b59199061",
+              "sha256": "2d31695fcce3c89ffc621011c6409c0ba1930000d7172dea48994a7744205deb"
+            }
+          },
+          {
+            "filename": "pyside6-6.10.3-cp39-abi3-manylinux_2_34_x86_64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.9",
+            "upload_time_iso_8601": "2026-04-02T08:51:13.134900Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "857f0e4927abee64073df6fb4065ec1ee8be243247aae14e8354162e9f949379",
+              "md5": "674b76f411b43a507577becec0621a2f",
+              "sha256": "36a12f000622e77ef0d98597d2640ae8775954ed900b578eacb6c9fca6cf78fb"
+            }
+          },
+          {
+            "filename": "pyside6-6.10.3-cp39-abi3-manylinux_2_39_aarch64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.9",
+            "upload_time_iso_8601": "2026-04-02T08:51:14.769191Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "7432a966aa87e72c3e2429fb4f02472c43f5993cc895c18acc315c62253e40f8",
+              "md5": "8fe3b517d562c2f36d0bf6bb13bbc5d2",
+              "sha256": "236a5f4782cbd821cdb92d76c3ff409e6197736bf328d18c483074a7d988793f"
+            }
+          },
+          {
+            "filename": "pyside6-6.10.3-cp39-abi3-win_amd64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.9",
+            "upload_time_iso_8601": "2026-04-02T08:51:16.114096Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "69b20b12acdc85a05034917ceecea4fe1aaed91c72fa3de6211666a572566174",
+              "md5": "66bb59c3d9d310c3a0a7425fd7f278b1",
+              "sha256": "c7847e4ae7b1aef1aad822ca7f175c2100c4f9f3af679125cbbdf2b364b32007"
+            }
+          },
+          {
+            "filename": "pyside6-6.10.3-cp39-abi3-win_arm64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.9",
+            "upload_time_iso_8601": "2026-04-02T08:51:17.705275Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "683123d4017b777ead5253772b95e5c97bdc4ae4861137ed5302d17cd8bcd11a",
+              "md5": "1d0cb9d0b64bccbb9c89cf3027a9de98",
+              "sha256": "cd6b5eb0ebaf950b5de1d5333b6bd4c94eeffb8f449b6257f259e263ab7781a5"
+            }
+          }
+        ],
+        "6.11.0": [
+          {
+            "filename": "pyside6-6.11.0-cp310-abi3-macosx_13_0_universal2.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-03-23T12:47:20.263834Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "f495f3f5a2799163b6658126d78a85bc1dec9eda88c75c26780556b26071a1d8",
+              "md5": "3c28c3a2e699b29d4307207ea7ef8eba",
+              "sha256": "1f2735dc4f2bd4ec452ae50502c8a22128bba0aced35358a2bbc58384b820c6f"
+            }
+          },
+          {
+            "filename": "pyside6-6.11.0-cp310-abi3-manylinux_2_34_x86_64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-03-23T12:47:21.727220Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "da899a1f521051714e6694ebbe2b979ded279845ec8e25cb309ca3960158d74f",
+              "md5": "8660233942295b408310671f5efec5f2",
+              "sha256": "c642e2d25704ca746fd37f56feacf25c5aecc4cd40bef23d18eec81f87d9dc00"
+            }
+          },
+          {
+            "filename": "pyside6-6.11.0-cp310-abi3-manylinux_2_39_aarch64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-03-23T12:47:22.761207Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "c23df779d8bba00fcde31a7d7fb6b59347a70773c9cc8135592dea9972579877",
+              "md5": "bbbc38e846e642f9e75c2b04d0dfd275",
+              "sha256": "267b344c73580ac938ca63c611881fb42a3922ebfe043e271005f4f06c372c4e"
+            }
+          },
+          {
+            "filename": "pyside6-6.11.0-cp310-abi3-win_amd64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-03-23T12:47:23.795291Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "ac98150e01a026df3e9697310236821fa825319bb4b9d6137539cb25a3032968",
+              "md5": "8f81f975eff37ab23a437ba3195fc4ad",
+              "sha256": "9092cb002ca43c64006afb2e0d0f6f51aef17aa737c33a45e502326a081ddcbc"
+            }
+          },
+          {
+            "filename": "pyside6-6.11.0-cp310-abi3-win_arm64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-03-23T12:47:25.073422Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "50e755960f7c6b41d058e95cb4af02652c46c48702c506c8bbf12e99550e1fb3",
+              "md5": "b8acd3231d9832342351c8cd538bdee8",
+              "sha256": "b15f39acc2b8f46251a630acad0d97f9a0a0461f2baffcd66d7adfada8eb641e"
+            }
+          }
+        ],
+        "6.11.1": [
+          {
+            "filename": "pyside6-6.11.1-cp310-abi3-macosx_13_0_universal2.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-05-13T09:47:36.402936Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "daa627ba5947ed48918f7b74b7c43a1e280aac069e36f25adeb4c9adfac835c4",
+              "md5": "82bce459bdfc923c26da6b76c8e0feff",
+              "sha256": "537682c3b7530817203e667c1f5a2f00486b37bf52c52eeab438544c7a0917f6"
+            }
+          },
+          {
+            "filename": "pyside6-6.11.1-cp310-abi3-manylinux_2_34_x86_64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-05-13T09:47:38.249358Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "d8deaf89d71410c83b10654d86ff9aff2a4f87c30163658f1cc145242e222526",
+              "md5": "9b0a6d03428f0bd15a694a9c9089d21f",
+              "sha256": "b1fc521ba2bb5109425ab8add06bddbdd524abcad06cfa012cc39a22a189feb2"
+            }
+          },
+          {
+            "filename": "pyside6-6.11.1-cp310-abi3-manylinux_2_39_aarch64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-05-13T09:47:39.440125Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "b60ed583bd3f7bf5046a4497b36f3902cfb64aa29554489a5a25c18e6b4ac0ac",
+              "md5": "db8209360d31ac03c1f7f327b8fa2600",
+              "sha256": "75f0005c3eb95c07cfb65522ec50d0815ac007a96482c21dc3cb4b4c04895d84"
+            }
+          },
+          {
+            "filename": "pyside6-6.11.1-cp310-abi3-win_amd64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-05-13T09:47:40.760997Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "57f2d9d8ce1373dabb37e5919f63cd18446556079631d3f2eea3ada03c29f6b8",
+              "md5": "e6f130bd7b33cd20ef1a7da33b517a3b",
+              "sha256": "0968877ab1fb4ef3587a284da6fe05e8647ada56a6a3750b6395188e01f4aba6"
+            }
+          },
+          {
+            "filename": "pyside6-6.11.1-cp310-abi3-win_arm64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-05-13T09:47:41.900995Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "9602a6057d8bd2bdb1940820fff2d627fdf4013148c9c57adf69fa40d3452ac3",
+              "md5": "c5c5ec77709b6f003a556a845b7d8e7a",
+              "sha256": "acee467cb5f256cc47ebb9d815a054c1d8416da380c191b247a76d164aa3f805"
+            }
+          }
+        ],
+        "6.11.2": [
+          {
+            "filename": "pyside6-6.11.2-cp310-abi3-macosx_13_0_universal2.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-08-18T06:37:27.794233Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "aeb599ff75f604d69eda1c5d1fe85cc43fb697d95eabc30ba86af099c2ddcd96",
+              "md5": "3e3c5a6c877afe3e18891902d68ca5aa",
+              "sha256": "13a3c79816879d9743672a669f1988f74459a78f89a97a2624fae4fe059ffa3a"
+            }
+          },
+          {
+            "filename": "pyside6-6.11.2-cp310-abi3-manylinux_2_34_x86_64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-08-18T06:37:30.298334Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "b2fe968844def58150a41568b505edca0d68df6901b20ea4222ccb0c069cc703",
+              "md5": "b49af8ccab27b2e7303fd397f61d7899",
+              "sha256": "dc6d03990489a5085842770718392ef5de36352d8f608d9a9fe03e60af4d7b66"
+            }
+          },
+          {
+            "filename": "pyside6-6.11.2-cp310-abi3-manylinux_2_39_aarch64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-08-18T06:37:32.383011Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "5e5cf4ecc6defaec645e5ac3ca2f99e3da286a28d1c647c2d10b584e0392b94c",
+              "md5": "52b8a527198d436360b240a6f817d675",
+              "sha256": "57fe867a6c93821a085d74e8a26f863fc2363516848181c466032595b33b1729"
+            }
+          },
+          {
+            "filename": "pyside6-6.11.2-cp310-abi3-win_amd64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-08-18T06:37:34.385342Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "94fe4aea9d30300fff4cda9bb729c1363b9e1095a8544e0d6b57065465e16599",
+              "md5": "323ba8a60309647af5face740c4b0442",
+              "sha256": "3201d67e3c10be2eaedd3910ff0f02351eca7e88c95a291cde5e7f2f55ef207f"
+            }
+          },
+          {
+            "filename": "pyside6-6.11.2-cp310-abi3-win_arm64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-08-18T06:37:36.437126Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "26b08e2fb01e9ee15ad29fe10d0dd2d37f503e4aa3714c9fbb07aca380618de7",
+              "md5": "3c6f29a00f4d86e7dbd4ace636da4a57",
+              "sha256": "0444ac71d0791a19bded35f6d9a94515941f23a6eb7098ca45a1b64a338be697"
+            }
+          }
+        ],
+        "6.11.3": [
+          {
+            "filename": "pyside6-6.11.3-cp310-abi3-macosx_13_0_universal2.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-10-26T12:52:37.401502Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "565d32f8f137e0887e0e4b580f1f8962b9dca3268f7d2d908a7a61207bab6d83",
+              "md5": "23a72a85c6a770d78dae43cec6556a18",
+              "sha256": "f52e98bfcc409e2cec4d70b4ca47e11a51737d48b3ea2a0a1af23652bfb8395a"
+            }
+          },
+          {
+            "filename": "pyside6-6.11.3-cp310-abi3-manylinux_2_34_x86_64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-10-26T12:52:39.664862Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "5a871de807123dd5edbc09d9b645a635ff308696e9d1f302c7201b4d821c8860",
+              "md5": "fd4c44698de7e084b723ee8864bf768a",
+              "sha256": "ef2bdb61b1ad7e5e8db8ca7fb1a60d8b7960dfd490c582d005d8903044ab44f1"
+            }
+          },
+          {
+            "filename": "pyside6-6.11.3-cp310-abi3-manylinux_2_39_aarch64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-10-26T12:52:42.174912Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "8aeb179c12d124e09c17ace7ab493d95c461ee3318b253fa9e33119807e2f808",
+              "md5": "60ecc54c9476fdbf8682ec72e806cfb9",
+              "sha256": "aa85bea06acb593564ec9cc1b0218510115341bcaa9585348760e4b9cac260cf"
+            }
+          },
+          {
+            "filename": "pyside6-6.11.3-cp310-abi3-win_amd64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-10-26T12:52:44.411775Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "5ec7d1f035501e00a4eb42635a45341dc786acdab9ea18cb55cb1320952a1632",
+              "md5": "49fd1b4dce0bfe60bff4a18ef59befd2",
+              "sha256": "c01ca54bb64f065129ab23eeb82696b4d4b47f594078ee18ac9b0698009b096c"
+            }
+          },
+          {
+            "filename": "pyside6-6.11.3-cp310-abi3-win_arm64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-10-26T12:52:46.218160Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "5bd59fab4ceae4a63104d918fcfb178d69d141c456c68c2494996b0a5443f107",
+              "md5": "3611114a61e3ecef9dfd60fedbeea57e",
+              "sha256": "adf77fd541dd97a3e96ccc081982231afbeae2af3b74b98253176f463703085c"
+            }
+          }
+        ],
+        "6.12.0": [
+          {
+            "filename": "pyside6-6.12.0-cp310-abi3-macosx_14_0_universal2.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.16,>=3.10",
+            "upload_time_iso_8601": "2026-10-08T09:11:15.222067Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "fadb0722bbb81c3515dd0847fd66a7fb4760b13ad59c89e40b27b362ab5624e2",
+              "md5": "7e4a8934db10800de7b8245535d4059c",
+              "sha256": "efea4c2f2aa54403c45de825865a902a1960a1cc9d5aaa92d4ebb8f4c4cd0708"
+            }
+          },
+          {
+            "filename": "pyside6-6.12.0-cp310-abi3-manylinux_2_34_x86_64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.16,>=3.10",
+            "upload_time_iso_8601": "2026-10-08T09:11:17.345609Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "2f53db0cabed1e70d0bc4666b8cbc2611b72bff2f9d2c4813820182621a8c6ee",
+              "md5": "49df0222f2996670f647588194c8de93",
+              "sha256": "d13ed4d0053cc20f3e4e0fdbf12790a9b7f958d7e22c0843411ecfa8c799e2a9"
+            }
+          },
+          {
+            "filename": "pyside6-6.12.0-cp310-abi3-manylinux_2_39_aarch64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.16,>=3.10",
+            "upload_time_iso_8601": "2026-10-08T09:11:18.705847Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "4d8cdfd4f339285d2e6c31067789b9b7dd2cee26c098ecc78ac7200fb04aa344",
+              "md5": "8756d2ac1be643aa2a88106f9cdb5afa",
+              "sha256": "8920e163f60493e18822d20f1e01c7c4bcf9c1c5cfbc68284788896f692594f8"
+            }
+          },
+          {
+            "filename": "pyside6-6.12.0-cp310-abi3-win_amd64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.16,>=3.10",
+            "upload_time_iso_8601": "2026-10-08T09:11:20.179541Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "a1da8e8514fc29ea916c3cd71a524480b77409e19ed12d709e8a5d73be089b81",
+              "md5": "d4ddd18af7b7e86c80d87eff6cdcf45e",
+              "sha256": "31a8d2893f2f28ab483b1534dde0438f27af6e234593de30425cb4729052d8f8"
+            }
+          },
+          {
+            "filename": "pyside6-6.12.0-cp310-abi3-win_arm64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.16,>=3.10",
+            "upload_time_iso_8601": "2026-10-08T09:11:21.552667Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "5f2e3ebafaf7f4ccea6f6ea9d017f7fc7d9484b79e6b31d1cb92f5f5262055f0",
+              "md5": "d87f01c06d6b55c5a50858d3884e0934",
+              "sha256": "22e2ec6407f32b61955a28f91ab55676e60017210285c28f0c381bfeed389414"
+            }
+          }
+        ],
+        "6.12.1": []
+      }
+    },
+    {
+      "package": "shiboken6",
+      "url": "https://pypi.org/pypi/shiboken6/json",
+      "retrieved_utc": "2026-11-19T23:40:56.096066+00:00",
+      "http_status": 200,
+      "response_sha256": "a32785f65c92282a00e9ac1ab1b66090d47dc6ceda0412ec38445a6f4a580afa",
+      "advertised_version": "6.12.0",
+      "requires_dist": null,
+      "versions_with_files_latest": [
+        [
+          "6.9.3",
+          5
+        ],
+        [
+          "6.10.0",
+          5
+        ],
+        [
+          "6.10.1",
+          5
+        ],
+        [
+          "6.10.2",
+          5
+        ],
+        [
+          "6.10.3",
+          5
+        ],
+        [
+          "6.11.0",
+          5
+        ],
+        [
+          "6.11.1",
+          5
+        ],
+        [
+          "6.11.2",
+          5
+        ],
+        [
+          "6.11.3",
+          5
+        ],
+        [
+          "6.12.0",
+          5
+        ]
+      ],
+      "releases": {
+        "6.10.3": [
+          {
+            "filename": "shiboken6-6.10.3-cp39-abi3-macosx_13_0_universal2.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.9",
+            "upload_time_iso_8601": "2026-04-02T08:49:31.875961Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "000dac1380fbb4d247be6b82931797826d8d18d59d96a48d8395d61cca0a4862",
+              "md5": "3fdf8b5f0fbcd7604c6c5dcda3171df9",
+              "sha256": "3827489c2b3059541a71678916716f2867eeeac8724adb6f82de6e69d1b5cfe8"
+            }
+          },
+          {
+            "filename": "shiboken6-6.10.3-cp39-abi3-manylinux_2_34_x86_64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.9",
+            "upload_time_iso_8601": "2026-04-02T08:49:33.360829Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "1bc5cbc20e31c0d7c47adeb5a6557991ce0eaab7a0288ee3b6aa25edaf3215d7",
+              "md5": "14e2d218ffa1e96195295df652f36da6",
+              "sha256": "99e8ac3319a2c93a4a8f8bb4512d71a9d43bc9f226f094a80a728d6dcc3e4826"
+            }
+          },
+          {
+            "filename": "shiboken6-6.10.3-cp39-abi3-manylinux_2_39_aarch64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.9",
+            "upload_time_iso_8601": "2026-04-02T08:49:34.662693Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "dae3ee446f92a8fd84a46230e6fb811cd914857802a0987ee91d87738e6bad20",
+              "md5": "983ae93b5979a93d251db40cebc0732c",
+              "sha256": "49d08bff0c36edb839aca0a8059fd771c81b4a0770f38f374542aae03f860c07"
+            }
+          },
+          {
+            "filename": "shiboken6-6.10.3-cp39-abi3-win_amd64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.9",
+            "upload_time_iso_8601": "2026-04-02T08:49:36.154885Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "fa6a488cf05549e3888dff5424e7713e29e45955c14f2041bf99f3f493b1acc8",
+              "md5": "ffccd1fcd37d8766a45bf702ec12bc1a",
+              "sha256": "38261c88e87a1c32d1302b642b755470d2369c78af3c7d7d9e95d631f79b556c"
+            }
+          },
+          {
+            "filename": "shiboken6-6.10.3-cp39-abi3-win_arm64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.9",
+            "upload_time_iso_8601": "2026-04-02T08:49:38.010979Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "2e5a5be8092d6b7ad9f0c8d96a9db8e3fe0e76f9a75e2a8a96814d06844e9de1",
+              "md5": "e8812eb9b7b29cc77270d8740bc416f8",
+              "sha256": "7f196245985bcf85d5c6d1cfd870f139484d5259c16e8a42deddacca0671bfbe"
+            }
+          }
+        ],
+        "6.11.0": [
+          {
+            "filename": "shiboken6-6.11.0-cp310-abi3-macosx_13_0_universal2.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-03-23T12:47:05.724875Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "821db56b7b694fbc871496435488d1f41c5068de546334850d722756511cef65",
+              "md5": "b54c28177388ae14336f6bc57c73d2b9",
+              "sha256": "d88e8a1eb705f2b9ad21db08a61ae1dc0c773e5cd86a069de0754c4cf1f9b43b"
+            }
+          },
+          {
+            "filename": "shiboken6-6.11.0-cp310-abi3-manylinux_2_34_x86_64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-03-23T12:47:07.349768Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "65cb4bb0c76011166230daa7c0074aeb3fdb3935c83ac1fef3789b85fcd1a8fc",
+              "md5": "f0de45dcd05d6d85cc53d4118eba277a",
+              "sha256": "ad54e64f8192ddbdff0c54ac82b89edcd62ed623f502ea21c960541d19514053"
+            }
+          },
+          {
+            "filename": "shiboken6-6.11.0-cp310-abi3-manylinux_2_39_aarch64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-03-23T12:47:08.689971Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "f596771a6e2b530f725303d16d78a321fa4876b98b4f3615c9851880df8c1a43",
+              "md5": "2d6adc7f468356e0c4324a391e7db9f8",
+              "sha256": "a10dc7718104ea2dc15d5b0b96909b77162ce1c76fcc6968e6df692b947a00e9"
+            }
+          },
+          {
+            "filename": "shiboken6-6.11.0-cp310-abi3-win_amd64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-03-23T12:47:10.143550Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "72f744c0c42c3f5f29dec457fd46ea0552174bcb8aa75becf03bbd90308ba07b",
+              "md5": "01d2f2994b06cbd856d598a5548f0dae",
+              "sha256": "483ff78a73c7b3189ca924abc694318084f078bcfeaffa68e32024ff2d025ee1"
+            }
+          },
+          {
+            "filename": "shiboken6-6.11.0-cp310-abi3-win_arm64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-03-23T12:47:11.832666Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "fb996e5ee21db2d6af84bbbd7d871d441dafeb069c6de5667b1aa49891a77c66",
+              "md5": "30e53bd23f950b2bffbfe617041a1c72",
+              "sha256": "3bd76cf56105ab2d62ecaff630366f11264f69b88d488f10f048da9a065781f4"
+            }
+          }
+        ],
+        "6.11.1": [
+          {
+            "filename": "shiboken6-6.11.1-cp310-abi3-macosx_13_0_universal2.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-05-13T09:47:01.091630Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "17f3f2b63df0251e7cd3172ea28e32ede52739de9566bcefcd0178681538ac81",
+              "md5": "f73da556dca6a76b073a3a78e9d51bb0",
+              "sha256": "1a16867f103ef1c662a5f09dfed03273a9f81688b174555162c58e83650a3f02"
+            }
+          },
+          {
+            "filename": "shiboken6-6.11.1-cp310-abi3-manylinux_2_34_x86_64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-05-13T09:47:02.653426Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "c79be0355d8897b5c150770f1d95718aad17d432fcc9c035c04f3f58427d4693",
+              "md5": "c64ea30a342b032fa0ab06130c08e530",
+              "sha256": "9a8bccfafc8805254cabcfa1edfaf55cd52889f4998c91ad0d9a4433fb1bcdbe"
+            }
+          },
+          {
+            "filename": "shiboken6-6.11.1-cp310-abi3-manylinux_2_39_aarch64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-05-13T09:47:04.020517Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "57d5dd4f1defed400be03340f2ede34b61f846776650b4e7ed9ebaf4c71979a2",
+              "md5": "7b445b60a212a79d56484aae9bac6928",
+              "sha256": "1bd2f4314414df2d122d9f646e03b731bc6d6b5f77a5f53f99a4fe4e97d84e6f"
+            }
+          },
+          {
+            "filename": "shiboken6-6.11.1-cp310-abi3-win_amd64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-05-13T09:47:05.924195Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "52b53f6fb2ee65b534193fb4ef713dd619dc31dadff5d12c16979a7699ad58be",
+              "md5": "3bd5bb25702763cd3ae9be33f85358b8",
+              "sha256": "c2c6863aa80ec18c0f82cea3417837b279cdc60024ac17123461dc9042577df7"
+            }
+          },
+          {
+            "filename": "shiboken6-6.11.1-cp310-abi3-win_arm64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-05-13T09:47:07.617060Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "98d1f15ca0e1666faae02c945f48e745ea35f8fcd8243b176109b4e2c4251f47",
+              "md5": "5994812072cc7e92fce20992008aff21",
+              "sha256": "7c8d9af17db4495d4fa5b1c393f218311c4855546b9dfa6a0bd21bcd66b55e9d"
+            }
+          }
+        ],
+        "6.11.2": [
+          {
+            "filename": "shiboken6-6.11.2-cp310-abi3-macosx_13_0_universal2.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-08-18T06:37:11.526498Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "474411bf71c36e71936ab4e923e5dd23599dab527c4488b01860b0f689ce9947",
+              "md5": "b6a40867df5fd647c296ba1c3e2c6e52",
+              "sha256": "53659683b1f7a08e9f87eff9b1065f1ceb7110cd7a4bc09fdf5efe43d286604d"
+            }
+          },
+          {
+            "filename": "shiboken6-6.11.2-cp310-abi3-manylinux_2_34_x86_64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-08-18T06:37:13.397073Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "a59af41bea4316d0c1bec4800842dcb4bd8fd3e29d6a79c496bc32e1aec42583",
+              "md5": "ee22d04fe6fe138ae8b86cba411dc724",
+              "sha256": "7a7a0a72a9ed26c9bf77d42246b1c736486befb8f31aa2fb29957ea4cdd1c1c2"
+            }
+          },
+          {
+            "filename": "shiboken6-6.11.2-cp310-abi3-manylinux_2_39_aarch64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-08-18T06:37:15.025119Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "560579ed0697515d4fc7435459e4ed4c4a3b5621a55b7c91d0f3f2cc3d617aa0",
+              "md5": "fbf4ce6e7c900974bfb57005b3a6d80a",
+              "sha256": "4bbbd6fa4d7cff5ec5e12bc4c10e1d845fa30c89457ecb13cc64f7bddb77f6f9"
+            }
+          },
+          {
+            "filename": "shiboken6-6.11.2-cp310-abi3-win_amd64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-08-18T06:37:18.002960Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "ce6bfee1b4814317e4664e318644c9c007676c65a71e5b2b9d3ac4121a94dc0a",
+              "md5": "99cc921a68367c6be2d8a514c7ce4e9e",
+              "sha256": "6ab0eba1c904455df621f9a6df3ca2bb896bab8670572d2bc4e37804ae91f19a"
+            }
+          },
+          {
+            "filename": "shiboken6-6.11.2-cp310-abi3-win_arm64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-08-18T06:37:21.046171Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "4db580c4e5aafeb8ac777cf5a1becfe87ac7197c35051df00b5f7819787e09d5",
+              "md5": "3de8ac3e450fea622456814456e966af",
+              "sha256": "97c49432488df958f0308736f3d15b6915d8826fc380af17bb4b9ec5c4a5e81b"
+            }
+          }
+        ],
+        "6.11.3": [
+          {
+            "filename": "shiboken6-6.11.3-cp310-abi3-macosx_13_0_universal2.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-10-26T12:51:35.699881Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "d03f75730e62db2597eadc0076ab8c264912fec6d54cdf506b0326229404825c",
+              "md5": "864fb0f5646a46ea57931a85676782d0",
+              "sha256": "9287279112201e18a7820d29ce9dc4ceca4148c681f4189aff6f4cea652d43af"
+            }
+          },
+          {
+            "filename": "shiboken6-6.11.3-cp310-abi3-manylinux_2_34_x86_64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-10-26T12:51:37.610506Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "7c4a696e3a9ed26436b1b41ca22dd21e7bce214ba1a1e1dea5c84b5627444c65",
+              "md5": "dc940abc8e2bf7a16a81b8e3e62717ac",
+              "sha256": "e601c957011345c741b88f661a12486f478db881d6777bdf37e3dc7a8d3387c6"
+            }
+          },
+          {
+            "filename": "shiboken6-6.11.3-cp310-abi3-manylinux_2_39_aarch64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-10-26T12:51:38.962385Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "fce2ce5f54d6bc8950fed935e61c1ade6537869fe6913517eef0d5f91140f5cc",
+              "md5": "9889e88ebd7a733637dc7c629db066c7",
+              "sha256": "01d172ec9599fed315aec025b1424ff945ae5358f87588a848797616a18de6e7"
+            }
+          },
+          {
+            "filename": "shiboken6-6.11.3-cp310-abi3-win_amd64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-10-26T12:51:40.517603Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "ecf7db1cb2ce128d5b7d5397cafdf666520db4466cf41d9c04aa7cb299341051",
+              "md5": "021da7b27139010025ad5aaa114b4cbb",
+              "sha256": "1d38919492d08417b7579ad077bc81110d05183d21eb21d66316bc556140a8a3"
+            }
+          },
+          {
+            "filename": "shiboken6-6.11.3-cp310-abi3-win_arm64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-10-26T12:51:42.311130Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "dbabf6015985addb5167ded233646dd265601fa9194a7c7ab37d77f636ce11e4",
+              "md5": "b653bf7c87cb7f9a5067241715634dff",
+              "sha256": "28c826799dba54bbea95417130127b70e05ddcb0190f4d28e9da8fc8808bdc1b"
+            }
+          }
+        ],
+        "6.12.0": [
+          {
+            "filename": "shiboken6-6.12.0-cp310-abi3-macosx_14_0_universal2.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.16,>=3.10",
+            "upload_time_iso_8601": "2026-10-08T09:10:41.506548Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "b54511536fba5f50a57671eb14441c6098096f3e57074e54c9d7d66039a5831e",
+              "md5": "b0dd18ba95bfcaef66bd9f2bbdf6eabc",
+              "sha256": "47105e05baf57d35453e07d240bbe59cb4b8d9565377ea5134ff9fb37d4f5c02"
+            }
+          },
+          {
+            "filename": "shiboken6-6.12.0-cp310-abi3-manylinux_2_34_x86_64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.16,>=3.10",
+            "upload_time_iso_8601": "2026-10-08T09:10:42.982446Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "49c2a04fa003b4360e99d8e3fc2829abacf37396ace63ea1cd616402209ec7c6",
+              "md5": "791fcef74cb23f37bff55f738130346e",
+              "sha256": "3bde565bb0890044b5c7f63808adddede5abc241e9395a2bfed61919884d6240"
+            }
+          },
+          {
+            "filename": "shiboken6-6.12.0-cp310-abi3-manylinux_2_39_aarch64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.16,>=3.10",
+            "upload_time_iso_8601": "2026-10-08T09:10:44.250878Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "97caa4415e6218e0dff764fe2b2d30db2fc8f499a08ace07634232ade3f73adc",
+              "md5": "cac62ad41f11e77bbcd422d6d5bf3421",
+              "sha256": "ff72a72b3277b418902d562b987b33a6f6818bed9fe40a49d634d09bc67f620e"
+            }
+          },
+          {
+            "filename": "shiboken6-6.12.0-cp310-abi3-win_amd64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.16,>=3.10",
+            "upload_time_iso_8601": "2026-10-08T09:10:45.627671Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "2ab6bee97e7a2edeab72aafabb46ee5adc939790a638d107860b4cad7a20e407",
+              "md5": "4320d4d18f4dbdcc2990c5275f9da5fb",
+              "sha256": "a1906cb8116869178c64b6bab52623bbc8b4ceed7b30bfc3c9aa0f6e67f6438e"
+            }
+          },
+          {
+            "filename": "shiboken6-6.12.0-cp310-abi3-win_arm64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.16,>=3.10",
+            "upload_time_iso_8601": "2026-10-08T09:10:47.123453Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "8cd55894d35f8a470ca8acff0d1cd8f15b1c94cbfdfe0ce4a6ec0fcf10b95bd1",
+              "md5": "af8fb901ff2830426e08f1b36bf3bd3e",
+              "sha256": "da382e68f0815b31b6dc2bce11a465b148c4f42c37b91546a361de1576567d10"
+            }
+          }
+        ],
+        "6.12.1": []
+      }
+    },
+    {
+      "package": "PySide6-Essentials",
+      "url": "https://pypi.org/pypi/PySide6-Essentials/json",
+      "retrieved_utc": "2026-11-19T23:40:56.096553+00:00",
+      "http_status": 200,
+      "response_sha256": "dac61fe68882436af453bca09eca969592767daf341e9580b352461ff2bae09f",
+      "advertised_version": "6.12.0",
+      "requires_dist": [
+        "shiboken6==6.12.0"
+      ],
+      "versions_with_files_latest": [
+        [
+          "6.9.3",
+          5
+        ],
+        [
+          "6.10.0",
+          5
+        ],
+        [
+          "6.10.1",
+          5
+        ],
+        [
+          "6.10.2",
+          5
+        ],
+        [
+          "6.10.3",
+          5
+        ],
+        [
+          "6.11.0",
+          5
+        ],
+        [
+          "6.11.1",
+          5
+        ],
+        [
+          "6.11.2",
+          5
+        ],
+        [
+          "6.11.3",
+          5
+        ],
+        [
+          "6.12.0",
+          5
+        ]
+      ],
+      "releases": {
+        "6.10.3": [
+          {
+            "filename": "pyside6_essentials-6.10.3-cp39-abi3-macosx_13_0_universal2.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.9",
+            "upload_time_iso_8601": "2026-04-02T08:48:41.107834Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "1109b14fae948aa38140079dd585c4c11fe42f12ef3be5a417603512547c232f",
+              "md5": "43735e349c4d5b2f9842d65f9426dea5",
+              "sha256": "8d7e2b826ac7f043dbfff487552c220517003927f6cfa14ab6a4824e8623a686"
+            }
+          },
+          {
+            "filename": "pyside6_essentials-6.10.3-cp39-abi3-manylinux_2_34_x86_64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.9",
+            "upload_time_iso_8601": "2026-04-02T08:48:47.900915Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "df781b2bc96e720c17b35f8d6f54a13d32fbcd4cb8a8fc4a3dba8741711a3ab0",
+              "md5": "820d04724d11235d68ce69117d257b1f",
+              "sha256": "5fb32b48010f513335a2166ac3df279c5996fb96402fd91a4875fc717fe55de0"
+            }
+          },
+          {
+            "filename": "pyside6_essentials-6.10.3-cp39-abi3-manylinux_2_39_aarch64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.9",
+            "upload_time_iso_8601": "2026-04-02T08:48:56.200200Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "739d90c6c356f7a261be3e40d655baaec394622cd58b14fd98fdd582ed0c644a",
+              "md5": "9cc8a038642815ccf6ecbd5a73f8d701",
+              "sha256": "6f1b226930828caef622aef0f1fe718db54849b29102617bc978c0120368ed6b"
+            }
+          },
+          {
+            "filename": "pyside6_essentials-6.10.3-cp39-abi3-win_amd64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.9",
+            "upload_time_iso_8601": "2026-04-02T08:49:06.878774Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "bf117cfcfc74213b8e33aecef6fa05dcedf45e65385155f07486a514a9777b0d",
+              "md5": "e6a6c649d3016afa146fba8e2a53d485",
+              "sha256": "051a70e2df79cf1c012a208ad82a98e8de23ca7fe3b0f3344d07152d15705b59"
+            }
+          },
+          {
+            "filename": "pyside6_essentials-6.10.3-cp39-abi3-win_arm64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.9",
+            "upload_time_iso_8601": "2026-04-02T08:49:15.249852Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "2853d43a9f3ac21fbaa9ba517b9d5f28297a4eb11ded6a85b625d71b1e6f3f49",
+              "md5": "507bd9484117a1c47a44fb93461f2b41",
+              "sha256": "f9124e2f4a4cedba83bea11f712b152093ff91be3512e17c64ffc4f43f02bddd"
+            }
+          }
+        ],
+        "6.11.0": [
+          {
+            "filename": "pyside6_essentials-6.11.0-cp310-abi3-macosx_13_0_universal2.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-03-23T12:42:52.872656Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "d2008a8583d3429c737cc20e61a43eba8ab1ec13ddb101e99802c2ffeedf3b41",
+              "md5": "52c9a46289ef6a667ca4cff7edd4f92d",
+              "sha256": "85d6ca87ef35fa6565d385ede72ae48420dd3f63113929d10fc800f6b0360e01"
+            }
+          },
+          {
+            "filename": "pyside6_essentials-6.11.0-cp310-abi3-manylinux_2_34_x86_64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-03-23T12:43:04.190000Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "f3a907c9e5c014b871c1b19caf8f994bcd50b345559b81f81671217b49559b67",
+              "md5": "0dcee037815f9f99a12a4bb6305438c4",
+              "sha256": "dc20e7afd5fc6fe51297db91cef997ce60844be578f7a49fc61b7ab9657a8849"
+            }
+          },
+          {
+            "filename": "pyside6_essentials-6.11.0-cp310-abi3-manylinux_2_39_aarch64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-03-23T12:43:24.649585Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "7c35f06b1b641d7600ec46374c16cd37c66fa4a22870326b4eb073a95471035f",
+              "md5": "610aa558bf8f5cd4eb3e0ac01b17e7fa",
+              "sha256": "4854cb0a1b061e7a576d8fb7bb7cf9f49540d558b1acb7df0742a7afefe61e4e"
+            }
+          },
+          {
+            "filename": "pyside6_essentials-6.11.0-cp310-abi3-win_amd64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-03-23T12:43:35.575770Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "ff37ba95c6262836d2b286b4e05a9d16a5e870995d5d2503ac6adc6312208049",
+              "md5": "eb44e0f323cae0c7d2ec5a2cac09b896",
+              "sha256": "3b3362882ad9389357a80504e600180006a957731fec05786fced7b038461fdf"
+            }
+          },
+          {
+            "filename": "pyside6_essentials-6.11.0-cp310-abi3-win_arm64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-03-23T12:43:43.573489Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "5327d17f25e45820e633a70e6109b35991eda09a5e8000c2a306f0ab7538d48c",
+              "md5": "ee5d8bc1d33c872bb4d1934a25bfa963",
+              "sha256": "81ca603dbf21bc39f89bb42db215c25ebe0c879a1a4c387625c321d2730ec187"
+            }
+          }
+        ],
+        "6.11.1": [
+          {
+            "filename": "pyside6_essentials-6.11.1-cp310-abi3-macosx_13_0_universal2.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-05-13T09:43:08.006993Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "b3da10d9197e7370eb4fed8df5fc547b7548dec88e5c5949e2d450db4ae96feb",
+              "md5": "54fa5f847e07f2ea8a5b323b49361e50",
+              "sha256": "228de53c2bc26b07e5021fbe3614fc44ca08e4dab9999af08c2b389d2c239957"
+            }
+          },
+          {
+            "filename": "pyside6_essentials-6.11.1-cp310-abi3-manylinux_2_34_x86_64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-05-13T09:43:24.836345Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "5c490e1237c4400bec7e335d2c4eeb49bc40d9fd88a9ac44ca9083ce1abdc308",
+              "md5": "d4639642eb4d9bc99abe669c3d177f56",
+              "sha256": "e3ef7027b41e4e55fadb56e3b3257dc8ee92154b639fe67fc4c8e05e9d976c60"
+            }
+          },
+          {
+            "filename": "pyside6_essentials-6.11.1-cp310-abi3-manylinux_2_39_aarch64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-05-13T09:43:35.423101Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "4cc5da4c5f23c6540ac5211a1f60177c8dee84b1bf40f2719479587ab8c60731",
+              "md5": "620f5357665aae84895663cb0181b7bc",
+              "sha256": "a039b6da68a3a4b9d243217b2b98d475eed3f617159ef6be925badab53c11b0d"
+            }
+          },
+          {
+            "filename": "pyside6_essentials-6.11.1-cp310-abi3-win_amd64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-05-13T09:43:44.920842Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "640eb663ecc96ca57b5c91b83b6615d6b174380b0faf30338125c26e053d6aa7",
+              "md5": "dd3d3725b6f7c0dd20e3b135e5705ea9",
+              "sha256": "63311bd48e32c584599ab04b9ef7c324082374cd2c9fa533f978fb893bb47e40"
+            }
+          },
+          {
+            "filename": "pyside6_essentials-6.11.1-cp310-abi3-win_arm64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-05-13T09:43:52.968746Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "f112eb6723faf5cb7fa581145da1c15f40d641b96e080f0491af2f1859fdeedb",
+              "md5": "27f008fefffbb71e66587eb3c4826095",
+              "sha256": "11253ea52aabecefe9febddbbe78b43a824129e3af1cec98431028fba7fa954f"
+            }
+          }
+        ],
+        "6.11.2": [
+          {
+            "filename": "pyside6_essentials-6.11.2-cp310-abi3-macosx_13_0_universal2.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-08-18T06:36:33.674731Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "6f160b7ecf89ebada82ed0430be33809ff325761ece83104f8635b1bd101fcd0",
+              "md5": "8e5fd4b07f566e54dbb9194c288ef1c8",
+              "sha256": "77795c145202e65a78d88f7cd409d186e3ba23d159bdb3ba2dcd159ae5e5f0d9"
+            }
+          },
+          {
+            "filename": "pyside6_essentials-6.11.2-cp310-abi3-manylinux_2_34_x86_64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-08-18T06:36:40.637005Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "0e1a84a84bbc75835ee88abdcb66eb875b8e1a21834af9b833bc1893f2c1bfaf",
+              "md5": "b47a48db08791d37978cf19dc3732932",
+              "sha256": "aaf9f25f0f324874085fa5b26a610318db8a8e243cf85bb3e5400595191c7778"
+            }
+          },
+          {
+            "filename": "pyside6_essentials-6.11.2-cp310-abi3-manylinux_2_39_aarch64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-08-18T06:36:46.970659Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "604cd92b08a2151d095b9a3725fa0e71b215ec686d40bbd5d8b702d21a9b5eaa",
+              "md5": "4ca3c2f6c9c00642a2f1fb28370f6a90",
+              "sha256": "d3ec6e1885c46e57f16364f38ea8040ffc5dc0b18341058f608fede3ba930567"
+            }
+          },
+          {
+            "filename": "pyside6_essentials-6.11.2-cp310-abi3-win_amd64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-08-18T06:36:54.038925Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "dc09d2662684aee4d3f027ff9b1e965f22301bc28ffc5b7f167658508e4475dc",
+              "md5": "663679457f86944a7d18c928c36c69cc",
+              "sha256": "c8a29def77032773a30879f7f24415b5395ad08592d147c170824ef4c735dfc1"
+            }
+          },
+          {
+            "filename": "pyside6_essentials-6.11.2-cp310-abi3-win_arm64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-08-18T06:36:59.073573Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "cd874dd2a6468cea600da1fcf9c7f02bc248eeaa98cdc75658e48e669d95326a",
+              "md5": "7ae20508d72874ac6e260a374af1ed32",
+              "sha256": "fadd75c5c20800d64dd0a586ea8cb337c5e630aa2246df0e5105738afa46e02c"
+            }
+          }
+        ],
+        "6.11.3": [
+          {
+            "filename": "pyside6_essentials-6.11.3-cp310-abi3-macosx_13_0_universal2.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-10-26T12:50:43.961419Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "c14855362ced49bf8dafd4220c38cc0a0acb4b822cb60ea91e777007a3c1ec81",
+              "md5": "2d6957eb9e04e385f8a4d23af9961e68",
+              "sha256": "e153290e03ef5bae4b29c584db0193e14d291a21c32030f6953fe98879b3202c"
+            }
+          },
+          {
+            "filename": "pyside6_essentials-6.11.3-cp310-abi3-manylinux_2_34_x86_64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-10-26T12:51:07.435523Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "91239692f9b9a7cf89c0e8b99da228a728064aa827dc115b5dc974156bcf14fc",
+              "md5": "c86e335a61daa0d1b5a17e842e25afd1",
+              "sha256": "c6a5c3b58bf55aef6e09a7de690ff6133335014ab81a7f22f56363ea08e8f6a3"
+            }
+          },
+          {
+            "filename": "pyside6_essentials-6.11.3-cp310-abi3-manylinux_2_39_aarch64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-10-26T12:51:14.521641Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "db5b51501ef59ad1ee97d9efa945e23a4f09b0e164ab8d869ea142b7bb7bc736",
+              "md5": "d46000f900095988b9a87d3e19264bae",
+              "sha256": "b7d77901d5fb413e96788cb15c56177cbbad0ff12605c716abdc79eabe4ba859"
+            }
+          },
+          {
+            "filename": "pyside6_essentials-6.11.3-cp310-abi3-win_amd64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-10-26T12:51:20.911077Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "100224eeb84caf10de98e366a2e536abf8e66b23a90c72553ccb3d77acef2dfd",
+              "md5": "b7661056cf2a8a86df1f4deea35a1961",
+              "sha256": "ea61687d2c27f8cc7a851c259481be1001dbffa3bebacea4491d9905e7a5d0cf"
+            }
+          },
+          {
+            "filename": "pyside6_essentials-6.11.3-cp310-abi3-win_arm64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-10-26T12:51:27.066083Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "ccb72e8208c9922cea97f592112f22693ba396cf00be11b0bd0036b83cdc10f6",
+              "md5": "3ae88e1d96213dfaa6de4d2e607bde67",
+              "sha256": "ca3a6dc165d66d714f443f22cb8631be8d3c5d0c27d0a104d394ee662f1f853a"
+            }
+          }
+        ],
+        "6.12.0": [
+          {
+            "filename": "pyside6_essentials-6.12.0-cp310-abi3-macosx_14_0_universal2.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.16,>=3.10",
+            "upload_time_iso_8601": "2026-10-08T09:09:54.453666Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "e190d528f8dd3f9f20712bc719e10c698d27c998e1dd76ed3f33b6fb606d0972",
+              "md5": "f2732fed0acaeff72279133dc8057785",
+              "sha256": "0867b709a724db28b161227c7d6ecb5ed10cc09226a53542417ac6dee1308239"
+            }
+          },
+          {
+            "filename": "pyside6_essentials-6.12.0-cp310-abi3-manylinux_2_34_x86_64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.16,>=3.10",
+            "upload_time_iso_8601": "2026-10-08T09:10:02.825079Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "7b3c7597d8dcb36aa8315427635ec6ec9d850ffbad4ce78b9118ac854889f2d3",
+              "md5": "42d4d6bc8d30e7cc8ef2bc56215f3b50",
+              "sha256": "16f4b5e41daf49235ae048458243da9efe5f3d8040f9cc5aa454ce69893d3bd9"
+            }
+          },
+          {
+            "filename": "pyside6_essentials-6.12.0-cp310-abi3-manylinux_2_39_aarch64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.16,>=3.10",
+            "upload_time_iso_8601": "2026-10-08T09:10:09.130425Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "5e4ef4fd4c016719be832ec49d3c87940459e87fd666179a0a199a3998d07916",
+              "md5": "8c6c6598d3addab2e3c7f3d4020e9681",
+              "sha256": "08c5841063fc1df69b7fa1ee405f539e66576a83fc48004be3e2c5e35ccbfa69"
+            }
+          },
+          {
+            "filename": "pyside6_essentials-6.12.0-cp310-abi3-win_amd64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.16,>=3.10",
+            "upload_time_iso_8601": "2026-10-08T09:10:15.104029Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "03619a7e32a37b224f68506785bfb0f288d516098ec71681782d72b695a6c95d",
+              "md5": "dfc737f1be67a56413cffb91268cab0b",
+              "sha256": "c9a95102aa23c1f86516a30d5a9be37552d324eee7e567eb7508973f1218cb42"
+            }
+          },
+          {
+            "filename": "pyside6_essentials-6.12.0-cp310-abi3-win_arm64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.16,>=3.10",
+            "upload_time_iso_8601": "2026-10-08T09:10:20.202985Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "921143afb3d0e7c25dd09f0eb7e44f1283dadb5fa8d8b517249fe3fde02e6702",
+              "md5": "2d8f59e5e6eb848052f8cb5ed62320f2",
+              "sha256": "c76aa689989bf9bb9b45535e0a81c6733294df720b0eed1308fa30d2606b98cc"
+            }
+          }
+        ],
+        "6.12.1": []
+      }
+    },
+    {
+      "package": "PySide6-Addons",
+      "url": "https://pypi.org/pypi/PySide6-Addons/json",
+      "retrieved_utc": "2026-11-19T23:40:56.097028+00:00",
+      "http_status": 200,
+      "response_sha256": "291c8e5736afd66833b1dbb4f33ea42741bd95271d4fdf17288ee3c657eb1ab6",
+      "advertised_version": "6.12.0",
+      "requires_dist": [
+        "PySide6_Essentials==6.12.0"
+      ],
+      "versions_with_files_latest": [
+        [
+          "6.9.3",
+          5
+        ],
+        [
+          "6.10.0",
+          5
+        ],
+        [
+          "6.10.1",
+          5
+        ],
+        [
+          "6.10.2",
+          5
+        ],
+        [
+          "6.10.3",
+          5
+        ],
+        [
+          "6.11.0",
+          5
+        ],
+        [
+          "6.11.1",
+          5
+        ],
+        [
+          "6.11.2",
+          5
+        ],
+        [
+          "6.11.3",
+          5
+        ],
+        [
+          "6.12.0",
+          5
+        ]
+      ],
+      "releases": {
+        "6.10.3": [
+          {
+            "filename": "pyside6_addons-6.10.3-cp39-abi3-macosx_13_0_universal2.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.9",
+            "upload_time_iso_8601": "2026-04-02T08:47:23.580502Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "6bcae898773690b41908d83b137e8ef08e3de7c6b22b5fdff3074bade12af2b3",
+              "md5": "b003cd47f7623f3c9f64ceaf553146af",
+              "sha256": "f2a2e3a7650cd1599996871da5bea76b7fb4b219bc2b4f7927739e86bc1fb9d9"
+            }
+          },
+          {
+            "filename": "pyside6_addons-6.10.3-cp39-abi3-manylinux_2_34_x86_64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.9",
+            "upload_time_iso_8601": "2026-04-02T08:47:40.365924Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "3dfb9df1103a6b71c35a223ea7ba7898c3aa3b1fb91d1aaf85b78f8a9a468121",
+              "md5": "f58cc3826a15a11fda13a222a95a0b4b",
+              "sha256": "a9a53a824ba8429953345c89a2dd5dc65d1f1d7e88b6cf1b975a6ef4f4d9760f"
+            }
+          },
+          {
+            "filename": "pyside6_addons-6.10.3-cp39-abi3-manylinux_2_39_aarch64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.9",
+            "upload_time_iso_8601": "2026-04-02T08:47:56.771089Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "8985c357b77987339a5eb7ff35a50bb16bcf900780b9a17c36e4f8ac7eccb0e6",
+              "md5": "ec51312c022a21851a6df792393438d2",
+              "sha256": "9938da9ad0d47966cf2064e5d26536e8b6ebcca074c54b2e2bfd0648cd248962"
+            }
+          },
+          {
+            "filename": "pyside6_addons-6.10.3-cp39-abi3-win_amd64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.9",
+            "upload_time_iso_8601": "2026-04-02T08:48:13.811237Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "2c5d28dc9b8c926c86530c42cab4ed4f1bc43f025da8b7d8a39d3e18f8a937f3",
+              "md5": "d72e35bbc96e88191e57942a486510bc",
+              "sha256": "b465b38d1ec3476a9197441fe6a62a1fac97c45a8094f11c2d7e318aee1e3fb3"
+            }
+          },
+          {
+            "filename": "pyside6_addons-6.10.3-cp39-abi3-win_arm64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.9",
+            "upload_time_iso_8601": "2026-04-02T08:48:20.015744Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "85e8d2e0b729e13ea9004a57dbf96cd0a5620c8d7379c147a61be8739cafda30",
+              "md5": "9011ff4f08346ab2da7fe8c9c59f7f16",
+              "sha256": "2a23d7ba09deaa35dbcdd171eb4d6251147b6a197a6f4c647d8e6416706861d0"
+            }
+          }
+        ],
+        "6.11.0": [
+          {
+            "filename": "pyside6_addons-6.11.0-cp310-abi3-macosx_13_0_universal2.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-03-23T12:40:40.497424Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "c0df241f311c61a46b7b1195927da77b2537692ee3442aa9ccd87981164ff78d",
+              "md5": "55b7885791808e1df69a4429cf181f13",
+              "sha256": "d5eaa4643302e3a0fa94c5766234bee4073d7d5ab9c2b7fd222692a176faf182"
+            }
+          },
+          {
+            "filename": "pyside6_addons-6.11.0-cp310-abi3-manylinux_2_34_x86_64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-03-23T12:41:05.379579Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "31b9e81172835ccc9d8b9792cc6bf7524a252a0db9a76ddd693de230402697f9",
+              "md5": "ac474655f90120f9e24b0d5ca855bdc2",
+              "sha256": "ac6fe3d4ef4497dde3efc5e896b0acd53ff6c93be4bf485f045690f919419f35"
+            }
+          },
+          {
+            "filename": "pyside6_addons-6.11.0-cp310-abi3-manylinux_2_39_aarch64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-03-23T12:41:38.134100Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "a8a4426d9333782bf65ab2a20257d6b4b3af9b8d5d7a710da719865fab49d492",
+              "md5": "a6f2094468614146d6dd429244b24ac6",
+              "sha256": "8ffb40222456078930816ebcac2f2511716d2acbc11716dd5acc5c365179a753"
+            }
+          },
+          {
+            "filename": "pyside6_addons-6.11.0-cp310-abi3-win_amd64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-03-23T12:42:00.668810Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "359a46d271fedfabad8c6dce2ebb69bb593745487ed33753a56a47c3ba4fdb1c",
+              "md5": "ac8ae85395fca55ecc560638a8baf91b",
+              "sha256": "413e6121c24f5ffdce376298059eddecff74aa6d638e94e0f6015b33d29b889e"
+            }
+          },
+          {
+            "filename": "pyside6_addons-6.11.0-cp310-abi3-win_arm64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-03-23T12:42:13.748227Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "16cd1b28264f7dc9a642da2e4e7c02f67418d0949eb7ce329ae20869703c2630",
+              "md5": "86b047efecdede69b0ee8079a3b23319",
+              "sha256": "aaaee83385977a0fe134b2f4fbfb92b45a880d5b656e4d90a708eef10b1b6de8"
+            }
+          }
+        ],
+        "6.11.1": [
+          {
+            "filename": "pyside6_addons-6.11.1-cp310-abi3-macosx_13_0_universal2.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-05-13T09:39:12.360973Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "3f6b8bc94aff48b63f788f2d84e5467c12362d68906ba742c0942f46cb04c879",
+              "md5": "129e3475547da910cd8ac3fbbf587d94",
+              "sha256": "54733c77f789bef5f03c6aff4ad3bec8b2eff021f0cfcbc53d5e6c250ded24f9"
+            }
+          },
+          {
+            "filename": "pyside6_addons-6.11.1-cp310-abi3-manylinux_2_34_x86_64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-05-13T09:39:34.185296Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "dd62fb1428a523b2a4541e232aab50d9e789e6b4526f37fd9593452a7ea5b6b3",
+              "md5": "9caa0a607d6bd7d38de6824fc5b68d0b",
+              "sha256": "8e6c65fbd73a512d6f72cda8d8277444a85a34dc99dd1dae9c21d35b8671bb1f"
+            }
+          },
+          {
+            "filename": "pyside6_addons-6.11.1-cp310-abi3-manylinux_2_39_aarch64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-05-13T09:39:54.424011Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "ee9b2ccd52f66db55c06de65d0501170a1935d04d64d0a230c0d892284a02ce3",
+              "md5": "90f1c39c58cb6972c057f688ed185ec3",
+              "sha256": "bf1c6c4e954e5eba3d2a7c661ad4b9689e8f09c7f4a16bdf29713371d11af993"
+            }
+          },
+          {
+            "filename": "pyside6_addons-6.11.1-cp310-abi3-win_amd64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-05-13T09:40:13.541328Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "9abd8adc4d350b3b363f3dfc8fccdcf5bfed25f7e36c2fff30c64e106f4f1572",
+              "md5": "8da18d13ab047bb4efa278377625a403",
+              "sha256": "0d13c4dfd671b050a48e4f8d8ddc724b7248f9c0437e7fc47fdf316278572923"
+            }
+          },
+          {
+            "filename": "pyside6_addons-6.11.1-cp310-abi3-win_arm64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-05-13T09:40:21.199912Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "65b79a840d97f0f0f04e372a87e205dd30ee285b4e3b021b188459a917c9dc76",
+              "md5": "29a828833d0d6a75c3801ecbd3d3d4df",
+              "sha256": "3494f480dee92f415be2f2d989c0b3f4755ac332b28045cbf4ba0f5c5a22ba37"
+            }
+          }
+        ],
+        "6.11.2": [
+          {
+            "filename": "pyside6_addons-6.11.2-cp310-abi3-macosx_13_0_universal2.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-08-18T06:35:33.037313Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "e391339fe9f7c94163815004ccd6b5c58b926b2dfb4e51c3b5563d412eab151f",
+              "md5": "ec3d4464018976618162e05f53fce411",
+              "sha256": "354c574a839f7d0751960ba03f33bec87c95e0f2796dca3287f54d03abe97dac"
+            }
+          },
+          {
+            "filename": "pyside6_addons-6.11.2-cp310-abi3-manylinux_2_34_x86_64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-08-18T06:35:45.583609Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "28cdce470e20f68901f4dfa5f742d6a3a58ba865684a232e4b87d5a1a2179cc0",
+              "md5": "d15e6a6daf330bac52a9dc58f2bc7b40",
+              "sha256": "a8b00956925fbdeffc7052cf933506391289f35ac4f3f71a0a167ec195cd47b4"
+            }
+          },
+          {
+            "filename": "pyside6_addons-6.11.2-cp310-abi3-manylinux_2_39_aarch64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-08-18T06:35:56.675209Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "11bdf725a8984703612c72cd17d0871d047132bacaccc13fc0d288a5e8a37dad",
+              "md5": "120d079f88191d1ef8a44fe533f373bf",
+              "sha256": "a2ca3c73e5f060d4aca49451abd9fba68dd0e1c66ff40cea3a1fe0415def579a"
+            }
+          },
+          {
+            "filename": "pyside6_addons-6.11.2-cp310-abi3-win_amd64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-08-18T06:36:07.295071Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "fbc108bf6594101b42fc88834009f1dac59a983c5b6805c62c5081f077d09b4a",
+              "md5": "3762cc53b523c0eb1dc9b718e3886331",
+              "sha256": "f449ea4431da20e7b86752cca8d166f93434516fe417f981c27e5f8e1b554407"
+            }
+          },
+          {
+            "filename": "pyside6_addons-6.11.2-cp310-abi3-win_arm64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-08-18T06:36:12.485841Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "2660e4b7f09343e9f29e565f488fb44c4f1fe260db481ba2c08ad8a1a7d48216",
+              "md5": "0eaf85c97b960da0bac633445861287d",
+              "sha256": "d5606af369484b862b4d5741cfc179e19d2b8819c3e04d210b8188e0c9f85988"
+            }
+          }
+        ],
+        "6.11.3": [
+          {
+            "filename": "pyside6_addons-6.11.3-cp310-abi3-macosx_13_0_universal2.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-10-26T12:49:14.022200Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "0b4c5a1a8e0ad9171da89070a492b0217296203078475fb4c9ba2145f0e44b7f",
+              "md5": "c9f45429a3eb6570ecaf22bd55484f5a",
+              "sha256": "a9af3d2719578f2bb8899098754183d5bee9c8d707b777aac98e10f2e9e55002"
+            }
+          },
+          {
+            "filename": "pyside6_addons-6.11.3-cp310-abi3-manylinux_2_34_x86_64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-10-26T12:49:26.626796Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "00f1d1313576cb6ee71d02d4d5762401f70310319ffe3b2a650b8d3101e4b07f",
+              "md5": "572eb0879e753f281021b551bf6f3226",
+              "sha256": "5cab663fbff1b7a1fa7e641754de3ca1ea410407fc70bd4e240144b42d09a69c"
+            }
+          },
+          {
+            "filename": "pyside6_addons-6.11.3-cp310-abi3-manylinux_2_39_aarch64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-10-26T12:49:39.328170Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "42781432b9c3bf72eb28d4f78a995c5aeecae8fc5ba848af29b5c8d99e91ef34",
+              "md5": "8923acc8cb3af38f9c3a0b4a1cfd8329",
+              "sha256": "6d536493003c5f409ba1bf52d8053e23f9c97f291e2a347a676902bfe0a1a31e"
+            }
+          },
+          {
+            "filename": "pyside6_addons-6.11.3-cp310-abi3-win_amd64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-10-26T12:49:49.514947Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "a646e4985ec7414d5e9892c819b60eb11a4facd2ab9f603bb6651f318d1a4545",
+              "md5": "ede4ef4eafcc24a247614305e3fcdfc6",
+              "sha256": "94a17b92bd9285e4044b11e78c18d4b452c5ed637906dabd383a11836f24f86f"
+            }
+          },
+          {
+            "filename": "pyside6_addons-6.11.3-cp310-abi3-win_arm64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.15,>=3.10",
+            "upload_time_iso_8601": "2026-10-26T12:49:54.833186Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "dd239f6df5e3e7aed09605313e8c02e778a8bc551726a80227b154198d5f1bf6",
+              "md5": "e0fb2f355030cdb8f3bcf2c76a4ea99f",
+              "sha256": "70bc141b13db2a36323bf0288b9e8a6f7e9bb3c3d0faeaa722ea61334f555e01"
+            }
+          }
+        ],
+        "6.12.0": [
+          {
+            "filename": "pyside6_addons-6.12.0-cp310-abi3-macosx_14_0_universal2.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.16,>=3.10",
+            "upload_time_iso_8601": "2026-10-08T09:08:14.778083Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "c316c401d6455dbf49df37a8b142883e12d446abf51919c3e0ef5d9570e29160",
+              "md5": "d581ea69067fa54781d143b4b1b82a5f",
+              "sha256": "1d9bcd294ce1c9829194c7d13b01f771a2254b86cb3462cc3399321d2797fdac"
+            }
+          },
+          {
+            "filename": "pyside6_addons-6.12.0-cp310-abi3-manylinux_2_34_x86_64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.16,>=3.10",
+            "upload_time_iso_8601": "2026-10-08T09:08:21.130007Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "ff3e0d6c5934de575286ac0699a701d4155048185035b8da0ee78d57a38bc7ef",
+              "md5": "55d215ea83ede46b9abfb53ecc432c36",
+              "sha256": "4ab38c0017f0453671a9313d3a53ca1c0e378924f54b07e596bcea94a9642391"
+            }
+          },
+          {
+            "filename": "pyside6_addons-6.12.0-cp310-abi3-manylinux_2_39_aarch64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.16,>=3.10",
+            "upload_time_iso_8601": "2026-10-08T09:08:26.921346Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "9414b6c5683614601448c3ea8f19613ca378db75158ba594b662a8a8041e3e5f",
+              "md5": "322c6a0c872e31b7ebc98a677e3c9270",
+              "sha256": "48cd0b639c06c9f79685f340ccae4319614b66d6efcdf06c2ce3836790d8c46e"
+            }
+          },
+          {
+            "filename": "pyside6_addons-6.12.0-cp310-abi3-win_amd64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.16,>=3.10",
+            "upload_time_iso_8601": "2026-10-08T09:08:31.678674Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "0241ba3d52fe2acd942ebf71eb02b3bdf0897f7f6f4ce8f52289cb50228e48d3",
+              "md5": "99eba7b6ac214cf085ce7cb69cbb6954",
+              "sha256": "98d8d62010da6605344cee83e5c96fb846170a1f2d924523f10f5d92078b02b0"
+            }
+          },
+          {
+            "filename": "pyside6_addons-6.12.0-cp310-abi3-win_arm64.whl",
+            "packagetype": "bdist_wheel",
+            "requires_python": "<3.16,>=3.10",
+            "upload_time_iso_8601": "2026-10-08T09:08:35.424828Z",
+            "yanked": false,
+            "digests": {
+              "blake2b_256": "ea73860ab764368cd59b1a09cb891a9a4519425395ad1f6c47d83fde908fe603",
+              "md5": "a550ee12ec801ce7f40f413b61f693af",
+              "sha256": "3c079cbaad2ad28bc5bfa92fd6bac4ba28d622b825825e3b4220f0682599b2db"
+            }
+          }
+        ],
+        "6.12.1": []
+      }
+    }
+  ]
+}

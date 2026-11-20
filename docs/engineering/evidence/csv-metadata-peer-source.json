@@ -1,0 +1,45 @@
+{
+  "schema": "patchtrace-independent-csv-review/1",
+  "baseline": "1a9f6429e74b7387eb4b8d64ce3675f5b5686aaa",
+  "candidate": "9308cef64592a5a7e7d7fb051cffa68464277c31",
+  "changed_export_functions": [
+    "render"
+  ],
+  "export_function_asts": {
+    "baseline": {
+      "_fail": "4f5c3a169583ae631cb250ef2d7b86b60ba151976d45a5469f42fe9227bce16e",
+      "selected": "0bfec34a90273334bac65f61ab6869854bdfea2d9e6e360a7f11c5715baf84a4",
+      "_lineage": "1c16798479bab5a48955f7bdea99b716e5d43348b9aecae0c20f53bbb4acdb56",
+      "_record": "9fd97dd4bed60cbdfeae49a6e2d5d9c0d41abc47fc516d0d2c4b6c6ff860bb32",
+      "document": "26ad519f5a46be2aa48cef7735e61d44837fbc4716842e00a5e316dceefbcd04",
+      "_cell": "da1c3ceef591ebca6a58d6a41866edab42528c56901a04e1fb146126290052be",
+      "_csv_row": "3879fa229c24ed71587120ab8a768dd63bd0d010afc53aebfa913fab3773b3b6",
+      "render": "c9c63aa1d39b4fc5416fc96160d373baa8b162d9f512ef81806b4bea7ba6a243",
+      "_write_new": "fcec4983177b388945c74d0f8c758d248059e3b3e2d9198906ec3e0e112822ec",
+      "_close_owned": "1920466b570b0986810eb89829f446b98f538346f4b05a33e7d5d3f281234298",
+      "_replace_linux": "038295566ce1d847633f0ee8cf0bdd664238f4c430694d7fe818473d4756ecb3",
+      "write_atomic": "1ef6fd5a73774fccd3c401284073a14f778c2d68e6412abd39b6e15c6b1f1717",
+      "export_delta": "0fb31e3d3bc096ba5b2b5f8cb02c24f5842548de7f850041119d14876ce9c0ea"
+    },
+    "candidate": {
+      "_fail": "4f5c3a169583ae631cb250ef2d7b86b60ba151976d45a5469f42fe9227bce16e",
+      "selected": "0bfec34a90273334bac65f61ab6869854bdfea2d9e6e360a7f11c5715baf84a4",
+      "_lineage": "1c16798479bab5a48955f7bdea99b716e5d43348b9aecae0c20f53bbb4acdb56",
+      "_record": "9fd97dd4bed60cbdfeae49a6e2d5d9c0d41abc47fc516d0d2c4b6c6ff860bb32",
+      "document": "26ad519f5a46be2aa48cef7735e61d44837fbc4716842e00a5e316dceefbcd04",
+      "_cell": "da1c3ceef591ebca6a58d6a41866edab42528c56901a04e1fb146126290052be",
+      "_csv_row": "3879fa229c24ed71587120ab8a768dd63bd0d010afc53aebfa913fab3773b3b6",
+      "render": "0bf911ec77228f4b318fd8e4828fd87dd528f3f1c7a36ea38d9875de2d46f83d",
+      "_write_new": "fcec4983177b388945c74d0f8c758d248059e3b3e2d9198906ec3e0e112822ec",
+      "_close_owned": "1920466b570b0986810eb89829f446b98f538346f4b05a33e7d5d3f281234298",
+      "_replace_linux": "038295566ce1d847633f0ee8cf0bdd664238f4c430694d7fe818473d4756ecb3",
+      "write_atomic": "1ef6fd5a73774fccd3c401284073a14f778c2d68e6412abd39b6e15c6b1f1717",
+      "export_delta": "0fb31e3d3bc096ba5b2b5f8cb02c24f5842548de7f850041119d14876ce9c0ea"
+    }
+  },
+  "owned_publication_byte_identical": true,
+  "notes": [
+    "Only render function changes; added CSV_CONTRACT constant is outside function AST inventory.",
+    "JSON early-return branch is textually unchanged; renderer adds one metadata record before the existing header/rows."
+  ]
+}

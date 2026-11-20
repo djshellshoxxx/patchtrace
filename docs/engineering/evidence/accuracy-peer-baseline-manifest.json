@@ -1,0 +1,27 @@
+{
+  "baseline": {
+    "duration_seconds": 0.59,
+    "failed": 28,
+    "passed": 7
+  },
+  "baseline_commit": "ef6f7a332872910277917a51ce9991bd56f0e298",
+  "command": "PYTHONPATH=. python -m pytest -q -c pyproject.toml docs/engineering/evidence/test_accuracy_peer_controls.py",
+  "files": {
+    "accuracy-peer-baseline.txt": {
+      "bytes": 32428,
+      "sha256": "123909f7a787ae557c8be9f4ac555ebb840d1ab7798c3116b90730c0a754de51"
+    },
+    "test_accuracy_peer_controls.py": {
+      "bytes": 8649,
+      "sha256": "df61591462c9afab7383a392473711ef4cfe008554588529c82bb6336f3299b9"
+    }
+  },
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "production_blobs": {
+    "parity": "15d1e8b39a97d7ed1ae49c5fc639020a030d2c47",
+    "scorerun": "f4d35524b1a466e7a0aca5fe285fa97f1effc512",
+    "scoring": "db4c29f1b0e1264a851cfc08fb0c17aec03bfe35"
+  },
+  "purpose": "Independent authored accuracy report-boundary controls; not empirical accuracy evidence",
+  "python": "3.12.14"
+}

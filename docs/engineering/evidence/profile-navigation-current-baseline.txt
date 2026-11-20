@@ -1,0 +1,144 @@
+FFFFFFFF.                                                                [100%]
+=================================== FAILURES ===================================
+_________ test_cancel_selection_preserves_edit_and_previous_selection __________
+
+panel = <patchtrace.ui.ProfilesPanel(0x2d686110) at 0x7f91644b2ec0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f91649ef3e0>
+
+    def test_cancel_selection_preserves_edit_and_previous_selection(panel, monkeypatch):
+        panel.max_age.setValue(30)
+        asked = answer(monkeypatch, QMessageBox.StandardButton.Cancel)
+        choose(panel, 'beta')
+>       assert asked and 'alpha' in asked[0]
+E       assert ([])
+
+tests/test_ui_profile_navigation.py:44: AssertionError
+_________ test_save_selection_commits_then_moves_to_requested_profile __________
+
+panel = <patchtrace.ui.ProfilesPanel(0x2d66bf40) at 0x7f9164452540>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9166478e60>
+
+    def test_save_selection_commits_then_moves_to_requested_profile(panel, monkeypatch):
+        panel.max_age.setValue(30)
+        asked = answer(monkeypatch, QMessageBox.StandardButton.Save)
+        choose(panel, 'beta')
+>       assert len(asked) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/test_ui_profile_navigation.py:54: AssertionError
+____________ test_save_with_rename_preserves_requested_destination _____________
+
+panel = <patchtrace.ui.ProfilesPanel(0x2d8863b0) at 0x7f9166247c40>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9166478d10>
+
+    def test_save_with_rename_preserves_requested_destination(panel, monkeypatch):
+        panel.name.setText('renamed')
+        panel.max_age.setValue(30)
+        asked = answer(monkeypatch, QMessageBox.StandardButton.Save)
+        choose(panel, 'beta')
+>       assert len(asked) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/test_ui_profile_navigation.py:65: AssertionError
+___________ test_discard_selection_is_explicit_and_keeps_saved_bytes ___________
+
+panel = <patchtrace.ui.ProfilesPanel(0x2da00510) at 0x7f91662474c0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9166479970>
+
+    def test_discard_selection_is_explicit_and_keeps_saved_bytes(panel, monkeypatch):
+        panel.max_age.setValue(30)
+        asked = answer(monkeypatch, QMessageBox.StandardButton.Discard)
+        choose(panel, 'beta')
+>       assert len(asked) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/test_ui_profile_navigation.py:75: AssertionError
+________ test_failed_navigation_save_keeps_draft_and_selection[invalid] ________
+
+panel = <patchtrace.ui.ProfilesPanel(0x2da6ca50) at 0x7f916624d500>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9166479910>
+failure = 'invalid'
+
+    @pytest.mark.parametrize('failure', ['invalid', 'storage'])
+    def test_failed_navigation_save_keeps_draft_and_selection(panel, monkeypatch, failure):
+        panel.max_age.setValue(30)
+        if failure == 'invalid':
+            panel.feature_ids.setText('not a feature ID')
+        else:
+            def fail(*args, **kwargs):
+                raise OSError('authored write failure')
+            monkeypatch.setattr(panel.store, 'save', fail)
+        asked = answer(monkeypatch, QMessageBox.StandardButton.Save)
+        choose(panel, 'beta')
+>       assert len(asked) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/test_ui_profile_navigation.py:91: AssertionError
+________ test_failed_navigation_save_keeps_draft_and_selection[storage] ________
+
+panel = <patchtrace.ui.ProfilesPanel(0x2dad9780) at 0x7f9166235b80>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f916647a090>
+failure = 'storage'
+
+    @pytest.mark.parametrize('failure', ['invalid', 'storage'])
+    def test_failed_navigation_save_keeps_draft_and_selection(panel, monkeypatch, failure):
+        panel.max_age.setValue(30)
+        if failure == 'invalid':
+            panel.feature_ids.setText('not a feature ID')
+        else:
+            def fail(*args, **kwargs):
+                raise OSError('authored write failure')
+            monkeypatch.setattr(panel.store, 'save', fail)
+        asked = answer(monkeypatch, QMessageBox.StandardButton.Save)
+        choose(panel, 'beta')
+>       assert len(asked) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/test_ui_profile_navigation.py:91: AssertionError
+_______ test_cancel_creation_navigation_keeps_current_draft[new_profile] _______
+
+panel = <patchtrace.ui.ProfilesPanel(0x2db45410) at 0x7f9166235200>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f916647be00>
+action = 'new_profile'
+
+    @pytest.mark.parametrize('action', ['new_profile', 'duplicate_profile'])
+    def test_cancel_creation_navigation_keeps_current_draft(panel, monkeypatch, action):
+        panel.max_age.setValue(30)
+        asked = answer(monkeypatch, QMessageBox.StandardButton.Cancel)
+        getattr(panel, action)()
+>       assert len(asked) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/test_ui_profile_navigation.py:103: AssertionError
+____ test_cancel_creation_navigation_keeps_current_draft[duplicate_profile] ____
+
+panel = <patchtrace.ui.ProfilesPanel(0x2dbb1ec0) at 0x7f91662a7900>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9166478da0>
+action = 'duplicate_profile'
+
+    @pytest.mark.parametrize('action', ['new_profile', 'duplicate_profile'])
+    def test_cancel_creation_navigation_keeps_current_draft(panel, monkeypatch, action):
+        panel.max_age.setValue(30)
+        asked = answer(monkeypatch, QMessageBox.StandardButton.Cancel)
+        getattr(panel, action)()
+>       assert len(asked) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/test_ui_profile_navigation.py:103: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_ui_profile_navigation.py::test_cancel_selection_preserves_edit_and_previous_selection
+FAILED tests/test_ui_profile_navigation.py::test_save_selection_commits_then_moves_to_requested_profile
+FAILED tests/test_ui_profile_navigation.py::test_save_with_rename_preserves_requested_destination
+FAILED tests/test_ui_profile_navigation.py::test_discard_selection_is_explicit_and_keeps_saved_bytes
+FAILED tests/test_ui_profile_navigation.py::test_failed_navigation_save_keeps_draft_and_selection[invalid]
+FAILED tests/test_ui_profile_navigation.py::test_failed_navigation_save_keeps_draft_and_selection[storage]
+FAILED tests/test_ui_profile_navigation.py::test_cancel_creation_navigation_keeps_current_draft[new_profile]
+FAILED tests/test_ui_profile_navigation.py::test_cancel_creation_navigation_keeps_current_draft[duplicate_profile]
+8 failed, 1 passed in 2.22s

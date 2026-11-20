@@ -1,0 +1,27 @@
+{
+  "archive_sha256": "2d14e0a6ecba1196dcd742d63de83bbaffed2a7a78ef5a0a9b4e92a0f73d1d28",
+  "duration_seconds": 3.09,
+  "engine_run": {
+    "argv_digest": "f9e98c5b84164a4fdd50b50317fd07d001fd9321da22f7e435ad463e344732c7",
+    "error_code": null,
+    "status": "ok"
+  },
+  "errors": [],
+  "fixture_sha256": {
+    "newer": "629ca756f38eee6d7d128a29b0accb8ea62e927d95f88dbb5ab76423ad55a53a",
+    "older": "aa059bfb56782263010a0da8bf2c42f1995f189ae4ad6abe6d35ed11ca746c5b"
+  },
+  "help_flags": {
+    "-C": true,
+    "-j": true,
+    "-t": true
+  },
+  "kind": "live-rzdiff",
+  "match_count": 322,
+  "mocked": false,
+  "os": "Windows",
+  "output_sha256": "dbc09c00260c6369427f258c803e0084dd4aa70b177eadc84a88019b8f736aac",
+  "pin": "0.9.1",
+  "rizin_version": "0.9.1",
+  "status": "passed"
+}

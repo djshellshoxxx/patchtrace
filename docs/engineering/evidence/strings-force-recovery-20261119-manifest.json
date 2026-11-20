@@ -1,0 +1,60 @@
+{
+  "baseline_commit": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+  "donor_commit": "6096e64d4e7b8f0ecc6af884f7d220e07790d85a",
+  "source_sha256": {
+    "src/patchtrace/strings/export.py": "198cf4a40c3fb85b831f3b6756144629760d5be49809bc2da227d9ff3437b9e9",
+    "src/patchtrace/owned_publication.py": "df3f710602c52023e9991022bda69bb50537a403d4669e16e8a3bfcc19fa7b63",
+    "tests/test_strings_export_force_cancellation.py": "322f21a76d9986e17b5f83676b35838051bea5888efdb894b2ed78f40e5dcf6f",
+    "tests/test_strings_export_force_cleanup.py": "568fe336e188da02b2568903ce87ca454a039ca2effa4d6e196d4b096403b1eb",
+    "tests/test_strings_export_force_ownership.py": "70296cd432ffa06b6075d8facc7ec766b24d9521926c3cba82a5d9f5ecaf128f",
+    "tests/test_owned_publication_replace.py": "5bb23f099cb0973cb0205ca8e4f409360465ebc749c4185a29d977e557b89bc4",
+    "tests/test_owned_publication_integrity.py": "19440dda090e1d8c62488763619cbf38dc0f35cd725858a34ca690d19ef8e858",
+    "docs/specs/program-e/WB3-integration-plan.md": "e597fee5e3113c171ca12a60026eb64ae4899b9cf238695a6236149fb9c1b71a"
+  },
+  "evidence": {
+    "security-force-baseline.log": {
+      "bytes": 53211,
+      "sha256": "585522c97e4d17d3ce186590dcd66d6f0c72a842684e490929ce36c9b4b6a687"
+    },
+    "security-force-baseline.xml": {
+      "bytes": 55433,
+      "sha256": "d0e829067fa1e8ea2284ce6e4cc9be4e32ef95e14460772819c231ca50796c86"
+    },
+    "security-force-focused.log": {
+      "bytes": 110,
+      "sha256": "c8f9de90277a38377385280e3469af34d0175850b8f7bd6ab3065f3987a202cb"
+    },
+    "security-force-focused.xml": {
+      "bytes": 9992,
+      "sha256": "da13b15997b5ff2add70da261ba2c1fc38f9078be37af102c06e02baff05d115"
+    },
+    "security-force-existing.log": {
+      "bytes": 47693,
+      "sha256": "334dc36f21bb79e68ab528489b989c9fbcccd4f529397c6343b077b3e2e0bea0"
+    },
+    "security-force-existing.xml": {
+      "bytes": 51449,
+      "sha256": "d890640b892f620aaf678b4b2967f237d6642cbe7c3d4ea9d7e210301050f060"
+    },
+    "security-force-all.log": {
+      "bytes": 190,
+      "sha256": "0b96a82ccac595568842b67bf647f2f0d39d38063b102dedb905f4c2d7435cff"
+    },
+    "security-force-all.xml": {
+      "bytes": 14332,
+      "sha256": "1ad0d6f4cf274ffaecd0b007fc58f699cfe0f1426b6641206626735c378bbd33"
+    },
+    "security-force-integration.log": {
+      "bytes": 351,
+      "sha256": "e42d104386f3aae23e0a4c9ba00b7eb44b97707338f28595f5ae723a5fb3ece2"
+    },
+    "security-force-integration.xml": {
+      "bytes": 40962,
+      "sha256": "0fcf11b9071cde5486a50e644dcfea1b2155e7ff33019a4794159293c283510d"
+    },
+    "security-force-ruff.log": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    }
+  }
+}

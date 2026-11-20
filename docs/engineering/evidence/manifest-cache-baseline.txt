@@ -1,0 +1,49 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_ test_reopening_version_two_cache_reparses_manifest_and_preserves_legacy_evidence _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-11/test_reopening_version_two_cac0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f5a95a4e7b0>
+
+    def test_reopening_version_two_cache_reparses_manifest_and_preserves_legacy_evidence(tmp_path, monkeypatch):
+        older, newer = tmp_path / 'older.exe', tmp_path / 'newer.exe'
+        older.write_bytes(rsrc_pe(tree({RT_MANIFEST: {1: {LANG_EN_US: (' ' + ENTITY).encode('utf-16-be')}}}))[0])
+        newer.write_bytes(rsrc_pe(tree({RT_MANIFEST: {1: {LANG_EN_US: NORMAL.encode()}}}))[0])
+        root = tmp_path / 'case'
+        service = ProjectService.create(older, newer, 'legacy manifest cache', root)
+        try:
+            result = inspect(service)
+            try:
+                metadata = result.sides['older'].metadata
+                assert metadata.status == 'partial'
+                assert metadata.manifests[0].warnings == ('manifest_dtd_rejected',)
+                # Exact facts returned by the old parser for these authored bytes.
+                # Preserve the actual resource identity and digest, as a genuine v2 row did.
+                legacy_manifest = replace(
+                    metadata.manifests[0], warnings=(),
+                    identity=AssemblyIdentity('AUTHORED_ENTITY_MARKER', None, None, None, None))
+                legacy_metadata = replace(metadata, status='ok', warnings=(), manifests=(legacy_manifest,))
+                digest = result.sides['older'].artifact_sha256
+            finally:
+                result.close()
+            with monkeypatch.context() as legacy:
+                legacy.setattr(cache, 'OVERVIEW_VERSION', 2)
+                legacy.setattr(cache_store, 'OVERVIEW_VERSION', 2)
+                storage = MetadataCacheStore(EnrichmentStore(service.store), service.project.id,
+                                             service.project.revision)
+                assert storage.publish(digest, legacy_metadata)
+            original_rows = [(entry.id, entry.body_sha256) for entry in EnrichmentStore(service.store).entries(KIND)]
+            assert len(original_rows) == 1
+        finally:
+            service.close()
+    
+        service = ProjectService.open(root)
+        try:
+            cached = snapshot_metadata_cache(service)
+>           assert digest not in cached
+E           AssertionError: assert 'db6da1d39a7338a4e5fbf0672590d0b571e6a19c6b740366ccd1d7b8edf91529' not in {'db6da1d39a7338a4e5fbf0672590d0b571e6a19c6b740366ccd1d7b8edf91529': PeMetadata(status='ok', resources=ResourceInvento...ersion=None, arch=None, token=None, type=None), dependencies=(), files=(), warnings=()),), signatures=(), warnings=())}
+
+tests/test_pe_manifest_cache_version.py:64: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_pe_manifest_cache_version.py::test_reopening_version_two_cache_reparses_manifest_and_preserves_legacy_evidence
+1 failed in 0.63s
