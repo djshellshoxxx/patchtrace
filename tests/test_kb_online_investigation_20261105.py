@@ -309,8 +309,16 @@ class _LooksLikeText:
         return 'KB5099001'
 
 
-@pytest.mark.parametrize('lead', [None, 42, b'KB5099001', _LooksLikeText()],
-                         ids=['null-lead', 'integer-lead', 'bytes-lead', 'strip-capable-object'])
+class _OverridingText(str):
+    """A str subclass can replace the normalization operation."""
+
+    def strip(self):
+        return b'KB5099001'
+
+
+@pytest.mark.parametrize('lead', [None, 42, b'KB5099001', _LooksLikeText(), _OverridingText('KB5099001')],
+                         ids=['null-lead', 'integer-lead', 'bytes-lead', 'strip-capable-object',
+                              'overriding-str-subclass'])
 def test_source_plan_refuses_non_text_leads_before_any_io(tmp_path, lead):
     opener = Opener({})
     request = plan_request(tmp_path, lead=lead)
