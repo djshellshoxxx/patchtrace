@@ -2,8 +2,10 @@
 
 Repository: <https://github.com/djshellshoxxx/PatchTrace>.
 
-Start with [generation 17](generation-17-20261120.md) for the held offline
-source admission repair and its limited reproducible controls, then read
+Start with [generation 18](generation-18-20261120.md) for the latest
+post-admission directory substitution regression and its limited controls, then
+[generation 17](generation-17-20261120.md) for the earlier held offline source
+admission repair. Then read
 [generation 16](generation-16-20261120.md) for the preceding read budget and
 rejected-row fix and [generation 15](generation-15-20261120.md) for original
 source selection. These successors remain distinct draft-only candidates.

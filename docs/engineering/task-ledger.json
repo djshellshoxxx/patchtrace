@@ -1,6 +1,6 @@
 {
   "schema": "patchtrace-engineering-task-ledger/1",
-  "updated_at": "2026-11-20T03:11:00Z",
+  "updated_at": "2026-11-20",
   "repository": "https://github.com/djshellshoxxx/PatchTrace",
   "integration_branch": "codex/patchtrace-followup-20261120-4c8d",
   "checkpoint_local_commit": "97ca0adfad5ea4e6cae0648a55529b9165a40b21",
@@ -257,6 +257,14 @@
       "source_commit": "386ae84e7e4c6ea15378de93290b2006a9ac5e71",
       "evidence": "docs/engineering-handoffs/generation-17-20261120.md",
       "result_or_next_action": "Refuses matching nonregular newest records and O_NOFOLLOW final-symlink substitutions where supported; descriptor fstat rejects FIFOs and other nonregular handles. Original 2 failures and repaired 4 controls reproduced only as isolated stdlib mirrors; repository tests/Ruff/CI and independent review still required. Ordinary regular-file substitution, parent-directory races, Linux forced-export publisher remain open."
+    },
+    {
+      "id": "offline-late-directory-substitution",
+      "status": "contract-tests-code-published-in-isolated-branch-hosted-independent-acceptance-pending",
+      "owner": "generation18 successor review and bounded repair",
+      "source_commit": "4d5e7d4ce4f1f9d1e027a4ed5ec5da657abe803a",
+      "evidence": "docs/engineering/held-source-directory-review-20261120.md",
+      "result_or_next_action": "POSIX EISDIR raised before descriptor fstat caused late-directory substitutions to be misclassified PT-KBC-INPUT. Contract-first mapping to PT-KBC-SOURCE; two repository tests added, five stdlib mirror controls pass. Actual whole-source pytest/Ruff, Windows native semantics and independent signoff pending; no regular-source race closure."
     }
   ],
   "aggregate_source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
@@ -290,6 +298,11 @@
       "name": "generation17_held_source_admission",
       "scope": "Contract-first separate branch after draft PR327, held Winbindex record read and matching nonregular-file refusal",
       "status": "source-implemented-isolated-mirror-reviewed-by-author-independent-review-pending"
+    },
+    {
+      "name": "generation18_late_directory_review",
+      "scope": "Independent post-generation17 adversarial inspection; isolated follow-up EISDIR source classification and synthetic FIFO control",
+      "status": "source-committed-stdlib-mirror-verified-hosted-and-external-review-pending"
     }
   ],
   "local_integration_branch": "codex/maximum-completion-20261119-4c8d",
