@@ -653,7 +653,7 @@ class KbService:
         # Preserve older legacy selection until exact predecessor membership is captured.
         target = target_row_membership(pair)
         rows = self.env.file_index(self.root).rows_for(pair.older.basename, '')
-        older_row = row_for(rows, pair.older.sha256, pair.older.basename)
+        older_row = row_for(rows, pair.older.sha256, pair.older.basename, require_unique=True)
         newer_row = row_for(rows, pair.newer.sha256, pair.newer.basename, target=target)
         try:
             plan = build_plan(pair, older_row, newer_row, self.env.acquirer)

@@ -199,3 +199,18 @@ committed, but local GitHub DNS resolution and absent Ruff prevent executing
 checked-out-source pytest/ruff. Exact-head hosted QA, Qt, native, packaging,
 independent review and release acceptance remain pending. The earlier #333,
 #334 and #335 checks qualify only their own sources. No main merge or release.
+
+## Generation-26 older source-body ambiguity safeguard (2026-11-20 UTC)
+
+An isolated draft successor to #336 updates SPEC-31-F before tests/code and
+rejects multiple **distinct** older normalized Winbindex source entries sharing
+one SHA-256 and basename. The original first-match selection could label an
+older BASE as an unrelated KB body or vice versa solely from list order.
+Exact repeated mappings and uniquely identified older rows remain usable.
+Eight repository test cases were authored including a no-network service
+preview; six isolated source-algorithm mirror controls passed, **not**
+checked-out-source pytest. Whole-repository offscreen QA, Ruff, relevant
+schema/dependency checks, independent review and exact-source hosted/native
+qualification remain unverified. Full raw index capture/older membership,
+Linux forced-publish exposure, native Qt disposition, Windows trust, accuracy
+layers and historical consolidation remain blocking. No main merge or release.

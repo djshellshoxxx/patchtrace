@@ -26,7 +26,8 @@
     "Generation21 same-call source gap isolation has isolated published spec/tests/source, but no source-pinned repository pytest, Ruff or independent reviewer acceptance yet; PR330 Linux/Windows full QA each failed four inherited assertions under the expanded skipped_bodies contract.",
     "Generation22 original BASE missing/nonobject metadata was counted as a successful undated row; source-level tests authored but no clone-backed pytest/Ruff available in this runtime. The eight local algorithm mirror controls do not qualify this candidate.",
     "Generation23 local primitive reproduced a FIFO block using an isolated child (killed cleanly); O_NONBLOCK and descriptor fstat primitive then refused nonregular input. These are stdlib controls, not actual repository pytest. On hosts lacking O_NONBLOCK, no pre-open FIFO guarantee is claimed.",
-    "Generation25 adds a narrowly anchored newer source KB/version selection; the normalized acquisition evidence is still not complete raw index or original older predecessor membership. Exact-source hosted and independent acceptance remain pending."
+    "Generation25 adds a narrowly anchored newer source KB/version selection; the normalized acquisition evidence is still not complete raw index or original older predecessor membership. Exact-source hosted and independent acceptance remain pending.",
+    "Generation26 older Winbindex row ambiguity: distinct normalized source entries with same SHA/basename must fail before plan/network. Preserved reproduction and six isolated mirror checks; actual source tests/Ruff and independent signoff pending. No completeness or empirical accuracy claim."
   ],
   "tasks": [
     {
@@ -222,7 +223,7 @@
       "owner": "next independently reviewed acquisition scope",
       "source_commit": null,
       "evidence": "docs/specs/kb-cve/31-F-workflow-ui-persistence.md",
-      "result_or_next_action": "Capture bounded original entry or whole-index bytes and explicit resolver input membership without fabricating historical provenance or reusing the advisory-only importer."
+      "result_or_next_action": "Capture bounded original entry or whole-index bytes and explicit resolver input membership without fabricating historical provenance or reusing the advisory-only importer. Generation26 conservatively refuses ambiguous older matching bodies but does not reconstruct predecessor membership, raw entry or full index."
     },
     {
       "id": "unix-socket-local-acceptance",
@@ -350,6 +351,15 @@
       "evidence": "docs/engineering-handoffs/generation-25-20261120.md",
       "review_status": "coordinator adversarial inspection; not independent reviewer signoff",
       "result_or_next_action": "Prior SHA-only first row selected BASE for a KB-targeted newer build. SPEC-31-F updated before eight repository test functions and runtime, newer target now parses exact index window, prefers own body, accepts only explicit other_versions copies, refuses missing selected source before network. 15 isolated algorithm controls passed, not checked-out-source pytest. Run exact-source hosted QA/Ruff/Qt/native/package and independent review. Older predecessor/source membership and complete raw index retention remain open."
+    },
+    {
+      "id": "older-source-ambiguity-g26",
+      "status": "implemented-draft-source-qualification-pending",
+      "owner": "generation-26 isolated acquisition continuation",
+      "source_commit": "dc32a7cc81c92fc8a31d295838da34695ba5f82f",
+      "evidence": "docs/engineering-handoffs/generation-26-20261120.md",
+      "result_or_next_action": "Contract-first guard refuses distinct older normalized entries matching one SHA/basename before acquisition preview planning or any network. Eight authored repository test cases (including integration no-fetch); isolated algorithm copy 6 passed. Full checked-out-source pytest/Ruff, exact-head hosted QA/Qt/native/package, and genuinely independent reviewer acceptance outstanding. Not raw input retention or exact predecessor reconstruction.",
+      "review_status": "coordinator-adversarial-not-independent"
     }
   ],
   "aggregate_source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
