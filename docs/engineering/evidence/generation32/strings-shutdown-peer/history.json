@@ -1,0 +1,50 @@
+[
+  {
+    "commit": "9997aaa912d484c63c35582f8de547735f6ac0bb",
+    "blob": "bb993410e248a2bce359bd93f23ddc2c33fc73eb",
+    "source_sha256": "134f17a90e0310606b29a29440d727775f2153a6debca4ff0beb30b0f77f55db",
+    "method": "def _refilter(self) -> None:\n        if self.closed:\n            return\n        loaded = self.loaded\n        if loaded is None:\n            return self._render()\n        generation, key, flt, rows = self.generation, self.key, self.current_filter(), loaded.rows\n        self.tasks.submit('strings-view', lambda token, _report: prepare_rows(rows, flt, token),\n                          lambda result: self._viewed(generation, key, result),\n                          lambda failure: self._failed(generation, failure))"
+  },
+  {
+    "commit": "1341dc217b32081b3a9652642106d8680deba8a3",
+    "blob": "500f0a30ba775ef4b18b1eca8d2408581cab3f57",
+    "source_sha256": "82d20821f54136aee11c81c8330b44c56249ab8eda63878a01d450374652ab4d",
+    "method": "def _refilter(self) -> None:\n        loaded = self.loaded\n        if loaded is None:\n            return self._render()\n        generation, key, flt, rows = self.generation, self.key, self.current_filter(), loaded.rows\n        self.tasks.submit('strings-view', lambda token, _report: prepare_rows(rows, flt, token),\n                          lambda result: self._viewed(generation, key, result),\n                          lambda failure: self._failed(generation, failure))"
+  },
+  {
+    "commit": "2042e24dc7f3eac265e0eb183c738527852b22cf",
+    "blob": "9e47c309c13eaa16670af69dec2e7a55e97d929c",
+    "source_sha256": "6a61576067cb79891f048b961be22b7f304c47b1fdb74ef48dc0a1cb0a17c937",
+    "method": "def _refilter(self) -> None:\n        loaded = self.loaded\n        if loaded is None:\n            return self._render()\n        generation, key, flt, rows = self.generation, self.key, self.current_filter(), loaded.rows\n        self.tasks.submit('strings-view', lambda token, _report: prepare_rows(rows, flt, token),\n                          lambda result: self._viewed(generation, key, result),\n                          lambda failure: self._failed(generation, failure))"
+  },
+  {
+    "commit": "087f50aae76f815dc013fb65e304eef8e21596c1",
+    "blob": "93158287e9cbcdf5bb93a72e6943fa44ebabcfaf",
+    "source_sha256": "d878af5d1f2a287625ed580f46a38e68322a0a0c2f55e912af30528cf66ad11e",
+    "method": "def _refilter(self) -> None:\n        loaded = self.loaded\n        if loaded is None:\n            return self._render()\n        generation, key, flt, rows = self.generation, self.key, self.current_filter(), loaded.rows\n        self.tasks.submit('strings-view', lambda token, _report: prepare_rows(rows, flt, token),\n                          lambda result: self._viewed(generation, key, result),\n                          lambda failure: self._failed(generation, failure))"
+  },
+  {
+    "commit": "6ad9ba7cbe9f86b2ddda58e1d59c583a21322fe8",
+    "blob": "ef1dd7f5637ad5c21366bbbb4f6228f9120c714f",
+    "source_sha256": "05a48b31784113b8d06c4db92d0b331574d2915da8b6ef007595542252e99bac",
+    "method": "def _refilter(self) -> None:\n        loaded = self.loaded\n        if loaded is None:\n            return self._render()\n        generation, key, flt, rows = self.generation, self.key, self.current_filter(), loaded.rows\n        self.tasks.submit('strings-view', lambda token, _report: prepare_rows(rows, flt, token),\n                          lambda result: self._viewed(generation, key, result),\n                          lambda failure: self._failed(generation, failure))"
+  },
+  {
+    "commit": "150d9b9618b4f621ce31101c64502fb555734d46",
+    "blob": "ac5fa8698967b83932485d1f6982133d08418988",
+    "source_sha256": "0efa2b8765beb7a144c7a07fcac05195e50fc940341ebfb67a06bf91c6916772",
+    "method": "def _refilter(self) -> None:\n        loaded = self.loaded\n        if loaded is None:\n            return self._render()\n        generation, key, flt, rows = self.generation, self.key, self.current_filter(), loaded.rows\n        self.tasks.submit('strings-view', lambda token, _report: prepare_rows(rows, flt, token),\n                          lambda result: self._viewed(generation, key, result),\n                          lambda failure: self._failed(generation, failure))"
+  },
+  {
+    "commit": "c00bc82aab2229fd6c37e8b16441fce16010e9d8",
+    "blob": "2dd795690813cab99fcffb92ea742bd993137a30",
+    "source_sha256": "576ae0bf2c9d04b25ba2755ebd5c62d80fc300f0645cea8fa7dba5b12247692f",
+    "method": "def _refilter(self) -> None:\n        loaded = self.loaded\n        if loaded is None:\n            return self._render()\n        generation, key, flt, rows = self.generation, self.key, self.current_filter(), loaded.rows\n        self.tasks.submit('strings-view', lambda token, _report: prepare_rows(rows, flt, token),\n                          lambda result: self._viewed(generation, key, result),\n                          lambda failure: self._failed(generation, failure))"
+  },
+  {
+    "commit": "fc2c86d9c76f02449f517a52677709ec002c226d",
+    "blob": "13922786ef946b5e4613348462dd3d5a62b591e6",
+    "source_sha256": "c802163765bd1a765ce7416d956fa8da7ed299226e8aba2065afbef26457c5ba",
+    "method": "def _refilter(self) -> None:\n        loaded = self.loaded\n        if loaded is None:\n            return self._render()\n        generation, key, flt, rows = self.generation, self.key, self.current_filter(), loaded.rows\n        self.tasks.submit('strings-view', lambda token, _report: prepare_rows(rows, flt, token),\n                          lambda result: self._viewed(generation, key, result),\n                          lambda failure: self._failed(generation, failure))"
+  }
+]

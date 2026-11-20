@@ -398,6 +398,8 @@ class StringsController(ControllerBase):
         self._render()
 
     def _refilter(self) -> None:
+        if self.closed:
+            return
         loaded = self.loaded
         if loaded is None:
             return self._render()

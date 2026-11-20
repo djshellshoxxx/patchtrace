@@ -1,0 +1,147 @@
+{
+  "contract": "independent-harness-review/1",
+  "observed_utc": "2026-11-20T17:00:03.265967+00:00",
+  "reviewer": "/root/ci_qualification",
+  "source": {
+    "commit": "8cff43a2fc78c2e150fbdbabc14a977c473811a4",
+    "tree": "824f444e89894aee7e951e2708fb2f53b64e9c62",
+    "base": "71b535cc5c1ca0ccc6762831a5d8a137644d14fc",
+    "worktree": "/workspace/scratch/b1d1356aa953/patchtrace-cache-review",
+    "clean_before_and_after_tests": true,
+    "frozen_changed_files": {
+      ".github/workflows/live-backend.yml": {
+        "sha256": "8d336907940cbfaabf0288b975165f46927e35a05e502b8937eea8e5d06a626f",
+        "bytes": 4628
+      },
+      "docs/engineering/evidence/live-cache-diagnostics-20261120/affected-green.log": {
+        "sha256": "29fca466123374d933edba193535ac7dc2802793c7e038b4c01b6a0fec465f7b",
+        "bytes": 199
+      },
+      "docs/engineering/evidence/live-cache-diagnostics-20261120/baseline.log": {
+        "sha256": "4725251c688d4d4f76c86da2ef156578d00053363bf77bceae33490d6a53f5e9",
+        "bytes": 1586
+      },
+      "docs/engineering/evidence/live-cache-diagnostics-20261120/receipt.json": {
+        "sha256": "09d0c55e12d9e1a9c157129997987e4885d00535bb556b9b5c8dd1f7c7c1bae4",
+        "bytes": 1469
+      },
+      "docs/engineering/live-cache-diagnostics-20261120.md": {
+        "sha256": "6614073ea6f44a64cd7ba072838d72ca2fd93f962b26a415bc2890fbde915229",
+        "bytes": 3626
+      },
+      "docs/modules.md": {
+        "sha256": "9b7839958d26a2716c47b095382fd4135b84c119118b2d42d1c46f45945e424e",
+        "bytes": 358052
+      },
+      "docs/specs/enrichment.md": {
+        "sha256": "6a9532a138fcc610666c8746f22c81a3393726d1707fc7cbcab84092a0f95501",
+        "bytes": 31289
+      },
+      "tests/test_live_cache_diagnostics.py": {
+        "sha256": "57ac385fa8fa69ffa7d86a39c8699b14a90c4fce8674dd7799a0406d730c333e",
+        "bytes": 12656
+      },
+      "tools/live_cache_check.py": {
+        "sha256": "ca6b7a8e7eac91815575948036a959a88068313f869e60711a0fd8c4446c2f25",
+        "bytes": 7550
+      }
+    }
+  },
+  "decision": "no blocker found within the reviewed diagnostics-only scope",
+  "test_receipt": {
+    "started_utc": "2026-11-20T16:58:46.452695+00:00",
+    "finished_utc": "2026-11-20T16:58:49.851751+00:00",
+    "command": [
+      "/workspace/scratch/b1d1356aa953/patchtrace-venv/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "/workspace/scratch/b1d1356aa953/patchtrace-cache-review-evidence/test_independent_cache_diagnostics.py",
+      "tests/test_live_cache_diagnostics.py",
+      "tests/test_backend_java_version.py",
+      "tests/test_backend_progress.py",
+      "tests/test_workflows.py",
+      "--junitxml=/workspace/scratch/b1d1356aa953/patchtrace-cache-review-evidence/review-tests.xml"
+    ],
+    "cwd": "/workspace/scratch/b1d1356aa953/patchtrace-cache-review",
+    "PYTHONPATH": "/workspace/scratch/b1d1356aa953/patchtrace-cache-review/src",
+    "QT_QPA_PLATFORM": "offscreen",
+    "returncode": 0,
+    "elapsed_seconds": 3.399070961000689,
+    "source_commit": "8cff43a2fc78c2e150fbdbabc14a977c473811a4",
+    "source_tree": "824f444e89894aee7e951e2708fb2f53b64e9c62"
+  },
+  "tests_by_classname": {
+    "": 48,
+    "tests.test_live_cache_diagnostics": 11,
+    "tests.test_backend_java_version": 6,
+    "tests.test_backend_progress": 51,
+    "tests.test_workflows": 45
+  },
+  "quality_checks": [
+    {
+      "command": [
+        "/workspace/scratch/b1d1356aa953/patchtrace-venv/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "tools/live_cache_check.py",
+        "tests/test_live_cache_diagnostics.py"
+      ],
+      "returncode": 0,
+      "output": "All checks passed!\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "71b535cc5c1ca0ccc6762831a5d8a137644d14fc",
+        "8cff43a2fc78c2e150fbdbabc14a977c473811a4"
+      ],
+      "returncode": 0,
+      "output": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--exit-code",
+        "71b535cc5c1ca0ccc6762831a5d8a137644d14fc",
+        "8cff43a2fc78c2e150fbdbabc14a977c473811a4",
+        "--",
+        "src"
+      ],
+      "returncode": 0,
+      "output": ""
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "returncode": 0,
+      "output": ""
+    }
+  ],
+  "unchanged_production_blob_ids": {
+    "src/patchtrace/backend.py": "001a08b43c78537bf48b2b76d858f92d54e30d54",
+    "src/patchtrace/jobs.py": "8f559f1b7846019a2eba96408c579a304648ab44",
+    "src/patchtrace/enrichment/cache.py": "fd8ae260a9a9e40b61db84d2d2940ea0576a68e4"
+  },
+  "findings": [],
+  "limits": [
+    "Fake-based harness review; no native analyzer or target binary execution.",
+    "Not a live Java-cache acceptance pass and not a diagnosis or repair of the earlier native java=unverified failure.",
+    "CI results for initial published 5cc3f2a do not qualify this frozen source or a later integrated source.",
+    "No remote mutation, job trigger, retry, merge, or root/author worktree edit occurred."
+  ],
+  "prior_failure": {
+    "run_url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44770501981",
+    "job_url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44770501981/job/136406567877",
+    "source_commit": "5cc3f2a540f2e49e8b86e20decf7d4f62ce89d0a",
+    "assertion": "second run was not a cache hit; java=unverified",
+    "cause": "unresolved; diagnostics absent from that attempt"
+  }
+}

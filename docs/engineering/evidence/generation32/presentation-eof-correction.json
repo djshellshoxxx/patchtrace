@@ -1,0 +1,43 @@
+{
+  "schema": "patchtrace-evidence-presentation-correction/1",
+  "original_complete_range_check_returncode": 2,
+  "originals_archive": "presentation-eof-originals.zip",
+  "archive_sha256": "9cadaeca085979af85ffe63dade3f27708212509c8b32ef4d432c66098119fc5",
+  "all_original_payloads_preserved": true,
+  "semantic_json_changes": false,
+  "rows": [
+    {
+      "path": "docs/engineering/ci-observation-generation30-20261120.md",
+      "original_sha256": "a2ad7104be09640288c0854cb94a10bf4b5d4e852fa6897d0deca55bcbca83ce",
+      "original_bytes": 3115,
+      "presentation_sha256": "57b98d30902ad4cec93292436b85337dfc48d41e6344f67cbf8a4f24271e22b9",
+      "presentation_bytes": 3114,
+      "change": "remove extra terminal LF only; original bytes retained in archive"
+    },
+    {
+      "path": "docs/engineering/evidence/generation30/patchtrace-ci-current.json",
+      "original_sha256": "b94d8ec8ed3e52b6d6c1585c39b6c0ca53c8d64da5d551ac711722940201a2d5",
+      "original_bytes": 26434,
+      "presentation_sha256": "d0dea252960b91ed14fe2c4cddf061c27dafad467c6012dca0a5238867fedbf9",
+      "presentation_bytes": 26433,
+      "change": "remove extra terminal LF only; original bytes retained in archive"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/patchtrace-ci-pr342-20261120-1614.json",
+      "original_sha256": "86a158e044288741fe3a5e68f482a1eae56c5a857d9303b9b37f66f38216d587",
+      "original_bytes": 49121,
+      "presentation_sha256": "c3e8862d8c7824e92e0cd194452870eb8f4d2f304a9bec90023f3168677ceb6e",
+      "presentation_bytes": 49120,
+      "change": "remove extra terminal LF only; original bytes retained in archive"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/patchtrace-ci-pr342-20261120-1614.md",
+      "original_sha256": "436cea6a0a752cf9e09138901d5aa59768fc488f6097b3e28e32c109ed0cdf17",
+      "original_bytes": 3955,
+      "presentation_sha256": "5aec8140e8dc3f98111ecbed072ec7cf1bc4984e24ce4d7dda745dc487ec6060",
+      "presentation_bytes": 3954,
+      "change": "remove extra terminal LF only; original bytes retained in archive"
+    }
+  ],
+  "historic_receipt_scope": "Earlier source-pinned manifests continue to refer to their original captured bytes; use the retained source or this archive. Current presentation copies and manifests record the new hashes explicitly."
+}

@@ -2,6 +2,7 @@
 
 | Module | Responsibility | Verification seam |
 |---|---|---|
+| `tools/live_cache_check.py` | Native cache acceptance with an explicit, create-only diagnostic directory; bounded first/second-run and existing Java-probe observations survive temporary-project cleanup without changing acceptance or execution | `test_live_cache_diagnostics.py`; injected projects/processes only, native cache acceptance remains separate |
 | `intelligence/tools/admission.py` | Opt-in owner-thread admission of current stored tool rows, evidence and cache origins; used by the Strings CLI without changing legacy ToolStore readers or running tools | `test_intel_tools_admission.py`, `test_strings_stored_source_admission.py`; synthetic projects and authored producer only |
 | `tools/branch_inventory.py` | Read-only full-history branch ancestry, patch evidence and exact-tip inventory replay; no ref mutation or deletion authorization | Real authored Git graphs and atomic report preservation in `tests/test_branch_inventory.py` |
 | `tools/research_qualification/receipt.py:git_head` | Bounded SHA-1 source observation for ordinary and linked checkouts, including gitfiles and common/private refs; no Git subprocess or clean-source attestation | `test_research_qualification_git_identity.py`, existing receipt/CLI callers, and independent real Git-layout controls |

@@ -368,3 +368,52 @@ observation because the copied observation is not selected by the resolver.
 This does not authenticate source bodies, preserve original raw Winbindex
 entries or reconstruct predecessor membership. Do not infer an exact source
 from matching binary hashes alone.
+
+
+### Local acquisition project-path preflight (generation 30, 2026-11-20)
+
+The consented `kb acquire --project` destination must not be a final-component
+symbolic link, including a dangling link or a link to an otherwise empty
+regular directory. Refuse it as `PT-KBC-INPUT` before the acquisition port
+stages/downloads any bytes. Preserve support for an absent destination or an
+actual empty directory, and continue refusing an existing non-directory or
+nonempty directory. This is a preflight guard only: it does not anchor parent
+components, prevent a concurrent destination substitution after inspection,
+or close the separately recorded Linux forced-export source replacement race.
+
+
+### Recheck acquisition destination after staging (generation 31, 2026-11-20)
+
+The destination admission before `AcquirePort.stage` cannot be assumed to remain
+valid while a consented download is in progress. After staging both files and
+verifying their hashes, and immediately before invoking the project-import
+callback, reapply the same project-directory admission rule. A live or dangling
+final-component symbolic link introduced during staging must return
+`PT-KBC-INPUT`; the import callback must not run, and the staged files must be
+discarded by the existing `finally` cleanup. Existing absent or genuinely empty
+directories continue to work. The initial preflight remains required to avoid
+network activity against a destination already known to be invalid.
+
+This is a second observation, **not** an atomic creation/descriptor-bound
+publication guarantee: parent-directory swaps and substitutions after this
+recheck remain possible. It does not resolve the separate Linux forced-source
+replacement visibility interval.
+
+
+### Final-component Windows junction preflight (generation 32, 2026-11-20)
+
+The local acquisition project destination must also refuse a final-component
+Windows NTFS junction, even when the junction resolves to an empty directory.
+Python 3.12+ exposes this distinct alias through `Path.is_junction()`;
+`Path.is_symlink()` alone does not establish the required junction refusal.
+Apply the same `PT-KBC-INPUT` rule on **both** existing destination admission
+observations (before staging and after staging, before project import). Preserve
+support for absent and genuinely empty directories. No download or project
+import should occur when the first check observes a junction.
+
+This is explicitly a final-component alias check. It does not claim to defend
+against parent junctions, substitution after either inspection, same-user
+adversarial writers, or the separate Linux forced Strings export-source race.
+A native Windows junction integration regression remains necessary for Windows
+acceptance; a portable predicate-injection test only verifies that the guard
+consults the distinct junction API.

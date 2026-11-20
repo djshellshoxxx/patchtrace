@@ -1,0 +1,47 @@
+{
+  "contract": "review-evidence-manifest/1",
+  "reviewed_commit": "8cff43a2fc78c2e150fbdbabc14a977c473811a4",
+  "reviewed_tree": "824f444e89894aee7e951e2708fb2f53b64e9c62",
+  "files": [
+    {
+      "path": "review.md",
+      "bytes": 7019,
+      "sha256": "163884e80485bf6d1c8c4c9e9606aea091c8d83890b2a17a785ab62b94ef0d60"
+    },
+    {
+      "path": "review.json",
+      "bytes": 5456,
+      "sha256": "caf3634738411e3ed90102a85719324f913251c1cb71da32c1f3527975bc0d38"
+    },
+    {
+      "path": "review-tests-receipt.json",
+      "bytes": 958,
+      "sha256": "ef5add760826eaecb985a956a24d1c60be4dd7823fd04c14809fcfc602fc9ac7"
+    },
+    {
+      "path": "review-tests.log",
+      "bytes": 260,
+      "sha256": "dde23ceb25766e1575264feed7576945ee9e8eeca79bf7ced23e37fe07e7a20b"
+    },
+    {
+      "path": "review-tests.xml",
+      "bytes": 21840,
+      "sha256": "340f51e00d2a02c8a6de7105e350f116a208db457cc97c2996f8256fc2ba2b8e"
+    },
+    {
+      "path": "test_independent_cache_diagnostics.py",
+      "bytes": 16196,
+      "sha256": "b07880b82d245116160c12f742007c0b5275d0f4944a217341f7983012f1bf29"
+    },
+    {
+      "path": "baseline-live-cache-check.py",
+      "bytes": 1966,
+      "sha256": "23571e9852c409bffa38dc1e598ab410c5e1bb04909a90516e23c2944c1ac3af"
+    },
+    {
+      "path": "baseline-live-backend.yml",
+      "bytes": 4545,
+      "sha256": "98ba11cedc7b7819881530285a9a16434fd43c8777a771aebe669debd98125bd"
+    }
+  ]
+}

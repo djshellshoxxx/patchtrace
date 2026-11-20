@@ -11,6 +11,8 @@ import threading
 from pathlib import Path
 from types import SimpleNamespace
 
+import pytest
+from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QApplication
 from qt_support import a11y_audit, join_gui_threads, top_level_windows  # noqa: F401
 from test_strings_view_model import change, delta
@@ -339,6 +341,39 @@ def test_shutdown_cancels_the_running_work_and_is_idempotent(qtbot):
     assert controller.loaded is None
     controller.scan()  # a closed panel starts nothing
     assert not controller.tasks.busy()
+
+
+@pytest.mark.parametrize('close_shared_runner', [False, True])
+def test_shutdown_refuses_queued_filter_work(qtbot, monkeypatch, close_shared_runner):
+    controller, _, shell, _ = start(qtbot)
+    before = table_texts(controller)
+    submitted = []
+    submit = shell.tasks.submit
+
+    def record_submit(channel, *args, **kwargs):
+        submitted.append(channel)
+        return submit(channel, *args, **kwargs)
+
+    monkeypatch.setattr(shell.tasks, 'submit', record_submit)
+    delivered = threading.Event()
+
+    def queued_filter_change():
+        panel = controller.panel
+        panel.change.setCurrentIndex(panel.change.findData('only-older'))
+        delivered.set()
+
+    QTimer.singleShot(0, queued_filter_change)
+    controller.shutdown()
+    if close_shared_runner:
+        shell.tasks.shutdown()
+    try:
+        with qtbot.captureExceptions() as errors:
+            qtbot.waitUntil(delivered.is_set)
+        assert submitted == [], 'a closed panel submitted new filter work'
+        assert errors == [], 'a queued filter touched the closed task runner'
+        assert controller.loaded is SAMPLE and table_texts(controller) == before
+    finally:
+        shell.tasks.shutdown()
 
 
 # ---- navigation --------------------------------------------------------------------------------------------------

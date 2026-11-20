@@ -1,5 +1,20 @@
 # Release readiness after the multi-generation integration
 
+## Final reviewed checkpoint — generation33
+
+Source `bbdef5a6` passed **606 affected tests with one native Windows skip**. Whole-tree Ruff, dependency validation, complete-range whitespace and independent source-scope checks pass. Five product repair areas and the CI diagnostic-retention fix are reviewed. The original native `java=unverified` cache failure and earlier unexplained full-suite SIGKILL remain unresolved; final-head hosted/native/package and standing release gates remain required. [Final qualification](generation33-qualification-20261120.md).
+
+
+## Latest five-area checkpoint
+
+Source `71b535cc` passed **493 affected cases with one native Windows skip**, whole-tree Ruff and complete-range whitespace. Initial remote `5cc3f2a` has an unresolved native cache gate failure (`java=unverified`); diagnostic retention is under independent review. Full/current-native/package and existing release blockers remain open. [Details](generation33-qualification-20261120.md).
+
+
+## Current generation 33 checkpoint
+
+**Blocked: draft PR342 remains an engineering candidate.** Reviewed source `ad891694` has 397 affected passes, whole-tree Ruff and dependency validation. Earlier local full-suite `a024f9ec` ended SIGKILL with unestablished cause; the two-case diagnostic does not convert it into a pass. Final-source hosted/native/package gates remain required, as do the forced-export, native Qt, full raw-input membership, Windows trust/manual and accuracy gates. See the [current handoff](../engineering-handoffs/generation-33-20261120.md) and [qualification evidence](generation33-qualification-20261120.md). All later sections below preserve historical source-specific observations.
+
+
 ## Current generation 30–31 checkpoint
 
 The [current handoff](../engineering-handoffs/generation-30-31-20261120.md) records independently reviewed receipt identity, Search cancellation and stored Strings source-admission repairs. These are bounded candidate improvements, not release qualification. Combined/current-head hosted gates and the existing forced-export, native Qt, raw-input membership, Windows/trust/manual and accuracy blockers remain open. The [official Qt refresh](qt-disposition-refresh-20261120.md) found no verified 6.12.1-family wheel update. Earlier results below remain historical and source-specific.

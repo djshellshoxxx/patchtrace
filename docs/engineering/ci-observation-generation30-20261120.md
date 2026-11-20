@@ -30,4 +30,3 @@ The QA workflow is byte-identical on main and generation 29: Git blob `4f40db058
 Inspect the current run's final QA/Qt and downstream Linux package/smoke results after completion. If a current candidate repeats the mirror failure, retain its source-specific logs before considering a narrow package-download resilience repair. Keep the original failed gate in history. Do not report an old passing pytest step or a skipped smoke step as whole-workflow acceptance.
 
 The source snapshots and exact job/step statuses are in `patchtrace-ci-current.json`; the original decoded package log is `patchtrace-main-package.log`. No jobs were triggered, rerun or cancelled. No repository code or remote state changed.
-

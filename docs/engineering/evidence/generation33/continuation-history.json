@@ -1,0 +1,25 @@
+{
+  "schema": "patchtrace-continuation-history/1",
+  "local_tip": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
+  "local_tree": "a8ef4316a88ab58619d966744e26b0067d66ff33",
+  "local_commit_count_since_g29": 13,
+  "bundles": [
+    {
+      "path": "local-continuation-history.bundle",
+      "tip": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
+      "prerequisite": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+      "bytes": 2106173,
+      "sha256": "4d52a5bad44c301a4a6d3dbeea47fa4a62dfefceefe1acda33f37f51cd5fc66f",
+      "git_bundle_verify": "pass"
+    },
+    {
+      "path": "cache-diagnostics-worker.bundle",
+      "tip": "8cff43a2fc78c2e150fbdbabc14a977c473811a4",
+      "prerequisite": "71b535cc5c1ca0ccc6762831a5d8a137644d14fc",
+      "bytes": 12161,
+      "sha256": "9bc1151fa0676019c4e7d353641384c57694f0e8bd66ba675401c76340302375",
+      "git_bundle_verify": "pass"
+    }
+  ],
+  "prerequisite_resolution": "The local continuation bundle includes71b535cc, satisfying the cache-worker bundle prerequisite. Existing remoteg29 is sufficient to reconstruct both."
+}

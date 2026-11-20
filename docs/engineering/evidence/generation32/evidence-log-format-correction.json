@@ -1,0 +1,12 @@
+{
+  "schema": "patchtrace-evidence-format-correction/1",
+  "source_worker_commit": "9997aaa912d484c63c35582f8de547735f6ac0bb",
+  "original_complete_range_check_returncode": 2,
+  "original_check_log": "original-worker-diff-check.log.gz",
+  "original_check_log_uncompressed_sha256": "99be7d6519725174409f06ada2f2687e8057a7606764afa4f9241fa62d8a5b09",
+  "raw_baseline_sha256": "138912449de8dd57c7178a43292e63608259fec4868de589ae40f30bbf2b3a8c",
+  "compressed_baseline_sha256": "54b6697149226acaede71fd405910f4bb4e15fab0ef580e292802c89b7f96e9f",
+  "decompression_byte_equal": true,
+  "source_test_or_assertion_changed": false,
+  "reason": "Ten trailing-whitespace lines in raw baseline failure evidence; preserve exact bytes as gzip, correct the unqualified whitespace-pass claim."
+}

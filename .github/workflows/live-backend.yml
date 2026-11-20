@@ -70,7 +70,7 @@ jobs:
         run: Remove-Item tests\fixtures\old.pdb, tests\fixtures\new.pdb
       - name: Native raw-output cache hit is byte-identical
         if: matrix.variant == 'raw-cache-hit'
-        run: python tools/live_cache_check.py
+        run: python tools/live_cache_check.py --diagnostics-dir live-cache-diagnostics
       - name: PatchTrace offline analysis succeeds despite persisted symbol store
         if: matrix.variant != 'repro-plain-ghidriff' && matrix.variant != 'raw-cache-hit'
         run: python tools/live_backend_check.py
@@ -82,3 +82,4 @@ jobs:
           path: |
             live-project/runs/
             live-project/project.sqlite3
+            live-cache-diagnostics/*.json

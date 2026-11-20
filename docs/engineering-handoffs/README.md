@@ -1,3 +1,9 @@
+# PatchTrace engineering handoffs
+
+Start with [generation 33](generation-33-20261120.md): five reviewed repair areas, including Strings shutdown and recovered acquisition destination guards; 606 combined affected passes with one native Windows skip, plus independently reviewed native-cache diagnostic retention; and preserved incomplete full-suite/diagnostic evidence. Delivery remains draft PR342. Current full hosted/native and release gates remain open. Refresh live refs, worker ownership and CI before resuming.
+
+## Historical checkpoints
+
 Start with [generations 30–31](generation-30-31-20261120.md): refreshed complete reference census, recovered worktree-aware receipt identity, repaired Search cancellation, and recovered current-artifact/cache-origin admission for stored Strings sources. All three scopes have meaningful red/green evidence and fresh independent review. Combined and current-head hosted qualification remain separate; main and release status are unchanged. Later receipts in that handoff supersede only their stated source-specific observations.
 
 Historical [generation 29](generation-29-20261120.md) records two **confirmed** PR339 hosted Ruff I001 failures in intentional pytest fixture self-alias import blocks. PR339 full Linux/Windows pytest and five Qt jobs passed their separate steps, but strict Ruff failed and the combined QA workflow is **failed**. Its successor split only the imports as Ruff recommended. Do not convert that original combined failure into a pass.
@@ -29,7 +35,6 @@ body to a KB-target pair. Spec and regression tests precede the narrow repair;
 CI and independent review remain pending. Full raw index/older predecessor
 membership, Linux forced-source publication and native release blockers remain.
 
-# PatchTrace engineering handoffs
 
 Start with [generation 24](generation-24-20261120.md) for distinct
 held-descriptor admission of local CVRF/CSAF advisory input across CLI and

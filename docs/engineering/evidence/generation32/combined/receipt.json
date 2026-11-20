@@ -1,0 +1,98 @@
+{
+  "schema": "patchtrace-combined-affected/1",
+  "source_commit": "ad8916944a697985be3e472cd57f2e15f0a263bc",
+  "source_tree": "23ad5e5230e539df4727f5b2235f107a3f895a98",
+  "initial_worktree_status": "",
+  "started_at_utc": "2026-11-20T16:24:37.410025+00:00",
+  "scope": "18 unique affected test files for four reviewed repairs; not the full suite",
+  "file_sha256": {
+    "tests/test_research_qualification_cli.py": "a11f54ac82d044097e0870d38976e2eb1840d3b16f2f720afc3a6fc159a32d01",
+    "tests/test_research_qualification_git_identity.py": "a06a3b577e62c6afe675067b971f4f061e955a11cc63384b9e8804a333ced3dc",
+    "tests/test_research_qualification_l1_run.py": "965b4c669904a2f798b2c89c9c192db5d0b7f0689e18a55dbc6358513226f961",
+    "tests/test_research_qualification_perf_harness.py": "c88a5c5895cca03fc91da07eb30ff17d4711f27f629f2c2fa862dadc316443dd",
+    "tests/test_research_qualification_receipt.py": "f2bc21b73e0f3c1affd77e074f166e260adadbf0a210ebf3a6808e1c1116dbf0",
+    "tests/test_research_qualification_scorerun.py": "96cae4f54155e5077d9825c945cc2088dea6c6f37fd8cf3d11527248a9d8823f",
+    "tests/test_ui_search_panel.py": "8244e1b41f413e2c4fcd310a88b61da3e3bbcae8a23f8fc7815e459f0175262f",
+    "tests/test_ui_search_saved.py": "d01c2add72d575ccebe7f412c2352a405fa7da34ebc10aafd7276bf4f41c0ffd",
+    "tests/test_search_saved_workflow.py": "d84a390753b5e35ddb479bd40bc69ec7afdc08ab2d635afa777a6fd3fb2decb9",
+    "tests/test_strings_stored_source_admission.py": "ce8482d7cbf9a8d51063bc433fb51e44367f4b45c7f707b0041306c9a7aa5897",
+    "tests/test_intel_tools_admission.py": "7b9de0cb4f716df0fc940cb64854a4f686f6fd85db67fe8cc18e3c95fa194e11",
+    "tests/test_strings_cli.py": "9723a1253f606510f50e0c91ef89f832af53324aa9511fe149a74b8eda5a35b7",
+    "tests/test_strings_sources.py": "c8fbdb5446f11899d5972ceb2375fe19925beb90534f72fa9f9396acf3f30636",
+    "tests/test_strings_basis.py": "631c1c6a8ef9bff7dd85c9e12a7db6f36dea1ea9faa2d84ae26ff51f85fdbfbb",
+    "tests/test_intel_tools_runner.py": "dd7c82041458205e0eed802c4baaa42cb01a5f4d2adf3cc86f1fe368707b583a",
+    "tests/test_ui_strings_panel.py": "1da0d373593ac91b4827ae339d594c25ea36158a6c04d9e94ac2dba15a0453ed",
+    "tests/test_ui_strings_run.py": "4b64ce899216db3c19f984d31e95996bb326e148fbd0668a43b28ce69e7b1b50",
+    "tests/test_gui_tasks.py": "b501fc5ba4b1b59ea18f6f4ba2dc50b74f6a49ec5e4e3cbe4f7550ca48a7e640",
+    "src/patchtrace/search/qt_panel.py": "9dedc8cf6d600b593efce87e80008a4041cd1955cee97766ad39d3d60e308cd3",
+    "src/patchtrace/strings/qt_panel.py": "134f17a90e0310606b29a29440d727775f2153a6debca4ff0beb30b0f77f55db",
+    "src/patchtrace/strings/cli.py": "3bebbfa170a41e09a26dfc5fdb793532c885a5f8497f90d6b1f312dbe0076fad",
+    "src/patchtrace/intelligence/tools/admission.py": "7a06f5087927e263b2433e820ed1b1f5c3c80a6c517d445a342523685c77c373",
+    "tools/research_qualification/receipt.py": "4a1021767db0c121d80d8cefcb969c0e531ef3a869fdd9eb2748936f7014f1c2"
+  },
+  "runs": [
+    {
+      "name": "pytest",
+      "command": [
+        "/workspace/scratch/b1d1356aa953/patchtrace-venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_research_qualification_cli.py",
+        "tests/test_research_qualification_git_identity.py",
+        "tests/test_research_qualification_l1_run.py",
+        "tests/test_research_qualification_perf_harness.py",
+        "tests/test_research_qualification_receipt.py",
+        "tests/test_research_qualification_scorerun.py",
+        "tests/test_ui_search_panel.py",
+        "tests/test_ui_search_saved.py",
+        "tests/test_search_saved_workflow.py",
+        "tests/test_strings_stored_source_admission.py",
+        "tests/test_intel_tools_admission.py",
+        "tests/test_strings_cli.py",
+        "tests/test_strings_sources.py",
+        "tests/test_strings_basis.py",
+        "tests/test_intel_tools_runner.py",
+        "tests/test_ui_strings_panel.py",
+        "tests/test_ui_strings_run.py",
+        "tests/test_gui_tasks.py",
+        "--junitxml=/workspace/scratch/b1d1356aa953/generation32-combined/combined.xml"
+      ],
+      "returncode": 0,
+      "duration_seconds": 58.51475649700296,
+      "log_sha256": "1b43dfb01298b5ee41716f9718a76a2a77c8cd50ead0130a728af518e7fa4e64"
+    },
+    {
+      "name": "ruff",
+      "command": [
+        "/workspace/scratch/b1d1356aa953/patchtrace-venv/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "src",
+        "tests",
+        "tools"
+      ],
+      "returncode": 0,
+      "duration_seconds": 0.24924366699997336,
+      "log_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "name": "dependencies",
+      "command": [
+        "/workspace/scratch/b1d1356aa953/patchtrace-venv/bin/python",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "returncode": 0,
+      "duration_seconds": 0.34690722900268156,
+      "log_sha256": "9261363b733079a641c2e4cc9bc46ffa1d8336945a87f807b6cf68847dbc9b09"
+    }
+  ],
+  "finished_at_utc": "2026-11-20T16:25:36.527903+00:00",
+  "final_head": "ad8916944a697985be3e472cd57f2e15f0a263bc",
+  "final_worktree_status": "",
+  "max_child_rss_kib": 195940,
+  "junit_sha256": "a76a6d9116c058d94a61d4d3f21b9a73b268dbfe0dd07f30c9a0b8de4308b5ac"
+}
