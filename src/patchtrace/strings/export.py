@@ -39,7 +39,8 @@ Format = Literal['json', 'csv']
 Scope = Literal['changed', 'all']
 CSV_COLUMNS = ('id', 'status', 'review_tier', 'display', 'length', 'cues', 'older_offsets', 'newer_offsets',
                'functions', 'lineage_groups', 'reasons')
-_FORMULA_LEADS = ('=', '+', '-', '@', '\t', '\r')
+_FORMULA_LEADS = ('=', '+', '-', '@')
+_CSV_IGNORABLE_PREFIX = ' \t\r\n\f\v\ufeff'
 
 
 @dataclass(frozen=True, slots=True)
@@ -86,7 +87,10 @@ def document(delta: StringsDelta, *, scope: Scope = 'changed', reveal: Mapping[s
 
 def _cell(value: object) -> str:
     text = str(value)
-    return "'" + text if text.startswith(_FORMULA_LEADS) else text
+    # Some CSV viewers can ignore whitespace/BOM before interpreting a cell.
+    # Prefix the original bytes, never strip them, when a formula may follow.
+    guarded = text.startswith(('\t', '\r', '\n')) or text.lstrip(_CSV_IGNORABLE_PREFIX).startswith(_FORMULA_LEADS)
+    return "'" + text if guarded else text
 
 
 def _csv_row(record: dict) -> list[str]:
