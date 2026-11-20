@@ -77,14 +77,20 @@ class WorkspaceFileIndex:
         rows are copied between keys. A missing record is no rows."""
         from ..acquisition.contracts import AcquisitionError
         from ..acquisition.winbindex import MAX_COMPRESSED, parse_rows
+        # Counts describe this attempt only; a removed source has no historical gaps.
+        self._skipped.pop(file_name, None)
         found = self._record(file_name)
         if found is None:
             return []
         path, date, compressed = found
         try:
-            if path.stat().st_size > MAX_COMPRESSED:
+            # A path-size probe can become stale between stat and read. Read no more
+            # than the accepted budget plus one sentinel byte from the opened file.
+            with path.open('rb') as handle:
+                raw = handle.read(MAX_COMPRESSED + 1)
+            if len(raw) > MAX_COMPRESSED:
                 raise KbcStoreError('PT-KBC-LIMIT', 'a Winbindex record in the workspace exceeds its size limit')
-            parsed = parse_rows(path.read_bytes(), file_name, date, compressed=compressed)
+            parsed = parse_rows(raw, file_name, date, compressed=compressed)
         except OSError:
             raise KbcStoreError('PT-KBC-INPUT', 'a Winbindex record in the workspace cannot be read') from None
         except AcquisitionError as exc:
