@@ -115,7 +115,6 @@ def test_not_comparable_delta_is_refused(tmp_path):
     (' \t@cmd', "' \t@cmd"),
     ('\nordinary', "'\nordinary"),
     ('\tordinary', "'\tordinary"),
-
     ('\rordinary', "'\rordinary"),
     ('\v@cmd', "'\v@cmd"),
     ('\\n=1+1', '\\n=1+1'),
@@ -123,9 +122,9 @@ def test_not_comparable_delta_is_refused(tmp_path):
     ('\ufeffordinary', '\ufeffordinary'),
     ('-7', "'-7"),
 ], ids=['direct-formula', 'space-formula', 'line-formula', 'bom-formula',
-        'space-tab-formula', 'line-control', 'tab-control', 'ordinary-space',
-        'ordinary-bom', 'direct-minus', 'carriage-control',
-        'vertical-tab-formula', 'literal-backslash-prose'])
+        'space-tab-formula', 'line-control', 'tab-control', 'carriage-control',
+        'vertical-tab-formula', 'literal-backslash-prose', 'ordinary-space',
+        'ordinary-bom', 'direct-minus'])
 def test_csv_formula_guard_considers_leading_ignorable_prefixes(delta, display, expected):
     doc = export.document(delta)
     doc['changes'][0]['display'] = display
