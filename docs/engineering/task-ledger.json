@@ -25,7 +25,8 @@
     "Generation27: selected newer target priority tier must not have conflicting normalized source claims. Four pre-fix isolated selector-controls failed; six post-fix isolated controls passed. These are not repository-source tests. PR336 hosted Linux pytest passed 23,792 with 51 skips/six xfails but Ruff I001 failed; successor removes only redundant blank import separator. Independent review, exact-source CI, raw index retention and all release blockers remain.",
     "Generation28 inherited hosted evidence: PR337 Linux QA passed 23,800/51 skips/six xfails but Ruff failed F401 (unused fixture import) plus an older I001 already fixed by generation27; PR338 Linux full QA had one failure in a newly authored selected-newer ambiguity integration fixture after 23,807 passes. The test injected the first SHA-matching body rather than the exact resolver-selected version/KB. Generation28 corrects only test fixture targeting and explicit fixture re-exports, not production source or consent. New source tests/whole-tree Ruff/CI and independent signoff remain pending.",
     "Generation29 PR339 exact-head Linux/Windows full pytest passed (23808/23694), but both combined jobs failed Ruff I001 in two fixture import blocks. A new isolated test-only successor split imports exactly per Ruff's diagnostic. PR339 five Qt gates passed; package/smoke skipped. New branch source-specific acceptance and independent review pending. No production or accuracy gain.",
-    "Generation30/31 recovers two narrow donor scopes and one UI repair. Historical focused selections and independent replays overlap; never sum them into a full-suite result. Main is unchanged."
+    "Generation30/31 recovers two narrow donor scopes and one UI repair. Historical focused selections and independent replays overlap; never sum them into a full-suite result. Main is unchanged.",
+    "Generation33: isolated Strings CSV leading-ignorable prefix guard: prior _cell did not prefix whitespace/BOM+formula or LF; SPEC WB3-S6 updated before ten repository regression test parameters and narrow source repair. Local source-equivalent CSV controls 10/10 passed, not repository-source pytest. No full local QA/Ruff due inaccessible repository and Ruff index. Parent #342 hosted checks active, source-specific CI and independent review pending."
   ],
   "tasks": [
     {
@@ -461,6 +462,18 @@
       "integration_commit": "58d30fe6",
       "evidence": "docs/engineering/strings-stored-source-recovery-20261120.md",
       "result_or_next_action": "Eight baseline failures; 102 affected passes; independent selection: 87 of97 overlap, ten extra existing GUI cases, plus two additional history controls. Donor2042e24d extracted narrowly; forced-export race unchanged. Combined/native gates remain pending."
+    },
+    {
+      "id": "strings-csv-formula-leading-prefix-g33",
+      "status": "implemented-isolated-candidate-unqualified",
+      "owner": "generation33 isolated CSV serialization worker; independent reviewer not assigned",
+      "branch": "codex/patchtrace-csv-formula-prefix-20261120-g33",
+      "source_commit": "6552b7ec7e3424b2a8bc2d919ef0ed13728ada38",
+      "spec_commit": "36c9dfd1b68b3f6460b4af9b29d31abdbd",
+      "test_commit": "df2300181d2bbd459562750b99b2b0b5c19441bc",
+      "evidence": "docs/engineering-handoffs/generation-33-20261120.md",
+      "review_status": "author-only; independent adversarial signoff pending",
+      "result_or_next_action": "After parent #342 CI terminal, run source-pinned repository test_strings_export, full QA/Ruff/Qt/native/package as applicable; request independent CSV compatibility review, create stacked draft, retain original parent/failures. No merge/release with forced-export and other open blockers."
     }
   ],
   "aggregate_source_commit": "c0108749e8813dfa6165e953b1a2dc2ad736e982",
