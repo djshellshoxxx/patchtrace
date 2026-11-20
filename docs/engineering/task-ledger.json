@@ -1,6 +1,6 @@
 {
   "schema": "patchtrace-engineering-task-ledger/1",
-  "updated_at": "2026-11-20T17:12:17.437054+00:00",
+  "updated_at": "2026-11-20T18:17:25+00:00",
   "repository": "https://github.com/djshellshoxxx/PatchTrace",
   "integration_branch": "codex/patchtrace-verified-integration-20261120-g30",
   "checkpoint_local_commit": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
@@ -40,7 +40,8 @@
     "Generation30/31 recovers two narrow donor scopes and one UI repair. Historical focused selections and independent replays overlap; never sum them into a full-suite result. Main is unchanged.",
     "Generation32 adds reviewed Strings shutdown admission. Clean combined source ad891694 passes 397 unique affected cases with no skips/failures; whole-tree Ruff and dependencies pass. Earlier full a024f9ec run remains incomplete after SIGKILL, cause unestablished. Original raw-log whitespace failure is retained and its exact payload compressed.",
     "Final source bbdef5a6: 606 passes/1 native skip in 30 unique maintained files; peer replays and earlier 397/493 selections overlap. Diagnostic retention is fixed, original native Java/cache failure is not. Final publication metadata carries exact tree equality.",
-    "Generation34: distinct Strings CSV formula-prefix guard extracted onto PR342's later g33 reviewed source 5f34fb57, preserving prior isolated CSV g33 branch and not overwriting active PR342. SPEC WB3 before tests/source, ten authored CSV serializer regressions, ten source-equivalent Python controls pass. Full repository pytest/Ruff, exact-head hosted QA, independent reviewer pending; no duplicate active parent runs."
+    "Generation34: distinct Strings CSV formula-prefix guard extracted onto PR342's later g33 reviewed source 5f34fb57, preserving prior isolated CSV g33 branch and not overwriting active PR342. SPEC WB3 before tests/source, ten authored CSV serializer regressions, ten source-equivalent Python controls pass. Full repository pytest/Ruff, exact-head hosted QA, independent reviewer pending; no duplicate active parent runs.",
+    "Generation35 independent review of generation34 source found five of ten CSV parameter fixture expectations contradict the Python literal-escape code points. Original stdlib replay 5 failures; source-equivalent corrected 13/13 controls pass after test-only edits. Exact repository pytest/Ruff and independently reviewed new head unverified. Parent PR342 CI active; no duplicate PR/full suite."
   ],
   "tasks": [
     {
@@ -558,8 +559,21 @@
       "spec_commit": "c88588d816420658ca8fcc812739b97a1ac7de89",
       "test_commit": "bc2cc75b9d33d130137d03bf07ab2883438ad2ca",
       "evidence": "docs/engineering-handoffs/generation-34-20261120.md",
-      "review_status": "author inspection only; genuinely independent signoff outstanding",
-      "result_or_next_action": "On terminal parent CI, qualify exact current-parent branch with pytest/Ruff/Qt/native/package and independent CSV review, then only guarded merge if all applicable gates and unrelated blockers cleared. Retain old g33 CSV branch and PR342 review history."
+      "review_status": "Independent generation35 source review found five authored fixture literal-escape mismatches; successor test-only correction published, post-fix signoff/pytest outstanding",
+      "result_or_next_action": "DO NOT qualify the original g34 ten fixture cases as passing repository pytest: five use literal backslash-letter values and would contradict expected outputs. g35 isolated successor fixes fixture source, adds three cases, has 13/13 stdlib mirror controls only. Run exact source tests/whole-tree Ruff/independent post-fix and hosted checks; no unsafe merge."
+    },
+    {
+      "id": "strings-csv-literal-fixtures-g35",
+      "status": "test-only-source-published-13-stdlib-controls-pass-repository-acceptance-pending",
+      "owner": "generation35 independent generation34 source reviewer; separate post-fix reviewer unassigned",
+      "branch": "codex/patchtrace-csv-fixture-escape-20261120-g35",
+      "base_commit": "599e1ee1bc7bec095b4e6fa28d5cfc25c4d6f7df",
+      "source_test_commit": "5852f9137a321d80acdf446f1bdf0599b4681918",
+      "spec_commit": "f203ae0adbd5370aa0c14e14eaf703897a322f3d",
+      "test_blob": "a4d3956400740e0486612fbb67b35675ce406198",
+      "evidence": "docs/engineering/csv-prefix-fixture-review-20261120.md",
+      "receipt": "docs/engineering/evidence/generation35/csv-fixture-controls.json",
+      "result_or_next_action": "On supported checkout run tests/test_strings_export.py, full offscreen pytest and whole-tree Ruff; capture exact SHA and seek separate independent post-fix reviewer. On parent CI terminal, open stacked draft only if nonoverlapping. Retain original g34 and PR342 heads."
     }
   ],
   "aggregate_source_commit": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
@@ -773,7 +787,7 @@
     "unique_collected_cases": 607,
     "source_review": "35 blob-and-mode comparisons passed"
   },
-  "current_handoff": "docs/engineering-handoffs/generation-33-20261120.md",
+  "current_handoff": "docs/engineering-handoffs/generation-35-20261120.md",
   "parallel_continuation": {
     "branch": "codex/patchtrace-acquire-windows-junction-20261120-g32",
     "head": "ae67122c69f05715afa622b7e4050b73ca155967",
