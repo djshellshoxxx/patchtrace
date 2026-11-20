@@ -43,7 +43,8 @@
     "Generation34: distinct Strings CSV formula-prefix guard extracted onto PR342's later g33 reviewed source 5f34fb57, preserving prior isolated CSV g33 branch and not overwriting active PR342. SPEC WB3 before tests/source, ten authored CSV serializer regressions, ten source-equivalent Python controls pass. Full repository pytest/Ruff, exact-head hosted QA, independent reviewer pending; no duplicate active parent runs.",
     "Generation35 independent review of generation34 source found five of ten CSV parameter fixture expectations contradict the Python literal-escape code points. Original stdlib replay 5 failures; source-equivalent corrected 13/13 controls pass after test-only edits. Exact repository pytest/Ruff and independently reviewed new head unverified. Parent PR342 CI active; no duplicate PR/full suite.",
     "Generation36 source inspection confirms production CSV _cell already guards every column; g35 tests covered only display. On an isolated successor, WB3-S6 was updated first and two parametrized cross-column CSV/JSON source tests were added. Two source-equivalent stdlib controls passed, not repository pytest. Source unchanged. PR342 Linux QA/Ruff/native/live succeeded at inspected final source; Windows QA/other Qt still running, original native failure remains. External independent g36 signoff and exact-source full tests pending.",
-    "Generation37 read exact PR342 Windows native raw-cache artifact 14660100681 using stdlib only: first/second JSON hashes match, second has cache_origin, both probe Temurin Java 25.0.5 successfully, acceptance passed. Original initial-head job 136406567877 java=unverified failure had no retained raw-cache artifact and still has no verified cause. Receipt digests, original error and new success are preserved separately. No runtime change, release gate or speculative retry."
+    "Generation37 read exact PR342 Windows native raw-cache artifact 14660100681 using stdlib only: first/second JSON hashes match, second has cache_origin, both probe Temurin Java 25.0.5 successfully, acceptance passed. Original initial-head job 136406567877 java=unverified failure had no retained raw-cache artifact and still has no verified cause. Receipt digests, original error and new success are preserved separately. No runtime change, release gate or speculative retry.",
+    "Generation38: PR342 exact source Windows Qt shard job 136446431330 failed two real investigation create timeout cases after 10,423 passes; 10-second wait still strict. Test-only g38 adds bounded operation/runner-busy/lifecycle context with original exception as cause and 3 source regressions; 6 synthetic local controls passed. Windows native root cause not yet known, full/CI/independent review pending. Do not mark QA combined success or rerun blindly."
   ],
   "tasks": [
     {
@@ -603,6 +604,17 @@
       "receipt": "docs/engineering/evidence/generation37/native-cache-supported-runner-44781837860.json",
       "evidence": "docs/engineering/native-cache-supported-runner-disposition-20261120.md",
       "result_or_next_action": "Hold original failure open with cause unestablished; preserve raw native probes from any later failure, obtain external review. Do not change cache admission, Java probes, assertions or CI budgets without reproduced source evidence."
+    },
+    {
+      "id": "windows-investigation-qt-timeout-diagnostic-g38",
+      "owner": "generation38 isolated UI diagnostic worker; independent post-change reviewer unassigned",
+      "status": "test-only-diagnostic-published-native-reproduction-and-qa-pending",
+      "branch": "codex/patchtrace-windows-qt-timeout-evidence-20261120-g38",
+      "failed_run": 44781838172,
+      "failed_job": 136446431330,
+      "source_test_commit": "c63a04613eabf976f228f28088a185cf9c01658f",
+      "evidence": "docs/engineering-handoffs/generation-38-20261120.md",
+      "result_or_next_action": "Use supported Windows runner to capture strict 10-second worker_busy status at reproduction without weakening gate; run new tests, full pytest/Ruff/Qt native and independent review. Original 2 failed/10,423 passed and prior SIGKILL remain distinct; no cause established."
     }
   ],
   "aggregate_source_commit": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
