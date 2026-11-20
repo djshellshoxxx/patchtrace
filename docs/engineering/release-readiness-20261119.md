@@ -86,3 +86,10 @@ and independent worker signoff remain pending**. There is no Windows native
 directory-classification claim and no closure of ordinary-file substitution,
 raw-index retention, resolver input membership or the Linux forced-export
 race. No release or main merge is eligible.
+
+
+## Generation-19 Winbindex body-loss accounting and inherited CI failure (2026-11-20 UTC)
+
+Separate isolated draft candidate `codex/patchtrace-winbindex-body-gap-20261120-g19` makes unreadable version/KB body loss visible in resolver coverage and plain-text Winbindex import; the JSON receipt now contains a distinct `skipped_bodies` field and two fixture expectations increase from 2 to 3 rather than weakening a gate. Four real repository tests were added but have not run locally; only a separate stdlib mirror reproduced the original counter omission and verified the amended formula. Independent source review and all exact-source hosted QA/Qt/native/package checks are pending.
+
+Fresh PR328 source-specific Windows QA proved 23,636 pytest passes, 162 skips, five xfails, then failed Ruff I001 on inherited `test_kbc_winbindex_held_admission_20261120.py`; the successor fixes only the import-block spacing. Another PR328 native Ghidra leg failed during a download transport reset, before native testing. Both original failures remain recorded in the [generation-19 review](winbindex-body-gap-review-20261120.md). No historical CI result qualifies this candidate. Raw entry/index persistence, resolver membership, Linux forced-export race, native Qt, Windows trust/manual, accuracy layers and historical semantic review remain blocking. **Not release ready or merge eligible.**

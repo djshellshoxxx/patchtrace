@@ -37,8 +37,8 @@
     {
       "feature": "Winbindex and binary pairing",
       "status": "partial",
-      "implemented": "Validated URL/HTTP handling and persisted immutable source proposals, windows, normalized delivery rows, approved request plans and verified download receipts; consent binds source metadata and recovery preserves it. New isolated generation-15 candidate rejects ambiguous newest-date plain/gzip records and aliased offline index paths; local isolated method controls pass, full-source CI and independent review pending. New isolated generation-16 candidate bounds the opened offline source read and resets skipped-entry counts when the source disappears; limited standard-library reproduction only. Generation-17 isolated candidate refuses matching nonregular records and final-component symlink swaps at descriptor open on hosts with O_NOFOLLOW; descriptor regularity checked and nonblocking open requested. Generation-18 isolated successor maps POSIX post-admission directory EISDIR to source refusal, with two new repository tests and five passing isolated mirror controls only.",
-      "remaining": "Complete raw entry/index retention, resolver-input reconstruction and native/live acquisition acceptance remain separate. Generation-16 actual repository tests/Ruff and independent review remain pending. Generation-17 repository tests/Ruff/source-pinned hosted CI and external independent review remain pending; ordinary-file and parent-path races are not closed. Generation-18 full-source CI, Windows native behavior and external independent review remain pending.",
+      "implemented": "Validated URL/HTTP handling and persisted immutable source proposals, windows, normalized delivery rows, approved request plans and verified download receipts; consent binds source metadata and recovery preserves it. New isolated generation-15 candidate rejects ambiguous newest-date plain/gzip records and aliased offline index paths; local isolated method controls pass, full-source CI and independent review pending. New isolated generation-16 candidate bounds the opened offline source read and resets skipped-entry counts when the source disappears; limited standard-library reproduction only. Generation-17 isolated candidate refuses matching nonregular records and final-component symlink swaps at descriptor open on hosts with O_NOFOLLOW; descriptor regularity checked and nonblocking open requested. Generation-18 isolated successor maps POSIX post-admission directory EISDIR to source refusal, with two new repository tests and five passing isolated mirror controls only. Generation-19 isolated candidate includes the previously omitted skipped_bodies source-loss count in offline resolver gap accounting, preserves distinct import receipt counters, and discloses nonzero invalid version/KB bodies in plain output. An inherited Windows CI I001 formatting issue is addressed in the same isolated successor.",
+      "remaining": "Complete raw entry/index retention, resolver-input reconstruction and native/live acquisition acceptance remain separate. Generation-16 actual repository tests/Ruff and independent review remain pending. Generation-17 repository tests/Ruff/source-pinned hosted CI and external independent review remain pending; ordinary-file and parent-path races are not closed. Generation-18 full-source CI, Windows native behavior and external independent review remain pending. Generation-19 four authored repository tests, updated affected assertions, full exact-source Linux/Windows QA/Ruff and external independent review remain pending; a small stdlib mirror is not repository acceptance.",
       "evidence": [
         "docs/engineering/winpairs-url-boundary.md",
         "docs/engineering/winpairs-http-review.md",
@@ -46,7 +46,8 @@
         "docs/engineering-handoffs/generation-15-20261120.md",
         "docs/engineering-handoffs/generation-16-20261120.md",
         "docs/engineering-handoffs/generation-17-20261120.md",
-        "docs/engineering-handoffs/generation-18-20261120.md"
+        "docs/engineering-handoffs/generation-18-20261120.md",
+        "docs/engineering-handoffs/generation-19-20261120.md"
       ]
     },
     {
