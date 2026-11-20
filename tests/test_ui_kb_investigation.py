@@ -30,7 +30,7 @@ def settled(qtbot, dialog):
         operations = {'import', 'search', 'browse_products', 'current_inputs', 'plan_sources',
                       'sync_sources', 'plan_metadata', 'refresh_metadata', 'candidate_pairs',
                       'candidate_preview', 'preview', 'create'}
-        operation = operation if operation in operations else 'unknown'
+        operation = operation if isinstance(operation, str) and operation in operations else 'unknown'
         try:
             worker_busy = dialog.tasks.busy(dialog._channel)
         except Exception:
