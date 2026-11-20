@@ -1,3 +1,10 @@
+## Generation 40 — advisory source-plan input validation (2026-11-20)
+
+- [ ] On supported checkout verify new six `test_kb_online_investigation_20261105.py` cases and neighboring offline source/UI tests.
+- [ ] Run whole-tree `python -m ruff check src tests tools`, required full offscreen pytest with termination receipts, plus source-specific hosted/native/Qt/package gates after active PR343 workflow terminates.
+- [ ] Obtain genuinely independent reviewer signoff for exact-str captured lead admission, no-data-echo errors, typed `PT-KBC-INPUT`, zero request/workspace behavior and preserved whitespace lead.
+- [ ] Keep source branch isolated, compare actual head/tree; do not promote while PR342 Windows Qt/time, raw Winbindex, Linux forced-export, Windows trust and separate L1/L2/L3 remain blocking.
+
 ## Generation 39 — direct investigation Create junction follow-up (2026-11-20)
 
 - [ ] On an actual checkout, run `tests/test_kbc_investigation_destination_junction_20261120.py`, adjacent creation/UI regressions and whole-tree Ruff; record source identity and pass/fail evidence.
