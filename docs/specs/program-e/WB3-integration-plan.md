@@ -378,3 +378,22 @@ Blocked external acceptance, reported separately and never counted as done: pinn
 | Q12 master/3.2 adapter | wait for a tagged release; HEAD-probe monthly |
 | Q13 shortcut and who applies A5/A7/A8 | `Ctrl+Shift+T`; A5 is in the F5 seam, A7 is `PANEL.tips`, A8 stays with the track as its adapter file |
 | Q14 series lifelines | later slice S11 |
+### WB3-S6 CSV leading-ignorable formula guard (generation 34, 2026-11-20)
+
+The eleven string-row CSV columns are untrusted text, including an explicitly
+revealed string display. For spreadsheet-oriented export, do not treat a leading
+ASCII space, ASCII control whitespace (`\\t\\r\\n\\f\\v`) or UTF-8 BOM
+character (`U+FEFF`) as proof that a formula-like token is harmless. If the
+first non-ignorable character after these prefixes is `=`, `+`, `-`, or
+`@`, emit an initial single-quote escape **before** the entire original cell
+text. An initial tab, carriage return or newline is guarded even when no
+formula token follows, consistent with the existing direct-control rule.
+Preserve every original character after that added quote, rather than stripping,
+normalizing or double-encoding it. Keep ordinary whitespace-prefixed prose
+unchanged; do not change JSON export, the versioned CSV metadata/header,
+row count, redaction, or publication paths.
+
+This is a conservative text-export guard, not proof of universal spreadsheet
+import behavior for every application/version or safe rendering of a malicious
+spreadsheet file. Tests must round-trip through the real CSV serializer and
+include both guarded formula-like prefixes and unchanged controls.
