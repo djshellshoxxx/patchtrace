@@ -43,3 +43,16 @@ that original head at those named gates. PR #325 head `4dfc0e49` had
 most full QA/Qt jobs queued and native jobs underway, with one native
 scenario successful. The later generation-15 code has no corresponding
 hosted qualification at this checkpoint. No main merge or release is eligible.
+
+## Generation-16 offline index read-bound qualification (2026-11-20 UTC)
+
+The isolated successor after draft PR326 uses a bounded held-stream read
+(`MAX_COMPRESSED + 1` sentinel) and clears stale `skipped_rows` when a
+previously partially parsed Winbindex record is removed. Original stale-stat
+and stale-gap failures were reproduced in a standard-library mirror; the
+repaired mirror reports the expected limit and zero missing-source gaps.
+The actual repository regression tests and source-pinned offscreen pytest,
+whole-tree Ruff, independent review and hosted QA/Qt/native checks are
+**pending**. This is not raw index retention or a closure of source-name
+replacement races. No release, main merge or deployment is eligible.
+See [generation 16](../engineering-handoffs/generation-16-20261120.md).
