@@ -1403,6 +1403,6 @@ unchanged. Tests: `test_kb_product_start_20261106.py`,
 
 | saved advisory scope | src/patchtrace/kbcorrelation/saved_scope.py | Pure validation of one KB/CVE search coverage identity, coherent finite selection and detectable current coverage drift; shared service/context boundary. Full-index admission remains in `index.py`; cached coverage bookkeeping does not determine claims. No storage, schema, Qt or network ownership. | contracts, sources.scope, index | tests/test_kbc_saved_scope_validation.py, test_kbc_saved_scope_flow.py, test_kbc_saved_scope_revision_identity.py |
 
-### Cycle95fe selective GUI recovery
+### Cycle 95fe selective GUI recovery
 
-`gui/table_spec.py:ColumnSpec.tip_id` and `gui/qt/table.py:headerData` expose optional registered header help with title/unit fallback. `ui_evidence.py` passes the existing shell announcer into the matches StateView. GUI specification6.6–6.7 and the retained donor tests govern these narrow seams; newer attempt-storage/lifecycle behavior is preserved.
+`gui/table_spec.py:ColumnSpec.tip_id` and `gui/qt/table.py:headerData` expose optional registered header help with title/unit fallback. `ui_evidence.py` passes the existing shell announcer into the matches StateView. GUI specification 6.6–6.7 and the retained donor tests govern these narrow seams; newer attempt-storage/lifecycle behavior is preserved.
