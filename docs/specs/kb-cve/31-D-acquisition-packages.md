@@ -92,6 +92,23 @@ partially parsed; an unusable record reports its error rather than reusing an
 older count. Preserve valid current-record skipped counts and existing
 `index_rows` rejection accounting without inventing historical coverage.
 
+### Offline version/body coverage accounting (2026-11-20, generation 19)
+
+`parse_rows` exposes two independent rejected-input counters:
+`skipped` for unreadable top-level SHA entries, and `skipped_bodies`
+for unreadable Windows-version/KB bodies or version containers. The
+workspace `IndexPort.rows` gap count MUST carry **both** parser counts
+plus independent `lineage.index_rows` conversion rejections. A malformed
+version/body cannot silently disappear and make an otherwise usable index
+appear complete. Do not add successful normalized rows to the gap count,
+count a rejected input twice, or call these rejected *units* the exact
+number of missing builds. A missing current record still resets the count
+to zero. File import receipts may report a separate `skipped_bodies`
+field, preserving the existing meaning of `skipped`. Existing source
+bytes, parser warnings, consent and provenance are unchanged. This is
+bounded gap accounting, **not** full raw entry/index persistence or replay
+of resolver input membership.
+
 ## D3. Verification precedence and authenticity states
 
 Mandatory: stream to private non-executable staging, bounded size, SHA-256, final PE parse, supported architecture, filename identity, selected product/build association, chronology check, stable final bytes (no TOCTOU between verification and project copy). Promote only after re-opening/hash verification via existing ingestion path. Use private scratch names chosen by program; reject symlink traversal and path escape.
