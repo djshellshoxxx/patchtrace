@@ -1,3 +1,5 @@
+# Current isolated successor: [generation 35](generation-35-20261120.md) independently found a source-encoding defect in the generation-34 CSV regression cases (five source-equivalent mismatches). Test fixtures now contain actual LF/tab/BOM, preserve a literal backslash control, and include CR/vertical-tab tests. Thirteen standalone CSV controls pass, but full repository pytest/Ruff, independent post-fix review and parent hosted/native gates are pending. No new PR/full workflow was started.
+
 Current isolated continuation: [generation 34](generation-34-20261120.md) ports **only** Strings CSV leading-formula-prefix guarding and ten authored tests onto PR342's later generation-33 source. This is separate from generation 33's already reviewed UI/acquisition/native-cache work. Source-equivalent local CSV controls passed; repository-source QA/Ruff/independent review are pending. Do not duplicate live PR342 checks or infer release acceptance.
 
 # PatchTrace engineering handoffs
