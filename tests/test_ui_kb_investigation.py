@@ -342,3 +342,21 @@ def test_settled_success_keeps_existing_timeout_budget():
             assert predicate()
 
     settled(ReadyBot(), SimpleNamespace(_pending=None))
+
+
+def test_settled_timeout_handles_unhashable_pending_operation():
+    class TimeoutBot:
+        def waitUntil(self, _predicate, *, timeout):
+            assert timeout == 10000
+            raise pytestqt.exceptions.TimeoutError('synthetic timeout')
+
+    dialog = SimpleNamespace(
+        _pending=SimpleNamespace(operation=['PRIVATE SOURCE']),
+        tasks=SimpleNamespace(busy=lambda channel: True), _channel='test',
+        _closed=False, _preview=None, _generation=3, _cancel_create=False,
+        _close_after_create=False,
+    )
+    with pytest.raises(AssertionError, match='operation=unknown') as raised:
+        settled(TimeoutBot(), dialog)
+    assert isinstance(raised.value.__cause__, pytestqt.exceptions.TimeoutError)
+    assert 'PRIVATE SOURCE' not in str(raised.value)
