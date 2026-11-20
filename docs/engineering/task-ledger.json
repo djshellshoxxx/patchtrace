@@ -31,7 +31,8 @@
     "Generation27: selected newer target priority tier must not have conflicting normalized source claims. Four pre-fix isolated selector-controls failed; six post-fix isolated controls passed. These are not repository-source tests. PR336 hosted Linux pytest passed 23,792 with 51 skips/six xfails but Ruff I001 failed; successor removes only redundant blank import separator. Independent review, exact-source CI, raw index retention and all release blockers remain.",
     "Generation28 inherited hosted evidence: PR337 Linux QA passed 23,800/51 skips/six xfails but Ruff failed F401 (unused fixture import) plus an older I001 already fixed by generation27; PR338 Linux full QA had one failure in a newly authored selected-newer ambiguity integration fixture after 23,807 passes. The test injected the first SHA-matching body rather than the exact resolver-selected version/KB. Generation28 corrects only test fixture targeting and explicit fixture re-exports, not production source or consent. New source tests/whole-tree Ruff/CI and independent signoff remain pending.",
     "Generation29 PR339 exact-head Linux/Windows full pytest passed (23808/23694), but both combined jobs failed Ruff I001 in two fixture import blocks. A new isolated test-only successor split imports exactly per Ruff's diagnostic. PR339 five Qt gates passed; package/smoke skipped. New branch source-specific acceptance and independent review pending. No production or accuracy gain.",
-    "Generation30: acquisition project preflight admitted a symlink to an empty directory and a dangling symlink. Isolated draft branch adds final-component symlink refusal, contract and four authored regression cases. Only stdlib filesystem controls ran; repository pytest/Ruff, independent review and hosted acceptance remain pending. This does not close parent path substitution or Linux forced export."
+    "Generation30: acquisition project preflight admitted a symlink to an empty directory and a dangling symlink. Isolated draft branch adds final-component symlink refusal, contract and four authored regression cases. Only stdlib filesystem controls ran; repository pytest/Ruff, independent review and hosted acceptance remain pending. This does not close parent path substitution or Linux forced export.",
+    "Generation31: second acquisition destination check before project import added on isolated branch to narrow the interval while staged downloads occur; two synthetic transport integration tests authored, not executed in a complete checkout. PR341 QA was still in progress, so no duplicate successor PR suite was triggered. Parent/commit ownership and remaining substitution interval in generation-31 handoff."
   ],
   "tasks": [
     {
@@ -400,6 +401,15 @@
       "source_commit": "c83390c1a11f511ee537866bc1e5c45476368cde",
       "evidence": "docs/engineering-handoffs/generation-30-20261120.md",
       "result_or_next_action": "Run exact-source tests, full pytest/Ruff and independent review; preserve preflight TOCTOU caveat."
+    },
+    {
+      "id": "acquisition-poststage-destination-g31",
+      "status": "implemented-unqualified-no-pr-while-parent-ci-running",
+      "owner": "generation31 isolated acquisition path worker",
+      "branch": "codex/patchtrace-acquire-poststage-destination-20261120-g31",
+      "source_commit": "9db4932a887aea1e42ff11be787a8f1743693494",
+      "evidence": "docs/engineering-handoffs/generation-31-20261120.md",
+      "result_or_next_action": "Wait for #341 exact-source QA terminal, independently review; open stacked draft and run new-source QA/Ruff/native/package only when prior full suite no longer ongoing. This is not an atomic TOCTOU solution."
     }
   ],
   "aggregate_source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
