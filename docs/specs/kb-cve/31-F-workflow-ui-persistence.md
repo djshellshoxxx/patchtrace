@@ -458,3 +458,17 @@ portable deterministic predicate test verifies the admission check on other
 hosts. Path mutation after this check, ancestor junctions, and the independent
 Linux forced Strings export-source-name interval remain unresolved; do not
 claim atomic publication, parent-anchored isolation or release acceptance.
+
+
+### Generation 40: advisory source-plan lead input must be text (2026-11-20)
+
+The offline KB/CVE investigation's opt-in advisory source-plan preview takes a
+captured `lead` field. Treat it as untrusted even though the normal Qt widget
+produces a string: require an actual text value **before** trimming it or
+passing it to `parse_lead`. Null, integer, byte-string, and objects exposing a
+`strip()` method must be refused with the existing `PT-KBC-INPUT` category,
+without attempting an advisory request or creating a workspace. Error text
+must not echo submitted input. Whitespace surrounding a valid textual KB/CVE
+lead remains accepted, and existing identifier syntax and month-scope policy
+are unchanged. This is defensive request-shape admission, not new source
+matching, provenance semantics, network scope or vulnerability analysis.
