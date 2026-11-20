@@ -1,3 +1,5 @@
+Current isolated continuation: [generation 34](generation-34-20261120.md) ports **only** Strings CSV leading-formula-prefix guarding and ten authored tests onto PR342's later generation-33 source. This is separate from generation 33's already reviewed UI/acquisition/native-cache work. Source-equivalent local CSV controls passed; repository-source QA/Ruff/independent review are pending. Do not duplicate live PR342 checks or infer release acceptance.
+
 # PatchTrace engineering handoffs
 
 Start with [generation 33](generation-33-20261120.md): five reviewed repair areas, including Strings shutdown and recovered acquisition destination guards; 606 combined affected passes with one native Windows skip, plus independently reviewed native-cache diagnostic retention; and preserved incomplete full-suite/diagnostic evidence. Delivery remains draft PR342. Current full hosted/native and release gates remain open. Refresh live refs, worker ownership and CI before resuming.
