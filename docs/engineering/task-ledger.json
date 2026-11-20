@@ -21,7 +21,8 @@
     "Focused test selections overlap and must not be summed.",
     "Local commit IDs are local source identities until a publication mapping is recorded.",
     "Completed-snapshot and implemented-reviewed refer only to the named scope, not whole-product completion.",
-    "Generation19 implementation is an isolated draft-source candidate. Original local parser-gap mirror intentionally failed, fixed algorithm mirror passed; actual repository tests, full offscreen QA, Ruff and external reviewer signoff pending."
+    "Generation19 implementation is an isolated draft-source candidate. Original local parser-gap mirror intentionally failed, fixed algorithm mirror passed; actual repository tests, full offscreen QA, Ruff and external reviewer signoff pending.",
+    "Generation20 independent source-level audit, full repository tests, native acceptance, schema impact and external review are NOT complete; this is one bounded parser source-loss fix, not final raw index retention or empirical accuracy."
   ],
   "tasks": [
     {
@@ -276,6 +277,16 @@
       "evidence": "docs/engineering-handoffs/generation-19-20261120.md",
       "review_status": "author-adversarial-inspection-only-external-independent-review-pending",
       "result_or_next_action": "WorkspaceIndex gap totals now include skipped top-level entries, unreadable version/KB bodies and downstream conversion rejects. Four new repository tests plus two updated existing fixture expectations committed but unexecuted locally. Import receipt and text expose body losses separately. Inherited Windows QA Ruff I001 corrected in isolated successor. Qualify exact source on hosted Windows/Linux QA, Qt, native/package, and independent review; do not merge/release."
+    },
+    {
+      "id": "offline-winbindex-whole-container-gaps",
+      "status": "contract-tests-code-published-isolated-qa-and-independent-review-pending",
+      "owner": "generation20 isolated parser-gap worker; independent reviewer unassigned",
+      "branch": "codex/patchtrace-winbindex-container-gap-20261120-g20",
+      "source_commit": "f5043094b6004e36d6b1e0774a786ad2f5cb8a6a",
+      "evidence": "docs/engineering-handoffs/generation-20-20261120.md",
+      "review_status": "coordinator-adversarial-only; independent worker not available",
+      "result_or_next_action": "A valid-SHA Winbindex entry with missing or nonobject windowsVersions was silently discarded with zero parser losses. SPEC-31-D now counts one unreadable container unit; explicit {} remains an observed empty container; distinct top-level skips unchanged. Eight isolated stdlib algorithm-mirror tests pass (not repository source). Eight new real-repository tests committed, not executed locally. Preserve parent PR330 CI; qualify this exact successor with Linux/Windows QA+Ruff, Qt, native and package gates, obtain independent reviewer signoff, then pursue full raw index retention/resolver membership."
     }
   ],
   "aggregate_source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",

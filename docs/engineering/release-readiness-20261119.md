@@ -93,3 +93,22 @@ race. No release or main merge is eligible.
 Separate isolated draft candidate `codex/patchtrace-winbindex-body-gap-20261120-g19` makes unreadable version/KB body loss visible in resolver coverage and plain-text Winbindex import; the JSON receipt now contains a distinct `skipped_bodies` field and two fixture expectations increase from 2 to 3 rather than weakening a gate. Four real repository tests were added but have not run locally; only a separate stdlib mirror reproduced the original counter omission and verified the amended formula. Independent source review and all exact-source hosted QA/Qt/native/package checks are pending.
 
 Fresh PR328 source-specific Windows QA proved 23,636 pytest passes, 162 skips, five xfails, then failed Ruff I001 on inherited `test_kbc_winbindex_held_admission_20261120.py`; the successor fixes only the import-block spacing. Another PR328 native Ghidra leg failed during a download transport reset, before native testing. Both original failures remain recorded in the [generation-19 review](winbindex-body-gap-review-20261120.md). No historical CI result qualifies this candidate. Raw entry/index persistence, resolver membership, Linux forced-export race, native Qt, Windows trust/manual, accuracy layers and historical semantic review remain blocking. **Not release ready or merge eligible.**
+
+## Generation-20 whole-container coverage accounting (2026-11-20 UTC)
+
+The isolated successor of draft PR330 closes a narrower, independently observed
+loss-reporting path: a top-level Winbindex entry with accepted file identity but
+missing or nonobject `windowsVersions` was previously emitted as zero rows with
+**zero** parser loss units. The contract-first candidate now counts one source
+container gap, preserving explicitly empty object semantics and the separate
+candidate parser. Synthetic real-repository regression tests are committed but
+not yet executed in a checked-out repository; eight local standard-library
+**algorithm-mirror** controls passed only. Later source-specific hosted QA,
+Ruff, Qt, native/package qualification and external independent review remain
+pending. No native accuracy, authenticity, or release-readiness claim results.
+
+This does **not** capture full raw Winbindex index contents, reconstruct exact
+resolver membership, fix the Linux forced-export source replacement interval,
+dispose of Qt advisories, complete Windows trust/manual testing, or satisfy
+layer-specific L1/L2/L3 accuracy gates. `release_ready` and main merge
+eligibility remain false. See [generation 20](../engineering-handoffs/generation-20-20261120.md).
