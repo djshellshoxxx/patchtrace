@@ -141,7 +141,7 @@ def _source_plan(request: InvestigationRequest, service):
 
     if request.manual_pair_start:
         raise KbcStoreError('PT-KBC-INPUT', 'Advisory sync requires an explicit KB/CVE starting point.')
-    if not isinstance(request.lead, str):
+    if type(request.lead) is not str:
         raise KbcStoreError('PT-KBC-INPUT', 'The KB/CVE starting point must be text.')
     parse_lead(_required(request.lead.strip(), 'a KB or CVE identifier'))
     raw = request.source_months
