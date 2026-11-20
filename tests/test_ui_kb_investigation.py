@@ -21,7 +21,25 @@ from patchtrace.service import ProjectService
 
 
 def settled(qtbot, dialog):
-    qtbot.waitUntil(lambda: dialog._pending is None, timeout=10000)
+    try:
+        qtbot.waitUntil(lambda: dialog._pending is None, timeout=10000)
+    except pytestqt.exceptions.TimeoutError as exc:
+        # The native Windows Qt gate has timed out here on real project creation.
+        # Never emit GUI status, file paths or source/advisory strings to CI.
+        operation = getattr(dialog._pending, 'operation', None)
+        operations = {'import', 'search', 'browse_products', 'current_inputs', 'plan_sources',
+                      'sync_sources', 'plan_metadata', 'refresh_metadata', 'candidate_pairs',
+                      'candidate_preview', 'preview', 'create'}
+        operation = operation if operation in operations else 'unknown'
+        try:
+            worker_busy = dialog.tasks.busy(dialog._channel)
+        except Exception:
+            worker_busy = 'unknown'  # Diagnostics must not mask the original timeout.
+        raise AssertionError(
+            f'Investigation dialog did not settle: operation={operation}, worker_busy={worker_busy}, '
+            f'preview={dialog._preview is not None}, closed={dialog._closed}, generation={dialog._generation}, '
+            f'cancel_create={dialog._cancel_create}, close_after_create={dialog._close_after_create}'
+        ) from exc
 
 
 @pytest.mark.parametrize('lead', ['CVE-2099-20001', 'KB5099001'])
