@@ -1,3 +1,12 @@
+Start with [generation 26](generation-26-20261120.md) for the distinct
+older Winbindex source-body ambiguity safeguard, stacked on draft #336.
+A SHA/basename alone cannot distinguish predecessor KB/version source claims;
+newly ambiguous older entries are refused before planning or network work.
+The contract and eight repository regression cases precede source code.
+Six isolated mirror controls passed; exact-source full QA/Ruff/CI and truly
+independent review remain unverified. This is not raw index retention or the
+Linux forced-export race repair.
+
 Start with [generation 25](generation-25-20261120.md) for resolver-window
 membership selection of the **newer** Winbindex acquisition evidence row on an
 isolated successor of PR335. The original SHA-only selection could bind a BASE
