@@ -398,3 +398,22 @@ This is a second observation, **not** an atomic creation/descriptor-bound
 publication guarantee: parent-directory swaps and substitutions after this
 recheck remain possible. It does not resolve the separate Linux forced-source
 replacement visibility interval.
+
+
+### Final-component Windows junction preflight (generation 32, 2026-11-20)
+
+The local acquisition project destination must also refuse a final-component
+Windows NTFS junction, even when the junction resolves to an empty directory.
+Python 3.12+ exposes this distinct alias through `Path.is_junction()`;
+`Path.is_symlink()` alone does not establish the required junction refusal.
+Apply the same `PT-KBC-INPUT` rule on **both** existing destination admission
+observations (before staging and after staging, before project import). Preserve
+support for absent and genuinely empty directories. No download or project
+import should occur when the first check observes a junction.
+
+This is explicitly a final-component alias check. It does not claim to defend
+against parent junctions, substitution after either inspection, same-user
+adversarial writers, or the separate Linux forced Strings export-source race.
+A native Windows junction integration regression remains necessary for Windows
+acceptance; a portable predicate-injection test only verifies that the guard
+consults the distinct junction API.
