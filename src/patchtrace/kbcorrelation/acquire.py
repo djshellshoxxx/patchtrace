@@ -106,11 +106,11 @@ def target_row_membership(pair: PairProposal) -> tuple[str, str | None]:
 
 
 def row_for(rows: Sequence[Mapping[str, Any]], sha256: str, file_name: str, *,
-            target: tuple[str, str | None] | None = None) -> Mapping[str, Any]:
+            target: tuple[str, str | None] | None = None, require_unique: bool = False) -> Mapping[str, Any]:
     """Select one delivery entry; the newer pair target must match its resolver KB/version body.
 
     Native version bodies take precedence over copies through other_versions, as in index_rows.
-    The older predecessor's original body is not recoverable from PairProposal alone.
+    PairProposal cannot identify an older source body; require_unique refuses competing older claims.
     """
     matching = [r for r in rows if r.get('sha256') == sha256 and r.get('file_name') == file_name]
     if target is not None:
@@ -127,6 +127,9 @@ def row_for(rows: Sequence[Mapping[str, Any]], sha256: str, file_name: str, *,
         matching = own or copied
     if not matching:
         raise KbcStoreError('PT-KBC-INPUT', 'the file index lacks the selected pair source body')
+    if require_unique and any(entry != matching[0] for entry in matching[1:]):
+        raise KbcStoreError('PT-KBC-INPUT', 'the older index source body is ambiguous; '
+                            'original predecessor membership is unavailable')
     return matching[0]
 
 
