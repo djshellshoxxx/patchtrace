@@ -5,9 +5,12 @@ import threading
 from dataclasses import replace
 
 import pytest
+from kbc_k1_support import no_sockets  # noqa: F401
 from test_kb_candidate_journey_20261105 import candidate_request, seed
 
 from patchtrace.kbcorrelation import wiring
+
+pytestmark = pytest.mark.usefixtures('no_sockets')
 
 
 class _LooksLikeComponent:
@@ -32,6 +35,7 @@ def test_candidate_pairs_refuses_non_text_component_without_index_read(tmp_path,
     def unexpected_index_read(*args, **kwargs):
         raise AssertionError("bad request must never inspect the file index")
 
+    monkeypatch.setattr(wiring.WorkspaceFileIndex, "available", unexpected_index_read)
     monkeypatch.setattr(wiring.WorkspaceFileIndex, "rows", unexpected_index_read)
     result = run(request, threading.Event())
 
