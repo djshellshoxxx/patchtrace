@@ -472,3 +472,18 @@ must not echo submitted input. Whitespace surrounding a valid textual KB/CVE
 lead remains accepted, and existing identifier syntax and month-scope policy
 are unchanged. This is defensive request-shape admission, not new source
 matching, provenance semantics, network scope or vulnerability analysis.
+
+
+### Generation 41: saved-index candidate component request type admission (2026-11-20)
+
+The desktop/offline `candidate_pairs` request carries a captured `component_name`
+from a normal Qt string input, but the backend request dataclass is also callable
+directly. The candidate snapshot must require an **exact plain `str`** before
+calling `strip()` or resolving an index filename. Reject null, numeric, byte,
+custom strip-compatible objects and `str` subclasses overriding normalization
+as `PT-KBC-INPUT`, with fixed text that does not echo the input. Valid padded
+component names must continue to normalize and enter the same saved-index
+candidate workflow. No source lookup, project creation, network operation or
+source-output mutation should happen for an invalid component name. This rule
+does not broaden input formats, alter Windows build matching, or imply provenance
+or accuracy gains.

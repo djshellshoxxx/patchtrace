@@ -319,3 +319,17 @@ qualified this branch; PR343 QA was active, so no overlapping full suite was
 started. Raw Winbindex, Linux forced-export, original SIGKILL/Qt/cache/ASM
 failures, Windows trust/manual and layered L1/L2/L3 remain open. Main/release
 eligibility stays false.
+
+
+## Generation 41 — candidate component-name request type gate (2026-11-20)
+
+A distinct isolated successor of generation 40 adds an exact plain-string
+check before saved-index candidate component-name normalization, returning a
+fixed `PT-KBC-INPUT` refusal for malformed captured request types. SPEC-31-F
+preceded six authored repository regression cases and the narrow runtime fix.
+Six standalone hand-copied Python controls passed, **not** checked-out-source
+pytest. The repository checkout and Ruff remain unavailable locally; full
+offscreen, native/Qt/package, genuinely independent review and exact-source
+acceptance remain pending. PR343's existing QA/Qt successful results belong
+only to PR343 and its packaging was queued at inspection. All historical and
+release blockers remain; no main merge or release eligibility is claimed.
