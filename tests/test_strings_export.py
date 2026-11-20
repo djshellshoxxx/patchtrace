@@ -105,3 +105,29 @@ def test_not_comparable_delta_is_refused(tmp_path):
     with pytest.raises(StringsError) as raised:
         export.export_delta(refused, tmp_path / 'out.json', fmt='json')
     assert raised.value.code == 'PT-STR-BASIS' and not (tmp_path / 'out.json').exists()
+
+
+@pytest.mark.parametrize(('display', 'expected'), [
+    ('=1+1', "'=1+1"),
+    ('  =1+1', "'  =1+1"),
+    ('\\n=1+1', "'\\n=1+1"),
+    ('\\ufeff+1', "'\\ufeff+1"),
+    (' \\t@cmd', "' \\t@cmd"),
+    ('\\nordinary', "'\\nordinary"),
+    ('\\tordinary', "'\\tordinary"),
+    ('   ordinary', '   ordinary'),
+    ('\\ufeffordinary', '\\ufeffordinary'),
+    ('-7', "'-7"),
+], ids=['direct-formula', 'space-formula', 'line-formula', 'bom-formula',
+        'space-tab-formula', 'line-control', 'tab-control', 'ordinary-space',
+        'ordinary-bom', 'direct-minus'])
+def test_csv_formula_guard_considers_leading_ignorable_prefixes(delta, display, expected):
+    doc = export.document(delta)
+    doc['changes'][0]['display'] = display
+    raw = export.render(doc, 'csv')
+    rows = csv.reader(io.StringIO(raw.decode('utf-8'), newline=''))
+    marker, metadata = next(rows)
+    assert marker == export.CSV_CONTRACT
+    assert json.loads(metadata)['contract'] == export.EXPORT_CONTRACT
+    assert next(rows) == list(export.CSV_COLUMNS)
+    assert next(rows)[3] == expected
