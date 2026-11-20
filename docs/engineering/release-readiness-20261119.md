@@ -258,3 +258,18 @@ repository-source acceptance. The full offscreen pytest, strict Ruff, Qt,
 native/package/smoke and independent review remain unverified. Parent-directory
 substitution and the separate Linux forced-export race remain unresolved.
 No main merge or release eligibility is claimed.
+
+
+## Generation 31 — post-stage acquisition destination admission (2026-11-20)
+
+A new isolated successor to draft #341 updates SPEC-31-F first, authors two
+synthetic integration regressions, and reuses the existing project path check
+immediately before invoking the import callback after staged downloads. It
+refuses destinations changed into live links or nonempty directories during
+download, preserving foreign bytes and existing staged-file cleanup. No
+atomicity against substitutions after this second check is asserted. PR341
+hosted full QA and Qt jobs were still active, so the successor remains a
+branch-only candidate to avoid starting another overlapping full suite.
+Repository pytest/Ruff, exact-head hosted/native/package gates and independent
+adversarial review remain unverified. Raw Winbindex, Linux forced-export,
+Qt/Windows trust, historical reconciliation and L1/L2/L3 blockers remain.
