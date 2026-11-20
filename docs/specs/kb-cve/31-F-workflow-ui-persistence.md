@@ -435,3 +435,26 @@ extension of the timing budget, a retry, or proof that a worker is deadlocked.
 Source-specific native Windows results determine whether the worker was still
 busy or whether completion delivery was missing. Preserve the actual PR342
 Windows Qt failure rather than converting it to a pass.
+
+
+### Generation 39: refuse Windows junctions at direct investigation project creation (2026-11-20)
+
+The desktop KB/CVE investigation **Create** route (`investigation_service._new_destination`)
+must refuse an existing final-component filesystem junction as well as a
+symbolic link **before** resolving the destination and starting the worker's
+project creation. Python 3.12's `Path.is_junction()` distinguishes Windows
+junctions from `Path.is_symlink()`. Treat either final-component alias as
+`PT-KBC-INPUT`; do not silently follow a junction to an apparently empty
+target. An ordinary absent/empty destination and an empty directory retaining
+only PatchTrace's lock inode remain permitted under existing policy.
+
+This is a narrow preflight fix for **direct investigation Create**, distinct
+from generation 33's already integrated acquisition-destination safeguards.
+No automatic path remapping, overwriting, network work, target execution,
+project teardown or persistence change is authorized. Keep the downstream
+`creation_directory_available` check and actual writer lock unchanged.
+A separate native Windows test must exercise a real junction, while a
+portable deterministic predicate test verifies the admission check on other
+hosts. Path mutation after this check, ancestor junctions, and the independent
+Linux forced Strings export-source-name interval remain unresolved; do not
+claim atomic publication, parent-anchored isolation or release acceptance.
