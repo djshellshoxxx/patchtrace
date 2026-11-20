@@ -2205,3 +2205,7 @@ restricted local environment**. No existing tests/limits were weakened.
 Source and donor identities, pending exact-head CI, unresolved original
 aggregate SIGKILL and source-race limitations are in
 [the generation-16 handoff](engineering-handoffs/generation-16-20261120.md).
+
+### 2026-11-20 generation22 — Winbindex BASE structural loss (draft, unqualified)
+
+Original BASE missing/nonobject metadata was accepted as an undated row. Contract/test/code changes on isolated `codex/patchtrace-base-body-gap-20261120-g22` add one unreadable-body gap instead. Eight **algorithm-mirror** controls passed in 0.05 s; nine authored repo-source pytest cases, full offscreen pytest, Ruff, schema/dependency, source-pinned hosted QA/Qt/native/package and external independent review are **not complete**. PR331's earlier four Linux and four Windows QA assertion failures are real and preserved; PR332 contains a later expectation correction whose source-specific outcome must be checked. Original local unsplit `bffcfa99` SIGKILL remains unexplained and not a pass. No target binary execution or accuracy claim.

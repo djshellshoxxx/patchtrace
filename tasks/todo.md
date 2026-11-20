@@ -1535,3 +1535,5 @@ and worker-ownership notes. No full-suite pass, main merge or release is claimed
 
 Read [generation 16](../docs/engineering-handoffs/generation-16-20261120.md)
 for exact commits and limitations. No main merge/release.
+
+- [ ] Generation22 `codex/patchtrace-base-body-gap-20261120-g22`: independently review malformed BASE structural metadata admission and valid-empty/unknown-date behavior; run exact-source focused/combined pytest and Ruff on a supported checkout, read Linux/Windows QA, native Qt/Ghidriff/package/smoke receipts. Nine source tests authored, 8 standalone mirror controls passed; not merged or release-ready.
