@@ -1,3 +1,7 @@
+## Generation 35 — CSV regression fixture correction (2026-11-20)
+
+An independent fresh source reviewer of the generation34 Strings CSV candidate found five of ten authored parametrized cases used literal backslash-letter spellings instead of actual Python control/BOM escapes. Five source-equivalent controls failed under the original fixture values; corrected g35 fixtures plus three additional cases pass 13/13 in a Python 3.13 stdlib CSV round trip. No runtime changes or parent PR342 modifications. These are not repository-source pytest or native spreadsheet evidence. Exact-source full pytest/Ruff, independent post-fix review, and hosted QA/native/package remain pending. The original SIGKILL, `java=unverified`, Linux forced-export, Winbindex membership and release blockers persist. See [generation35 handoff](../engineering-handoffs/generation-35-20261120.md) and [source review](csv-prefix-fixture-review-20261120.md).
+
 # Release readiness after the multi-generation integration
 
 ## Final reviewed checkpoint — generation33
