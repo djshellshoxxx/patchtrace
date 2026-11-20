@@ -83,8 +83,8 @@ def _required(value, label):
 
 def _new_destination(request: InvestigationRequest) -> Path:
     path = Path(_required(request.destination, 'a new project directory')).expanduser()
-    if path.is_symlink():
-        raise KbcStoreError('PT-KBC-INPUT', 'Choose a new project directory, not a symbolic link.')
+    if path.is_symlink() or path.is_junction():
+        raise KbcStoreError('PT-KBC-INPUT', 'Choose a new project directory, not a symbolic link or junction.')
     resolved = path.resolve()
     if request.current_project is not None and resolved.is_relative_to(request.current_project.resolve()):
         raise KbcStoreError('PT-KBC-INPUT', 'Choose a new directory outside the currently open project.')
