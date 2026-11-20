@@ -24,7 +24,8 @@
     "Generation19 implementation is an isolated draft-source candidate. Original local parser-gap mirror intentionally failed, fixed algorithm mirror passed; actual repository tests, full offscreen QA, Ruff and external reviewer signoff pending.",
     "Generation20 independent source-level audit, full repository tests, native acceptance, schema impact and external review are NOT complete; this is one bounded parser source-loss fix, not final raw index retention or empirical accuracy.",
     "Generation21 same-call source gap isolation has isolated published spec/tests/source, but no source-pinned repository pytest, Ruff or independent reviewer acceptance yet; PR330 Linux/Windows full QA each failed four inherited assertions under the expanded skipped_bodies contract.",
-    "Generation22 original BASE missing/nonobject metadata was counted as a successful undated row; source-level tests authored but no clone-backed pytest/Ruff available in this runtime. The eight local algorithm mirror controls do not qualify this candidate."
+    "Generation22 original BASE missing/nonobject metadata was counted as a successful undated row; source-level tests authored but no clone-backed pytest/Ruff available in this runtime. The eight local algorithm mirror controls do not qualify this candidate.",
+    "Generation23 local primitive reproduced a FIFO block using an isolated child (killed cleanly); O_NONBLOCK and descriptor fstat primitive then refused nonregular input. These are stdlib controls, not actual repository pytest. On hosts lacking O_NONBLOCK, no pre-open FIFO guarantee is claimed."
   ],
   "tasks": [
     {
@@ -318,6 +319,16 @@
       "evidence": "docs/engineering-handoffs/generation-22-20261120.md",
       "review_status": "coordinator-adversarial-only-external-review-not-complete",
       "result_or_next_action": "Malformed BASE bodies previously produced apparently valid undated baseline rows with zero rejected-body loss. SPEC-31-D, nine repository-source regression parameter cases, and narrow parser repair committed in isolated successor. Eight standalone mirror controls pass, NOT actual repository pytest. Qualify exact-source Linux/Windows QA, Qt, native, package, Ruff; acquire independent review; no merge/release."
+    },
+    {
+      "id": "offline-winbindex-import-regular-source",
+      "status": "spec-tests-source-published-exact-source-qa-and-independent-review-pending",
+      "owner": "generation23 isolated Winbindex import admission worker; external reviewer not assigned",
+      "branch": "codex/patchtrace-offline-import-regular-source-20261120-g23",
+      "source_commit": "efc83cb1a4659a751d83b9f32a677269dbe4bc34",
+      "evidence": "docs/engineering-handoffs/generation-23-20261120.md",
+      "review_status": "coordinator adversarial inspection only; independent signoff pending",
+      "result_or_next_action": "The local save_winbindex_record importer previously opened a FIFO without O_NONBLOCK before read; a bounded stdlib control confirmed blocking. Source now requests nonblocking open on supported hosts and fstat verifies a held regular descriptor before reading. Three repository tests are authored but not executed locally; exact-source pytest/Ruff/hosted QA/Qt/native/package and external review pending. Import-source mitigation does not solve full raw index/resolver membership or Linux forced-export publication."
     }
   ],
   "aggregate_source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
@@ -371,6 +382,11 @@
       "name": "generation22_base_metadata",
       "scope": "Isolated new BASE metadata structural admission and source-loss counter, stacked on PR332 without altering preceding CI",
       "status": "source-implemented-hosted-and-independent-review-pending"
+    },
+    {
+      "name": "generation23_offline_import_regular_source",
+      "scope": "Isolated child of draft PR333: regular-source admission for offline Winbindex importer; earlier generations' branches and in-flight checks untouched",
+      "status": "spec-tests-source-published; pending exact-source CI and external independent review"
     }
   ],
   "local_integration_branch": "codex/maximum-completion-20261119-4c8d",

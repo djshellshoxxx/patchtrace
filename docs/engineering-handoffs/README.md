@@ -2,7 +2,7 @@
 
 Repository: <https://github.com/djshellshoxxx/PatchTrace>.
 
-Start with [generation 22](generation-22-20261120.md) for malformed BASE record loss accounting on a separate draft successor of PR332. This is a narrow parser repair, not full raw index/resolver input retention. Source-specific hosted CI and independent review are pending.
+Start with [generation 23](generation-23-20261120.md) for held regular-file admission of offline Winbindex manual import sources, including a bounded FIFO nonblocking reproduction. The new branch is a draft-only successor of #333; actual repository tests, hosted CI and external review are not yet accepted.\n\nThen read [generation 22](generation-22-20261120.md) for malformed BASE record loss accounting on a separate draft successor of PR332. This is a narrow parser repair, not full raw index/resolver input retention. Source-specific hosted CI and independent review are pending.
 
 Then read [generation 21](generation-21-20261120.md) for the isolated same-read Winbindex gap accounting repair and source-specific inherited PR330 QA failure evidence. Its source-level tests, full hosted gates and independent reviewer signoff are pending.
 

@@ -142,3 +142,20 @@ Qt disposition, Windows trust and L1/L2/L3 evidence. No main merge or release.
 ## Generation-22 malformed BASE metadata loss (2026-11-20 UTC)
 
 An isolated child of draft PR332 adds a specification-first parser correction: missing or nonobject `BASE.windowsVersionInfo` no longer fabricates an undated baseline and is counted as one unreadable body. Nine synthetic repository pytest cases are authored and an eight-case standalone algorithm mirror passed. The actual repository tests, Ruff, Linux/Windows QA, Qt/native/package, independent review and complete raw index/resolver membership remain **pending**. Parent PR331's four real full-QA fixture failures per host are preserved; PR332's correction has not yet been accepted on this new child. Release readiness and main merge eligibility remain **false**. See [generation 22](../engineering-handoffs/generation-22-20261120.md).
+
+## Generation-23 offline Winbindex import-source admission (2026-11-20 UTC)
+
+A new isolated draft child of PR333 addresses the importer-specific pre-read
+FIFO blocking path. A bounded standard-library child reproduced blocking in
+the original `open(source, 'rb')` sequence; nonblocking open and held-descriptor
+`fstat` distinguished a FIFO without reading it. SPEC-31-D was amended before
+three regression tests and a narrow `save_winbindex_record` change. This is
+**not** repository-source pytest or hosted QA. There is no complete checkout
+in this runtime (github.com DNS resolution failed), and Ruff is not installed.
+The repository regression cases, full offscreen pytest/Ruff, exact-source Linux
+and Windows QA, Qt, native Ghidriff, Windows packaging and independent adversarial
+review have not been accepted. No CI results from PR332/333 qualify this child.
+No source provenance or accuracy gain is asserted. Release readiness, main merge
+eligibility, full raw index/resolver membership, Linux force-export, official Qt
+advisory disposition, Windows trust/manual and L1/L2/L3 gates remain open.
+See [generation 23](../engineering-handoffs/generation-23-20261120.md).

@@ -172,6 +172,26 @@ limits and existing public return shapes remain unchanged. This is only a
 source-loss accounting repair; not complete raw retention, provenance
 authentication, verified accuracy or release qualification.
 
+### Generation 23: source-file admission for offline Winbindex imports (2026-11-20)
+
+`save_winbindex_record` imports an existing local metadata **file**, not a pipe,
+device, directory or other streaming endpoint. On a host that exposes
+`os.O_NONBLOCK`, opening the user-selected source MUST request that flag,
+so a substituted named pipe cannot block the importer before any size or
+parser control runs. Check `fstat` on the opened descriptor and refuse
+all non-regular sources with `PT-KBC-INPUT` **before reading or publishing**.
+Do not rely only on a stale pathname inspection. On hosts without a supported
+nonblocking-open capability, do not claim this fully prevents pre-open blocking.
+
+A user-selected symbolic link resolving to a regular file remains supported,
+consistent with the existing manual import path. This check is a filesystem
+input and liveness guard, not vendor authentication or protection from a
+noncooperating replacement of one regular file with another. Keep the
+existing `MAX_COMPRESSED + 1` bound, strict parser, receipt schema, raw
+record bytes, destination publication semantics and error code for unrelated
+read failures. The separate Linux forced strings export replacement interval
+remains open; this import admission cannot close it.
+
 ## D3. Verification precedence and authenticity states
 
 Mandatory: stream to private non-executable staging, bounded size, SHA-256, final PE parse, supported architecture, filename identity, selected product/build association, chronology check, stable final bytes (no TOCTOU between verification and project copy). Promote only after re-opening/hash verification via existing ingestion path. Use private scratch names chosen by program; reject symlink traversal and path escape.

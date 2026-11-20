@@ -1537,3 +1537,5 @@ Read [generation 16](../docs/engineering-handoffs/generation-16-20261120.md)
 for exact commits and limitations. No main merge/release.
 
 - [ ] Generation22 `codex/patchtrace-base-body-gap-20261120-g22`: independently review malformed BASE structural metadata admission and valid-empty/unknown-date behavior; run exact-source focused/combined pytest and Ruff on a supported checkout, read Linux/Windows QA, native Qt/Ghidriff/package/smoke receipts. Nine source tests authored, 8 standalone mirror controls passed; not merged or release-ready.
+
+- [ ] Generation23 `codex/patchtrace-offline-import-regular-source-20261120-g23`: qualify actual FIFO/regular-file/symlink import regression tests and Ruff on its own source; review source and supported Windows behavior independently. The POSIX stdlib primitive was reproduced, but repository-source tests and all hosted gates remain pending. Do not merge until exact-source checks green and blocking findings resolved.
