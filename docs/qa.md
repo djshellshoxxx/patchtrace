@@ -2235,3 +2235,15 @@ Original BASE missing/nonobject metadata was accepted as an undated row. Contrac
 ## Generation 23: manual Winbindex import source admission (2026-11-20)
 
 Distinct new isolated source: `codex/patchtrace-offline-import-regular-source-20261120-g23`, parent PR333 exact head `543b0a6f1dd2e2ce2b53a7790b7e32ed77dcbd8f`. A standalone POSIX subprocess executing the original `open(FIFO, 'rb')` sequence remained blocked for 0.3 seconds until deliberately terminated; the nonblocking-open/fstat primitive returned a nonregular descriptor without waiting. This demonstrates an importer liveness flaw and a scoped primitive, **not** checked-out PatchTrace execution. SPEC-31-D, three authored source regression tests, and a narrow source patch retain original acceptance thresholds. Local full pytest and Ruff **not run**: github.com DNS unavailable and Ruff absent. Exact-source hosted Linux/Windows QA, Qt, Ghidriff native, packages and independent review **pending**. Original `bffcfa99` interrupted suite and inherited PR330/331 four-hosted-failure evidence remain unchanged; no tests marked passing without receipts. No releases, main merges or target execution.
+
+
+### Generation 34 — current-parent Strings CSV guard (2026-11-20)
+
+Parent: PR342 `5f34fb57`; spec `c88588d`; tests `bc2cc75`; source
+`95072a3`. Ten local **source-equivalent** Python stdlib CSV controls passed;
+repository-source regression tests, full offscreen pytest and whole-tree Ruff
+were not run due GitHub and pip index DNS failure in this environment.
+Parent's old Windows QA/Qt jobs were cancelled on new publication, not
+successful; current parent head requires fresh CI and this later source has
+no hosted acceptance. Fresh independent review is pending. Prior source,
+logs and unresolved forced-export/native/accuracy gates remain intact.
