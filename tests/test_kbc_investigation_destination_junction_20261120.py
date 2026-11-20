@@ -39,6 +39,22 @@ def test_direct_create_still_accepts_real_empty_directory(tmp_path):
     assert list(destination.iterdir()) == []
 
 
+
+def test_direct_create_keeps_original_symlink_refusal(tmp_path):
+    destination = tmp_path / 'linked'
+    target = tmp_path / 'target'
+    target.mkdir()
+    try:
+        destination.symlink_to(target, target_is_directory=True)
+    except (OSError, NotImplementedError) as exc:
+        pytest.skip(f'local symlinks unavailable: {exc}')
+    request = InvestigationRequest('create', tmp_path / 'workspace', destination=destination)
+    with pytest.raises(KbcStoreError) as error:
+        _new_destination(request)
+    assert error.value.code == 'PT-KBC-INPUT'
+    assert list(target.iterdir()) == []
+
+
 @pytest.mark.skipif(os.name != 'nt', reason='requires an actual Windows NTFS junction')
 def test_direct_create_refuses_native_windows_junction(tmp_path):
     target = tmp_path / 'retained'
