@@ -134,6 +134,24 @@ new container-loss unit. No change is authorized to raw index retention,
 resolver membership, binary confidence, native accuracy, consent,
 source authenticity, limits, or release gates.
 
+### Generation 21: same-read offline index gap identity (2026-11-20)
+
+A single `WorkspaceFileIndex.rows(file_name, key)` result must bind its
+normalized row mappings and **all parser rejection counts** to the **same
+selected record read**. A concurrent or re-entrant `rows_for` call for the
+same filename must not overwrite or clear the first call's loss accounting
+between parsing and lineage conversion. Carry the count as call-local data,
+not mutable adapter-wide state; add downstream `index_rows` conversion rejects
+to that local count only. Preserve the separate `rows_for` mapping-only port,
+original record admission and size limits, and the no-record zero-gap behavior.
+
+This is distinct from generation 16's *sequential* missing-record freshness
+repair: even when both reads succeed, interleaving can combine one read's
+rows with another read's loss count, making an incomplete source look complete.
+No source byte retention, resolver membership replay, new serialization,
+source authenticity, cross-process snapshot, or Linux forced-export race
+closure is inferred from this narrower same-call accounting guarantee.
+
 ## D3. Verification precedence and authenticity states
 
 Mandatory: stream to private non-executable staging, bounded size, SHA-256, final PE parse, supported architecture, filename identity, selected product/build association, chronology check, stable final bytes (no TOCTOU between verification and project copy). Promote only after re-opening/hash verification via existing ingestion path. Use private scratch names chosen by program; reject symlink traversal and path escape.
