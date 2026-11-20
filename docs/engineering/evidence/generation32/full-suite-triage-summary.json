@@ -1,0 +1,330 @@
+{
+  "schema": "patchtrace-terminated-full-suite-triage/1",
+  "observed_at_utc": "2026-11-20T16:21:23.400431+00:00",
+  "source_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+  "source_tree": "1eb4f2197e22c9e46d25bded163ee241835572e6",
+  "tracked_worktree_status": "",
+  "decision": "qualification-incomplete; SIGKILL-origin-unestablished; two isolated boundary cases passed",
+  "full_run": {
+    "source_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+    "source_tree": "1eb4f2197e22c9e46d25bded163ee241835572e6",
+    "started_at_utc": "2026-11-20T15:58:53.322845+00:00",
+    "finished_at_utc": "2026-11-20T16:08:16.640276+00:00",
+    "duration_seconds": 563.2575080780007,
+    "returncode": -9,
+    "max_rss_kib": 1113696,
+    "user_cpu_seconds": 353.13424,
+    "system_cpu_seconds": 23.516283
+  },
+  "wrapper_exit_status": 137,
+  "wrapper_exit_status_basis": "128 - child returncode in retained launcher, corroborated by parent session report",
+  "launcher_timeout_configured": false,
+  "junit_exists_for_original_run": false,
+  "original_log_hash_matches_receipt": true,
+  "partial_progress": {
+    "markers": {
+      ".": 3635,
+      "s": 10
+    },
+    "marker_total": 3645,
+    "failure_or_error_markers": 0,
+    "last_displayed_percent": 15,
+    "additional_markers_after_last_percent": 45,
+    "percent_lines_matching_fresh_collection": 50,
+    "fresh_collection_total": 23936,
+    "nodes_without_reported_markers_under_same_order": 20291,
+    "last_reported_candidate": {
+      "ordinal_one_based": 3645,
+      "nodeid": "tests/test_codetext_tokens.py::test_hostile_text_is_covered_within_a_loose_time_bound[number-tails-c]"
+    },
+    "next_candidate": {
+      "ordinal_one_based": 3646,
+      "nodeid": "tests/test_codetext_tokens.py::test_hostile_text_is_covered_within_a_loose_time_bound[number-tails-asm]"
+    },
+    "qualification": "Markers do not certify completed teardown or a terminal pass. Mapping assumes fresh same-source collection order; no original active-node trace exists."
+  },
+  "collection_only": {
+    "command": [
+      "/workspace/scratch/b1d1356aa953/patchtrace-venv/bin/python",
+      "-m",
+      "pytest",
+      "--collect-only",
+      "-q"
+    ],
+    "returncode": 0,
+    "duration_seconds": 29.464132401000825,
+    "max_rss_kib": 540280,
+    "parsed_nodeid_count": 23936,
+    "collection_summary_lines": [
+      "23936 tests collected in 22.63s"
+    ],
+    "log_sha256": "c0d099ffb368f4d5cb6bee8a9bd6e4bbd158ea672539bd2922a9c3d91e144947",
+    "ordered_nodeids_sha256": "83aa79774696491ffa70fb8925a57238e294cb3fe8909cd3dfca0c34e62a6bef",
+    "final_worktree_status": ""
+  },
+  "resource_evidence": {
+    "observation_file": "generation31-full-suite-triage/resource-observation.json",
+    "cgroup_counters_available": false,
+    "kernel_log_available": false,
+    "original_process_limits_captured": false,
+    "original_process_tree_rss_trace_captured": false,
+    "max_rss_qualification": "Launcher RUSAGE_CHILDREN maximum; no synchronized process-tree/host-total measurement or memory-cap observation.",
+    "postmortem_qualification": "Resource snapshot comes from a later tool process; it cannot reconstruct kill-time pressure or limits.",
+    "oom_attribution": "unestablished",
+    "external_timeout_or_supervisor_attribution": "unestablished",
+    "product_failure_attribution": "unestablished"
+  },
+  "secondary_progress_clue": {
+    "temporary_root": "/tmp/pytest-of-agent/pytest-42",
+    "latest_entries": [
+      {
+        "name": "test_interrupt_after_first_eng0",
+        "mtime_ns": 1795190874132162221,
+        "mtime_utc": "2026-11-20T16:07:54.132162+00:00"
+      },
+      {
+        "name": "test_reimport_bindiff_twice_th0",
+        "mtime_ns": 1795190874055299503,
+        "mtime_utc": "2026-11-20T16:07:54.055300+00:00"
+      },
+      {
+        "name": "test_rzdiff_alias_matches_run_0",
+        "mtime_ns": 1795190873760668124,
+        "mtime_utc": "2026-11-20T16:07:53.760668+00:00"
+      },
+      {
+        "name": "test_run_max_parallel_three_ex0",
+        "mtime_ns": 1795190873731612551,
+        "mtime_utc": "2026-11-20T16:07:53.731612+00:00"
+      },
+      {
+        "name": "test_run_timeout_out_of_range_0",
+        "mtime_ns": 1795190873709359845,
+        "mtime_utc": "2026-11-20T16:07:53.709360+00:00"
+      }
+    ],
+    "last_temp_test_ordinal": 3015,
+    "qualification": "The newest temp directory identifies an earlier fixture, not the final active test; subsequent CodeText cases do not need tmp_path."
+  },
+  "cache_observed_before_diagnostic": {
+    "count": 141,
+    "mtime_utc": "2026-11-20T15:50:31.755801+00:00",
+    "sha256": "e4cb63a7fea18a3987d4982bc63c66a7b569a096411d9d1b7e822f8bb56841cf",
+    "qualification": "Predated original full run; not its execution trace. The later two-node run can update ignored pytest cache files."
+  },
+  "candidate_path": {
+    "package": "patchtrace.codetext.tokens",
+    "ordinary_scope": "Synthetic display-text tokenization and coverage assertions; no GUI interaction, target binary or native comparator execution.",
+    "calls": [
+      "tokenize",
+      "_scan_line",
+      "_scan_c or _scan_asm",
+      "open_comment_lines",
+      "assert_covers"
+    ],
+    "fixture": {
+      "characters": 117030,
+      "ascii_bytes": 117030,
+      "line_count": 30,
+      "nonnewline_characters_per_line": 3900,
+      "existing_max_line_characters": 4096,
+      "existing_max_document_characters": 1048576,
+      "input_amplified": false
+    },
+    "original_elapsed_assertion_seconds": 3.0,
+    "separate_150ms_benchmark_reached_by_progress_mapping": false,
+    "source_comparison_base": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+    "source_comparisons": [
+      {
+        "path": "tests/test_codetext_tokens.py",
+        "base_blob": "62b0aa2d9931c9ac0afc8ad8027db89cf35eb412",
+        "current_blob": "62b0aa2d9931c9ac0afc8ad8027db89cf35eb412",
+        "equal": true,
+        "sha256": "274aac9e87a2b16d5cda7303f1803bb73f7b58459bf3dd462dd415e154f3e249"
+      },
+      {
+        "path": "src/patchtrace/codetext/tokens.py",
+        "base_blob": "10bdd826799e74e1cf030a7b73962d95661f52d4",
+        "current_blob": "10bdd826799e74e1cf030a7b73962d95661f52d4",
+        "equal": true,
+        "sha256": "7afd28f93dfbca7881ce9cd5c6795851daa97d3302b59220992393acc832eb53"
+      },
+      {
+        "path": "src/patchtrace/codetext/names.py",
+        "base_blob": "77bf41405665b4d549d7728a95aa113c9409e6da",
+        "current_blob": "77bf41405665b4d549d7728a95aa113c9409e6da",
+        "equal": true,
+        "sha256": "7320baea17ced6d3cad06574f7a5325ab299714c8beb734bb2e16fa3b37f9b08"
+      }
+    ]
+  },
+  "historical_comparison": {
+    "source": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
+    "returncode": -9,
+    "duration_seconds": 1729.332,
+    "partial_markers": 19877,
+    "kill_cause": "unestablished",
+    "same_named_node_markers": [
+      {
+        "nodeid": "tests/test_codetext_tokens.py::test_hostile_text_is_covered_within_a_loose_time_bound[number-tails-c]",
+        "ordinal_one_based": 3645,
+        "progress_marker": "."
+      },
+      {
+        "nodeid": "tests/test_codetext_tokens.py::test_hostile_text_is_covered_within_a_loose_time_bound[number-tails-asm]",
+        "ordinal_one_based": 3646,
+        "progress_marker": "."
+      }
+    ],
+    "limitation": "Historical source object unavailable locally; old names/progress are not current qualification or proof of identical historical source blobs."
+  },
+  "bounded_diagnostic": {
+    "schema": "patchtrace-bounded-boundary-diagnostic/1",
+    "source_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+    "source_tree": "1eb4f2197e22c9e46d25bded163ee241835572e6",
+    "started_at_utc": "2026-11-20T16:19:39.611155+00:00",
+    "command": [
+      "/workspace/scratch/b1d1356aa953/patchtrace-venv/bin/python",
+      "-m",
+      "pytest",
+      "-vv",
+      "--setup-show",
+      "--durations=2",
+      "--junitxml=/workspace/scratch/b1d1356aa953/generation31-full-suite-triage/boundary-diagnostic.xml",
+      "tests/test_codetext_tokens.py::test_hostile_text_is_covered_within_a_loose_time_bound[number-tails-c]",
+      "tests/test_codetext_tokens.py::test_hostile_text_is_covered_within_a_loose_time_bound[number-tails-asm]"
+    ],
+    "cwd": "/workspace/scratch/b1d1356aa953/patchtrace-integration",
+    "explicit_environment": {
+      "QT_QPA_PLATFORM": "offscreen",
+      "PYTHONPATH": "/workspace/scratch/b1d1356aa953/patchtrace-integration/src"
+    },
+    "fresh_process": true,
+    "start_new_session": true,
+    "repetitions": 1,
+    "input_amplified": false,
+    "original_assertion_elapsed_seconds": 3.0,
+    "diagnostic_wall_cap_seconds": 60.0,
+    "diagnostic_process_tree_rss_cap_bytes": 805306368,
+    "sampling_interval_seconds": 0.05,
+    "cap_semantics": "A cap hit is diagnostic-incomplete, separate from unchanged acceptance assertions.",
+    "state": "completed",
+    "child_pid": 16,
+    "returncode": 0,
+    "diagnostic_cap_hit": null,
+    "finished_at_utc": "2026-11-20T16:19:57.896190+00:00",
+    "duration_seconds": 18.284739053997328,
+    "sampled_peak_process_tree_rss_bytes": 87842816,
+    "sampled_min_host_available_bytes": 1241186304,
+    "samples_count": 181,
+    "final_head": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+    "final_worktree_status": "",
+    "log_sha256": "83d74dd82aa7db13c350866a931e56db5da63451973995800a6c70e97b645ae2",
+    "phase_observation_method": "pytest --setup-show/verbose lines sampled from its log; timestamps are observation times, not profiler measurements",
+    "junit_sha256": "077ac53d0661ca7d3bf0471bc7a0b45ab637d1a496e78163e9f8b8d690db04de",
+    "junit_suites": [
+      {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "2",
+        "time": "14.496",
+        "timestamp": "2026-11-20T08:19:42.393301-08:00",
+        "hostname": "0e558e4650b0"
+      }
+    ],
+    "junit_cases": [
+      {
+        "classname": "tests.test_codetext_tokens",
+        "name": "test_hostile_text_is_covered_within_a_loose_time_bound[number-tails-c]",
+        "time": "11.260"
+      },
+      {
+        "classname": "tests.test_codetext_tokens",
+        "name": "test_hostile_text_is_covered_within_a_loose_time_bound[number-tails-asm]",
+        "time": "0.630"
+      }
+    ],
+    "samples_sha256": "098743cf931e5c8680acbe413f72584020596552e1786de57150bef746362780"
+  },
+  "next_action": "Stop local testing after the two passes. Preserve original incomplete run and seek runner kill/memory telemetry before attributing cause; future aggregate qualification needs a supported source-pinned runner.",
+  "additional_tests_executed": 2,
+  "whole_suite_reruns": 0,
+  "input_amplification": false,
+  "assertion_changes": false,
+  "source_edits": false,
+  "remote_mutations": false,
+  "artifacts": [
+    {
+      "path": "generation30-evidence/full-suite.log",
+      "bytes": 4045,
+      "sha256": "657c58634782f452d7e75f71412b85d348691c92279a42d0f48bb48009740848"
+    },
+    {
+      "path": "generation30-evidence/full-suite-run.json",
+      "bytes": 1286,
+      "sha256": "a095935b21b294a5d3a13e209a69e6d3dc9f0d86b4d305fb6f40ac99285459a0"
+    },
+    {
+      "path": "run_generation30_full.py",
+      "bytes": 2197,
+      "sha256": "65fb3bd54cd4cfc1095c222dcf6fa659b71580b574d8bc490b04433fa7e87015"
+    },
+    {
+      "path": "run_generation31_collection.py",
+      "bytes": 2970,
+      "sha256": "295d137abf30f9da07d55189dfcf2499318f1df9dc1d5c4ada1624e508e248ba"
+    },
+    {
+      "path": "run_generation31_boundary_diagnostic.py",
+      "bytes": 6204,
+      "sha256": "c514ff1be7cc399f36157970160ace2c5e5b606872f0c21278415d945ad78456"
+    },
+    {
+      "path": "generation31-full-suite-triage/collection.log",
+      "bytes": 2118299,
+      "sha256": "c0d099ffb368f4d5cb6bee8a9bd6e4bbd158ea672539bd2922a9c3d91e144947"
+    },
+    {
+      "path": "generation31-full-suite-triage/collection-run.json",
+      "bytes": 4067,
+      "sha256": "4b72c4fe57dbcafd335936bf603b3c9b0f128fbe3f134f2b289eaeaca4fc3d20"
+    },
+    {
+      "path": "generation31-full-suite-triage/ordered-nodeids.json",
+      "bytes": 2238858,
+      "sha256": "83aa79774696491ffa70fb8925a57238e294cb3fe8909cd3dfca0c34e62a6bef"
+    },
+    {
+      "path": "generation31-full-suite-triage/resource-observation.json",
+      "bytes": 6369,
+      "sha256": "46eb46146ef423040d37a351309151d1b2ea930b538a5190b98e80b397e9ab0b"
+    },
+    {
+      "path": "generation31-full-suite-triage/boundary-diagnostic.log",
+      "bytes": 2960,
+      "sha256": "83d74dd82aa7db13c350866a931e56db5da63451973995800a6c70e97b645ae2"
+    },
+    {
+      "path": "generation31-full-suite-triage/boundary-diagnostic.xml",
+      "bytes": 536,
+      "sha256": "077ac53d0661ca7d3bf0471bc7a0b45ab637d1a496e78163e9f8b8d690db04de"
+    },
+    {
+      "path": "generation31-full-suite-triage/boundary-diagnostic-run.json",
+      "bytes": 2765,
+      "sha256": "93bf00237db05b20b1062958b28021881d344cf60472f975f0edee9ace5e9265"
+    },
+    {
+      "path": "generation31-full-suite-triage/boundary-diagnostic-samples.json",
+      "bytes": 40893,
+      "sha256": "098743cf931e5c8680acbe413f72584020596552e1786de57150bef746362780"
+    },
+    {
+      "path": "patchtrace-integration/docs/engineering/evidence/aggregate-qualification-20261120.zip",
+      "bytes": 329719,
+      "sha256": "231e9a81d49e46a8c3f0f5ea1503756b8934167d5d4b318e45a46dc65b15871d"
+    }
+  ]
+}

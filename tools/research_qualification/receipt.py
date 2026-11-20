@@ -11,6 +11,7 @@ import json
 import os
 import platform
 import re
+import stat
 import sys
 import tempfile
 from datetime import UTC, datetime
@@ -379,23 +380,68 @@ def _reject_constant(name: str) -> Any:
     raise ReceiptError(f"strict JSON only: {name} is not allowed")
 
 
+def _git_text(path: Path, limit: int = 65_536) -> str:
+    flags = os.O_RDONLY | getattr(os, 'O_BINARY', 0) | getattr(os, 'O_NONBLOCK', 0) | getattr(os, 'O_NOFOLLOW', 0)
+    fd = os.open(path, flags)
+    with os.fdopen(fd, 'rb') as stream:
+        info = os.fstat(stream.fileno())
+        if not stat.S_ISREG(info.st_mode) or info.st_size > limit:
+            raise ValueError('unsupported Git metadata')
+        raw = stream.read(limit + 1)
+    if len(raw) > limit:
+        raise ValueError('oversized Git metadata')
+    return raw.decode('utf-8').rstrip('\r\n')
+
+
+def _git_location(base: Path, value: str) -> Path:
+    if not value or any(ord(c) < 32 for c in value):
+        raise ValueError('invalid Git metadata pointer')
+    path = (base / value).resolve(strict=True)
+    if not path.is_dir():
+        raise ValueError('Git metadata pointer is not a directory')
+    return path
+
+
+def _git_ref(value: str) -> bool:
+    return (value.startswith('refs/') and not value.endswith('.') and '@{' not in value
+            and '..' not in value and all(part and not part.startswith('.') and not part.endswith('.lock')
+                                       for part in value.split('/'))
+            and not any(c.isspace() or ord(c) < 32 or ord(c) == 127 or c in '\\~^:?*[' for c in value))
+
+
 def git_head(repo: str | os.PathLike[str] = ".") -> str | None:
-    """Current commit SHA read without invoking git (None when not a checkout)."""
-    head = Path(repo) / ".git" / "HEAD"
+    """Observe this checkout's SHA-1 HEAD, including linked worktrees, without invoking Git."""
     try:
-        text = head.read_text(encoding="utf-8").strip()
-        if text.startswith("ref: "):
-            ref = Path(repo) / ".git" / text[5:]
-            if ref.exists():
-                return ref.read_text(encoding="utf-8").strip()
-            packed = Path(repo) / ".git" / "packed-refs"
-            if packed.exists():
-                for line in packed.read_text(encoding="utf-8").splitlines():
-                    if line.endswith(" " + text[5:]):
-                        return line.split()[0]
+        root = Path(repo)
+        private = root / '.git'
+        if not private.is_dir():
+            locator = _git_text(private)
+            if not locator.startswith('gitdir: '):
+                return None
+            private = _git_location(root, locator[8:])
+        common = private
+        try:
+            location = _git_text(private / 'commondir')
+        except FileNotFoundError:
+            pass
+        else:
+            common = _git_location(private, location)
+        head = _git_text(private / 'HEAD')
+        if re.fullmatch('[0-9a-f]{40}', head):
+            return head
+        ref = head[5:] if head.startswith('ref: ') else ''
+        if not _git_ref(ref):
             return None
-        return text
-    except OSError:
+        directory = private if ref.startswith(('refs/bisect/', 'refs/worktree/', 'refs/rewritten/')) else common
+        try:
+            value = _git_text(directory / ref)
+        except FileNotFoundError:
+            packed = _git_text(directory / 'packed-refs', 8 * 1024 * 1024)
+            values = {line.partition(' ')[0] for line in packed.splitlines()
+                      if line.partition(' ')[2] == ref}
+            value = next(iter(values)) if len(values) == 1 else ''
+        return value if re.fullmatch('[0-9a-f]{40}', value) else None
+    except (OSError, ValueError, UnicodeError, RuntimeError):
         return None
 
 

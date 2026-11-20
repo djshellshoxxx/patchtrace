@@ -247,6 +247,15 @@ scope selection, returned row count and SHA-256 of the complete file are unchang
 
 ### File publication
 
+Stored-source admission (2026-11-20): the Strings CLI must bind stored FLOSS
+results to the current project, artifact hash and side through SPEC-36 T14's
+opt-in admission helper. Swapping orientation must not relabel an earlier
+artifact's results. Auto falls back to verified built-in scanning when stored
+evidence is unavailable; explicit FLOSS selection refuses. Legitimate cached
+results retain their admitted originating run's recorded raw provenance even
+when the cache-hit run has no raw sidecar. This amendment changes no comparison,
+cue, ranking, function-linking, export, or dock behavior.
+
 Publication has two explicit paths:
 
 - Without `--force`, the selected parent must already exist. Publication holds the source bytes and
@@ -308,6 +317,8 @@ GUI (`ui_strings.py`, Qt only; logic in `strings/view_model.py`). **Where**: doc
 | FLOSS missing | "FLOSS is not set up. You do not need it for plain strings. It is only needed for stack, tight and decoded strings." |
 | FLOSS unsupported | "This FLOSS build is not supported: {reason}. PatchTrace is tested with FLOSS 3.1.1." |
 | cancelled | "Extraction cancelled. Earlier results are unchanged." |
+**Shutdown amendment (2026-11-20)**: closing the Strings controller ends admission of filter-preparation work as well as scans. A filter-control signal already queued before shutdown must not submit a new task afterward, whether the shared task runner is still serving another panel or has also shut down. Loaded rows and persistence remain unchanged. The existing generation/key guards continue to reject earlier results.
+
 **Qt pitfalls**: rich-text tooltips and the `accessibleDescription` fallback (F16); never `setHtml/setMarkdown`; QLabel autodetects rich text (use `PlainLabel`); worker QThreads unparented and registered (a parent deleting a running QThread aborts); results delivered by signal with a generation check; model reset only on the GUI thread; no proxy model at 100k rows; clipboard capped; `visibilityChanged` queued; sizes from `QFontMetrics` for DPI 125/150/200.
 **Performance budget**: model reset with 100k rows <= 300 ms; filter+sort <= 400 ms; `data()` O(1) on precomputed text; first paint of 40 rows x 8 columns <= 50 ms; GUI-process memory for two 200k tables <= 250 MiB (the pydantic path measured about 1 GiB, F15); the GUI thread never parses, hashes or reads artifacts.
 **Offscreen tests**: `QT_QPA_PLATFORM=offscreen`, the pytest-qt MainWindow fixture of `test_ui_engine_setup.py`; every state above; hostile strings; 100k-row `data()` call counters and a `tracemalloc` peak; thread join on dock close; tooltip audit; contrast test for any fill; 20 repeats in one session without abort.

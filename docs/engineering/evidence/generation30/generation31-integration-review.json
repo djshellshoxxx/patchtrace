@@ -1,0 +1,80 @@
+{
+  "schema": "patchtrace-integration-review/1",
+  "reviewed_at_utc": "2026-11-20T16:04:08.595176+00:00",
+  "source_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+  "source_tree": "1eb4f2197e22c9e46d25bded163ee241835572e6",
+  "final_observed_head": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+  "final_worktree_status": "",
+  "decision": "bounded-source-integration-approved-with-two-documentation-corrections",
+  "source_blocking_findings": 0,
+  "documentation_findings": [
+    {
+      "id": "G31-DOC-1",
+      "severity": "low",
+      "scope": [
+        "docs/engineering-handoffs/generation-30-31-20261120.md",
+        "docs/engineering/task-ledger.json"
+      ],
+      "finding": "The Strings peer selection has 87 overlapping implementation cases and 10 additional existing GUI cases, not 97 overlapping cases. Two separate history controls are also additional.",
+      "correction": "Describe 87 overlapping plus 10 additional existing GUI tests, plus two separate history controls. Do not add overlapping replays into a full-suite total.",
+      "source_blocker": false
+    },
+    {
+      "id": "G31-DOC-2",
+      "severity": "low",
+      "scope": [
+        "docs/engineering/consolidation-inventory-20261120-g30.md",
+        "docs/engineering/consolidation-inventory-20261120-g30.json"
+      ],
+      "finding": "The report lists raw remote snapshot, all-PR metadata and the generator as replay evidence, but those files are absent from the committed tree. The committed census retains only 10 recent release records while its coverage records all 59 observed releases.",
+      "correction": "Persist and link the prepared compressed replay bundle, which includes unchanged raw inputs, all 59 release records, all 330 PR records, generator and manifest; state that the main census retains 10 recent release details.",
+      "source_blocker": false
+    }
+  ],
+  "checks": {
+    "source_blob_comparisons": 21,
+    "all_source_blobs_match": true,
+    "original_plan_preserved": true,
+    "documentation_checkpoint_changes_runtime": false,
+    "new_local_markdown_links_checked": 8,
+    "broken_new_markdown_links": 0,
+    "recorded_branch_pr_commit_objects_verified": 671,
+    "missing_or_noncommit_objects": [],
+    "evidence_payload_hashes_verified": 26,
+    "recorded_source_hashes_verified": 21,
+    "junit_files_checked": 13,
+    "compressed_evidence_files_checked": 5
+  },
+  "census": {
+    "branches": 341,
+    "pull_requests": 330,
+    "tags": 59,
+    "observed_releases": 59,
+    "release_records_in_main_census": 10,
+    "release_records_in_replay_inputs": 59,
+    "full_semantic_review_claimed": false
+  },
+  "replay_archive": {
+    "name": "generation31-census-replay.zip",
+    "bytes": 147135,
+    "sha256": "e32f5dc05e45d3247b49a77bc2bf5bfe664a6453747b446347434ba7a775085b"
+  },
+  "actions_performed": [
+    "read-only Git blob and object comparison",
+    "JSON/XML/hash and archive integrity inspection",
+    "local documentation link and count verification",
+    "scratch report and replay archive creation"
+  ],
+  "not_performed": [
+    "test execution",
+    "full-suite rerun",
+    "source edit",
+    "remote mutation",
+    "native or release qualification"
+  ],
+  "limits": [
+    "This review verifies integration and saved evidence, not a complete security audit.",
+    "The active full suite and current-source hosted/native gates remain the coordinator responsibility.",
+    "Historical branch containment or patch equivalence does not establish preserved functionality."
+  ]
+}

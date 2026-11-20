@@ -169,6 +169,35 @@ Status: implemented 2026-10-12 in `backend.run_comparison`; enabled only when th
 
 After a completed native run, if `RuntimeFingerprint.eligible()` (all versions known, symbol policy `disabled`, no symbol inputs), `backend` admits the raw JSON (≤ 100 MiB) with `put_raw`. Before launching Ghidriff, `run_comparison` computes the fingerprint and, unless `no_cache`/`refresh`, calls `get_raw`; on a hit it writes a new project-owned run directory with the copied bytes, records provenance `cache_origin = {key, created}` in `AnalysisRun.settings`, and continues through the existing normalization/service publication (identical validation to a fresh run). A hit never skips normalization or artifact identity checks; the case remains usable after the global cache is deleted. Fingerprint inputs come only from probed versions (`diagnose`), never from defaults; `unknown` makes the run ineligible. Acceptance: hit produces byte-identical raw JSON and identical matches; swapped orientation misses; any version change misses; corrupted entry falls back to a real run; GUI displays "from cache" in run details.
 
+### Native cache diagnostic retention (2026-11-20)
+
+The acceptance harness `tools/live_cache_check.py` accepts an optional
+`--diagnostics-dir DIRECTORY`. It requires a new directory before starting
+analysis and never overwrites an existing directory or report. With no option,
+it retains its original temporary-project cleanup and acceptance behavior.
+
+With the option, `first.json` and `second.json` retain each attempted run's
+status, allowlisted runtime/cache settings, raw digest and match count when
+available, at most 64 event records, and at most four existing Java-probe
+observations. A record is written even when that run fails. `result.json`
+records the unchanged final acceptance outcome and exception class/message.
+Each document uses `native-cache-diagnostics/1` and is capped at 512 KiB.
+Event messages are limited to 512 characters; Java output and error messages
+are redacted and limited to 4,096 characters. Environment mappings, credentials,
+target bytes, raw analysis bodies, and complete projects are not exported.
+
+The harness observes the existing `java -version` process calls only. It
+forwards the original arguments, return objects, and exceptions, and restores
+its temporary observer in `finally`. It adds no probes or retries and changes
+no timeout, Java verification rule, cache admission rule, or acceptance
+assertion. Diagnostic write errors are reported explicitly and never suppress
+the original analysis or acceptance exception. The existing workflow uploader
+retains these files through its unchanged `always()` step.
+
+Fake-based tests establish diagnostic retention and observer transparency.
+They do not establish the cause of a native unverified-Java result or replace
+source-specific native acceptance on a supported runner.
+
 ## 14. Acceptance
 
 See tests `tests/test_enrichment_*.py`. Golden arithmetic, invariants (property-based where useful), negatives listed per detector, ownership forgery, side reversal, stable ordering, CLI/GUI/report value agreement, storage compatibility with v1 code paths. Performance objectives: 10,000 pairs / 100,000 lines in 10 s / 512 MiB — measured 6.6 s / 240 MiB (synthetic, Linux, `tools/bench_enrichment.py`); derived-cache hit 500 ms — measured 3.1 s, **not met** (input hashing and ownership revalidation dominate; both are correctness requirements). Phase D track B (same synthetic workload, best of 3 on one shared Linux host): 4.49 s before, 1.79 s after; still **not met** (`docs/qa.md` `[B:hardening]`). UI responsiveness at that scale and Windows timings are unmeasured.

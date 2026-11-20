@@ -1,0 +1,70 @@
+{
+  "schema": "patchtrace-evidence-copy/1",
+  "files": [
+    {
+      "path": "generation31-document-correction-check.json",
+      "bytes": 1172,
+      "sha256": "e67bbecff6cf653f336de42d7d1ba806c7cda39f4fe17c5f90eb83aee719949f"
+    },
+    {
+      "path": "generation31-publication-doc-audit.md",
+      "bytes": 4654,
+      "sha256": "cd4411b88a40cb1858b051d6a4b921a90240a916136ac5f15c15b5c80e6ba4f9"
+    },
+    {
+      "path": "patchtrace-ci-pr342-20261120-1614.json",
+      "bytes": 49120,
+      "sha256": "c3e8862d8c7824e92e0cd194452870eb8f4d2f304a9bec90023f3168677ceb6e",
+      "original_captured_sha256": "86a158e044288741fe3a5e68f482a1eae56c5a857d9303b9b37f66f38216d587",
+      "original_captured_bytes": 49121,
+      "original_payload_archive": "presentation-eof-originals.zip",
+      "format_change": "extra terminal LF removed only"
+    },
+    {
+      "path": "patchtrace-ci-pr342-20261120-1614.md",
+      "bytes": 3954,
+      "sha256": "5aec8140e8dc3f98111ecbed072ec7cf1bc4984e24ce4d7dda745dc487ec6060",
+      "original_captured_sha256": "436cea6a0a752cf9e09138901d5aa59768fc488f6097b3e28e32c109ed0cdf17",
+      "original_captured_bytes": 3955,
+      "original_payload_archive": "presentation-eof-originals.zip",
+      "format_change": "extra terminal LF removed only"
+    },
+    {
+      "path": "patchtrace-ci-pr342-20261120-1614-manifest.json",
+      "bytes": 1310,
+      "sha256": "5b55d83c2e9e4815c26bb903cfa7cdaab9e015f132388f61af511bed0a3be1c8",
+      "original_captured_sha256": "de8f6c84c381a1f949c2b9f0e8aeeca103839e0061c7c8ec97e84fa58a1ac505",
+      "original_captured_bytes": 777,
+      "original_payload_archive": "presentation-eof-originals.zip"
+    },
+    {
+      "path": "patchtrace-pr340-linux-qa-20261120-1614.log.gz",
+      "bytes": 15308,
+      "sha256": "ec040dbafde81725213c585021239141e203412463961662acca52d02e46e71a",
+      "uncompressed_sha256": "b417598b162566b0a0b4c618be1839a0e27485de6a22f21a816f8ec4ee1e1b7e",
+      "uncompressed_bytes": 87027
+    },
+    {
+      "path": "patchtrace-pr342-native-clean-20261120-1614.log.gz",
+      "bytes": 19879,
+      "sha256": "f965f9f67cd68a0257e91ee6a886eb790ecb0c583e31f66123eb37ba1dca4565",
+      "uncompressed_sha256": "de670c489ab05e92f1169e5d28b2833c3c5a656865799d4a8a10c71f232f8409",
+      "uncompressed_bytes": 135782
+    },
+    {
+      "path": "frozen-full-suite-run.json",
+      "bytes": 1286,
+      "sha256": "a095935b21b294a5d3a13e209a69e6d3dc9f0d86b4d305fb6f40ac99285459a0"
+    },
+    {
+      "path": "frozen-full-suite.log",
+      "bytes": 4045,
+      "sha256": "657c58634782f452d7e75f71412b85d348691c92279a42d0f48bb48009740848"
+    },
+    {
+      "path": "frozen-full-suite-launcher.py",
+      "bytes": 2197,
+      "sha256": "65fb3bd54cd4cfc1095c222dcf6fa659b71580b574d8bc490b04433fa7e87015"
+    }
+  ]
+}

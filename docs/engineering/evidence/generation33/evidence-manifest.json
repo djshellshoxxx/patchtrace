@@ -1,0 +1,357 @@
+{
+  "schema": "patchtrace-final-evidence-manifest/1",
+  "qualified_source": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
+  "files": [
+    {
+      "path": "docs/engineering/evidence/generation32/combined/combined.xml",
+      "bytes": 54292,
+      "sha256": "a76a6d9116c058d94a61d4d3f21b9a73b268dbfe0dd07f30c9a0b8de4308b5ac"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/combined/dependencies.log",
+      "bytes": 30,
+      "sha256": "9261363b733079a641c2e4cc9bc46ffa1d8336945a87f807b6cf68847dbc9b09"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/combined/pytest.log",
+      "bytes": 501,
+      "sha256": "1b43dfb01298b5ee41716f9718a76a2a77c8cd50ead0130a728af518e7fa4e64"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/combined/receipt.json",
+      "bytes": 5227,
+      "sha256": "337a72f699fb8a0602788e4041d3450bfa50913c74c1fec18b8e9f894a8b456c"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/combined/ruff.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/evidence-copy-manifest.json",
+      "bytes": 2794,
+      "sha256": "f9c7b1870648bbf15c0405015bacbca66c384a0c18e3f59e2f295564abe7ac14"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/evidence-log-format-correction.json",
+      "bytes": 780,
+      "sha256": "d22b64d22e47a743f16c475e1a1945ff34099d3376d76ce3d7738c75ed8a4353"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/frozen-full-suite-launcher.py",
+      "bytes": 2197,
+      "sha256": "65fb3bd54cd4cfc1095c222dcf6fa659b71580b574d8bc490b04433fa7e87015"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/frozen-full-suite-run.json",
+      "bytes": 1286,
+      "sha256": "a095935b21b294a5d3a13e209a69e6d3dc9f0d86b4d305fb6f40ac99285459a0"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/frozen-full-suite.log",
+      "bytes": 4045,
+      "sha256": "657c58634782f452d7e75f71412b85d348691c92279a42d0f48bb48009740848"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/full-suite-triage-summary.json",
+      "bytes": 13388,
+      "sha256": "d68a8882715dfc368f962eae26950230f1e9588d654dd31ad2dd1239d05cc704"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/full-suite-triage.zip",
+      "bytes": 706671,
+      "sha256": "dd89e6d45644e84da06c1d36e1830775bea0f1bb34f65bb3d7ae2d193783d849"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/generation31-document-correction-check.json",
+      "bytes": 1172,
+      "sha256": "e67bbecff6cf653f336de42d7d1ba806c7cda39f4fe17c5f90eb83aee719949f"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/generation31-publication-doc-audit.md",
+      "bytes": 4654,
+      "sha256": "cd4411b88a40cb1858b051d6a4b921a90240a916136ac5f15c15b5c80e6ba4f9"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/original-worker-diff-check.log.gz",
+      "bytes": 155,
+      "sha256": "59d427fc353d681bda3ef7e6035fd1c5574d3d6d5fc57000803a153fbbfdf87a"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/patchtrace-ci-pr342-20261120-1614-manifest.json",
+      "bytes": 1310,
+      "sha256": "5b55d83c2e9e4815c26bb903cfa7cdaab9e015f132388f61af511bed0a3be1c8"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/patchtrace-ci-pr342-20261120-1614.json",
+      "bytes": 49120,
+      "sha256": "c3e8862d8c7824e92e0cd194452870eb8f4d2f304a9bec90023f3168677ceb6e"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/patchtrace-ci-pr342-20261120-1614.md",
+      "bytes": 3954,
+      "sha256": "5aec8140e8dc3f98111ecbed072ec7cf1bc4984e24ce4d7dda745dc487ec6060"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/patchtrace-pr340-linux-qa-20261120-1614.log.gz",
+      "bytes": 15308,
+      "sha256": "ec040dbafde81725213c585021239141e203412463961662acca52d02e46e71a"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/patchtrace-pr342-native-clean-20261120-1614.log.gz",
+      "bytes": 19879,
+      "sha256": "f965f9f67cd68a0257e91ee6a886eb790ecb0c583e31f66123eb37ba1dca4565"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/presentation-eof-correction.json",
+      "bytes": 2336,
+      "sha256": "1ea3d9aa2d579be649cd64b30de7796438e4d64ab8d4836b43f1884a0ca3352d"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/presentation-eof-originals.zip",
+      "bytes": 14893,
+      "sha256": "9cadaeca085979af85ffe63dade3f27708212509c8b32ef4d432c66098119fc5"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/strings-shutdown-peer/checks.json",
+      "bytes": 1886,
+      "sha256": "2291c4a11f8bd2c79ce901b3ed231aa238ab66c62347a146c09b98a515158cb3"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/strings-shutdown-peer/history.json",
+      "bytes": 5704,
+      "sha256": "ed940fe9b91a9d241ff205048660ae3420414f9771b37815d657f105db97e3cb"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/strings-shutdown-peer/pytest.log",
+      "bytes": 181,
+      "sha256": "7ee1bc2e133d3e2d7f0f9e38156b24a33a893dae8fe152383d112f1d3f8bca56"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/strings-shutdown-peer/receipt.json",
+      "bytes": 2407,
+      "sha256": "975647136b8e327b8c39a227328bc50cb20391d48b42909132ce3a41a284c858"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/strings-shutdown-peer/results.xml",
+      "bytes": 12539,
+      "sha256": "738d42f785553a27ebc37e97e26704860e011287dd24ebce388bf035dfd0ed77"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/strings-shutdown-peer/test_strings_shutdown_peer.py",
+      "bytes": 3604,
+      "sha256": "5c9cd249507756f734cf095469a35153f1e6e29d5c1996a11b50ffa972cf55b1"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/strings-shutdown-worker.bundle",
+      "bytes": 5917,
+      "sha256": "1c4b94ba6d0dbb03b0a2ad80ce32742d790e8ffe55f1a8c0fc4c7ad6f8a0f800"
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/triage-archive-check.json",
+      "bytes": 222,
+      "sha256": "5f660b779107b019a7d3700064f1d27adb24e72cf73e5ab5e30ee321c5fc98dd"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/acquire-g32-defensive-review.xml",
+      "bytes": 14962,
+      "sha256": "c517691ae129660498cbd37a354e77ceaf848c1676681fc4567248049d4cdf20"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/acquire-g32-minimal.patch.gz",
+      "bytes": 3750,
+      "sha256": "b82a555b6b8e0755637304e7baa71bb64901036b5b05abf8fa1016afe98a8192"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/acquire-g32-review.json",
+      "bytes": 4674,
+      "sha256": "ed91588d850467d1d7e1f273ef7a214b383a545a33e5698ac37a52396aa20971"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/cache-diagnostics-worker.bundle",
+      "bytes": 12161,
+      "sha256": "9bc1151fa0676019c4e7d353641384c57694f0e8bd66ba675401c76340302375"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/cache-independent/baseline-live-backend.yml",
+      "bytes": 4545,
+      "sha256": "98ba11cedc7b7819881530285a9a16434fd43c8777a771aebe669debd98125bd"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/cache-independent/baseline-live-cache-check.py",
+      "bytes": 1966,
+      "sha256": "23571e9852c409bffa38dc1e598ab410c5e1bb04909a90516e23c2944c1ac3af"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/cache-independent/manifest.json",
+      "bytes": 1439,
+      "sha256": "e104cfd47697451a474fb3f4057b7f6852bca033ed2b2ff304ee79c898edebeb"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/cache-independent/review-tests-receipt.json",
+      "bytes": 958,
+      "sha256": "ef5add760826eaecb985a956a24d1c60be4dd7823fd04c14809fcfc602fc9ac7"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/cache-independent/review-tests.log",
+      "bytes": 260,
+      "sha256": "dde23ceb25766e1575264feed7576945ee9e8eeca79bf7ced23e37fe07e7a20b"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/cache-independent/review-tests.xml",
+      "bytes": 21840,
+      "sha256": "340f51e00d2a02c8a6de7105e350f116a208db457cc97c2996f8256fc2ba2b8e"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/cache-independent/review.json",
+      "bytes": 5456,
+      "sha256": "caf3634738411e3ed90102a85719324f913251c1cb71da32c1f3527975bc0d38"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/cache-independent/review.md",
+      "bytes": 7019,
+      "sha256": "163884e80485bf6d1c8c4c9e9606aea091c8d83890b2a17a785ab62b94ef0d60"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/cache-independent/test_independent_cache_diagnostics.py",
+      "bytes": 16196,
+      "sha256": "b07880b82d245116160c12f742007c0b5275d0f4944a217341f7983012f1bf29"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/ci-final-1641.zip",
+      "bytes": 19532,
+      "sha256": "e9a15b7c98f55a53120fe206f03977adcc109265be227564048022aad827bb8d"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/ci-final-archive-check.json",
+      "bytes": 654,
+      "sha256": "b0e9474fe43333009b51d691cbf84913d22ce8e5c59c55e6153ecaf3a6d50c16"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/combined/combined.xml",
+      "bytes": 69002,
+      "sha256": "13684bcd488f33e78a88ae1434ec8240b46e4f945abd21fd0cb295bee000a00a"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/combined/pytest.log",
+      "bytes": 592,
+      "sha256": "790c1fbbb7a58fdf66bc12dac98c5aa4d9a1e013de1f34492e8bf8dc1e1e1625"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/combined/receipt.json",
+      "bytes": 6920,
+      "sha256": "a8455dc869690748b3bc486dbc67b67fea2df789717445d77438e5619283e311"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/combined/ruff.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/combined/whitespace.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/continuation-history.json",
+      "bytes": 1065,
+      "sha256": "81933acc495c0f29e4a1492506727a727d76acf5c00c887621c4b7a68bcefad3"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/documentation-link-correction.json",
+      "bytes": 475,
+      "sha256": "5575f4c17ec028afa8622d80049dc23935798de902981b0264eeb3e69bfa2c34"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/extraction.json",
+      "bytes": 999,
+      "sha256": "eb34e457ce9ec81f9034fe39e63074f0416a1ded8dcd893436194d4dd516cacd"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/final-combined/combined.xml",
+      "bytes": 85077,
+      "sha256": "b372cfa4018f983166f78d9f478e327d82e7d7b536d03117f0d4addba332d2ae"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/final-combined/dependencies.log",
+      "bytes": 30,
+      "sha256": "9261363b733079a641c2e4cc9bc46ffa1d8336945a87f807b6cf68847dbc9b09"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/final-combined/pytest.log",
+      "bytes": 752,
+      "sha256": "4662b0ee60f205623cd12f8198c250c5dcce7820accac019cd7af6f53e0b0f6f"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/final-combined/receipt.json",
+      "bytes": 8202,
+      "sha256": "0a65436af364cffa7cbfdd305b2c5daf95bb1439458893f9e69a190c9de82190"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/final-combined/ruff.log",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/final-combined/whitespace.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/final-source-integration-review-bbdef5a6.json",
+      "bytes": 21580,
+      "sha256": "1c874f7d1ca0727d6efa1dd593159cfcad8af720c572007c83e8c9fe45d49733"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/final-source-integration-review-bbdef5a6.md",
+      "bytes": 6114,
+      "sha256": "a97403ee3af3273fb0ef236dc297c32a442e212507da96aa12174fbc85cec9df"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/final-validation.json",
+      "bytes": 847,
+      "sha256": "5f1f54be869a93a8f705282aef9d4ca5dfa4c8b8a4c1d3a5a208ebea63959e9c"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/generation33-historical-link-review.json",
+      "bytes": 7066,
+      "sha256": "326a892433bc84efb6f7b7394a1fb63256ebd947d9fd280f18a7301206c12a23"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/generation33-historical-link-review.md",
+      "bytes": 4306,
+      "sha256": "db795b11d6d2a9e235478ae4fc05ee608389425e45d83693dbda0b7ba25c182e"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/generation33-historical-links-remote.json",
+      "bytes": 47500,
+      "sha256": "bdcc2b9dc4aacce5b12df75801e79e50752253cef8962a7c6fbdef8ae7c20cd9"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/local-continuation-history.bundle",
+      "bytes": 2106173,
+      "sha256": "4d52a5bad44c301a4a6d3dbeea47fa4a62dfefceefe1acda33f37f51cd5fc66f"
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/parallel-acquisition-history.bundle",
+      "bytes": 26027,
+      "sha256": "681ae1af5d7a4c442967342e442415158a799f2bc806447c77c091117728b7cd"
+    },
+    {
+      "path": "docs/engineering/evidence/live-cache-diagnostics-20261120/affected-green.log",
+      "bytes": 199,
+      "sha256": "29fca466123374d933edba193535ac7dc2802793c7e038b4c01b6a0fec465f7b"
+    },
+    {
+      "path": "docs/engineering/evidence/live-cache-diagnostics-20261120/baseline.log",
+      "bytes": 1586,
+      "sha256": "4725251c688d4d4f76c86da2ef156578d00053363bf77bceae33490d6a53f5e9"
+    },
+    {
+      "path": "docs/engineering/evidence/live-cache-diagnostics-20261120/receipt.json",
+      "bytes": 1469,
+      "sha256": "09d0c55e12d9e1a9c157129997987e4885d00535bb556b9b5c8dd1f7c7c1bae4"
+    }
+  ],
+  "self_hash_note": "This manifest excludes itself. Final Git tree verifies all published blobs."
+}

@@ -1,0 +1,29 @@
+{
+  "base_commit": "71b535cc5c1ca0ccc6762831a5d8a137644d14fc",
+  "baseline_harness_sha256": "23571e9852c409bffa38dc1e598ab410c5e1bb04909a90516e23c2944c1ac3af",
+  "repaired_file_sha256": {
+    "tools/live_cache_check.py": "ca6b7a8e7eac91815575948036a959a88068313f869e60711a0fd8c4446c2f25",
+    "tests/test_live_cache_diagnostics.py": "57ac385fa8fa69ffa7d86a39c8699b14a90c4fce8674dd7799a0406d730c333e",
+    ".github/workflows/live-backend.yml": "8d336907940cbfaabf0288b975165f46927e35a05e502b8937eea8e5d06a626f"
+  },
+  "baseline": {
+    "node": "tests/test_live_cache_diagnostics.py::test_cache_miss_keeps_both_runs_and_original_java_probe_results",
+    "result": "1 failed in 3.17s",
+    "log": "baseline.log"
+  },
+  "affected": {
+    "command": "python -m pytest -q tests/test_live_cache_diagnostics.py tests/test_backend_java_version.py tests/test_backend_progress.py tests/test_workflows.py",
+    "result": "113 passed in 2.97s",
+    "log": "affected-green.log"
+  },
+  "quality": [
+    "python -m ruff check tools/live_cache_check.py tests/test_live_cache_diagnostics.py: passed",
+    "git diff --check: passed"
+  ],
+  "environment": {
+    "python": "3.12.14",
+    "pythonpath": "/workspace/scratch/b1d1356aa953/patchtrace-cache-diagnostics/src"
+  },
+  "evidence_kind": "Injected projects and Java/process fakes; no target or native analyzer execution.",
+  "native_failure_cause": "Unresolved; these tests verify diagnostic retention, not native cache acceptance."
+}

@@ -1,5 +1,40 @@
 # PatchTrace delivery tracker
 
+## Final reviewed checkpoint — generation33
+
+Source `bbdef5a6` passed **606 affected tests with one native Windows skip**. Whole-tree Ruff, dependency validation, complete-range whitespace and independent source-scope checks pass. Five product repair areas and the CI diagnostic-retention fix are reviewed. The original native `java=unverified` cache failure and earlier unexplained full-suite SIGKILL remain unresolved; final-head hosted/native/package and standing release gates remain required. [Final qualification](../docs/engineering-handoffs/generation-33-20261120.md).
+
+
+## Latest five-area checkpoint
+
+Source `71b535cc` passed **493 affected cases with one native Windows skip**, whole-tree Ruff and complete-range whitespace. Initial remote `5cc3f2a` has an unresolved native cache gate failure (`java=unverified`); diagnostic retention is under independent review. Full/current-native/package and existing release blockers remain open. [Details](../docs/engineering-handoffs/generation-33-20261120.md).
+
+
+## 2026-11-20 generation 33
+
+- [x] Confirm, repair and independently review queued Strings filtering after shutdown (`9997aaa9`, integrated `ad891694`).
+- [x] Pass 397 unique affected cases, whole-tree Ruff and dependency validation on one unchanged combined source.
+- [x] Preserve the incomplete full-suite SIGKILL, ordered collection and two-case diagnostic; retain unestablished cause.
+- [x] Correct bundle count/publication status/review overlap and raw failure-log whitespace accounting without losing original evidence.
+- [ ] Finish exact-final-source hosted/full/Qt/package/native qualification and retain existing release blockers.
+
+[Generation32 handoff](../docs/engineering-handoffs/generation-33-20261120.md). Draft publication remains separate from main/release acceptance.
+
+
+## 2026-11-20 generations 30–31: reviewed candidate repairs
+
+Candidate-only continuation from `6c8b33b8`; main remains `fdc2696c`.
+
+- [x] Enumerate 341 branches, all 330 PRs and 59 tags/releases; fetch every PR head. Semantic review remains incomplete.
+- [x] Recover worktree-aware receipt identity with original donor attribution, red/green evidence and independent review (`648e5089`).
+- [x] Repair pending Search debounce cancellation with real Qt regression and fresh review (`c216df83`).
+- [x] Recover stored Strings artifact/side admission and valid cache-origin provenance with eight baseline failures and 102 affected passes (`58d30fe6`).
+- [x] Independently verify recent g24–g29 input guards and fixture corrections: 96 focused passes.
+- [ ] Complete combined local and final-head hosted qualification before reassessing integration eligibility.
+- [ ] Retain Linux forced-export race, native Qt, raw-input membership, Windows/manual/trust and historical donor-review blockers.
+
+[Generation handoff](../docs/engineering-handoffs/generation-30-31-20261120.md). No main merge, release, or whole-product completion is claimed.
+
 ## 2026-11-19 continuation consolidation
 
 This checkpoint starts at accepted main `fdc2696c`. The listed implementation

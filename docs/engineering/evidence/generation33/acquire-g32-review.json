@@ -1,0 +1,85 @@
+{
+  "review": "bounded independent protective destination admission review",
+  "donor_commit": "ae67122c69f05715afa622b7e4050b73ca155967",
+  "donor_tree": "8540ad1b31dd0e9859770b7146ef66dcd23a67d3",
+  "comparison_commit": "ad8916944a697985be3e472cd57f2e15f0a263bc",
+  "merge_base": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+  "disposition": "unique small extraction suitable for separate integration qualification; not native Windows or release acceptance",
+  "production_changes": {
+    "file": "src/patchtrace/kbcorrelation/acquire.py",
+    "summary": "Refuse final-component symlinks/junctions and reapply destination admission after verified staging before import callback."
+  },
+  "paths": {
+    "src/patchtrace/kbcorrelation/acquire.py": {
+      "current": "100644 blob 12d64c46da0d7016288620b9c77c9fd8a7bf8ffe\tsrc/patchtrace/kbcorrelation/acquire.py",
+      "donor": "100644 blob 222a2077ec8fe471535e54e82effa25123c66d3c\tsrc/patchtrace/kbcorrelation/acquire.py",
+      "sha256": "6bc456e41a681fa0b9b7fb7eb2ea5924f6ebc263e534802ce3b7cb40a6f9724b"
+    },
+    "docs/specs/kb-cve/31-F-workflow-ui-persistence.md": {
+      "current": "100644 blob b307433bd6146c0104f4a1cd9de17d17aa7161a1\tdocs/specs/kb-cve/31-F-workflow-ui-persistence.md",
+      "donor": "100644 blob 5e16e2ea5b0f72dd069bb4ce2130b1e3e4054976\tdocs/specs/kb-cve/31-F-workflow-ui-persistence.md",
+      "sha256": "81f43ee79901d1c85767096e5511b1823a20888e278d66b782ab83d1a693df5b"
+    },
+    "tests/test_kbc_acquire_destination_symlink_20261120.py": {
+      "current": null,
+      "donor": "100644 blob 7414465f2ceb1e9d1d6f04a3f542255a38ba683d\ttests/test_kbc_acquire_destination_symlink_20261120.py",
+      "sha256": "9a1a2141769059ec209afe630c82ad7b9ca989921bf439bc34617440d9a7182e"
+    },
+    "tests/test_kbc_acquire_destination_after_stage_20261120.py": {
+      "current": null,
+      "donor": "100644 blob 7fb3a0ada43b67e0aecc6aed89ba5fd0f3626c1d\ttests/test_kbc_acquire_destination_after_stage_20261120.py",
+      "sha256": "5c80b7cfebd1f411b8d78215a53af818755a5b25197590856a6dbbc157b8332e"
+    },
+    "tests/test_kbc_acquire_windows_junction_20261120.py": {
+      "current": null,
+      "donor": "100644 blob 0cfba7d115b64ce612be6955be085b1f0e30c18a\ttests/test_kbc_acquire_windows_junction_20261120.py",
+      "sha256": "b273f0dce5571491cf0101859ec317a7b9dcd92c9f26422a93a45dd22d0ecdd6"
+    }
+  },
+  "minimal_patch": {
+    "path": "/workspace/scratch/b1d1356aa953/acquire-g32-minimal.patch",
+    "sha256": "c6a33a85c719a1168ed65711c04b5ed5e346b4ad39bffbc054ec3bb6cd183e2a"
+  },
+  "pytest": {
+    "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src python -m pytest -q tests/test_kbc_acquire_destination_symlink_20261120.py tests/test_kbc_acquire_destination_after_stage_20261120.py tests/test_kbc_acquire_windows_junction_20261120.py tests/test_acquisition_workflow.py tests/test_kbc_acquire_cli.py tests/test_kbc_acquire_pair_binding.py tests/test_kbc_acquisition_evidence.py tests/test_kbc_acquisition_peer_review.py --junitxml=acquire-g32-defensive-review.xml",
+    "stdout_summary": "96 passed, 1 skipped in 5.32s",
+    "tests": 97,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 1,
+    "new_cases": 9,
+    "new_passes": 8,
+    "skip_details": [
+      {
+        "node": "tests.test_kbc_acquire_windows_junction_20261120::test_real_windows_junction_to_empty_directory_is_refused",
+        "reason": "native NTFS junction support is Windows-only"
+      }
+    ],
+    "junit_path": "/workspace/scratch/b1d1356aa953/acquire-g32-defensive-review.xml",
+    "junit_sha256": "c517691ae129660498cbd37a354e77ceaf848c1676681fc4567248049d4cdf20"
+  },
+  "ruff": {
+    "command": "python -m ruff check src tests tools",
+    "exit_code": 0,
+    "stdout": "All checks passed!"
+  },
+  "environment": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "packages": {
+      "pytest": "9.2.0",
+      "ruff": "0.17.6",
+      "pydantic": "2.14.2",
+      "PySide6": "6.12.0"
+    },
+    "imported_acquire": "/workspace/scratch/b1d1356aa953/patchtrace-acquire-review/src/patchtrace/kbcorrelation/acquire.py"
+  },
+  "limitations": [
+    "Windows junction case skipped on Linux; no native Windows acceptance.",
+    "Final-component observations only; no parent anchoring or atomic publication guarantee.",
+    "No closure of remaining postcheck substitution or Linux forced Strings export source-name race.",
+    "Provided synthetic/mocked fixtures establish no live-provider, target-execution, or analysis accuracy claim.",
+    "No full-suite or exact combined-source CI qualification in this review."
+  ],
+  "worktree_status": ""
+}

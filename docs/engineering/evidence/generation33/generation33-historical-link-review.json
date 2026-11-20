@@ -1,0 +1,142 @@
+{
+  "schema": "patchtrace-historical-link-review/1",
+  "reviewed_at_utc": "2026-11-20T16:40:02.808221+00:00",
+  "repository": "djshellshoxxx/patchtrace",
+  "baseline_commit": "ad8916944a697985be3e472cd57f2e15f0a263bc",
+  "baseline_tree": "23ad5e5230e539df4727f5b2235f107a3f895a98",
+  "publication_commit": "b10746302c712d4968285cc4190f6d3adf09d57c",
+  "publication_tree": "7a6771ca39bf0b7983d06f7e6bb0280809c773c5",
+  "restoration_commit": "25b2ac8000e4bb2b941ce44ccbbb25a7eff5c278",
+  "restoration_commit_date": "2026-11-03T22:51:55-07:00",
+  "restoration_subject": "Restore truncated trackers, add tracker regression test, align spec registry (#173)",
+  "restoration_is_baseline_ancestor": true,
+  "decision": "All four broken links predate baseline; all four historical artifacts remotely verified; replace only link destinations with exact historical GitHub blob URLs.",
+  "files": [
+    {
+      "broken_relative_link": "qa/corpus-safeguards-20261101.md",
+      "artifact_path": "docs/qa/corpus-safeguards-20261101.md",
+      "historical_commit": "4aa99f7bd989765000c6ebd659c9565030a48849",
+      "historical_commit_date": "2026-11-01T06:13:05-07:00",
+      "git_blob_sha": "6d1c97cecc0d3ceb66ec118ce4393a19f4738d20",
+      "bytes": 11706,
+      "sha256": "9c29334e159f8abf5453562920f2bed35f38566975ba2ddb161ca4d735d51fec",
+      "verified_github_blob_url": "https://github.com/djshellshoxxx/patchtrace/blob/4aa99f7bd989765000c6ebd659c9565030a48849/docs/qa/corpus-safeguards-20261101.md",
+      "remote_fetch_succeeded": true,
+      "remote_bytes_equal_local_git_blob": true,
+      "link_lines": {
+        "25b2ac8000e4bb2b941ce44ccbbb25a7eff5c278": 1231,
+        "ad8916944a697985be3e472cd57f2e15f0a263bc": 1480,
+        "b10746302c712d4968285cc4190f6d3adf09d57c": 1485
+      },
+      "targets_absent_at": {
+        "25b2ac8000e4bb2b941ce44ccbbb25a7eff5c278": true,
+        "ad8916944a697985be3e472cd57f2e15f0a263bc": true,
+        "b10746302c712d4968285cc4190f6d3adf09d57c": true
+      },
+      "baseline_and_publication_link_text_identical": true,
+      "retained_remote_tracking_ref_count": 18,
+      "retained_remote_tracking_ref_sample": [
+        "refs/remotes/origin-pr/154",
+        "refs/remotes/origin-pr/155",
+        "refs/remotes/origin-pr/161",
+        "refs/remotes/origin-pr/163"
+      ]
+    },
+    {
+      "broken_relative_link": "qa/prereg-markdown-review-20261101.md",
+      "artifact_path": "docs/qa/prereg-markdown-review-20261101.md",
+      "historical_commit": "f27d23a80ee49573ccca54cdf036427f57eebb2a",
+      "historical_commit_date": "2026-11-01T07:28:01-07:00",
+      "git_blob_sha": "0f2a8f1a932c83a89bd8b6823fae3f1b0a9600f1",
+      "bytes": 5947,
+      "sha256": "65b9711db2a62b714d8531232c57a5e0c649b26f7646032fd880ce85bf611d64",
+      "verified_github_blob_url": "https://github.com/djshellshoxxx/patchtrace/blob/f27d23a80ee49573ccca54cdf036427f57eebb2a/docs/qa/prereg-markdown-review-20261101.md",
+      "remote_fetch_succeeded": true,
+      "remote_bytes_equal_local_git_blob": true,
+      "link_lines": {
+        "25b2ac8000e4bb2b941ce44ccbbb25a7eff5c278": 1240,
+        "ad8916944a697985be3e472cd57f2e15f0a263bc": 1489,
+        "b10746302c712d4968285cc4190f6d3adf09d57c": 1494
+      },
+      "targets_absent_at": {
+        "25b2ac8000e4bb2b941ce44ccbbb25a7eff5c278": true,
+        "ad8916944a697985be3e472cd57f2e15f0a263bc": true,
+        "b10746302c712d4968285cc4190f6d3adf09d57c": true
+      },
+      "baseline_and_publication_link_text_identical": true,
+      "retained_remote_tracking_ref_count": 16,
+      "retained_remote_tracking_ref_sample": [
+        "refs/remotes/origin-pr/154",
+        "refs/remotes/origin-pr/161",
+        "refs/remotes/origin-pr/163",
+        "refs/remotes/origin-pr/164"
+      ]
+    },
+    {
+      "broken_relative_link": "qa/corpus-output-persistence-20261101.md",
+      "artifact_path": "docs/qa/corpus-output-persistence-20261101.md",
+      "historical_commit": "99660cc825b366a28e50b18eacad44dbb069ca69",
+      "historical_commit_date": "2026-11-01T06:45:58-07:00",
+      "git_blob_sha": "ab21d0db4f51e95f3d0b7a3e1b1723d814f4cdd8",
+      "bytes": 9572,
+      "sha256": "9c3e2f24c9808bd3695f158d04b275300f4c21fbf80aa08ffe105da75ddb2071",
+      "verified_github_blob_url": "https://github.com/djshellshoxxx/patchtrace/blob/99660cc825b366a28e50b18eacad44dbb069ca69/docs/qa/corpus-output-persistence-20261101.md",
+      "remote_fetch_succeeded": true,
+      "remote_bytes_equal_local_git_blob": true,
+      "link_lines": {
+        "25b2ac8000e4bb2b941ce44ccbbb25a7eff5c278": 1248,
+        "ad8916944a697985be3e472cd57f2e15f0a263bc": 1497,
+        "b10746302c712d4968285cc4190f6d3adf09d57c": 1502
+      },
+      "targets_absent_at": {
+        "25b2ac8000e4bb2b941ce44ccbbb25a7eff5c278": true,
+        "ad8916944a697985be3e472cd57f2e15f0a263bc": true,
+        "b10746302c712d4968285cc4190f6d3adf09d57c": true
+      },
+      "baseline_and_publication_link_text_identical": true,
+      "retained_remote_tracking_ref_count": 16,
+      "retained_remote_tracking_ref_sample": [
+        "refs/remotes/origin-pr/157",
+        "refs/remotes/origin-pr/160",
+        "refs/remotes/origin-pr/163",
+        "refs/remotes/origin-pr/164"
+      ]
+    },
+    {
+      "broken_relative_link": "qa/output-credited-replay-20261101.md",
+      "artifact_path": "docs/qa/output-credited-replay-20261101.md",
+      "historical_commit": "aff72cddc902f31a2cf44dea9c48797edabc1c30",
+      "historical_commit_date": "2026-11-01T07:30:47-07:00",
+      "git_blob_sha": "e43b890f5b976d5b6a93f3b41c5149f96cf86994",
+      "bytes": 5642,
+      "sha256": "afe033c15332845c26b032c116d9f69edc68082d936ea0b266785f9b4c08a4b4",
+      "verified_github_blob_url": "https://github.com/djshellshoxxx/patchtrace/blob/aff72cddc902f31a2cf44dea9c48797edabc1c30/docs/qa/output-credited-replay-20261101.md",
+      "remote_fetch_succeeded": true,
+      "remote_bytes_equal_local_git_blob": true,
+      "link_lines": {
+        "25b2ac8000e4bb2b941ce44ccbbb25a7eff5c278": 1252,
+        "ad8916944a697985be3e472cd57f2e15f0a263bc": 1501,
+        "b10746302c712d4968285cc4190f6d3adf09d57c": 1506
+      },
+      "targets_absent_at": {
+        "25b2ac8000e4bb2b941ce44ccbbb25a7eff5c278": true,
+        "ad8916944a697985be3e472cd57f2e15f0a263bc": true,
+        "b10746302c712d4968285cc4190f6d3adf09d57c": true
+      },
+      "baseline_and_publication_link_text_identical": true,
+      "retained_remote_tracking_ref_count": 16,
+      "retained_remote_tracking_ref_sample": [
+        "refs/remotes/origin-pr/157",
+        "refs/remotes/origin-pr/160",
+        "refs/remotes/origin-pr/163",
+        "refs/remotes/origin-pr/164"
+      ]
+    }
+  ],
+  "remote_receipt_file": "generation33-historical-links-remote.json",
+  "remote_receipt_sha256": "bdcc2b9dc4aacce5b12df75801e79e50752253cef8962a7c6fbdef8ae7c20cd9",
+  "tests_run": 0,
+  "repository_edits": false,
+  "remote_mutations": false,
+  "scope_limit": "Verifies the four named target documents and their byte identity only; does not requalify historical test claims or validate every nested reference."
+}

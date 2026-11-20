@@ -1,5 +1,8 @@
 # PatchTrace discovery and unique-work handoff — 2026-11-19
 
+Latest census: [generation 30 JSON](consolidation-inventory-20261120-g30.json) and [human review](consolidation-inventory-20261120-g30.md). The older snapshot below is retained as historical evidence; graph inclusion does not prove behavioral preservation.
+
+
 ## Scope and pinned baseline
 
 This is a fresh repository census and a bounded semantic review, not a claim that

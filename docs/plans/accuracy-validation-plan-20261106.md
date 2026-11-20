@@ -130,3 +130,26 @@ the available log does not establish which original Win32 parameter or call caus
 Primary API contracts: [NtSetInformationFile](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-ntsetinformationfile),
 [FILE_RENAME_INFORMATION](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/ns-ntifs-_file_rename_information),
 and [FILE_DISPOSITION_INFORMATION](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/ns-ntddk-_file_disposition_information).
+
+## Receipt source identity in linked worktrees (2026-11-18)
+
+The shared research receipt helper must identify the requested checkout's HEAD
+without invoking Git, loading configuration or running hooks. Support ordinary
+`.git` directories and the documented `gitdir:` pointer used by linked worktrees
+and submodule checkouts. Read worktree-local HEAD; read shared branch refs and
+packed refs from the declared `commondir`, retaining per-worktree ref exceptions.
+Relative pointer paths resolve against the containing Git metadata location.
+See the [Git repository layout](https://git-scm.com/docs/gitrepository-layout)
+and [worktree details](https://git-scm.com/docs/git-worktree).
+
+Return only a validated lowercase 40-character commit identity. Missing, invalid,
+ambiguous, oversized or nonregular metadata yields unknown (`None`), never an
+arbitrary text value presented as a commit. Bound individual metadata files to
+64 KiB and packed refs to 8 MiB. Ref names must remain relative inside their Git
+metadata namespace; reject traversal and absolute paths. Do not substitute the
+main checkout's HEAD for a linked worktree's detached or branch HEAD.
+
+This metadata observation does not independently verify clean source content or
+authenticity. Exact-tree/dirty-state evidence and input hashes remain separate.
+Old receipts remain immutable; new execution produces new receipts with the
+resolved identity. No accuracy claim follows from source identification.

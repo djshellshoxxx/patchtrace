@@ -1,0 +1,40 @@
+{
+  "schema": "patchtrace-local-qualification/1",
+  "source_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+  "source_tree": "1eb4f2197e22c9e46d25bded163ee241835572e6",
+  "initial_worktree_status": "",
+  "started_at_utc": "2026-11-20T15:58:53.322845+00:00",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "python": "3.12.14",
+  "command": [
+    "/workspace/scratch/b1d1356aa953/patchtrace-venv/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "--junitxml=/workspace/scratch/b1d1356aa953/generation30-evidence/full-suite.xml"
+  ],
+  "state": "completed",
+  "dependencies": {
+    "PySide6": "6.12.0",
+    "shiboken6": "6.12.0",
+    "pydantic": "2.14.2",
+    "protobuf": "7.36.2",
+    "pytest": "9.2.0",
+    "pytest-qt": "4.5.0",
+    "ruff": "0.17.6",
+    "hypothesis": "6.170.17",
+    "psutil": "7.2.2",
+    "rapidfuzz": "3.14.6",
+    "yara-x": "1.21.0",
+    "iced-x86": "1.21.0"
+  },
+  "returncode": -9,
+  "finished_at_utc": "2026-11-20T16:08:16.640276+00:00",
+  "duration_seconds": 563.2575080780007,
+  "max_rss_kib": 1113696,
+  "user_cpu_seconds": 353.13424,
+  "system_cpu_seconds": 23.516283,
+  "final_head": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+  "final_worktree_status": "",
+  "log_sha256": "657c58634782f452d7e75f71412b85d348691c92279a42d0f48bb48009740848"
+}

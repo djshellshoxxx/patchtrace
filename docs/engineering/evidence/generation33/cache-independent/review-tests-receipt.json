@@ -1,0 +1,23 @@
+{
+  "started_utc": "2026-11-20T16:58:46.452695+00:00",
+  "finished_utc": "2026-11-20T16:58:49.851751+00:00",
+  "command": [
+    "/workspace/scratch/b1d1356aa953/patchtrace-venv/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "/workspace/scratch/b1d1356aa953/patchtrace-cache-review-evidence/test_independent_cache_diagnostics.py",
+    "tests/test_live_cache_diagnostics.py",
+    "tests/test_backend_java_version.py",
+    "tests/test_backend_progress.py",
+    "tests/test_workflows.py",
+    "--junitxml=/workspace/scratch/b1d1356aa953/patchtrace-cache-review-evidence/review-tests.xml"
+  ],
+  "cwd": "/workspace/scratch/b1d1356aa953/patchtrace-cache-review",
+  "PYTHONPATH": "/workspace/scratch/b1d1356aa953/patchtrace-cache-review/src",
+  "QT_QPA_PLATFORM": "offscreen",
+  "returncode": 0,
+  "elapsed_seconds": 3.399070961000689,
+  "source_commit": "8cff43a2fc78c2e150fbdbabc14a977c473811a4",
+  "source_tree": "824f444e89894aee7e951e2708fb2f53b64e9c62"
+}
