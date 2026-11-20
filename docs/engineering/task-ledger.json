@@ -29,7 +29,8 @@
     "Generation25 adds a narrowly anchored newer source KB/version selection; the normalized acquisition evidence is still not complete raw index or original older predecessor membership. Exact-source hosted and independent acceptance remain pending.",
     "Generation26 older Winbindex row ambiguity: distinct normalized source entries with same SHA/basename must fail before plan/network. Preserved reproduction and six isolated mirror checks; actual source tests/Ruff and independent signoff pending. No completeness or empirical accuracy claim.",
     "Generation27: selected newer target priority tier must not have conflicting normalized source claims. Four pre-fix isolated selector-controls failed; six post-fix isolated controls passed. These are not repository-source tests. PR336 hosted Linux pytest passed 23,792 with 51 skips/six xfails but Ruff I001 failed; successor removes only redundant blank import separator. Independent review, exact-source CI, raw index retention and all release blockers remain.",
-    "Generation28 inherited hosted evidence: PR337 Linux QA passed 23,800/51 skips/six xfails but Ruff failed F401 (unused fixture import) plus an older I001 already fixed by generation27; PR338 Linux full QA had one failure in a newly authored selected-newer ambiguity integration fixture after 23,807 passes. The test injected the first SHA-matching body rather than the exact resolver-selected version/KB. Generation28 corrects only test fixture targeting and explicit fixture re-exports, not production source or consent. New source tests/whole-tree Ruff/CI and independent signoff remain pending."
+    "Generation28 inherited hosted evidence: PR337 Linux QA passed 23,800/51 skips/six xfails but Ruff failed F401 (unused fixture import) plus an older I001 already fixed by generation27; PR338 Linux full QA had one failure in a newly authored selected-newer ambiguity integration fixture after 23,807 passes. The test injected the first SHA-matching body rather than the exact resolver-selected version/KB. Generation28 corrects only test fixture targeting and explicit fixture re-exports, not production source or consent. New source tests/whole-tree Ruff/CI and independent signoff remain pending.",
+    "Generation29 PR339 exact-head Linux/Windows full pytest passed (23808/23694), but both combined jobs failed Ruff I001 in two fixture import blocks. A new isolated test-only successor split imports exactly per Ruff's diagnostic. PR339 five Qt gates passed; package/smoke skipped. New branch source-specific acceptance and independent review pending. No production or accuracy gain."
   ],
   "tasks": [
     {
@@ -374,11 +375,22 @@
     },
     {
       "id": "generation28-hosted-qa-fixture",
-      "status": "published-for-qualification",
+      "status": "hosted-linux-windows-pytest-and-qt-passed-ruff-i001-blocked",
       "owner": "generation28-test-fixture-only",
       "source_commit": null,
       "evidence": "docs/engineering-handoffs/generation-28-20261120.md",
-      "result_or_next_action": "Source-pinned QA required to validate the selected newer-body integration test now injects into the actual resolver window and that both imports are recognized as pytest fixture exports; retain predecessor CI failures and the exact-source independent review gate."
+      "result_or_next_action": "PR339 source a5c6ff87 complete-tree 93ab7f6c: hosted Linux 23808 pass/51 skip/6 xfail; Windows 23694 pass/166 skip/5 xfail; 5 Qt jobs successful. Both strict Ruff legs failed on two I001 fixture self-alias import blocks. Generation29 new isolated test-only source 981d41e3 splits two statements per exact Ruff suggestions. Require new-source CI, native/package and independent review; prior results are not full gate acceptance."
+    },
+    {
+      "id": "generation29-hosted-ruff-imports",
+      "status": "test-only-source-committed-hosted-ci-and-independent-review-pending",
+      "owner": "generation29 isolated QA lint worker; external reviewer unassigned",
+      "branch": "codex/patchtrace-qa-ruff-imports-20261120-g29",
+      "source_commit": "981d41e379324f5cae7c078d9857d73e4cd02658",
+      "code_tree": "aa8a96bd55e85d2ab11dd0c9b6b565778d05509b",
+      "evidence": "docs/engineering-handoffs/generation-29-20261120.md",
+      "review_status": "coordinator source-aware inspection only; independent signoff pending",
+      "result_or_next_action": "Preserved PR339 Linux/Windows full pytest passes and 5 Qt successes plus exact Ruff I001 failures. Split self-alias ready as ready imports in two tests per hosted Ruff diff. Exact new-head full QA/Ruff, Qt/native/package and adversarial independent review remain required. No production/contract change, no release or merge."
     }
   ],
   "aggregate_source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
