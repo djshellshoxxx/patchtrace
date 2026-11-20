@@ -104,3 +104,5 @@ unreviewed work explicitly. Later refs need a delta inventory.
 Focused passes do not authorize main promotion. Applicable checks must be green,
 with no blocker and a fresh expected-head REST merge guard. Release publication
 remains a separate process.
+
+- [Cycle95fe — selective GUI recovery, candidate admission and inventory replay](cycle-95fe-20261120.md); see the [current engineering index](../engineering/WORKER_HANDOFF.md).

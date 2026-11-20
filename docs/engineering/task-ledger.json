@@ -1,24 +1,22 @@
 {
   "schema": "patchtrace-engineering-task-ledger/1",
-  "updated_at": "2026-11-20T18:17:25+00:00",
+  "updated_at": "2026-11-20T23:55:27.563455+00:00",
   "repository": "https://github.com/djshellshoxxx/PatchTrace",
-  "integration_branch": "codex/patchtrace-verified-integration-20261120-g30",
-  "checkpoint_local_commit": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
-  "starting_candidate": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+  "integration_branch": "codex/patchtrace-consolidation-20261120-95fe",
+  "checkpoint_local_commit": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
+  "starting_candidate": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
   "main_at_discovery": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
   "remote_publication": {
-    "status": "published-draft-with-final-reviewed-source",
-    "pull_request": 342,
-    "url": "https://github.com/djshellshoxxx/PatchTrace/pull/342",
-    "branch": "codex/patchtrace-verified-integration-20261120-g30",
-    "base_branch": "codex/patchtrace-qa-ruff-imports-20261120-g29",
-    "base_commit": "6c8b33b851a22fb16d39b31693922359cd34ad12",
-    "initial_remote_commit": "5cc3f2a540f2e49e8b86e20decf7d4f62ce89d0a",
-    "initial_local_commit": "9fdb02abd3ec9353102ce4fe5df30f953d290d14",
-    "initial_tree": "559c18105a2a79960811f4f6f2c011c0bf15cc7c",
-    "initial_tree_equality_verified": true,
-    "reviewed_runtime_test_tool_checkpoint": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
-    "latest_head_rule": "Resolve live PR342; its current body and publication commit contain the final local/remote tree mapping. This record does not assign the initial head to later source."
+    "status": "code-objects-created-and-tree-verified; draft-branch-publication-receipt-is-in-associated-PR",
+    "branch": "consolidation/patchtrace-20261120-95fe",
+    "base_branch": "codex/patchtrace-candidate-component-type-20261120-g41",
+    "base_commit": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+    "local_source": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
+    "tree": "a72efdcbf503e0480a182fd323c5c4320d27c098",
+    "remote_code_commit": "406acf96f5b1a299aca940f98eeb69d0b9583729",
+    "tree_verified_equal": true,
+    "commit_mapping": "docs/engineering/evidence/cycle95fe/code-commit-mapping.json",
+    "documentation_head_rule": "Resolve the named remote branch and its associated draft PR; documentation/evidence commits do not change the frozen code source."
   },
   "release_ready": false,
   "main_merge_eligible": false,
@@ -47,7 +45,8 @@
     "Generation38: PR342 exact source Windows Qt shard job 136446431330 failed two real investigation create timeout cases after 10,423 passes; 10-second wait still strict. A source-level diagnostic review found a non-string/unhashable operation could mask the timeout; regression and type gate repaired. Test-only g38 adds bounded operation/runner-busy/lifecycle context with original exception as cause and 4 source regressions; 7 synthetic local controls passed. Windows native root cause not yet known, full/CI/independent review pending. Do not mark QA combined success or rerun blindly.",
     "Generation39 isolated direct KB investigation Create route from PR343 source: unlike the already integrated acquisition guard, _new_destination checked is_symlink but not is_junction before resolve/empty-target check. SPEC and portable/native regression tests precede one-condition fix. Initial Windows native case was strengthened to use empty target (original code would otherwise refuse for unrelated nonempty content). Three local source-equivalent conditions passed, not actual repo pytest/Ruff or Windows. PR343 CI still active; independent review and full gates pending.",
     "Generation40 isolated source-plan admission on g39: _source_plan previously called lead.strip without runtime type check. Non-text types caused uncaught exceptions or invalid normalization; exact type gate returns PT-KBC-INPUT before network/workspace. SPEC-first, six repository test cases authored (five invalid including overridden subclass, one valid text). Six standalone source-equivalent expectations passed only; full checked-out tests/Ruff, CI and separate review pending. PR343 workflow active; no duplicate suite.",
-    "Generation41: offline saved-index candidate component_name.strip() was unguarded; null/integer raised AttributeError, non-text .strip objects could bypass a typed request boundary. SPEC-31-F, 6 regression cases and exact-str guard committed in isolated branch. Hand-copied algorithm controls only; checkout pytest/Ruff, source CI and independent signoff pending. No predecessor or main ref moved."
+    "Generation41: offline saved-index candidate component_name.strip() was unguarded; null/integer raised AttributeError, non-text .strip objects could bypass a typed request boundary. SPEC-31-F, 6 regression cases and exact-str guard committed in isolated branch. Hand-copied algorithm controls only; checkout pytest/Ruff, source CI and independent signoff pending. No predecessor or main ref moved.",
+    "Cycle95fe current indexes reconcile stale top-level checkpoints. Current preintegration selections overlap; no sum is a full-suite pass. External foreground scopes remain separately owned. Main/release are not promoted."
   ],
   "tasks": [
     {
@@ -654,11 +653,59 @@
       "branch": "codex/patchtrace-candidate-component-type-20261120-g41",
       "source_commit": "67653265a713dcddb8fee903adcd2fef9c539989",
       "evidence": "docs/engineering-handoffs/generation-41-20261120.md",
-      "review_status": "author-source-inspection-only",
-      "result_or_next_action": "Run six new tests plus saved-index candidate suite and whole-tree Ruff; obtain independent source review and exact-source CI. Do not infer full aggregate/native acceptance."
+      "review_status": "independent standards/spec review complete; ordering gap repaired in 649ed46e with independent closure",
+      "result_or_next_action": "Existing six authored cases were executed within 105/1 baseline selection; successor covers both operations and earlier read boundary. Final hosted/full acceptance remains separate."
+    },
+    {
+      "id": "95fe-candidate-admission-order",
+      "owner": "interactive-95fe",
+      "status": "implemented-independently-reviewed-locally-integrated",
+      "source_commit": "649ed46ead79ad12c9fa35085e704ac3f0d32631",
+      "evidence": "docs/engineering/CONSOLIDATION_LEDGER.md",
+      "result_or_next_action": "183 related cases pass on clean combined ccc3664f; four baseline failures retained; full/hosted pending"
+    },
+    {
+      "id": "95fe-gui-help-announcements",
+      "owner": "interactive-95fe",
+      "status": "implemented-independently-reviewed-locally-integrated",
+      "source_commit": "2c7f506b61ad1f8010c82c1303dd181baf8c0158",
+      "evidence": "docs/engineering/CONSOLIDATION_LEDGER.md",
+      "result_or_next_action": "212 affected passed; 2 preserved baseline failures; actual screen-reader pending"
+    },
+    {
+      "id": "95fe-inventory-replay",
+      "owner": "interactive-95fe",
+      "status": "implemented-independently-reviewed-locally-integrated",
+      "source_commit": "076c1ffaea35e922b206da5818023fe96459de23",
+      "evidence": "docs/engineering/CONSOLIDATION_LEDGER.md",
+      "result_or_next_action": "Ten inventory cases pass on clean combined ccc3664f; real 353-row replay identical; original CLI and two unit failures retained"
+    },
+    {
+      "id": "95fe-csv-qt-coverage",
+      "owner": "interactive-95fe",
+      "status": "test-only-completed-locally-integrated",
+      "source_commit": "c71d604edbd63e3b8d0f10b120c775acd1c5f8b4",
+      "evidence": "docs/engineering/CONSOLIDATION_LEDGER.md",
+      "result_or_next_action": "47 passes; no production bug or failed baseline claimed"
+    },
+    {
+      "id": "95fe-semantic-triage",
+      "owner": "interactive-95fe",
+      "status": "scoped-source-review-completed",
+      "source_commit": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
+      "evidence": "docs/engineering/CONSOLIDATION_LEDGER.md",
+      "result_or_next_action": "Nine donor scopes accounted for; no runtime acceptance/deletion implied"
+    },
+    {
+      "id": "95fe-qualification",
+      "owner": "interactive-95fe",
+      "status": "bounded-combined-pass-full-and-hosted-blocked",
+      "source_commit": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
+      "evidence": "docs/engineering/CONSOLIDATION_LEDGER.md",
+      "result_or_next_action": "183 + 50 - 21 shared = 212 distinct passing cases on clean ccc3664f; four interrupted -9 runs retained; full/native/hosted gates remain required"
     }
   ],
-  "aggregate_source_commit": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
+  "aggregate_source_commit": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
   "workers": [
     {
       "name": "repository_inventory",
@@ -703,9 +750,61 @@
     {
       "name": "generation31_integration_review",
       "status": "completed"
+    },
+    {
+      "name": "95fe-ledger-discovery",
+      "status": "completed"
+    },
+    {
+      "name": "95fe-g41-standards",
+      "status": "completed"
+    },
+    {
+      "name": "95fe-g41-spec",
+      "status": "completed"
+    },
+    {
+      "name": "95fe-admission-implementation",
+      "status": "completed"
+    },
+    {
+      "name": "95fe-admission-review",
+      "status": "completed"
+    },
+    {
+      "name": "95fe-gui-recovery",
+      "status": "completed"
+    },
+    {
+      "name": "95fe-gui-review",
+      "status": "completed"
+    },
+    {
+      "name": "95fe-inventory-review",
+      "status": "completed"
+    },
+    {
+      "name": "95fe-coverage",
+      "status": "completed"
+    },
+    {
+      "name": "95fe-late-stack-audit",
+      "status": "completed"
+    },
+    {
+      "name": "95fe-historical-ui",
+      "status": "completed"
+    },
+    {
+      "name": "95fe-historical-integrity",
+      "status": "completed"
+    },
+    {
+      "name": "95fe-root",
+      "status": "reviewed-draft-publication-and-handoff"
     }
   ],
-  "local_integration_branch": "codex/patchtrace-verified-integration-20261120-g30",
+  "local_integration_branch": "codex/patchtrace-consolidation-20261120-95fe",
   "continuation": {
     "title": "Continue PatchTrace engineering",
     "enabled": true,
@@ -715,10 +814,11 @@
     "environment_selection": "inherited",
     "environment_availability_verified": false,
     "automation_id": "Automation_8671977e1a1081919d2b8650cf5a1c1c",
-    "checkpoint": "PR342; generation33; final reviewed source bbdef5a6",
+    "checkpoint": "Cycle95fe local ccc3664f / remote code 406acf96; resolve new draft branch before continuation",
     "last_observed_run_state": "completed at2026-11-20T16:25:26.023415Z; verified2026-11-20T16:31:57Z",
-    "handoff": "docs/engineering-handoffs/generation-33-20261120.md",
-    "prompt_update_rule": "After verified publication, save exact final head/tree without changing cadence, timezone or environment selection."
+    "handoff": "docs/engineering/WORKER_HANDOFF.md",
+    "prompt_update_rule": "After verified publication, save exact final head/tree without changing cadence, timezone or environment selection.",
+    "prompt_update_status": "Own completed handoff to be recorded after verified branch/PR publication; preserve other foreground ownership and schedule"
   },
   "hosted_initial_candidate": {
     "head": "3862cb5de3256efec8f6392a3b6fb4d9e600c377",
@@ -849,27 +949,62 @@
     "complete_local_history_bundle": "docs/engineering/evidence/generation33/local-continuation-history.bundle",
     "complete_local_history_commits": 13
   },
-  "aggregate_source_tree": "a8ef4316a88ab58619d966744e26b0067d66ff33",
+  "aggregate_source_tree": "a72efdcbf503e0480a182fd323c5c4320d27c098",
   "current_qualification": {
-    "source_commit": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
-    "source_tree": "a8ef4316a88ab58619d966744e26b0067d66ff33",
-    "affected_passed": 606,
-    "failed": 0,
-    "skipped": 1,
-    "errors": 0,
-    "unique_test_files": 30,
+    "source_commit": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
+    "source_tree": "a72efdcbf503e0480a182fd323c5c4320d27c098",
     "whole_tree_ruff": "passed",
     "dependency_validation": "passed",
-    "full_suite": "incomplete-earlier-source-SIGKILL-origin-unestablished",
+    "protobuf_runtime": "7.36.2-upb-passed",
+    "cli_help": "passed",
+    "full_suite": "incomplete-SIGKILL-before-first-test-start",
+    "full_returncode": -9,
+    "full_seconds": 23.089,
+    "full_cause": "unestablished",
+    "combined_bounded_selection": "212-distinct-passes-across-two-completed-bounded-processes",
+    "hosted_final_source": "pending",
     "release_ready": false,
-    "evidence": "docs/engineering/generation33-qualification-20261120.md",
-    "skip_reason": "native Windows junction case on Linux",
-    "whole_candidate_whitespace": "passed",
-    "native_cache_gate": "initial remote 5cc push-native failure; java=unverified; origin unestablished",
-    "unique_collected_cases": 607,
-    "source_review": "35 blob-and-mode comparisons passed"
+    "evidence": "docs/engineering/cycle-95fe-qualification.md",
+    "combined_process_returncode": -9,
+    "completed_combined_runs": [
+      {
+        "receipt": "combined-admission",
+        "passed": 183,
+        "skipped": 0
+      },
+      {
+        "receipt": "combined-changed-cases",
+        "passed": 50,
+        "skipped": 0
+      }
+    ],
+    "shared_test_identities": 21,
+    "distinct_passing_test_identities": 212,
+    "incomplete_runs": [
+      {
+        "receipt": "full",
+        "returncode": -9,
+        "seconds": 23.089
+      },
+      {
+        "receipt": "combined-focused",
+        "returncode": -9,
+        "seconds": 70.395
+      },
+      {
+        "receipt": "combined-gui",
+        "returncode": -9,
+        "seconds": 32.827
+      },
+      {
+        "receipt": "combined-integrity-coverage",
+        "returncode": -9,
+        "seconds": 21.474
+      }
+    ],
+    "diagnosis": "SIGKILL sender/cause unestablished; no OOM, fixed timeout or GUI-causation claim"
   },
-  "current_handoff": "docs/engineering-handoffs/generation-35-20261120.md",
+  "current_handoff": "docs/engineering/WORKER_HANDOFF.md",
   "parallel_continuation": {
     "branch": "codex/patchtrace-acquire-windows-junction-20261120-g32",
     "head": "ae67122c69f05715afa622b7e4050b73ca155967",
@@ -878,5 +1013,98 @@
     "owner": "completed independent defensive review and root integration",
     "overwrites_active_pr342": false,
     "integration_commit": "71b535cc5c1ca0ccc6762831a5d8a137644d14fc"
+  },
+  "checkpoint_history": [
+    {
+      "updated_at": "2026-11-20T18:17:25+00:00",
+      "integration_branch": "codex/patchtrace-verified-integration-20261120-g30",
+      "checkpoint_local_commit": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
+      "current_handoff": "docs/engineering-handoffs/generation-35-20261120.md",
+      "current_qualification": {
+        "source_commit": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
+        "source_tree": "a8ef4316a88ab58619d966744e26b0067d66ff33",
+        "affected_passed": 606,
+        "failed": 0,
+        "skipped": 1,
+        "errors": 0,
+        "unique_test_files": 30,
+        "whole_tree_ruff": "passed",
+        "dependency_validation": "passed",
+        "full_suite": "incomplete-earlier-source-SIGKILL-origin-unestablished",
+        "release_ready": false,
+        "evidence": "docs/engineering/generation33-qualification-20261120.md",
+        "skip_reason": "native Windows junction case on Linux",
+        "whole_candidate_whitespace": "passed",
+        "native_cache_gate": "initial remote 5cc push-native failure; java=unverified; origin unestablished",
+        "unique_collected_cases": 607,
+        "source_review": "35 blob-and-mode comparisons passed"
+      },
+      "remote_publication": {
+        "status": "published-draft-with-final-reviewed-source",
+        "pull_request": 342,
+        "url": "https://github.com/djshellshoxxx/PatchTrace/pull/342",
+        "branch": "codex/patchtrace-verified-integration-20261120-g30",
+        "base_branch": "codex/patchtrace-qa-ruff-imports-20261120-g29",
+        "base_commit": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+        "initial_remote_commit": "5cc3f2a540f2e49e8b86e20decf7d4f62ce89d0a",
+        "initial_local_commit": "9fdb02abd3ec9353102ce4fe5df30f953d290d14",
+        "initial_tree": "559c18105a2a79960811f4f6f2c011c0bf15cc7c",
+        "initial_tree_equality_verified": true,
+        "reviewed_runtime_test_tool_checkpoint": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
+        "latest_head_rule": "Resolve live PR342; its current body and publication commit contain the final local/remote tree mapping. This record does not assign the initial head to later source."
+      }
+    }
+  ],
+  "current_cycle": {
+    "id": "95fe-20261120",
+    "owner": "interactive-95fe",
+    "status": "reviewed-draft-candidate-full-and-hosted-gates-pending",
+    "handoff": "docs/engineering-handoffs/cycle-95fe-20261120.md",
+    "remote_snapshot": {
+      "branches": 354,
+      "topic_branches": 353,
+      "pull_requests": 334,
+      "open_prs": 78,
+      "merged_prs": 172,
+      "closed_unmerged_prs": 84,
+      "tags": 59,
+      "releases": 59,
+      "all_releases_prerelease": true
+    },
+    "external_ownership": {
+      "session": "/workspace/scratch/2bade0b323c3/PatchTrace",
+      "scopes": [
+        "TaskRunner lifecycle",
+        "report cleanup outcomes",
+        "Linux forced-export publication"
+      ],
+      "source": "existing automation prompt and local read-only inspection",
+      "expires_or_handoff": "2026-11-21T03:00:00Z"
+    },
+    "semantic_dispositions": {
+      "reviewed_scopes": 9,
+      "superseded_product_scopes": 8,
+      "already_main_ancestor": 1,
+      "previously_unresolved_scopes_reviewed": 7,
+      "previously_patch_equivalent_scopes_reviewed": 1,
+      "record": "docs/engineering/cycle-95fe-semantic-review.json"
+    },
+    "latest_parent_ci_observation": {
+      "observed_utc": "2026-11-20T23:53:17Z",
+      "source": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+      "five_native_jobs": "success",
+      "linux_windows_qa_and_five_qt_jobs": "in_progress",
+      "qualifies_current_source": false
+    }
+  },
+  "publication_preparation_cycle95fe": {
+    "method": "GitHub Git Data API; no CLI push credentials; no force update",
+    "local_code_source": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
+    "remote_code_source": "406acf96f5b1a299aca940f98eeb69d0b9583729",
+    "identical_code_tree": "a72efdcbf503e0480a182fd323c5c4320d27c098",
+    "local_code_commits": 9,
+    "preserved_local_merges": 3,
+    "mapping": "docs/engineering/evidence/cycle95fe/code-commit-mapping.json",
+    "evidence_directory": "docs/engineering/evidence/cycle95fe"
   }
 }

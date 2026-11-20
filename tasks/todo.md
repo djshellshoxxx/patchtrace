@@ -1612,3 +1612,17 @@ for exact commits and limitations. No main merge/release.
 
 
 - [ ] Generation35 Strings CSV fixture source qualification: original g34 regression table had five literal-escape mismatches; g35 test-only source corrects them and passes 13/13 stdlib mirror controls. Run source-pinned `python -m pytest -q tests/test_strings_export.py`, whole-tree Ruff and full offscreen suite, get fresh independent post-fix review and hosted QA/native/package after PR342 activity concludes. Preserve g34, PR342 and original failures (see `docs/engineering-handoffs/generation-35-20261120.md`).
+
+## Cycle 95fe — 20 November 2026
+
+- [x] Independently review and locally integrate candidate component admission before reads.
+- [x] Recover registered-header help and Evidence announcements from retained PR #321.
+- [x] Repair bounded inventory replay and reproduce the captured 353-topic report byte-for-byte.
+- [x] Add required form-feed/JSON and Qt timeout fallback acceptance coverage.
+- [x] Account for nine further historical product scopes without deleting branches.
+- [x] Verify 212 distinct passing cases across two bounded runs on the combined source.
+- [ ] Complete exact final-source hosted/full/native qualification; retain all four current local SIGKILLs without claiming a cause.
+- [ ] Reconcile the separately owned foreground TaskRunner/report/publication work after handoff.
+- [ ] Preserve Windows/manual/accessibility/raw-source and separate accuracy gates.
+
+Current authority: [engineering ledger](../docs/engineering/task-ledger.json).

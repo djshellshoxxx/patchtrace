@@ -2280,3 +2280,25 @@ whole-tree Ruff/full offscreen suite were not run in this inaccessible
 checkout; no independent review was recorded. Native Windows Qt PR343 run
 44810716926 was active. Preserve its actual results, do not credit predecessor
 checks or close original blocker receipts.
+
+
+## 2026-11-20 cycle 95fe — source-pinned consolidation checks
+
+Clean combined local source `ccc3664f11a81d3d30f907da36fc3d22da0063d0` maps to remote code `406acf96f5b1a299aca940f98eeb69d0b9583729` with
+identical tree `a72efdcbf503e0480a182fd323c5c4320d27c098`. Two completed bounded source runs passed 183 and 50
+cases with 21 shared JUnit identities: **212 distinct passing cases**. All ten
+inventory cases and the two recovered GUI cases are included. Whole-tree Ruff,
+dependency consistency, protobuf/upb runtime and headless CLI help passed.
+
+The full, 27-file, GUI and integrity/coverage attempts ended SIGKILL (-9) after
+23.089, 70.395, 32.827 and 21.474 seconds respectively. None has a final pytest
+summary/JUnit; the full attempt reached no first test-start event. The sender
+and cause are unestablished. No progress dots are counted as acceptance, and no
+test, timeout or skip policy was weakened. Worker-scope passes are retained with
+their own source identities and are not added to the combined-source union.
+
+Final-source hosted QA/Qt/native/package and real Windows manual acceptance
+remain required. See [qualification](engineering/cycle-95fe-qualification.md),
+[findings](engineering/AUDIT_FINDINGS.md), and
+[durable evidence](engineering/evidence/cycle95fe/). Earlier failures remain
+preserved; no main promotion, release, or target execution is claimed.
