@@ -1517,3 +1517,21 @@ the queued aggregate and current PR319 `8d130aef` native results.
 The latest [handoff](../docs/engineering-handoffs/generation-9-through-14-20261120.md)
 and [ledger](../docs/engineering/task-ledger.json) supersede earlier running-state
 and worker-ownership notes. No full-suite pass, main merge or release is claimed.
+
+
+## 2026-11-20 generation-16 offline index read hardening
+
+- [x] Reproduce pathname-size staleness bypass of a raw index read budget and
+  stale rejected-row count after file deletion, in an isolated stdlib mirror.
+- [x] Update SPEC-31-D, implement bounded read from one opened stream and
+  clear the previous per-file skipped count, with two repository regression cases.
+- [ ] Run source-pinned actual repository regression tests, related KBC pairing
+  tests, whole-tree Ruff and complete offscreen suite on a supported checkout;
+  retain CI artifacts and obtain independent adversarial signoff.
+- [ ] Keep PR326/325 original-source qualification separate; never rerun an
+  in-progress full suite or treat the focused simulation as hosted acceptance.
+- [ ] Retain full raw entry/index and resolver-input reconstruction, Linux
+  forced-export race, Qt advisories, Windows trust/manual and L1/L2/L3 gates.
+
+Read [generation 16](../docs/engineering-handoffs/generation-16-20261120.md)
+for exact commits and limitations. No main merge/release.
