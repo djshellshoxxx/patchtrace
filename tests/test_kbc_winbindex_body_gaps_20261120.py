@@ -5,6 +5,7 @@ All records are synthetic; no sockets, target execution, or live provider claims
 from __future__ import annotations
 
 import json
+from io import StringIO
 
 from patchtrace.acquisition.winbindex import parse_rows
 from patchtrace.kbcorrelation.wiring import WorkspaceFileIndex, save_winbindex_record
@@ -89,3 +90,21 @@ def test_import_receipt_exposes_body_rejections_without_redefining_entry_skips(t
     assert receipt["skipped"] == 0
     assert receipt["skipped_bodies"] == 1
     assert (tmp_path / "workspace" / receipt["stored_as"]).read_bytes() == body
+
+
+def test_plain_import_does_not_hide_unreadable_version_or_kb_bodies(tmp_path):
+    from patchtrace.kbcorrelation import cli_index
+
+    body = _body()
+    original = tmp_path / "original.json"
+    original.write_bytes(body)
+    output = StringIO()
+    result = cli_index.main(
+        ["import", "--winbindex", NAME, "--data-date", DATE,
+         "--workspace", str(tmp_path / "workspace"), str(original)],
+        ports=cli_index.IndexPorts(winbindex=save_winbindex_record),
+        stdout=output,
+    )
+    assert result == 0
+    assert "0 entr(ies) skipped" in output.getvalue()
+    assert "1 version/KB body unit(s) unreadable" in output.getvalue()
