@@ -1625,3 +1625,14 @@ for exact commits and limitations. No main merge/release.
 
 
 - [ ] Generation35 Strings CSV fixture source qualification: original g34 regression table had five literal-escape mismatches; g35 test-only source corrects them and passes 13/13 stdlib mirror controls. Run source-pinned `python -m pytest -q tests/test_strings_export.py`, whole-tree Ruff and full offscreen suite, get fresh independent post-fix review and hosted QA/native/package after PR342 activity concludes. Preserve g34, PR342 and original failures (see `docs/engineering-handoffs/generation-35-20261120.md`).
+
+
+### PatchTrace sibling integration — 2026-11-20
+
+- [x] Refresh PR345 and PR346 exact publication heads and handoffs; select PR345 as new isolated base without rewriting either branch.
+- [x] Recover only PR346's unique candidate pre-service admission ordering and bounded branch-snapshot replay with exact source/test blob checks. Retain PR345 TaskRunner/report/Linux export and richer accessible GUI tests.
+- [x] Preserve two distinct Qt diagnostics and two CSV form-feed controls without importing PR346's obsolete Linux overwrite expectation.
+- [ ] Run exact combined branch focused candidate/inventory/Qt/CSV pytest, whole-tree Ruff and supported aggregate with phase/termination evidence; do not repeat known SIGKILL command blindly.
+- [ ] Obtain independent complete-source reviewer and exact-source hosted Windows/Linux QA, Qt/native/package/smoke checks. Inspect queued predecessor jobs without claiming green.
+- [ ] Map application ColumnSpec tip IDs with real registered entries and tests; maintain separate native screen-reader and Windows trust acceptance.
+- [ ] Retain full raw Winbindex/index provenance and resolver membership, historical donor semantic review and L1/L2/L3-specific accuracy; no release or main merge while blocked.
