@@ -66,6 +66,20 @@ Persistence: kind `tool-run` (body `ToolRun`, id `run_id`) and kind `tool-eviden
 - diec [run]: `<exe> -j -D <scratch>/db -E <scratch>/empty -C <scratch>/empty [-d -u] <scratch>/in/artifact.bin`; `-d -u` only with the heuristic option. The copied database is the pinned one; extra and custom databases are empty so user-writable signature folders cannot change results.
 - Never passed: capa `-d -v -vv -t --restrict-to-*` and the non-PE formats/backends; FLOSS `-l --functions -L -d -v --install/uninstall-right-click-menu`; diec `-r -a -g -l -M -x -c -t -p -S -w -s --test --addtest`. `--version`, `--help` and `-H` only in the probe.
 
+#### T3.1 Windows executable names in version probes (2026-11-21)
+
+The capa and FLOSS version probes accept a version line beginning with the exact
+program name `capa` or `floss`, with an optional literal `.exe` suffix. This covers
+argparse program-name banners from the configured Windows release executables.
+A different prefix, extension or lookalike separator is not a tool identity.
+Each adapter retains its existing version-number grammar, supported major,
+zero-exit requirement, executable SHA-256 pin and explicit untested-build opt-in.
+The required help options and backend checks still apply after identification.
+
+Controlled version/help responses establish this parsing contract only. They do
+not establish native Windows compatibility or explain a failed version process.
+In particular, accepting a `.exe` banner cannot make a nonzero FLOSS exit valid.
+
 ### T4. Execution
 Scratch per engine and side: `mkdtemp(prefix='patchtrace-<engine>-')` under the configured scratch root with `cwd/ home/ tmp/ programdata/ in/` (+ `rules/ sigs/` for capa, `db/ empty/` for diec). The artifact is streamed from the project's verified reader into `in/artifact.bin`, re-hashed (mismatch: `PT-TOOL-ARTIFACT`) and made read-only; tools never see the project path or the user's file name. The input path must stay <= 200 characters (Windows MAX_PATH margin; else `PT-TOOL-INPUT`). The scratch is removed afterwards.
 

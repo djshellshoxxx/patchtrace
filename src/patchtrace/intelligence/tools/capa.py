@@ -56,7 +56,8 @@ MIN_GHIDRA = (12, 0)
 MEMORY_DEFAULT = 8 * 1024 ** 3
 MIN_MEMORY_LIMIT = 256 * 1024 ** 2
 MAX_RULE_SOURCE = 256 * 1024
-_VERSION = re.compile(r'^capa (\d+)\.(\d+)\.(\d+)\s*$', re.MULTILINE)
+# argparse's program name includes the suffix of the Windows release executable.
+_VERSION = re.compile(r'^capa(?:\.exe)? (\d+)\.(\d+)\.(\d+)\s*$', re.MULTILINE)
 _BACKENDS = re.compile(r'-b \{([a-z0-9,]+)\}')
 _GHIDRA_VERSION = re.compile(r'^application\.version\s*=\s*([A-Za-z0-9_.-]{1,32})\s*$', re.MULTILINE)
 

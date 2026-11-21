@@ -61,7 +61,8 @@ TYPE_SHARE = {'static': 0.6, 'language': 0.1, 'stack': 0.1, 'tight': 0.1, 'decod
 SPARE_ORDER = ('static', 'language', 'decoded', 'stack', 'tight')
 EMULATION_CONSENT_SHA256 = hashlib.sha256(EMULATION_CONSENT.encode('utf-8')).hexdigest()
 NOT_PE = 'supports the following formats'
-_VERSION = re.compile(r'^floss v?(\d+)\.(\d+)\.(\d+)(\S*)\s*$', re.MULTILINE)
+# argparse's program name includes the suffix of the Windows release executable.
+_VERSION = re.compile(r'^floss(?:\.exe)? v?(\d+)\.(\d+)\.(\d+)(\S*)\s*$', re.MULTILINE)
 _ONLY = re.compile(r'--only \{([a-z,]+)\}')
 
 
