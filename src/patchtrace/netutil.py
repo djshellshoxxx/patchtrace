@@ -37,8 +37,10 @@ def interruptible[T](call: Callable[[], T], cancel: threading.Event | None, *, p
     """Run ``call`` and return its result, or raise `Cancelled` within ~``poll`` s of ``cancel.set()``.
 
     The call runs on a daemon thread. After abandonment the thread closes whatever it eventually
-    returns through ``cleanup`` and publishes nothing else. At most MAX_ABANDONED abandoned threads
-    may be alive at once; further calls fail with `TooManyAbandoned` instead of leaking more.
+    returns through ``cleanup`` and publishes nothing else. The abandoned count includes late
+    cleanup. Before starting a worker, the helper checks this count and refuses new calls at or
+    above MAX_ABANDONED with `TooManyAbandoned`. Previously admitted concurrent calls can later
+    become abandoned and increase the count above that admission threshold.
     """
     global _abandoned
     if cancel is None:
