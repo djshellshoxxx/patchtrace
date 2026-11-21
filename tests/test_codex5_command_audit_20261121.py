@@ -103,7 +103,6 @@ def _workflow(command: str) -> str:
     ("FLAG=1 env sudo /opt/python3.12 -m pip install unsafe", 1),
     ("python.exe -m pip install --require-hashes -r lock", 0),
     ("pip3.exe install unsafe", 1),
-    ("python -m pip install `\n --require-hashes -r lock", 0),
     ("python -m pip install \\\n --require-hashes -r lock", 0),
     ("python -m pip install unsafe & pip install --no-index -r offline", 1),
     ("printf '%s' 'python -m pip install unsafe'", 0),
@@ -118,6 +117,7 @@ def test_supported_conditionals_and_boundary_tokens(command: str, expected: int)
 
 
 @pytest.mark.parametrize("command", [
+    "python -m pip install `\n --require-hashes -r lock",
     "bash -c 'python -m pip install --require-hashes -r lock'",
     "eval 'pip install unsafe'",
     '"$PYTHON" -m pip install unsafe',
@@ -262,3 +262,41 @@ def test_empty_workflow_discovery_is_not_an_expected_hash_failure(
     with pytest.raises(AssertionError, match="No GitHub Actions workflow sources found") as caught:
         test_all_explicit_workflow_pip_installs_are_protected()
     assert not isinstance(caught.value, UnprotectedPipInstalls)
+
+
+@pytest.mark.parametrize(("command", "expected"), [
+    ("echo word#; python -m pip install sample-package", 1),
+    ("echo `\npython -m pip install sample-package\n`\n", None),
+    ("echo ';' python -m pip install sample-package", 0),
+    ("printf '%s' '&&' python -m pip install sample-package", 0),
+    ("echo okay # python -m pip install $(not-executed)", 0),
+    ("echo word\\#; python -m pip install sample-package", 1),
+    ("echo 'word#'; python -m pip install sample-package", 1),
+    ("echo word #; python -m pip install sample-package", 0),
+    ('echo "$(python -m pip install sample-package)"', None),
+])
+def test_peer_lexical_controls(command: str, expected: int | None) -> None:
+    if expected is None:
+        with pytest.raises(WorkflowAuditError):
+            unhashed_installs(_workflow(command))
+    else:
+        assert len(unhashed_installs(_workflow(command))) == expected
+
+
+@pytest.mark.parametrize(("command", "expected"), [
+    ('echo "$(find "$ROOT" -type d)"\npython -m pip install unsafe', 1),
+    ("echo '$(python -m pip install literal)'", 0),
+    ("echo '&&'; python -m pip install unsafe", 1),
+    ("echo \\; python -m pip install literal", 0),
+    ("python -m pi\\\np ins\\\ntall unsafe", 1),
+    ('echo "$(\npython -m pip install unsafe\n)"', None),
+    ('echo "$(python -m pi\\\np install unsafe)"', None),
+])
+def test_lexical_spans_keep_independent_commands_and_literals_distinct(
+    command: str, expected: int | None,
+) -> None:
+    if expected is None:
+        with pytest.raises(WorkflowAuditError):
+            unhashed_installs(_workflow(command))
+    else:
+        assert len(unhashed_installs(_workflow(command))) == expected

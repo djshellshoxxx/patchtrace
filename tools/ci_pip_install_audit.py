@@ -78,37 +78,156 @@ def run_scalars(source: str) -> Iterator[str]:
                 yield step["run"]
 
 
-def _shell_commands(body: str) -> Iterator[list[str]]:
-    body = re.sub(r"(?:\\|`)\r?\n", " ", body)
-    heredoc_end: str | None = None
-    for line in body.splitlines():
-        if heredoc_end is not None:
-            if line.strip() == heredoc_end:
-                heredoc_end = None
-            elif _POSSIBLE_INSTALL.search(line):
-                raise WorkflowAuditError("installer text inside an unsupported embedded script")
+def _substitution_end(body: str, start: int) -> int:
+    """Keep unsupported substitution opaque through its closing delimiter."""
+    backtick = body[start] == "`"
+    index = start + (1 if backtick else 2)
+    depth = 1
+    quote: str | None = None
+    while index < len(body):
+        char = body[index]
+        if char == "\\" and quote != "'":
+            index += 2
             continue
-        if _POSSIBLE_INSTALL.search(line) and ("$(" in line or "`" in line):
-            raise WorkflowAuditError("installer text in unsupported command substitution")
-        lexer = shlex.shlex(line, posix=True, punctuation_chars=";&|<>()")
+        if backtick:
+            if char == "`":
+                return index + 1
+        elif quote is not None:
+            if char == quote:
+                quote = None
+        elif char in {"'", '"'}:
+            quote = char
+        elif char == "(":
+            depth += 1
+        elif char == ")":
+            depth -= 1
+            if depth == 0:
+                return index + 1
+        index += 1
+    # An unfinished substitution consumes the rest for matching purposes;
+    # installer text there must still cause an explicit unsupported error.
+    return len(body)
+
+
+def _command_segments(body: str) -> list[tuple[str, bool]]:
+    """Keep quote/escape context until actual operators and comments are known.
+
+    This establishes lexical boundaries only. It does not evaluate shell syntax;
+    executable substitution, including ambiguous backticks, remains unsupported.
+    """
+    segments: list[tuple[str, bool]] = []
+    current: list[str] = []
+    quote: str | None = None
+    word_start = True
+    substitution = False
+    index = 0
+
+    def finish() -> str:
+        nonlocal substitution
+        segment = "".join(current).strip()
+        if segment:
+            segments.append((segment, substitution))
+        current.clear()
+        substitution = False
+        return segment
+
+    while index < len(body):
+        char = body[index]
+        if char == "\\" and quote != "'":
+            if index + 1 >= len(body):
+                raise WorkflowAuditError("trailing shell escape")
+            following = body[index + 1]
+            if following == "\n":
+                index += 2
+            elif body.startswith("\r\n", index + 1):
+                index += 3
+            else:
+                current.extend((char, following))
+                word_start = False
+                index += 2
+            continue
+        if quote != "'" and (char == "`" or body.startswith("$(", index)):
+            end = _substitution_end(body, index)
+            current.append(body[index:end])
+            substitution = True
+            word_start = False
+            index = end
+            continue
+        if quote is not None:
+            current.append(char)
+            if char == quote:
+                quote = None
+            index += 1
+            continue
+        if char in {"'", '"'}:
+            quote = char
+            current.append(char)
+            word_start = False
+            index += 1
+            continue
+        if char == "#" and word_start:
+            # Comment text cannot introduce operators, quotes or substitution.
+            end = body.find("\n", index)
+            index = len(body) if end < 0 else end
+            continue
+        if char in ";&|":
+            end = index + 1
+            while end < len(body) and body[end] in ";&|":
+                end += 1
+            if body[index:end] not in _SPLIT:
+                raise WorkflowAuditError("unsupported shell operator")
+            finish()
+            word_start = True
+            index = end
+            continue
+        if char in "\r\n":
+            header = finish()
+            index += 2 if body.startswith("\r\n", index) else 1
+            word_start = True
+            if match := _HEREDOC.search(header):
+                # Only a simple literal delimiter is understood. Embedded
+                # language source is never interpreted as shell commands.
+                terminated = False
+                while index < len(body):
+                    end = body.find("\n", index)
+                    if end < 0:
+                        end = len(body)
+                    line = body[index:end]
+                    index = min(end + 1, len(body))
+                    if line.strip() == match[2]:
+                        terminated = True
+                        break
+                    if _POSSIBLE_INSTALL.search(line):
+                        raise WorkflowAuditError("installer text inside an unsupported embedded script")
+                if not terminated:
+                    raise WorkflowAuditError("unterminated embedded script")
+            continue
+        current.append(char)
+        word_start = char.isspace()
+        index += 1
+    if quote is not None:
+        raise WorkflowAuditError("unparseable workflow run command")
+    finish()
+    return segments
+
+
+def _shell_commands(body: str) -> Iterator[list[str]]:
+    commands: list[list[str]] = []
+    for segment, substitution in _command_segments(body):
+        # Operators/comments were handled before quotes and escapes are lost.
+        lexer = shlex.shlex(segment, posix=True, punctuation_chars="<>()")
         lexer.whitespace_split = True
-        lexer.commenters = "#"
+        lexer.commenters = ""
         try:
-            tokens = list(lexer)
+            command = list(lexer)
         except ValueError as exc:
             raise WorkflowAuditError("unparseable workflow run command") from exc
-        if (match := _HEREDOC.search(line)) and any(token in {"<<", "<<-"} for token in tokens):
-            heredoc_end = match[2]
-        command: list[str] = []
-        for token in [*tokens, ";"]:
-            if token in _SPLIT:
-                if command:
-                    yield command
-                    command = []
-            else:
-                command.append(token)
-    if heredoc_end is not None:
-        raise WorkflowAuditError("unterminated embedded script")
+        continued = segment.replace("\\\r\n", "").replace("\\\n", "")
+        if substitution and (_POSSIBLE_INSTALL.search(" ".join(command))
+                             or _POSSIBLE_INSTALL.search(continued)):
+            raise WorkflowAuditError("installer text in unsupported command substitution")
+        commands.append(command)
+    yield from commands
 
 
 def _pip_args(command: list[str]) -> list[str] | None:

@@ -36,8 +36,11 @@ POSIX executable paths, simple environment assignments, option-free `env`/`sudo`
 and the simple `if`/`elif`/`while`/`until`, `then`/`else`/`do`, and `!` prefixes
 used around direct commands. Windows `.exe` names may use the same direct form.
 Recognize newline, semicolon, `&&`, `||`, pipe and background separators, shell
-comments and backslash/PowerShell-backtick line continuations. Decode YAML
-folding before considering shell boundaries.
+comments and POSIX backslash-newline continuations. Decode YAML folding before
+considering shell boundaries. Preserve quotes and escapes while identifying
+operators; only then normalize each command's arguments. A quoted `;` or `&&`
+is data, not a command boundary. A word-attached `#` is literal; a real comment
+must be removed before looking for unsupported syntax in its text.
 
 An echo/printf/Write-Output/Write-Host literal is not an installer. Matching
 installer text in unsupported wrappers, command substitutions, grouping,
@@ -47,6 +50,15 @@ and indirect invocations are outside the proved executable classification;
 matching installer text there must not become a successful empty result.
 This is intentionally not a general POSIX/PowerShell/cmd parser. Known unsupported
 syntax must be fixed in the audit contract and covered before accepting it.
+The small lexical boundary follows POSIX quoting/comments; the current Windows
+direct-command forms fit that subset. Executable backticks, including apparent
+PowerShell continuations, are rejected when the scalar contains installer text:
+the string-only API cannot distinguish that dialect from command substitution.
+Detect unsupported executable substitution across the complete decoded scalar,
+not just on the physical line containing the installer. Single-quoted literal
+substitution text and substitution text wholly in comments remain data.
+A completed substitution without installer text does not hide or block a later
+independent direct install in the same scalar; its lexical span is kept intact.
 
 Only literal `--require-hashes` or `--no-index` tokens associated with the same
 recognized install qualify as the syntactic boundary. Comments, neighboring
@@ -64,6 +76,10 @@ Retain original donor evidence and its incomplete fixture-only qualification.
 The repaired audit must cover the independent commented-block, folded blank-line,
 env.run and conditional-negation controls, supported positive/negative command
 forms, unsupported matching syntax, malformed YAML and missing dependencies.
+Retain the five independently reproduced failures on blocked candidate
+`93b053a88e4373d9f5c69cd68f96e1a49305d579`: word-attached hash before an
+installer, multiline backtick substitution, quoted semicolon/AND punctuation
+inside literal output, and substitution text wholly inside a shell comment.
 A positive current-tree census must see 21 workflows, 200 actual run scalars,
 42 direct install commands, one Pages command with a boundary flag and 41
 unprotected commands at source base ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e.

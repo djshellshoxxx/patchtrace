@@ -50,5 +50,45 @@
     "no PR349/PR350/main branch ref move",
     "no workflow dispatch/retry",
     "no merge/release/deployment/tag/deletion"
-  ]
+  ],
+  "repair_qualification": {
+    "scope": "Corrected bounded source audit; broad CODEX-5 wheel closure is still open. Original fields above remain the historical donor record.",
+    "integration_base": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+    "blocked_first_repair": "93b053a88e4373d9f5c69cd68f96e1a49305d579",
+    "candidate_source_blobs": {
+      "tools/ci_pip_install_audit.py": {
+        "blob": "30414e029061f069b02f0855c8f9796a3f7736bc",
+        "sha256": "9ba9ae72780533b505c51c1df73b77e453939ba632de4d88fd765d6c7a2e4dbe"
+      },
+      "tests/test_codex5_command_audit_20261121.py": {
+        "blob": "43ba4f745f4e3dbdfc391f891e580bfb6a1f5729",
+        "sha256": "04d68349ec5dff7ab9fed93a7cfafbe0704b47650c88b9ee9a4465fd7cbc958c"
+      }
+    },
+    "contract_before_implementation": "docs/specs/ci-pip-command-audit.md",
+    "existing_dev_dependency": "PyYAML >=6,<7; no dependency manifest changes",
+    "red_controls": {
+      "original_donor": "4 independently supplied controls failed before the YAML/conditional repair",
+      "first_repair": "5 peer lexical controls failed; 4 adjacent positive controls passed",
+      "registry": "unchanged missing-spec-path selector failed before the narrow registry entry"
+    },
+    "author_targeted_validation": "214 passed, 2 strict CODEX-5 xfailed; includes unchanged tests/test_codex_pkg_workflows.py and tests/test_spec_registry.py",
+    "actual_source_census": {
+      "workflows": 21,
+      "step_run_scalars": 200,
+      "pip_installs": 42,
+      "unprotected_installs": 41,
+      "only_boundary_flag_workflow": "pages.yml"
+    },
+    "lexical_scope": "Quote/escape-aware POSIX command boundaries and real comments; substitutions kept opaque across physical lines and rejected when matching installer text. Backticks are explicitly unsupported rather than guessed as PowerShell continuation syntax. No shell/package/target execution.",
+    "full_suite": "No v2 local full attempt. The sole already-started v1 attempt uses the preserved original worktree/environment, began from dirty pre-commit source, and is not v2 qualification. Its actual outcome is retained separately by root.",
+    "receipt_directory": "/workspace/scratch/837fe19aae3a/evidence/codex5-command-audit-repair-v2",
+    "remaining_gates": [
+      "independent corrected-source peer review",
+      "supported hosted qualification on the final combined source",
+      "broad CODEX-5 complete artifact hash closure",
+      "existing manual/native/provenance/L1/L2/L3 acceptance"
+    ],
+    "protected_scope": "Workflow bytes, original CODEX-5 test, dependency manifest, runtime sources, ledger and QA files are unchanged."
+  }
 }
