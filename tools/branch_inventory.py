@@ -78,7 +78,17 @@ def branches(git: Git, remote: str, snapshot: Path | None = None) -> list[tuple[
             raise ValueError("branch snapshot exceeds the input byte limit")
         previous_limit = csv.field_size_limit(MAX_METADATA_BYTES)
         try:
-            rows = list(csv.DictReader(io.StringIO(raw.decode("utf-8"), newline=""), delimiter="\t"))
+            reader = csv.DictReader(io.StringIO(raw.decode("utf-8"), newline=""), delimiter="\t")
+            headers = reader.fieldnames
+            if (not headers or len(headers) != len(set(headers))
+                    or "branch" not in headers or "tip_sha" not in headers
+                    or any(not name.strip() for name in headers)):
+                raise ValueError("invalid branch snapshot TSV headers")
+            rows = list(reader)
+            if any(None in row or any(value is None for value in row.values())
+                   or not row["branch"].strip() or not row["tip_sha"].strip()
+                   for row in rows):
+                raise ValueError("invalid branch snapshot TSV rows")
         except csv.Error as exc:
             raise ValueError("invalid branch snapshot TSV") from exc
         finally:
