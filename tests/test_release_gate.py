@@ -757,6 +757,58 @@ def test_third_party_actions_in_the_release_job_are_pinned_to_a_commit():
     assert all(re.fullmatch(r'[\w.-]+/[\w.-]+@[0-9a-f]{40}', action) for action in third_party), third_party
 
 
+def test_runs_that_can_publish_are_never_cancelled_by_a_newer_run():
+    text = WORKFLOW.read_text(encoding='utf-8')
+    assert "cancel-in-progress: ${{ github.event_name == 'pull_request' }}" in text
+    assert "github.event_name == 'pull_request' && github.ref || github.run_id" in text
+
+
+def _concurrency_for_event_fixture(event_name: str, ref: str, run_id: str) -> tuple[str, bool]:
+    """Model only the declared source shape for nonempty fixture refs, not GitHub's expression engine."""
+    block = TEXT.split('\nconcurrency:\n', 1)[1].split('\njobs:', 1)[0]
+    group = re.search(
+        r"^  group: \$\{\{ github\.workflow \}\}-\$\{\{ github\.event_name == '([^']+)' "
+        r"&& github\.ref \|\| github\.run_id \}\}$", block, re.M)
+    cancel = re.search(
+        r"^  cancel-in-progress: \$\{\{ github\.event_name == '([^']+)' \}\}$", block, re.M)
+    assert group is not None and cancel is not None, 'Unexpected workflow concurrency expression'
+    return (ref if event_name == group[1] else run_id), event_name == cancel[1]
+
+
+@pytest.mark.parametrize('event,first_ref,second_ref,same_group,cancel', [
+    ('pull_request', 'refs/pull/7/merge', 'refs/pull/7/merge', True, True),
+    ('pull_request', 'refs/pull/7/merge', 'refs/pull/8/merge', False, True),
+    ('push', 'refs/heads/main', 'refs/heads/main', False, False),
+    ('push', 'refs/tags/v0.1.0-alpha.1', 'refs/tags/v0.1.0-alpha.1', False, False),
+    ('workflow_dispatch', 'refs/heads/main', 'refs/heads/main', False, False),
+    ('workflow_dispatch', 'refs/tags/v0.1.0-alpha.1', 'refs/tags/v0.1.0-alpha.1', False, False),
+])
+def test_concurrency_groups_only_newer_runs_of_the_same_pull_request(
+        event, first_ref, second_ref, same_group, cancel):
+    first_group, first_cancel = _concurrency_for_event_fixture(event, first_ref, '100')
+    second_group, second_cancel = _concurrency_for_event_fixture(event, second_ref, '101')
+    assert (first_group == second_group) is same_group
+    assert first_cancel is cancel and second_cancel is cancel
+
+
+def test_required_windows_artifact_upload_refuses_an_empty_result():
+    uploads = [step for step in steps_of(BLOCKS['qa'])
+               if re.search(r'^          name: PatchTrace-windows-x64$', step, re.M)]
+    assert len(uploads) == 1
+    upload = uploads[0]
+    assert 'uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02' in upload
+    assert re.search(r"^        if: runner.os == 'Windows' && success\(\)$", upload, re.M)
+    assert re.search(r'^          if-no-files-found: error$', upload, re.M)
+    paths = re.search(r'^          path: \|\n((?:            [^\n]+(?:\n|$))+)', upload, re.M)
+    assert paths is not None
+    assert [line.strip() for line in paths[1].splitlines()] == [
+        'dist/PatchTrace-0.1.0-windows-x64.zip',
+        'dist/PatchTrace-0.1.0-windows-x64.zip.sha256',
+        'dist/PatchTrace-Windows-x64-Setup.exe',
+        'dist/PatchTrace-Windows-x64-Setup.exe.sha256',
+    ]
+
+
 def test_a_tag_names_its_own_release_and_main_builds_keep_the_beta_name():
     """Acceptance spec 1.2: an alpha tag must not publish under the automatic beta name."""
     step = next(step for step in steps_of(BLOCKS['release']) if 'action-gh-release' in step)

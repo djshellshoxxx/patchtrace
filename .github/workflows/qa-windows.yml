@@ -8,8 +8,8 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   qa:
     strategy:
@@ -81,6 +81,7 @@ jobs:
         if: runner.os == 'Windows' && success()
         with:
           name: PatchTrace-windows-x64
+          if-no-files-found: error
           path: |
             dist/PatchTrace-0.1.0-windows-x64.zip
             dist/PatchTrace-0.1.0-windows-x64.zip.sha256

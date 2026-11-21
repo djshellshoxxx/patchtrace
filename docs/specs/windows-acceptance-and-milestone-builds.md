@@ -63,6 +63,49 @@ From `.github/workflows/qa-windows.yml`:
 
 **Release gate (slice RG, `tools/release_gate.py`).** A push-only `release-gate` job decides whether this push publishes: `release` needs it and runs only for a `v*` tag or when the gate prints `publish=true`. The gate counts the first-parent commits on `main` after the commit (`target_commitish`) of the latest published, non-draft prerelease whose tag starts with `v0.1.0-beta.`, the head included, and publishes at the third. It also publishes for a head message containing `[release]`, for a tag, when no such prerelease exists or the latest one is not on the head's first-parent history, and whenever the gate itself fails (fail open: the reason is printed, and the count and the reason go into the release notes). A commit whose whole message, subject and body alike, contains `[skip ci]`, `[ci skip]`, `[no ci]`, `[skip actions]` or `[actions skip]` is not counted, because GitHub runs no workflow for it and no build exists; the head always counts, because this run exists. Consequences: `qa`, the packages and the smoke jobs still run on every push that is not skipped; a squash body that quotes a marker on any line skips the whole push run (PR #48 was skipped that way), so do not write the literal markers in commit messages or PR bodies unless that is the intent, and `[release]` belongs to the owner and instance A; two runs in flight at once both read the release list before either publishes, so an extra prerelease is possible; a `workflow_dispatch` run no longer publishes even from a `v*` tag ref, because the gate job is push-only.
 
+### 1.1.1 Run concurrency and required Windows upload (2026-11-21)
+
+The QA workflow cancels an older run only for a newer `pull_request` run of the
+same workflow and PR ref. Its concurrency group suffix is the PR ref for
+`pull_request` and `github.run_id` for other events. Separate push, tag and
+manual runs therefore have separate groups; cancellation is disabled for them.
+Re-running one run retains its run id. Keep these recovered expressions:
+
+```yaml
+group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+```
+
+| Event | Group suffix | Cancel an in-progress run in that group |
+|---|---|---|
+| `pull_request` | PR ref | Yes |
+| `push` to main or a `v*` tag | Run id | No |
+| `workflow_dispatch` | Run id | No |
+
+This scheduling control does not authorize publication. Preserve the triggers,
+job graph, all Action pins, permissions, QA/Qt/native gates, artifact paths and
+the existing `[no release]` condition. Pages and its `[no deploy]` control are
+unchanged.
+
+The existing `PatchTrace-windows-x64` upload sets `if-no-files-found: error`.
+At pinned `actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02`,
+this input fails the action when none of the declared paths resolves to a file;
+the default only warns. Keep the existing Windows/success condition and the
+four ZIP/Setup/checksum paths. Other uploads retain their existing behavior.
+This control does not prove that every required member exists or that downloaded
+artifacts pass the Windows smoke tests; that broader validation remains separate.
+The historical exact build/dev pins and repository-wide CODEX-5 closure also
+remain separate.
+
+`tests/test_release_gate.py` retains the original concurrency regression and
+checks event-pair grouping for this exact expression shape, plus the required
+upload input and paths. These are source checks and bounded fixtures, not a
+GitHub expression engine or hosted scheduling/upload acceptance.
+
+Pinned input and implementation references:
+[action.yml](https://github.com/actions/upload-artifact/blob/ea165f8d65b6e75b540449e92b4886f43607fa02/action.yml),
+[empty-file handling](https://github.com/actions/upload-artifact/blob/ea165f8d65b6e75b540449e92b4886f43607fa02/src/upload/upload-artifact.ts).
+
 ### 1.2 Which commits are milestone candidates
 
 A commit is a **milestone candidate** only when all of these hold on that exact SHA:
