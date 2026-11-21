@@ -45,12 +45,12 @@ def test_invalid_saved_pr_json_preserves_previous_inventory_output(tmp_path, cap
     pulls = tmp_path / "pulls.json"
     pulls.write_text('[{"number":1,"number":2}]', encoding="utf-8")
     snapshot = tmp_path / "refs.tsv"
-    snapshot.write_text("branch\\ttip_sha\\n", encoding="utf-8")
+    snapshot.write_text("branch\ttip_sha\n", encoding="utf-8")
     previous = tmp_path / "inventory.tsv"
-    previous.write_bytes(b"previous verified inventory\\n")
+    previous.write_bytes(b"previous verified inventory\n")
     with pytest.raises(SystemExit) as caught:
         tool.main(["--repo", str(tmp_path), "--main", "a" * 40, "--candidate", "b" * 40,
                    "--pulls-json", str(pulls), "--refs-tsv", str(snapshot), "--output", str(previous)])
     assert caught.value.code == 2
     assert "invalid pull-request metadata" in capsys.readouterr().err
-    assert previous.read_bytes() == b"previous verified inventory\\n"
+    assert previous.read_bytes() == b"previous verified inventory\n"
