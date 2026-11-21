@@ -1,0 +1,74 @@
+{
+  "schema": "patchtrace-inventory-strict-pr-json-controls/1",
+  "date": "2026-11-20",
+  "source_base": "a63a20b2a272d53a09422222050080823fc3c664",
+  "source_repair_commit": "9def9acd7ab131bc28adf6c30b518638bf307269",
+  "control_environment": "local CPython stdlib hand-copied read_json logic; not imported checked-out PatchTrace source",
+  "controls": [
+    {
+      "case": "duplicate top-level PR number",
+      "old_default": "accepted",
+      "new": "rejected"
+    },
+    {
+      "case": "duplicate head.ref",
+      "old_default": "accepted",
+      "new": "rejected"
+    },
+    {
+      "case": "duplicate nested head.repo.full_name",
+      "old_default": "accepted",
+      "new": "rejected"
+    },
+    {
+      "case": "NaN",
+      "old_default": "accepted",
+      "new": "rejected"
+    },
+    {
+      "case": "Infinity",
+      "old_default": "accepted",
+      "new": "rejected"
+    },
+    {
+      "case": "-Infinity",
+      "old_default": "accepted",
+      "new": "rejected"
+    },
+    {
+      "case": "nested valid Unicode JSON",
+      "new": "accepted and retained"
+    },
+    {
+      "case": "malformed JSON syntax",
+      "new": "fixed input error"
+    },
+    {
+      "case": "deeply nested JSON",
+      "new": "fixed input error"
+    }
+  ],
+  "summary": {
+    "reproduced_ambiguous_defaults": 6,
+    "standalone_mirrored_controls_passed": 9,
+    "repository_tests_authored": 11,
+    "repository_pytest": "not run",
+    "whole_tree_ruff": "not run",
+    "independent_review": "pending"
+  },
+  "environment_blockers": [
+    "git ls-remote https://github.com/djshellshoxxx/PatchTrace.git: Could not resolve host: github.com",
+    "python -m ruff: No module named ruff"
+  ],
+  "prior_failures_unmodified": [
+    "PR345 Windows QA external Chocolatey NSIS HTTP503",
+    "historical unqualified SIGKILL aggregate",
+    "PR342 Windows Qt failures",
+    "initial 5cc raw-cache java=unverified"
+  ],
+  "claims_excluded": [
+    "not a full checkout-based pass",
+    "not a release qualification",
+    "not semantic branch equivalence"
+  ]
+}
