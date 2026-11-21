@@ -4,18 +4,18 @@
   "base_pr": 348,
   "base_head": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
   "branch": "codex/patchtrace-corpus-archive-integrity-20261121",
-  "workflow_blob_sha": "03444dfd08d97815c0ede48443de1846bd796009",
+  "workflow_blob_sha": "c15784337596d03de29a144980312872830b8aa4",
   "source_contract": "docs/specs/known-answer-corpus.md",
   "source_repair_commit": "c32449278d0712fa9e653f4b7c51eb5f679a693c",
   "source_test": "tests/test_corpus_cache_archive_integrity_20261121.py",
   "maintained_audit_test": "tests/test_codex_pkg_workflows.py",
   "controls": {
     "author_connector_exact_source_static": {
-      "passes": 12,
+      "passes": 14,
       "failures": 0
     },
     "author_js_negative_mutations": {
-      "passes": 12,
+      "passes": 14,
       "failures": 0,
       "details": [
         "rizin cached tree substitution",
@@ -29,7 +29,9 @@
         "Ghidra archive identity substitution",
         "Ghidriff engine gate removal",
         "rizin checksum source substitution",
-        "rizin extraction source substitution"
+        "rizin extraction source substitution",
+        "rizin extracted-cache old-key reuse",
+        "Ghidra extracted-cache old-key reuse"
       ]
     },
     "synthetic_local_shell_replay": {
@@ -62,14 +64,28 @@
       "rizin_skip_hit": true,
       "ghidra_skip_hit": true
     },
-    "repair_workflow_blob": "03444dfd08d97815c0ede48443de1846bd796009",
+    "repair_workflow_blob": "c15784337596d03de29a144980312872830b8aa4",
     "repair": {
       "cached_extracted_rizin": false,
       "cached_extracted_ghidra": false,
       "rizin_skip_hit": false,
       "ghidra_skip_hit": false,
-      "always_verify_both_archives": true
+      "always_verify_both_archives": true,
+      "versioned_archive_keys": true
     },
     "method": "source-text read of immutable PR348 and isolated branch blobs, author-side static check; not Actions execution"
+  },
+  "cache_namespace_finding": {
+    "previous_cache_keys": [
+      "rizin-${{ env.RIZIN_SHA256 }}",
+      "ghidra-${{ env.GHIDRA_SHA256 }}"
+    ],
+    "problem": "Existing cache entries under old keys contain extracted directories; retaining old key with new archive path permits stale hits that prevent writing new archive cache, so proof of efficient archive caching fails.",
+    "repair": [
+      "rizin-archive-v1-${{ env.RIZIN_SHA256 }}",
+      "ghidra-archive-v1-${{ env.GHIDRA_SHA256 }}"
+    ],
+    "migration_controls": "Reviewed spec before adding two test cases and changing workflow keys",
+    "source_commit": "6cf0b2f8b7e5d1231fc00d6f985dfa36a8554cc7"
   }
 }
