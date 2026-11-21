@@ -1,0 +1,54 @@
+{
+  "schema": "patchtrace-codex5-command-audit-evidence/1",
+  "date": "2026-11-21",
+  "scope": "Per-command audit precision only; does not close CODEX-5",
+  "source_base": "f928a0cef29eac2b603d390c40fb86448111b91b",
+  "exact_new_code_blobs": {
+    "tools/ci_pip_install_audit.py": "9c356458d14a6bb7e76d075868dae1cad94a7ce7",
+    "tests/test_codex5_command_audit_20261121.py": "0065c0510e179247b06ebd75910d558929080888"
+  },
+  "checked_local_mirror_git_hash_matches_remote_blob": true,
+  "qualification": {
+    "environment": "/tmp/pt-codex5-audit synthetic local mirror, Python pytest 9.0.2; no full repository checkout",
+    "authored_workflow_fixtures": [
+      "fixture-safe.yml",
+      "fixture-unhashed.yml"
+    ],
+    "new_test_selection": "17 passed, 1 strict CODEX-5 xfailed, 0 failures, 0 ordinary skips",
+    "compileall": "passed",
+    "extra_controls": "2 passed",
+    "ruff": "not run: package index DNS unavailable; do not infer lint success",
+    "hosted_ci": "not run for this isolated branch",
+    "independent_peer": "not yet assigned"
+  },
+  "mutations": [
+    {
+      "name": "remove shell comment stripping",
+      "expected": "comment-only --require-hashes incorrectly exempts install",
+      "observed": "1 failed, 14 passed, 3 deselected"
+    },
+    {
+      "name": "remove && command boundary",
+      "expected": "later locked command exempts earlier unlocked install",
+      "observed": "1 failed, 14 passed, 3 deselected"
+    },
+    {
+      "name": "disable folded-YAML line joining",
+      "expected": "line-separated --require-hashes is not bound to its install",
+      "observed": "1 failed, 14 passed, 3 deselected"
+    }
+  ],
+  "retained_gates": [
+    "CODEX-5 broad hash-locked closure",
+    "exact checkout pytest/Ruff/pip",
+    "independent code review",
+    "all applicable hosted current-head CI",
+    "Root837FE PR349 lease and qualified integration",
+    "manual/native/provenance/L1/L2/L3"
+  ],
+  "no_actions": [
+    "no PR349/PR350/main branch ref move",
+    "no workflow dispatch/retry",
+    "no merge/release/deployment/tag/deletion"
+  ]
+}
