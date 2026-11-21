@@ -1,3 +1,7 @@
+# Current continuation — strict saved all-pages PR JSON admission (2026-11-20)
+
+Read [the new handoff](inventory-pr-json-strict-20261120.md). A contract-first isolated successor of the immutable-tip inventory branch refuses duplicate nested PR JSON keys, nonfinite constants and excessive nesting before any branch Git replay. Eleven repository cases authored; nine stand-alone mirrored parser controls passed. Exact source pytest/Ruff/hosted CI and independent review remain pending. Parent PR347 Windows QA/Qt still active at last inspection. No main merge or release.
+
 # Current isolated continuation — exact Git commit identity in offline inventory (2026-11-20)
 
 Start with [the latest handoff](inventory-tip-oid-20261120.md) and the authoritative [task ledger](../engineering/task-ledger.json). A contract-first PR347/TSV-shape successor refuses mutable Git revision expressions as snapshot `tip_sha` and checks that a full SHA-1/SHA-256 tip resolves to the exact same commit object. Seven repository cases are authored; temporary synthetic Git controls reproduced the old mutable-ref acceptance and verified the corrected guard. Checked-out pytest/Ruff, exact-source native/Qt/CI and independent review are still pending. The PR345 Windows QA NSIS Chocolatey HTTP 503 failure is recorded separately; no duplicate run or release.
