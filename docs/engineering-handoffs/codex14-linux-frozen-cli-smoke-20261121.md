@@ -10,3 +10,5 @@ Candidate branch `codex/patchtrace-linux-frozen-cli-smoke-20261121`, parent PR #
 6. Retain CODEX-1/5/6, source-free historical 181/16 classification, raw index/entry membership, Linux overwrite refusal, Windows manual/trust/accessibility, and independent L1/L2/L3.
 
 There is no authorization to force-push, rebase another worker, delete old branches, deploy, publish a release, execute target binaries or send notifications.
+
+7. The source-only structural evidence includes seven negative mutation controls in `docs/engineering/evidence/codex14-linux-smoke-static-review-20261121.json`; all were detected. This is *not* an independent reviewer or actual checked-out-source test. Only the frozen-smoke harness docstring changed; its runtime code is unchanged.
