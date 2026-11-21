@@ -64,7 +64,7 @@ def test_actual_step_verifies_one_archive_before_removing_the_extracted_tree():
     assert "Remove-Item -LiteralPath ghidra-runtime -Recurse -Force" in script, "fresh extraction is required"
     required_in_order = [
         "$ErrorActionPreference = 'Stop'",
-        "$env:GHIDRA_SHA256 -cnotmatch '^[0-9a-f]{64}$'",
+        r"$env:GHIDRA_SHA256 -cnotmatch '\A[0-9a-f]{64}\z'",
         "$archive = 'ghidra-archive/ghidra.zip'",
         "if (-not (Test-Path -LiteralPath $archive -PathType Leaf))",
         "Invoke-WebRequest $env:GHIDRA_URL -OutFile $archive",
@@ -204,7 +204,10 @@ def test_exact_step_verifies_downloaded_and_restored_zip_before_fresh_extraction
         )
 
 
-@pytest.mark.parametrize("digest", ("", "a" * 63, "A" * 64, "not-a-sha256"))
+@pytest.mark.parametrize("digest", (
+    "", "a" * 63, "A" * 64, "not-a-sha256",
+    pytest.param("a" * 64 + "\n", id="terminal-lf"),
+))
 def test_exact_step_rejects_missing_or_malformed_pin_before_download(tmp_path, powershell, digest):
     source, _ = make_archive(tmp_path)
     result = run_archive_step(tmp_path, powershell, source, digest, download=True)

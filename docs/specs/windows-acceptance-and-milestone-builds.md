@@ -273,10 +273,12 @@ Keep the existing Ghidra 12.0.4 release URL and SHA-256
 Python 3.12, Temurin 25 and Ghidriff revision unchanged.
 
 The PowerShell provisioning step runs for every variant on hits and misses.
-It refuses a missing or malformed pin before download, downloads only when the
-original ZIP is absent, and verifies that ZIP against the source-reviewed pin
-before changing the extraction directory. A corrupt restored ZIP fails the
-step; it is not silently replaced by a download. After a matching SHA-256,
+It refuses a missing or malformed pin before download. The entire pin value
+must be exactly 64 lowercase hexadecimal characters, with no terminal LF or
+other whitespace; use the absolute .NET anchors `\A[0-9a-f]{64}\z`.
+It downloads only when the original ZIP is absent and verifies that ZIP against
+the source-reviewed pin before changing the extraction directory. A corrupt
+restored ZIP fails the step; it is not silently replaced by a download. After a matching SHA-256,
 remove any prior `ghidra-runtime`, extract the same verified ZIP afresh and
 export `GHIDRA_INSTALL_DIR` as before. Download, hash, removal and extraction
 errors are terminating. Keep the verified original ZIP available for the cache
@@ -291,8 +293,10 @@ check remains separate from the original-archive cache.
 
 `tests/test_live_ghidra_archive.py` checks the workflow contract and replays only
 the actual provisioning step against tiny authored ZIPs, with a local download
-double and no engine or target execution. PowerShell fixtures skip explicitly
-where `pwsh` is unavailable; Windows QA requires it. These checks establish no
+double and no engine or target execution. The terminal-LF pin control requires
+rejection before any download, runtime extraction or environment export.
+PowerShell fixtures skip explicitly where `pwsh` is unavailable; Windows QA
+requires it. These checks establish no
 hosted cache or native acceptance. Exact-source hosted evidence must separately
 show a cold miss, pinned download/checksum/fresh extraction and successful cache
 save, followed by an actual exact-key restore/checksum/fresh extraction, with
