@@ -18,6 +18,16 @@ def test_triggers_are_push_to_main_on_site_paths_and_manual_dispatch():
     assert 'pull_request' not in TEXT  # never deploys from a pull request
 
 
+def test_deployment_hold_is_push_only_and_uses_the_actual_head_message():
+    # Static source contract: GitHub evaluates contains case-insensitively; no expression engine runs here.
+    deploy = TEXT.split('\n  deploy:\n', 1)[1]
+    condition = re.search(r'^    if: (.+)$', deploy, re.M)
+    assert condition is not None
+    assert condition.group(1) == (
+        "github.event_name != 'push' || !contains(github.event.head_commit.message, '[no deploy]')")
+    assert re.search(r'^    needs: build$', deploy, re.M)
+
+
 def test_permissions_are_minimal_for_pages_deployment():
     # Workflow level is read-only; only the deploy job may write Pages / mint the OIDC token (CODEX-3).
     block = TEXT.split('permissions:\n', 1)[1].split('\nconcurrency:', 1)[0]
@@ -41,7 +51,12 @@ def test_official_pages_actions_are_pinned_to_a_major_version():
 
 
 def test_builds_with_the_site_tool_and_deploys_the_dist_artifact_to_github_pages():
-    assert 'run: python tools/site/build_site.py\n' in TEXT
+    build = TEXT.split('\n  build:\n', 1)[1].split('\n  deploy:\n', 1)[0]
+    assert '[no deploy]' not in TEXT.split('\n  deploy:\n', 1)[0]
+    assert not re.search(r'^    if:', build, re.M)
+    assert 'run: python -m pytest -q tests/test_site_*.py' in build
+    assert 'run: python tools/site/build_site.py\n' in build
+    assert 'actions/upload-pages-artifact@' in build
     assert re.search(r'upload-pages-artifact@v\d+\n\s+with:\n\s+path: site/dist', TEXT)
     assert 'needs: build' in TEXT
     assert re.search(r'environment:\n\s+name: github-pages\n\s+url: \$\{\{ steps\.deployment\.outputs\.page_url \}\}', TEXT)
@@ -51,4 +66,5 @@ def test_builds_with_the_site_tool_and_deploys_the_dist_artifact_to_github_pages
 def test_no_secret_or_untrusted_event_data_is_interpolated_into_shell_commands():
     runs = re.findall(r'run: (.*)', TEXT)
     assert runs and not any('${{' in command for command in runs)
-    assert 'secrets.' not in TEXT and 'github.event.' not in TEXT
+    assert 'secrets.' not in TEXT
+    assert not any('github.event.' in command for command in runs)

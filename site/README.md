@@ -9,8 +9,12 @@ tree is `site/dist/`, deployed by `.github/workflows/pages.yml`. Canonical URL:
 
 1. **Enable Pages with the GitHub Actions source** (one time; repository settings cannot be changed from
    code). Repository **Settings -> Pages -> Build and deployment -> Source: GitHub Actions**. After that,
-   every push to `main` that touches `site/**` or `tools/site/**` deploys, and **Actions -> GitHub Pages ->
-   Run workflow** deploys on demand.
+   pushes to `main` that touch `site/**`, `tools/site/**` or the Pages workflow normally deploy after
+   a successful build. Put `[no deploy]` in the actual push head commit message to keep the site build
+   and artifact while skipping deployment; matching is case-insensitive. For a merge, use the resulting
+   merge commit title or body. **Actions -> GitHub Pages -> Run workflow** still deploys on demand.
+   The hold applies to one push and is separate from `[no release]`; see the
+   [deployment control contract](../docs/specs/pages-deployment-control.md).
 2. **Upload the logo.** Save the original square logo as `site/assets/source/logo-original.png` and
    commit it. The build turns it into `logo-512.png`, `logo-192.png`, `favicon-64.png`,
    `apple-touch-icon-180.png` and a 1200x630 `og-image.png` (Pillow, LANCZOS). The original itself is never
