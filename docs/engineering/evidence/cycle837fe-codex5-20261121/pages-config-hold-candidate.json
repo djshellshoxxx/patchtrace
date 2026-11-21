@@ -1,0 +1,60 @@
+{
+  "head": "0cdd5bf37130206c2ddec399450be6338ae8e4fd",
+  "tree": "6d532dd606a1fdf987245a03271970758a03fe57",
+  "parent": "5b5328ee83ee4990b3311f7ac90e2f5e5f76f800",
+  "branch": "codex/patchtrace-pages-config-hold-20261121-837fe",
+  "message": "Honor Pages configuration hold before artifact upload [no release] [no deploy]",
+  "clean": true,
+  "changed_files": [
+    {
+      "path": ".github/workflows/pages.yml",
+      "sha256": "d224e0ec7cc5de6d12e3ac61903c63eedcae01abee8deb9cbe4062988da6f1b6",
+      "git_blob": "1cb1690ff545d2b13fc9a54152f840e8dbb6ad04"
+    },
+    {
+      "path": "docs/specs/REGISTRY.md",
+      "sha256": "d636b0ef4903079ff1e0c504088c09acc2083dbeaebfbb7d768e77c680f739d9",
+      "git_blob": "be28f62ab75abdb02518de05ede20d444fafe7d1"
+    },
+    {
+      "path": "docs/specs/pages-deployment-control.md",
+      "sha256": "5858b520d22800068fb8ea9c40b2cd0512f8082f820463ce3af38f5525189390",
+      "git_blob": "24009e5c79bec2a1d294cce8332760423d1861a6"
+    },
+    {
+      "path": "tests/test_site_workflow.py",
+      "sha256": "9ec721236be6a9e2d41522e91cf995aac9ae95183597a1a6a0cf41cc75260872",
+      "git_blob": "1342c5bc4682208791a2c24f72bfd4f2ea89720f"
+    }
+  ],
+  "validation_runs": {
+    "red-workflow": {
+      "testcases": 8,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    "green-site": {
+      "testcases": 249,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "green-workflow-scanner-registry": {
+      "testcases": 228,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2
+    },
+    "frozen-workflow-registry": {
+      "testcases": 119,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "validation_overlap": "The frozen check overlaps prior site and registry runs; do not sum all counts. Site and separate workflow/scanner/registry files are disjoint. The two CODEX-5 skips are retained strict expected failures.",
+  "final_wording_change": "After the broad focused green checks, only the Pages spec explanatory paragraph changed to explicitly describe the unguarded action; the final frozen workflow/registry check passed.",
+  "hosted_followup_pending": true,
+  "root_worktree_modified": false
+}

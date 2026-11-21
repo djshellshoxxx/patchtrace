@@ -1,0 +1,80 @@
+{
+  "source": "0cdd5bf37130206c2ddec399450be6338ae8e4fd",
+  "remote": "06b5ed67c78aac30972e657b4a7ae5a17de739b8",
+  "tree": "6d532dd606a1fdf987245a03271970758a03fe57",
+  "local_parent": "5b5328ee83ee4990b3311f7ac90e2f5e5f76f800",
+  "remote_parent": "92dfc4d4d2ef9d604bc9db1a639d4f19add535a8",
+  "ref_movement": false,
+  "actual_remote_commit": {
+    "sha": "06b5ed67c78aac30972e657b4a7ae5a17de739b8",
+    "node_id": "C_kwDOVEPRFdoAKDA2YjVlZDY3Yzc4YWFjMzA5NzJlNjU3YjRhN2FlNWExN2RlNzM5Yjg",
+    "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/06b5ed67c78aac30972e657b4a7ae5a17de739b8",
+    "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/06b5ed67c78aac30972e657b4a7ae5a17de739b8",
+    "author": {
+      "name": "sheldon",
+      "email": "127660907+djshellshoxxx@users.noreply.github.com",
+      "date": "2026-11-21T09:39:17Z"
+    },
+    "committer": {
+      "name": "sheldon",
+      "email": "127660907+djshellshoxxx@users.noreply.github.com",
+      "date": "2026-11-21T09:39:17Z"
+    },
+    "tree": {
+      "sha": "6d532dd606a1fdf987245a03271970758a03fe57",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/6d532dd606a1fdf987245a03271970758a03fe57"
+    },
+    "message": "Honor Pages configuration hold before artifact upload [no release] [no deploy]\n\nPreserved local source commit: 0cdd5bf37130206c2ddec399450be6338ae8e4fd\nPreserved local complete tree: 6d532dd606a1fdf987245a03271970758a03fe57\nOriginal author: Codex <codex@openai.com>\nOriginal author date: 2026-11-21T01:35:24-08:00\nLocal parent 5b5328ee83ee4990b3311f7ac90e2f5e5f76f800 is mapped to remote 92dfc4d4d2ef9d604bc9db1a639d4f19add535a8; complete tree identity is unchanged.",
+    "parents": [
+      {
+        "sha": "92dfc4d4d2ef9d604bc9db1a639d4f19add535a8",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/92dfc4d4d2ef9d604bc9db1a639d4f19add535a8",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/92dfc4d4d2ef9d604bc9db1a639d4f19add535a8"
+      }
+    ],
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "original_commit": {
+    "local_commit": "0cdd5bf37130206c2ddec399450be6338ae8e4fd",
+    "tree": "6d532dd606a1fdf987245a03271970758a03fe57",
+    "parents": [
+      "5b5328ee83ee4990b3311f7ac90e2f5e5f76f800"
+    ],
+    "base_tree": "1e12edd510399fd92da6867cd071394ceb7fc95b",
+    "message": "Honor Pages configuration hold before artifact upload [no release] [no deploy]",
+    "author": "Codex <codex@openai.com>",
+    "author_date": "2026-11-21T01:35:24-08:00",
+    "entries": [
+      {
+        "path": ".github/workflows/pages.yml",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "1cb1690ff545d2b13fc9a54152f840e8dbb6ad04"
+      },
+      {
+        "path": "docs/specs/REGISTRY.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "be28f62ab75abdb02518de05ede20d444fafe7d1"
+      },
+      {
+        "path": "docs/specs/pages-deployment-control.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "24009e5c79bec2a1d294cce8332760423d1861a6"
+      },
+      {
+        "path": "tests/test_site_workflow.py",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "1342c5bc4682208791a2c24f72bfd4f2ea89720f"
+      }
+    ]
+  }
+}

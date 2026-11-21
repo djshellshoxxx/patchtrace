@@ -1,0 +1,108 @@
+{
+  "captured_utc": "2026-11-21T09:31:38.647439+00:00",
+  "stage": "Preliminary immutable input review; final applied records and new Pages combination not yet received",
+  "helper_sha256": "b73c4d771bdd17ca35e63ff7663b3cf92b907ef8714ff4c37e63051d701d1c26",
+  "helper_executed_by_reviewer": false,
+  "primary_merge": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+  "primary_source": {
+    "repo_full_name": "djshellshoxxx/PatchTrace",
+    "pull_request": 349,
+    "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+    "head_tree_sha": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+    "base_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+    "synthetic_merge_sha": "66f153a8372ad93c72e2f5b10365dcf210681684",
+    "synthetic_merge_tree_sha": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+    "synthetic_merge_parents": [
+      "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+      "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e"
+    ],
+    "all_28_logged_checkouts_match_synthetic_merge": true,
+    "observed_at_utc": "2026-11-21 09:16:35 UTC"
+  },
+  "seven_run_ids": [
+    44881740990,
+    44881740983,
+    44881741061,
+    44881741004,
+    44881741068,
+    44881741002,
+    44881740985
+  ],
+  "separate_intel_run_id": 44881741040,
+  "workflow_count_combined": 8,
+  "seven_run_successful_jobs": 28,
+  "seven_run_intentional_skips": 3,
+  "intel_successful_jobs": 2,
+  "intel_intentional_job_skips": 1,
+  "combined_successful_jobs": 30,
+  "combined_intentional_job_skips": 4,
+  "platform_full_suites": {
+    "Linux": {
+      "passed": 24190,
+      "skipped": 53,
+      "xfailed": 3,
+      "warnings": 21,
+      "failed": 0,
+      "seconds": 2394.87,
+      "errors": 0
+    },
+    "Windows": {
+      "passed": 24059,
+      "skipped": 185,
+      "xfailed": 2,
+      "warnings": 22,
+      "failed": 0,
+      "seconds": 3575.91,
+      "errors": 0
+    }
+  },
+  "intel_pytest_counts": {
+    "passed": 7,
+    "failed": 0,
+    "skipped": 1,
+    "errors": 0
+  },
+  "intel_blocked_artifact_checks": 1,
+  "primary_archive": {
+    "sha256": "8eb127426bcf216b840bc10d5243fccdb8964d4ba17bf53b6282920406b57859",
+    "bytes": 3237595,
+    "members": 159,
+    "payloads_verified": 158,
+    "manifest_sha256": "84e2b4a6c32a4086c3f9e9e209688180fa068d2be360eb665f4c1d5c5c205016"
+  },
+  "intel_archive": {
+    "sha256": "6e32067c94180fec5f94223eeed28b6456e54592e4f432a9c8aeb69b9595af9b",
+    "bytes": 141471,
+    "members": 37,
+    "payloads_verified": 36,
+    "manifest_sha256": "7e45326836ab2cf5a252154547659023c725894585797e838b56636be7c86318"
+  },
+  "open_gates": [
+    {
+      "id": "CODEX-5",
+      "scope": "Hash-required pip downloads remain an expected failure on both OSes.",
+      "node_id": "tests/test_codex_pkg_workflows.py::test_pip_downloads_require_hashes"
+    },
+    {
+      "id": "Tier W llvm-pdbutil",
+      "scope": "Linux live comparison blocked because llvm-pdbutil is absent."
+    },
+    {
+      "id": "Tier W Ghidra export",
+      "scope": "Both OSes blocked because no --ghidra-dir was supplied."
+    },
+    {
+      "id": "BinDiff Windows no_network",
+      "scope": "6 checks passed; network isolation remains blocked/manual."
+    },
+    {
+      "id": "Tier R rz-diff coverage",
+      "scope": "5/11 pairs completed; six tiny pairs failed; Windows advisory has 11 findings, all exit 1; MSVC skipped; no Ghidra archive-cache acceptance."
+    },
+    {
+      "id": "Native input and provenance scope",
+      "scope": "Synthetic/compiled authored fixtures and cache/equivalence checks are not general match-accuracy or real-driver acceptance; BinDiff TOFU independent-provenance limitation remains."
+    }
+  ],
+  "next_required": "Compare definitive applied record tree and final ancestry; preserve observed post-main Pages configuration failure separately and review forthcoming narrow repair."
+}

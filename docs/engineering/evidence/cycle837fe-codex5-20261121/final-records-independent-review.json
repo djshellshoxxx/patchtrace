@@ -1,0 +1,858 @@
+{
+  "schema": "patchtrace/independent-final-records-review/1",
+  "reviewed_at_utc": "2026-11-21T09:52:10.683180+00:00",
+  "verdict": "CLEAR for this exact staged records tree and planned ordered ancestry; actual final commit/ref/CI are not yet asserted",
+  "blockers": [],
+  "reviewer": "/root/codex1_independent_review",
+  "records_tree": "e7ecad2c0b1128a83876bf137634cf9f64d29f1f",
+  "code_source": "0cdd5bf37130206c2ddec399450be6338ae8e4fd",
+  "code_tree": "6d532dd606a1fdf987245a03271970758a03fe57",
+  "planned_ordered_parents": [
+    "0cdd5bf37130206c2ddec399450be6338ae8e4fd",
+    "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+    "36b58a7d857690a8bf0093bcee1edd5036189b30"
+  ],
+  "checks_passed": 141,
+  "checks": [
+    {
+      "check": "HEAD matches reviewed Pages source",
+      "passed": true
+    },
+    {
+      "check": "Code tree identity",
+      "passed": true
+    },
+    {
+      "check": "No tracked unstaged edits",
+      "passed": true
+    },
+    {
+      "check": "Index equals immutable reviewed tree",
+      "passed": true
+    },
+    {
+      "check": "Pending merge parents ordered actual main then original donor",
+      "passed": true
+    },
+    {
+      "check": "Only five record paths and evidence subtree change",
+      "passed": true,
+      "changed_path_count": 57,
+      "changed_paths": [
+        "docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md",
+        "docs/engineering/cycle837fe-codex5-20261121.md",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/ae69-native-intel-source-identity.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/ae69-native-intel-summary.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/ae69-native-intel.zip",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/ancillary-branch-summary.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/ancillary-branches.zip",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/ancillary-independent-review.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/author-history.zip",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/code-publication-mapping.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/combined-focused.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/combined-pages-record-validation.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/combined-pages-record-validation.zip",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-dispositions.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-java-and-code-remote-verification.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-java-independent-review.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-java-probe.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-java-probe.zip",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-license-classification.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-license-independent-review.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-license-independent.zip",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-license-review.zip",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/independent-primary-input-review.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/independent-review.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/independent-review.md",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/independent-review.zip",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/local-codex5-pages-source.bundle",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/main-publication-gate-review.zip",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/manifest.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/pages-code-publication-mapping.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/pages-config-404-independent-assessment.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/pages-config-hold-candidate.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/pages-config-hold-handoff.md",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/pages-config-hold-repair.zip",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/pages-independent-review.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/pages-independent-review.zip",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/pr-chain-reconciliation-review.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/pr-chain-reconciliation-review.zip",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-acceptance-reconciliation.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-archive-receipt.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-evidence-manifest.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-final-ae69-evidence.zip",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-final-qualification.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-merge-proof.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-pr-closures.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-promotion-context.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/prior-ledger-ae69.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/qualification.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/records-assembly-helper.py",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/records-helper-preparation.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/recovered-donor-task-and-notes.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/ref-refresh-summary.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/ref-refresh.zip",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/root-validation.zip",
+        "docs/engineering/task-ledger.json",
+        "docs/qa.md",
+        "tasks/todo.md"
+      ]
+    },
+    {
+      "check": "No code-tree path deleted",
+      "passed": true
+    },
+    {
+      "check": "Every other tracked entry exactly equals reviewed source",
+      "passed": true,
+      "protected_entries": 4665
+    },
+    {
+      "check": "Entire prior authoritative ledger retained byte-for-byte",
+      "passed": true,
+      "sha256": "f2cd11ef4df5e15d5b96160885bb382fbb3960cf0ab2b73860663c913e7eead7"
+    },
+    {
+      "check": "Original 98 IDs/order; 104 unique total",
+      "passed": true
+    },
+    {
+      "check": "Exactly 11 promotions plus seven authorized legacy updates; other 80 rows exact",
+      "passed": true,
+      "changed_ids": [
+        "837fe-codex1-direct-actions",
+        "837fe-codex5-bounded-assessment",
+        "837fe-combined-pr349-qualification",
+        "837fe-intel-probe-diagnostics",
+        "837fe-intel-synthetic-windows-identity",
+        "837fe-intel-windows-version-names",
+        "837fe-native-c4-combined-qualification",
+        "837fe-pr349-spec-registry",
+        "837fe-tier-r-immutable-pin-contract",
+        "backup-cleanup-cancellation-20261121-837fe",
+        "codex14-linux-frozen-cli-smoke-20261121",
+        "codex5-per-command-audit-gap-20261121-95fe",
+        "codex6-cache-hit-fixture-20261121",
+        "codex6-corpus-cache-archive-20261121",
+        "cycle3-pages-deployment-control",
+        "pages-site-isolation-and-hashes-20261121-95fe",
+        "search-header-help-20261121-837fe",
+        "service-postcommit-snapshot-20261121-837fe"
+      ]
+    },
+    {
+      "check": "All eleven primary promotions retain implementation COMPLETE",
+      "passed": true
+    },
+    {
+      "check": "Baseline three continuation histories preserved exactly",
+      "passed": true
+    },
+    {
+      "check": "Eleven complete pre-promotion rows preserved",
+      "passed": true
+    },
+    {
+      "check": "Prior top-level current fields deep copied",
+      "passed": true
+    },
+    {
+      "check": "All seven legacy before rows and history equal baseline",
+      "passed": true
+    },
+    {
+      "check": "All seven recorded after rows equal final current rows",
+      "passed": true
+    },
+    {
+      "check": "Pages checkpoint retains former C5 source and qualification",
+      "passed": true
+    },
+    {
+      "check": "Only authorized ledger top-level fields change; workers/history retained",
+      "passed": true,
+      "changed_fields": [
+        "aggregate_source_commit",
+        "aggregate_source_tree",
+        "checkpoint_local_commit",
+        "codex5_followup_837fe",
+        "continuation",
+        "continuation_history",
+        "current_qualification",
+        "integration_branch",
+        "local_integration_branch",
+        "notes",
+        "primary_main_promotion_837fe",
+        "remote_publication",
+        "tasks",
+        "updated_at"
+      ]
+    },
+    {
+      "check": "Exactly one original donor task and two notes recovered",
+      "passed": true
+    },
+    {
+      "check": "Original 44 notes remain prefix; exact two donor notes appended",
+      "passed": true
+    },
+    {
+      "check": "Donor task deep copy and notes retained in history and current checkpoint",
+      "passed": true
+    },
+    {
+      "check": "Four additional completed tasks exactly match frozen authorized context",
+      "passed": true
+    },
+    {
+      "check": "Final appended Pages task is complete implementation, testing acceptance",
+      "passed": true
+    },
+    {
+      "check": "Prior complete file retained as exact suffix: docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md",
+      "passed": true,
+      "original_bytes": 8891,
+      "original_sha256": "d7da283c1b57f344aa97e40b30fcacefbb2a5604d16dd723d5b331298ec64b7d"
+    },
+    {
+      "check": "Prior complete file retained as exact suffix: docs/qa.md",
+      "passed": true,
+      "original_bytes": 424962,
+      "original_sha256": "0be91ba10f46a117bc812f14809606c46f912626ccff5ae94616b1b969bdf1c3"
+    },
+    {
+      "check": "Prior complete file retained as exact suffix: tasks/todo.md",
+      "passed": true,
+      "original_bytes": 258506,
+      "original_sha256": "3c4352bd6c94dd6d656e7c37284718fc97ff2f4b512ec4c42980a4e4e02b0da7"
+    },
+    {
+      "check": "Manifest exactly inventories all 51 payloads",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: ae69-native-intel-source-identity.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: ae69-native-intel-summary.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: ae69-native-intel.zip",
+      "passed": true
+    },
+    {
+      "check": "ZIP CRC and unique members: ae69-native-intel.zip",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: ancillary-branch-summary.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: ancillary-branches.zip",
+      "passed": true
+    },
+    {
+      "check": "ZIP CRC and unique members: ancillary-branches.zip",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: ancillary-independent-review.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: author-history.zip",
+      "passed": true
+    },
+    {
+      "check": "ZIP CRC and unique members: author-history.zip",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: code-publication-mapping.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: combined-focused.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: combined-pages-record-validation.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: combined-pages-record-validation.zip",
+      "passed": true
+    },
+    {
+      "check": "ZIP CRC and unique members: combined-pages-record-validation.zip",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: historical-dispositions.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: historical-java-and-code-remote-verification.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: historical-java-independent-review.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: historical-java-probe.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: historical-java-probe.zip",
+      "passed": true
+    },
+    {
+      "check": "ZIP CRC and unique members: historical-java-probe.zip",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: historical-license-classification.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: historical-license-independent-review.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: historical-license-independent.zip",
+      "passed": true
+    },
+    {
+      "check": "ZIP CRC and unique members: historical-license-independent.zip",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: historical-license-review.zip",
+      "passed": true
+    },
+    {
+      "check": "ZIP CRC and unique members: historical-license-review.zip",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: independent-primary-input-review.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: independent-review.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: independent-review.md",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: independent-review.zip",
+      "passed": true
+    },
+    {
+      "check": "ZIP CRC and unique members: independent-review.zip",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: local-codex5-pages-source.bundle",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: main-publication-gate-review.zip",
+      "passed": true
+    },
+    {
+      "check": "ZIP CRC and unique members: main-publication-gate-review.zip",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: pages-code-publication-mapping.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: pages-config-404-independent-assessment.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: pages-config-hold-candidate.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: pages-config-hold-handoff.md",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: pages-config-hold-repair.zip",
+      "passed": true
+    },
+    {
+      "check": "ZIP CRC and unique members: pages-config-hold-repair.zip",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: pages-independent-review.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: pages-independent-review.zip",
+      "passed": true
+    },
+    {
+      "check": "ZIP CRC and unique members: pages-independent-review.zip",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: pr-chain-reconciliation-review.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: pr-chain-reconciliation-review.zip",
+      "passed": true
+    },
+    {
+      "check": "ZIP CRC and unique members: pr-chain-reconciliation-review.zip",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: primary-acceptance-reconciliation.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: primary-archive-receipt.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: primary-evidence-manifest.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: primary-final-ae69-evidence.zip",
+      "passed": true
+    },
+    {
+      "check": "ZIP CRC and unique members: primary-final-ae69-evidence.zip",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: primary-final-qualification.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: primary-merge-proof.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: primary-pr-closures.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: primary-promotion-context.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: prior-ledger-ae69.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: qualification.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: records-assembly-helper.py",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: records-helper-preparation.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: recovered-donor-task-and-notes.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: ref-refresh-summary.json",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: ref-refresh.zip",
+      "passed": true
+    },
+    {
+      "check": "ZIP CRC and unique members: ref-refresh.zip",
+      "passed": true
+    },
+    {
+      "check": "Payload size and digest: root-validation.zip",
+      "passed": true
+    },
+    {
+      "check": "ZIP CRC and unique members: root-validation.zip",
+      "passed": true
+    },
+    {
+      "check": "Total evidence payload bytes",
+      "passed": true,
+      "payloads": 51,
+      "bytes": 8441650
+    },
+    {
+      "check": "Exact previously reviewed/frozen evidence retained: primary-final-ae69-evidence.zip",
+      "passed": true
+    },
+    {
+      "check": "Exact previously reviewed/frozen evidence retained: ae69-native-intel.zip",
+      "passed": true
+    },
+    {
+      "check": "Exact previously reviewed/frozen evidence retained: independent-review.zip",
+      "passed": true
+    },
+    {
+      "check": "Exact previously reviewed/frozen evidence retained: author-history.zip",
+      "passed": true
+    },
+    {
+      "check": "Exact previously reviewed/frozen evidence retained: root-validation.zip",
+      "passed": true
+    },
+    {
+      "check": "Exact previously reviewed/frozen evidence retained: historical-java-probe.zip",
+      "passed": true
+    },
+    {
+      "check": "Exact previously reviewed/frozen evidence retained: historical-license-review.zip",
+      "passed": true
+    },
+    {
+      "check": "Exact previously reviewed/frozen evidence retained: historical-license-independent.zip",
+      "passed": true
+    },
+    {
+      "check": "Exact previously reviewed/frozen evidence retained: ancillary-branches.zip",
+      "passed": true
+    },
+    {
+      "check": "Exact previously reviewed/frozen evidence retained: pr-chain-reconciliation-review.zip",
+      "passed": true
+    },
+    {
+      "check": "Exact previously reviewed/frozen evidence retained: pages-config-hold-repair.zip",
+      "passed": true
+    },
+    {
+      "check": "Exact previously reviewed/frozen evidence retained: pages-independent-review.zip",
+      "passed": true
+    },
+    {
+      "check": "Exact previously reviewed/frozen evidence retained: combined-pages-record-validation.zip",
+      "passed": true
+    },
+    {
+      "check": "Exact previously reviewed/frozen evidence retained: records-assembly-helper.py",
+      "passed": true
+    },
+    {
+      "check": "Exact previously reviewed/frozen evidence retained: primary-promotion-context.json",
+      "passed": true
+    },
+    {
+      "check": "Exact previously reviewed/frozen evidence retained: local-codex5-pages-source.bundle",
+      "passed": true
+    },
+    {
+      "check": "Source bundle verifies against retained base",
+      "passed": true,
+      "advertised_heads": [
+        "0cdd5bf37130206c2ddec399450be6338ae8e4fd refs/heads/integration/patchtrace-codex5-followup-20261121-837fe"
+      ]
+    },
+    {
+      "check": "Exact C5 and Pages ordered local code chain retained",
+      "passed": true
+    },
+    {
+      "check": "Actual main Git object identity",
+      "passed": true
+    },
+    {
+      "check": "Actual primary merge parents/tree/opt-outs",
+      "passed": true
+    },
+    {
+      "check": "Retained REST actual merge agrees with full Git object",
+      "passed": true
+    },
+    {
+      "check": "Seven-run archive and separate Intel form eight unique workflows",
+      "passed": true
+    },
+    {
+      "check": "Eight workflows success attempt one on exact primary head",
+      "passed": true
+    },
+    {
+      "check": "Primary combined 30 successful jobs and four skipped jobs",
+      "passed": true,
+      "counts": {
+        "success": 30,
+        "skipped": 4
+      }
+    },
+    {
+      "check": "Source-specific primary full suite figures unchanged",
+      "passed": true
+    },
+    {
+      "check": "PR 345: closed after actual merge, original description suffix retained",
+      "passed": true
+    },
+    {
+      "check": "PR 345: original head, base and title preserved",
+      "passed": true
+    },
+    {
+      "check": "PR 346: closed after actual merge, original description suffix retained",
+      "passed": true
+    },
+    {
+      "check": "PR 346: original head, base and title preserved",
+      "passed": true
+    },
+    {
+      "check": "PR 347: closed after actual merge, original description suffix retained",
+      "passed": true
+    },
+    {
+      "check": "PR 347: original head, base and title preserved",
+      "passed": true
+    },
+    {
+      "check": "PR 348: closed after actual merge, original description suffix retained",
+      "passed": true
+    },
+    {
+      "check": "PR 348: original head, base and title preserved",
+      "passed": true
+    },
+    {
+      "check": "PR346 remains explicitly selective recovery, not whole-head ancestry",
+      "passed": true
+    },
+    {
+      "check": "Original 181/16 census unchanged",
+      "passed": true
+    },
+    {
+      "check": "Only five previously reviewed complete-branch dispositions",
+      "passed": true
+    },
+    {
+      "check": "C5 1548 pass/two strict xfail belongs only to 5b",
+      "passed": true
+    },
+    {
+      "check": "Prior dirty failed full attempt preserved without cause invention or pass transfer",
+      "passed": true
+    },
+    {
+      "check": "Current source identifies Pages combination; release and merge eligibility false",
+      "passed": true
+    },
+    {
+      "check": "Bounded parser and Pages implementation remain testing; broader C5 rows blocked",
+      "passed": true
+    },
+    {
+      "check": "Manifest distinguishes current source and original assembly checkpoint",
+      "passed": true
+    },
+    {
+      "check": "Pages remote code mapping exact tree and ordered single parent; no ref movement claimed",
+      "passed": true
+    },
+    {
+      "check": "Post-record validation explicitly scoped to 0cdd with records dirty",
+      "passed": true
+    },
+    {
+      "check": "Archived final registry XML independently counts 111 passes",
+      "passed": true
+    },
+    {
+      "check": "Report explicitly retains source boundaries and open acceptance gates",
+      "passed": true
+    },
+    {
+      "check": "Frozen index and tracked source still unchanged at review end",
+      "passed": true
+    }
+  ],
+  "ledger": {
+    "baseline_tasks": 98,
+    "current_tasks": 104,
+    "unchanged_original_tasks": 80,
+    "promoted_original_tasks": 11,
+    "reconciled_legacy_tasks": 7,
+    "appended_tasks": 6,
+    "prior_notes": 44,
+    "donor_notes": 2,
+    "prior_histories": 3,
+    "current_histories": 6,
+    "current_sha256": "ada6332912bb9fe87d404c0de5e8a0b6a300ca0e1fd50c95ebf615b3db02a04a"
+  },
+  "payloads": {
+    "count": 51,
+    "bytes": 8441650,
+    "manifest_sha256": "52d850ef22b8533305e27f29fe66048a5ff6cb32ffcff105be85d3c6ca52910d",
+    "archives": [
+      {
+        "path": "ae69-native-intel.zip",
+        "members": 37,
+        "bytes": 141471,
+        "sha256": "6e32067c94180fec5f94223eeed28b6456e54592e4f432a9c8aeb69b9595af9b"
+      },
+      {
+        "path": "ancillary-branches.zip",
+        "members": 26,
+        "bytes": 289510,
+        "sha256": "81bc99aa2ece7800031b75649da9c0527edbf977c6ef16bf3192f0fdf82cf3d0"
+      },
+      {
+        "path": "author-history.zip",
+        "members": 148,
+        "bytes": 517762,
+        "sha256": "888cae02ac96bc90a9a51061f2d1e2ee38935ea8a1187f9c60b0921e585ba878"
+      },
+      {
+        "path": "combined-pages-record-validation.zip",
+        "members": 11,
+        "bytes": 6816,
+        "sha256": "aa3e6238d4e3386fa0763cf77b83d5081493854b808dfce8be2107009b2c8d77"
+      },
+      {
+        "path": "historical-java-probe.zip",
+        "members": 12,
+        "bytes": 9284,
+        "sha256": "5bae9c5cde288a619c5aef2cb23df84c7c991a51999532266b2b12797eeafb29"
+      },
+      {
+        "path": "historical-license-independent.zip",
+        "members": 6,
+        "bytes": 25443,
+        "sha256": "e35b585568b7bfc861abdab661ecb6282deee1f662e43d47afae33e2271c53fb"
+      },
+      {
+        "path": "historical-license-review.zip",
+        "members": 114,
+        "bytes": 1292224,
+        "sha256": "a86b0478942988b249857c600a964cfb521b096cebbfe69ddb47f6e7e2ae8769"
+      },
+      {
+        "path": "independent-review.zip",
+        "members": 215,
+        "bytes": 1673831,
+        "sha256": "356c89a7e9ffd7c01e25d47e98ed02b291be0c69bc0e22934ee609e61c99f7e6"
+      },
+      {
+        "path": "main-publication-gate-review.zip",
+        "members": 4,
+        "bytes": 16350,
+        "sha256": "9930194d52a7a17c32bf79af152c9047245934a0eed82f8c8e314f650072df81"
+      },
+      {
+        "path": "pages-config-hold-repair.zip",
+        "members": 44,
+        "bytes": 96916,
+        "sha256": "a0f0f0dd5a9cb68698a7e6b410b9c39059755fc00c78168cd8c89df0f1997025"
+      },
+      {
+        "path": "pages-independent-review.zip",
+        "members": 9,
+        "bytes": 16806,
+        "sha256": "0144ec7a091e1c4e7da8624d5ffe3e5ce1212f9a032c6ae81971033ec14d954e"
+      },
+      {
+        "path": "pr-chain-reconciliation-review.zip",
+        "members": 12,
+        "bytes": 50129,
+        "sha256": "ddb93f07a44cf41106c5ed9237b10a5f0c4e965d6f28d91530f73fc0a331279c"
+      },
+      {
+        "path": "primary-final-ae69-evidence.zip",
+        "members": 159,
+        "bytes": 3237595,
+        "sha256": "8eb127426bcf216b840bc10d5243fccdb8964d4ba17bf53b6282920406b57859"
+      },
+      {
+        "path": "ref-refresh.zip",
+        "members": 10,
+        "bytes": 112726,
+        "sha256": "4f9250e16ead15ca29fd8f4252938effe67d1a58245fb64d08ada992a94a1162"
+      },
+      {
+        "path": "root-validation.zip",
+        "members": 14,
+        "bytes": 36232,
+        "sha256": "b0cf012bab566eb9b9102a167ef820b0401d131844f09769c5d610ee4ab44b89"
+      }
+    ]
+  },
+  "pr_closures": [
+    {
+      "pr": 345,
+      "method": "successor ancestry",
+      "head": "39c38a02f126963fc03827fa49741255590227ad",
+      "base": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+      "original_body_sha256": "8a6a1f8d2bb34fcbdff5b4ee22d83bc3a35ab3dc3ba08b48879245260c71447d",
+      "original_body_preserved_as_suffix": true,
+      "reconciliation_prefix_bytes": 805
+    },
+    {
+      "pr": 346,
+      "method": "selective recovery",
+      "head": "c07774ecf5a3f7337834f95a9a4c51c8ec5fad44",
+      "base": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+      "original_body_sha256": "db5536dc73489012fc41da8cb3aca9a14f1d5fac3e21aeb36b7abba36e5a0707",
+      "original_body_preserved_as_suffix": true,
+      "reconciliation_prefix_bytes": 1848
+    },
+    {
+      "pr": 347,
+      "method": "successor ancestry",
+      "head": "b461ac64eb9beb74449ce2b18b6795a2af34a02a",
+      "base": "39c38a02f126963fc03827fa49741255590227ad",
+      "original_body_sha256": "1ad6e6234d5b7c6325f917db56a0f475c9b6059bc909c0d467ec05bd2ead4e89",
+      "original_body_preserved_as_suffix": true,
+      "reconciliation_prefix_bytes": 807
+    },
+    {
+      "pr": 348,
+      "method": "successor ancestry",
+      "head": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+      "base": "b461ac64eb9beb74449ce2b18b6795a2af34a02a",
+      "original_body_sha256": "21bd87be85d88e05bb03249f10565a1c34d9b42b7802a534517331e064e59c0c",
+      "original_body_preserved_as_suffix": true,
+      "reconciliation_prefix_bytes": 742
+    }
+  ],
+  "source_tests_rerun_for_records_review": 0,
+  "pages_independent_source_review": {
+    "source": "0cdd5bf37130206c2ddec399450be6338ae8e4fd",
+    "maintained_passed": 119,
+    "in_memory_controls": 12,
+    "archive_sha256": "0144ec7a091e1c4e7da8624d5ffe3e5ce1212f9a032c6ae81971033ec14d954e"
+  },
+  "review_scope": "Retained exact objects and artifacts only; no fresh remote claims, product tests, helper execution, source/index/ref/PR/CI mutations.",
+  "remaining_gates": [
+    "Verify actual final record commit and equivalent remote ordered parents/tree after creation.",
+    "A bounded review-receipt-only addition may follow; recheck that exact delta.",
+    "Applicable hosted qualification for the final new source and guarded main promotion remain pending.",
+    "Hosted held Pages configure-skip/upload evidence remains pending.",
+    "Broad CODEX-5 hashes, native/environment, Ghidra archive-cache, manual/trust/provenance and L1/L2/L3 gates stay open; release readiness is false."
+  ]
+}

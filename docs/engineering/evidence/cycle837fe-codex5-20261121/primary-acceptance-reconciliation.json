@@ -1,0 +1,337 @@
+{
+  "schema": "patchtrace/primary-legacy-acceptance-reconciliation/1",
+  "recorded_at": "2026-11-21T09:37:05.314572+00:00",
+  "scope": "Current acceptance addendum after immutable helper application; prior values retained below.",
+  "primary": {
+    "primary_source": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+    "qualified_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+    "tested_checkout": "66f153a8372ad93c72e2f5b10365dcf210681684",
+    "actual_main_merge": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+    "scope": "Primary source only; new C5/Pages source requires its own qualification.",
+    "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-final-qualification.json"
+  },
+  "before": [
+    {
+      "id": "codex14-linux-frozen-cli-smoke-20261121",
+      "owner": "completed independent spec/standards reviews; coordinator qualification",
+      "status": "implemented-independently-reviewed-local-passed-hosted-frozen-pending",
+      "branch": "codex/patchtrace-linux-frozen-cli-smoke-20261121",
+      "base_commit": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+      "scope": "Add full actual frozen CLI harness to unpacked checksum-verified Linux onedir release artifact on ubuntu-22.04 and ubuntu-24.04 without removing existing Qt offscreen/xcb checks.",
+      "contract_commit": "68cfff469618f0123df81740c4ab2a0bf3e24e00",
+      "test_commit": "d34f6100c01d06c4ff2681d3b6ca6d6fca07ed8d",
+      "workflow_commit": "93a6698b1a8f38e26199638ee9d72d2adc985dd3",
+      "tests": "tests/test_codex_pkg_packaging.py (previous CODEX-14 strict xfail promoted to source contract assertion; 1 preserved/enhanced case and 1 new Qt-modes preservation case)",
+      "contract": "docs/linux.md (frozen Linux CLI acceptance)",
+      "evidence": "docs/engineering/codex14-linux-frozen-cli-smoke-20261121.md",
+      "review_status": "Two independent axes found no blocking defect; root unused-import repair separately reviewed.",
+      "result_or_next_action": "91 focused tests passed on retained source before import-only cleanup; final combined source has469 distinct affected passes, wholeRuff passed. Require exact-candidate Ubuntu22.04/24.04 full frozen CLI jobs plus applicable QA/native/package. No frozen executable execution inferred from text controls.",
+      "smoke_docstring_commit": "2af9a5c37eaf25198fada253fcc586e8fe0183ba",
+      "test_hardening_commit": "6ea0ff2538159bdc714d840ab1368fdecc2b6d77",
+      "negative_controls": "7/7 author-side in-memory workflow mutations detected, evidence docs/engineering/evidence/codex14-linux-smoke-static-review-20261121.json; not independent review",
+      "source_commit": "5fa47ac7b03451f404c2f0acd871e8700067c13f",
+      "combined_source": "e5a531668ef523cd6faa26d5fec59aa552749134",
+      "latest_evidence": "docs/engineering/evidence/cycle3-95fe/qualification.json"
+    },
+    {
+      "id": "codex6-corpus-cache-archive-20261121",
+      "owner": "completed independent spec/standards reviews; coordinator qualification",
+      "status": "implemented-repaired-independently-reviewed-local-passed-hosted-cache-pending",
+      "branch": "codex/patchtrace-corpus-archive-integrity-20261121",
+      "base_branch": "codex/patchtrace-integration-20261121-2bad",
+      "base_commit": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+      "source_area": ".github/workflows/corpus-tier-r.yml, strict source tests, Tier R normative specification",
+      "contract": "docs/specs/known-answer-corpus.md",
+      "review": "docs/engineering/codex6-corpus-cache-archive-20261121.md",
+      "evidence": "docs/engineering/evidence/codex6-archive-cache-controls-20261121.json",
+      "tests": [
+        "tests/test_corpus_cache_archive_integrity_20261121.py",
+        "tests/test_codex_pkg_workflows.py"
+      ],
+      "source_repair_commit": "c32449278d0712fa9e653f4b7c51eb5f679a693c",
+      "verification": "Historical author receipt: 14 fetched-source invariants and 14 author JS mutations; previous 12-invariant current-summary label corrected by cycle3 review. Actual source-bound results and independent reviews are recorded in cycle3 qualification; native cache acceptance is separate.",
+      "result_or_next_action": "Original d250 test oracle failed1/29passed/2xfail; repaired full rizin heading and original-valid precondition. Corrected selection30pass/2existingxfail and wholeRuff pass. Actual Bash fixture cache-hit cases pass on both archive formats. Combined469 passes overlap. Hosted TierR/cache-hit and separate Ghidriff path remain unverified; do not treat PR348 or fixture data as that acceptance.",
+      "source_commit": "53e02a478235498563a092d7943c7feaf40adda6",
+      "combined_source": "e5a531668ef523cd6faa26d5fec59aa552749134",
+      "review_status": "No blocking workflow/runtime finding. P3 current-summary counts reconciled against final14/14 author receipt.",
+      "latest_evidence": "docs/engineering/evidence/cycle3-95fe/qualification.json"
+    },
+    {
+      "id": "codex6-cache-hit-fixture-20261121",
+      "status": "implemented-repaired-independently-reviewed-local-passed-hosted-cache-pending",
+      "owner": "completed independent spec/standards reviews; coordinator qualification",
+      "base_commit": "658cc814aa74d1eaebf0d7e6dd4553d06aaef0eb",
+      "branch": "codex/patchtrace-codex6-cache-hit-fixture-tests-20261121",
+      "evidence": "docs/engineering-handoffs/codex6-cache-hit-fixture-20261121.md",
+      "tests": "tests/test_corpus_archive_cache_hit_shell_20261121.py",
+      "result_or_next_action": "Original d250 test oracle failed1/29passed/2xfail; repaired full rizin heading and original-valid precondition. Corrected selection30pass/2existingxfail and wholeRuff pass. Actual Bash fixture cache-hit cases pass on both archive formats. Combined469 passes overlap. Hosted TierR/cache-hit and separate Ghidriff path remain unverified; do not treat PR348 or fixture data as that acceptance.",
+      "source_commit": "53e02a478235498563a092d7943c7feaf40adda6",
+      "combined_source": "e5a531668ef523cd6faa26d5fec59aa552749134",
+      "review_status": "No blocking workflow/runtime finding. P3 current-summary counts reconciled against final14/14 author receipt.",
+      "latest_evidence": "docs/engineering/evidence/cycle3-95fe/qualification.json"
+    },
+    {
+      "id": "cycle3-pages-deployment-control",
+      "status": "implemented-independently-reviewed-local-passed-hosted-pending",
+      "owner": "completed author and two independent review axes",
+      "source_commit": "e54e4d0afbcdc3916539c62810877faa65842d5e",
+      "combined_source": "e5a531668ef523cd6faa26d5fec59aa552749134",
+      "contract": "docs/specs/pages-deployment-control.md",
+      "evidence": "docs/engineering/evidence/cycle3-95fe/pages-veto-candidate.json",
+      "result_or_next_action": "Actual push-head [no deploy] veto is limited to Pages deploy; manual dispatch, build/artifacts and permissions unchanged. Source red1fail/6pass; repaired52staticchecks; combined tests pass. No deployment invoked. Actual main merge must contain both [no release] [no deploy]."
+    },
+    {
+      "id": "pages-site-isolation-and-hashes-20261121-95fe",
+      "status": "implemented-independently-reviewed-local-qualified",
+      "owner": "95FE-C4 completed author and two independent reviewers",
+      "source_commit": "8c5e77e2c1ad3f6cfa62c2e474f7bcc2f4af1dd5",
+      "evidence": "docs/engineering/evidence/cycle4-95fe/qualification.json",
+      "result_or_next_action": "Confirmed missing-pydantic site-only fixture error repaired by explicit pytest isolation. Seven verified Linux/Python 3.12 wheels are pinned and hashed. Fresh offline install/build and both refusal controls verified; 247 site passes and one existing optional GUI skip. The final full-dependency selection includes a passing GUI screenshot test. Hosted index/build and broader CODEX-5 remain open."
+    },
+    {
+      "id": "codex5-per-command-audit-gap-20261121-95fe",
+      "status": "open-follow-up",
+      "owner": "next coordinated audit worker; preserve 837FE Action-pin file ownership",
+      "source_commit": "11f51c105bf63946f59373ae605b937c4fee607a",
+      "evidence": "docs/engineering/evidence/cycle4-95fe/codex5-research.md",
+      "result_or_next_action": "Current run-block heuristic accepts hash/offline flags anywhere, including unrelated commands/comments. Synthetic text controls retained. Implement per-command and referenced-lock checks without weakening global strict xfail; no current workflow compromise inferred."
+    },
+    {
+      "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
+      "merge_status": "not merged to main",
+      "id": "837fe-codex5-bounded-assessment",
+      "status": "BLOCKED",
+      "description": "Recover wheelhouse infrastructure and inventory missing workflow hash closures",
+      "source_branch": "integration/patchtrace-20261121-837fe-combined",
+      "source_commit": "0a270822935fb372fc181f3e2573fe60d9a16a53",
+      "assigned_worker": "completed codex5_recovery_assessment;next scoped lock owner unassigned",
+      "files_owned": [],
+      "implementation_status": "assessment complete;broader closures incomplete",
+      "test_results": "Known strict-xfail exposed with --runxfail:1failed;no installs/native acceptance.",
+      "audit_findings": "Verified backend wheelhouse reusable;42explicit install steps before C4 Pages;host/transitive closures and per-command check incomplete.",
+      "dependencies": [
+        "target-specific approved Windows/Linux closures",
+        "existing backend builder reuse"
+      ],
+      "blockers": [
+        "missing host/build/app/dev/signing/engine locks and native install/build evidence"
+      ],
+      "evidence_links": [
+        "docs/engineering/evidence/cycle837fe-native-c4-20261121/codex5-bounded-assessment.md"
+      ],
+      "next_action": "Complete remaining scoped closures;Pages does not close all CODEX-5;preserve strict failure."
+    }
+  ],
+  "after": [
+    {
+      "id": "codex14-linux-frozen-cli-smoke-20261121",
+      "owner": "completed independent spec/standards reviews; coordinator qualification",
+      "status": "MERGED",
+      "branch": "codex/patchtrace-linux-frozen-cli-smoke-20261121",
+      "base_commit": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+      "scope": "Add full actual frozen CLI harness to unpacked checksum-verified Linux onedir release artifact on ubuntu-22.04 and ubuntu-24.04 without removing existing Qt offscreen/xcb checks.",
+      "contract_commit": "68cfff469618f0123df81740c4ab2a0bf3e24e00",
+      "test_commit": "d34f6100c01d06c4ff2681d3b6ca6d6fca07ed8d",
+      "workflow_commit": "93a6698b1a8f38e26199638ee9d72d2adc985dd3",
+      "tests": "tests/test_codex_pkg_packaging.py (previous CODEX-14 strict xfail promoted to source contract assertion; 1 preserved/enhanced case and 1 new Qt-modes preservation case)",
+      "contract": "docs/linux.md (frozen Linux CLI acceptance)",
+      "evidence": "docs/engineering/codex14-linux-frozen-cli-smoke-20261121.md",
+      "review_status": "Two independent axes found no blocking defect; root unused-import repair separately reviewed.",
+      "result_or_next_action": "Package job 136797782885 and frozen jobs 136798676259 (Ubuntu22.04) / 136798676256 (Ubuntu24.04) succeeded; each 64 PASS / 0 FAIL with archive checksum and offscreen/XCB self-tests. Earlier text controls are not counted as native execution. Preserve wider release and final-follow-up gates.",
+      "smoke_docstring_commit": "2af9a5c37eaf25198fada253fcc586e8fe0183ba",
+      "test_hardening_commit": "6ea0ff2538159bdc714d840ab1368fdecc2b6d77",
+      "negative_controls": "7/7 author-side in-memory workflow mutations detected, evidence docs/engineering/evidence/codex14-linux-smoke-static-review-20261121.json; not independent review",
+      "source_commit": "5fa47ac7b03451f404c2f0acd871e8700067c13f",
+      "combined_source": "e5a531668ef523cd6faa26d5fec59aa552749134",
+      "latest_evidence": "docs/engineering/evidence/cycle3-95fe/qualification.json",
+      "implementation_status": "COMPLETE",
+      "merge_status": "Merged through qualified primary PR349 at 9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "primary_acceptance_837fe": {
+        "primary_source": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+        "qualified_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "tested_checkout": "66f153a8372ad93c72e2f5b10365dcf210681684",
+        "actual_main_merge": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+        "scope": "Primary source only; new C5/Pages source requires its own qualification.",
+        "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-final-qualification.json"
+      },
+      "acceptance_status": "Actual Ubuntu 22.04 and 24.04 full frozen CLI accepted on primary source",
+      "blockers": [],
+      "current_primary_test_results": {
+        "qa_run": 44881740990,
+        "package_job": 136797782885,
+        "ubuntu2204": {
+          "job": 136798676259,
+          "passed": 64,
+          "failed": 0
+        },
+        "ubuntu2404": {
+          "job": 136798676256,
+          "passed": 64,
+          "failed": 0
+        },
+        "artifact": 14701041842,
+        "large_product_zip_locally_downloaded": false
+      }
+    },
+    {
+      "id": "codex6-corpus-cache-archive-20261121",
+      "owner": "completed independent spec/standards reviews; coordinator qualification",
+      "status": "MERGED",
+      "branch": "codex/patchtrace-corpus-archive-integrity-20261121",
+      "base_branch": "codex/patchtrace-integration-20261121-2bad",
+      "base_commit": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+      "source_area": ".github/workflows/corpus-tier-r.yml, strict source tests, Tier R normative specification",
+      "contract": "docs/specs/known-answer-corpus.md",
+      "review": "docs/engineering/codex6-corpus-cache-archive-20261121.md",
+      "evidence": "docs/engineering/evidence/codex6-archive-cache-controls-20261121.json",
+      "tests": [
+        "tests/test_corpus_cache_archive_integrity_20261121.py",
+        "tests/test_codex_pkg_workflows.py"
+      ],
+      "source_repair_commit": "c32449278d0712fa9e653f4b7c51eb5f679a693c",
+      "verification": "Historical author receipt: 14 fetched-source invariants and 14 author JS mutations; previous 12-invariant current-summary label corrected by cycle3 review. Actual source-bound results and independent reviews are recorded in cycle3 qualification; native cache acceptance is separate.",
+      "result_or_next_action": "Source and fixture repairs are merged. Actual Tier R run 44881741002 verified both rizin archive-cache hits; Ghidra archive provisioning was skipped. Tier R remains 5/11 completed engine pairs, six tiny-input no-functions results, zero blocked and one separate identical-input corpus skip. Preserve the earlier failing oracle and repaired fixture evidence; keep Ghidra archive cache and wider native gates open.",
+      "source_commit": "53e02a478235498563a092d7943c7feaf40adda6",
+      "combined_source": "e5a531668ef523cd6faa26d5fec59aa552749134",
+      "review_status": "No blocking workflow/runtime finding. P3 current-summary counts reconciled against final14/14 author receipt.",
+      "latest_evidence": "docs/engineering/evidence/cycle3-95fe/qualification.json",
+      "implementation_status": "COMPLETE",
+      "merge_status": "Merged through qualified primary PR349 at 9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "primary_acceptance_837fe": {
+        "primary_source": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+        "qualified_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "tested_checkout": "66f153a8372ad93c72e2f5b10365dcf210681684",
+        "actual_main_merge": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+        "scope": "Primary source only; new C5/Pages source requires its own qualification.",
+        "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-final-qualification.json"
+      },
+      "acceptance_status": "Partial native acceptance: both rizin archive cache hits verify; Ghidra archive cache remains unverified",
+      "blockers": [
+        "Ghidra archive provisioning/hit was skipped; separate Ghidriff raw-cache success does not close this gate."
+      ]
+    },
+    {
+      "id": "codex6-cache-hit-fixture-20261121",
+      "status": "MERGED",
+      "owner": "completed independent spec/standards reviews; coordinator qualification",
+      "base_commit": "658cc814aa74d1eaebf0d7e6dd4553d06aaef0eb",
+      "branch": "codex/patchtrace-codex6-cache-hit-fixture-tests-20261121",
+      "evidence": "docs/engineering-handoffs/codex6-cache-hit-fixture-20261121.md",
+      "tests": "tests/test_corpus_archive_cache_hit_shell_20261121.py",
+      "result_or_next_action": "Source and fixture repairs are merged. Actual Tier R run 44881741002 verified both rizin archive-cache hits; Ghidra archive provisioning was skipped. Tier R remains 5/11 completed engine pairs, six tiny-input no-functions results, zero blocked and one separate identical-input corpus skip. Preserve the earlier failing oracle and repaired fixture evidence; keep Ghidra archive cache and wider native gates open.",
+      "source_commit": "53e02a478235498563a092d7943c7feaf40adda6",
+      "combined_source": "e5a531668ef523cd6faa26d5fec59aa552749134",
+      "review_status": "No blocking workflow/runtime finding. P3 current-summary counts reconciled against final14/14 author receipt.",
+      "latest_evidence": "docs/engineering/evidence/cycle3-95fe/qualification.json",
+      "implementation_status": "COMPLETE",
+      "merge_status": "Merged through qualified primary PR349 at 9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "primary_acceptance_837fe": {
+        "primary_source": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+        "qualified_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "tested_checkout": "66f153a8372ad93c72e2f5b10365dcf210681684",
+        "actual_main_merge": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+        "scope": "Primary source only; new C5/Pages source requires its own qualification.",
+        "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-final-qualification.json"
+      },
+      "acceptance_status": "Partial native acceptance: both rizin archive cache hits verify; Ghidra archive cache remains unverified",
+      "blockers": [
+        "Ghidra archive provisioning/hit was skipped; separate Ghidriff raw-cache success does not close this gate."
+      ]
+    },
+    {
+      "id": "cycle3-pages-deployment-control",
+      "status": "MERGED",
+      "owner": "completed author and two independent review axes",
+      "source_commit": "e54e4d0afbcdc3916539c62810877faa65842d5e",
+      "combined_source": "e5a531668ef523cd6faa26d5fec59aa552749134",
+      "contract": "docs/specs/pages-deployment-control.md",
+      "evidence": "docs/engineering/evidence/cycle3-95fe/pages-veto-candidate.json",
+      "result_or_next_action": "Original deploy-only implementation is merged. Main 9023761 Pages run 44889511406 skipped deploy job 136802309849. Site tests passed 247/1 skipped and static build succeeded, but unconditional configure-pages GET returned404. Retain original deployment-only evidence; a separate task tracks the new guard while preserving upload/manual dispatch.",
+      "implementation_status": "COMPLETE",
+      "merge_status": "Merged through qualified primary PR349 at 9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "primary_acceptance_837fe": {
+        "primary_source": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+        "qualified_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "tested_checkout": "66f153a8372ad93c72e2f5b10365dcf210681684",
+        "actual_main_merge": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+        "scope": "Primary source only; new C5/Pages source requires its own qualification.",
+        "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-final-qualification.json"
+      },
+      "acceptance_status": "Actual deploy hold observed; separate configuration lookup defect discovered",
+      "blockers": [
+        "Post-main configure-pages returned HTTP404; a narrow configuration guard is separately owned and awaits qualification."
+      ]
+    },
+    {
+      "id": "pages-site-isolation-and-hashes-20261121-95fe",
+      "status": "MERGED",
+      "owner": "95FE-C4 completed author and two independent reviewers",
+      "source_commit": "8c5e77e2c1ad3f6cfa62c2e474f7bcc2f4af1dd5",
+      "evidence": "docs/engineering/evidence/cycle4-95fe/qualification.json",
+      "result_or_next_action": "Main 9023761 Pages run 44889511406 passed hashed/binary-only installation, isolated site tests (247 passed/1 optional-GUI skip), and static build. Separate configure-pages404 is tracked by the guard fix. Broader CODEX5 and actual deployment remain open; no dispatch or enablement occurred.",
+      "implementation_status": "COMPLETE",
+      "merge_status": "Merged through qualified primary PR349 at 9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "primary_acceptance_837fe": {
+        "primary_source": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+        "qualified_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "tested_checkout": "66f153a8372ad93c72e2f5b10365dcf210681684",
+        "actual_main_merge": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+        "scope": "Primary source only; new C5/Pages source requires its own qualification.",
+        "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-final-qualification.json"
+      },
+      "acceptance_status": "Actual hosted locked install, isolated site tests and site build passed",
+      "blockers": [
+        "Separate Pages configuration404 prevented first held-run artifact upload."
+      ]
+    },
+    {
+      "id": "codex5-per-command-audit-gap-20261121-95fe",
+      "status": "BLOCKED",
+      "owner": "next coordinated audit worker; preserve 837FE Action-pin file ownership",
+      "source_commit": "11f51c105bf63946f59373ae605b937c4fee607a",
+      "evidence": "docs/engineering/evidence/cycle4-95fe/codex5-research.md",
+      "result_or_next_action": "Recovered YAML/per-command audit exists at 5b5328ee with independent review and typed strict expected failure; see codex5-per-command-audit-20261121. Keep referenced-lock validation and full host/build/app/dev/signing/engine closures open; recognizing command flags does not complete CODEX5.",
+      "implementation_status": "Bounded parser complete in reviewed C5 source; referenced-lock verification remains open",
+      "merge_status": "Original gap record merged in primary; recovered parser follow-up not yet merged",
+      "blockers": [
+        "Referenced-lock content/hash closure remains outside this bounded parser.",
+        "Final follow-up hosted qualification and guarded main merge pending."
+      ]
+    },
+    {
+      "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
+      "merge_status": "Assessment record merged through primary 9023761; broader implementation remains BLOCKED",
+      "id": "837fe-codex5-bounded-assessment",
+      "status": "BLOCKED",
+      "description": "Recover wheelhouse infrastructure and inventory missing workflow hash closures",
+      "source_branch": "integration/patchtrace-20261121-837fe-combined",
+      "source_commit": "0a270822935fb372fc181f3e2573fe60d9a16a53",
+      "assigned_worker": "completed codex5_recovery_assessment;next scoped lock owner unassigned",
+      "files_owned": [],
+      "implementation_status": "assessment complete;broader closures incomplete",
+      "test_results": "Known strict-xfail exposed with --runxfail:1failed;no installs/native acceptance.",
+      "audit_findings": "Verified backend wheelhouse reusable;42explicit install steps before C4 Pages;host/transitive closures and per-command check incomplete.",
+      "dependencies": [
+        "target-specific approved Windows/Linux closures",
+        "existing backend builder reuse"
+      ],
+      "blockers": [
+        "missing host/build/app/dev/signing/engine locks and native install/build evidence"
+      ],
+      "evidence_links": [
+        "docs/engineering/evidence/cycle837fe-native-c4-20261121/codex5-bounded-assessment.md"
+      ],
+      "next_action": "Complete remaining scoped closures;Pages does not close all CODEX-5;preserve strict failure.",
+      "primary_record_promotion": {
+        "primary_source": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+        "qualified_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "tested_checkout": "66f153a8372ad93c72e2f5b10365dcf210681684",
+        "actual_main_merge": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+        "scope": "Primary source only; new C5/Pages source requires its own qualification.",
+        "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-final-qualification.json"
+      }
+    }
+  ],
+  "prior_task_ids_and_order_preserved": true,
+  "prior_notes_and_failure_history_preserved": true
+}

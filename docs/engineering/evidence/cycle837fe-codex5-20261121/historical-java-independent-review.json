@@ -1,0 +1,132 @@
+{
+  "schema": "patchtrace-independent-java-branches-and-c5-dag/1",
+  "utc": "2026-11-21T09:00:15.708053+00:00",
+  "verdict": "no-blocker-in-two-named-dispositions-or-three-commit-source-mapping",
+  "source_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+  "source_local_commit": "06ea27de0936f1f8eb1aeca264833c21845a7f36",
+  "published_equivalent": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+  "fresh_java_head_refs": {
+    "chatgpt/java-probe-ci-fix-20261016": "0254841e3e635ed717e35abcf83021f001d7df29",
+    "chatgpt/java-probe-boundaries-20261016": "09bb4519d7d8e9ff8f40abcba7e11cb297d8b61e"
+  },
+  "complete_java_branch_scopes": [
+    {
+      "head": "0254841e3e635ed717e35abcf83021f001d7df29",
+      "merge_base": "8ee61c623fa37c5a219f912cf7870bfeddcb1f70",
+      "whole_branch_changed_paths": [
+        "tests/test_backend_java_version.py"
+      ],
+      "commits": [
+        "0254841e3e635ed717e35abcf83021f001d7df29"
+      ],
+      "test_blob": "a83bdbd3c54d40169ce35ae36221d35233fdd8fc",
+      "donor_bytes_verified": true,
+      "complete_diff_verified": true
+    },
+    {
+      "head": "09bb4519d7d8e9ff8f40abcba7e11cb297d8b61e",
+      "merge_base": "8ee61c623fa37c5a219f912cf7870bfeddcb1f70",
+      "whole_branch_changed_paths": [
+        "tests/test_backend_java_version.py"
+      ],
+      "commits": [
+        "0254841e3e635ed717e35abcf83021f001d7df29",
+        "09bb4519d7d8e9ff8f40abcba7e11cb297d8b61e"
+      ],
+      "test_blob": "385d571bfc0306034f0bd79e1cddb8db43ee1fa9",
+      "donor_bytes_verified": true,
+      "complete_diff_verified": true
+    }
+  ],
+  "first_branch_import_order_only": true,
+  "first_branch_classification": "DUPLICATE",
+  "second_branch_classification": "SUPERSEDED",
+  "second_branch_ast_equality": {
+    "_configured_probe": true,
+    "_result": true,
+    "test_java_version_retries_timeout_once_with_longer_bound": true,
+    "test_java_version_stops_after_second_timeout": true,
+    "test_java_version_does_not_retry_non_timeout_failures": false,
+    "test_java_version_does_not_retry_timeout_after_cancellation": true,
+    "test_java_version_does_not_retry_oserror": true,
+    "test_java_version_never_spawns_when_java_is_missing": true
+  },
+  "strict_fixture_state_normalization": {
+    "removed_only_exact_assignments": [
+      "current = []",
+      "current[:] = [outcome]"
+    ],
+    "rewritten_only_return": "return current[0] -> return outcome",
+    "complete_function_ast_equal_after_normalization": true,
+    "four_outcome_classes_and_assertions_retained": true
+  },
+  "current_test_blob": "b5cd5e543adc5c9f2d65093940f1f54ec4808de4",
+  "retained_test_receipt": {
+    "executed_cases": 13,
+    "current_cases": 6,
+    "original_ci_fix_donor_cases": 1,
+    "original_boundary_donor_cases": 6,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "independently_rerun": false,
+    "native_execution_or_native_claim": false
+  },
+  "root_manifest_entries_verified": 11,
+  "root_archive": {
+    "members": 12,
+    "bytes": 9284,
+    "sha256": "5bae9c5cde288a619c5aef2cb23df84c7c991a51999532266b2b12797eeafb29"
+  },
+  "historical_census": {
+    "original_unmatched": 181,
+    "original_patch_equivalent": 16,
+    "snapshot_preserved": true,
+    "review_scope": "only the two named whole-branch contributions; no global semantic exhaustion or branch-deletion disposition"
+  },
+  "remote_c5_mapping": [
+    {
+      "local": "93b053a88e4373d9f5c69cd68f96e1a49305d579",
+      "remote": "deb5552f4ec1879292ecb212bde1bbb8f1efea53",
+      "tree": "90e69cbc319d4bc6076a4701964a4a3bb376a516",
+      "local_parents": [
+        "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e"
+      ],
+      "remote_parents": [
+        "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e"
+      ],
+      "fresh_remote_identity_verified": true,
+      "original_message_and_source_trailers_preserved": true
+    },
+    {
+      "local": "4cbe479023067b05b688cd1c1b02994b0228e305",
+      "remote": "225b465e7852f4069b288adb6bb52af6e697dc25",
+      "tree": "98a4fc483085f9a1489508bc00a67f0284cb0168",
+      "local_parents": [
+        "93b053a88e4373d9f5c69cd68f96e1a49305d579"
+      ],
+      "remote_parents": [
+        "deb5552f4ec1879292ecb212bde1bbb8f1efea53"
+      ],
+      "fresh_remote_identity_verified": true,
+      "original_message_and_source_trailers_preserved": true
+    },
+    {
+      "local": "5b5328ee83ee4990b3311f7ac90e2f5e5f76f800",
+      "remote": "92dfc4d4d2ef9d604bc9db1a639d4f19add535a8",
+      "tree": "1e12edd510399fd92da6867cd071394ceb7fc95b",
+      "local_parents": [
+        "4cbe479023067b05b688cd1c1b02994b0228e305"
+      ],
+      "remote_parents": [
+        "225b465e7852f4069b288adb6bb52af6e697dc25"
+      ],
+      "fresh_remote_identity_verified": true,
+      "original_message_and_source_trailers_preserved": true
+    }
+  ],
+  "mapping_file_sha256": "2c8b88e12db391d8cd90e2ef2b1ce2e31502ca81c374481334e59094cef974ff",
+  "publication_record_ref_movement": false,
+  "ref_scope_note": "Fresh GETs verify commit/tree/ordered-parent identities and both Java head refs. No ref operation was invoked by this reviewer. Historical absence of other remote ref movement is the coordinator publication record, not inferable from commit objects alone.",
+  "reviewer_mutations": "Separate independent evidence only; no source, refs, ledger or root evidence edits; no additional tests or native runs."
+}

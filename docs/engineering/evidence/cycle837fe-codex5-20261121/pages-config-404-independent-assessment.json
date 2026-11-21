@@ -1,0 +1,84 @@
+{
+  "schema": "patchtrace/pages-config-404-assessment/1",
+  "source_head": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+  "source_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+  "failure": {
+    "run_id": 44889511406,
+    "job_id": 136802040292,
+    "failed_step": "actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b",
+    "actual_error": "Get Pages site failed / HttpError: Not Found",
+    "site_tests": {
+      "passed": 247,
+      "skipped": 1
+    },
+    "static_site_build": "success",
+    "deployment_job_id": 136802309849,
+    "deployment_conclusion": "skipped",
+    "configuration_cause_limit": "The 404 alone does not distinguish absent Pages configuration from token visibility/permission."
+  },
+  "recommendation": {
+    "scope": "Guard configure-pages only; preserve unconditional site tests, site build, and upload-pages-artifact.",
+    "predicate": "github.event_name != 'push' || !contains(github.event.head_commit.message, '[no deploy]')",
+    "permissions": "unchanged",
+    "enablement": "unchanged default false",
+    "deployment_job": "unchanged"
+  },
+  "pinned_action_findings": [
+    {
+      "action": "actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b",
+      "files": [
+        "action.yml",
+        "src/index.js",
+        "src/api-client.js",
+        "src/context.js"
+      ],
+      "finding": "action.yml defaults enablement=false. Audited source always looks up the Pages site; lookup failure is rethrown when enablement is false. Actual hosted log exhibits this GET failure. No static_site_generator input or step id/output consumer is present in the workflow."
+    },
+    {
+      "action": "actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa",
+      "files": [
+        "action.yml"
+      ],
+      "finding": "Exact pinned composite archives inputs.path into RUNNER_TEMP/artifact.tar, then calls actions/upload-artifact@v4. It references no configure-pages outputs or GITHUB_PAGES environment variable. The workflow passes the fixed site/dist path, after building the site."
+    }
+  ],
+  "contract_changes_required": [
+    {
+      "path": "tests/test_site_workflow.py",
+      "test": "test_builds_with_the_site_tool_and_deploys_the_dist_artifact_to_github_pages",
+      "issue": "Its broad assertion forbids [no deploy] anywhere before deploy, so a configure-only guard must replace that assertion with narrow step-level checks. Preserve the existing no build-job if, exact upload pin/path, unconditional tests/build/upload, unchanged deploy predicate/dependency/permissions, and trigger tests."
+    },
+    {
+      "path": "docs/specs/pages-deployment-control.md",
+      "issue": "Current wording limits the hold to deploy only. Add the explicit configure lookup exception while continuing to require tests/build/artifact upload and manual dispatch behavior."
+    },
+    {
+      "path": "docs/specs/REGISTRY.md",
+      "issue": "Update the Pages contract summary for the new configure-lookup exception; preserve path registration."
+    },
+    {
+      "path": "docs/engineering/task-ledger.json",
+      "issue": "Add a new source-specific post-main failure/follow-up record; retain earlier deploy-only implementation history."
+    }
+  ],
+  "preserve_related_contracts": [
+    "tests/test_site_dependency_lock.py",
+    "docs/specs/pages-build-isolation-and-hashes.md",
+    "tests/test_spec_registry.py",
+    "tasks/todo.md"
+  ],
+  "dispatch_and_remaining_limits": [
+    "The exact existing predicate remains true for workflow_dispatch even if the checked-out commit contains [no deploy]; that is the current explicit manual-deployment contract, not a newly introduced bypass.",
+    "Unmarked push and workflow_dispatch still perform configure-pages and retain the unresolved actual Pages configuration/permission requirement.",
+    "The Pages workflow has no pull_request trigger. Static local regressions cannot prove the hosted condition or artifact upload; the next authorized automatic held main push must establish that actual outcome.",
+    "The pinned upload composite contains an existing transitive actions/upload-artifact@v4 reference. This change neither alters it nor claims to close the separate transitive-reference gate.",
+    "The observed deployment skip also has a failed build dependency. Source and actual marker independently make the deploy expression false, but the observed skipped state alone does not isolate causation."
+  ],
+  "observer_actions": {
+    "source_edits": 0,
+    "workflow_dispatches": 0,
+    "workflow_retries": 0,
+    "Pages_enablement_changes": 0,
+    "local_native_or_target_execution": 0
+  }
+}

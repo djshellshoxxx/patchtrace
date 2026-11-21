@@ -1,0 +1,4512 @@
+{
+  "schema": "patchtrace-primary-promotion/1",
+  "verified": true,
+  "merge_result": {
+    "sha": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+    "merged": true,
+    "message": "Pull Request successfully merged"
+  },
+  "actual_commit": {
+    "sha": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+    "node_id": "C_kwDOVEPRFdoAKDkwMjM3NjFhNDA2NmFjMWM1MGMxMjdhYzA5ZDBiYTVmNTZjZGM5ZTQ",
+    "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+    "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+    "author": {
+      "name": "sheldon",
+      "email": "127660907+djshellshoxxx@users.noreply.github.com",
+      "date": "2026-11-21T09:25:15Z"
+    },
+    "committer": {
+      "name": "GitHub",
+      "email": "noreply@github.com",
+      "date": "2026-11-21T09:25:15Z"
+    },
+    "tree": {
+      "sha": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/c3f09435deb99ca0ddb3406e27ab315dba7740cf"
+    },
+    "message": "Merge qualified PatchTrace consolidation (#349) [no release] [no deploy]\n\n[no release] [no deploy]\n\nPromote reviewed source ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e, complete tree c3f09435deb99ca0ddb3406e27ab315dba7740cf. All eight applicable exact-source workflows completed successfully; 30 applicable jobs passed and four intentionally inapplicable jobs were skipped. Tested synthetic merge 66f153a8372ad93c72e2f5b10365dcf210681684 has parents fdc2696c23bdbfe7668348f25e3b336ce33039f7 and ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e.\n\nLinux full suite: 24,190 passed, 53 skipped, 3 expected failures. Windows full suite: 24,059 passed, 185 skipped, 2 expected failures. Whole-tree Ruff, Qt repetition, actual Windows standalone/portable/installer/uninstall, and Ubuntu 22.04/24.04 frozen smoke checks passed. Native and packaging qualification details and independent reviews are preserved in PR #349 and source-specific evidence. Sealed primary evidence SHA256: 8eb127426bcf216b840bc10d5243fccdb8964d4ba17bf53b6282920406b57859.\n\nThis merge preserves the broader CODEX-5, Tier R/Tier W native, manual accessibility/trust/provenance, and L1/L2/L3 acceptance gates. It does not authorize a release, tag, Pages deployment, or deletion of historical branches.",
+    "parents": [
+      {
+        "sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/fdc2696c23bdbfe7668348f25e3b336ce33039f7"
+      },
+      {
+        "sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e"
+      }
+    ],
+    "verification": {
+      "verified": true,
+      "reason": "valid",
+      "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJrAWN7CRC1aQ7uu5UhlAAAWlkQAH8EA7RbnnKWjkxK5cRhksdd\nfBa9oshshZbrfmxB8u6tyuc6VtpUjpM9ULfxX5CURP5MR+wkBgq12I6eLVE1HrJk\nhn6xlf1m7uj8cgLrCY4ujwu3PBs21iJTQbEE5j2NXTYajZQq9a2+3qdkafllKLY7\nYWlefNfNKUIELkUMLE3dxlQJz58jJfh3IhytQMKqzKQYqUiTOOhu6EQvLxoQIFWF\nY6zOM+olkIKemDMSSIYT06PAU8/WIEKB776u93Gkvu6kMzRVoB/EYLtBsnv1n09w\n0eUHhmqZLkJkCRUYLbJKZvRhi5FI10A7+bO3c0toA0tsb7FYPehLstDBHDFYEv3u\nnbxdvFkp+tDVtvBeMDvrm7FX4QaanVH0fK3IiQX2Hddz7LSZ3OD8YTi8R4OJJICF\nsIBAqyvGp2m46h03RJ+YOuqEuTY6yCrgqhKtlL8I/CZAZP+4cEw4qBVVOpQGnHw7\nyolfvlMW83gQMV347ayA5dU0x2YSnjBizuu2uuST9+bNQxvch4XV/ynGkNcB8Bmh\nRpSEo6Spjk4DhGV4SuVxOMgp2+lRfE4oaEZSq0vcAHhpF1R3XM+UI21TpVZ6ElB7\nZQUVO2YbgX/Rb7aiLvJRJhdwmDkRTtIhJROwLG4w/Wqp9vXaB6v0wpU60vUeVGiF\nzJGxo4EEyee44bVYvKcb\n=dVAc\n-----END PGP SIGNATURE-----\n",
+      "payload": "tree c3f09435deb99ca0ddb3406e27ab315dba7740cf\nparent fdc2696c23bdbfe7668348f25e3b336ce33039f7\nparent ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e\nauthor sheldon <127660907+djshellshoxxx@users.noreply.github.com> 1795253115 -0700\ncommitter GitHub <noreply@github.com> 1795253115 -0700\n\nMerge qualified PatchTrace consolidation (#349) [no release] [no deploy]\n\n[no release] [no deploy]\n\nPromote reviewed source ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e, complete tree c3f09435deb99ca0ddb3406e27ab315dba7740cf. All eight applicable exact-source workflows completed successfully; 30 applicable jobs passed and four intentionally inapplicable jobs were skipped. Tested synthetic merge 66f153a8372ad93c72e2f5b10365dcf210681684 has parents fdc2696c23bdbfe7668348f25e3b336ce33039f7 and ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e.\n\nLinux full suite: 24,190 passed, 53 skipped, 3 expected failures. Windows full suite: 24,059 passed, 185 skipped, 2 expected failures. Whole-tree Ruff, Qt repetition, actual Windows standalone/portable/installer/uninstall, and Ubuntu 22.04/24.04 frozen smoke checks passed. Native and packaging qualification details and independent reviews are preserved in PR #349 and source-specific evidence. Sealed primary evidence SHA256: 8eb127426bcf216b840bc10d5243fccdb8964d4ba17bf53b6282920406b57859.\n\nThis merge preserves the broader CODEX-5, Tier R/Tier W native, manual accessibility/trust/provenance, and L1/L2/L3 acceptance gates. It does not authorize a release, tag, Pages deployment, or deletion of historical branches.",
+      "verified_at": "2026-11-21T09:25:16Z"
+    }
+  },
+  "main_after": {
+    "ref": "refs/heads/main",
+    "node_id": "REF_kwDOVEPRFa9yZWZzL2hlYWRzL21haW4",
+    "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/refs/heads/main",
+    "object": {
+      "sha": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "type": "commit",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/9023761a4066ac1c50c127ac09d0ba5f56cdc9e4"
+    }
+  },
+  "pull_request": {
+    "number": 349,
+    "url": "https://github.com/djshellshoxxx/patchtrace/pull/349",
+    "merged": true,
+    "merged_at": "2026-11-21T09:25:16Z",
+    "merge_commit_sha": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+    "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+    "base_sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7"
+  },
+  "premerge_workflows": [
+    {
+      "id": 44881741004,
+      "name": "Live BinDiff acceptance",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881741004"
+    },
+    {
+      "id": 44881741040,
+      "name": "Live intel tools acceptance",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881741040"
+    },
+    {
+      "id": 44881741061,
+      "name": "Live rizin rz-diff acceptance",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881741061"
+    },
+    {
+      "id": 44881741002,
+      "name": "Corpus Tier R (sharded)",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881741002"
+    },
+    {
+      "id": 44881740983,
+      "name": "Native Windows Ghidriff acceptance",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881740983"
+    },
+    {
+      "id": 44881740985,
+      "name": "Live unified extraction (SPEC-31 S1)",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881740985"
+    },
+    {
+      "id": 44881741068,
+      "name": "Optional dependency wheels probe",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881741068"
+    },
+    {
+      "id": 44881740990,
+      "name": "QA and Windows standalone",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881740990"
+    }
+  ],
+  "premerge_jobs": [
+    {
+      "id": 136778367617,
+      "run_id": 44881740990,
+      "workflow_name": "QA and Windows standalone",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881740990",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2KBCgQ",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778367617",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881740990/job/136778367617",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T07:46:05Z",
+      "started_at": "2026-11-21T07:51:58Z",
+      "completed_at": "2026-11-21T08:05:07Z",
+      "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T07:51:58Z",
+          "completed_at": "2026-11-21T07:52:00Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T07:52:00Z",
+          "completed_at": "2026-11-21T07:52:04Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T07:52:04Z",
+          "completed_at": "2026-11-21T07:52:04Z"
+        },
+        {
+          "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T07:52:04Z",
+          "completed_at": "2026-11-21T07:52:26Z"
+        },
+        {
+          "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T07:52:26Z",
+          "completed_at": "2026-11-21T07:52:41Z"
+        },
+        {
+          "name": "Run python tools/qt_gate.py --repeat 20 --shard 4/4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T07:52:41Z",
+          "completed_at": "2026-11-21T08:05:05Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-21T08:05:05Z",
+          "completed_at": "2026-11-21T08:05:05Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-21T08:05:05Z",
+          "completed_at": "2026-11-21T08:05:05Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-21T08:05:05Z",
+          "completed_at": "2026-11-21T08:05:05Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778367617",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000073917,
+      "runner_name": "GitHub Actions 1000073917",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881740990
+    },
+    {
+      "id": 136778367746,
+      "run_id": 44881740990,
+      "workflow_name": "QA and Windows standalone",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881740990",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2KBDAg",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778367746",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881740990/job/136778367746",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T07:46:05Z",
+      "started_at": "2026-11-21T08:02:14Z",
+      "completed_at": "2026-11-21T08:31:02Z",
+      "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T08:02:15Z",
+          "completed_at": "2026-11-21T08:02:15Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T08:02:15Z",
+          "completed_at": "2026-11-21T08:02:18Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T08:02:18Z",
+          "completed_at": "2026-11-21T08:02:18Z"
+        },
+        {
+          "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T08:02:18Z",
+          "completed_at": "2026-11-21T08:02:24Z"
+        },
+        {
+          "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T08:02:24Z",
+          "completed_at": "2026-11-21T08:02:36Z"
+        },
+        {
+          "name": "Run python tools/qt_gate.py --repeat 20 --shard 3/4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T08:02:36Z",
+          "completed_at": "2026-11-21T08:31:00Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-21T08:31:00Z",
+          "completed_at": "2026-11-21T08:31:00Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-21T08:31:00Z",
+          "completed_at": "2026-11-21T08:31:00Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-21T08:31:00Z",
+          "completed_at": "2026-11-21T08:31:00Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778367746",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000073973,
+      "runner_name": "GitHub Actions 1000073973",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881740990
+    },
+    {
+      "id": 136778367760,
+      "run_id": 44881740990,
+      "workflow_name": "QA and Windows standalone",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881740990",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2KBDEA",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778367760",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881740990/job/136778367760",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T07:46:05Z",
+      "started_at": "2026-11-21T07:58:43Z",
+      "completed_at": "2026-11-21T08:45:40Z",
+      "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T07:58:44Z",
+          "completed_at": "2026-11-21T07:58:45Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T07:58:45Z",
+          "completed_at": "2026-11-21T07:58:48Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T07:58:48Z",
+          "completed_at": "2026-11-21T07:58:48Z"
+        },
+        {
+          "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T07:58:48Z",
+          "completed_at": "2026-11-21T07:58:54Z"
+        },
+        {
+          "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T07:58:54Z",
+          "completed_at": "2026-11-21T07:59:11Z"
+        },
+        {
+          "name": "Run python tools/qt_gate.py --repeat 20 --shard 1/4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T07:59:11Z",
+          "completed_at": "2026-11-21T08:45:38Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-21T08:45:38Z",
+          "completed_at": "2026-11-21T08:45:38Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-21T08:45:38Z",
+          "completed_at": "2026-11-21T08:45:39Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-21T08:45:39Z",
+          "completed_at": "2026-11-21T08:45:39Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778367760",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000073958,
+      "runner_name": "GitHub Actions 1000073958",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881740990
+    },
+    {
+      "id": 136778367798,
+      "run_id": 44881740990,
+      "workflow_name": "QA and Windows standalone",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881740990",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2KBDNg",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778367798",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881740990/job/136778367798",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T07:46:05Z",
+      "started_at": "2026-11-21T07:59:33Z",
+      "completed_at": "2026-11-21T08:40:07Z",
+      "name": "qa (ubuntu-latest)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T07:59:34Z",
+          "completed_at": "2026-11-21T07:59:35Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T07:59:35Z",
+          "completed_at": "2026-11-21T07:59:38Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T07:59:38Z",
+          "completed_at": "2026-11-21T07:59:38Z"
+        },
+        {
+          "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T07:59:38Z",
+          "completed_at": "2026-11-21T07:59:44Z"
+        },
+        {
+          "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T07:59:44Z",
+          "completed_at": "2026-11-21T07:59:58Z"
+        },
+        {
+          "name": "Run python -m pip check",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T07:59:58Z",
+          "completed_at": "2026-11-21T07:59:59Z"
+        },
+        {
+          "name": "protobuf equals the pin and runs the upb backend (SPEC-10b)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-21T07:59:59Z",
+          "completed_at": "2026-11-21T07:59:59Z"
+        },
+        {
+          "name": "Native pair-publication boundary controls",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-21T07:59:59Z",
+          "completed_at": "2026-11-21T08:00:01Z"
+        },
+        {
+          "name": "Run python -m pytest -q --junitxml=qa-results.xml",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-21T08:00:01Z",
+          "completed_at": "2026-11-21T08:40:03Z"
+        },
+        {
+          "name": "Run python -m ruff check src tests tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-21T08:40:03Z",
+          "completed_at": "2026-11-21T08:40:04Z"
+        },
+        {
+          "name": "BinExport worker memory cap measurement (SPEC-10b U7, non-gating)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 11,
+          "started_at": "2026-11-21T08:40:04Z",
+          "completed_at": "2026-11-21T08:40:04Z"
+        },
+        {
+          "name": "Run python tools/build_windows.py",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 12,
+          "started_at": "2026-11-21T08:40:04Z",
+          "completed_at": "2026-11-21T08:40:04Z"
+        },
+        {
+          "name": "Frozen EXE headless smoke (A1-A4) and self-test",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 13,
+          "started_at": "2026-11-21T08:40:04Z",
+          "completed_at": "2026-11-21T08:40:04Z"
+        },
+        {
+          "name": "Extract and run portable Windows ZIP outside checkout",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 14,
+          "started_at": "2026-11-21T08:40:04Z",
+          "completed_at": "2026-11-21T08:40:04Z"
+        },
+        {
+          "name": "Install pinned NSIS compiler",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 15,
+          "started_at": "2026-11-21T08:40:04Z",
+          "completed_at": "2026-11-21T08:40:04Z"
+        },
+        {
+          "name": "Build per-user Windows installer",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 16,
+          "started_at": "2026-11-21T08:40:04Z",
+          "completed_at": "2026-11-21T08:40:04Z"
+        },
+        {
+          "name": "Install, launch, and uninstall the setup package",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 17,
+          "started_at": "2026-11-21T08:40:04Z",
+          "completed_at": "2026-11-21T08:40:04Z"
+        },
+        {
+          "name": "Record this matrix leg's own result for the release notes",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-11-21T08:40:04Z",
+          "completed_at": "2026-11-21T08:40:04Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-11-21T08:40:04Z",
+          "completed_at": "2026-11-21T08:40:05Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 20,
+          "started_at": "2026-11-21T08:40:05Z",
+          "completed_at": "2026-11-21T08:40:05Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 39,
+          "started_at": "2026-11-21T08:40:05Z",
+          "completed_at": "2026-11-21T08:40:05Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 40,
+          "started_at": "2026-11-21T08:40:05Z",
+          "completed_at": "2026-11-21T08:40:05Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 41,
+          "started_at": "2026-11-21T08:40:05Z",
+          "completed_at": "2026-11-21T08:40:05Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778367798",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000073963,
+      "runner_name": "GitHub Actions 1000073963",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881740990
+    },
+    {
+      "id": 136778367826,
+      "run_id": 44881740990,
+      "workflow_name": "QA and Windows standalone",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881740990",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2KBDUg",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778367826",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881740990/job/136778367826",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T07:46:05Z",
+      "started_at": "2026-11-21T08:02:37Z",
+      "completed_at": "2026-11-21T08:33:14Z",
+      "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T08:02:38Z",
+          "completed_at": "2026-11-21T08:02:40Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T08:02:40Z",
+          "completed_at": "2026-11-21T08:02:47Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T08:02:47Z",
+          "completed_at": "2026-11-21T08:02:48Z"
+        },
+        {
+          "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T08:02:48Z",
+          "completed_at": "2026-11-21T08:03:14Z"
+        },
+        {
+          "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T08:03:14Z",
+          "completed_at": "2026-11-21T08:03:30Z"
+        },
+        {
+          "name": "Run python tools/qt_gate.py --repeat 20 --shard 2/4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T08:03:30Z",
+          "completed_at": "2026-11-21T08:33:11Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-21T08:33:11Z",
+          "completed_at": "2026-11-21T08:33:11Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-21T08:33:11Z",
+          "completed_at": "2026-11-21T08:33:11Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-21T08:33:11Z",
+          "completed_at": "2026-11-21T08:33:11Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778367826",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000073975,
+      "runner_name": "GitHub Actions 1000073975",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881740990
+    },
+    {
+      "id": 136778367868,
+      "run_id": 44881740990,
+      "workflow_name": "QA and Windows standalone",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881740990",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2KBDfA",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778367868",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881740990/job/136778367868",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T07:46:05Z",
+      "started_at": "2026-11-21T08:03:48Z",
+      "completed_at": "2026-11-21T09:08:12Z",
+      "name": "qa (windows-latest)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T08:03:49Z",
+          "completed_at": "2026-11-21T08:03:50Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T08:03:50Z",
+          "completed_at": "2026-11-21T08:03:59Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T08:03:59Z",
+          "completed_at": "2026-11-21T08:03:59Z"
+        },
+        {
+          "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 4,
+          "started_at": "2026-11-21T08:03:59Z",
+          "completed_at": "2026-11-21T08:03:59Z"
+        },
+        {
+          "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T08:03:59Z",
+          "completed_at": "2026-11-21T08:04:49Z"
+        },
+        {
+          "name": "Run python -m pip check",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T08:04:49Z",
+          "completed_at": "2026-11-21T08:04:49Z"
+        },
+        {
+          "name": "protobuf equals the pin and runs the upb backend (SPEC-10b)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-21T08:04:49Z",
+          "completed_at": "2026-11-21T08:04:50Z"
+        },
+        {
+          "name": "Native pair-publication boundary controls",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-21T08:04:50Z",
+          "completed_at": "2026-11-21T08:04:58Z"
+        },
+        {
+          "name": "Run python -m pytest -q --junitxml=qa-results.xml",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-21T08:04:58Z",
+          "completed_at": "2026-11-21T09:04:41Z"
+        },
+        {
+          "name": "Run python -m ruff check src tests tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-21T09:04:41Z",
+          "completed_at": "2026-11-21T09:04:42Z"
+        },
+        {
+          "name": "BinExport worker memory cap measurement (SPEC-10b U7, non-gating)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-21T09:04:42Z",
+          "completed_at": "2026-11-21T09:04:54Z"
+        },
+        {
+          "name": "Run python tools/build_windows.py",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-21T09:04:54Z",
+          "completed_at": "2026-11-21T09:06:28Z"
+        },
+        {
+          "name": "Frozen EXE headless smoke (A1-A4) and self-test",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-21T09:06:28Z",
+          "completed_at": "2026-11-21T09:07:06Z"
+        },
+        {
+          "name": "Extract and run portable Windows ZIP outside checkout",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-21T09:07:06Z",
+          "completed_at": "2026-11-21T09:07:15Z"
+        },
+        {
+          "name": "Install pinned NSIS compiler",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-21T09:07:15Z",
+          "completed_at": "2026-11-21T09:07:26Z"
+        },
+        {
+          "name": "Build per-user Windows installer",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-11-21T09:07:26Z",
+          "completed_at": "2026-11-21T09:07:54Z"
+        },
+        {
+          "name": "Install, launch, and uninstall the setup package",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-11-21T09:07:54Z",
+          "completed_at": "2026-11-21T09:08:01Z"
+        },
+        {
+          "name": "Record this matrix leg's own result for the release notes",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-11-21T09:08:01Z",
+          "completed_at": "2026-11-21T09:08:01Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-11-21T09:08:01Z",
+          "completed_at": "2026-11-21T09:08:02Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-11-21T09:08:02Z",
+          "completed_at": "2026-11-21T09:08:09Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 39,
+          "started_at": "2026-11-21T09:08:09Z",
+          "completed_at": "2026-11-21T09:08:09Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 40,
+          "started_at": "2026-11-21T09:08:09Z",
+          "completed_at": "2026-11-21T09:08:11Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 41,
+          "started_at": "2026-11-21T09:08:11Z",
+          "completed_at": "2026-11-21T09:08:11Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778367868",
+      "labels": [
+        "windows-latest"
+      ],
+      "runner_id": 1000073979,
+      "runner_name": "GitHub Actions 1000073979",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881740990
+    },
+    {
+      "id": 136778367891,
+      "run_id": 44881740990,
+      "workflow_name": "QA and Windows standalone",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881740990",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2KBDkw",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778367891",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881740990/job/136778367891",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T07:46:05Z",
+      "started_at": "2026-11-21T08:04:36Z",
+      "completed_at": "2026-11-21T08:55:01Z",
+      "name": "qt-gate (windows-latest, 5, 1/1)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T08:04:37Z",
+          "completed_at": "2026-11-21T08:04:37Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T08:04:37Z",
+          "completed_at": "2026-11-21T08:04:47Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T08:04:47Z",
+          "completed_at": "2026-11-21T08:04:47Z"
+        },
+        {
+          "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 4,
+          "started_at": "2026-11-21T08:04:47Z",
+          "completed_at": "2026-11-21T08:04:47Z"
+        },
+        {
+          "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T08:04:47Z",
+          "completed_at": "2026-11-21T08:05:27Z"
+        },
+        {
+          "name": "Run python tools/qt_gate.py --repeat 5 --shard 1/1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T08:05:27Z",
+          "completed_at": "2026-11-21T08:54:57Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-21T08:54:57Z",
+          "completed_at": "2026-11-21T08:54:57Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-21T08:54:57Z",
+          "completed_at": "2026-11-21T08:54:59Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-21T08:54:59Z",
+          "completed_at": "2026-11-21T08:54:59Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778367891",
+      "labels": [
+        "windows-latest"
+      ],
+      "runner_id": 1000073982,
+      "runner_name": "GitHub Actions 1000073982",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881740990
+    },
+    {
+      "id": 136778368612,
+      "run_id": 44881740990,
+      "workflow_name": "QA and Windows standalone",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881740990",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2KBGZA",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778368612",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881740990/job/136778368612",
+      "status": "completed",
+      "conclusion": "skipped",
+      "created_at": "2026-11-21T07:46:05Z",
+      "started_at": "2026-11-21T07:46:05Z",
+      "completed_at": "2026-11-21T07:46:05Z",
+      "name": "release-gate",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778368612",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": null,
+      "runner_name": null,
+      "runner_group_id": null,
+      "runner_group_name": null,
+      "observed_run_id": 44881740990
+    },
+    {
+      "id": 136797782885,
+      "run_id": 44881740990,
+      "workflow_name": "QA and Windows standalone",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881740990",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2ciDZQ",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136797782885",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881740990/job/136797782885",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T09:08:12Z",
+      "started_at": "2026-11-21T09:09:23Z",
+      "completed_at": "2026-11-21T09:11:47Z",
+      "name": "linux-package",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T09:09:24Z",
+          "completed_at": "2026-11-21T09:09:25Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T09:09:25Z",
+          "completed_at": "2026-11-21T09:09:28Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T09:09:28Z",
+          "completed_at": "2026-11-21T09:09:28Z"
+        },
+        {
+          "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1 libxcb-cursor0 libxkbcommon-x11-0 xvfb",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T09:09:28Z",
+          "completed_at": "2026-11-21T09:09:54Z"
+        },
+        {
+          "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T09:09:54Z",
+          "completed_at": "2026-11-21T09:10:22Z"
+        },
+        {
+          "name": "Run python tools/check_protobuf_runtime.py",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T09:10:22Z",
+          "completed_at": "2026-11-21T09:10:22Z"
+        },
+        {
+          "name": "Run python tools/build_linux.py",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-21T09:10:22Z",
+          "completed_at": "2026-11-21T09:11:39Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-21T09:11:39Z",
+          "completed_at": "2026-11-21T09:11:44Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-21T09:11:44Z",
+          "completed_at": "2026-11-21T09:11:44Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-11-21T09:11:44Z",
+          "completed_at": "2026-11-21T09:11:44Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-11-21T09:11:44Z",
+          "completed_at": "2026-11-21T09:11:44Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136797782885",
+      "labels": [
+        "ubuntu-22.04"
+      ],
+      "runner_id": 1000074279,
+      "runner_name": "GitHub Actions 1000074279",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881740990
+    },
+    {
+      "id": 136798676256,
+      "run_id": 44881740990,
+      "workflow_name": "QA and Windows standalone",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881740990",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2dYlIA",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136798676256",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881740990/job/136798676256",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T09:11:47Z",
+      "started_at": "2026-11-21T09:13:44Z",
+      "completed_at": "2026-11-21T09:15:20Z",
+      "name": "linux-smoke (ubuntu-24.04)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T09:13:45Z",
+          "completed_at": "2026-11-21T09:13:47Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T09:13:47Z",
+          "completed_at": "2026-11-21T09:13:54Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T09:13:54Z",
+          "completed_at": "2026-11-21T09:13:54Z"
+        },
+        {
+          "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T09:13:54Z",
+          "completed_at": "2026-11-21T09:14:12Z"
+        },
+        {
+          "name": "Run actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T09:14:12Z",
+          "completed_at": "2026-11-21T09:14:24Z"
+        },
+        {
+          "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1 libfontconfig1 libdbus-1-3 libxkbcommon0 libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-shape0 libxcb-xinerama0 libxcb-xkb1 libxcb-xfixes0 xvfb",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T09:14:24Z",
+          "completed_at": "2026-11-21T09:14:45Z"
+        },
+        {
+          "name": "Run sha256sum -c PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-21T09:14:45Z",
+          "completed_at": "2026-11-21T09:14:45Z"
+        },
+        {
+          "name": "Run tar xzf PatchTrace-0.1.0-linux-x86_64.tar.gz && test -x PatchTrace/PatchTrace",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-21T09:14:45Z",
+          "completed_at": "2026-11-21T09:14:47Z"
+        },
+        {
+          "name": "Report unresolved shared libraries of bundled Qt platform plugins",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-21T09:14:47Z",
+          "completed_at": "2026-11-21T09:14:47Z"
+        },
+        {
+          "name": "Run QT_QPA_PLATFORM=offscreen PatchTrace/PatchTrace --self-test",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-21T09:14:47Z",
+          "completed_at": "2026-11-21T09:14:50Z"
+        },
+        {
+          "name": "Run QT_QPA_PLATFORM=xcb xvfb-run -a PatchTrace/PatchTrace --self-test",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-21T09:14:50Z",
+          "completed_at": "2026-11-21T09:14:54Z"
+        },
+        {
+          "name": "Full frozen Linux CLI smoke (CODEX-14)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-21T09:14:54Z",
+          "completed_at": "2026-11-21T09:15:17Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23,
+          "started_at": "2026-11-21T09:15:17Z",
+          "completed_at": "2026-11-21T09:15:17Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24,
+          "started_at": "2026-11-21T09:15:17Z",
+          "completed_at": "2026-11-21T09:15:17Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25,
+          "started_at": "2026-11-21T09:15:17Z",
+          "completed_at": "2026-11-21T09:15:17Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136798676256",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000074298,
+      "runner_name": "GitHub Actions 1000074298",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881740990
+    },
+    {
+      "id": 136798676259,
+      "run_id": 44881740990,
+      "workflow_name": "QA and Windows standalone",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881740990",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2dYlIw",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136798676259",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881740990/job/136798676259",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T09:11:47Z",
+      "started_at": "2026-11-21T09:14:10Z",
+      "completed_at": "2026-11-21T09:15:25Z",
+      "name": "linux-smoke (ubuntu-22.04)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T09:14:11Z",
+          "completed_at": "2026-11-21T09:14:12Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T09:14:12Z",
+          "completed_at": "2026-11-21T09:14:15Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T09:14:15Z",
+          "completed_at": "2026-11-21T09:14:15Z"
+        },
+        {
+          "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T09:14:15Z",
+          "completed_at": "2026-11-21T09:14:33Z"
+        },
+        {
+          "name": "Run actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T09:14:33Z",
+          "completed_at": "2026-11-21T09:14:36Z"
+        },
+        {
+          "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1 libfontconfig1 libdbus-1-3 libxkbcommon0 libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-shape0 libxcb-xinerama0 libxcb-xkb1 libxcb-xfixes0 xvfb",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T09:14:36Z",
+          "completed_at": "2026-11-21T09:14:53Z"
+        },
+        {
+          "name": "Run sha256sum -c PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-21T09:14:53Z",
+          "completed_at": "2026-11-21T09:14:54Z"
+        },
+        {
+          "name": "Run tar xzf PatchTrace-0.1.0-linux-x86_64.tar.gz && test -x PatchTrace/PatchTrace",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-21T09:14:54Z",
+          "completed_at": "2026-11-21T09:14:55Z"
+        },
+        {
+          "name": "Report unresolved shared libraries of bundled Qt platform plugins",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-21T09:14:55Z",
+          "completed_at": "2026-11-21T09:14:55Z"
+        },
+        {
+          "name": "Run QT_QPA_PLATFORM=offscreen PatchTrace/PatchTrace --self-test",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-21T09:14:55Z",
+          "completed_at": "2026-11-21T09:14:57Z"
+        },
+        {
+          "name": "Run QT_QPA_PLATFORM=xcb xvfb-run -a PatchTrace/PatchTrace --self-test",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-21T09:14:57Z",
+          "completed_at": "2026-11-21T09:14:59Z"
+        },
+        {
+          "name": "Full frozen Linux CLI smoke (CODEX-14)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-21T09:14:59Z",
+          "completed_at": "2026-11-21T09:15:23Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23,
+          "started_at": "2026-11-21T09:15:23Z",
+          "completed_at": "2026-11-21T09:15:23Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24,
+          "started_at": "2026-11-21T09:15:23Z",
+          "completed_at": "2026-11-21T09:15:23Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25,
+          "started_at": "2026-11-21T09:15:23Z",
+          "completed_at": "2026-11-21T09:15:23Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136798676259",
+      "labels": [
+        "ubuntu-22.04"
+      ],
+      "runner_id": 1000074303,
+      "runner_name": "GitHub Actions 1000074303",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881740990
+    },
+    {
+      "id": 136799583020,
+      "run_id": 44881740990,
+      "workflow_name": "QA and Windows standalone",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881740990",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2eP7LA",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136799583020",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881740990/job/136799583020",
+      "status": "completed",
+      "conclusion": "skipped",
+      "created_at": "2026-11-21T09:15:26Z",
+      "started_at": "2026-11-21T09:15:26Z",
+      "completed_at": "2026-11-21T09:15:25Z",
+      "name": "release",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136799583020",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": null,
+      "runner_name": null,
+      "runner_group_id": null,
+      "runner_group_name": null,
+      "observed_run_id": 44881740990
+    },
+    {
+      "id": 136778308223,
+      "run_id": 44881740983,
+      "workflow_name": "Native Windows Ghidriff acceptance",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881740983",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2J9afw",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778308223",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881740983/job/136778308223",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T07:45:50Z",
+      "started_at": "2026-11-21T07:54:50Z",
+      "completed_at": "2026-11-21T07:58:18Z",
+      "name": "native (patchtrace-clean)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T07:54:51Z",
+          "completed_at": "2026-11-21T07:54:54Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T07:54:54Z",
+          "completed_at": "2026-11-21T07:55:04Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T07:55:04Z",
+          "completed_at": "2026-11-21T07:55:05Z"
+        },
+        {
+          "name": "Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T07:55:05Z",
+          "completed_at": "2026-11-21T07:55:05Z"
+        },
+        {
+          "name": "Run ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T07:55:05Z",
+          "completed_at": "2026-11-21T07:55:10Z"
+        },
+        {
+          "name": "Run cl /nologo /LD /Od /GS- /Zi tests\\fixtures\\old.c /Fdtests\\fixtures\\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\\fixtures\\old.dll /PDB:tests\\fixtures\\old.pdb",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T07:55:10Z",
+          "completed_at": "2026-11-21T07:55:15Z"
+        },
+        {
+          "name": "Run Invoke-WebRequest 'https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip' -OutFile ghidra.zip",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-21T07:55:15Z",
+          "completed_at": "2026-11-21T07:55:32Z"
+        },
+        {
+          "name": "Run python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-21T07:55:32Z",
+          "completed_at": "2026-11-21T07:56:13Z"
+        },
+        {
+          "name": "Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9,
+          "started_at": "2026-11-21T07:56:13Z",
+          "completed_at": "2026-11-21T07:56:13Z"
+        },
+        {
+          "name": "Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 10,
+          "started_at": "2026-11-21T07:56:13Z",
+          "completed_at": "2026-11-21T07:56:13Z"
+        },
+        {
+          "name": "Remove PDBs at the path embedded in the fixture DLLs",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 11,
+          "started_at": "2026-11-21T07:56:13Z",
+          "completed_at": "2026-11-21T07:56:13Z"
+        },
+        {
+          "name": "Native raw-output cache hit is byte-identical",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 12,
+          "started_at": "2026-11-21T07:56:13Z",
+          "completed_at": "2026-11-21T07:56:13Z"
+        },
+        {
+          "name": "PatchTrace offline analysis succeeds despite persisted symbol store",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-21T07:56:13Z",
+          "completed_at": "2026-11-21T07:58:12Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-21T07:58:12Z",
+          "completed_at": "2026-11-21T07:58:14Z"
+        },
+        {
+          "name": "Post Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26,
+          "started_at": "2026-11-21T07:58:14Z",
+          "completed_at": "2026-11-21T07:58:14Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27,
+          "started_at": "2026-11-21T07:58:14Z",
+          "completed_at": "2026-11-21T07:58:14Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 28,
+          "started_at": "2026-11-21T07:58:14Z",
+          "completed_at": "2026-11-21T07:58:16Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 29,
+          "started_at": "2026-11-21T07:58:16Z",
+          "completed_at": "2026-11-21T07:58:16Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778308223",
+      "labels": [
+        "windows-latest"
+      ],
+      "runner_id": 1000073928,
+      "runner_name": "GitHub Actions 1000073928",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881740983
+    },
+    {
+      "id": 136778308331,
+      "run_id": 44881740983,
+      "workflow_name": "Native Windows Ghidriff acceptance",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881740983",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2J9a6w",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778308331",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881740983/job/136778308331",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T07:45:50Z",
+      "started_at": "2026-11-21T07:57:16Z",
+      "completed_at": "2026-11-21T08:02:34Z",
+      "name": "native (patchtrace-seeded-store)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T07:57:17Z",
+          "completed_at": "2026-11-21T07:57:20Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T07:57:20Z",
+          "completed_at": "2026-11-21T07:57:28Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T07:57:28Z",
+          "completed_at": "2026-11-21T07:57:28Z"
+        },
+        {
+          "name": "Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T07:57:28Z",
+          "completed_at": "2026-11-21T07:57:29Z"
+        },
+        {
+          "name": "Run ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T07:57:29Z",
+          "completed_at": "2026-11-21T07:57:34Z"
+        },
+        {
+          "name": "Run cl /nologo /LD /Od /GS- /Zi tests\\fixtures\\old.c /Fdtests\\fixtures\\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\\fixtures\\old.dll /PDB:tests\\fixtures\\old.pdb",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T07:57:34Z",
+          "completed_at": "2026-11-21T07:57:38Z"
+        },
+        {
+          "name": "Run Invoke-WebRequest 'https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip' -OutFile ghidra.zip",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-21T07:57:38Z",
+          "completed_at": "2026-11-21T07:57:55Z"
+        },
+        {
+          "name": "Run python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-21T07:57:55Z",
+          "completed_at": "2026-11-21T07:58:36Z"
+        },
+        {
+          "name": "Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-21T07:58:36Z",
+          "completed_at": "2026-11-21T08:00:22Z"
+        },
+        {
+          "name": "Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 10,
+          "started_at": "2026-11-21T08:00:22Z",
+          "completed_at": "2026-11-21T08:00:22Z"
+        },
+        {
+          "name": "Remove PDBs at the path embedded in the fixture DLLs",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 11,
+          "started_at": "2026-11-21T08:00:22Z",
+          "completed_at": "2026-11-21T08:00:22Z"
+        },
+        {
+          "name": "Native raw-output cache hit is byte-identical",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 12,
+          "started_at": "2026-11-21T08:00:22Z",
+          "completed_at": "2026-11-21T08:00:22Z"
+        },
+        {
+          "name": "PatchTrace offline analysis succeeds despite persisted symbol store",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-21T08:00:22Z",
+          "completed_at": "2026-11-21T08:02:28Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-21T08:02:28Z",
+          "completed_at": "2026-11-21T08:02:30Z"
+        },
+        {
+          "name": "Post Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26,
+          "started_at": "2026-11-21T08:02:30Z",
+          "completed_at": "2026-11-21T08:02:30Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27,
+          "started_at": "2026-11-21T08:02:30Z",
+          "completed_at": "2026-11-21T08:02:30Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 28,
+          "started_at": "2026-11-21T08:02:30Z",
+          "completed_at": "2026-11-21T08:02:32Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 29,
+          "started_at": "2026-11-21T08:02:32Z",
+          "completed_at": "2026-11-21T08:02:33Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778308331",
+      "labels": [
+        "windows-latest"
+      ],
+      "runner_id": 1000073950,
+      "runner_name": "GitHub Actions 1000073950",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881740983
+    },
+    {
+      "id": 136778308406,
+      "run_id": 44881740983,
+      "workflow_name": "Native Windows Ghidriff acceptance",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881740983",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2J9bNg",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778308406",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881740983/job/136778308406",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T07:45:50Z",
+      "started_at": "2026-11-21T08:00:32Z",
+      "completed_at": "2026-11-21T08:03:32Z",
+      "name": "native (repro-plain-ghidriff)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T08:00:33Z",
+          "completed_at": "2026-11-21T08:00:35Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T08:00:35Z",
+          "completed_at": "2026-11-21T08:00:44Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T08:00:44Z",
+          "completed_at": "2026-11-21T08:00:44Z"
+        },
+        {
+          "name": "Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T08:00:44Z",
+          "completed_at": "2026-11-21T08:00:44Z"
+        },
+        {
+          "name": "Run ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T08:00:44Z",
+          "completed_at": "2026-11-21T08:00:49Z"
+        },
+        {
+          "name": "Run cl /nologo /LD /Od /GS- /Zi tests\\fixtures\\old.c /Fdtests\\fixtures\\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\\fixtures\\old.dll /PDB:tests\\fixtures\\old.pdb",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T08:00:49Z",
+          "completed_at": "2026-11-21T08:00:53Z"
+        },
+        {
+          "name": "Run Invoke-WebRequest 'https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip' -OutFile ghidra.zip",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-21T08:00:53Z",
+          "completed_at": "2026-11-21T08:01:06Z"
+        },
+        {
+          "name": "Run python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-21T08:01:06Z",
+          "completed_at": "2026-11-21T08:01:41Z"
+        },
+        {
+          "name": "Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-21T08:01:41Z",
+          "completed_at": "2026-11-21T08:03:16Z"
+        },
+        {
+          "name": "Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-21T08:03:16Z",
+          "completed_at": "2026-11-21T08:03:27Z"
+        },
+        {
+          "name": "Remove PDBs at the path embedded in the fixture DLLs",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 11,
+          "started_at": "2026-11-21T08:03:27Z",
+          "completed_at": "2026-11-21T08:03:27Z"
+        },
+        {
+          "name": "Native raw-output cache hit is byte-identical",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 12,
+          "started_at": "2026-11-21T08:03:27Z",
+          "completed_at": "2026-11-21T08:03:27Z"
+        },
+        {
+          "name": "PatchTrace offline analysis succeeds despite persisted symbol store",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 13,
+          "started_at": "2026-11-21T08:03:27Z",
+          "completed_at": "2026-11-21T08:03:27Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-21T08:03:27Z",
+          "completed_at": "2026-11-21T08:03:27Z"
+        },
+        {
+          "name": "Post Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26,
+          "started_at": "2026-11-21T08:03:27Z",
+          "completed_at": "2026-11-21T08:03:27Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27,
+          "started_at": "2026-11-21T08:03:27Z",
+          "completed_at": "2026-11-21T08:03:27Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 28,
+          "started_at": "2026-11-21T08:03:27Z",
+          "completed_at": "2026-11-21T08:03:29Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 29,
+          "started_at": "2026-11-21T08:03:29Z",
+          "completed_at": "2026-11-21T08:03:29Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778308406",
+      "labels": [
+        "windows-latest"
+      ],
+      "runner_id": 1000073968,
+      "runner_name": "GitHub Actions 1000073968",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881740983
+    },
+    {
+      "id": 136778308420,
+      "run_id": 44881740983,
+      "workflow_name": "Native Windows Ghidriff acceptance",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881740983",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2J9bRA",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778308420",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881740983/job/136778308420",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T07:45:50Z",
+      "started_at": "2026-11-21T08:00:37Z",
+      "completed_at": "2026-11-21T08:04:12Z",
+      "name": "native (raw-cache-hit)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T08:00:38Z",
+          "completed_at": "2026-11-21T08:00:40Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T08:00:40Z",
+          "completed_at": "2026-11-21T08:00:49Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T08:00:49Z",
+          "completed_at": "2026-11-21T08:00:49Z"
+        },
+        {
+          "name": "Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T08:00:49Z",
+          "completed_at": "2026-11-21T08:00:49Z"
+        },
+        {
+          "name": "Run ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T08:00:49Z",
+          "completed_at": "2026-11-21T08:00:54Z"
+        },
+        {
+          "name": "Run cl /nologo /LD /Od /GS- /Zi tests\\fixtures\\old.c /Fdtests\\fixtures\\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\\fixtures\\old.dll /PDB:tests\\fixtures\\old.pdb",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T08:00:54Z",
+          "completed_at": "2026-11-21T08:00:59Z"
+        },
+        {
+          "name": "Run Invoke-WebRequest 'https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip' -OutFile ghidra.zip",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-21T08:00:59Z",
+          "completed_at": "2026-11-21T08:01:20Z"
+        },
+        {
+          "name": "Run python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-21T08:01:20Z",
+          "completed_at": "2026-11-21T08:02:01Z"
+        },
+        {
+          "name": "Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9,
+          "started_at": "2026-11-21T08:02:01Z",
+          "completed_at": "2026-11-21T08:02:01Z"
+        },
+        {
+          "name": "Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 10,
+          "started_at": "2026-11-21T08:02:01Z",
+          "completed_at": "2026-11-21T08:02:01Z"
+        },
+        {
+          "name": "Remove PDBs at the path embedded in the fixture DLLs",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 11,
+          "started_at": "2026-11-21T08:02:01Z",
+          "completed_at": "2026-11-21T08:02:01Z"
+        },
+        {
+          "name": "Native raw-output cache hit is byte-identical",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-21T08:02:01Z",
+          "completed_at": "2026-11-21T08:04:06Z"
+        },
+        {
+          "name": "PatchTrace offline analysis succeeds despite persisted symbol store",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 13,
+          "started_at": "2026-11-21T08:04:06Z",
+          "completed_at": "2026-11-21T08:04:06Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-21T08:04:06Z",
+          "completed_at": "2026-11-21T08:04:07Z"
+        },
+        {
+          "name": "Post Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26,
+          "started_at": "2026-11-21T08:04:07Z",
+          "completed_at": "2026-11-21T08:04:07Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27,
+          "started_at": "2026-11-21T08:04:07Z",
+          "completed_at": "2026-11-21T08:04:07Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 28,
+          "started_at": "2026-11-21T08:04:07Z",
+          "completed_at": "2026-11-21T08:04:10Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 29,
+          "started_at": "2026-11-21T08:04:10Z",
+          "completed_at": "2026-11-21T08:04:10Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778308420",
+      "labels": [
+        "windows-latest"
+      ],
+      "runner_id": 1000073969,
+      "runner_name": "GitHub Actions 1000073969",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881740983
+    },
+    {
+      "id": 136778308433,
+      "run_id": 44881740983,
+      "workflow_name": "Native Windows Ghidriff acceptance",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881740983",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2J9bUQ",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778308433",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881740983/job/136778308433",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T07:45:50Z",
+      "started_at": "2026-11-21T08:00:59Z",
+      "completed_at": "2026-11-21T08:04:33Z",
+      "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T08:01:00Z",
+          "completed_at": "2026-11-21T08:01:02Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T08:01:02Z",
+          "completed_at": "2026-11-21T08:01:12Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T08:01:12Z",
+          "completed_at": "2026-11-21T08:01:12Z"
+        },
+        {
+          "name": "Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T08:01:12Z",
+          "completed_at": "2026-11-21T08:01:12Z"
+        },
+        {
+          "name": "Run ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T08:01:12Z",
+          "completed_at": "2026-11-21T08:01:19Z"
+        },
+        {
+          "name": "Run cl /nologo /LD /Od /GS- /Zi tests\\fixtures\\old.c /Fdtests\\fixtures\\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\\fixtures\\old.dll /PDB:tests\\fixtures\\old.pdb",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T08:01:19Z",
+          "completed_at": "2026-11-21T08:01:26Z"
+        },
+        {
+          "name": "Run Invoke-WebRequest 'https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip' -OutFile ghidra.zip",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-21T08:01:26Z",
+          "completed_at": "2026-11-21T08:01:38Z"
+        },
+        {
+          "name": "Run python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-21T08:01:38Z",
+          "completed_at": "2026-11-21T08:02:17Z"
+        },
+        {
+          "name": "Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-21T08:02:17Z",
+          "completed_at": "2026-11-21T08:03:24Z"
+        },
+        {
+          "name": "Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 10,
+          "started_at": "2026-11-21T08:03:24Z",
+          "completed_at": "2026-11-21T08:03:24Z"
+        },
+        {
+          "name": "Remove PDBs at the path embedded in the fixture DLLs",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-21T08:03:24Z",
+          "completed_at": "2026-11-21T08:03:25Z"
+        },
+        {
+          "name": "Native raw-output cache hit is byte-identical",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 12,
+          "started_at": "2026-11-21T08:03:25Z",
+          "completed_at": "2026-11-21T08:03:25Z"
+        },
+        {
+          "name": "PatchTrace offline analysis succeeds despite persisted symbol store",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-21T08:03:25Z",
+          "completed_at": "2026-11-21T08:04:28Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-21T08:04:28Z",
+          "completed_at": "2026-11-21T08:04:30Z"
+        },
+        {
+          "name": "Post Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26,
+          "started_at": "2026-11-21T08:04:30Z",
+          "completed_at": "2026-11-21T08:04:30Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27,
+          "started_at": "2026-11-21T08:04:30Z",
+          "completed_at": "2026-11-21T08:04:30Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 28,
+          "started_at": "2026-11-21T08:04:30Z",
+          "completed_at": "2026-11-21T08:04:31Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 29,
+          "started_at": "2026-11-21T08:04:31Z",
+          "completed_at": "2026-11-21T08:04:32Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778308433",
+      "labels": [
+        "windows-latest"
+      ],
+      "runner_id": 1000073970,
+      "runner_name": "GitHub Actions 1000073970",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881740983
+    },
+    {
+      "id": 136778306745,
+      "run_id": 44881741061,
+      "workflow_name": "Live rizin rz-diff acceptance",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881741061",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2J9UuQ",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778306745",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881741061/job/136778306745",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T07:45:50Z",
+      "started_at": "2026-11-21T07:57:12Z",
+      "completed_at": "2026-11-21T07:58:20Z",
+      "name": "live rz-diff (windows-latest)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T07:57:12Z",
+          "completed_at": "2026-11-21T07:57:14Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T07:57:14Z",
+          "completed_at": "2026-11-21T07:57:32Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T07:57:32Z",
+          "completed_at": "2026-11-21T07:57:32Z"
+        },
+        {
+          "name": "Run python -m pip install -e .",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T07:57:32Z",
+          "completed_at": "2026-11-21T07:57:58Z"
+        },
+        {
+          "name": "Install pinned rizin (fail closed on missing or mismatched SHA-256)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 5,
+          "started_at": "2026-11-21T07:57:58Z",
+          "completed_at": "2026-11-21T07:57:58Z"
+        },
+        {
+          "name": "Install pinned rizin (fail closed on missing or mismatched SHA-256)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T07:57:58Z",
+          "completed_at": "2026-11-21T07:58:02Z"
+        },
+        {
+          "name": "Build PE pair (MinGW)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7,
+          "started_at": "2026-11-21T07:58:02Z",
+          "completed_at": "2026-11-21T07:58:02Z"
+        },
+        {
+          "name": "Run ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-21T07:58:02Z",
+          "completed_at": "2026-11-21T07:58:07Z"
+        },
+        {
+          "name": "Build PE pair (MSVC)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-21T07:58:07Z",
+          "completed_at": "2026-11-21T07:58:12Z"
+        },
+        {
+          "name": "Run live rz-diff check",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-21T07:58:12Z",
+          "completed_at": "2026-11-21T07:58:15Z"
+        },
+        {
+          "name": "Step summary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-21T07:58:15Z",
+          "completed_at": "2026-11-21T07:58:15Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-21T07:58:15Z",
+          "completed_at": "2026-11-21T07:58:17Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23,
+          "started_at": "2026-11-21T07:58:17Z",
+          "completed_at": "2026-11-21T07:58:17Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24,
+          "started_at": "2026-11-21T07:58:17Z",
+          "completed_at": "2026-11-21T07:58:19Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25,
+          "started_at": "2026-11-21T07:58:19Z",
+          "completed_at": "2026-11-21T07:58:19Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778306745",
+      "labels": [
+        "windows-latest"
+      ],
+      "runner_id": 1000073946,
+      "runner_name": "GitHub Actions 1000073946",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881741061
+    },
+    {
+      "id": 136778306813,
+      "run_id": 44881741061,
+      "workflow_name": "Live rizin rz-diff acceptance",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881741061",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2J9U_Q",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778306813",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881741061/job/136778306813",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T07:45:50Z",
+      "started_at": "2026-11-21T07:46:07Z",
+      "completed_at": "2026-11-21T07:46:51Z",
+      "name": "live rz-diff (ubuntu-latest)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T07:46:08Z",
+          "completed_at": "2026-11-21T07:46:09Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T07:46:09Z",
+          "completed_at": "2026-11-21T07:46:12Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T07:46:12Z",
+          "completed_at": "2026-11-21T07:46:12Z"
+        },
+        {
+          "name": "Run python -m pip install -e .",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T07:46:12Z",
+          "completed_at": "2026-11-21T07:46:21Z"
+        },
+        {
+          "name": "Install pinned rizin (fail closed on missing or mismatched SHA-256)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T07:46:21Z",
+          "completed_at": "2026-11-21T07:46:27Z"
+        },
+        {
+          "name": "Install pinned rizin (fail closed on missing or mismatched SHA-256)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 6,
+          "started_at": "2026-11-21T07:46:27Z",
+          "completed_at": "2026-11-21T07:46:27Z"
+        },
+        {
+          "name": "Build PE pair (MinGW)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-21T07:46:27Z",
+          "completed_at": "2026-11-21T07:46:41Z"
+        },
+        {
+          "name": "Run ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 8,
+          "started_at": "2026-11-21T07:46:41Z",
+          "completed_at": "2026-11-21T07:46:41Z"
+        },
+        {
+          "name": "Build PE pair (MSVC)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9,
+          "started_at": "2026-11-21T07:46:41Z",
+          "completed_at": "2026-11-21T07:46:41Z"
+        },
+        {
+          "name": "Run live rz-diff check",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-21T07:46:41Z",
+          "completed_at": "2026-11-21T07:46:47Z"
+        },
+        {
+          "name": "Step summary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-21T07:46:47Z",
+          "completed_at": "2026-11-21T07:46:47Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-21T07:46:47Z",
+          "completed_at": "2026-11-21T07:46:48Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23,
+          "started_at": "2026-11-21T07:46:48Z",
+          "completed_at": "2026-11-21T07:46:48Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24,
+          "started_at": "2026-11-21T07:46:48Z",
+          "completed_at": "2026-11-21T07:46:49Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25,
+          "started_at": "2026-11-21T07:46:49Z",
+          "completed_at": "2026-11-21T07:46:49Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778306813",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000073902,
+      "runner_name": "GitHub Actions 1000073902",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881741061
+    },
+    {
+      "id": 136778306709,
+      "run_id": 44881741004,
+      "workflow_name": "Live BinDiff acceptance",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881741004",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2J9UlQ",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778306709",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881741004/job/136778306709",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T07:45:50Z",
+      "started_at": "2026-11-21T07:48:17Z",
+      "completed_at": "2026-11-21T07:49:40Z",
+      "name": "live BinDiff (windows-latest)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T07:48:18Z",
+          "completed_at": "2026-11-21T07:48:19Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T07:48:19Z",
+          "completed_at": "2026-11-21T07:48:28Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T07:48:28Z",
+          "completed_at": "2026-11-21T07:48:29Z"
+        },
+        {
+          "name": "Qt runtime libraries (the pytest-qt plugin imports Qt even for this non-GUI test)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 4,
+          "started_at": "2026-11-21T07:48:29Z",
+          "completed_at": "2026-11-21T07:48:29Z"
+        },
+        {
+          "name": "Run python -m pip install -e .[dev]",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T07:48:29Z",
+          "completed_at": "2026-11-21T07:49:10Z"
+        },
+        {
+          "name": "Pin digest for the cache key",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T07:49:10Z",
+          "completed_at": "2026-11-21T07:49:11Z"
+        },
+        {
+          "name": "Run actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-21T07:49:11Z",
+          "completed_at": "2026-11-21T07:49:14Z"
+        },
+        {
+          "name": "Provision pinned BinDiff (download + verify + extract; never executes it)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-21T07:49:14Z",
+          "completed_at": "2026-11-21T07:49:17Z"
+        },
+        {
+          "name": "Live BinDiff tests (records passed / failed / blocked)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-21T07:49:17Z",
+          "completed_at": "2026-11-21T07:49:35Z"
+        },
+        {
+          "name": "Live status summary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-21T07:49:35Z",
+          "completed_at": "2026-11-21T07:49:35Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-21T07:49:35Z",
+          "completed_at": "2026-11-21T07:49:36Z"
+        },
+        {
+          "name": "Post Run actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-11-21T07:49:36Z",
+          "completed_at": "2026-11-21T07:49:36Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-11-21T07:49:36Z",
+          "completed_at": "2026-11-21T07:49:36Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22,
+          "started_at": "2026-11-21T07:49:36Z",
+          "completed_at": "2026-11-21T07:49:38Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23,
+          "started_at": "2026-11-21T07:49:38Z",
+          "completed_at": "2026-11-21T07:49:39Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778306709",
+      "labels": [
+        "windows-latest"
+      ],
+      "runner_id": 1000073908,
+      "runner_name": "GitHub Actions 1000073908",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881741004
+    },
+    {
+      "id": 136778307003,
+      "run_id": 44881741004,
+      "workflow_name": "Live BinDiff acceptance",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881741004",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2J9Vuw",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778307003",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881741004/job/136778307003",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T07:45:50Z",
+      "started_at": "2026-11-21T07:45:56Z",
+      "completed_at": "2026-11-21T07:46:58Z",
+      "name": "live BinDiff (ubuntu-22.04)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T07:45:57Z",
+          "completed_at": "2026-11-21T07:45:58Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T07:45:58Z",
+          "completed_at": "2026-11-21T07:46:01Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T07:46:01Z",
+          "completed_at": "2026-11-21T07:46:01Z"
+        },
+        {
+          "name": "Qt runtime libraries (the pytest-qt plugin imports Qt even for this non-GUI test)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T07:46:01Z",
+          "completed_at": "2026-11-21T07:46:18Z"
+        },
+        {
+          "name": "Run python -m pip install -e .[dev]",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T07:46:18Z",
+          "completed_at": "2026-11-21T07:46:37Z"
+        },
+        {
+          "name": "Pin digest for the cache key",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T07:46:37Z",
+          "completed_at": "2026-11-21T07:46:38Z"
+        },
+        {
+          "name": "Run actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-21T07:46:38Z",
+          "completed_at": "2026-11-21T07:46:38Z"
+        },
+        {
+          "name": "Provision pinned BinDiff (download + verify + extract; never executes it)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-21T07:46:38Z",
+          "completed_at": "2026-11-21T07:46:42Z"
+        },
+        {
+          "name": "Live BinDiff tests (records passed / failed / blocked)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-21T07:46:42Z",
+          "completed_at": "2026-11-21T07:46:55Z"
+        },
+        {
+          "name": "Live status summary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-21T07:46:55Z",
+          "completed_at": "2026-11-21T07:46:55Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-21T07:46:55Z",
+          "completed_at": "2026-11-21T07:46:56Z"
+        },
+        {
+          "name": "Post Run actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-11-21T07:46:56Z",
+          "completed_at": "2026-11-21T07:46:56Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-11-21T07:46:56Z",
+          "completed_at": "2026-11-21T07:46:56Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22,
+          "started_at": "2026-11-21T07:46:56Z",
+          "completed_at": "2026-11-21T07:46:57Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23,
+          "started_at": "2026-11-21T07:46:57Z",
+          "completed_at": "2026-11-21T07:46:57Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778307003",
+      "labels": [
+        "ubuntu-22.04"
+      ],
+      "runner_id": 1000073897,
+      "runner_name": "GitHub Actions 1000073897",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881741004
+    },
+    {
+      "id": 136778306711,
+      "run_id": 44881741068,
+      "workflow_name": "Optional dependency wheels probe",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881741068",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2J9Ulw",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778306711",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881741068/job/136778306711",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T07:45:50Z",
+      "started_at": "2026-11-21T07:51:15Z",
+      "completed_at": "2026-11-21T07:51:55Z",
+      "name": "probe (windows-latest)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T07:51:15Z",
+          "completed_at": "2026-11-21T07:51:16Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T07:51:16Z",
+          "completed_at": "2026-11-21T07:51:23Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T07:51:23Z",
+          "completed_at": "2026-11-21T07:51:23Z"
+        },
+        {
+          "name": "Run python -m pip install --only-binary=:all: -e '.[search,rules]'",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T07:51:23Z",
+          "completed_at": "2026-11-21T07:51:52Z"
+        },
+        {
+          "name": "every optional dependency imports",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T07:51:52Z",
+          "completed_at": "2026-11-21T07:51:52Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-21T07:51:52Z",
+          "completed_at": "2026-11-21T07:51:52Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-21T07:51:52Z",
+          "completed_at": "2026-11-21T07:51:54Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-21T07:51:54Z",
+          "completed_at": "2026-11-21T07:51:54Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778306711",
+      "labels": [
+        "windows-latest"
+      ],
+      "runner_id": 1000073915,
+      "runner_name": "GitHub Actions 1000073915",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881741068
+    },
+    {
+      "id": 136778306881,
+      "run_id": 44881741068,
+      "workflow_name": "Optional dependency wheels probe",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881741068",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2J9VQQ",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778306881",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881741068/job/136778306881",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T07:45:50Z",
+      "started_at": "2026-11-21T07:55:34Z",
+      "completed_at": "2026-11-21T07:55:59Z",
+      "name": "probe (ubuntu-latest)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T07:55:34Z",
+          "completed_at": "2026-11-21T07:55:36Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T07:55:36Z",
+          "completed_at": "2026-11-21T07:55:43Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T07:55:43Z",
+          "completed_at": "2026-11-21T07:55:43Z"
+        },
+        {
+          "name": "Run python -m pip install --only-binary=:all: -e '.[search,rules]'",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T07:55:43Z",
+          "completed_at": "2026-11-21T07:55:57Z"
+        },
+        {
+          "name": "every optional dependency imports",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T07:55:57Z",
+          "completed_at": "2026-11-21T07:55:57Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-21T07:55:57Z",
+          "completed_at": "2026-11-21T07:55:57Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-21T07:55:57Z",
+          "completed_at": "2026-11-21T07:55:57Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-21T07:55:57Z",
+          "completed_at": "2026-11-21T07:55:57Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778306881",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000073937,
+      "runner_name": "GitHub Actions 1000073937",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881741068
+    },
+    {
+      "id": 136778647020,
+      "run_id": 44881741002,
+      "workflow_name": "Corpus Tier R (sharded)",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881741002",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2KSF7A",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778647020",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881741002/job/136778647020",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T07:47:18Z",
+      "started_at": "2026-11-21T07:47:29Z",
+      "completed_at": "2026-11-21T07:47:53Z",
+      "name": "plan",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T07:47:30Z",
+          "completed_at": "2026-11-21T07:47:32Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T07:47:32Z",
+          "completed_at": "2026-11-21T07:47:37Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T07:47:37Z",
+          "completed_at": "2026-11-21T07:47:37Z"
+        },
+        {
+          "name": "Run python -m pip install -e .",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T07:47:37Z",
+          "completed_at": "2026-11-21T07:47:48Z"
+        },
+        {
+          "name": "Emit shard matrix",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T07:47:48Z",
+          "completed_at": "2026-11-21T07:47:49Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T07:47:49Z",
+          "completed_at": "2026-11-21T07:47:50Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-21T07:47:50Z",
+          "completed_at": "2026-11-21T07:47:50Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-21T07:47:50Z",
+          "completed_at": "2026-11-21T07:47:50Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-21T07:47:50Z",
+          "completed_at": "2026-11-21T07:47:50Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778647020",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000073906,
+      "runner_name": "GitHub Actions 1000073906",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881741002
+    },
+    {
+      "id": 136778647143,
+      "run_id": 44881741002,
+      "workflow_name": "Corpus Tier R (sharded)",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881741002",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2KSGZw",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778647143",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881741002/job/136778647143",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T07:47:18Z",
+      "started_at": "2026-11-21T07:55:48Z",
+      "completed_at": "2026-11-21T07:56:29Z",
+      "name": "windows advisory (smoke)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T07:55:49Z",
+          "completed_at": "2026-11-21T07:55:50Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T07:55:50Z",
+          "completed_at": "2026-11-21T07:55:56Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T07:55:56Z",
+          "completed_at": "2026-11-21T07:55:56Z"
+        },
+        {
+          "name": "Run python -m pip install -e .",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T07:55:56Z",
+          "completed_at": "2026-11-21T07:56:19Z"
+        },
+        {
+          "name": "Plan and run the smoke subset as one shard",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T07:56:19Z",
+          "completed_at": "2026-11-21T07:56:25Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T07:56:25Z",
+          "completed_at": "2026-11-21T07:56:26Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-21T07:56:26Z",
+          "completed_at": "2026-11-21T07:56:26Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-21T07:56:26Z",
+          "completed_at": "2026-11-21T07:56:27Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-21T07:56:27Z",
+          "completed_at": "2026-11-21T07:56:27Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778647143",
+      "labels": [
+        "windows-latest"
+      ],
+      "runner_id": 1000073938,
+      "runner_name": "GitHub Actions 1000073938",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881741002
+    },
+    {
+      "id": 136778647791,
+      "run_id": 44881741002,
+      "workflow_name": "Corpus Tier R (sharded)",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881741002",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2KSI7w",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778647791",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881741002/job/136778647791",
+      "status": "completed",
+      "conclusion": "skipped",
+      "created_at": "2026-11-21T07:47:18Z",
+      "started_at": "2026-11-21T07:47:18Z",
+      "completed_at": "2026-11-21T07:47:18Z",
+      "name": "msvc cl advisory (windows-2022)",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778647791",
+      "labels": [
+        "windows-2022"
+      ],
+      "runner_id": null,
+      "runner_name": null,
+      "runner_group_id": null,
+      "runner_group_name": null,
+      "observed_run_id": 44881741002
+    },
+    {
+      "id": 136778779707,
+      "run_id": 44881741002,
+      "workflow_name": "Corpus Tier R (sharded)",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881741002",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2KaMOw",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778779707",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881741002/job/136778779707",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T07:47:53Z",
+      "started_at": "2026-11-21T07:55:19Z",
+      "completed_at": "2026-11-21T07:57:18Z",
+      "name": "shard 1 of 2",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T07:55:20Z",
+          "completed_at": "2026-11-21T07:55:22Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T07:55:22Z",
+          "completed_at": "2026-11-21T07:55:27Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T07:55:27Z",
+          "completed_at": "2026-11-21T07:55:27Z"
+        },
+        {
+          "name": "Run python -m pip install -e .",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T07:55:27Z",
+          "completed_at": "2026-11-21T07:55:40Z"
+        },
+        {
+          "name": "Install compilers (mingw-w64, LLVM)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T07:55:40Z",
+          "completed_at": "2026-11-21T07:56:05Z"
+        },
+        {
+          "name": "Restore pinned rizin",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T07:56:05Z",
+          "completed_at": "2026-11-21T07:56:06Z"
+        },
+        {
+          "name": "Install pinned rizin (fail closed on missing or mismatched SHA-256)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-21T07:56:06Z",
+          "completed_at": "2026-11-21T07:56:11Z"
+        },
+        {
+          "name": "Point at rizin",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-21T07:56:11Z",
+          "completed_at": "2026-11-21T07:56:11Z"
+        },
+        {
+          "name": "Java for Ghidra (only when ghidriff is requested)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9,
+          "started_at": "2026-11-21T07:56:11Z",
+          "completed_at": "2026-11-21T07:56:11Z"
+        },
+        {
+          "name": "Restore Ghidra",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 10,
+          "started_at": "2026-11-21T07:56:11Z",
+          "completed_at": "2026-11-21T07:56:11Z"
+        },
+        {
+          "name": "Install Ghidra and Ghidriff (fail closed on digest mismatch)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 11,
+          "started_at": "2026-11-21T07:56:11Z",
+          "completed_at": "2026-11-21T07:56:11Z"
+        },
+        {
+          "name": "Run shard",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-21T07:56:11Z",
+          "completed_at": "2026-11-21T07:57:15Z"
+        },
+        {
+          "name": "Step summary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-21T07:57:15Z",
+          "completed_at": "2026-11-21T07:57:15Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-21T07:57:15Z",
+          "completed_at": "2026-11-21T07:57:16Z"
+        },
+        {
+          "name": "Post Restore pinned rizin",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26,
+          "started_at": "2026-11-21T07:57:16Z",
+          "completed_at": "2026-11-21T07:57:16Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27,
+          "started_at": "2026-11-21T07:57:16Z",
+          "completed_at": "2026-11-21T07:57:16Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 28,
+          "started_at": "2026-11-21T07:57:16Z",
+          "completed_at": "2026-11-21T07:57:16Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 29,
+          "started_at": "2026-11-21T07:57:16Z",
+          "completed_at": "2026-11-21T07:57:16Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778779707",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000073934,
+      "runner_name": "GitHub Actions 1000073934",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881741002
+    },
+    {
+      "id": 136778779739,
+      "run_id": 44881741002,
+      "workflow_name": "Corpus Tier R (sharded)",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881741002",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2KaMWw",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778779739",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881741002/job/136778779739",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T07:47:53Z",
+      "started_at": "2026-11-21T07:57:27Z",
+      "completed_at": "2026-11-21T08:00:03Z",
+      "name": "shard 0 of 2",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T07:57:28Z",
+          "completed_at": "2026-11-21T07:57:31Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T07:57:31Z",
+          "completed_at": "2026-11-21T07:57:37Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T07:57:37Z",
+          "completed_at": "2026-11-21T07:57:38Z"
+        },
+        {
+          "name": "Run python -m pip install -e .",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T07:57:38Z",
+          "completed_at": "2026-11-21T07:57:51Z"
+        },
+        {
+          "name": "Install compilers (mingw-w64, LLVM)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T07:57:51Z",
+          "completed_at": "2026-11-21T07:58:17Z"
+        },
+        {
+          "name": "Restore pinned rizin",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T07:58:17Z",
+          "completed_at": "2026-11-21T07:58:21Z"
+        },
+        {
+          "name": "Install pinned rizin (fail closed on missing or mismatched SHA-256)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-21T07:58:21Z",
+          "completed_at": "2026-11-21T07:58:27Z"
+        },
+        {
+          "name": "Point at rizin",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-21T07:58:27Z",
+          "completed_at": "2026-11-21T07:58:27Z"
+        },
+        {
+          "name": "Java for Ghidra (only when ghidriff is requested)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9,
+          "started_at": "2026-11-21T07:58:27Z",
+          "completed_at": "2026-11-21T07:58:27Z"
+        },
+        {
+          "name": "Restore Ghidra",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 10,
+          "started_at": "2026-11-21T07:58:27Z",
+          "completed_at": "2026-11-21T07:58:27Z"
+        },
+        {
+          "name": "Install Ghidra and Ghidriff (fail closed on digest mismatch)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 11,
+          "started_at": "2026-11-21T07:58:27Z",
+          "completed_at": "2026-11-21T07:58:27Z"
+        },
+        {
+          "name": "Run shard",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-21T07:58:27Z",
+          "completed_at": "2026-11-21T07:59:58Z"
+        },
+        {
+          "name": "Step summary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-21T07:59:58Z",
+          "completed_at": "2026-11-21T07:59:58Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-21T07:59:58Z",
+          "completed_at": "2026-11-21T07:59:59Z"
+        },
+        {
+          "name": "Post Restore pinned rizin",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26,
+          "started_at": "2026-11-21T07:59:59Z",
+          "completed_at": "2026-11-21T07:59:59Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27,
+          "started_at": "2026-11-21T07:59:59Z",
+          "completed_at": "2026-11-21T07:59:59Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 28,
+          "started_at": "2026-11-21T07:59:59Z",
+          "completed_at": "2026-11-21T08:00:00Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 29,
+          "started_at": "2026-11-21T08:00:00Z",
+          "completed_at": "2026-11-21T08:00:00Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778779739",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000073953,
+      "runner_name": "GitHub Actions 1000073953",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881741002
+    },
+    {
+      "id": 136781514526,
+      "run_id": 44881741002,
+      "workflow_name": "Corpus Tier R (sharded)",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881741002",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2NBHHg",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136781514526",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881741002/job/136781514526",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T08:00:03Z",
+      "started_at": "2026-11-21T08:01:52Z",
+      "completed_at": "2026-11-21T08:02:16Z",
+      "name": "merge",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T08:01:53Z",
+          "completed_at": "2026-11-21T08:01:54Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T08:01:54Z",
+          "completed_at": "2026-11-21T08:01:57Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T08:01:57Z",
+          "completed_at": "2026-11-21T08:01:57Z"
+        },
+        {
+          "name": "Run python -m pip install -e .",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T08:01:57Z",
+          "completed_at": "2026-11-21T08:02:08Z"
+        },
+        {
+          "name": "Run actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T08:02:08Z",
+          "completed_at": "2026-11-21T08:02:09Z"
+        },
+        {
+          "name": "Run actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T08:02:09Z",
+          "completed_at": "2026-11-21T08:02:10Z"
+        },
+        {
+          "name": "Merge (fails on missing, duplicate or foreign shards)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-21T08:02:10Z",
+          "completed_at": "2026-11-21T08:02:10Z"
+        },
+        {
+          "name": "Determinism (second merge of the same shards must give the same report_sha256)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-21T08:02:10Z",
+          "completed_at": "2026-11-21T08:02:11Z"
+        },
+        {
+          "name": "CI status JSON (never silent, even when the shard set is rejected)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-21T08:02:11Z",
+          "completed_at": "2026-11-21T08:02:11Z"
+        },
+        {
+          "name": "Step summary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-21T08:02:11Z",
+          "completed_at": "2026-11-21T08:02:11Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-21T08:02:11Z",
+          "completed_at": "2026-11-21T08:02:12Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-11-21T08:02:12Z",
+          "completed_at": "2026-11-21T08:02:12Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22,
+          "started_at": "2026-11-21T08:02:12Z",
+          "completed_at": "2026-11-21T08:02:13Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23,
+          "started_at": "2026-11-21T08:02:13Z",
+          "completed_at": "2026-11-21T08:02:13Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136781514526",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000073971,
+      "runner_name": "GitHub Actions 1000073971",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881741002
+    },
+    {
+      "id": 136778308489,
+      "run_id": 44881740985,
+      "workflow_name": "Live unified extraction (SPEC-31 S1)",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881740985",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2J9biQ",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778308489",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881740985/job/136778308489",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T07:45:50Z",
+      "started_at": "2026-11-21T07:47:00Z",
+      "completed_at": "2026-11-21T07:55:17Z",
+      "name": "windows",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T07:47:02Z",
+          "completed_at": "2026-11-21T07:47:03Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T07:47:03Z",
+          "completed_at": "2026-11-21T07:47:10Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T07:47:10Z",
+          "completed_at": "2026-11-21T07:47:10Z"
+        },
+        {
+          "name": "Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T07:47:10Z",
+          "completed_at": "2026-11-21T07:47:10Z"
+        },
+        {
+          "name": "Run ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T07:47:10Z",
+          "completed_at": "2026-11-21T07:47:14Z"
+        },
+        {
+          "name": "Build the fixture DLLs with MSVC",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T07:47:14Z",
+          "completed_at": "2026-11-21T07:47:18Z"
+        },
+        {
+          "name": "Install Ghidra 12.0.4 with a pinned digest",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-21T07:47:18Z",
+          "completed_at": "2026-11-21T07:47:36Z"
+        },
+        {
+          "name": "Run python -m pip install -e . \"pyghidra==3.0.2\" \"$env:GHIDRIFF_PIN\"",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-21T07:47:36Z",
+          "completed_at": "2026-11-21T07:48:10Z"
+        },
+        {
+          "name": "Live extraction, CI fixture pair",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-21T07:48:10Z",
+          "completed_at": "2026-11-21T07:51:33Z"
+        },
+        {
+          "name": "Live extraction, probe pair",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-21T07:51:33Z",
+          "completed_at": "2026-11-21T07:55:11Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-21T07:55:11Z",
+          "completed_at": "2026-11-21T07:55:13Z"
+        },
+        {
+          "name": "Post Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-11-21T07:55:13Z",
+          "completed_at": "2026-11-21T07:55:13Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-11-21T07:55:13Z",
+          "completed_at": "2026-11-21T07:55:13Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22,
+          "started_at": "2026-11-21T07:55:13Z",
+          "completed_at": "2026-11-21T07:55:15Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23,
+          "started_at": "2026-11-21T07:55:15Z",
+          "completed_at": "2026-11-21T07:55:15Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778308489",
+      "labels": [
+        "windows-latest"
+      ],
+      "runner_id": 1000073904,
+      "runner_name": "GitHub Actions 1000073904",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881740985
+    },
+    {
+      "id": 136780466858,
+      "run_id": 44881740985,
+      "workflow_name": "Live unified extraction (SPEC-31 S1)",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881740985",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2MBKqg",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136780466858",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881740985/job/136780466858",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T07:55:17Z",
+      "started_at": "2026-11-21T07:59:11Z",
+      "completed_at": "2026-11-21T08:05:39Z",
+      "name": "linux",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T07:59:12Z",
+          "completed_at": "2026-11-21T07:59:13Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T07:59:13Z",
+          "completed_at": "2026-11-21T07:59:16Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T07:59:16Z",
+          "completed_at": "2026-11-21T07:59:17Z"
+        },
+        {
+          "name": "Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T07:59:17Z",
+          "completed_at": "2026-11-21T07:59:17Z"
+        },
+        {
+          "name": "Run actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T07:59:17Z",
+          "completed_at": "2026-11-21T07:59:18Z"
+        },
+        {
+          "name": "Install Ghidra 12.0.4 with a pinned digest",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T07:59:18Z",
+          "completed_at": "2026-11-21T07:59:25Z"
+        },
+        {
+          "name": "Run python -m pip install -e . \"pyghidra==3.0.2\" \"$GHIDRIFF_PIN\"",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-21T07:59:25Z",
+          "completed_at": "2026-11-21T07:59:42Z"
+        },
+        {
+          "name": "Live extraction on the Windows-built DLLs, CI fixture pair",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-21T07:59:42Z",
+          "completed_at": "2026-11-21T08:02:40Z"
+        },
+        {
+          "name": "Live extraction on the Windows-built DLLs, probe pair",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-21T08:02:40Z",
+          "completed_at": "2026-11-21T08:05:35Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-21T08:05:35Z",
+          "completed_at": "2026-11-21T08:05:36Z"
+        },
+        {
+          "name": "Post Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-11-21T08:05:36Z",
+          "completed_at": "2026-11-21T08:05:36Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-11-21T08:05:36Z",
+          "completed_at": "2026-11-21T08:05:36Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-11-21T08:05:36Z",
+          "completed_at": "2026-11-21T08:05:36Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-11-21T08:05:36Z",
+          "completed_at": "2026-11-21T08:05:36Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136780466858",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000073960,
+      "runner_name": "GitHub Actions 1000073960",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881740985
+    },
+    {
+      "id": 136778306622,
+      "run_id": 44881741040,
+      "workflow_name": "Live intel tools acceptance",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881741040",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2J9UPg",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778306622",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881741040/job/136778306622",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T07:45:50Z",
+      "started_at": "2026-11-21T07:49:10Z",
+      "completed_at": "2026-11-21T07:50:21Z",
+      "name": "live intel tools (ubuntu-22.04)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T07:49:11Z",
+          "completed_at": "2026-11-21T07:49:12Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T07:49:12Z",
+          "completed_at": "2026-11-21T07:49:14Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T07:49:14Z",
+          "completed_at": "2026-11-21T07:49:14Z"
+        },
+        {
+          "name": "Qt runtime libraries (pytest-qt imports Qt; diec needs Qt 5 Core and Script)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T07:49:14Z",
+          "completed_at": "2026-11-21T07:49:33Z"
+        },
+        {
+          "name": "Run python -m pip install -e .[dev]",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T07:49:33Z",
+          "completed_at": "2026-11-21T07:49:52Z"
+        },
+        {
+          "name": "Run actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T07:49:52Z",
+          "completed_at": "2026-11-21T07:49:58Z"
+        },
+        {
+          "name": "Provision pinned tools (download + verify + extract; never executes them)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-21T07:49:58Z",
+          "completed_at": "2026-11-21T07:49:59Z"
+        },
+        {
+          "name": "Live intel tools tests (records passed / failed / blocked)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-21T07:49:59Z",
+          "completed_at": "2026-11-21T07:50:18Z"
+        },
+        {
+          "name": "Live status summary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-21T07:50:18Z",
+          "completed_at": "2026-11-21T07:50:18Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-21T07:50:18Z",
+          "completed_at": "2026-11-21T07:50:18Z"
+        },
+        {
+          "name": "Post Run actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-11-21T07:50:18Z",
+          "completed_at": "2026-11-21T07:50:19Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-11-21T07:50:19Z",
+          "completed_at": "2026-11-21T07:50:19Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-11-21T07:50:19Z",
+          "completed_at": "2026-11-21T07:50:19Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-11-21T07:50:19Z",
+          "completed_at": "2026-11-21T07:50:19Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778306622",
+      "labels": [
+        "ubuntu-22.04"
+      ],
+      "runner_id": 1000073909,
+      "runner_name": "GitHub Actions 1000073909",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881741040
+    },
+    {
+      "id": 136778306878,
+      "run_id": 44881741040,
+      "workflow_name": "Live intel tools acceptance",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881741040",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2J9VPg",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778306878",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881741040/job/136778306878",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-21T07:45:50Z",
+      "started_at": "2026-11-21T07:55:24Z",
+      "completed_at": "2026-11-21T07:57:13Z",
+      "name": "live intel tools (windows-latest)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T07:55:25Z",
+          "completed_at": "2026-11-21T07:55:26Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T07:55:26Z",
+          "completed_at": "2026-11-21T07:55:34Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T07:55:34Z",
+          "completed_at": "2026-11-21T07:55:34Z"
+        },
+        {
+          "name": "Qt runtime libraries (pytest-qt imports Qt; diec needs Qt 5 Core and Script)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 4,
+          "started_at": "2026-11-21T07:55:34Z",
+          "completed_at": "2026-11-21T07:55:34Z"
+        },
+        {
+          "name": "Run python -m pip install -e .[dev]",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T07:55:34Z",
+          "completed_at": "2026-11-21T07:56:14Z"
+        },
+        {
+          "name": "Run actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T07:56:14Z",
+          "completed_at": "2026-11-21T07:56:16Z"
+        },
+        {
+          "name": "Provision pinned tools (download + verify + extract; never executes them)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-21T07:56:16Z",
+          "completed_at": "2026-11-21T07:56:18Z"
+        },
+        {
+          "name": "Live intel tools tests (records passed / failed / blocked)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-21T07:56:18Z",
+          "completed_at": "2026-11-21T07:57:08Z"
+        },
+        {
+          "name": "Live status summary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-21T07:57:08Z",
+          "completed_at": "2026-11-21T07:57:08Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-21T07:57:08Z",
+          "completed_at": "2026-11-21T07:57:09Z"
+        },
+        {
+          "name": "Post Run actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-11-21T07:57:09Z",
+          "completed_at": "2026-11-21T07:57:09Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-11-21T07:57:09Z",
+          "completed_at": "2026-11-21T07:57:09Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-11-21T07:57:09Z",
+          "completed_at": "2026-11-21T07:57:11Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-11-21T07:57:11Z",
+          "completed_at": "2026-11-21T07:57:11Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778306878",
+      "labels": [
+        "windows-latest"
+      ],
+      "runner_id": 1000073935,
+      "runner_name": "GitHub Actions 1000073935",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions",
+      "observed_run_id": 44881741040
+    },
+    {
+      "id": 136778307631,
+      "run_id": 44881741040,
+      "workflow_name": "Live intel tools acceptance",
+      "head_branch": "integration/patchtrace-20261121-95fe-c3",
+      "run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44881741040",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVEPRFc8AAAAf2J9YLw",
+      "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/jobs/136778307631",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881741040/job/136778307631",
+      "status": "completed",
+      "conclusion": "skipped",
+      "created_at": "2026-11-21T07:45:50Z",
+      "started_at": "2026-11-21T07:45:50Z",
+      "completed_at": "2026-11-21T07:45:49Z",
+      "name": "live build environment (ubuntu-22.04)",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/check-runs/136778307631",
+      "labels": [
+        "ubuntu-22.04"
+      ],
+      "runner_id": null,
+      "runner_name": null,
+      "runner_group_id": null,
+      "runner_group_name": null,
+      "observed_run_id": 44881741040
+    }
+  ],
+  "all_applicable_automated_jobs_passed": true,
+  "postmerge_observation": "Separate Pages run44889511406 exposed configure-pages404 after site247passed/1skipped and successful build; deploy job136802309849 skipped. This does not rewrite premerge result; repair and actual main release hold are separately tracked."
+}

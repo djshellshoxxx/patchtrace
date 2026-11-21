@@ -1,0 +1,23 @@
+{
+  "source": "36b58a7d857690a8bf0093bcee1edd5036189b30",
+  "base": "f928a0cef29eac2b603d390c40fb86448111b91b",
+  "task": {
+    "id": "codex5-per-command-audit-20261121",
+    "status": "implemented-exact-new-file-controls-verified-awaiting-peer-hosted",
+    "owner": "isolated CODEX-5 author; reviewer unassigned; Root837FE owns PR349 integration separately",
+    "branch": "codex/patchtrace-codex5-per-command-audit-20261121",
+    "base_commit": "f928a0cef29eac2b603d390c40fb86448111b91b",
+    "evidence": "docs/engineering/evidence/codex5-per-command-audit-20261121.json",
+    "source_paths": [
+      "tools/ci_pip_install_audit.py",
+      "tests/test_codex5_command_audit_20261121.py",
+      "docs/audits/codex-workflows-1.md"
+    ],
+    "result_or_next_action": "Exact published scanner/test Git blobs equal local executed mirror; 17 tests passed, 1 strict CODEX-5 xfailed; 3 intentional mutations each cause 1 correct failure. Full GitHub workflow checkout tests/Ruff/independent peer/CI still open. Coordinate with Root837FE; do not merge while unqualified."
+  },
+  "notes": [
+    "2026-11-21 isolated CODEX-5 scanner: per-command run-scalar audit published on an independent C4-descendant branch, preserving both strict CODEX-5 xfails (old plus new) and all parent files. Local authored-fixture source mirror 17 passed/one strict xfailed; compileall and two additional controls pass. Full repository-source pytest/Ruff, independent review and actual workflow package hash closure are NOT established. No main or PR349/350 ref movement.",
+    "CODEX-5 per-command isolated follow-up: local mirror's newly authored scanner and tests match published Git blob identities exactly. Seventeen clean fixture tests pass and one strict CODEX-5 expected failure is retained; three source mutations each fail precisely one regression. This is not whole-repo qualification or independent review; source-bound actual workflow scan remains pending."
+  ],
+  "entire_donor_ledger_substituted": false
+}

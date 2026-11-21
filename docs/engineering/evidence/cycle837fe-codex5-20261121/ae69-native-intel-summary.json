@@ -1,0 +1,415 @@
+{
+  "workflow_run_id": 44881741040,
+  "workflow_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881741040",
+  "run_attempt": 1,
+  "event": "pull_request",
+  "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+  "tree_sha": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+  "actual_checkout_sha": "66f153a8372ad93c72e2f5b10365dcf210681684",
+  "workflow_status": "completed",
+  "workflow_conclusion": "success",
+  "platforms": {
+    "linux": {
+      "job_id": 136778306622,
+      "job_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881741040/job/136778306622",
+      "job_conclusion": "success",
+      "pytest_counts": {
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "errors": 0
+      },
+      "pytest_seconds": 17.85,
+      "pytest_summary_line": "2026-11-21T07:50:17.9826124Z ============================== 4 passed in 17.85s ==============================",
+      "checks": {
+        "capa": {
+          "engine": "intel-tools-capa",
+          "input": "synthetic",
+          "mocked": false,
+          "probe_diagnostics": {
+            "contract": "intel-version-probes/1",
+            "probes": [
+              {
+                "argv": [
+                  "capa",
+                  "--version"
+                ],
+                "command_truncated": false,
+                "elapsed_ms": 652,
+                "oversize": false,
+                "reason": null,
+                "reason_truncated": false,
+                "returncode": 0,
+                "spawn_error": null,
+                "spawn_error_truncated": false,
+                "stderr": "",
+                "stderr_chars": 0,
+                "stderr_truncated": false,
+                "stdout": "capa 9.4.0\n",
+                "stdout_chars": 11,
+                "stdout_truncated": false
+              },
+              {
+                "argv": [
+                  "capa",
+                  "--help"
+                ],
+                "command_truncated": false,
+                "elapsed_ms": 652,
+                "oversize": false,
+                "reason": null,
+                "reason_truncated": false,
+                "returncode": 0,
+                "spawn_error": null,
+                "spawn_error_truncated": false,
+                "stderr": "",
+                "stderr_chars": 0,
+                "stderr_truncated": false,
+                "stdout": "        [--restrict-to-functions RESTRICT_TO_FUNCTIONS]\n            [--restrict-to-processes RESTRICT_TO_PROCESSES]\n            [--os {auto,linux,macos,windows}] [-r RULES] [-s SIGNATURES]\n            [-t TAG] [-j]\n            input_file\n\nThe FLARE team's open-source tool to identify capabilities in executable files.\n\npositional arguments:\n  input_file            path to file to analyze\n\noptions:\n  -h, --help            show this help message and exit\n  --version             show program's version number and exit\n  -v, --verbose         enable verbose result document (no effect with --json)\n  -vv, --vverbose       enable very verbose result document (no effect with\n                        --json)\n  -d, --debug           enable debugging output on STDERR\n  -q, --quiet           disable all output but errors\n  --color {auto,always,never}\n                        enable ANSI color codes in results, default: only\n                        during interactive session\n  -f {auto,pe,dotnet,elf,sc32,sc64,cape,drakvuf,vmray,freeze,binexport2,binja_database}, --format {auto,pe,dotnet,elf,sc32,sc64,cape,drakvuf,vmray,freeze,binexport2,binja_database}\n                        select input format, auto: (default) detect file type\n                        automatically, pe: Windows PE file, dotnet: .NET PE\n                        file, elf: Executable and Linkable Format, sc32:\n                        32-bit shellcode, sc64: 64-bit shellcode, cape: CAPE\n                        sandbox report, drakvuf: DRAKVUF sandbox report,\n                        vmray: VMRay sandbox report, freeze: features\n                        previously frozen by capa, binexport2: BinExport2,\n                        binja_database: Binary Ninja Database\n  -b {auto,vivisect,ida,pefile,binja,dotnet,binexport2,ghidra,freeze,cape,drakvuf,vmray}, --backend {auto,vivisect,ida,pefile,binja,dotnet,binexport2,ghidra,freeze,cape,drakvuf,vmray}\n                        select backend, auto: (default) detect appropriate\n                        backend automatically, vivisect: vivisect, ida: IDA\n                        via idalib, pefile: pefile (file features only),\n                        binja: Binary Ninja, dotnet: .NET, binexport2:\n                        BinExport2, ghidra: Ghidra, freeze: capa freeze, cape:\n                        CAPE, drakvuf: DRAKVUF, vmray: VMRay\n  --restrict-to-functions RESTRICT_TO_FUNCTIONS\n                        provide a list of comma-separated function virtual\n                        addresses to analyze (static analysis).\n  --restrict-to-processes RESTRICT_TO_PROCESSES\n                        provide a list of comma-separated process IDs to\n                        analyze (dynamic analysis).\n  --os {auto,linux,macos,windows}\n                        select sample OS: auto (detect OS automatically -\n                        default), linux, macos, windows\n  -r RULES, --rules RULES\n                        path to rule file or directory, use embedded rules by\n                        default\n  -s SIGNATURES, --signatures SIGNATURES\n                        path to .sig/.pat file or directory used to identify\n                        library functions, use embedded signatures by default\n  -t TAG, --tag TAG     filter on rule meta field values\n  -j, --json            emit JSON instead of text\n\nBy default, capa uses a default set of embedded rules.\nYou can see the rule set here:\n  https://github.com/mandiant/capa-rules\n\nYou can load capa JSON output to capa Explorer Web:\n  https://github.com/mandiant/capa/explorer\n\nTo provide your own rule set, use the `-r` flag:\n  capa  --rules /path/to/rules  suspicious.exe\n  capa  -r      /path/to/rules  suspicious.exe\n\nexamples:\n  identify capabilities in a binary\n    capa suspicious.exe\n\n  identify capabilities in 32-bit shellcode, see `-f` for all supported formats\n    capa -f sc32 shellcode.bin\n\n  report match locations\n    capa -v suspicious.exe\n\n  report all feature match details\n    capa -vv suspicious.exe\n\n  filter rules by meta fields, e.g. rule name or namespace\n    capa -t \"create TCP socket\" suspicious.exe\n",
+                "stdout_chars": 4393,
+                "stdout_truncated": true
+              }
+            ],
+            "probes_omitted": 0
+          },
+          "reason": "pinned 9.4.0 reproduced the goldens on the synthetic pair",
+          "status": "passed",
+          "version": "9.4.0"
+        },
+        "floss": {
+          "engine": "intel-tools-floss",
+          "input": "synthetic",
+          "mocked": false,
+          "probe_diagnostics": {
+            "contract": "intel-version-probes/1",
+            "probes": [
+              {
+                "argv": [
+                  "floss",
+                  "--version"
+                ],
+                "command_truncated": false,
+                "elapsed_ms": 602,
+                "oversize": false,
+                "reason": null,
+                "reason_truncated": false,
+                "returncode": 0,
+                "spawn_error": null,
+                "spawn_error_truncated": false,
+                "stderr": "",
+                "stderr_chars": 0,
+                "stderr_truncated": false,
+                "stdout": "floss v3.1.1-0-g3cd3ee6\n",
+                "stdout_chars": 24,
+                "stdout_truncated": false
+              },
+              {
+                "argv": [
+                  "floss",
+                  "-H"
+                ],
+                "command_truncated": false,
+                "elapsed_ms": 652,
+                "oversize": false,
+                "reason": null,
+                "reason_truncated": false,
+                "returncode": 0,
+                "spawn_error": null,
+                "spawn_error_truncated": false,
+                "stderr": "",
+                "stderr_chars": 0,
+                "stderr_truncated": false,
+                "stdout": "usage: floss [-h] [-H] [-n MIN_LENGTH]\n             [--no {static,stack,tight,decoded} [{static,stack,tight,decoded} ...]]\n             [--only {static,stack,tight,decoded} [{static,stack,tight,decoded} ...]]\n             [-f {auto,pe,sc32,sc64}] [--language {go,rust,dotnet,none}] [-l]\n             [--functions FUNCTIONS [FUNCTIONS ...]] [--disable-progress]\n             [--signatures SIGNATURES] [-L] [--version] [-j] [-v] [-d] [-q]\n             [--color {auto,always,never}]\n             sample\n\nThe FLARE team's open-source tool to extract ALL strings from malware.\n  floss v3.1.1-0-g3cd3ee6 - https://github.com/mandiant/flare-floss/\n\nFLOSS extracts the following string types:\n 1. static strings:  \"regular\" ASCII and UTF-16LE strings\n 2. stack strings:   strings constructed on the stack at run-time\n 3. tight strings:   special form of stack strings, decoded on the stack\n 4. decoded strings: strings decoded in a function\n\nLanguage-specific strings:\n 1. Go:   strings from binaries written in Go\n 2. Rust: strings from binaries written in Rust\n\npositional arguments:\n  sample                path to sample to analyze\n\noptional arguments:\n  -h, --help            show this help message and exit\n  -H                    show advanced options and exit\n  -n MIN_LENGTH, --minimum-length MIN_LENGTH\n                        minimum string length\n\nanalysis arguments:\n  --no {static,stack,tight,decoded} [{static,stack,tight,decoded} ...]\n                        do not extract specified string type(s)\n  --only {static,stack,tight,decoded} [{static,stack,tight,decoded} ...]\n                        only extract specified string type(s)\n\nadvanced arguments:\n  -f {auto,pe,sc32,sc64}, --format {auto,pe,sc32,sc64}\n                        select sample format, auto: (default) detect file type\n                        automatically, pe: Windows PE file, sc32: 32-bit\n                        shellcode, sc64: 64-bit shellcode\n  --language {go,rust,dotnet,none}\n                        use language-specific string extraction, auto-detect\n                        language by default, disable using 'none'\n  -l, --load            load from existing FLOSS results document\n  --functions FUNCTIONS [FUNCTIONS ...]\n                        only analyze the specified functions, hex-encoded like\n                        0x401000, space-separate multiple functions\n  --disable-progress    disable all progress bars\n  --signatures SIGNATURES\n                        path to .sig/.pat file or directory used to identify\n                        library functions, use embedded signatures by default\n  -L, --large-file      allow processing files larger than 16 MB\n  --version             show program's version number and exit\n\nrendering arguments:\n  -j, --json            emit JSON instead of text\n  -v, --verbose         enable verbose results, e.g. including function\n                        offsets (does not affect JSON output)\n\nlogging arguments:\n  -d, --debug           enable debugging output on STDERR, specify multiple\n                        times to increase verbosity\n  -q, --quiet           disable all status output on STDOUT except fatal\n                        errors\n  --color {auto,always,never}\n                        enable ANSI color codes in results, default: only\n                        during interactive session\n\nexamples:\n  extract all strings from 32-bit shellcode\n    floss -f sc32 shellcode.bin\n\n  only decode strings from the specified functions\n    floss --functions 0x401000 0x401100 suspicious.exe\n\n  extract strings from a binary written in Go (if automatic language identification fails)\n    floss --language go program.exe\n",
+                "stdout_chars": 3653,
+                "stdout_truncated": false
+              }
+            ],
+            "probes_omitted": 0
+          },
+          "reason": "pinned 3.1.1 reproduced the goldens on the synthetic pair",
+          "status": "passed",
+          "version": "3.1.1"
+        },
+        "diec": {
+          "engine": "intel-tools-diec",
+          "input": "synthetic",
+          "mocked": false,
+          "probe_diagnostics": {
+            "contract": "intel-version-probes/1",
+            "probes": [
+              {
+                "argv": [
+                  "diec",
+                  "--version"
+                ],
+                "command_truncated": false,
+                "elapsed_ms": 50,
+                "oversize": false,
+                "reason": null,
+                "reason_truncated": false,
+                "returncode": 0,
+                "spawn_error": null,
+                "spawn_error_truncated": false,
+                "stderr": "",
+                "stderr_chars": 0,
+                "stderr_truncated": false,
+                "stdout": "die 3.21\n",
+                "stdout_chars": 9,
+                "stdout_truncated": false
+              },
+              {
+                "argv": [
+                  "diec",
+                  "--help"
+                ],
+                "command_truncated": false,
+                "elapsed_ms": 50,
+                "oversize": false,
+                "reason": null,
+                "reason_truncated": false,
+                "returncode": 0,
+                "spawn_error": null,
+                "spawn_error_truncated": false,
+                "stderr": "",
+                "stderr_chars": 0,
+                "stderr_truncated": false,
+                "stdout": "Usage: /home/runner/work/patchtrace/patchtrace/build/intel-tools/diec/usr/bin/diec [options] target\nDetect It Easy v3.21\nCopyright(C) 2006-2008 Hellsp@wn 2012-2026 hors<horsicq@gmail.com> Web: http://ntinfo.biz\n\n\nOptions:\n  -h, --help                   Displays help on commandline options.\n  --help-all                   Displays help including Qt specific options.\n  -v, --version                Displays version information.\n  -r, --recursivescan          Scan directories recursively\n  -d, --deepscan               Enable deep scanning for thorough analysis\n  -u, --heuristicscan          Enable heuristic scanning methods\n  -b, --verbose                Show verbose output with detailed information\n  -g, --aggressivecscan        Enable aggressive scanning mode\n  -a, --alltypes               Scan all file types\n  -f, --format                 Format the output result\n  -l, --profiling              Profile signatures during scan\n  -M, --messages               Display scan messages and warnings\n  -U, --hideunknown            Hide unknown file types from results\n  -e, --entropy                Display file entropy information\n  -i, --info                   Display file information\n  -S, --struct <struct>        Show special file information using specified\n                               structure (e.g., 'Hash' or 'Hash#MD5')\n  -x, --xml                    Output results in XML format\n  -j, --json                   Output results in JSON format\n  -c, --csv                    Output results in CSV format\n  -t, --tsv                    Output results in TSV format\n  -p, --plaintext              Output results as plain text\n  -D, --database <path>        Set database path\n  -E, --extradatabase <path>   Set extra database path\n  -C, --customdatabase <path>  Set custom database path\n  -s, --showdatabase           Show database information\n  -w, --showstructs            Display all available special structures for the\n                               file\n  --test <directory>           Test signatures in specified directory\n  --addtest <filename>         Add test case with filename, detect string, and\n                               directory\n\nArguments:\n  target                       The file or directory to open.\n",
+                "stdout_chars": 2235,
+                "stdout_truncated": false
+              }
+            ],
+            "probes_omitted": 0
+          },
+          "reason": "pinned 3.21 reproduced the goldens on the synthetic pair",
+          "status": "passed",
+          "version": "3.21"
+        },
+        "floss-offline": {
+          "engine": "intel-tools-floss-offline",
+          "mocked": false,
+          "reason": "FLOSS static strings ran in an empty network namespace",
+          "status": "passed"
+        }
+      },
+      "artifact": {
+        "id": 14697683317,
+        "bytes": 5646,
+        "sha256": "bc0ed1446e8755f5420330c786f4615dcdd9cffe0522d7fa5db5c97650515e46",
+        "api_digest_match": true,
+        "zip_crc_passed": true
+      }
+    },
+    "windows": {
+      "job_id": 136778306878,
+      "job_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44881741040/job/136778306878",
+      "job_conclusion": "success",
+      "pytest_counts": {
+        "passed": 3,
+        "failed": 0,
+        "skipped": 1,
+        "errors": 0
+      },
+      "pytest_seconds": 48.93,
+      "pytest_summary_line": "2026-11-21T07:57:08.2830875Z ======================== 3 passed, 1 skipped in 48.93s ========================",
+      "checks": {
+        "capa": {
+          "engine": "intel-tools-capa",
+          "input": "synthetic",
+          "mocked": false,
+          "probe_diagnostics": {
+            "contract": "intel-version-probes/1",
+            "probes": [
+              {
+                "argv": [
+                  "capa.exe",
+                  "--version"
+                ],
+                "command_truncated": false,
+                "elapsed_ms": 3297,
+                "oversize": false,
+                "reason": null,
+                "reason_truncated": false,
+                "returncode": 0,
+                "spawn_error": null,
+                "spawn_error_truncated": false,
+                "stderr": "",
+                "stderr_chars": 0,
+                "stderr_truncated": false,
+                "stdout": "capa.exe 9.4.0\r\n",
+                "stdout_chars": 16,
+                "stdout_truncated": false
+              },
+              {
+                "argv": [
+                  "capa.exe",
+                  "--help"
+                ],
+                "command_truncated": false,
+                "elapsed_ms": 2625,
+                "oversize": false,
+                "reason": null,
+                "reason_truncated": false,
+                "returncode": 0,
+                "spawn_error": null,
+                "spawn_error_truncated": false,
+                "stderr": "",
+                "stderr_chars": 0,
+                "stderr_truncated": false,
+                "stdout": "RESTRICT_TO_PROCESSES]\r\n                [--os {auto,linux,macos,windows}] [-r RULES] [-s SIGNATURES]\r\n                [-t TAG] [-j]\r\n                input_file\r\n\r\nThe FLARE team's open-source tool to identify capabilities in executable files.\r\n\r\npositional arguments:\r\n  input_file            path to file to analyze\r\n\r\noptions:\r\n  -h, --help            show this help message and exit\r\n  --version             show program's version number and exit\r\n  -v, --verbose         enable verbose result document (no effect with --json)\r\n  -vv, --vverbose       enable very verbose result document (no effect with\r\n                        --json)\r\n  -d, --debug           enable debugging output on STDERR\r\n  -q, --quiet           disable all output but errors\r\n  --color {auto,always,never}\r\n                        enable ANSI color codes in results, default: only\r\n                        during interactive session\r\n  -f {auto,pe,dotnet,elf,sc32,sc64,cape,drakvuf,vmray,freeze,binexport2,binja_database}, --format {auto,pe,dotnet,elf,sc32,sc64,cape,drakvuf,vmray,freeze,binexport2,binja_database}\r\n                        select input format, auto: (default) detect file type\r\n                        automatically, pe: Windows PE file, dotnet: .NET PE\r\n                        file, elf: Executable and Linkable Format, sc32:\r\n                        32-bit shellcode, sc64: 64-bit shellcode, cape: CAPE\r\n                        sandbox report, drakvuf: DRAKVUF sandbox report,\r\n                        vmray: VMRay sandbox report, freeze: features\r\n                        previously frozen by capa, binexport2: BinExport2,\r\n                        binja_database: Binary Ninja Database\r\n  -b {auto,vivisect,ida,pefile,binja,dotnet,binexport2,ghidra,freeze,cape,drakvuf,vmray}, --backend {auto,vivisect,ida,pefile,binja,dotnet,binexport2,ghidra,freeze,cape,drakvuf,vmray}\r\n                        select backend, auto: (default) detect appropriate\r\n                        backend automatically, vivisect: vivisect, ida: IDA\r\n                        via idalib, pefile: pefile (file features only),\r\n                        binja: Binary Ninja, dotnet: .NET, binexport2:\r\n                        BinExport2, ghidra: Ghidra, freeze: capa freeze, cape:\r\n                        CAPE, drakvuf: DRAKVUF, vmray: VMRay\r\n  --restrict-to-functions RESTRICT_TO_FUNCTIONS\r\n                        provide a list of comma-separated function virtual\r\n                        addresses to analyze (static analysis).\r\n  --restrict-to-processes RESTRICT_TO_PROCESSES\r\n                        provide a list of comma-separated process IDs to\r\n                        analyze (dynamic analysis).\r\n  --os {auto,linux,macos,windows}\r\n                        select sample OS: auto (detect OS automatically -\r\n                        default), linux, macos, windows\r\n  -r RULES, --rules RULES\r\n                        path to rule file or directory, use embedded rules by\r\n                        default\r\n  -s SIGNATURES, --signatures SIGNATURES\r\n                        path to .sig/.pat file or directory used to identify\r\n                        library functions, use embedded signatures by default\r\n  -t TAG, --tag TAG     filter on rule meta field values\r\n  -j, --json            emit JSON instead of text\r\n\r\nBy default, capa uses a default set of embedded rules.\r\nYou can see the rule set here:\r\n  https://github.com/mandiant/capa-rules\r\n\r\nYou can load capa JSON output to capa Explorer Web:\r\n  https://github.com/mandiant/capa/explorer\r\n\r\nTo provide your own rule set, use the `-r` flag:\r\n  capa  --rules /path/to/rules  suspicious.exe\r\n  capa  -r      /path/to/rules  suspicious.exe\r\n\r\nexamples:\r\n  identify capabilities in a binary\r\n    capa suspicious.exe\r\n\r\n  identify capabilities in 32-bit shellcode, see `-f` for all supported formats\r\n    capa -f sc32 shellcode.bin\r\n\r\n  report match locations\r\n    capa -v suspicious.exe\r\n\r\n  report all feature match details\r\n    capa -vv suspicious.exe\r\n\r\n  filter rules by meta fields, e.g. rule name or namespace\r\n    capa -t \"create TCP socket\" suspicious.exe\r\n",
+                "stdout_chars": 4515,
+                "stdout_truncated": true
+              }
+            ],
+            "probes_omitted": 0
+          },
+          "reason": "pinned 9.4.0 reproduced the goldens on the synthetic pair",
+          "status": "passed",
+          "version": "9.4.0"
+        },
+        "floss": {
+          "engine": "intel-tools-floss",
+          "input": "synthetic",
+          "mocked": false,
+          "probe_diagnostics": {
+            "contract": "intel-version-probes/1",
+            "probes": [
+              {
+                "argv": [
+                  "floss.exe",
+                  "--version"
+                ],
+                "command_truncated": false,
+                "elapsed_ms": 2000,
+                "oversize": false,
+                "reason": null,
+                "reason_truncated": false,
+                "returncode": 0,
+                "spawn_error": null,
+                "spawn_error_truncated": false,
+                "stderr": "",
+                "stderr_chars": 0,
+                "stderr_truncated": false,
+                "stdout": "floss.exe v3.1.1-0-g3cd3ee6\r\n",
+                "stdout_chars": 29,
+                "stdout_truncated": false
+              },
+              {
+                "argv": [
+                  "floss.exe",
+                  "-H"
+                ],
+                "command_truncated": false,
+                "elapsed_ms": 1234,
+                "oversize": false,
+                "reason": null,
+                "reason_truncated": false,
+                "returncode": 0,
+                "spawn_error": null,
+                "spawn_error_truncated": false,
+                "stderr": "",
+                "stderr_chars": 0,
+                "stderr_truncated": false,
+                "stdout": ",decoded} [{static,stack,tight,decoded} ...]]\r\n                 [--only {static,stack,tight,decoded} [{static,stack,tight,decoded} ...]]\r\n                 [-f {auto,pe,sc32,sc64}] [--language {go,rust,dotnet,none}]\r\n                 [-l] [--functions FUNCTIONS [FUNCTIONS ...]]\r\n                 [--disable-progress] [--signatures SIGNATURES] [-L]\r\n                 [--version] [--install-right-click-menu]\r\n                 [--uninstall-right-click-menu] [-j] [-v] [-d] [-q]\r\n                 [--color {auto,always,never}]\r\n                 sample\r\n\r\nThe FLARE team's open-source tool to extract ALL strings from malware.\r\n  floss.exe v3.1.1-0-g3cd3ee6 - https://github.com/mandiant/flare-floss/\r\n\r\nFLOSS extracts the following string types:\r\n 1. static strings:  \"regular\" ASCII and UTF-16LE strings\r\n 2. stack strings:   strings constructed on the stack at run-time\r\n 3. tight strings:   special form of stack strings, decoded on the stack\r\n 4. decoded strings: strings decoded in a function\r\n\r\nLanguage-specific strings:\r\n 1. Go:   strings from binaries written in Go\r\n 2. Rust: strings from binaries written in Rust\r\n\r\npositional arguments:\r\n  sample                path to sample to analyze\r\n\r\noptional arguments:\r\n  -h, --help            show this help message and exit\r\n  -H                    show advanced options and exit\r\n  -n MIN_LENGTH, --minimum-length MIN_LENGTH\r\n                        minimum string length\r\n\r\nanalysis arguments:\r\n  --no {static,stack,tight,decoded} [{static,stack,tight,decoded} ...]\r\n                        do not extract specified string type(s)\r\n  --only {static,stack,tight,decoded} [{static,stack,tight,decoded} ...]\r\n                        only extract specified string type(s)\r\n\r\nadvanced arguments:\r\n  -f {auto,pe,sc32,sc64}, --format {auto,pe,sc32,sc64}\r\n                        select sample format, auto: (default) detect file type\r\n                        automatically, pe: Windows PE file, sc32: 32-bit\r\n                        shellcode, sc64: 64-bit shellcode\r\n  --language {go,rust,dotnet,none}\r\n                        use language-specific string extraction, auto-detect\r\n                        language by default, disable using 'none'\r\n  -l, --load            load from existing FLOSS results document\r\n  --functions FUNCTIONS [FUNCTIONS ...]\r\n                        only analyze the specified functions, hex-encoded like\r\n                        0x401000, space-separate multiple functions\r\n  --disable-progress    disable all progress bars\r\n  --signatures SIGNATURES\r\n                        path to .sig/.pat file or directory used to identify\r\n                        library functions, use embedded signatures by default\r\n  -L, --large-file      allow processing files larger than 16 MB\r\n  --version             show program's version number and exit\r\n  --install-right-click-menu\r\n                        install FLOSS to the right-click context menu for\r\n                        Windows Explorer and exit\r\n  --uninstall-right-click-menu\r\n                        uninstall FLOSS from the right-click context menu for\r\n                        Windows Explorer and exit\r\n\r\nrendering arguments:\r\n  -j, --json            emit JSON instead of text\r\n  -v, --verbose         enable verbose results, e.g. including function\r\n                        offsets (does not affect JSON output)\r\n\r\nlogging arguments:\r\n  -d, --debug           enable debugging output on STDERR, specify multiple\r\n                        times to increase verbosity\r\n  -q, --quiet           disable all status output on STDOUT except fatal\r\n                        errors\r\n  --color {auto,always,never}\r\n                        enable ANSI color codes in results, default: only\r\n                        during interactive session\r\n\r\nexamples:\r\n  extract all strings from 32-bit shellcode\r\n    floss -f sc32 shellcode.bin\r\n\r\n  only decode strings from the specified functions\r\n    floss --functions 0x401000 0x401100 suspicious.exe\r\n\r\n  extract strings from a binary written in Go (if automatic language identification fails)\r\n    floss --language go program.exe\r\n",
+                "stdout_chars": 4182,
+                "stdout_truncated": true
+              }
+            ],
+            "probes_omitted": 0
+          },
+          "reason": "pinned 3.1.1 reproduced the goldens on the synthetic pair",
+          "status": "passed",
+          "version": "3.1.1"
+        },
+        "diec": {
+          "engine": "intel-tools-diec",
+          "input": "synthetic",
+          "mocked": false,
+          "probe_diagnostics": {
+            "contract": "intel-version-probes/1",
+            "probes": [
+              {
+                "argv": [
+                  "diec.exe",
+                  "--version"
+                ],
+                "command_truncated": false,
+                "elapsed_ms": 61,
+                "oversize": false,
+                "reason": null,
+                "reason_truncated": false,
+                "returncode": 0,
+                "spawn_error": null,
+                "spawn_error_truncated": false,
+                "stderr": "",
+                "stderr_chars": 0,
+                "stderr_truncated": false,
+                "stdout": "die 3.21\r\n",
+                "stdout_chars": 10,
+                "stdout_truncated": false
+              },
+              {
+                "argv": [
+                  "diec.exe",
+                  "--help"
+                ],
+                "command_truncated": false,
+                "elapsed_ms": 46,
+                "oversize": false,
+                "reason": null,
+                "reason_truncated": false,
+                "returncode": 0,
+                "spawn_error": null,
+                "spawn_error_truncated": false,
+                "stderr": "",
+                "stderr_chars": 0,
+                "stderr_truncated": false,
+                "stdout": "Usage: D:\\a\\patchtrace\\patchtrace\\build\\intel-tools\\diec\\die\\diec.exe [options] target\r\nDetect It Easy v3.21\r\nCopyright(C) 2006-2008 Hellsp@wn 2012-2026 hors<horsicq@gmail.com> Web: http://ntinfo.biz\r\n\r\n\r\nOptions:\r\n  -?, -h, --help               Displays help on commandline options.\r\n  --help-all                   Displays help including Qt specific options.\r\n  -v, --version                Displays version information.\r\n  -r, --recursivescan          Scan directories recursively\r\n  -d, --deepscan               Enable deep scanning for thorough analysis\r\n  -u, --heuristicscan          Enable heuristic scanning methods\r\n  -b, --verbose                Show verbose output with detailed information\r\n  -g, --aggressivecscan        Enable aggressive scanning mode\r\n  -a, --alltypes               Scan all file types\r\n  -f, --format                 Format the output result\r\n  -l, --profiling              Profile signatures during scan\r\n  -M, --messages               Display scan messages and warnings\r\n  -U, --hideunknown            Hide unknown file types from results\r\n  -e, --entropy                Display file entropy information\r\n  -i, --info                   Display file information\r\n  -S, --struct <struct>        Show special file information using specified\r\n                               structure (e.g., 'Hash' or 'Hash#MD5')\r\n  -x, --xml                    Output results in XML format\r\n  -j, --json                   Output results in JSON format\r\n  -c, --csv                    Output results in CSV format\r\n  -t, --tsv                    Output results in TSV format\r\n  -p, --plaintext              Output results as plain text\r\n  -D, --database <path>        Set database path\r\n  -E, --extradatabase <path>   Set extra database path\r\n  -C, --customdatabase <path>  Set custom database path\r\n  -s, --showdatabase           Show database information\r\n  -w, --showstructs            Display all available special structures for the\r\n                               file\r\n  --test <directory>           Test signatures in specified directory\r\n  --addtest <filename>         Add test case with filename, detect string, and\r\n                               directory\r\n\r\nArguments:\r\n  target                       The file or directory to open.\r\n",
+                "stdout_chars": 2262,
+                "stdout_truncated": false
+              }
+            ],
+            "probes_omitted": 0
+          },
+          "reason": "pinned 3.21 reproduced the goldens on the synthetic pair",
+          "status": "passed",
+          "version": "3.21"
+        },
+        "floss-offline": {
+          "engine": "intel-tools-floss-offline",
+          "mocked": false,
+          "reason": "unshare -rn is unavailable on this platform",
+          "status": "blocked"
+        }
+      },
+      "artifact": {
+        "id": 14698632267,
+        "bytes": 5754,
+        "sha256": "b75985367d589e936a567e64351bf48b565c871cbea8ec485202509cb04e9e37",
+        "api_digest_match": true,
+        "zip_crc_passed": true
+      }
+    }
+  },
+  "total_pytest_counts": {
+    "passed": 7,
+    "failed": 0,
+    "skipped": 1,
+    "errors": 0
+  },
+  "blocked_artifact_checks": 1,
+  "scope": "Only this exact head and existing native CI on pinned tools/default synthetic pairs.",
+  "previous_results_transferred": false,
+  "boundaries": [
+    "Windows offline namespace unavailable is a blocked artifact and one skipped pytest check.",
+    "Probe observer retains bounded redacted version/help tails, not complete raw analysis streams.",
+    "No arbitrary-binary accuracy, capa Ghidra, FLOSS deobfuscation or DIE heuristic qualification.",
+    "No source/ref edits, retries, dispatches, local upstream tools or analyzed targets executed."
+  ],
+  "dispatch_only_job": {
+    "id": 136778307631,
+    "conclusion": "skipped",
+    "counted_as_pytest_skip": false,
+    "reason": "Live build environment job requires workflow_dispatch; this is pull_request."
+  },
+  "all_three_engines_passed_both_platforms": true
+}

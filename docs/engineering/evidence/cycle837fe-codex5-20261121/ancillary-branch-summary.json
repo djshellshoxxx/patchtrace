@@ -1,0 +1,27 @@
+{
+  "current_head": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+  "current_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+  "captured_utc": "2026-11-21T08:02:36.630685+00:00",
+  "branch_dispositions": [
+    {
+      "branch": "codex/patchtrace-buildenv-header-help-20261121-a1",
+      "head": "09f07582d8d9017fe2be080605120b5c4cfd0b91",
+      "classification": "SUPERSEDED",
+      "commits": 9,
+      "changed_paths": 8,
+      "reason": "All five header help mappings, registration and table behavior already provided by current reviewed C4 implementation; two module AST comparisons and unchanged donor7-case Qt replay pass. Tooltip wording differs within the same evidence semantics. Current actual controller/host/copy/audit tests are stronger. Historical donor QA/ledger/handoff records retained, not copied over current state.",
+      "new_test_result": "7 passed in0.43s against current source; not added to1444selection"
+    },
+    {
+      "branch": "evidence/patchtrace-pr349-initial-ci-20261121-95fe",
+      "head": "566c43cd1647697cc770ea0cb92a0fb130015ec9",
+      "classification": "ARCHIVE",
+      "commits": 1,
+      "changed_paths": 11,
+      "reason": "Unique original11f publication/initial-advisory-failure evidence only; no source implementation. Original raw metadata, log and compressed representation remain retained with verified original manifests and gzip equality.",
+      "qualification": "Historical initial snapshot, not current-source acceptance"
+    }
+  ],
+  "original_semantic_backlog": "Original181 unmatched/16 patch-equivalent census unchanged; these two refs are new ancillary branches from the later refresh.",
+  "mutations": "No current source/test/workflow/ref edits; donor branches retained."
+}

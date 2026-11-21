@@ -1,3 +1,29 @@
+## Current combined source checkpoint — CODEX-5 and Pages configuration hold
+
+Implementation source `0cdd5bf37130206c2ddec399450be6338ae8e4fd` / tree `6d532dd606a1fdf987245a03271970758a03fe57` maps exactly to remote code object `06b5ed67c78aac30972e657b4a7ae5a17de739b8`. Both bounded source changes have independent signoff. Earlier `5b5328ee` evidence below remains source-specific; its scanner, tests and runtime bytes are unchanged. Independent records review passed 141 mechanical checks on tree `e7ecad2c0b1128a83876bf137634cf9f64d29f1f`, with zero blockers; these are record checks, not product test cases. Applicable hosted qualification and main merge remain pending. Resolve the final published head from live PR/CI metadata; this checkpoint does not assert future success.
+
+The first held main Pages run [44889511406](https://github.com/djshellshoxxx/PatchTrace/actions/runs/44889511406) passed hashed installation, **247 site tests / one optional-GUI skip**, and static build, then failed configuration GET with HTTP404; deployment skipped. The repair adds only the existing deployment predicate to configuration. Tests/build/upload, pins, permissions, triggers and the deploy job stay unchanged. Validation: intended red regression **one failed / seven passed**; **249 site passes**; separate **226 passes / two strict CODEX-5 expected failures**; overlapping author and independent **119-pass** confirmations, plus **12 independent controls**. Hosted configure-skip/upload proof awaits the next automatic held main push.
+
+Seven older acceptance rows are now reconciled with before-snapshots: CODEX-14 records both actual 64-check Ubuntu passes; CODEX-6 retains verified rizin hits and the open Ghidra archive path; original Pages source work is merged while its new configuration defect is tracked separately. Broader dependency closures, native limits, manual/trust/accessibility/provenance and separate L1/L2/L3 gates remain open. **Release readiness and new-source merge eligibility remain false.**
+
+The final local record commit preserves ordered parents `0cdd5bf37130206c2ddec399450be6338ae8e4fd`, actual main `9023761a4066ac1c50c127ac09d0ba5f56cdc9e4`, and original donor `36b58a7d857690a8bf0093bcee1edd5036189b30`, retaining selected source and the authoritative ledger without replacing it with the donor ledger. Earlier sections are immutable checkpoint history.
+
+---
+
+## Current CODEX-5 follow-up after qualified primary promotion
+
+Primary PR #349 source `ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e` / tree `c3f09435deb99ca0ddb3406e27ab315dba7740cf` is merged through `9023761a4066ac1c50c127ac09d0ba5f56cdc9e4`, with actual ordered parents/tree and both **[no release] [no deploy]** verified. Its final evidence retains documented native/environment limits and expected failures.
+
+New code `5b5328ee83ee4990b3311f7ac90e2f5e5f76f800` / tree `1e12edd510399fd92da6867cd071394ceb7fc95b` maps to static remote code object `92dfc4d4d2ef9d604bc9db1a639d4f19add535a8`. Root: **1,548 passed / 2 strict CODEX-5 xfailed**, **1,550 distinct cases**, **66 selectors**, **84.021s**; whole-tree Ruff/pip/isolated binding passed. Final peer: **226 passed / 2 strict xfailed**, **20 lexical / 3 YAML controls**, plus typed failure controls. Counts overlap. The repaired task is **implementation COMPLETE / TESTING**; final follow-up publication, hosted qualification and guarded main merge remain pending. Static mapped identities are not live final PR/CI outcomes. Release readiness and new-source merge eligibility remain false.
+
+The first-repair full attempt remains incomplete: modified working tree, SIGKILL **-9**, wrapper **247**, **498.536s**, unknown cause, no aggregate summary. No second local full run occurred. Broader CODEX-5, Ghidra archive-cache acceptance, Tier R/Tier W/native limits, manual/trust/accessibility, full provenance and separate L1/L2/L3 gates remain open. The original **181/16** census is retained.
+
+[Current report](engineering/cycle837fe-codex5-20261121.md) · [Ledger](engineering/task-ledger.json). Root owns publication/qualification; authoring and independent review are released.
+
+### Preserved historical checkpoints
+
+All earlier text below remains verbatim as source-specific history. Its earlier pending-main/current-owner wording is superseded only by the scoped current record above.
+
 ## Current PR349 Tier R test repair
 
 [Current report](engineering/cycle837fe-native-c4-20261121.md) and [ledger](engineering/task-ledger.json): tested 829600f8 / tree 306c4d58, **1,444 passed / 1 CODEX-5 xfailed**, 1,445 distinct cases, 65 selectors. Whole-tree Ruff, dependencies, isolated binding and independent 67-case review pass. The missed Tier R mutable-tag assertion is repaired; all original workflow/digest/permissions/compiler requirements remain. The cancelled predecessor's partial 1 failed / 19,776 passed result and the original review coverage miss are retained.

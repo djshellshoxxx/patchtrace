@@ -1,0 +1,149 @@
+{
+  "scope": "Read-only GitHub GET responses; no remote mutation tools invoked.",
+  "remote_commits": [
+    {
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/deb5552f4ec1879292ecb212bde1bbb8f1efea53",
+      "commit": {
+        "sha": "deb5552f4ec1879292ecb212bde1bbb8f1efea53",
+        "node_id": "C_kwDOVEPRFdoAKGRlYjU1NTJmNGVjMTg3OTI5MmVjYjIxMmJkZTFiYmI4ZjFlZmVhNTM",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/deb5552f4ec1879292ecb212bde1bbb8f1efea53",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/deb5552f4ec1879292ecb212bde1bbb8f1efea53",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T08:53:37Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T08:53:37Z"
+        },
+        "tree": {
+          "sha": "90e69cbc319d4bc6076a4701964a4a3bb376a516",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/90e69cbc319d4bc6076a4701964a4a3bb376a516"
+        },
+        "message": "Repair recovered CODEX-5 command audit boundaries [no release] [no deploy]\n\nRecover audit precision work from 36b58a7d857690a8bf0093bcee1edd5036189b30 while retaining its original fixture-only evidence. Parse actual workflow step run values through existing dev PyYAML, recognize direct conditional installs, and keep parser failures separate from missing-boundary expected failure.\n\nAuthor affected selection: 87 passed, 2 strict CODEX-5 xfailed. Whole-tree Ruff, pip check and isolated source/direct_url binding passed. Full local attempt began against these same pre-commit working-tree source bytes and remains pending; no clean-base, peer or hosted qualification claimed. Current workflow bytes and original CODEX-5 test are unchanged.\n\nOriginal-local-commit: 93b053a88e4373d9f5c69cd68f96e1a49305d579\nExact-local-tree: 90e69cbc319d4bc6076a4701964a4a3bb376a516\nOriginal-author: Codex <codex@openai.com>\nOriginal-author-date: 2026-11-21T00:16:07-08:00",
+        "parents": [
+          {
+            "sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/225b465e7852f4069b288adb6bb52af6e697dc25",
+      "commit": {
+        "sha": "225b465e7852f4069b288adb6bb52af6e697dc25",
+        "node_id": "C_kwDOVEPRFdoAKDIyNWI0NjVlNzg1MmY0MDY5YjI4OGFkYjZiYjUyYWY2ZTY5N2RjMjU",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/225b465e7852f4069b288adb6bb52af6e697dc25",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/225b465e7852f4069b288adb6bb52af6e697dc25",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T08:53:38Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T08:53:38Z"
+        },
+        "tree": {
+          "sha": "98a4fc483085f9a1489508bc00a67f0284cb0168",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/98a4fc483085f9a1489508bc00a67f0284cb0168"
+        },
+        "message": "Preserve quote and comment boundaries in CODEX-5 audit [no release] [no deploy]\n\nCorrect the five independently reproduced lexical failures on blocked 93b053a8 and register the audit spec by path. Keep quotes and escapes through operator/comment splitting; retain unsupported substitution spans across lines; reject ambiguous backticks without claiming a general shell parser.\n\nRed evidence: five peer controls failed and the unchanged missing-spec registry selector failed before correction. Green evidence: 214 affected tests passed, two CODEX-5 strict expected failures retained; all nine independent controls replay; complete source census 21 workflows, 200 run steps, 42 installers, 41 unprotected. Whole-tree Ruff, pip consistency and isolated editable source binding pass. No v2 local full run or hosted qualification claimed; original v1 full attempt and its separate environment remain intact.\n\nOriginal-local-commit: 4cbe479023067b05b688cd1c1b02994b0228e305\nExact-local-tree: 98a4fc483085f9a1489508bc00a67f0284cb0168\nOriginal-author: Codex <codex@openai.com>\nOriginal-author-date: 2026-11-21T00:36:56-08:00",
+        "parents": [
+          {
+            "sha": "deb5552f4ec1879292ecb212bde1bbb8f1efea53",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/deb5552f4ec1879292ecb212bde1bbb8f1efea53",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/deb5552f4ec1879292ecb212bde1bbb8f1efea53"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/92dfc4d4d2ef9d604bc9db1a639d4f19add535a8",
+      "commit": {
+        "sha": "92dfc4d4d2ef9d604bc9db1a639d4f19add535a8",
+        "node_id": "C_kwDOVEPRFdoAKDkyZGZjNGQ0ZDJlZjlkNjA0YmM5ZGIxYTYzOWQ0ZjE5YWRkNTM1YTg",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/92dfc4d4d2ef9d604bc9db1a639d4f19add535a8",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/92dfc4d4d2ef9d604bc9db1a639d4f19add535a8",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T08:53:39Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T08:53:39Z"
+        },
+        "tree": {
+          "sha": "1e12edd510399fd92da6867cd071394ceb7fc95b",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/1e12edd510399fd92da6867cd071394ceb7fc95b"
+        },
+        "message": "Refuse executable process substitution in CODEX-5 audit [no release] [no deploy]\n\nResolve the remaining immutable V2 review finding with a quote-aware marker check that reuses the existing opaque substitution span. Input/output and multiline process substitutions with installer text fail explicitly; quoted and escaped literal companions remain data, and unrelated completed substitutions preserve later direct installs.\n\nRed controls: 4 executable cases failed on unchanged V2 while 4 quoted companions passed. Corrected selection: 226 passed, two strict CODEX-5 xfailed; whole-tree Ruff, pip check and isolated editable source binding pass. Retained independent controls replayed and 21/200/42/41 current-source census preserved. No second local full attempt: original93 SIGKILL and its exact source evidence are retained; no hosted/native or broad hash-closure acceptance claimed.\n\nOriginal-local-commit: 5b5328ee83ee4990b3311f7ac90e2f5e5f76f800\nExact-local-tree: 1e12edd510399fd92da6867cd071394ceb7fc95b\nOriginal-author: Codex <codex@openai.com>\nOriginal-author-date: 2026-11-21T00:46:06-08:00",
+        "parents": [
+          {
+            "sha": "225b465e7852f4069b288adb6bb52af6e697dc25",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/225b465e7852f4069b288adb6bb52af6e697dc25",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/225b465e7852f4069b288adb6bb52af6e697dc25"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    }
+  ],
+  "java_head_refs": [
+    {
+      "branch": "chatgpt/java-probe-ci-fix-20261016",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/ref/heads/chatgpt/java-probe-ci-fix-20261016",
+      "response": {
+        "ref": "refs/heads/chatgpt/java-probe-ci-fix-20261016",
+        "node_id": "REF_kwDOVEPRFdoALXJlZnMvaGVhZHMvY2hhdGdwdC9qYXZhLXByb2JlLWNpLWZpeC0yMDI2MTAxNg",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/refs/heads/chatgpt/java-probe-ci-fix-20261016",
+        "object": {
+          "sha": "0254841e3e635ed717e35abcf83021f001d7df29",
+          "type": "commit",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/0254841e3e635ed717e35abcf83021f001d7df29"
+        }
+      }
+    },
+    {
+      "branch": "chatgpt/java-probe-boundaries-20261016",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/ref/heads/chatgpt/java-probe-boundaries-20261016",
+      "response": {
+        "ref": "refs/heads/chatgpt/java-probe-boundaries-20261016",
+        "node_id": "REF_kwDOVEPRFdoAMXJlZnMvaGVhZHMvY2hhdGdwdC9qYXZhLXByb2JlLWJvdW5kYXJpZXMtMjAyNjEwMTY",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/refs/heads/chatgpt/java-probe-boundaries-20261016",
+        "object": {
+          "sha": "09bb4519d7d8e9ff8f40abcba7e11cb297d8b61e",
+          "type": "commit",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/09bb4519d7d8e9ff8f40abcba7e11cb297d8b61e"
+        }
+      }
+    }
+  ]
+}

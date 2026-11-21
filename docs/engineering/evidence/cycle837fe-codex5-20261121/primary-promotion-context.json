@@ -1,0 +1,298 @@
+{
+  "merged": true,
+  "source_head": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+  "source_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+  "main_before": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+  "merge_commit": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+  "actual_parents": [
+    "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+    "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e"
+  ],
+  "actual_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+  "opt_outs_verified": true,
+  "all_applicable_automated_jobs_passed": true,
+  "qualification_archive_sha256": "8eb127426bcf216b840bc10d5243fccdb8964d4ba17bf53b6282920406b57859",
+  "merged_at": "2026-11-21T09:25:16Z",
+  "summary_markdown": "PR #349 merged at 2026-11-21T09:25:16Z through the required expected-head REST mechanism. Fresh REST and the fetched actual Git object prove exact parents, complete tree equality, both publication opt-outs, and the resulting main ref. All eight applicable premerge workflows completed successfully on attempt 1: 30 successful jobs and four intentional skips. The seven-run primary archive covers 28 successes/three skips; the separate Intel archive covers two successes/one dispatch-only skip. Linux full QA: **24,190 passed / 53 skipped / 3 expected failures**, zero failures/errors. Windows full QA: **24,059 passed / 185 skipped / 2 expected failures**, zero failures/errors. Each JUnit contains 24,246 cases. All five Qt repetition gates passed, counted separately. Actual Windows standalone, 64-check frozen smoke, portable extraction/checksum, pinned NSIS3.13 installer/install/runtime/uninstall passed. Ubuntu22.04 and24.04 each passed 64 frozen checks, checksum and offscreen/XCB self-tests. Product artifact identities and actual hosted checksums are recorded; large product ZIPs were not locally downloaded. Ghidriff authored positive/negative/raw-cache controls, actual Rizin, BinDiff, unified extraction and Intel runs passed within their documented scopes. TierR remains warning-level5/11 with6 no-function results; Ghidra archive cache and full-suite TierW/CODEX5 limitations remain open.\n\nPRs #345–#348 were then closed as consolidated after fresh unchanged-head checks. #346 is selective recovery, not whole-head ancestry; thirteen branch-side-only commits including documentation/merges remain preserved. All original descriptions, bases, refs and histories remain intact. This metadata reconciliation is not four separate source merges.\n\n**New post-main observation:** Pages run44889511406 failed at the configuration lookup with HTTP404 after site247passed/1skipped and a successful build. Deploy job136802309849 was skipped. That observed configuration defect is tracked separately for a spec-first, independently reviewed fix; the earlier successful premerge qualification is not rewritten, and no Pages enablement or manual dispatch occurred. Actual post-main QA release hold is still under observation at this checkpoint.",
+  "historical_summary_markdown": "Five additional complete branch contributions were accounted for without deleting their refs: Java import-order donor `0254841e` is DUPLICATE; Java boundary-test donor `09bb4519` is SUPERSEDED, with13 unchanged donor/current test executions passing (overlapping behaviors); license-gate donor `d3617acf` is SUPERSEDED with all11 changed paths accounted,69/74 symbols AST-identical and five bounded extensions reviewed,251 maintained passes/one ordinary missing-wheel skip and51 unchanged donor passes counted separately. Build-environment donor `09f07582` is SUPERSEDED (all8 paths/nine commits, seven unchanged donor tests); initial-CI evidence donor `566c43cd` is ARCHIVE (all11 original files retained). Each review was independently accepted. These named dispositions do not imply global historical exhaustion and do not rewrite the original181/16 census. Fresh reference census observed369heads/340PRs/59tags with pagination/time limits retained.",
+  "historical_dispositions": [
+    {
+      "branch": "chatgpt/java-probe-ci-fix-20261016",
+      "head": "0254841e3e635ed717e35abcf83021f001d7df29",
+      "classification": "DUPLICATE",
+      "whole_branch_accounted": true,
+      "unique_paths": [
+        "tests/test_backend_java_version.py"
+      ],
+      "reason": "Sole import-order correction is retained; original unchanged donor test passes.",
+      "original_ref_retained": true,
+      "original_census_rewritten": false
+    },
+    {
+      "branch": "chatgpt/java-probe-boundaries-20261016",
+      "head": "09bb4519d7d8e9ff8f40abcba7e11cb297d8b61e",
+      "classification": "SUPERSEDED",
+      "whole_branch_accounted": true,
+      "unique_paths": [
+        "tests/test_backend_java_version.py"
+      ],
+      "reason": "All donor cancellation/retry/error/missing-Java behavior tests are retained; current explicit fixture state improves lint compatibility; complete donor tests pass unchanged.",
+      "original_ref_retained": true,
+      "original_census_rewritten": false
+    },
+    {
+      "branch": "claude/bundle-license-gate",
+      "head": "d3617acf9af7834582b4962a8c149969a7d55a22",
+      "classification": "SUPERSEDED",
+      "whole_branch_accounted": true,
+      "merge_base": "21a005e242177f07a984937a7cd924e826c17b9f",
+      "unique_paths": [
+        ".github/workflows/backend-bundle.yml",
+        "docs/notices.md",
+        "tests/test_backend_pin.py",
+        "tests/test_build_backend_bundle.py",
+        "tests/test_build_full_variants.py",
+        "tests/test_codex_pkg_packaging.py",
+        "tools/backend_pin.json",
+        "tools/build_backend_bundle.py",
+        "tools/build_linux.py",
+        "tools/build_windows.py",
+        "tools/check_backend_pin.py"
+      ],
+      "reason": "All eleven branch paths are semantically integrated;69/74 top-level symbols identical, five bounded later extensions reviewed; no unique missing compatible delta found. Donor and maintained execution results remain separate and overlapping. Original branch retained.",
+      "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-license-classification.json",
+      "original_ref_retained": true,
+      "original_census_rewritten": false
+    },
+    {
+      "branch": "codex/patchtrace-buildenv-header-help-20261121-a1",
+      "head": "09f07582d8d9017fe2be080605120b5c4cfd0b91",
+      "classification": "SUPERSEDED",
+      "commits": 9,
+      "changed_paths": 8,
+      "reason": "All five header help mappings, registration and table behavior already provided by current reviewed C4 implementation; two module AST comparisons and unchanged donor7-case Qt replay pass. Tooltip wording differs within the same evidence semantics. Current actual controller/host/copy/audit tests are stronger. Historical donor QA/ledger/handoff records retained, not copied over current state.",
+      "new_test_result": "7 passed in0.43s against current source; not added to1444selection",
+      "original_ref_retained": true,
+      "original_census_rewritten": false
+    },
+    {
+      "branch": "evidence/patchtrace-pr349-initial-ci-20261121-95fe",
+      "head": "566c43cd1647697cc770ea0cb92a0fb130015ec9",
+      "classification": "ARCHIVE",
+      "commits": 1,
+      "changed_paths": 11,
+      "reason": "Unique original11f publication/initial-advisory-failure evidence only; no source implementation. Original raw metadata, log and compressed representation remain retained with verified original manifests and gzip equality.",
+      "qualification": "Historical initial snapshot, not current-source acceptance",
+      "original_ref_retained": true,
+      "original_census_rewritten": false
+    }
+  ],
+  "additional_completed_tasks": [
+    {
+      "id": "837fe-historical-java-probe-branch-accounting",
+      "status": "COMPLETE",
+      "description": "Account for both complete historical Java probe test-only branches",
+      "source_branch": "chatgpt/java-probe-ci-fix-20261016",
+      "source_branches": [
+        "chatgpt/java-probe-ci-fix-20261016",
+        "chatgpt/java-probe-boundaries-20261016"
+      ],
+      "source_commit": "0254841e3e635ed717e35abcf83021f001d7df29",
+      "source_commits": [
+        "0254841e3e635ed717e35abcf83021f001d7df29",
+        "09bb4519d7d8e9ff8f40abcba7e11cb297d8b61e"
+      ],
+      "target_integration_branch": "integration/patchtrace-codex5-followup-20261121-837fe",
+      "assigned_worker": "root837FE and independent codex1_independent_review",
+      "files_owned": [
+        "tests/test_backend_java_version.py"
+      ],
+      "implementation_status": "COMPLETE",
+      "test_results": "13 executed cases passed, zero failures/errors/skips: seven original donor and six current; overlapping behaviors, not native acceptance.",
+      "audit_findings": "Independent whole-branch review accepted DUPLICATE import-order donor and SUPERSEDED boundary donor; seven of eight function ASTs identical; remaining change is bounded fixture-state normalization.",
+      "dependencies": [],
+      "blockers": [],
+      "merge_status": "Contributions already retained in qualified primary main9023761; no donor ref moved.",
+      "evidence_links": [
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-java-probe.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-java-probe.zip",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-java-independent-review.json"
+      ],
+      "next_action": "Retain exact source/provenance and original refs; publish reviewed records with the separately qualified follow-up. No broader native or historical completion inference."
+    },
+    {
+      "id": "837fe-historical-license-branch-accounting",
+      "status": "COMPLETE",
+      "description": "Account for the complete historical bundle/license gate contribution",
+      "source_branch": "claude/bundle-license-gate",
+      "source_branches": [
+        "claude/bundle-license-gate"
+      ],
+      "source_commit": "d3617acf9af7834582b4962a8c149969a7d55a22",
+      "source_commits": [
+        "d3617acf9af7834582b4962a8c149969a7d55a22"
+      ],
+      "target_integration_branch": "integration/patchtrace-codex5-followup-20261121-837fe",
+      "assigned_worker": "root837FE and independent codex1_independent_review",
+      "files_owned": [
+        ".github/workflows/backend-bundle.yml",
+        "docs/notices.md",
+        "tests/test_backend_pin.py",
+        "tests/test_build_backend_bundle.py",
+        "tests/test_build_full_variants.py",
+        "tests/test_codex_pkg_packaging.py",
+        "tools/backend_pin.json",
+        "tools/build_backend_bundle.py",
+        "tools/build_linux.py",
+        "tools/build_windows.py",
+        "tools/check_backend_pin.py"
+      ],
+      "implementation_status": "COMPLETE",
+      "test_results": "251 maintained passes/one ordinary missing-wheel skip;51 unchanged donor parameterized passes, overlapping counts kept separate. All11 executed paths byte-equal to qualified primary source.",
+      "audit_findings": "Independent review accepts SUPERSEDED; all11 changed paths and all74 top-level symbols accounted, both complete full-variant attachment branches retained. Earlier reviewer enumeration failure/correction preserved.",
+      "dependencies": [],
+      "blockers": [],
+      "merge_status": "Implementation already integrated; PR65 merge00db4c9c0ce53d1c4c556f3530e8c54163e91e95 is ancestor of primary main. Original branch retained.",
+      "evidence_links": [
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-license-classification.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-license-review.zip",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-license-independent-review.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-license-independent.zip"
+      ],
+      "next_action": "Retain exact source/provenance and original refs; publish reviewed records with the separately qualified follow-up. No broader native or historical completion inference."
+    },
+    {
+      "id": "837fe-new-ancillary-branch-accounting",
+      "status": "COMPLETE",
+      "description": "Account for the newly discovered build-environment and historical initial-CI evidence branches",
+      "source_branch": "codex/patchtrace-buildenv-header-help-20261121-a1",
+      "source_branches": [
+        "codex/patchtrace-buildenv-header-help-20261121-a1",
+        "evidence/patchtrace-pr349-initial-ci-20261121-95fe"
+      ],
+      "source_commit": "09f07582d8d9017fe2be080605120b5c4cfd0b91",
+      "source_commits": [
+        "09f07582d8d9017fe2be080605120b5c4cfd0b91",
+        "566c43cd1647697cc770ea0cb92a0fb130015ec9"
+      ],
+      "target_integration_branch": "integration/patchtrace-codex5-followup-20261121-837fe",
+      "assigned_worker": "root837FE and independent codex1_independent_review",
+      "files_owned": [
+        "src/patchtrace/buildenv/tooltip_entries.py",
+        "src/patchtrace/buildenv/panel_model.py",
+        "docs/engineering/evidence/cycle3-95fe/postpublication/"
+      ],
+      "implementation_status": "COMPLETE",
+      "test_results": "Seven unchanged build-environment donor tests passed against current source; semantic comparisons of all five mappings and current stronger host/controller tests. Eleven original evidence files and gzip/raw equality verified.",
+      "audit_findings": "Independent review accepts complete SUPERSEDED build-environment branch and ARCHIVE original-CI evidence branch. Original failure2failed/1passed/1skipped remains evidence for its own source.",
+      "dependencies": [],
+      "blockers": [],
+      "merge_status": "Current implementation retained through primary main; evidence archived without wholesale donor ledger substitution.",
+      "evidence_links": [
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/ancillary-branches.zip",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/ancillary-independent-review.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/ancillary-branch-summary.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/ref-refresh.zip",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/ref-refresh-summary.json"
+      ],
+      "next_action": "Retain exact source/provenance and original refs; publish reviewed records with the separately qualified follow-up. No broader native or historical completion inference."
+    },
+    {
+      "id": "837fe-pr345-348-reconciliation",
+      "status": "COMPLETE",
+      "description": "Reconcile obsolete stacked consolidation drafts after actual qualified PR349 main promotion",
+      "source_branch": "PR345",
+      "source_branches": [
+        "PR345",
+        "PR346",
+        "PR347",
+        "PR348"
+      ],
+      "source_commit": "39c38a02f126963fc03827fa49741255590227ad",
+      "source_commits": [
+        "39c38a02f126963fc03827fa49741255590227ad",
+        "c07774ecf5a3f7337834f95a9a4c51c8ec5fad44",
+        "b461ac64eb9beb74449ce2b18b6795a2af34a02a",
+        "6b6fcd3597a604212032ffc453477aeb6edc69ff"
+      ],
+      "target_integration_branch": "integration/patchtrace-codex5-followup-20261121-837fe",
+      "assigned_worker": "root837FE and independent codex1_independent_review",
+      "files_owned": [],
+      "implementation_status": "COMPLETE",
+      "test_results": "Fresh unchanged-head checks before each closure; returned snapshots verify closed/not individually merged and all original descriptions preserved. Primary actual parents/tree verified.",
+      "audit_findings": "Independent review accepted ancestry accounting for345/347/348 and selective recovery for346; thirteen branch-side-only commits include documentation/merges, not a claim of thirteen missing implementation commits.",
+      "dependencies": [],
+      "blockers": [],
+      "merge_status": "All four closed as consolidated at2026-11-21T09:26UTC after actual main merge9023761; no separate old feature-base merge and no branch deletion.",
+      "evidence_links": [
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/pr-chain-reconciliation-review.zip",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/pr-chain-reconciliation-review.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-pr-closures.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-merge-proof.json"
+      ],
+      "next_action": "Retain exact source/provenance and original refs; publish reviewed records with the separately qualified follow-up. No broader native or historical completion inference."
+    }
+  ],
+  "additional_evidence": [
+    {
+      "source": "evidence/primary-main-promotion/merge-proof.json",
+      "destination": "primary-merge-proof.json",
+      "sha256": "a1ce7b974ff16dd71e78d448a7143931bad2e7ec96e4d0f8be1e1ccea79a86b8"
+    },
+    {
+      "source": "evidence/primary-main-promotion/pr-closures.json",
+      "destination": "primary-pr-closures.json",
+      "sha256": "42a60c0929cbd699bf054b2545d126cd1ba198608df52f99d876319838ee29a5"
+    },
+    {
+      "source": "evidence/historical-license-review/historical-license-review-d3617acf.zip",
+      "destination": "historical-license-review.zip",
+      "sha256": "a86b0478942988b249857c600a964cfb521b096cebbfe69ddb47f6e7e2ae8769"
+    },
+    {
+      "source": "evidence/historical-license-review/classification.json",
+      "destination": "historical-license-classification.json",
+      "sha256": "0088323821148691208259539a90e87cb53a93a8f34d08297e1b3d6095c4f7ee"
+    },
+    {
+      "source": "evidence/historical-license-independent/review.json",
+      "destination": "historical-license-independent-review.json",
+      "sha256": "b1b3cba37f6913d3bcfd4d425e8275f7b43ddb3c94aedf16e10e362191cc28bb"
+    },
+    {
+      "source": "evidence/historical-license-independent/historical-license-independent.zip",
+      "destination": "historical-license-independent.zip",
+      "sha256": "e35b585568b7bfc861abdab661ecb6282deee1f662e43d47afae33e2271c53fb"
+    },
+    {
+      "source": "evidence/premerge-pr-chain-review/independent-pr-chain-review.zip",
+      "destination": "pr-chain-reconciliation-review.zip",
+      "sha256": "ddb93f07a44cf41106c5ed9237b10a5f0c4e965d6f28d91530f73fc0a331279c"
+    },
+    {
+      "source": "evidence/premerge-pr-chain-review/independent-review.json",
+      "destination": "pr-chain-reconciliation-review.json",
+      "sha256": "65451d5f0a9aa11ecf1d95df7d507d8294513f100447ab42e0a1b176d8ad939e"
+    },
+    {
+      "source": "evidence/new-ancillary-branches/summary.json",
+      "destination": "ancillary-branch-summary.json",
+      "sha256": "21ce4d8dac0f3ea4c67b831a6416bc2f81d6e9311857346b20b370015285b076"
+    },
+    {
+      "source": "evidence/final-ae69-intel/summary.json",
+      "destination": "ae69-native-intel-summary.json",
+      "sha256": "436a2a97088fe0f343980f028dcead451966ad70f6511a3ce603638ce7d4ae54"
+    },
+    {
+      "source": "evidence/final-ae69-intel/source-identity.json",
+      "destination": "ae69-native-intel-source-identity.json",
+      "sha256": "4f258e93ed299d2d4cd3ba7733c04cc151198f75932dde56d770765bca5fa332"
+    },
+    {
+      "source": "assemble_codex5_records_preparation.json",
+      "destination": "records-helper-preparation.json",
+      "sha256": "754647e9ab0a425800870ca2eca90a58b7090b9a818be0b41c2976ce83770276"
+    }
+  ]
+}
