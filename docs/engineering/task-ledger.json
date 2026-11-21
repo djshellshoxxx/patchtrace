@@ -1,6 +1,6 @@
 {
   "schema": "patchtrace-engineering-task-ledger/1",
-  "updated_at": "2026-11-20T23:55:22.940937+00:00",
+  "updated_at": "2026-11-21T00:20:55.609Z",
   "repository": "https://github.com/djshellshoxxx/PatchTrace",
   "integration_branch": "codex/autonomous-consolidation-20261120-2bad",
   "checkpoint_local_commit": "1d0f60f3004db9e32f314518d5be661b85ef4d71",
@@ -43,7 +43,9 @@
     "Generation39 isolated direct KB investigation Create route from PR343 source: unlike the already integrated acquisition guard, _new_destination checked is_symlink but not is_junction before resolve/empty-target check. SPEC and portable/native regression tests precede one-condition fix. Initial Windows native case was strengthened to use empty target (original code would otherwise refuse for unrelated nonempty content). Three local source-equivalent conditions passed, not actual repo pytest/Ruff or Windows. PR343 CI still active; independent review and full gates pending.",
     "Generation40 isolated source-plan admission on g39: _source_plan previously called lead.strip without runtime type check. Non-text types caused uncaught exceptions or invalid normalization; exact type gate returns PT-KBC-INPUT before network/workspace. SPEC-first, six repository test cases authored (five invalid including overridden subclass, one valid text). Six standalone source-equivalent expectations passed only; full checked-out tests/Ruff, CI and separate review pending. PR343 workflow active; no duplicate suite.",
     "Generation41: offline saved-index candidate component_name.strip() was unguarded; null/integer raised AttributeError, non-text .strip objects could bypass a typed request boundary. SPEC-31-F, 6 regression cases and exact-str guard committed in isolated branch. Hand-copied algorithm controls only; checkout pytest/Ruff, source CI and independent signoff pending. No predecessor or main ref moved.",
-    "Current session distinguishes completed selections from interrupted runs. Missing summaries and dot counts are not passes. This ledger is authoritative; prior generation narratives retain historical source-specific claims."
+    "Current session distinguishes completed selections from interrupted runs. Missing summaries and dot counts are not passes. This ledger is authoritative; prior generation narratives retain historical source-specific claims.",
+    "PR345/346 sibling reconciliation, 2026-11-20: both draft heads refreshed unchanged (39c38a02 and c07774ec), PR345 kept as source base. Recovered exact donor blobs for pre-service candidate admission, malformed candidate tests, bounded 32 MiB TSV replay tool and tests; retained PR345 TaskRunner/report/Linux refusal and more-complete Evidence/table GUI tests. Ported two Qt diagnostic controls and two Strings form-feed CSV/JSON controls only; did not overwrite Linux force-refusal expectations. No tested complete combined source yet; PR345/346 native and QA queues pending. No main/release merge.",
+    "Shared header-help/Evidence implementation recovered once: src/patchtrace/gui/qt/table.py and gui/table_spec.py are byte-identical across PR345/346; ui_evidence.py differs only formatting. 95fe GUI worker's separate 212-case selection not added to 2bad counts. 95fe bounded 212 distinct passing test identities belong only to ccc3664f source, not this combined branch. Original SIGKILLs and historic native Qt remain open."
   ],
   "tasks": [
     {
@@ -739,6 +741,56 @@
       "source_commit": "1d0f60f3004db9e32f314518d5be661b85ef4d71",
       "evidence": "docs/engineering/session-20261120-2bad.md",
       "result_or_next_action": "Dedicated editable environment binds python -I to the current checkout; dependencies reused read-only. Full/native acceptance remains separate."
+    },
+    {
+      "id": "95fe-candidate-admission-order",
+      "owner": "interactive-95fe",
+      "status": "implemented-independently-reviewed-locally-integrated",
+      "source_commit": "649ed46ead79ad12c9fa35085e704ac3f0d32631",
+      "evidence": "docs/engineering/CONSOLIDATION_LEDGER.md",
+      "result_or_next_action": "183 related cases pass on clean combined ccc3664f; four baseline failures retained; full/hosted pending",
+      "retained_source_qualification": "649ed46ead79ad12c9fa35085e704ac3f0d32631",
+      "combined_head_qualification": "pending"
+    },
+    {
+      "id": "95fe-inventory-replay",
+      "owner": "interactive-95fe",
+      "status": "implemented-independently-reviewed-locally-integrated",
+      "source_commit": "076c1ffaea35e922b206da5818023fe96459de23",
+      "evidence": "docs/engineering/CONSOLIDATION_LEDGER.md",
+      "result_or_next_action": "Ten inventory cases pass on clean combined ccc3664f; real 353-row replay identical; original CLI and two unit failures retained",
+      "retained_source_qualification": "076c1ffaea35e922b206da5818023fe96459de23",
+      "combined_head_qualification": "pending"
+    },
+    {
+      "id": "95fe-csv-qt-coverage",
+      "owner": "interactive-95fe",
+      "status": "test-only-completed-locally-integrated",
+      "source_commit": "c71d604edbd63e3b8d0f10b120c775acd1c5f8b4",
+      "evidence": "docs/engineering/CONSOLIDATION_LEDGER.md",
+      "result_or_next_action": "47 passes; no production bug or failed baseline claimed",
+      "retained_source_qualification": "c71d604edbd63e3b8d0f10b120c775acd1c5f8b4",
+      "combined_head_qualification": "pending"
+    },
+    {
+      "id": "95fe-semantic-triage",
+      "owner": "interactive-95fe",
+      "status": "scoped-source-review-completed",
+      "source_commit": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
+      "evidence": "docs/engineering/CONSOLIDATION_LEDGER.md",
+      "result_or_next_action": "Nine donor scopes accounted for; no runtime acceptance/deletion implied",
+      "retained_source_qualification": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
+      "combined_head_qualification": "pending"
+    },
+    {
+      "id": "95fe-qualification",
+      "owner": "interactive-95fe",
+      "status": "bounded-combined-pass-full-and-hosted-blocked",
+      "source_commit": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
+      "evidence": "docs/engineering/CONSOLIDATION_LEDGER.md",
+      "result_or_next_action": "183 + 50 - 21 shared = 212 distinct passing cases on clean ccc3664f; four interrupted -9 runs retained; full/native/hosted gates remain required",
+      "retained_source_qualification": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
+      "combined_head_qualification": "pending"
     }
   ],
   "aggregate_source_commit": "1d0f60f3004db9e32f314518d5be661b85ef4d71",
@@ -1028,7 +1080,7 @@
     "release_ready": false,
     "coordinator_archive_sha256": "961d81699d1ce25d212708028f4274978aad536a424b44a5711cfb57955479f6"
   },
-  "current_handoff": "docs/engineering-handoffs/session-20261120-2bad.md",
+  "current_handoff": "docs/engineering-handoffs/sibling-reconciliation-20261120.md",
   "previous_session_qualification": {
     "source_commit": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
     "source_tree": "a8ef4316a88ab58619d966744e26b0067d66ff33",
@@ -1101,5 +1153,90 @@
     "status": "foreground-workers-completed-handoff-ready",
     "handoff": "docs/engineering-handoffs/session-20261120-2bad.md",
     "next_action": "Inspect current branch/PR and final-source hosted gates; do not repeat the four recovered/repaired scopes or infer aggregate passes. Continue unowned column-help mapping and evidence-backed donor review."
+  },
+  "sibling_95fe_qualification": {
+    "source_commit": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
+    "source_tree": "a72efdcbf503e0480a182fd323c5c4320d27c098",
+    "whole_tree_ruff": "passed",
+    "dependency_validation": "passed",
+    "protobuf_runtime": "7.36.2-upb-passed",
+    "cli_help": "passed",
+    "full_suite": "incomplete-SIGKILL-before-first-test-start",
+    "full_returncode": -9,
+    "full_seconds": 23.089,
+    "full_cause": "unestablished",
+    "combined_bounded_selection": "212-distinct-passes-across-two-completed-bounded-processes",
+    "hosted_final_source": "pending",
+    "release_ready": false,
+    "evidence": "docs/engineering/cycle-95fe-qualification.md",
+    "combined_process_returncode": -9,
+    "completed_combined_runs": [
+      {
+        "receipt": "combined-admission",
+        "passed": 183,
+        "skipped": 0
+      },
+      {
+        "receipt": "combined-changed-cases",
+        "passed": 50,
+        "skipped": 0
+      }
+    ],
+    "shared_test_identities": 21,
+    "distinct_passing_test_identities": 212,
+    "incomplete_runs": [
+      {
+        "receipt": "full",
+        "returncode": -9,
+        "seconds": 23.089
+      },
+      {
+        "receipt": "combined-focused",
+        "returncode": -9,
+        "seconds": 70.395
+      },
+      {
+        "receipt": "combined-gui",
+        "returncode": -9,
+        "seconds": 32.827
+      },
+      {
+        "receipt": "combined-integrity-coverage",
+        "returncode": -9,
+        "seconds": 21.474
+      }
+    ],
+    "diagnosis": "SIGKILL sender/cause unestablished; no OOM, fixed timeout or GUI-causation claim",
+    "environment_receipts": "docs/engineering/evidence/cycle95fe/environment-checks.json"
+  },
+  "sibling_95fe_publication": {
+    "branch": "consolidation/patchtrace-20261120-95fe",
+    "head": "c07774ecf5a3f7337834f95a9a4c51c8ec5fad44",
+    "tree": "8b3b62b05bb6e7bd9eb5de8cbda797aceca52ca0",
+    "pr": 346,
+    "documented_in": "docs/engineering/cycle-95fe-qualification.md",
+    "source_commit": "ccc3664f11a81d3d30f907da36fc3d22da0063d0"
+  },
+  "next_combined_candidate": {
+    "branch": "codex/patchtrace-pr345-346-unique-recovery-20261120",
+    "base_branch": "codex/autonomous-consolidation-20261120-2bad",
+    "base_head": "39c38a02f126963fc03827fa49741255590227ad",
+    "donor_pr": 346,
+    "donor_head": "c07774ecf5a3f7337834f95a9a4c51c8ec5fad44",
+    "source_integrations": [
+      "95fe-candidate-admission-order",
+      "95fe-inventory-replay"
+    ],
+    "test_integrations": [
+      "95fe-candidate-cases",
+      "95fe-inventory-cases",
+      "95fe-qt-diagnostics",
+      "95fe-strings-form-feed"
+    ],
+    "shared_gui_runtime": "retained PR345 implementation only",
+    "main_merge_eligible": false,
+    "release_ready": false,
+    "qualification": "no final-source full/hosted/independent acceptance yet",
+    "handoff": "docs/engineering-handoffs/sibling-reconciliation-20261120.md"
   }
 }
