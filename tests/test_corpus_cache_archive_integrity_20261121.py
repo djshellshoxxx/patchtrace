@@ -41,7 +41,9 @@ def admission_errors(source: str) -> list[str]:
             errors.append(f"{label}: restored content must be reverified")
         verified = f'${{{verifier}}}' in setup and "sha256sum -c -" in setup
         unpack = extractor in setup
-        if not verified or not unpack or setup.index("sha256sum -c -") > setup.index(extractor):
+        if not verified or not unpack:
+            errors.append(f"{label}: pinned digest must precede extraction")
+        elif setup.index("sha256sum -c -") > setup.index(extractor):
             errors.append(f"{label}: pinned digest must precede extraction")
         if label == "rizin":
             if "rm -rf rizin" not in setup or "rizin-archive/$RIZIN_ASSET" not in setup:
@@ -76,4 +78,5 @@ def test_cached_tools_are_verified_archives_before_use():
 def test_regression_contract_detects_removed_integrity_boundary(old, new):
     original = WORKFLOW.read_text(encoding="utf-8")
     assert old in original
-    assert admission_errors(original.replace(old, new, 1)), (old, new)
+    mutated = original.replace(old, new) if old.startswith("contains(") else original.replace(old, new, 1)
+    assert admission_errors(mutated), (old, new)
