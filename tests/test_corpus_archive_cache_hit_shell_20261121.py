@@ -18,7 +18,6 @@ from pathlib import Path
 
 import pytest
 
-
 WORKFLOW = Path(__file__).resolve().parents[1] / ".github/workflows/corpus-tier-r.yml"
 REQUIRED_TOOLS = ("bash", "sha256sum", "tar", "unzip")
 pytestmark = pytest.mark.skipif(
