@@ -1,3 +1,11 @@
+## Current combined handoff — PR349 / 837FE
+
+Use [the combined handoff](cycle837fe-combined-pr349-20261121.md) and [authoritative ledger](../engineering/task-ledger.json). The code passes 1,296 affected cases with 1 CODEX-5 expected failure and has completed scoped independent review. Exact-publication-head hosted qualification remains pending. Earlier entries retain their source-specific history; this handoff supersedes their named ownership and next-action paragraphs.
+
+## Current combined follow-up — PR #349 plus 837FE
+
+Root837FE has consumed the explicit completed 95FE-C3 handoff. The storage/Search fixes are combined locally with PR #349; combined qualification and CODEX-1 direct pinning are in progress. No ancestor result qualifies this new source. Preserve every earlier source-specific receipt and hold main promotion until the combined checks and blockers are resolved.
+
 # Current continuation — cycle3 reviewed workflow integration
 
 [Current cycle3 handoff](cycle3-20261121-95fe.md) and [authoritative ledger](../engineering/task-ledger.json) supersede earlier next-action paragraphs for the named integrated scopes.469 distinct affected tests pass; independent reviews are complete; new-source hosted acceptance remains pending. Preserve release/deployment holds.
@@ -14,6 +22,10 @@ verifies pinned SHA-256 on every use and unpacks only after verification.
 Author source and synthetic tamper checks pass; full repository/hosted
 qualification and independent review remain open. CODEX-14 is separate.
 No main merge, release or deployment.
+
+## Current parallel storage/Search candidate — 837fe
+
+Read the [scoped handoff](cycle837fe-20261121.md) and authoritative ledger. Final code b880c317 passes 450 affected cases and independent review. Exact-head hosted qualification and the separate 95FE-C3 integration ownership remain gates. This parallel checkpoint does not replace the owning coordinator's latest handoff.
 
 # Current continuation — cycle 2
 

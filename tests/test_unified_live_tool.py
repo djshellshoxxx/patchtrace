@@ -268,8 +268,31 @@ def test_workflow_has_no_tabs_and_unquoted_colon_values_outside_block_scalars():
         if value in ('|', '>', '|-', '>-'):
             in_block, indent = True, len(match.group(1)) + (2 if line.lstrip().startswith('- ') else 0)
             continue
-        if value and value[0] not in '\'"[{' and (': ' in value or ' #' in value):
-            pytest.fail(f'line {number}: plain scalar with ": " or " #" must be quoted: {line.strip()}')
+        if value and value[0] not in '\'"[{':
+            plain = re.split(r'\s#', value, maxsplit=1)[0].rstrip()
+            if ': ' in plain or plain.endswith(':'):
+                pytest.fail(f'line {number}: plain scalar with ": " must be quoted: {line.strip()}')
+
+
+@pytest.mark.parametrize('line', [
+    '      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0',
+    '      - name: Checkout # readable comment: version',
+])
+def test_workflow_scalar_check_accepts_yaml_comments(monkeypatch, line):
+    monkeypatch.setitem(test_workflow_has_no_tabs_and_unquoted_colon_values_outside_block_scalars.__globals__,
+                        'workflow_lines', lambda: [line])
+    test_workflow_has_no_tabs_and_unquoted_colon_values_outside_block_scalars()
+
+
+@pytest.mark.parametrize('line', [
+    '      - name: Invalid: nested value # comment',
+    '      - name: Invalid: # comment',
+])
+def test_workflow_scalar_check_still_rejects_unquoted_colons(monkeypatch, line):
+    monkeypatch.setitem(test_workflow_has_no_tabs_and_unquoted_colon_values_outside_block_scalars.__globals__,
+                        'workflow_lines', lambda: [line])
+    with pytest.raises(pytest.fail.Exception, match='plain scalar'):
+        test_workflow_has_no_tabs_and_unquoted_colon_values_outside_block_scalars()
 
 
 def test_workflow_pins_the_same_ghidra_and_ghidriff_as_the_backend_workflow():
@@ -286,8 +309,14 @@ def test_workflow_is_read_only_pinned_to_known_actions_and_free_of_event_data():
     text = WORKFLOW.read_text(encoding='utf-8')
     assert re.search(r'^permissions:\n  contents: read$', text, re.M)
     for action in re.findall(r'uses: (\S+)', text):
-        assert action in {'actions/checkout@v4', 'actions/setup-python@v5', 'actions/setup-java@v4',
-                          'actions/upload-artifact@v4', 'actions/download-artifact@v4', 'ilammy/msvc-dev-cmd@v1'}, action
+        assert action in {
+            'actions/checkout@11d5960a326750d5838078e36cf38b85af677262',
+            'actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065',
+            'actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3',
+            'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02',
+            'actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093',
+            'ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756',
+        }, action
     assert '${{ github.event' not in text and 'secrets.' not in text
     assert 'java-version: \'21\'' in text and text.count('tools/live_unified_check.py') >= 4
 

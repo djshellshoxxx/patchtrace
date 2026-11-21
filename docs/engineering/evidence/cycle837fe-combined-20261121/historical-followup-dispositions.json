@@ -1,0 +1,1096 @@
+{
+  "schema": "patchtrace.bounded-historical-semantic-followup/1",
+  "reviewed_at_utc": "2026-11-21T06:22:06.129797+00:00",
+  "reviewer": "historical_semantics_followup independent read-only worker",
+  "target_local_commit": "4ca982e708685889ac2c6f8bedecf79443e6664c",
+  "target_tree": "6a4f9124f9e9e1af6621975fe8c8fc1a1f0cacac",
+  "captured_inventory_heads": 364,
+  "records": [
+    {
+      "branch": "codex/consolidate-backup-stability-20261102",
+      "scope": "Repeated complete backup-byte observations before trusting a cached verification verdict.",
+      "classification": "DUPLICATE",
+      "behavior": "The entire verified_backup.py implementation is byte-identical. _fingerprint obtains two complete observations and returns a version only when they agree; _fingerprint_once retains bounded regular-file hashing and identity/change checks. Every original test declaration remains AST-identical, including the original no-change-time cached-reuse control. Later test additions do not remove the donor controls.",
+      "excluded": "Full filesystem concurrency guarantees, fresh native Windows execution, all future writer behavior, and historical QA/document assertions are not requalified.",
+      "head": "f1a55c4cf21ddb0dea243bd417b74f86caaed142",
+      "donor_tree": "61ddda8e5b94e4eaaeb13e9939625740d1124067",
+      "pull_request": {
+        "base_ref": "main",
+        "base_sha": "ce8c65bf41541cf6adb52289d2a530ce2817a53a",
+        "draft": false,
+        "head_matches_snapshot": true,
+        "head_sha": "f1a55c4cf21ddb0dea243bd417b74f86caaed142",
+        "merged_at": "2026-11-03T00:27:31Z",
+        "number": 162,
+        "state": "closed",
+        "title": "fix: verify stable backup bytes before cached reuse",
+        "url": "https://github.com/djshellshoxxx/patchtrace/pull/162"
+      },
+      "original_pr_base": "ce8c65bf41541cf6adb52289d2a530ce2817a53a",
+      "original_pr_unique_commits": [
+        "f1a55c4cf21ddb0dea243bd417b74f86caaed142"
+      ],
+      "merge_bases_with_target": [
+        "f1a55c4cf21ddb0dea243bd417b74f86caaed142"
+      ],
+      "unique_commits_vs_target": [],
+      "original_pr_changed_paths": [
+        "A\tdocs/qa/backup-byte-stability-20261102.md",
+        "M\tsrc/patchtrace/verified_backup.py",
+        "M\ttests/test_verified_backup_byte_integrity.py"
+      ],
+      "live_ref_verified": true,
+      "live_ref_url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/ref/heads/codex/consolidate-backup-stability-20261102",
+      "whole_branch_status": "PARTIALLY_REVIEWED",
+      "source_recovery_required_in_named_scope": false,
+      "delete_authorized": false,
+      "production_comparisons": [
+        {
+          "path": "src/patchtrace/verified_backup.py",
+          "donor_blob": "9f1e4dbc0bdebb72b1317f7c20ba3953eb66d402",
+          "target_blob": "9f1e4dbc0bdebb72b1317f7c20ba3953eb66d402",
+          "byte_identical": true,
+          "donor_bytes_sha256": "732a2017cc765bc9f08879a51583f4137b5b576ed4276b966d6f9b8a36364318",
+          "target_bytes_sha256": "732a2017cc765bc9f08879a51583f4137b5b576ed4276b966d6f9b8a36364318",
+          "declarations": [
+            {
+              "declaration": "_fingerprint",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "c3ab3c30563da4ebc8aa28594b0a7f06cf0666b8bfa77d6ccdca77672ecb47db",
+              "target_ast_sha256": "c3ab3c30563da4ebc8aa28594b0a7f06cf0666b8bfa77d6ccdca77672ecb47db"
+            },
+            {
+              "declaration": "_fingerprint_once",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "5ed5ea61be714723b15ad695c1de5ff2a5f0e0d76a86ca845614646972e2c2c1",
+              "target_ast_sha256": "5ed5ea61be714723b15ad695c1de5ff2a5f0e0d76a86ca845614646972e2c2c1"
+            },
+            {
+              "declaration": "_stat_key",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "b2d366955448ac147fb1d2f826dcad3ddc3c6d23a8ff8dce940002229508ddcf",
+              "target_ast_sha256": "b2d366955448ac147fb1d2f826dcad3ddc3c6d23a8ff8dce940002229508ddcf"
+            }
+          ],
+          "new_target_declarations": []
+        }
+      ],
+      "test_source_comparisons": [
+        {
+          "path": "tests/test_verified_backup_byte_integrity.py",
+          "donor_blob": "71c724011bb249781dca78ea8dc0ff61d045ecc2",
+          "target_blob": "72b3d20da2e877d61ef49d6f571e902dc14fc87b",
+          "byte_identical": false,
+          "donor_bytes_sha256": "b820aa3d3f357ad4ff6a27e89fb480a1fb3bce8dd61faf91c4487b46074c72c5",
+          "target_bytes_sha256": "86c981678db7b9cc5889a6039efb0e8ef86110933584096bf4e871545135e401",
+          "declarations": [
+            {
+              "declaration": "service",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "70b71ac180b6f20a10a7df5f7584aa2072f2b8c8a87d3ae9008d08d65711171f",
+              "target_ast_sha256": "70b71ac180b6f20a10a7df5f7584aa2072f2b8c8a87d3ae9008d08d65711171f"
+            },
+            {
+              "declaration": "_change_bytes_preserving_metadata",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "6cdba9203557d377dad065cdca06fe7e408b04fdcccaeb6f75b4c99e4d122db9",
+              "target_ast_sha256": "6cdba9203557d377dad065cdca06fe7e408b04fdcccaeb6f75b4c99e4d122db9"
+            },
+            {
+              "declaration": "_save",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "64ed085c30e762e07b2aaa534c3245283c89977de085d33e1be14748cd8418d6",
+              "target_ast_sha256": "64ed085c30e762e07b2aaa534c3245283c89977de085d33e1be14748cd8418d6"
+            },
+            {
+              "declaration": "_sequences",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "e2ef0861476f6c694143bab75b9abd80b5bc38113387d033feb2082a479e5c1e",
+              "target_ast_sha256": "e2ef0861476f6c694143bab75b9abd80b5bc38113387d033feb2082a479e5c1e"
+            },
+            {
+              "declaration": "test_cached_good_backup_does_not_trust_same_size_restored_mtime_corruption",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "91217bd5977d5625859f77f763a713ed150f5b5696277599b4c1483f8277e64f",
+              "target_ast_sha256": "91217bd5977d5625859f77f763a713ed150f5b5696277599b4c1483f8277e64f"
+            },
+            {
+              "declaration": "test_public_save_keeps_history_when_cached_backup_was_tampered",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "5acde260641713ef249461ee1b7a45e5c6003897cdd6d22f096cb15786665611",
+              "target_ast_sha256": "5acde260641713ef249461ee1b7a45e5c6003897cdd6d22f096cb15786665611"
+            },
+            {
+              "declaration": "test_corruption_after_sqlite_check_cannot_enter_the_verdict_cache",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "bad444f234488680e580168ffb1c3b6c68366aff867ddb0e9f876f96182ccad3",
+              "target_ast_sha256": "bad444f234488680e580168ffb1c3b6c68366aff867ddb0e9f876f96182ccad3"
+            },
+            {
+              "declaration": "test_published_copy_changed_after_link_is_not_returned_as_verified",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "beff43f1159bf44d9d404a723bc204adbe5497975fe133fd26695373684bc6f5",
+              "target_ast_sha256": "beff43f1159bf44d9d404a723bc204adbe5497975fe133fd26695373684bc6f5"
+            },
+            {
+              "declaration": "test_unreadable_byte_fingerprint_never_publishes_a_verified_copy",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "38cc12e664972c1f051b7e52f8c2c39dc651f6ccce67e4b359f73741ddaf206d",
+              "target_ast_sha256": "38cc12e664972c1f051b7e52f8c2c39dc651f6ccce67e4b359f73741ddaf206d"
+            },
+            {
+              "declaration": "test_edit_to_already_hashed_bytes_with_restored_mtime_is_not_trusted",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "40b3f386c55b927e5e796c7ed8987ecc2ffb6cee80483fdff2fef574054700b9",
+              "target_ast_sha256": "40b3f386c55b927e5e796c7ed8987ecc2ffb6cee80483fdff2fef574054700b9"
+            },
+            {
+              "declaration": "_unchanged_change_times",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "6e98cf1adedc0ecb1b84d28bacfd9c019df76757f3b9b3a9847e8d9f6df0616c",
+              "target_ast_sha256": "6e98cf1adedc0ecb1b84d28bacfd9c019df76757f3b9b3a9847e8d9f6df0616c"
+            },
+            {
+              "declaration": "test_cached_reuse_matches_bytes_when_change_times_do_not_advance",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "998eca68685f6a70e20e4137749a89ed83e87ff7f10d51ae29af22ee4daa95fe",
+              "target_ast_sha256": "998eca68685f6a70e20e4137749a89ed83e87ff7f10d51ae29af22ee4daa95fe"
+            },
+            {
+              "declaration": "_fixed_backup_clock",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "910c0406c2e793ce589ea4e6434a85d7b9e93fb877b78d1b16d182d7e32b5932",
+              "target_ast_sha256": "910c0406c2e793ce589ea4e6434a85d7b9e93fb877b78d1b16d182d7e32b5932"
+            },
+            {
+              "declaration": "test_timestamp_collision_preserves_previous_verified_backup",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "0120ca8d70e8ff398dcc358af2138719767832c09513d770cbff5dc991bf0146",
+              "target_ast_sha256": "0120ca8d70e8ff398dcc358af2138719767832c09513d770cbff5dc991bf0146"
+            },
+            {
+              "declaration": "test_preexisting_pending_copy_is_neither_reused_nor_removed",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "f3b0d8e518ff854af41b86a9c4858963751c2714b8aefbb2b1645d7517f5c0c0",
+              "target_ast_sha256": "f3b0d8e518ff854af41b86a9c4858963751c2714b8aefbb2b1645d7517f5c0c0"
+            },
+            {
+              "declaration": "test_destination_created_during_publication_survives",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "d6d9df161c00a71ade75c58ac381015343c1bd0123c1cba8a5615750e0bd065c",
+              "target_ast_sha256": "d6d9df161c00a71ade75c58ac381015343c1bd0123c1cba8a5615750e0bd065c"
+            },
+            {
+              "declaration": "test_unsupported_atomic_publication_fails_closed",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "d77d25d5cbb181eaf2c4acf009aeba07379e8725dd59bdceb22cc3aa50e42059",
+              "target_ast_sha256": "d77d25d5cbb181eaf2c4acf009aeba07379e8725dd59bdceb22cc3aa50e42059"
+            }
+          ],
+          "new_target_declarations": [
+            "test_failed_second_observation_revokes_cached_backup_until_reverified"
+          ]
+        }
+      ],
+      "captured_main": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+      "merge_bases_with_captured_main": [
+        "f1a55c4cf21ddb0dea243bd417b74f86caaed142"
+      ]
+    },
+    {
+      "branch": "integrate/gui-inspection-20261105",
+      "scope": "Ignore an obsolete inspection failure after the current project inspection key changes.",
+      "classification": "DUPLICATE",
+      "behavior": "MainWindow._inspection_failed is AST-identical. A mismatched supplied key returns before changing the inspection error, emitting status or appending a log; a current or unspecified key follows the retained failure path. The complete stale-inspection regression file is byte-identical.",
+      "excluded": "The same donor also changed export privacy copy; that already-reviewed export scope is deliberately excluded here. Broader success-path/lifecycle changes and native GUI acceptance are not reviewed.",
+      "head": "3fa22c611697d7593755c329fd762bfb47b39b84",
+      "donor_tree": "0b465c0989ea00da15da51270619db0e021b21dd",
+      "pull_request": {
+        "base_ref": "main",
+        "base_sha": "5d504ff5c046bfb758623182b472976003632bba",
+        "draft": true,
+        "head_matches_snapshot": true,
+        "head_sha": "3fa22c611697d7593755c329fd762bfb47b39b84",
+        "merged_at": "2026-11-07T06:13:28Z",
+        "number": 196,
+        "state": "closed",
+        "title": "fix(gui): preserve current inspection status after project changes",
+        "url": "https://github.com/djshellshoxxx/patchtrace/pull/196"
+      },
+      "original_pr_base": "5d504ff5c046bfb758623182b472976003632bba",
+      "original_pr_unique_commits": [
+        "3fa22c611697d7593755c329fd762bfb47b39b84"
+      ],
+      "merge_bases_with_target": [
+        "3fa22c611697d7593755c329fd762bfb47b39b84"
+      ],
+      "unique_commits_vs_target": [],
+      "original_pr_changed_paths": [
+        "M\tdocs/qa.md",
+        "M\tdocs/specs/gui-preflight-inspection.md",
+        "M\tdocs/specs/ui.md",
+        "M\tsrc/patchtrace/ui.py",
+        "M\ttasks/todo.md",
+        "A\ttests/test_audit116_export_copy.py",
+        "A\ttests/test_audit116_stale_inspection_failure.py"
+      ],
+      "live_ref_verified": true,
+      "live_ref_url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/ref/heads/integrate/gui-inspection-20261105",
+      "whole_branch_status": "PARTIALLY_REVIEWED",
+      "source_recovery_required_in_named_scope": false,
+      "delete_authorized": false,
+      "production_comparisons": [
+        {
+          "path": "src/patchtrace/ui.py",
+          "donor_blob": "a36766f42246e9c65ba21d8a6053a602cbfae465",
+          "target_blob": "d2a797f0dfb50aed50594e3e3b81a1d7c0e740d9",
+          "byte_identical": false,
+          "donor_bytes_sha256": "9a0cd20084c998bbc6bc5910231167f6ab240a28c4c9b0b4eec7ad99b3b7a654",
+          "target_bytes_sha256": "5b34948a950bbe585a7b06e0a880bf47b323850af57ea650cd62547cc864c78e",
+          "declarations": [
+            {
+              "declaration": "MainWindow._inspection_failed",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "bc95565a9a34de0f34dec34625945b75296a7c4ead6cc620612d2194b7f4e349",
+              "target_ast_sha256": "bc95565a9a34de0f34dec34625945b75296a7c4ead6cc620612d2194b7f4e349"
+            }
+          ],
+          "new_target_declarations": [
+            "MainWindow.investigate_kb",
+            "MainWindow.investigation_dialog"
+          ]
+        }
+      ],
+      "test_source_comparisons": [
+        {
+          "path": "tests/test_audit116_stale_inspection_failure.py",
+          "donor_blob": "60df1fcac03b0961358b3bd19776fddc2a7db5d1",
+          "target_blob": "60df1fcac03b0961358b3bd19776fddc2a7db5d1",
+          "byte_identical": true,
+          "donor_bytes_sha256": "a946e223a64dd305e10b4dbd25803227af3adbbe04657cc6eff50037e5e78ce4",
+          "target_bytes_sha256": "a946e223a64dd305e10b4dbd25803227af3adbbe04657cc6eff50037e5e78ce4",
+          "declarations": [
+            {
+              "declaration": "test_stale_failure_is_ignored",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "b0e2d7519b9982d5f11f41c619b7be2724690e15fccd4fb4ca440f54e06e8a50",
+              "target_ast_sha256": "b0e2d7519b9982d5f11f41c619b7be2724690e15fccd4fb4ca440f54e06e8a50"
+            },
+            {
+              "declaration": "test_stale_failure_preserves_current_error",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "31447170dbb6a23ef34cc5704ad3872f916fca7ce0a3773d1c1b90eff8f692ea",
+              "target_ast_sha256": "31447170dbb6a23ef34cc5704ad3872f916fca7ce0a3773d1c1b90eff8f692ea"
+            },
+            {
+              "declaration": "test_current_and_unkeyed_failures_still_report",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "35b414336f18f414cb852460d0ddab95945fb760b5fd10fa36009d068bec85d6",
+              "target_ast_sha256": "35b414336f18f414cb852460d0ddab95945fb760b5fd10fa36009d068bec85d6"
+            }
+          ],
+          "new_target_declarations": []
+        }
+      ],
+      "captured_main": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+      "merge_bases_with_captured_main": [
+        "3fa22c611697d7593755c329fd762bfb47b39b84"
+      ]
+    },
+    {
+      "branch": "integrate/project-adoption-20261105",
+      "scope": "Transactional adoption of an incoming project, including prior service and recent-project preference rollback.",
+      "classification": "DUPLICATE",
+      "behavior": "The complete project_adoption.py helper and its test file are byte-identical; MainWindow.set_service remains the same thin AST-equivalent delegation. The previous service stays open until incoming render/preferences/menu work succeeds. Failure restores the prior pointer and preference state, attempts view recovery, closes only a rejected different service, and reraises. Readopting the same service does not close it.",
+      "excluded": "All other MainWindow evolution, service close-error contracts, prior manual platform claims and whole-branch document equivalence are not evaluated.",
+      "head": "1c97defacd54a593a8ecdcda2b9c11c85b073791",
+      "donor_tree": "e008808535f0e565485f9c6b750a79d5eef0320e",
+      "pull_request": {
+        "base_ref": "main",
+        "base_sha": "5d504ff5c046bfb758623182b472976003632bba",
+        "draft": true,
+        "head_matches_snapshot": true,
+        "head_sha": "1c97defacd54a593a8ecdcda2b9c11c85b073791",
+        "merged_at": "2026-11-07T06:13:27Z",
+        "number": 198,
+        "state": "closed",
+        "title": "fix(gui): retain the current project when replacement adoption fails",
+        "url": "https://github.com/djshellshoxxx/patchtrace/pull/198"
+      },
+      "original_pr_base": "5d504ff5c046bfb758623182b472976003632bba",
+      "original_pr_unique_commits": [
+        "a7accac683891175c862c86ddb5b2051d61189fa",
+        "1c97defacd54a593a8ecdcda2b9c11c85b073791"
+      ],
+      "merge_bases_with_target": [
+        "1c97defacd54a593a8ecdcda2b9c11c85b073791"
+      ],
+      "unique_commits_vs_target": [],
+      "original_pr_changed_paths": [
+        "M\tdocs/modules.md",
+        "M\tdocs/qa.md",
+        "M\tdocs/specs/ui.md",
+        "A\tsrc/patchtrace/gui/qt/project_adoption.py",
+        "M\tsrc/patchtrace/ui.py",
+        "M\ttasks/todo.md",
+        "A\ttests/test_gui_project_adoption.py"
+      ],
+      "live_ref_verified": true,
+      "live_ref_url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/ref/heads/integrate/project-adoption-20261105",
+      "whole_branch_status": "PARTIALLY_REVIEWED",
+      "source_recovery_required_in_named_scope": false,
+      "delete_authorized": false,
+      "production_comparisons": [
+        {
+          "path": "src/patchtrace/gui/qt/project_adoption.py",
+          "donor_blob": "ad88680c90dd769b61bfbb2dd95a7bc6eea3b42a",
+          "target_blob": "ad88680c90dd769b61bfbb2dd95a7bc6eea3b42a",
+          "byte_identical": true,
+          "donor_bytes_sha256": "f420776dec871c914a7cf21c7634a1c51642486f32ac92c48b6982e62bf849f3",
+          "target_bytes_sha256": "f420776dec871c914a7cf21c7634a1c51642486f32ac92c48b6982e62bf849f3",
+          "declarations": [
+            {
+              "declaration": "adopt_project",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "69af9ba769c16e682b522dee02c36c57a40ffd7fbdd8834c7ad9475f22ae5617",
+              "target_ast_sha256": "69af9ba769c16e682b522dee02c36c57a40ffd7fbdd8834c7ad9475f22ae5617"
+            }
+          ],
+          "new_target_declarations": []
+        },
+        {
+          "path": "src/patchtrace/ui.py",
+          "donor_blob": "61e8e2a6e0e0334b7395457ea57a942d54decd9c",
+          "target_blob": "d2a797f0dfb50aed50594e3e3b81a1d7c0e740d9",
+          "byte_identical": false,
+          "donor_bytes_sha256": "90213c47956427441af5d848ea4c1192ee4769be279cd8df9d21a968570ebf1f",
+          "target_bytes_sha256": "5b34948a950bbe585a7b06e0a880bf47b323850af57ea650cd62547cc864c78e",
+          "declarations": [
+            {
+              "declaration": "MainWindow.set_service",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "75d272f20f856da6f7834f74fc5cfdccee3cdcb1dc99801e6cb5e765eb1bc4e0",
+              "target_ast_sha256": "75d272f20f856da6f7834f74fc5cfdccee3cdcb1dc99801e6cb5e765eb1bc4e0"
+            }
+          ],
+          "new_target_declarations": [
+            "MainWindow.investigate_kb",
+            "MainWindow.investigation_dialog"
+          ]
+        }
+      ],
+      "test_source_comparisons": [
+        {
+          "path": "tests/test_gui_project_adoption.py",
+          "donor_blob": "a7d4083b700c19dde85a135164cc6dd3fb5a6ea8",
+          "target_blob": "a7d4083b700c19dde85a135164cc6dd3fb5a6ea8",
+          "byte_identical": true,
+          "donor_bytes_sha256": "a6d23056717f56d3585e45c452a3f8bf97f6c9f6140f3710cfc8ec0d3027c559",
+          "target_bytes_sha256": "a6d23056717f56d3585e45c452a3f8bf97f6c9f6140f3710cfc8ec0d3027c559",
+          "declarations": [
+            {
+              "declaration": "window",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "2f3d7a75a230565d6a351f098efa8e2c1d44485c4434a3838e9e747cc0088f18",
+              "target_ast_sha256": "2f3d7a75a230565d6a351f098efa8e2c1d44485c4434a3838e9e747cc0088f18"
+            },
+            {
+              "declaration": "closed",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "1204f3ad388f7fa95feba375e4b62e30cc078de21750be8ed3adce10c39a03dc",
+              "target_ast_sha256": "1204f3ad388f7fa95feba375e4b62e30cc078de21750be8ed3adce10c39a03dc"
+            },
+            {
+              "declaration": "test_failed_adoption_preserves_previous_service_and_preferences",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "2ef08ebc9a867426368e058c80a1884a813fea7ec1501521c11b95183a509323",
+              "target_ast_sha256": "2ef08ebc9a867426368e058c80a1884a813fea7ec1501521c11b95183a509323"
+            },
+            {
+              "declaration": "test_failed_first_adoption_restores_absent_preferences",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "b753796063b1f477607998cc16ce040005c4ca9feb091cece02b4925d1c7c8c8",
+              "target_ast_sha256": "b753796063b1f477607998cc16ce040005c4ca9feb091cece02b4925d1c7c8c8"
+            },
+            {
+              "declaration": "test_success_keeps_previous_open_until_render_and_preferences_finish",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "f62030697f8c2248210fecc8242edf0d5d5e2395b3a7525b65990cf10b3ccdde",
+              "target_ast_sha256": "f62030697f8c2248210fecc8242edf0d5d5e2395b3a7525b65990cf10b3ccdde"
+            },
+            {
+              "declaration": "test_readopting_same_service_never_closes_it",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "3a5a3d67d88fafc4a31ac5a17cb4915ca7bd5b4c5b1ab8db087c4de7c63961f4",
+              "target_ast_sha256": "3a5a3d67d88fafc4a31ac5a17cb4915ca7bd5b4c5b1ab8db087c4de7c63961f4"
+            },
+            {
+              "declaration": "test_failed_rollback_render_retains_previous_service_and_reports_diagnostic",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "ee180ca1e0c59b5190cd7d27e12c429bc4d9a6cbcab81158aad303fdd2b0b994",
+              "target_ast_sha256": "ee180ca1e0c59b5190cd7d27e12c429bc4d9a6cbcab81158aad303fdd2b0b994"
+            }
+          ],
+          "new_target_declarations": []
+        }
+      ],
+      "captured_main": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+      "merge_bases_with_captured_main": [
+        "1c97defacd54a593a8ecdcda2b9c11c85b073791"
+      ]
+    },
+    {
+      "branch": "repair/wizard-lock-retry-20261105",
+      "scope": "Shared read-only creation preflight for retained lock-only destinations, and retention of an already committed acquired project on later provenance/final-copy failure.",
+      "classification": "SUPERSEDED",
+      "behavior": "The donor preflight contract remains called by New/Acquisition dialogs, acquisition.check_project_root, KB destination checking and attachment admission. The shared helper now additionally inspects the nearest existing ancestor when lstat reports a missing destination; the KB path also refuses a Windows junction. Donor dialog methods, acquisition workflow and promote function, are AST-equivalent in the named paths; the attachment _begin destination guard remains an identical subtree inside a later expanded journal path. promote still closes and retains the committed project instead of deleting it after later verification/provenance failure. All original creation-retry test declarations remain unchanged, with an added Windows missing-parent control.",
+      "excluded": "Later acquisition network/provenance behavior, other quarantine cleanup methods, complete KB attachment evolution and platform execution are outside scope. The unchanged import-boundary helper tests are checked, but the unrelated evolving domain-import inventory is excluded.",
+      "head": "38be184cda6fbe6f79a6f265b04e2efc6a2688dd",
+      "donor_tree": "2b0736953403c4f1b2c64426bdbe11218132de62",
+      "pull_request": {
+        "base_ref": "integrate/swarm-qualified-20261105",
+        "base_sha": "f33e2a0aaa3399644367f2419fee21cfe2e8702b",
+        "draft": true,
+        "head_matches_snapshot": true,
+        "head_sha": "38be184cda6fbe6f79a6f265b04e2efc6a2688dd",
+        "merged_at": null,
+        "number": 219,
+        "state": "closed",
+        "title": "Permit safe wizard retry with retained persistent lock",
+        "url": "https://github.com/djshellshoxxx/patchtrace/pull/219"
+      },
+      "original_pr_base": "f33e2a0aaa3399644367f2419fee21cfe2e8702b",
+      "original_pr_unique_commits": [
+        "38be184cda6fbe6f79a6f265b04e2efc6a2688dd"
+      ],
+      "merge_bases_with_target": [
+        "38be184cda6fbe6f79a6f265b04e2efc6a2688dd"
+      ],
+      "unique_commits_vs_target": [],
+      "original_pr_changed_paths": [
+        "M\tdocs/specs/acquisition.md",
+        "M\tdocs/specs/ui.md",
+        "M\tsrc/patchtrace/acquisition/quarantine.py",
+        "M\tsrc/patchtrace/acquisition/workflow.py",
+        "M\tsrc/patchtrace/kbcorrelation/investigation_service.py",
+        "M\tsrc/patchtrace/kbcorrelation/store.py",
+        "M\tsrc/patchtrace/persistence.py",
+        "M\tsrc/patchtrace/ui.py",
+        "M\ttests/stress/test_cli_stress_recovery.py",
+        "M\ttests/test_acquisition_hardening.py",
+        "A\ttests/test_gui_creation_retry.py",
+        "M\ttests/test_kbc_contracts.py"
+      ],
+      "live_ref_verified": true,
+      "live_ref_url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/ref/heads/repair/wizard-lock-retry-20261105",
+      "whole_branch_status": "PARTIALLY_REVIEWED",
+      "source_recovery_required_in_named_scope": false,
+      "delete_authorized": false,
+      "production_comparisons": [
+        {
+          "path": "src/patchtrace/persistence.py",
+          "donor_blob": "05a86e390313ba6e335592bc683bb691cb4992fa",
+          "target_blob": "b74f2c2b3f5b95b21748999aae343053e331922d",
+          "byte_identical": false,
+          "donor_bytes_sha256": "aa80f3d585e03bd7e3e9a110727f39f4c1e2a6bccf9fa80d560a208c1f0cab17",
+          "target_bytes_sha256": "9bfe53c6472eafd3d00c487b9e2431781efa384fd9104aefc95bb031ea445119",
+          "declarations": [
+            {
+              "declaration": "creation_directory_available",
+              "present": true,
+              "ast_identical": false,
+              "donor_ast_sha256": "27eeb569864f1854c4075d6e896daff91dc9a16d84f360e03fd669bb5a814fa7",
+              "target_ast_sha256": "2c30d692b0bcacd867eb4204bb402d540eaafdbaef5408fca3ebb8c4921197ba"
+            }
+          ],
+          "new_target_declarations": [
+            "ProjectLock._check_identity"
+          ]
+        },
+        {
+          "path": "src/patchtrace/ui.py",
+          "donor_blob": "09e8d815851919660a318f82e0d458482e9d6c73",
+          "target_blob": "d2a797f0dfb50aed50594e3e3b81a1d7c0e740d9",
+          "byte_identical": false,
+          "donor_bytes_sha256": "106e757a186b28de56aec348eb78b954bac0d0710a90d8444055d24f9a1100e6",
+          "target_bytes_sha256": "5b34948a950bbe585a7b06e0a880bf47b323850af57ea650cd62547cc864c78e",
+          "declarations": [
+            {
+              "declaration": "NewProjectDialog.accept",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "bde9cc789190f87279d851fe96d2013ca90e649d7c89e50e46b69cba3932abd9",
+              "target_ast_sha256": "bde9cc789190f87279d851fe96d2013ca90e649d7c89e50e46b69cba3932abd9"
+            },
+            {
+              "declaration": "AcquisitionDialog.download",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "9bf767967973dbc4dae839aa8a68b1ee18f840dd6270c8071a0219bbc4643d04",
+              "target_ast_sha256": "9bf767967973dbc4dae839aa8a68b1ee18f840dd6270c8071a0219bbc4643d04"
+            }
+          ],
+          "new_target_declarations": []
+        },
+        {
+          "path": "src/patchtrace/acquisition/workflow.py",
+          "donor_blob": "cfeea68fee9665f855e4abb7392c86526e26c1a9",
+          "target_blob": "cfeea68fee9665f855e4abb7392c86526e26c1a9",
+          "byte_identical": true,
+          "donor_bytes_sha256": "14e25ab930533d98527b79786152e3b2b8d2992a8f03cbe9382e319e461ab66f",
+          "target_bytes_sha256": "14e25ab930533d98527b79786152e3b2b8d2992a8f03cbe9382e319e461ab66f",
+          "declarations": [
+            {
+              "declaration": "check_project_root",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "d788a083c66a4b69f66dd29d3218d6bf073fb9893455d359dd1b21e4bbafc048",
+              "target_ast_sha256": "d788a083c66a4b69f66dd29d3218d6bf073fb9893455d359dd1b21e4bbafc048"
+            }
+          ],
+          "new_target_declarations": []
+        },
+        {
+          "path": "src/patchtrace/acquisition/quarantine.py",
+          "donor_blob": "72dd63ac6261efcd0bcf59f703f9af8e10ac071e",
+          "target_blob": "99fadf3bf10215521b5b0320f228c9292f839986",
+          "byte_identical": false,
+          "donor_bytes_sha256": "79c48c9adfc07d38af4e1ee9378f0ef0a2bb9e8c624229d1e467ecfb1436675a",
+          "target_bytes_sha256": "d503b6befa6d053a20172b9cb62577b894d8206729d0ddce4f948e17a63ba3ba",
+          "declarations": [
+            {
+              "declaration": "promote",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "d33173729a6d0cb74abf1c1a4bd731a3aec7fcbf6f956f74a073f5deff03926b",
+              "target_ast_sha256": "d33173729a6d0cb74abf1c1a4bd731a3aec7fcbf6f956f74a073f5deff03926b"
+            }
+          ],
+          "new_target_declarations": []
+        },
+        {
+          "path": "src/patchtrace/kbcorrelation/investigation_service.py",
+          "donor_blob": "7d4e507d8adf47dd3055915c24119ebae94d2145",
+          "target_blob": "00aa0ebcd3d3a507046b3825715e490d866f1eef",
+          "byte_identical": false,
+          "donor_bytes_sha256": "cd90a673927613e8545dcaf6c36bf7bd0ae72ab6036805887bb8e3967b8d0bd5",
+          "target_bytes_sha256": "718905489afba4bdd63639121b68a2d0b9c73dfebae1605574050ef6d0a9e62e",
+          "declarations": [
+            {
+              "declaration": "_new_destination",
+              "present": true,
+              "ast_identical": false,
+              "donor_ast_sha256": "bfec81408ec125f12e43830742d50558c7326711a58bfd0bd7c62142459b4b8d",
+              "target_ast_sha256": "d9641d53eda260e2ecbdc72a38ae15577c1e70245d6f6a2ae1450dd80f223e51"
+            }
+          ],
+          "new_target_declarations": [
+            "_CandidateFileIndex",
+            "_CandidateFileIndex.__init__",
+            "_CandidateFileIndex.available",
+            "_CandidateFileIndex.rows",
+            "_CandidateFileIndex.rows_for",
+            "_CandidateFileIndex.unchanged",
+            "_candidate_operation",
+            "_candidate_owner",
+            "_candidate_snapshot",
+            "_check_start_mode",
+            "_index_claims",
+            "_metadata_operation",
+            "_product_selection",
+            "_source_operation",
+            "_source_plan"
+          ]
+        },
+        {
+          "path": "src/patchtrace/kbcorrelation/store.py",
+          "donor_blob": "d4ef8aa4ff22aebf1a32f0901ddd76179a172703",
+          "target_blob": "3decc9ba5200b65ab212b6064e65f75a3cbb4cb9",
+          "byte_identical": false,
+          "donor_bytes_sha256": "a58a143040ed75331314308dc653c9465886f8b81ce1a98cf01ab9f5adcb31c5",
+          "target_bytes_sha256": "ec2f9f6e05df61855ffe4603362e24c3a62660e775cbdb28edf91b8e84ace0f0",
+          "declarations": [
+            {
+              "declaration": "ProjectAttachment._begin",
+              "present": true,
+              "ast_identical": false,
+              "donor_ast_sha256": "0758fdc0bbc004b3a9ea7f4f5ec1844a150ca2c1a5442023ca82f914b4961b33",
+              "target_ast_sha256": "5ff5a02398bceee49d5dc5c291c944f91137a3f7d867be26ea01fe8cde74ba0b"
+            }
+          ],
+          "new_target_declarations": [
+            "ProjectAttachment._acquisition"
+          ]
+        }
+      ],
+      "test_source_comparisons": [
+        {
+          "path": "tests/test_gui_creation_retry.py",
+          "donor_blob": "33825730b7d9f3dc232fd56e29885a13f7ff6c78",
+          "target_blob": "4df9f373d03ef1d9a5b694c213cd9ea322709a15",
+          "byte_identical": false,
+          "donor_bytes_sha256": "50d1f124b5f017b437e0c88f6790e5221f2cc79d3bc54e9595cc79f130d7352e",
+          "target_bytes_sha256": "a887c0a866fbab5509d92d8593bcca1dcaa581de8e32891ceab3545cf61c1281",
+          "declarations": [
+            {
+              "declaration": "test_new_wizard_retries_after_real_failed_creation",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "a3c5a44fc6fdc801582e77a1c56b58078a120d2792e58b0c285a87ee6d4de257",
+              "target_ast_sha256": "a3c5a44fc6fdc801582e77a1c56b58078a120d2792e58b0c285a87ee6d4de257"
+            },
+            {
+              "declaration": "test_destination_preflight_is_readonly_and_bounded",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "f550fb844fba4cad013f130b64b50502ab6221c8eccff42be0b61b8ef012d895",
+              "target_ast_sha256": "f550fb844fba4cad013f130b64b50502ab6221c8eccff42be0b61b8ef012d895"
+            },
+            {
+              "declaration": "test_active_lock_preflight_does_not_bypass_actual_writer_lock",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "a8d7672e468f269e8ade8d15087ab220c2d990db09ea7556eb9e1092910bb290",
+              "target_ast_sha256": "a8d7672e468f269e8ade8d15087ab220c2d990db09ea7556eb9e1092910bb290"
+            },
+            {
+              "declaration": "test_foreign_entry_still_blocks_new_wizard",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "8fbdfac919ae1e327edfd0ba9f129185030ed533bef8092ca5ffa3f8152a9528",
+              "target_ast_sha256": "8fbdfac919ae1e327edfd0ba9f129185030ed533bef8092ca5ffa3f8152a9528"
+            },
+            {
+              "declaration": "test_kb_destination_accepts_retained_lock_without_mutating_it",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "c277641611819f254a732c5c045226290a4dada90cf2a69cfd0e8ee2ecb04d95",
+              "target_ast_sha256": "c277641611819f254a732c5c045226290a4dada90cf2a69cfd0e8ee2ecb04d95"
+            },
+            {
+              "declaration": "test_destination_preflight_refuses_inspection_error",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "188e045e61893bb5b4f8410c25b81335ee9a8e1b17e0e49eb19c269059f514eb",
+              "target_ast_sha256": "188e045e61893bb5b4f8410c25b81335ee9a8e1b17e0e49eb19c269059f514eb"
+            },
+            {
+              "declaration": "test_promotion_failure_retains_committed_snapshot_foreign_files_and_lock",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "2988ad9d75755f1f4a020cd8d3789af8501e0c024de242c1769caae16a25df1f",
+              "target_ast_sha256": "2988ad9d75755f1f4a020cd8d3789af8501e0c024de242c1769caae16a25df1f"
+            },
+            {
+              "declaration": "test_acquisition_wizard_accepts_lock_only_destination",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "5456db7bc9bb239e22e174078b0850c87972826553fe54f9b89b5f1d2b927986",
+              "target_ast_sha256": "5456db7bc9bb239e22e174078b0850c87972826553fe54f9b89b5f1d2b927986"
+            },
+            {
+              "declaration": "test_acquisition_wizard_reports_retained_project_on_postcreate_failure",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "5220b27f07eca5d9f3bee663a2f6039c2733825acceca356fc98650fe3b3f8af",
+              "target_ast_sha256": "5220b27f07eca5d9f3bee663a2f6039c2733825acceca356fc98650fe3b3f8af"
+            },
+            {
+              "declaration": "test_kb_creation_retries_into_retained_lock_directory",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "4814ece5deb6126534b5c996a4816971f8ad744775fe95520752fffd6b909d65",
+              "target_ast_sha256": "4814ece5deb6126534b5c996a4816971f8ad744775fe95520752fffd6b909d65"
+            },
+            {
+              "declaration": "test_acquisition_workflow_uses_same_lock_only_policy",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "3423558f6ef5e33a99312ea04a646920d11417a5488bf5e943353751a27070f3",
+              "target_ast_sha256": "3423558f6ef5e33a99312ea04a646920d11417a5488bf5e943353751a27070f3"
+            }
+          ],
+          "new_target_declarations": [
+            "test_absent_destination_checks_nearest_existing_parent_on_windows"
+          ]
+        },
+        {
+          "path": "tests/test_acquisition_hardening.py",
+          "donor_blob": "069a5bd6bbbf34749da72ec8b8a2287a3f3eb8e7",
+          "target_blob": "069a5bd6bbbf34749da72ec8b8a2287a3f3eb8e7",
+          "byte_identical": true,
+          "donor_bytes_sha256": "b163526404c4e619205c633f19f8ebe29e29249465ae1cc70d3eda6722320ba3",
+          "target_bytes_sha256": "b163526404c4e619205c633f19f8ebe29e29249465ae1cc70d3eda6722320ba3",
+          "declarations": [
+            {
+              "declaration": "test_promote_failure_after_create_retains_the_committed_project",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "78fac56527aac9e0aba7d1f72764bf74e9236e5211e2f7af609321eb6158b1ec",
+              "target_ast_sha256": "78fac56527aac9e0aba7d1f72764bf74e9236e5211e2f7af609321eb6158b1ec"
+            }
+          ],
+          "new_target_declarations": []
+        },
+        {
+          "path": "tests/test_kbc_contracts.py",
+          "donor_blob": "dbccb22ee2f3806b9b0d98704fed4c725f75ae7c",
+          "target_blob": "d48e133374a3dec52d77586b90f6ee3d83803c3d",
+          "byte_identical": false,
+          "donor_bytes_sha256": "5cffe72e13d1cbb8e2c6e177303c5bc99874574dd5d23f4cd5653b7056a7b228",
+          "target_bytes_sha256": "a852e109948f8df9026aa179dae837a662aaaefe574f7902575d136a55893334",
+          "declarations": [
+            {
+              "declaration": "test_investigation_destination_preflight_has_no_database_escape",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "337124ea70ce8d6d8b8c2bbaece063b8173806ca0ae0eeb86b28addb4a8f6414",
+              "target_ast_sha256": "337124ea70ce8d6d8b8c2bbaece063b8173806ca0ae0eeb86b28addb4a8f6414"
+            },
+            {
+              "declaration": "test_workspace_destination_preflight_is_exact_helper_import",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "c31efc4dece1c9b33adabb3df12ed9dd5c8c1afb02d7625186eb97efa96d8576",
+              "target_ast_sha256": "c31efc4dece1c9b33adabb3df12ed9dd5c8c1afb02d7625186eb97efa96d8576"
+            }
+          ],
+          "new_target_declarations": []
+        }
+      ],
+      "adaptation_checks": {
+        "attachment_preflight_guard_ast_identical": true,
+        "preflight_precedes_journal_publication": true,
+        "surrounding_journal_evolution_excluded": true
+      },
+      "captured_main": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+      "merge_bases_with_captured_main": [
+        "38be184cda6fbe6f79a6f265b04e2efc6a2688dd"
+      ]
+    },
+    {
+      "branch": "work/investigation-accessibility-20261105",
+      "scope": "Investigation field mnemonic buddies, ordered keyboard traversal and focus on a missing workspace field.",
+      "classification": "SUPERSEDED",
+      "behavior": "The original labeled-field construction loop is retained as an identical AST subtree, including field buddies and the original mnemonic text. The final tab-order application loop is also identical. Current initialization extends the ordered list for stored-product and separately consented metadata controls; its original product selector remains before the older binary field. The missing-workspace guard still sets keyboard focus to the correct field. The complete original accessibility regression file is byte-identical.",
+      "excluded": "New product/metadata features, every new mnemonic combination, native screen-reader/manual accessibility and broad investigation lifecycle are not qualified.",
+      "head": "b5d4bceabdc34f520120d9dc336d975768e20483",
+      "donor_tree": "264bfbec7179e9bacf8302908080b7fd2dcc5b3c",
+      "pull_request": {
+        "base_ref": "integrate/swarm-wave3-20261105",
+        "base_sha": "afc8a2967ba3dec6b1ac3351d20dd08c193ba9bc",
+        "draft": true,
+        "head_matches_snapshot": true,
+        "head_sha": "b5d4bceabdc34f520120d9dc336d975768e20483",
+        "merged_at": null,
+        "number": 226,
+        "state": "closed",
+        "title": "Restore investigation label shortcuts and keyboard focus order",
+        "url": "https://github.com/djshellshoxxx/patchtrace/pull/226"
+      },
+      "original_pr_base": "afc8a2967ba3dec6b1ac3351d20dd08c193ba9bc",
+      "original_pr_unique_commits": [
+        "b5d4bceabdc34f520120d9dc336d975768e20483"
+      ],
+      "merge_bases_with_target": [
+        "b5d4bceabdc34f520120d9dc336d975768e20483"
+      ],
+      "unique_commits_vs_target": [],
+      "original_pr_changed_paths": [
+        "A\tdocs/qa/investigation-accessibility-20261105.md",
+        "M\tdocs/specs/kb-cve/31-F-workflow-ui-persistence.md",
+        "M\tsrc/patchtrace/kbcorrelation/investigation_qt.py",
+        "A\ttests/test_kb_accessibility_20261105.py"
+      ],
+      "live_ref_verified": true,
+      "live_ref_url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/ref/heads/work/investigation-accessibility-20261105",
+      "whole_branch_status": "PARTIALLY_REVIEWED",
+      "source_recovery_required_in_named_scope": false,
+      "delete_authorized": false,
+      "production_comparisons": [
+        {
+          "path": "src/patchtrace/kbcorrelation/investigation_qt.py",
+          "donor_blob": "cc688c6b52153db6cca710f5b1629851e461a0dd",
+          "target_blob": "4f0bfeae3599cd2e23962462d69777d5e7e08ed6",
+          "byte_identical": false,
+          "donor_bytes_sha256": "34df607fc63c16bff1373cd4e2969c4743cdd0efd50c5b1c17dcc765f8188f5f",
+          "target_bytes_sha256": "049d069205c3a96d5377f0f8740ae0c0fc7722bf55321f0788f282483be6a024",
+          "declarations": [
+            {
+              "declaration": "InvestigationDialog.__init__",
+              "present": true,
+              "ast_identical": false,
+              "donor_ast_sha256": "970dda5ea1130efe0b051a1f1d4b7f8ad7d5dc9e8795bad5f90c840f4f3651c3",
+              "target_ast_sha256": "2e33969ccc13616d594ff53d3bdd732c6e06daeb536d9dbe85a0d1e025e7af85"
+            },
+            {
+              "declaration": "InvestigationDialog._submit",
+              "present": true,
+              "ast_identical": false,
+              "donor_ast_sha256": "a8dd5573c915c45ed8b0d05d2cb9719ac3ffd35604bf23b323f26b56945f4d59",
+              "target_ast_sha256": "0f54d4db33eecc403faa553c6a47dd7cdf4bdf63e4f58061042975d25e9e1ddc"
+            }
+          ],
+          "new_target_declarations": [
+            "InvestigationDialog._browse_products",
+            "InvestigationDialog._candidate_changed",
+            "InvestigationDialog._clear_candidates",
+            "InvestigationDialog._clear_product_listing",
+            "InvestigationDialog._inspect_candidates",
+            "InvestigationDialog._plan_metadata",
+            "InvestigationDialog._plan_sources",
+            "InvestigationDialog._preview_candidate",
+            "InvestigationDialog._product_mode_changed",
+            "InvestigationDialog._refresh_metadata",
+            "InvestigationDialog._sync_sources"
+          ]
+        }
+      ],
+      "test_source_comparisons": [
+        {
+          "path": "tests/test_kb_accessibility_20261105.py",
+          "donor_blob": "b955505fe772e832eba9d76fb2e8d8ee34240c3a",
+          "target_blob": "b955505fe772e832eba9d76fb2e8d8ee34240c3a",
+          "byte_identical": true,
+          "donor_bytes_sha256": "7c132d84c64605b845d81da9c6c9541cd244f488a99f8f91ddc4a12968feb087",
+          "target_bytes_sha256": "7c132d84c64605b845d81da9c6c9541cd244f488a99f8f91ddc4a12968feb087",
+          "declarations": [
+            {
+              "declaration": "dialog",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "267b3ffa32ae5759315cd9834b31514aece4404d9c747ce48972be2f1c17222b",
+              "target_ast_sha256": "267b3ffa32ae5759315cd9834b31514aece4404d9c747ce48972be2f1c17222b"
+            },
+            {
+              "declaration": "test_composite_field_label_targets_edit",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "f69b61838cbac757b472dec39556eac9a15c04a99f3874a93d92ad4f475f9957",
+              "target_ast_sha256": "f69b61838cbac757b472dec39556eac9a15c04a99f3874a93d92ad4f475f9957"
+            },
+            {
+              "declaration": "test_label_mnemonic_moves_keyboard_focus",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "2a992ff90838462100f04af2d063d6e8340845dadb67ccb6e7f64066c085c919",
+              "target_ast_sha256": "2a992ff90838462100f04af2d063d6e8340845dadb67ccb6e7f64066c085c919"
+            },
+            {
+              "declaration": "test_product_selection_occurs_between_search_and_binary_fields",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "58f684be5c77400ae383738a5ec2f3c98cc3ae22a84cf2c050207eecb794b3d7",
+              "target_ast_sha256": "58f684be5c77400ae383738a5ec2f3c98cc3ae22a84cf2c050207eecb794b3d7"
+            },
+            {
+              "declaration": "test_missing_workspace_validation_focuses_correctable_field",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "97d33a549037bfb782876503728f7d0c60139b37c94fdbebbf0f1b31d1e4ecdc",
+              "target_ast_sha256": "97d33a549037bfb782876503728f7d0c60139b37c94fdbebbf0f1b31d1e4ecdc"
+            },
+            {
+              "declaration": "test_binary_only_tab_order_skips_disabled_advisory_fields",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "efb60e30886377093e715e03cbd8174f2724a74dbe89526470d2340665975f0f",
+              "target_ast_sha256": "efb60e30886377093e715e03cbd8174f2724a74dbe89526470d2340665975f0f"
+            }
+          ],
+          "new_target_declarations": []
+        }
+      ],
+      "adaptation_checks": {
+        "original_labeled_field_loop_ast_identical": true,
+        "original_tab_order_application_loop_ast_identical": true,
+        "workspace_focus_guard_ast_identical": true,
+        "current_scope_order": "position = tab_order.index(self.fields['older']); tab_order[position:position] = [product_filter, browse_products, self.scope]"
+      },
+      "captured_main": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+      "merge_bases_with_captured_main": [
+        "b5d4bceabdc34f520120d9dc336d975768e20483"
+      ]
+    },
+    {
+      "branch": "work/persistence-security-20261105",
+      "scope": "Preserve ordinary writer-lock identity validation before writing lock metadata.",
+      "classification": "DUPLICATE",
+      "behavior": "The complete ProjectLock class is AST-identical, including _check_identity and initialization. The same regular-file/link-count/handle-path identity checks occur around kernel lock acquisition before metadata writes, and descriptor cleanup remains present. The complete original regression file is byte-identical. This is a retention comparison, not a new attack or platform reproduction.",
+      "excluded": "Other persistence methods and later backup/state reconciliation, new race analysis, fresh filesystem/native acceptance and all transitive dependencies are not requalified.",
+      "head": "1a1e1951c55cdef46ff248145031639674ce1c63",
+      "donor_tree": "42400f01fa4e4959b4b0ca2e99e97fb51f060fad",
+      "pull_request": {
+        "base_ref": "integrate/swarm-wave3-20261105",
+        "base_sha": "afc8a2967ba3dec6b1ac3351d20dd08c193ba9bc",
+        "draft": true,
+        "head_matches_snapshot": true,
+        "head_sha": "1a1e1951c55cdef46ff248145031639674ce1c63",
+        "merged_at": null,
+        "number": 227,
+        "state": "closed",
+        "title": "Reject aliased and replaced project lock files before writes",
+        "url": "https://github.com/djshellshoxxx/patchtrace/pull/227"
+      },
+      "original_pr_base": "afc8a2967ba3dec6b1ac3351d20dd08c193ba9bc",
+      "original_pr_unique_commits": [
+        "1a1e1951c55cdef46ff248145031639674ce1c63"
+      ],
+      "merge_bases_with_target": [
+        "1a1e1951c55cdef46ff248145031639674ce1c63"
+      ],
+      "unique_commits_vs_target": [],
+      "original_pr_changed_paths": [
+        "A\tdocs/qa/persistence-security-20261105.md",
+        "M\tdocs/specs/architecture.md",
+        "M\tsrc/patchtrace/persistence.py",
+        "A\ttests/test_persistence_security_20261105.py"
+      ],
+      "live_ref_verified": true,
+      "live_ref_url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/ref/heads/work/persistence-security-20261105",
+      "whole_branch_status": "PARTIALLY_REVIEWED",
+      "source_recovery_required_in_named_scope": false,
+      "delete_authorized": false,
+      "production_comparisons": [
+        {
+          "path": "src/patchtrace/persistence.py",
+          "donor_blob": "fea4606e88ad79930b37d6f87f608988c6c4ee1b",
+          "target_blob": "b74f2c2b3f5b95b21748999aae343053e331922d",
+          "byte_identical": false,
+          "donor_bytes_sha256": "9888cd5f9c9ec2af1c3bede3797c30f401acc9891a93f2a1acd8f596237d09c9",
+          "target_bytes_sha256": "9bfe53c6472eafd3d00c487b9e2431781efa384fd9104aefc95bb031ea445119",
+          "declarations": [
+            {
+              "declaration": "ProjectLock",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "bc3c2607c55a0ea70b7396a581d014ca5e754dbf569f94acdca410c94d2cdec0",
+              "target_ast_sha256": "bc3c2607c55a0ea70b7396a581d014ca5e754dbf569f94acdca410c94d2cdec0"
+            },
+            {
+              "declaration": "ProjectLock._check_identity",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "7e92f85cd60f71e08871223ba0c9a2a62d9ed10b72dce6ee8b221e4d09aa5718",
+              "target_ast_sha256": "7e92f85cd60f71e08871223ba0c9a2a62d9ed10b72dce6ee8b221e4d09aa5718"
+            },
+            {
+              "declaration": "ProjectLock.__init__",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "4352c139fa7559275131fabe6e667212f66e2a09c4acec5dfd62af1e22183ab1",
+              "target_ast_sha256": "4352c139fa7559275131fabe6e667212f66e2a09c4acec5dfd62af1e22183ab1"
+            }
+          ],
+          "new_target_declarations": []
+        }
+      ],
+      "test_source_comparisons": [
+        {
+          "path": "tests/test_persistence_security_20261105.py",
+          "donor_blob": "553f8202be88945ec74b93acf376e144a90402cb",
+          "target_blob": "553f8202be88945ec74b93acf376e144a90402cb",
+          "byte_identical": true,
+          "donor_bytes_sha256": "092114440a0db5dd034863570d9c55e4015ebdb60f929a705902474ca0ed9b86",
+          "target_bytes_sha256": "092114440a0db5dd034863570d9c55e4015ebdb60f929a705902474ca0ed9b86",
+          "declarations": [
+            {
+              "declaration": "test_lock_refuses_hardlinked_foreign_file_without_writing",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "9d978ad65ee51efc1df33546fa21a3a943dd64f0198322ccbdcc02b6022c2130",
+              "target_ast_sha256": "9d978ad65ee51efc1df33546fa21a3a943dd64f0198322ccbdcc02b6022c2130"
+            },
+            {
+              "declaration": "test_lock_refuses_path_substitution_after_open_without_writing",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "4785aabb851e8f5c003a514b6a3abab6b65191dfb03de2801f06f6ca0cb7ad35",
+              "target_ast_sha256": "4785aabb851e8f5c003a514b6a3abab6b65191dfb03de2801f06f6ca0cb7ad35"
+            },
+            {
+              "declaration": "test_persistent_regular_lock_reuses_inode_and_excludes_second_writer",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "3f0a4147459303b8ec9dea9da5993f2fb367fd0fa7be4e2b497756d03fcaf0fa",
+              "target_ast_sha256": "3f0a4147459303b8ec9dea9da5993f2fb367fd0fa7be4e2b497756d03fcaf0fa"
+            },
+            {
+              "declaration": "test_lock_refuses_nonregular_file_before_fdopen",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "f127d5b9644369c3ae180edbbb7bdd063420ac282502ff5519370f4ba197bfc4",
+              "target_ast_sha256": "f127d5b9644369c3ae180edbbb7bdd063420ac282502ff5519370f4ba197bfc4"
+            },
+            {
+              "declaration": "test_lock_identity_refusal_closes_raw_descriptor_without_writing",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "6e6daa0c8ef9d41991afd18851788574512fbe65c78a0d6708b4a1254c76b962",
+              "target_ast_sha256": "6e6daa0c8ef9d41991afd18851788574512fbe65c78a0d6708b4a1254c76b962"
+            },
+            {
+              "declaration": "test_lock_rechecks_link_count_after_kernel_acquisition",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "f48949bbc2499291f7fe7bdd5585fbbd4930685c08d058278faa0dfb4230f775",
+              "target_ast_sha256": "f48949bbc2499291f7fe7bdd5585fbbd4930685c08d058278faa0dfb4230f775"
+            }
+          ],
+          "new_target_declarations": []
+        }
+      ],
+      "captured_main": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+      "merge_bases_with_captured_main": [
+        "1a1e1951c55cdef46ff248145031639674ce1c63"
+      ]
+    }
+  ],
+  "counts": {
+    "named_scopes_reviewed": 6,
+    "DUPLICATE": 4,
+    "SUPERSEDED": 2,
+    "whole_branches_fully_reviewed": 0,
+    "new_ports_needed_in_reviewed_scopes": 0
+  },
+  "limits": [
+    "No test execution, target/tool execution, source/index/ref change, merge, or deletion.",
+    "Source and regression retention are compared; runtime/native/manual acceptance is not inferred.",
+    "All six donor heads are ancestors of main and the frozen target, including three closed-unmerged PR heads; source comparison independently establishes the named behavior retention.",
+    "The existing 181 unmatched / 16 patch-equivalent branch-level backlog is not decremented by these scoped reviews.",
+    "The target was frozen before later root integration/index changes; comparison identities do not drift."
+  ]
+}

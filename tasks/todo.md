@@ -1720,3 +1720,28 @@ Owner/branch: `codex/patchtrace-linux-frozen-cli-smoke-20261121`; handoff
 - [ ] Publish and inspect exact new-source full/Qt/native/package, TierR and both Linux frozen CLI checks; retain real cache-hit/Ghidriff acceptance boundaries.
 - [ ] Perform only a qualified expected-head REST main merge, actual message including `[no release] [no deploy]`; no release or deployment.
 - [ ] Keep CODEX-1/5, remaining help mappings, historical semantics, manual/native/raw-provenance and separate accuracy gates open.
+
+## Parallel 837fe — reviewed source, hosted integration pending
+
+- [x] Complete six Search header explanations and real-host audit coverage; independently close the help-text overclaim.
+- [x] Reconcile service state after save/backup post-commit interruption; refuse edits and backup when committed state cannot be reread. Close SVC-R1/R2 with independent controls.
+- [x] Preserve backup cancellation/primary errors across filesystem cleanup failure and leave consumed staging names untouched after publication.
+- [x] Qualify combined source `b880c317` with 450 affected cases, Ruff/dependency/source checks and independent reviews. Retain original failures.
+- [x] Expand 364 live heads into exact Git metadata, join 338 captured PRs and retain 59 tags; preserve partial semantic scope and the existing backlog.
+- [x] Verify the upstream Action pin map; implementation remains with the workflow owner.
+- [ ] Inspect this candidate's exact published-head hosted qualification and reconcile with the separate 95FE-C3 integration after ownership permits it. Merge only with green applicable checks and a fresh expected-head REST guard.
+- [ ] Retain the local AF_UNIX restriction and unexplained SIGKILL as unsuccessful source-specific evidence. Do not claim release, native accessibility, trust, provenance or L1/L2/L3 closure.
+
+[Report](../docs/engineering/cycle837fe-recovery-and-search-20261121.md) · [Scoped handoff](../docs/engineering-handoffs/cycle837fe-20261121.md) · [Authoritative ledger](../docs/engineering/task-ledger.json).
+
+## Combined PR349 follow-up — 837FE
+
+- [x] Consume released 95FE handoff and preserve Linux/cache/Pages repairs plus the reviewed storage/Search fixes.
+- [x] Complete/review CODEX-1 direct pins, Windows Intel version names and bounded observation of existing live probes.
+- [x] Diagnose original PR349 Linux failure and register all 3 current specs without weakening its test.
+- [x] Pass 1,296 combined cases with 1 CODEX-5 xfail; Ruff, dependencies and source binding pass.
+- [ ] Inspect exact combined-head hosted full/Qt/native/package and both Ubuntu frozen CLI runs; inspect actual Windows Intel diagnostics.
+- [ ] Perform only a qualified expected-head REST main merge with `[no release] [no deploy]`; reconcile retained stacked PR records afterward.
+- [ ] Continue CODEX-5, transitive dependency closure, Ghidra cache acceptance, historical semantics, manual/trust/accessibility/raw-provenance and separate L1/L2/L3 gates.
+
+[Current combined handoff](../docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md).

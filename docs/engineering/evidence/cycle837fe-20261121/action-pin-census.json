@@ -1,0 +1,731 @@
+{
+  "baseline": "e5a531668ef523cd6faa26d5fec59aa552749134",
+  "references": {
+    "actions/checkout@v4": [
+      {
+        "path": ".github/workflows/backend-bundle.yml",
+        "line": 92
+      },
+      {
+        "path": ".github/workflows/backend-bundle.yml",
+        "line": 201
+      },
+      {
+        "path": ".github/workflows/backend-bundle.yml",
+        "line": 235
+      },
+      {
+        "path": ".github/workflows/backend-bundle.yml",
+        "line": 296
+      },
+      {
+        "path": ".github/workflows/backend-bundle.yml",
+        "line": 351
+      },
+      {
+        "path": ".github/workflows/backend-bundle.yml",
+        "line": 416
+      },
+      {
+        "path": ".github/workflows/codex-cloud.yml",
+        "line": 30
+      },
+      {
+        "path": ".github/workflows/corpus-tier-r.yml",
+        "line": 55
+      },
+      {
+        "path": ".github/workflows/corpus-tier-r.yml",
+        "line": 81
+      },
+      {
+        "path": ".github/workflows/corpus-tier-r.yml",
+        "line": 167
+      },
+      {
+        "path": ".github/workflows/corpus-tier-r.yml",
+        "line": 212
+      },
+      {
+        "path": ".github/workflows/corpus-tier-r.yml",
+        "line": 240
+      },
+      {
+        "path": ".github/workflows/diff-and-score.yml",
+        "line": 72
+      },
+      {
+        "path": ".github/workflows/diff-and-score.yml",
+        "line": 108
+      },
+      {
+        "path": ".github/workflows/diff-and-score.yml",
+        "line": 202
+      },
+      {
+        "path": ".github/workflows/live-backend.yml",
+        "line": 25
+      },
+      {
+        "path": ".github/workflows/live-bindiff.yml",
+        "line": 44
+      },
+      {
+        "path": ".github/workflows/live-capa.yml",
+        "line": 33
+      },
+      {
+        "path": ".github/workflows/live-intel-tools.yml",
+        "line": 41
+      },
+      {
+        "path": ".github/workflows/live-intel-tools.yml",
+        "line": 82
+      },
+      {
+        "path": ".github/workflows/live-kbc.yml",
+        "line": 34
+      },
+      {
+        "path": ".github/workflows/live-kev.yml",
+        "line": 30
+      },
+      {
+        "path": ".github/workflows/live-nvd.yml",
+        "line": 25
+      },
+      {
+        "path": ".github/workflows/live-rizin.yml",
+        "line": 37
+      },
+      {
+        "path": ".github/workflows/live-unified.yml",
+        "line": 25
+      },
+      {
+        "path": ".github/workflows/live-unified.yml",
+        "line": 71
+      },
+      {
+        "path": ".github/workflows/nightly-fuzz.yml",
+        "line": 18
+      },
+      {
+        "path": ".github/workflows/nightly-fuzz.yml",
+        "line": 43
+      },
+      {
+        "path": ".github/workflows/optional-deps.yml",
+        "line": 20
+      },
+      {
+        "path": ".github/workflows/pages.yml",
+        "line": 22
+      },
+      {
+        "path": ".github/workflows/pilot-eval.yml",
+        "line": 15
+      },
+      {
+        "path": ".github/workflows/qa-windows.yml",
+        "line": 24
+      },
+      {
+        "path": ".github/workflows/qa-windows.yml",
+        "line": 117
+      },
+      {
+        "path": ".github/workflows/qa-windows.yml",
+        "line": 132
+      },
+      {
+        "path": ".github/workflows/qa-windows.yml",
+        "line": 159
+      },
+      {
+        "path": ".github/workflows/qa-windows.yml",
+        "line": 207
+      },
+      {
+        "path": ".github/workflows/qa-windows.yml",
+        "line": 240
+      },
+      {
+        "path": ".github/workflows/unified-corpus.yml",
+        "line": 32
+      },
+      {
+        "path": ".github/workflows/unified-corpus.yml",
+        "line": 85
+      },
+      {
+        "path": ".github/workflows/unified-corpus.yml",
+        "line": 108
+      },
+      {
+        "path": ".github/workflows/unified-live-gates.yml",
+        "line": 34
+      },
+      {
+        "path": ".github/workflows/unified-live-gates.yml",
+        "line": 87
+      },
+      {
+        "path": ".github/workflows/unified-live-gates.yml",
+        "line": 148
+      },
+      {
+        "path": ".github/workflows/unified-live-gates.yml",
+        "line": 209
+      },
+      {
+        "path": ".github/workflows/unified-live-gates.yml",
+        "line": 235
+      },
+      {
+        "path": ".github/workflows/winbindex-pairs.yml",
+        "line": 33
+      }
+    ],
+    "actions/setup-python@v5": [
+      {
+        "path": ".github/workflows/backend-bundle.yml",
+        "line": 95
+      },
+      {
+        "path": ".github/workflows/backend-bundle.yml",
+        "line": 204
+      },
+      {
+        "path": ".github/workflows/backend-bundle.yml",
+        "line": 238
+      },
+      {
+        "path": ".github/workflows/backend-bundle.yml",
+        "line": 299
+      },
+      {
+        "path": ".github/workflows/backend-bundle.yml",
+        "line": 354
+      },
+      {
+        "path": ".github/workflows/backend-bundle.yml",
+        "line": 419
+      },
+      {
+        "path": ".github/workflows/corpus-tier-r.yml",
+        "line": 56
+      },
+      {
+        "path": ".github/workflows/corpus-tier-r.yml",
+        "line": 82
+      },
+      {
+        "path": ".github/workflows/corpus-tier-r.yml",
+        "line": 168
+      },
+      {
+        "path": ".github/workflows/corpus-tier-r.yml",
+        "line": 213
+      },
+      {
+        "path": ".github/workflows/corpus-tier-r.yml",
+        "line": 241
+      },
+      {
+        "path": ".github/workflows/diff-and-score.yml",
+        "line": 76
+      },
+      {
+        "path": ".github/workflows/diff-and-score.yml",
+        "line": 112
+      },
+      {
+        "path": ".github/workflows/diff-and-score.yml",
+        "line": 206
+      },
+      {
+        "path": ".github/workflows/live-backend.yml",
+        "line": 26
+      },
+      {
+        "path": ".github/workflows/live-bindiff.yml",
+        "line": 45
+      },
+      {
+        "path": ".github/workflows/live-capa.yml",
+        "line": 34
+      },
+      {
+        "path": ".github/workflows/live-intel-tools.yml",
+        "line": 42
+      },
+      {
+        "path": ".github/workflows/live-intel-tools.yml",
+        "line": 83
+      },
+      {
+        "path": ".github/workflows/live-kbc.yml",
+        "line": 37
+      },
+      {
+        "path": ".github/workflows/live-kev.yml",
+        "line": 33
+      },
+      {
+        "path": ".github/workflows/live-nvd.yml",
+        "line": 28
+      },
+      {
+        "path": ".github/workflows/live-rizin.yml",
+        "line": 38
+      },
+      {
+        "path": ".github/workflows/live-unified.yml",
+        "line": 26
+      },
+      {
+        "path": ".github/workflows/live-unified.yml",
+        "line": 72
+      },
+      {
+        "path": ".github/workflows/nightly-fuzz.yml",
+        "line": 19
+      },
+      {
+        "path": ".github/workflows/nightly-fuzz.yml",
+        "line": 46
+      },
+      {
+        "path": ".github/workflows/optional-deps.yml",
+        "line": 21
+      },
+      {
+        "path": ".github/workflows/pages.yml",
+        "line": 23
+      },
+      {
+        "path": ".github/workflows/pilot-eval.yml",
+        "line": 16
+      },
+      {
+        "path": ".github/workflows/qa-windows.yml",
+        "line": 25
+      },
+      {
+        "path": ".github/workflows/qa-windows.yml",
+        "line": 120
+      },
+      {
+        "path": ".github/workflows/qa-windows.yml",
+        "line": 133
+      },
+      {
+        "path": ".github/workflows/qa-windows.yml",
+        "line": 162
+      },
+      {
+        "path": ".github/workflows/qa-windows.yml",
+        "line": 211
+      },
+      {
+        "path": ".github/workflows/unified-corpus.yml",
+        "line": 33
+      },
+      {
+        "path": ".github/workflows/unified-corpus.yml",
+        "line": 86
+      },
+      {
+        "path": ".github/workflows/unified-corpus.yml",
+        "line": 109
+      },
+      {
+        "path": ".github/workflows/unified-live-gates.yml",
+        "line": 35
+      },
+      {
+        "path": ".github/workflows/unified-live-gates.yml",
+        "line": 88
+      },
+      {
+        "path": ".github/workflows/unified-live-gates.yml",
+        "line": 149
+      },
+      {
+        "path": ".github/workflows/unified-live-gates.yml",
+        "line": 210
+      },
+      {
+        "path": ".github/workflows/unified-live-gates.yml",
+        "line": 236
+      },
+      {
+        "path": ".github/workflows/winbindex-pairs.yml",
+        "line": 37
+      }
+    ],
+    "actions/upload-artifact@v4": [
+      {
+        "path": ".github/workflows/backend-bundle.yml",
+        "line": 183
+      },
+      {
+        "path": ".github/workflows/backend-bundle.yml",
+        "line": 217
+      },
+      {
+        "path": ".github/workflows/backend-bundle.yml",
+        "line": 274
+      },
+      {
+        "path": ".github/workflows/backend-bundle.yml",
+        "line": 281
+      },
+      {
+        "path": ".github/workflows/backend-bundle.yml",
+        "line": 333
+      },
+      {
+        "path": ".github/workflows/backend-bundle.yml",
+        "line": 390
+      },
+      {
+        "path": ".github/workflows/backend-bundle.yml",
+        "line": 397
+      },
+      {
+        "path": ".github/workflows/backend-bundle.yml",
+        "line": 460
+      },
+      {
+        "path": ".github/workflows/corpus-tier-r.yml",
+        "line": 65
+      },
+      {
+        "path": ".github/workflows/corpus-tier-r.yml",
+        "line": 154
+      },
+      {
+        "path": ".github/workflows/corpus-tier-r.yml",
+        "line": 199
+      },
+      {
+        "path": ".github/workflows/corpus-tier-r.yml",
+        "line": 222
+      },
+      {
+        "path": ".github/workflows/corpus-tier-r.yml",
+        "line": 254
+      },
+      {
+        "path": ".github/workflows/diff-and-score.yml",
+        "line": 189
+      },
+      {
+        "path": ".github/workflows/diff-and-score.yml",
+        "line": 242
+      },
+      {
+        "path": ".github/workflows/live-backend.yml",
+        "line": 77
+      },
+      {
+        "path": ".github/workflows/live-bindiff.yml",
+        "line": 72
+      },
+      {
+        "path": ".github/workflows/live-capa.yml",
+        "line": 58
+      },
+      {
+        "path": ".github/workflows/live-intel-tools.yml",
+        "line": 66
+      },
+      {
+        "path": ".github/workflows/live-intel-tools.yml",
+        "line": 102
+      },
+      {
+        "path": ".github/workflows/live-kbc.yml",
+        "line": 55
+      },
+      {
+        "path": ".github/workflows/live-kev.yml",
+        "line": 49
+      },
+      {
+        "path": ".github/workflows/live-nvd.yml",
+        "line": 45
+      },
+      {
+        "path": ".github/workflows/live-rizin.yml",
+        "line": 95
+      },
+      {
+        "path": ".github/workflows/live-unified.yml",
+        "line": 58
+      },
+      {
+        "path": ".github/workflows/live-unified.yml",
+        "line": 94
+      },
+      {
+        "path": ".github/workflows/nightly-fuzz.yml",
+        "line": 30
+      },
+      {
+        "path": ".github/workflows/nightly-fuzz.yml",
+        "line": 56
+      },
+      {
+        "path": ".github/workflows/pilot-eval.yml",
+        "line": 32
+      },
+      {
+        "path": ".github/workflows/qa-windows.yml",
+        "line": 72
+      },
+      {
+        "path": ".github/workflows/qa-windows.yml",
+        "line": 80
+      },
+      {
+        "path": ".github/workflows/qa-windows.yml",
+        "line": 142
+      },
+      {
+        "path": ".github/workflows/unified-corpus.yml",
+        "line": 70
+      },
+      {
+        "path": ".github/workflows/unified-corpus.yml",
+        "line": 95
+      },
+      {
+        "path": ".github/workflows/unified-corpus.yml",
+        "line": 130
+      },
+      {
+        "path": ".github/workflows/unified-live-gates.yml",
+        "line": 61
+      },
+      {
+        "path": ".github/workflows/unified-live-gates.yml",
+        "line": 68
+      },
+      {
+        "path": ".github/workflows/unified-live-gates.yml",
+        "line": 125
+      },
+      {
+        "path": ".github/workflows/unified-live-gates.yml",
+        "line": 186
+      },
+      {
+        "path": ".github/workflows/unified-live-gates.yml",
+        "line": 220
+      },
+      {
+        "path": ".github/workflows/unified-live-gates.yml",
+        "line": 260
+      },
+      {
+        "path": ".github/workflows/winbindex-pairs.yml",
+        "line": 90
+      },
+      {
+        "path": ".github/workflows/winbindex-pairs.yml",
+        "line": 98
+      }
+    ],
+    "actions/cache@v4": [
+      {
+        "path": ".github/workflows/backend-bundle.yml",
+        "line": 243
+      },
+      {
+        "path": ".github/workflows/backend-bundle.yml",
+        "line": 360
+      },
+      {
+        "path": ".github/workflows/corpus-tier-r.yml",
+        "line": 94
+      },
+      {
+        "path": ".github/workflows/corpus-tier-r.yml",
+        "line": 123
+      },
+      {
+        "path": ".github/workflows/live-bindiff.yml",
+        "line": 56
+      },
+      {
+        "path": ".github/workflows/live-capa.yml",
+        "line": 41
+      },
+      {
+        "path": ".github/workflows/live-intel-tools.yml",
+        "line": 49
+      },
+      {
+        "path": ".github/workflows/live-intel-tools.yml",
+        "line": 89
+      }
+    ],
+    "actions/download-artifact@v4": [
+      {
+        "path": ".github/workflows/backend-bundle.yml",
+        "line": 302
+      },
+      {
+        "path": ".github/workflows/backend-bundle.yml",
+        "line": 422
+      },
+      {
+        "path": ".github/workflows/backend-bundle.yml",
+        "line": 486
+      },
+      {
+        "path": ".github/workflows/corpus-tier-r.yml",
+        "line": 172
+      },
+      {
+        "path": ".github/workflows/corpus-tier-r.yml",
+        "line": 177
+      },
+      {
+        "path": ".github/workflows/diff-and-score.yml",
+        "line": 80
+      },
+      {
+        "path": ".github/workflows/diff-and-score.yml",
+        "line": 120
+      },
+      {
+        "path": ".github/workflows/diff-and-score.yml",
+        "line": 210
+      },
+      {
+        "path": ".github/workflows/diff-and-score.yml",
+        "line": 218
+      },
+      {
+        "path": ".github/workflows/live-unified.yml",
+        "line": 79
+      },
+      {
+        "path": ".github/workflows/qa-windows.yml",
+        "line": 166
+      },
+      {
+        "path": ".github/workflows/qa-windows.yml",
+        "line": 227
+      },
+      {
+        "path": ".github/workflows/qa-windows.yml",
+        "line": 231
+      },
+      {
+        "path": ".github/workflows/qa-windows.yml",
+        "line": 235
+      },
+      {
+        "path": ".github/workflows/unified-corpus.yml",
+        "line": 113
+      },
+      {
+        "path": ".github/workflows/unified-live-gates.yml",
+        "line": 95
+      },
+      {
+        "path": ".github/workflows/unified-live-gates.yml",
+        "line": 156
+      },
+      {
+        "path": ".github/workflows/unified-live-gates.yml",
+        "line": 240
+      },
+      {
+        "path": ".github/workflows/unified-live-gates.yml",
+        "line": 244
+      },
+      {
+        "path": ".github/workflows/unified-live-gates.yml",
+        "line": 249
+      }
+    ],
+    "ilammy/msvc-dev-cmd@v1": [
+      {
+        "path": ".github/workflows/backend-bundle.yml",
+        "line": 306
+      },
+      {
+        "path": ".github/workflows/live-backend.yml",
+        "line": 33
+      },
+      {
+        "path": ".github/workflows/live-rizin.yml",
+        "line": 75
+      },
+      {
+        "path": ".github/workflows/live-unified.yml",
+        "line": 33
+      }
+    ],
+    "openai/codex-action@v1": [
+      {
+        "path": ".github/workflows/codex-cloud.yml",
+        "line": 36
+      }
+    ],
+    "actions/setup-java@v4": [
+      {
+        "path": ".github/workflows/corpus-tier-r.yml",
+        "line": 116
+      },
+      {
+        "path": ".github/workflows/diff-and-score.yml",
+        "line": 115
+      },
+      {
+        "path": ".github/workflows/live-backend.yml",
+        "line": 29
+      },
+      {
+        "path": ".github/workflows/live-unified.yml",
+        "line": 29
+      },
+      {
+        "path": ".github/workflows/live-unified.yml",
+        "line": 75
+      },
+      {
+        "path": ".github/workflows/unified-live-gates.yml",
+        "line": 91
+      },
+      {
+        "path": ".github/workflows/unified-live-gates.yml",
+        "line": 152
+      }
+    ],
+    "actions/configure-pages@v5": [
+      {
+        "path": ".github/workflows/pages.yml",
+        "line": 32
+      }
+    ],
+    "actions/upload-pages-artifact@v3": [
+      {
+        "path": ".github/workflows/pages.yml",
+        "line": 33
+      }
+    ],
+    "actions/deploy-pages@v4": [
+      {
+        "path": ".github/workflows/pages.yml",
+        "line": 49
+      }
+    ]
+  }
+}

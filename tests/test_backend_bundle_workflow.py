@@ -12,8 +12,14 @@ yaml = pytest.importorskip('yaml')
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = ROOT / '.github' / 'workflows' / 'backend-bundle.yml'
-ALLOWED_ACTIONS = {'actions/checkout@v4', 'actions/setup-python@v5', 'actions/upload-artifact@v4',
-                   'actions/download-artifact@v4', 'actions/cache@v4', 'ilammy/msvc-dev-cmd@v1'}
+ALLOWED_ACTIONS = {
+    'actions/checkout@11d5960a326750d5838078e36cf38b85af677262',
+    'actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065',
+    'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02',
+    'actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093',
+    'actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830',
+    'ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756',
+}
 JOB_IDS = {'pin', 'vrfy', 'bld-win', 'acc-win', 'bld-lin', 'acc-lin', 'pub'}
 
 
@@ -61,7 +67,7 @@ def test_least_privilege_permissions(doc):
 def test_actions_pinned_like_other_workflows(doc):
     used = {s['uses'] for job in doc['jobs'].values() for s in steps(job) if 'uses' in s}
     assert used <= ALLOWED_ACTIONS, used - ALLOWED_ACTIONS
-    assert all(re.fullmatch(r'[\w./-]+@v\d+', u) for u in used)
+    assert all(re.fullmatch(r'[\w./-]+@[0-9a-f]{40}', u) for u in used)
     assert not any('softprops' in u for u in used)  # release uses the gh CLI so failures are explicit
 
 

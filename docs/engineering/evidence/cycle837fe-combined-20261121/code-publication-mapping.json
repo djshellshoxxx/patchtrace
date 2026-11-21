@@ -1,0 +1,415 @@
+{
+  "base": "11f51c105bf63946f59373ae605b937c4fee607a",
+  "local_code": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
+  "remote_code": {
+    "remote_commit": "61b26107d77fb632571ede932e0796d4b643f50c",
+    "tree": "2666e72d5efd51600b170cef033103c9947bae3b",
+    "original_parents": [
+      "4ca982e708685889ac2c6f8bedecf79443e6664c"
+    ],
+    "remote_parents": [
+      "4ef6f5f8ba92a8818e7cd464df416c1c43ad345b"
+    ],
+    "message": "Register current CI specifications and preserve acceptance boundaries [no release] [no deploy]"
+  },
+  "transport": "GitHub Git Data API; each blob and complete tree verified; mapped ordered parents retained",
+  "mapping": {
+    "e86506bdcd963c7e00057997153117f75f60ba55": {
+      "remote_commit": "16b0b481c3cc74673ecc961aaa976698daf25dc7",
+      "tree": "31703c908120964c94025c617caca90d82871b91",
+      "original_parents": [
+        "6b6fcd3597a604212032ffc453477aeb6edc69ff"
+      ],
+      "remote_parents": [
+        "6b6fcd3597a604212032ffc453477aeb6edc69ff"
+      ],
+      "message": "docs(search): specify semantic result header help"
+    },
+    "b79611e1e34fd2cb72da490662c4b6ca463c2c4f": {
+      "remote_commit": "e101fb45376bcf7501c017806447408e7bb95553",
+      "tree": "592e74f03720c481a6d567cdb50dc9eee93e597d",
+      "original_parents": [
+        "e86506bdcd963c7e00057997153117f75f60ba55"
+      ],
+      "remote_parents": [
+        "16b0b481c3cc74673ecc961aaa976698daf25dc7"
+      ],
+      "message": "test(search): cover result header help in live panel states"
+    },
+    "96bdf532f69685551c2190e304551807158477e2": {
+      "remote_commit": "2e52b904d403e4b41c9c88ff4ab6eedb58d468dd",
+      "tree": "971424989ffbec07c63e867f642b9b0b0a7c761e",
+      "original_parents": [
+        "b79611e1e34fd2cb72da490662c4b6ca463c2c4f"
+      ],
+      "remote_parents": [
+        "e101fb45376bcf7501c017806447408e7bb95553"
+      ],
+      "message": "feat(search): explain all six result table headers"
+    },
+    "b51b17615e2c72e167bfec15727336eaf7cfb57f": {
+      "remote_commit": "1b2522cbbca8883d058ad8bae5d44bc856dec969",
+      "tree": "1f123b7893c977796d89656959285e565adf1db2",
+      "original_parents": [
+        "96bdf532f69685551c2190e304551807158477e2"
+      ],
+      "remote_parents": [
+        "2e52b904d403e4b41c9c88ff4ab6eedb58d468dd"
+      ],
+      "message": "test(search): require the six new semantic header entries"
+    },
+    "0069d0d28a8a8695d72f6ca960beaa7756b082ce": {
+      "remote_commit": "cfaeecd4e84927ccbc2011ef2d563492fff3627c",
+      "tree": "6ebd9e8173cbb62218f308e0b33e89d1a43f71f3",
+      "original_parents": [
+        "b51b17615e2c72e167bfec15727336eaf7cfb57f"
+      ],
+      "remote_parents": [
+        "1b2522cbbca8883d058ad8bae5d44bc856dec969"
+      ],
+      "message": "fix(search): match header promises to retained detail content"
+    },
+    "ddf15a7cf3c8847136098cc6c1d831b7993b2867": {
+      "remote_commit": "9799c96285ae11dc86621d23c3cdb2481db40d8f",
+      "tree": "ca97152821bf4f1cf44d71473e4fdd99c8381c94",
+      "original_parents": [
+        "0069d0d28a8a8695d72f6ca960beaa7756b082ce"
+      ],
+      "remote_parents": [
+        "cfaeecd4e84927ccbc2011ef2d563492fff3627c"
+      ],
+      "message": "Clarify service snapshot reconciliation after interrupted saves [no release]"
+    },
+    "50697fef4f043448a3040809d9c7e0f6239ce033": {
+      "remote_commit": "281aa0af6dabf90a6ca0955caf23830b0f906488",
+      "tree": "aff284d02e07ae4efd2e8ce0707ac119f2ab7570",
+      "original_parents": [
+        "ddf15a7cf3c8847136098cc6c1d831b7993b2867"
+      ],
+      "remote_parents": [
+        "9799c96285ae11dc86621d23c3cdb2481db40d8f"
+      ],
+      "message": "Cover service state after committed and rolled-back save failures [no release]"
+    },
+    "38e2d98f010d04bb8b91328017f8ddde8801cdce": {
+      "remote_commit": "aeb54912923e570418409c36978f7c8f0aed8db1",
+      "tree": "21b2801a76253519b05de7366a4c3a9deff43716",
+      "original_parents": [
+        "50697fef4f043448a3040809d9c7e0f6239ce033"
+      ],
+      "remote_parents": [
+        "281aa0af6dabf90a6ca0955caf23830b0f906488"
+      ],
+      "message": "Reconcile service state after interrupted snapshot saves [no release]"
+    },
+    "84a8d70269ae8fcd5a69c966c0c546ab1885a4d9": {
+      "remote_commit": "8181815c492e628a282e704e2b1d64fa61dfe04b",
+      "tree": "363e43d22e441fca9fdbe4379526020c07f4bdae",
+      "original_parents": [
+        "0069d0d28a8a8695d72f6ca960beaa7756b082ce"
+      ],
+      "remote_parents": [
+        "cfaeecd4e84927ccbc2011ef2d563492fff3627c"
+      ],
+      "message": "Clarify backup cancellation and staging cleanup outcomes [no release]"
+    },
+    "b04d7b98faa20170756a91519613862731dd227b": {
+      "remote_commit": "9c875b28c338a364546f880afe8c6039ee1300b6",
+      "tree": "be2ee5a771a215ade7773792ce3d7fbdfc8d39bc",
+      "original_parents": [
+        "84a8d70269ae8fcd5a69c966c0c546ab1885a4d9"
+      ],
+      "remote_parents": [
+        "8181815c492e628a282e704e2b1d64fa61dfe04b"
+      ],
+      "message": "Cover backup cleanup failures and consumed staging ownership [no release]"
+    },
+    "486db791620d94ae4b0d58593bad96d3cc6e8d6b": {
+      "remote_commit": "606c2b9bfac8a72e476707c1bccd9f9f5c24ecdf",
+      "tree": "f6f2a59103388abeb1d28633e80b981832be90c1",
+      "original_parents": [
+        "b04d7b98faa20170756a91519613862731dd227b"
+      ],
+      "remote_parents": [
+        "9c875b28c338a364546f880afe8c6039ee1300b6"
+      ],
+      "message": "Preserve backup failure and cancellation when stage cleanup fails [no release]"
+    },
+    "4d3a60f8686bb80832e33d4fc01040daf7deaa09": {
+      "remote_commit": "8f2367a3d6f7316499d35eed0ffbf3a7181a5274",
+      "tree": "7b58a3f0b9627d006876641ed35accadb387d757",
+      "original_parents": [
+        "486db791620d94ae4b0d58593bad96d3cc6e8d6b"
+      ],
+      "remote_parents": [
+        "606c2b9bfac8a72e476707c1bccd9f9f5c24ecdf"
+      ],
+      "message": "Scope backup cleanup contract to its filesystem error boundary [no release]"
+    },
+    "276fa8943da8931839a070e77addec585d21b5a0": {
+      "remote_commit": "0b18ba0ad09dedebb9ae27ec95cd56ffbb7843f8",
+      "tree": "7710afe26bfb2c07eb76596c3ab5599c3c15ee11",
+      "original_parents": [
+        "38e2d98f010d04bb8b91328017f8ddde8801cdce",
+        "4d3a60f8686bb80832e33d4fc01040daf7deaa09"
+      ],
+      "remote_parents": [
+        "aeb54912923e570418409c36978f7c8f0aed8db1",
+        "8f2367a3d6f7316499d35eed0ffbf3a7181a5274"
+      ],
+      "message": "Merge commit '4d3a60f8686bb80832e33d4fc01040daf7deaa09' into codex/patchtrace-recovery-search-20261121-837fe"
+    },
+    "5f24fe1ab3827bdcf8b8a779b6e34f189426a3c0": {
+      "remote_commit": "98fbc10f26db3647c53134cd066d2dea9eec67de",
+      "tree": "b02bb369a80b3a972c1856fbe5c23a96989f3f56",
+      "original_parents": [
+        "38e2d98f010d04bb8b91328017f8ddde8801cdce"
+      ],
+      "remote_parents": [
+        "aeb54912923e570418409c36978f7c8f0aed8db1"
+      ],
+      "message": "Require backup refusal while service save state is uncertain [no release]"
+    },
+    "92091e1d0b8bb33fde2761cad499c741b0e0d225": {
+      "remote_commit": "d5230f6efa820a0cc6c8ecb031764a2765c89b05",
+      "tree": "f9c80e37930463ddba84d041c219a8d0a57abbc0",
+      "original_parents": [
+        "5f24fe1ab3827bdcf8b8a779b6e34f189426a3c0"
+      ],
+      "remote_parents": [
+        "98fbc10f26db3647c53134cd066d2dea9eec67de"
+      ],
+      "message": "Refuse backup recovery through an unreconciled service [no release]"
+    },
+    "3c08585c62ac9f5e3e662dad5df6c52e54b457b2": {
+      "remote_commit": "1e1eff49732fb09de65cd27eb4b3438ed140a3bd",
+      "tree": "6b6db9bb3c783cc58e768ec94df482017fa95afb",
+      "original_parents": [
+        "92091e1d0b8bb33fde2761cad499c741b0e0d225"
+      ],
+      "remote_parents": [
+        "d5230f6efa820a0cc6c8ecb031764a2765c89b05"
+      ],
+      "message": "Cover post-commit recovery failure during healthy project backup [no release]"
+    },
+    "1ce478b3f5dee036f54cb9e39353ef82cf1610c0": {
+      "remote_commit": "a53ec42e48b760321cf6080fe97514508544e790",
+      "tree": "52b9926d6db21b4f76140c6385f67380acd0b988",
+      "original_parents": [
+        "3c08585c62ac9f5e3e662dad5df6c52e54b457b2"
+      ],
+      "remote_parents": [
+        "1e1eff49732fb09de65cd27eb4b3438ed140a3bd"
+      ],
+      "message": "Reconcile snapshot outcomes across backup recovery failures [no release]"
+    },
+    "b880c317add4de3ac22c87cd842abb0e7ccc615d": {
+      "remote_commit": "06d4237843b048116e645167ecca9ad9c29a7f57",
+      "tree": "74a4ee3714ea492e84c2a2a3aaf41fa54849e404",
+      "original_parents": [
+        "276fa8943da8931839a070e77addec585d21b5a0",
+        "1ce478b3f5dee036f54cb9e39353ef82cf1610c0"
+      ],
+      "remote_parents": [
+        "0b18ba0ad09dedebb9ae27ec95cd56ffbb7843f8",
+        "a53ec42e48b760321cf6080fe97514508544e790"
+      ],
+      "message": "Merge commit '1ce478b3f5dee036f54cb9e39353ef82cf1610c0' into codex/patchtrace-recovery-search-20261121-837fe"
+    },
+    "760c5e0b1320a6b08fc23d800c037c124488b4bc": {
+      "remote_commit": "a9711b078214312a1b50b342f213228617ef9edf",
+      "tree": "79693e8cf73658ddd291fea4c1fd4bcc7ebe4680",
+      "original_parents": [
+        "b880c317add4de3ac22c87cd842abb0e7ccc615d"
+      ],
+      "remote_parents": [
+        "06d4237843b048116e645167ecca9ad9c29a7f57"
+      ],
+      "message": "Record reviewed storage recovery, Search help and exact qualification evidence [no release] [no deploy]"
+    },
+    "36ead053fdfd7a69cbd06bf2c60431bbc15bf471": {
+      "remote_commit": "a3b9f69ed855b6ebe2c0b34a00ae42ff125a0d39",
+      "tree": "7db24ed0c0f8ff532fc01e80b0fa54ccaeca8cda",
+      "original_parents": [
+        "760c5e0b1320a6b08fc23d800c037c124488b4bc"
+      ],
+      "remote_parents": [
+        "a9711b078214312a1b50b342f213228617ef9edf"
+      ],
+      "message": "Close publication evidence audit and retain independent verification [no release] [no deploy]"
+    },
+    "36dd3a6f454ae856cf9c34bc05cd97bdaf165182": {
+      "remote_commit": "6c3832a81161d2dfff92fbcfd024a83d4dbba742",
+      "tree": "934ba927e87f4bb681a2941256cfebf4d1d00cdb",
+      "original_parents": [
+        "11f51c105bf63946f59373ae605b937c4fee607a",
+        "36ead053fdfd7a69cbd06bf2c60431bbc15bf471"
+      ],
+      "remote_parents": [
+        "11f51c105bf63946f59373ae605b937c4fee607a",
+        "a3b9f69ed855b6ebe2c0b34a00ae42ff125a0d39"
+      ],
+      "message": "Combine reviewed storage and Search fixes with released PR349 integration [no release] [no deploy]"
+    },
+    "d4ccc3a0d05442862feb6d2ac64bdf71525e5e03": {
+      "remote_commit": "e9dff78e125764fce4ca9ee8b8bc8ce8123c8a47",
+      "tree": "3a1378eb5513bccbb5b4dbdfbbf0163e02de7c2a",
+      "original_parents": [
+        "11f51c105bf63946f59373ae605b937c4fee607a"
+      ],
+      "remote_parents": [
+        "11f51c105bf63946f59373ae605b937c4fee607a"
+      ],
+      "message": "Specify reviewed immutable direct Action references [no release] [no deploy]"
+    },
+    "d66f170fdd54a6bac4b858467be7ecbc6aafed0d": {
+      "remote_commit": "33ff0d32fc6c97d5c139161093838487c1960b5a",
+      "tree": "e01d9afc3c295207d23697eaed36a2e5a3cb5679",
+      "original_parents": [
+        "d4ccc3a0d05442862feb6d2ac64bdf71525e5e03"
+      ],
+      "remote_parents": [
+        "e9dff78e125764fce4ca9ee8b8bc8ce8123c8a47"
+      ],
+      "message": "Pin reviewed direct Actions and enforce immutable workflow contracts [no release] [no deploy]"
+    },
+    "ff6c79f1a9c97877d061995cae40be38e42154f9": {
+      "remote_commit": "e17bacd713c12234fe3a1ed6122d8d7bef867292",
+      "tree": "82ea9ce307974544abd787e3649e2574e38036b5",
+      "original_parents": [
+        "d66f170fdd54a6bac4b858467be7ecbc6aafed0d"
+      ],
+      "remote_parents": [
+        "33ff0d32fc6c97d5c139161093838487c1960b5a"
+      ],
+      "message": "Keep workflow scalar checks strict while accepting version comments [no release] [no deploy]"
+    },
+    "ad0997044ddd2c957ad0de1ede8db4c7dab00317": {
+      "remote_commit": "dc3ef3445b1aaded26ee5380373494e6e0793d69",
+      "tree": "504f322f13c4b89305defb39afd839557bee6f24",
+      "original_parents": [
+        "ff6c79f1a9c97877d061995cae40be38e42154f9"
+      ],
+      "remote_parents": [
+        "e17bacd713c12234fe3a1ed6122d8d7bef867292"
+      ],
+      "message": "Record CODEX-1 source qualification and retained failing controls [no release] [no deploy]"
+    },
+    "0542b3fb74a5c5dc6a28245145ea8e616012a925": {
+      "remote_commit": "8a3a8bea9b110abdb2004d9ad291199deda6aa5b",
+      "tree": "2d02bbddc395f76f060828e0e0ca8a8659948a8b",
+      "original_parents": [
+        "36dd3a6f454ae856cf9c34bc05cd97bdaf165182",
+        "ad0997044ddd2c957ad0de1ede8db4c7dab00317"
+      ],
+      "remote_parents": [
+        "6c3832a81161d2dfff92fbcfd024a83d4dbba742",
+        "dc3ef3445b1aaded26ee5380373494e6e0793d69"
+      ],
+      "message": "Integrate direct Action pin source and preserved controls [no release] [no deploy]"
+    },
+    "47d8228b10f330728eb20ed99a688074cd49bd17": {
+      "remote_commit": "0cb2420b30d4811581b266e33001016de2dd6ca1",
+      "tree": "0957f7e5563fae5f4d11ace04045adf55aae53cd",
+      "original_parents": [
+        "11f51c105bf63946f59373ae605b937c4fee607a"
+      ],
+      "remote_parents": [
+        "11f51c105bf63946f59373ae605b937c4fee607a"
+      ],
+      "message": "Specify exact Windows executable names in Intel version probes [no release] [no deploy]"
+    },
+    "e18177302fce5d58e92a677bae89d7732d94a8d6": {
+      "remote_commit": "6095d4236e7d7bd574a2f88d6e0337fb3a2008c3",
+      "tree": "272004c2c5200c860d8b0dd863e0b0292c8ed579",
+      "original_parents": [
+        "47d8228b10f330728eb20ed99a688074cd49bd17"
+      ],
+      "remote_parents": [
+        "0cb2420b30d4811581b266e33001016de2dd6ca1"
+      ],
+      "message": "Retain Windows Intel version-name regression controls [no release] [no deploy]"
+    },
+    "eeb7bc07eff8b1028adc40fbad8d04deecfdd539": {
+      "remote_commit": "222ee6dcca7e6b41c12a7f2b2aa2dd0a6fc8e607",
+      "tree": "e937a9b143b6513e7166bc318828a342127d58a7",
+      "original_parents": [
+        "e18177302fce5d58e92a677bae89d7732d94a8d6"
+      ],
+      "remote_parents": [
+        "6095d4236e7d7bd574a2f88d6e0337fb3a2008c3"
+      ],
+      "message": "Accept literal Windows executable suffix in Intel version probes [no release] [no deploy]"
+    },
+    "3a3c6a687b3acef7ee8b38420b83398f5e2d1dab": {
+      "remote_commit": "912d74e927c1f7c6599222b44d85b0d46a8dd03f",
+      "tree": "e2a71b1ac561bdfe7035c4a1f27276ea48d0bcef",
+      "original_parents": [
+        "0542b3fb74a5c5dc6a28245145ea8e616012a925",
+        "eeb7bc07eff8b1028adc40fbad8d04deecfdd539"
+      ],
+      "remote_parents": [
+        "8a3a8bea9b110abdb2004d9ad291199deda6aa5b",
+        "222ee6dcca7e6b41c12a7f2b2aa2dd0a6fc8e607"
+      ],
+      "message": "Integrate Windows Intel version-name compatibility fix [no release] [no deploy]"
+    },
+    "ceea21d41f9fc6c24b9b0b51be8db37de461df9a": {
+      "remote_commit": "d84ea37d66033246827d2c77e96358ab5eb416ee",
+      "tree": "4c95b3627063b14504ddae0fd71f4f7067a88754",
+      "original_parents": [
+        "11f51c105bf63946f59373ae605b937c4fee607a"
+      ],
+      "remote_parents": [
+        "11f51c105bf63946f59373ae605b937c4fee607a"
+      ],
+      "message": "Specify bounded live Intel probe diagnostics without acceptance changes"
+    },
+    "de2f1b0aa13cdb8154c4a5a2d123e56ab6697f5b": {
+      "remote_commit": "e53310c5bde38cdce5ab0f4dd65a429685ffede2",
+      "tree": "b186aba05be43674f4b9ad39aadb11293b811219",
+      "original_parents": [
+        "ceea21d41f9fc6c24b9b0b51be8db37de461df9a"
+      ],
+      "remote_parents": [
+        "d84ea37d66033246827d2c77e96358ab5eb416ee"
+      ],
+      "message": "Retain failing controls for missing live Intel probe evidence"
+    },
+    "03db821b65b19ebe57044d2e1eee2da0c3605a08": {
+      "remote_commit": "3f3971b0d7b25c1fb5bfafef09a82ea7454d0f6b",
+      "tree": "a783e551564db1ce65c81f4483e9488f0c57daf3",
+      "original_parents": [
+        "de2f1b0aa13cdb8154c4a5a2d123e56ab6697f5b"
+      ],
+      "remote_parents": [
+        "e53310c5bde38cdce5ab0f4dd65a429685ffede2"
+      ],
+      "message": "Preserve bounded existing Intel version probes in live acceptance evidence"
+    },
+    "4ca982e708685889ac2c6f8bedecf79443e6664c": {
+      "remote_commit": "4ef6f5f8ba92a8818e7cd464df416c1c43ad345b",
+      "tree": "6a4f9124f9e9e1af6621975fe8c8fc1a1f0cacac",
+      "original_parents": [
+        "3a3c6a687b3acef7ee8b38420b83398f5e2d1dab",
+        "03db821b65b19ebe57044d2e1eee2da0c3605a08"
+      ],
+      "remote_parents": [
+        "912d74e927c1f7c6599222b44d85b0d46a8dd03f",
+        "3f3971b0d7b25c1fb5bfafef09a82ea7454d0f6b"
+      ],
+      "message": "Retain bounded evidence from actual live Intel probes [no release] [no deploy]"
+    },
+    "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c": {
+      "remote_commit": "61b26107d77fb632571ede932e0796d4b643f50c",
+      "tree": "2666e72d5efd51600b170cef033103c9947bae3b",
+      "original_parents": [
+        "4ca982e708685889ac2c6f8bedecf79443e6664c"
+      ],
+      "remote_parents": [
+        "4ef6f5f8ba92a8818e7cd464df416c1c43ad345b"
+      ],
+      "message": "Register current CI specifications and preserve acceptance boundaries [no release] [no deploy]"
+    }
+  }
+}

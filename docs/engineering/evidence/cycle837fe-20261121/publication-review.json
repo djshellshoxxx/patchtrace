@@ -1,0 +1,41 @@
+{
+  "schema": "patchtrace.publication-audit/1",
+  "recorded_at_utc": "2026-11-21T05:57:28.239900+00:00",
+  "disposition": "NO_REMAINING_PUBLICATION_BLOCKER_IN_REVIEWED_CORRECTED_CONTENT",
+  "original_commit": "760c5e0b1320a6b08fc23d800c037c124488b4bc",
+  "original_tree": "79693e8cf73658ddd291fea4c1fd4bcc7ebe4680",
+  "original_finding": "PUB-E1 missing Action pin upstream receipts; closed by five reviewed correction files",
+  "corrected_complete_tree": "00b23e0a7a2688a4d1a281686d26db6a91066075",
+  "corrected_commit": "Not yet committed at review; bind eventual commit to this exact tree",
+  "code_checkpoint": "b880c317add4de3ac22c87cd842abb0e7ccc615d",
+  "unchanged_code_subtrees": {
+    "src": "918cfe41dc4f121399234e6ec86659ca03c3ed54",
+    "tests": "ed979b51ce2745eebd9468b8950f3d9bb1816b51",
+    "tools": "125b618d34303bc652f55db0d034200261c12c3b",
+    ".github": "ac7f38b565a364be8a5ba5bc6c93e773960baefd",
+    "docs/specs": "b130eb807027960e1f5b9d1df3e45e9b9d2cc492"
+  },
+  "remaining_blockers": [],
+  "verified": [
+    "19 manifest payloads, 1041123 bytes, all sizes/hashes valid",
+    "215-member test archive; all CRCs, original-file equality and 99 internal digest references valid",
+    "12-member Action archive; all originals and 11 manifest hashes valid",
+    "Bundle head b880, sole prerequisite PR348, all three author commits retained",
+    "Independent compact decode equals original JSON; all 364 head/tree/parent Git objects checked",
+    "38 JUnit files: source attribution/counts correct; S-H1/SVC-R1/R2 closed",
+    "13 introduced Markdown links and 3 task-ledger targets resolve",
+    "AF_UNIX EPERM separate from unexplained SIGKILL; no unsupported full/native/release success"
+  ],
+  "nonblocking_observation": "git diff --check b880..760 reports one raw Git bundle-verification trailing space. Source b880 whitespace-pass claim remains correctly scoped.",
+  "limits": [
+    "No product tests rerun",
+    "No source/index/ref/workflow/remote edits by reviewers",
+    "Does not qualify subsequently announced PR349 integration or a future merged/published tree"
+  ],
+  "receipts": {
+    "integrity.json": "6ee9d2067cf12e00ef94c8c7809fc34948796f019da6cf5b8a8e3ac5773f3531",
+    "correction-integrity.json": "b60a287da4f7e192ee2b3696b186cba7fb33f15cd72dbd4d717c096bcdea7109",
+    "claims-links.json": "258824a3477ef576ce8c911f0dbfbc816319c6ba6435e354a5b62ac2c46a2c78",
+    "claims-links-correction.json": "e63fb163f888bcc094e4c3579123ddc92be877b61254963918d3c0b7028ff6cb"
+  }
+}

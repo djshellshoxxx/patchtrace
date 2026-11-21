@@ -1,0 +1,159 @@
+{
+  "schema": "patchtrace.combined-publication-audit/1",
+  "recorded_at_utc": "2026-11-21T06:34:36.654437+00:00",
+  "disposition": "NO_REMAINING_PUBLICATION_AUDIT_BLOCKER",
+  "final_commit": "eff71f218a3eab4fe4d7acc3cc9fff28e83e651d",
+  "final_tree": "d8c1a3f9e3fbd1a06ac1c07e59f555f64eac45c3",
+  "code_checkpoint": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
+  "code_tree": "2666e72d5efd51600b170cef033103c9947bae3b",
+  "unchanged_subtrees": {
+    "src": "528c5e6b2f75902394d192ee8b21cbf4b33901f2",
+    "tests": "10d944f55c2ccb6ef1b05000c2d5ec23df273e03",
+    "tools": "697bb76c56f66d68dde904b560d6480dd3b6e68a",
+    ".github": "e2f940b4aa933fe39f60b7072646809441429d0b",
+    "docs/specs": "25927e89a9ef513cf870963c3afbcc39f6802b51"
+  },
+  "closed_findings": {
+    "C-PUB-E1": {
+      "status": "CLOSED",
+      "snapshot": "2026-11-21T06:19:32Z",
+      "snapshot_head": "11f51c105bf63946f59373ae605b937c4fee607a",
+      "qt_successes": 5,
+      "windows_qa": "in_progress",
+      "timestamp_basis": "UTC clock read immediately after this GitHub API response in the same orchestration call; source remains the original PR349 head."
+    },
+    "C-PUB-O1": {
+      "status": "CLOSED",
+      "current_continuation": {
+        "status": "TESTING",
+        "owner": "root837FE",
+        "handoff": "docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md",
+        "code_commit": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
+        "target_pr": 349,
+        "next_action": "Publish the reviewed combined candidate to existing PR349 with an expected-head fast-forward guard, inspect exact-head hosted full/Qt/native/package/frozen results and Intel diagnostics, resolve applicable blockers, and use guarded REST main merge with both [no release] [no deploy]. Preserve the separate remaining release gates and existing continuation cadence."
+      },
+      "local_integration_branch": "integration/patchtrace-20261121-837fe-combined",
+      "prior_continuation_preserved_unchanged": true,
+      "prior_local_branch_preserved": true,
+      "worker_status_counts": {
+        "completed": 24,
+        "COMPLETE": 16,
+        "completed-source-review-or-census": 3,
+        "TESTING-root-owned": 1
+      }
+    }
+  },
+  "remaining_blockers": [],
+  "manifest": {
+    "payloads": 22,
+    "payload_bytes": 1645090,
+    "sha256": "5d3cf5552e994779bdadf9380949d493e0e1fc4ab38f7340c1cfc34ff18575fd"
+  },
+  "archives": {
+    "codex1-independent-review.zip": {
+      "members": 25,
+      "uncompressed_bytes": 116879,
+      "sha256": "4dba68d80225f03fcda6e52dd692408f6159acbae305bc268fbf78df3d461c65",
+      "all_crc_valid": true,
+      "all_original_bytes_match": true,
+      "internal_hash_references": 24
+    },
+    "historical-followup-review.zip": {
+      "members": 18,
+      "uncompressed_bytes": 131298,
+      "sha256": "9a365f08ff2d357ffd29b4a5e0d49c8d2313e66c4657269c16cc94d4b3e09dfc",
+      "all_crc_valid": true,
+      "all_original_bytes_match": true,
+      "internal_hash_references": 17
+    },
+    "intel-independent-review.zip": {
+      "members": 20,
+      "uncompressed_bytes": 88831,
+      "sha256": "eb192aeb146b0c4ff06364db620fa085a9e3a83b4f720c6ab94eabd27e039cce",
+      "all_crc_valid": true,
+      "all_original_bytes_match": true,
+      "internal_hash_references": 19
+    },
+    "intel-probe-author.zip": {
+      "members": 22,
+      "uncompressed_bytes": 86427,
+      "sha256": "7763d4e604000386beb67d10b74c0a359b28b2627a0d014c7c8270336d1d0c9b",
+      "all_crc_valid": true,
+      "all_original_bytes_match": true,
+      "internal_hash_references": 21
+    },
+    "intel-version-author.zip": {
+      "members": 16,
+      "uncompressed_bytes": 78966,
+      "sha256": "25e0707bb73000a2bd68e979430f78d555a18a0c93425b60ff53af55f3742c74",
+      "all_crc_valid": true,
+      "all_original_bytes_match": true,
+      "internal_hash_references": 15
+    },
+    "pr349-initial-native-evidence.zip": {
+      "members": 23,
+      "uncompressed_bytes": 959391,
+      "sha256": "1464db5f37289fa94fb67d40f794df6cccbd31f4428085ff6034b63c50550150",
+      "all_crc_valid": true,
+      "all_original_bytes_match": true,
+      "internal_hash_references": 30
+    },
+    "pr349-registry-failure-evidence.zip": {
+      "members": 13,
+      "uncompressed_bytes": 142927,
+      "sha256": "f475a95308fcb04630f6ebb65801510c419ec5f6446653a04cd3610b4503e01f",
+      "all_crc_valid": true,
+      "all_original_bytes_match": true,
+      "internal_hash_references": 12
+    }
+  },
+  "combined_results": {
+    "passed": 1296,
+    "xfailed": 1,
+    "failed": 0,
+    "errors": 0,
+    "ordinary_skips": 0,
+    "distinct_cases": 1297,
+    "selectors": 57,
+    "expected_failure": [
+      "tests.test_codex_pkg_workflows::test_pip_downloads_require_hashes"
+    ],
+    "source_receipts_clean": true,
+    "seconds": 95.946
+  },
+  "mapping": {
+    "original_commits": 35,
+    "original_trees_parents_messages_verified": true,
+    "ordered_parent_remapping_verified": true,
+    "all_35_remote_objects_freshly_read_and_matched": true,
+    "remote_code": "61b26107d77fb632571ede932e0796d4b643f50c",
+    "remote_tree": "2666e72d5efd51600b170cef033103c9947bae3b",
+    "remote_receipt_sha256": "efda0ebf0e6edf7a6da207b8fad400df85ef81c6aa9dae1c216c9e9e28057888"
+  },
+  "bundle": {
+    "bytes": 1049086,
+    "sha256": "41b82d2f6998e621dc3ded24df8dc4f73f97effa16d8676e3829600ec8cdea30",
+    "head": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
+    "prerequisites": [
+      "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+      "11f51c105bf63946f59373ae605b937c4fee607a"
+    ],
+    "verified": true,
+    "strict_pack_verified": true,
+    "exact_35_original_commit_objects_in_pack": true,
+    "stdout": "The bundle contains this ref:\n2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c HEAD\nThe bundle requires these 2 refs:\n6b6fcd3597a604212032ffc453477aeb6edc69ff \n11f51c105bf63946f59373ae605b937c4fee607a \nThe bundle uses this hash algorithm: sha1\n",
+    "stderr": "/workspace/scratch/837fe19aae3a/evidence/combined-publication-audit/snapshot-451ab3e/original-source-history.bundle is okay\n"
+  },
+  "relative_markdown_links_verified": 35,
+  "qualification": "Source-specific publication audit only. No product tests rerun or source/index/ref/workflow/remote writes. No full/native/main-merge/release success claim. Prior 760 publication audit preserved. Later Windows QA observations are outside this snapshot.",
+  "source_counts_and_history": "Component counts match source-bound receipts; overlapping selections are not summed. Original Linux registry and Windows Intel failures are retained. Six historical scopes comprise four duplicate and two superseded dispositions; all whole branches remain partially reviewed. The 53 AST declarations are not executed-test counts.",
+  "final_worktree_clean": true,
+  "publication_whitespace_pass": true,
+  "supporting_receipts": {
+    "integrity.json": "2ac548dbbd3878449d47fdd309b6c4a8ad38560b1e602a65d0ca34c99767941e",
+    "remote-objects.json": "efda0ebf0e6edf7a6da207b8fad400df85ef81c6aa9dae1c216c9e9e28057888",
+    "final-correction.json": "405f21e6da4f3a40c286194a327468ede3ae82e15d0795e6dd84ed0101fd8d95",
+    "claims-links.json": "8d983f8b5824893ab508a2a7011b855731b8a157b60aa65606c5dc7eb75f0972",
+    "claims-links-final-correction.json": "6c340a2a3fdc056f288f46247fa6de5007ddf7bd32e82dd40c6fac430dba0762"
+  }
+}

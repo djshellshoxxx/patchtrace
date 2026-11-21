@@ -247,6 +247,7 @@ def test_workflow_uploads_diagnostics_even_when_native_acceptance_fails():
     steps = workflow['jobs']['native']['steps']
     cache = next(step for step in steps if step.get('if') == "matrix.variant == 'raw-cache-hit'")
     assert cache['run'] == 'python tools/live_cache_check.py --diagnostics-dir live-cache-diagnostics'
-    upload = next(step for step in steps if step.get('uses') == 'actions/upload-artifact@v4')
+    upload = next(step for step in steps
+                  if step.get('uses') == 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02')
     assert upload['if'] == 'always()'
     assert 'live-cache-diagnostics/*.json' in upload['with']['path'].splitlines()

@@ -79,3 +79,9 @@ PR #321 remains retained at `f851d74d134a09cb9b12013d2c1adba1fde0c24f`.
 This cycle separately recovers registered table-header help and Evidence state
 announcements. Broad Search-source/Strings-composition adoption requires further
 review and would overwrite newer lifecycle fixes if applied wholesale.
+
+## Current combined PR349 candidate — 837FE
+
+[Combined report](cycle837fe-combined-pr349-20261121.md) and [authoritative ledger](task-ledger.json) supersede earlier next-action text only for the completed named scopes. Reviewed storage/Search, CODEX-1 and Intel repairs are integrated with the released 95FE Linux/cache/Pages source. Final code `2a67980c` passes 1,296 affected cases with 1 CODEX-5 xfail; new-head hosted qualification and main promotion remain pending. Preserve original failed controls, the PR349 registry failure, Windows Intel limits, all historical branches and separate release gates.
+
+Six further scoped source-retention dispositions are recorded for PR #162, #196, #198, #219, #226 and #227: four DUPLICATE, two SUPERSEDED, all whole branches PARTIALLY_REVIEWED. No code port or branch deletion is indicated. These source comparisons do not reduce the181 unmatched/16 patch-equivalent branch-level backlog. [Exact evidence](evidence/cycle837fe-combined-20261121/historical-followup-dispositions.json).

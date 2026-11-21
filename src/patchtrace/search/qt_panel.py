@@ -47,7 +47,8 @@ CHANNELS = ('search.query', 'search.build', 'search.coverage')
 _QUERY_HINT = 'Use words, "quoted phrases" and -excluded words; see the placeholder for filters.'
 
 # Cells: Side, Kind, Match, Where, Change, Why (widths from the spec, in em).
-COLUMNS = tuple(ColumnSpec(key, title, lambda r, i=i: r.cells[i], width_em=width, accessible=lambda r: r.accessible)
+COLUMNS = tuple(ColumnSpec(key, title, lambda r, i=i: r.cells[i], width_em=width, accessible=lambda r: r.accessible,
+                           tip_id=f'search.col.{key}')
                 for i, (key, title, width) in enumerate(zip(
                     ('side', 'kind', 'match', 'where', 'change', 'why'), vm.HEADERS, (10, 14, 36, 26, 20, 40),
                     strict=True)))
