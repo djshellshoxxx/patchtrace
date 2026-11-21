@@ -51,3 +51,22 @@ successor. That ownership record is not proof that another session's work passed
 Use exact commit/tree identities. Earlier main, parent PR, unit-only, synthetic,
 offscreen or native results qualify only their named source and scope. Preserve
 original failures. A clean focused run cannot replace full/native acceptance.
+
+## Verified publication and parallel sibling
+
+Draft [PR #346](https://github.com/djshellshoxxx/patchtrace/pull/346) was created
+at remote `87328763478db060909b75cd6849295056f9b405`, identical to local publication
+`61965a71047d54003d400d9aff779a83cba3dedb`, tree
+`e85b8c5b94806278627c9efd03669656c02be070`. Later documentation-only commits add
+this receipt; resolve the PR for its current head. The first exact-source QA,
+five Qt and five native jobs were queued; the release gate was skipped. Main
+remained `fdc2696c23bdbfe7668348f25e3b336ce33039f7`; 80 PRs were open at capture.
+
+The separate foreground concurrently published [PR #345](https://github.com/djshellshoxxx/patchtrace/pull/345)
+at `39c38a02f126963fc03827fa49741255590227ad`, from the same g41 parent. Exact
+comparison found identical table-spec/table-model and GUI-specification blobs;
+Evidence source differs only in line wrapping and has an identical whole-file
+AST. The GUI recovery is therefore shared work and must be counted once. PR345
+also preserves additional header/Evidence assertions and tests. Its report,
+TaskRunner and Linux publication changes remain separately reviewed/qualified.
+See [publication receipt](evidence/cycle95fe/initial-publication.json).

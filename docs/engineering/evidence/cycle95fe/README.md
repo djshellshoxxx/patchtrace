@@ -42,3 +42,8 @@ three exited zero on clean frozen `ccc3664f`. They were recorded after the ZIP
 was frozen and do not change its members or hashes. The runner helper is in the
 ZIP. [Publication audit](publication-audit.md) records the independent review
 and the corrected handoff-index finding.
+
+[initial-publication.json](initial-publication.json) preserves the first
+verified PR346 head/tree, its queued checks and the concurrent PR345 overlap.
+The exact runtime comparison prevents duplicate GUI implementation/credit;
+subsequent combined integration remains separately gated.

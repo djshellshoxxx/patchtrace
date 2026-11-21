@@ -1,0 +1,172 @@
+{
+  "schema": "patchtrace-publication-receipt/1",
+  "observed_utc": "2026-11-21T00:01:30Z",
+  "pull_request": 346,
+  "url": "https://github.com/djshellshoxxx/patchtrace/pull/346",
+  "draft": true,
+  "initial_remote_head": "87328763478db060909b75cd6849295056f9b405",
+  "initial_local_head": "61965a71047d54003d400d9aff779a83cba3dedb",
+  "initial_complete_tree": "e85b8c5b94806278627c9efd03669656c02be070",
+  "parent": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+  "main": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+  "source_tree_verified_equal": true,
+  "branch": "consolidation/patchtrace-20261120-95fe",
+  "open_prs_at_observation": 80,
+  "checks": [
+    {
+      "id": 136648640241,
+      "name": "release-gate",
+      "head_sha": "87328763478db060909b75cd6849295056f9b405",
+      "status": "completed",
+      "conclusion": "skipped",
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44840881926/job/136648640241"
+    },
+    {
+      "id": 136648640091,
+      "name": "native (patchtrace-seeded-store)",
+      "head_sha": "87328763478db060909b75cd6849295056f9b405",
+      "status": "queued",
+      "conclusion": null,
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44840882079/job/136648640091"
+    },
+    {
+      "id": 136648639943,
+      "name": "native (repro-plain-ghidriff)",
+      "head_sha": "87328763478db060909b75cd6849295056f9b405",
+      "status": "queued",
+      "conclusion": null,
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44840882079/job/136648639943"
+    },
+    {
+      "id": 136648639932,
+      "name": "native (patchtrace-clean)",
+      "head_sha": "87328763478db060909b75cd6849295056f9b405",
+      "status": "queued",
+      "conclusion": null,
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44840882079/job/136648639932"
+    },
+    {
+      "id": 136648639686,
+      "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+      "head_sha": "87328763478db060909b75cd6849295056f9b405",
+      "status": "queued",
+      "conclusion": null,
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44840882079/job/136648639686"
+    },
+    {
+      "id": 136648639460,
+      "name": "native (raw-cache-hit)",
+      "head_sha": "87328763478db060909b75cd6849295056f9b405",
+      "status": "queued",
+      "conclusion": null,
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44840882079/job/136648639460"
+    },
+    {
+      "id": 136648639130,
+      "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+      "head_sha": "87328763478db060909b75cd6849295056f9b405",
+      "status": "queued",
+      "conclusion": null,
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44840881926/job/136648639130"
+    },
+    {
+      "id": 136648639064,
+      "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+      "head_sha": "87328763478db060909b75cd6849295056f9b405",
+      "status": "queued",
+      "conclusion": null,
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44840881926/job/136648639064"
+    },
+    {
+      "id": 136648639012,
+      "name": "qt-gate (windows-latest, 5, 1/1)",
+      "head_sha": "87328763478db060909b75cd6849295056f9b405",
+      "status": "queued",
+      "conclusion": null,
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44840881926/job/136648639012"
+    },
+    {
+      "id": 136648638924,
+      "name": "qa (windows-latest)",
+      "head_sha": "87328763478db060909b75cd6849295056f9b405",
+      "status": "queued",
+      "conclusion": null,
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44840881926/job/136648638924"
+    },
+    {
+      "id": 136648638920,
+      "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+      "head_sha": "87328763478db060909b75cd6849295056f9b405",
+      "status": "queued",
+      "conclusion": null,
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44840881926/job/136648638920"
+    },
+    {
+      "id": 136648638887,
+      "name": "qa (ubuntu-latest)",
+      "head_sha": "87328763478db060909b75cd6849295056f9b405",
+      "status": "queued",
+      "conclusion": null,
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44840881926/job/136648638887"
+    },
+    {
+      "id": 136648638701,
+      "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+      "head_sha": "87328763478db060909b75cd6849295056f9b405",
+      "status": "queued",
+      "conclusion": null,
+      "details_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44840881926/job/136648638701"
+    }
+  ],
+  "sibling": {
+    "pull_request": 345,
+    "head": "39c38a02f126963fc03827fa49741255590227ad",
+    "branch": "codex/autonomous-consolidation-20261120-2bad",
+    "base": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+    "draft": true,
+    "url": "https://github.com/djshellshoxxx/patchtrace/pull/345",
+    "comparisons": [
+      {
+        "path": "src/patchtrace/gui/table_spec.py",
+        "cycle95fe_blob": "4bab0fb8013bbb32a3e5c0b58ac5bc02d8fade89",
+        "sibling345_blob": "4bab0fb8013bbb32a3e5c0b58ac5bc02d8fade89",
+        "identical": true
+      },
+      {
+        "path": "src/patchtrace/gui/qt/table.py",
+        "cycle95fe_blob": "e90b3acd981fa7045b370a080b7e27694f4e01d9",
+        "sibling345_blob": "e90b3acd981fa7045b370a080b7e27694f4e01d9",
+        "identical": true
+      },
+      {
+        "path": "src/patchtrace/ui_evidence.py",
+        "cycle95fe_blob": "0d6141351ab16fc54967fe5d2e06251878d29ba5",
+        "sibling345_blob": "a97f981594e755f2dba42c8c220aaebb61732970",
+        "identical": false
+      },
+      {
+        "path": "docs/specs/gui-framework.md",
+        "cycle95fe_blob": "b965feebe028276494fa1dbedef129cff99bcc2a",
+        "sibling345_blob": "b965feebe028276494fa1dbedef129cff99bcc2a",
+        "identical": true
+      },
+      {
+        "path": "tests/test_gui_table.py",
+        "cycle95fe_blob": "c5bcedee57ea8421f16ee4b40c7e47392b791db8",
+        "sibling345_blob": "7a1cb7f1796a240cc7f37a93ab9c4aab4bcfbd05",
+        "identical": false
+      },
+      {
+        "path": "tests/test_evidence_host.py",
+        "cycle95fe_blob": "12f5fc6fbdcb44f4a4fe2f76f7a99976dcf9b218",
+        "sibling345_blob": "b6e03813877c8a1daf86973b3b8a08f45ee39f73",
+        "identical": false
+      }
+    ],
+    "ui_evidence_whole_file_ast_equal": true,
+    "ui_evidence_blob_difference": "Line wrapping of the identical StateView constructor call only",
+    "test_relationship": "PR345 adds assertions to the same header regression and adds one header and one Evidence test; original Evidence test AST is identical. Retain the additions during reconciliation.",
+    "source_qualification": "Sibling review/test claims are its own; not transferred to PR346."
+  },
+  "later_documentation_rule": "Resolve the named branch/PR for current head. This receipt preserves the first verified publication; later documentation-only updates do not change the frozen code source."
+}

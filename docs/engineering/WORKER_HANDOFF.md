@@ -34,3 +34,14 @@ latest handoff before touching those scopes.
    gates and blockers permit. Preserve every branch.
 5. Keep native/manual accessibility, Windows trust, raw-source membership and
    separate accuracy-layer acceptance explicit. No release is authorized.
+
+## Published sibling discovered at final refresh
+
+This cycle is draft [PR #346](https://github.com/djshellshoxxx/patchtrace/pull/346).
+The parallel foreground published draft [PR #345](https://github.com/djshellshoxxx/patchtrace/pull/345)
+from the same g41 parent. Its header-help/Evidence runtime recovery matches this
+cycle semantically and its GUI tests add useful controls; preserve the shared
+implementation once. Read [the integration queue](INTEGRATION_QUEUE.md) and
+[exact publication receipt](evidence/cycle95fe/initial-publication.json) before
+assigning further GUI recovery or merging either ledger. Neither candidate is
+main-qualified by the publication observations.

@@ -7,7 +7,7 @@
   "starting_candidate": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
   "main_at_discovery": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
   "remote_publication": {
-    "status": "code-objects-created-and-tree-verified; draft-branch-publication-receipt-is-in-associated-PR",
+    "status": "published-draft",
     "branch": "consolidation/patchtrace-20261120-95fe",
     "base_branch": "codex/patchtrace-candidate-component-type-20261120-g41",
     "base_commit": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
@@ -16,7 +16,14 @@
     "remote_code_commit": "406acf96f5b1a299aca940f98eeb69d0b9583729",
     "tree_verified_equal": true,
     "commit_mapping": "docs/engineering/evidence/cycle95fe/code-commit-mapping.json",
-    "documentation_head_rule": "Resolve the named remote branch and its associated draft PR; documentation/evidence commits do not change the frozen code source."
+    "documentation_head_rule": "Resolve the named remote branch and its associated draft PR; documentation/evidence commits do not change the frozen code source.",
+    "pull_request": 346,
+    "url": "https://github.com/djshellshoxxx/patchtrace/pull/346",
+    "initial_remote_commit": "87328763478db060909b75cd6849295056f9b405",
+    "initial_local_commit": "61965a71047d54003d400d9aff779a83cba3dedb",
+    "initial_publication_tree": "e85b8c5b94806278627c9efd03669656c02be070",
+    "initial_publication_receipt": "docs/engineering/evidence/cycle95fe/initial-publication.json",
+    "current_documentation_head": "Resolve consolidation/patchtrace-20261120-95fe and PR346; initial publication receipt remains historical."
   },
   "release_ready": false,
   "main_merge_eligible": false,
@@ -670,7 +677,8 @@
       "status": "implemented-independently-reviewed-locally-integrated",
       "source_commit": "2c7f506b61ad1f8010c82c1303dd181baf8c0158",
       "evidence": "docs/engineering/CONSOLIDATION_LEDGER.md",
-      "result_or_next_action": "212 affected passed; 2 preserved baseline failures; actual screen-reader pending"
+      "result_or_next_action": "212 affected passed; 2 preserved baseline failures; actual screen-reader pending",
+      "shared_implementation": "Equivalent runtime recovery also published concurrently in PR345; count once and retain its additional GUI regressions when reconciling."
     },
     {
       "id": "95fe-inventory-replay",
@@ -801,7 +809,7 @@
     },
     {
       "name": "95fe-root",
-      "status": "reviewed-draft-publication-and-handoff"
+      "status": "published-draft-handoff"
     }
   ],
   "local_integration_branch": "codex/patchtrace-consolidation-20261120-95fe",
@@ -814,7 +822,7 @@
     "environment_selection": "inherited",
     "environment_availability_verified": false,
     "automation_id": "Automation_8671977e1a1081919d2b8650cf5a1c1c",
-    "checkpoint": "Cycle95fe local ccc3664f / remote code 406acf96; resolve new draft branch before continuation",
+    "checkpoint": "PR346 cycle95fe; frozen code ccc3664f / remote406acf96; reconcile siblingPR345 after source-specific gates",
     "last_observed_run_state": "completed at2026-11-20T16:25:26.023415Z; verified2026-11-20T16:31:57Z",
     "handoff": "docs/engineering/WORKER_HANDOFF.md",
     "prompt_update_rule": "After verified publication, save exact final head/tree without changing cadence, timezone or environment selection.",
@@ -1059,7 +1067,7 @@
   "current_cycle": {
     "id": "95fe-20261120",
     "owner": "interactive-95fe",
-    "status": "reviewed-draft-candidate-full-and-hosted-gates-pending",
+    "status": "published-draft-full-and-hosted-gates-pending",
     "handoff": "docs/engineering-handoffs/cycle-95fe-20261120.md",
     "remote_snapshot": {
       "branches": 354,
@@ -1104,6 +1112,15 @@
       "independently_verified_closed": true,
       "result": "suitable for draft publication; no additional blocker",
       "record": "docs/engineering/evidence/cycle95fe/publication-audit.md"
+    },
+    "sibling_publication": {
+      "pull_request": 345,
+      "head": "39c38a02f126963fc03827fa49741255590227ad",
+      "branch": "codex/autonomous-consolidation-20261120-2bad",
+      "common_parent": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+      "gui_recovery_overlap": "Two production blobs and GUI specification identical; ui_evidence.py whole-file AST identical with line-wrap-only blob difference. Sibling retains additional tests. Count shared GUI recovery once.",
+      "independent_scope": "Report cleanup, TaskRunner lifecycle and Linux overwrite refusal remain sibling-owned and separately qualified.",
+      "next_action": "After exact-source gates and ownership handoff, integrate both qualified changes, retain sibling GUI assertions/tests and this branch admission/inventory/coverage work. Reconcile ledger fields explicitly; do not replace either entire ledger."
     }
   },
   "publication_preparation_cycle95fe": {

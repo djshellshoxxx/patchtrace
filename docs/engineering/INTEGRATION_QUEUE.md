@@ -34,3 +34,19 @@ Keep releases disabled with the existing `[no release]` convention.
 The terminated local full run does not qualify this candidate. Bounded tests and
 mechanical/semantic branch reviews remain useful independently of that blocked
 aggregate. Do not repeat the killed command unchanged merely to obtain a pass.
+
+## Concurrent sibling reconciliation
+
+PR #346 and sibling PR #345 (`39c38a02`) both descend from exact g41 `67f7e08e`.
+Their table-header/Evidence runtime recovery is equivalent; preserve it once.
+Retain PR345's extra GUI test assertions and new cases, this branch's admission,
+inventory and coverage changes, and the sibling's separate report/TaskRunner/
+Linux publication repairs. No sibling source was merged by this cycle.
+
+Refresh both heads and applicable gates before integration. Reconcile the
+engineering ledger and shared documents field-by-field, preserving both dated
+evidence sets. Do not replace either tree or ledger wholesale. A combined
+candidate requires its own qualification; separate PR passes do not transfer.
+The [initial publication receipt](evidence/cycle95fe/initial-publication.json)
+records exact overlap and source identities. The frozen branch census is not
+silently recounted after these two new publications.
