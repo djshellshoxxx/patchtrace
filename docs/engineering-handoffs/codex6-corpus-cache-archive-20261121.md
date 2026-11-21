@@ -17,9 +17,9 @@ no foreground reviewer/worker is running in the background.
    after production repair, with positive cache archive/hash assertions;
    CODEX-1 and CODEX-5 strict xfails are retained.
 4. `tests/test_corpus_cache_archive_integrity_20261121.py`: hermetic
-   structural check plus twelve individual negative mutation cases.
+   structural check plus fourteen individual negative mutation cases.
 5. Evidence: `docs/engineering/evidence/codex6-archive-cache-controls-20261121.json`.
-   Exact source static checks 12/12; negative JS mutations 12/12;
+   Exact source static checks 12/12; negative JS mutations 14/14;
    synthetic shell archive verify + tamper refusal for both formats.
    This is author-side source review and shell-mechanism testing only.
 6. Ledger: `docs/engineering/task-ledger.json`, authoritative.
@@ -55,3 +55,14 @@ Still open: CODEX-1 immutable Action pins, CODEX-5 wheel hash locks,
 CODEX-14 original Linux frozen CLI smoke on its separate branch,
 full raw input/index provenance, Windows manual trust/screen-reader,
 historical 181/16 branch dispositions, and distinct L1/L2/L3 accuracy.
+
+## Additional review correction
+
+The previous cached extracted-tree key namespace was reused by the first
+archive-only patch. Existing cache hits could restore old tree layouts and
+starve the new archive cache indefinitely. This was corrected in the source
+only after SPEC-32 and two red/green key-namespace mutation cases were
+added: `rizin-archive-v1-` / `ghidra-archive-v1-` (digest suffix retained).
+No restore-key fallback is authorized. Latest workflow blob:
+`c15784337596d03de29a144980312872830b8aa4`. The latest source
+needs new-hosted qualification; earlier static results are not reused blindly.
