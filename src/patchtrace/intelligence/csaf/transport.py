@@ -173,9 +173,15 @@ class OfflineCache:
         """The URL map in ``path``: {} when there is none. A file that cannot be read (I/O error, not JSON, not an
         object, over ``MAX_MAP_BYTES``) reads as {} too, unless ``strict``, which refuses with PT-INTEL-CONFIG."""
         try:
+            # The stat is only an early hint: a same-user writer can grow the file
+            # between stat and read. Cap the read itself before JSON decoding.
             if path.stat().st_size > self.MAX_MAP_BYTES:
                 raise ValueError('index over its size cap')
-            data = json.loads(path.read_text(encoding='utf-8'))
+            with path.open('rb') as source:
+                raw = source.read(self.MAX_MAP_BYTES + 1)
+            if len(raw) > self.MAX_MAP_BYTES:
+                raise ValueError('index over its size cap')
+            data = json.loads(raw.decode('utf-8'))
             if not isinstance(data, dict):
                 raise ValueError('index is not an object')
         except FileNotFoundError:
@@ -207,7 +213,12 @@ class OfflineCache:
             path = self.root / 'bodies' / sha
             if limit is not None and path.stat().st_size > limit:
                 raise IntelError('PT-INTEL-LIMIT', f'the cached body exceeds its {limit}-byte cap')
-            body = path.read_bytes()
+            # When the resource kind supplies a limit, read at most one byte beyond it,
+            # even if the file grew after stat. The no-limit API remains unchanged.
+            with path.open('rb') as source:
+                body = source.read(limit + 1 if limit is not None else -1)
+            if limit is not None and len(body) > limit:
+                raise IntelError('PT-INTEL-LIMIT', f'the cached body exceeds its {limit}-byte cap')
         except OSError:
             return None
         if hashlib.sha256(body).hexdigest() != sha:
