@@ -1,3 +1,8 @@
+## Inventory snapshot column-shape replay — 2026-11-20
+
+- [ ] On source-bound checkout run `python -m pytest -q tests/test_branch_inventory.py`, whole-tree `python -m ruff check src tests tools` and supported offscreen aggregate with explicit termination receipts; standalone stdlib controls are not repository acceptance.
+- [ ] Obtain independent review of strict TSV header/row-shape refusal, unchanged large-field handling and prior published evidence; then source-specific hosted qualification after PR347 queues complete. Do not merge/main/promote while blockers remain. [Handoff](../docs/engineering-handoffs/inventory-tsv-shape-20261120.md).
+
 ## Current authoritative continuation — 20 November 2026
 
 - [x] Recover reviewed report and accessibility donor slices.
