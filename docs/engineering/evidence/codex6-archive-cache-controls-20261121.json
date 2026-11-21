@@ -1,0 +1,54 @@
+{
+  "schema": "patchtrace-codex6-archive-cache-controls/1",
+  "date_utc": "2026-11-21",
+  "base_pr": 348,
+  "base_head": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+  "branch": "codex/patchtrace-corpus-archive-integrity-20261121",
+  "workflow_blob_sha": "03444dfd08d97815c0ede48443de1846bd796009",
+  "source_contract": "docs/specs/known-answer-corpus.md",
+  "source_repair_commit": "c32449278d0712fa9e653f4b7c51eb5f679a693c",
+  "source_test": "tests/test_corpus_cache_archive_integrity_20261121.py",
+  "maintained_audit_test": "tests/test_codex_pkg_workflows.py",
+  "controls": {
+    "author_connector_exact_source_static": {
+      "passes": 12,
+      "failures": 0
+    },
+    "author_js_negative_mutations": {
+      "passes": 10,
+      "failures": 0,
+      "details": [
+        "rizin cached tree substitution",
+        "Ghidra cached tree substitution",
+        "digest verification removal",
+        "rizin extraction omission",
+        "Ghidra extraction omission",
+        "rizin clean destination omission",
+        "Ghidra clean destination omission",
+        "rizin archive identity substitution",
+        "Ghidra archive identity substitution",
+        "Ghidriff engine gate removal"
+      ]
+    },
+    "synthetic_local_shell_replay": {
+      "positive_rizin": true,
+      "corrupt_rizin_refused": true,
+      "positive_ghidra": true,
+      "corrupt_ghidra_refused": true
+    }
+  },
+  "excluded_claims": [
+    "source-bound repository pytest or full suite",
+    "whole-tree Ruff",
+    "independent reviewer",
+    "hosted end-to-end Actions workflow acceptance",
+    "actual rizin/Ghidra/Ghidriff execution",
+    "native matching or accuracy",
+    "main merge/release"
+  ],
+  "source_only_limitations": [
+    "No repository checkout mounted",
+    "Shell cannot resolve github.com",
+    "PR348 source-bound Windows QA still active at last inspection"
+  ]
+}
