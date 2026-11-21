@@ -1079,6 +1079,12 @@ R5 contract notes: no persisted contract changed. Deviations from the card, all 
 ### [PIL-D1:eval-core]
 | pilot evaluation | tools/calibration/pilot/{contracts,metrics,ablation,gate,report}.py | tie-aware metrics, LOCO arm catalogue, G-PIL gate over lineage bootstrap, single-use locked run, deterministic report | calibration bootstrap, run_locked_test | core built; arm runner, case loader and CLI wait for LBL M2/M5 |
 
+The advisory pilot CI tooling closure is defined by
+`docs/specs/pilot-evaluation-tooling-hashes.md` and
+`tools/calibration/pilot/requirements-ci.lock`. It protects only the first
+pytest/Hypothesis install; the separate editable application install and
+evaluation semantics remain unchanged.
+
 ### [PIL-C2:read-model]
 | leads read model | src/patchtrace/pilot/read_model.py | Qt-free state resolution L0-L8, context choices, precomputed lead rows, banners, filter | pilot.report, store, review | built; ui_leads.py and the dock wait for the GUI panel registry |
 ### [WBQ-S6-S9:qt-modules]
