@@ -1,0 +1,1404 @@
+{
+  "schema": "patchtrace.publication-remote-object-audit/1",
+  "recorded_at_utc": "2026-11-21T06:27:39.197Z",
+  "read_only": true,
+  "count": 35,
+  "all_expected_sha_tree_ordered_parents_messages_match": true,
+  "observations": [
+    {
+      "original": "e86506bdcd963c7e00057997153117f75f60ba55",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/16b0b481c3cc74673ecc961aaa976698daf25dc7",
+      "payload": {
+        "sha": "16b0b481c3cc74673ecc961aaa976698daf25dc7",
+        "node_id": "C_kwDOVEPRFdoAKDE2YjBiNDgxYzNjYzc0NjczZWNjOTYxYWFhOTc2Njk4ZGFmMjVkYzc",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/16b0b481c3cc74673ecc961aaa976698daf25dc7",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/16b0b481c3cc74673ecc961aaa976698daf25dc7",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:04Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:04Z"
+        },
+        "tree": {
+          "sha": "31703c908120964c94025c617caca90d82871b91",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/31703c908120964c94025c617caca90d82871b91"
+        },
+        "message": "docs(search): specify semantic result header help",
+        "parents": [
+          {
+            "sha": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/6b6fcd3597a604212032ffc453477aeb6edc69ff",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/6b6fcd3597a604212032ffc453477aeb6edc69ff"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "b79611e1e34fd2cb72da490662c4b6ca463c2c4f",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/e101fb45376bcf7501c017806447408e7bb95553",
+      "payload": {
+        "sha": "e101fb45376bcf7501c017806447408e7bb95553",
+        "node_id": "C_kwDOVEPRFdoAKGUxMDFmYjQ1Mzc2YmNmNzUwMWMwMTc4MDY0NDc0MDhlN2JiOTU1NTM",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/e101fb45376bcf7501c017806447408e7bb95553",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/e101fb45376bcf7501c017806447408e7bb95553",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:14Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:14Z"
+        },
+        "tree": {
+          "sha": "592e74f03720c481a6d567cdb50dc9eee93e597d",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/592e74f03720c481a6d567cdb50dc9eee93e597d"
+        },
+        "message": "test(search): cover result header help in live panel states",
+        "parents": [
+          {
+            "sha": "16b0b481c3cc74673ecc961aaa976698daf25dc7",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/16b0b481c3cc74673ecc961aaa976698daf25dc7",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/16b0b481c3cc74673ecc961aaa976698daf25dc7"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "96bdf532f69685551c2190e304551807158477e2",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/2e52b904d403e4b41c9c88ff4ab6eedb58d468dd",
+      "payload": {
+        "sha": "2e52b904d403e4b41c9c88ff4ab6eedb58d468dd",
+        "node_id": "C_kwDOVEPRFdoAKDJlNTJiOTA0ZDQwM2U0YjQxYzljODhmZjRhYjZlZWRiNThkNDY4ZGQ",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/2e52b904d403e4b41c9c88ff4ab6eedb58d468dd",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/2e52b904d403e4b41c9c88ff4ab6eedb58d468dd",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:15Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:15Z"
+        },
+        "tree": {
+          "sha": "971424989ffbec07c63e867f642b9b0b0a7c761e",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/971424989ffbec07c63e867f642b9b0b0a7c761e"
+        },
+        "message": "feat(search): explain all six result table headers",
+        "parents": [
+          {
+            "sha": "e101fb45376bcf7501c017806447408e7bb95553",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/e101fb45376bcf7501c017806447408e7bb95553",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/e101fb45376bcf7501c017806447408e7bb95553"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "b51b17615e2c72e167bfec15727336eaf7cfb57f",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/1b2522cbbca8883d058ad8bae5d44bc856dec969",
+      "payload": {
+        "sha": "1b2522cbbca8883d058ad8bae5d44bc856dec969",
+        "node_id": "C_kwDOVEPRFdoAKDFiMjUyMmNiYmNhODg4M2QwNThhZDhiYWU1ZDQ0YmM4NTZkZWM5Njk",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/1b2522cbbca8883d058ad8bae5d44bc856dec969",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/1b2522cbbca8883d058ad8bae5d44bc856dec969",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:16Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:16Z"
+        },
+        "tree": {
+          "sha": "1f123b7893c977796d89656959285e565adf1db2",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/1f123b7893c977796d89656959285e565adf1db2"
+        },
+        "message": "test(search): require the six new semantic header entries",
+        "parents": [
+          {
+            "sha": "2e52b904d403e4b41c9c88ff4ab6eedb58d468dd",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/2e52b904d403e4b41c9c88ff4ab6eedb58d468dd",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/2e52b904d403e4b41c9c88ff4ab6eedb58d468dd"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "0069d0d28a8a8695d72f6ca960beaa7756b082ce",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/cfaeecd4e84927ccbc2011ef2d563492fff3627c",
+      "payload": {
+        "sha": "cfaeecd4e84927ccbc2011ef2d563492fff3627c",
+        "node_id": "C_kwDOVEPRFdoAKGNmYWVlY2Q0ZTg0OTI3Y2NiYzIwMTFlZjJkNTYzNDkyZmZmMzYyN2M",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/cfaeecd4e84927ccbc2011ef2d563492fff3627c",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/cfaeecd4e84927ccbc2011ef2d563492fff3627c",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:17Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:17Z"
+        },
+        "tree": {
+          "sha": "6ebd9e8173cbb62218f308e0b33e89d1a43f71f3",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/6ebd9e8173cbb62218f308e0b33e89d1a43f71f3"
+        },
+        "message": "fix(search): match header promises to retained detail content",
+        "parents": [
+          {
+            "sha": "1b2522cbbca8883d058ad8bae5d44bc856dec969",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/1b2522cbbca8883d058ad8bae5d44bc856dec969",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/1b2522cbbca8883d058ad8bae5d44bc856dec969"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "ddf15a7cf3c8847136098cc6c1d831b7993b2867",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/9799c96285ae11dc86621d23c3cdb2481db40d8f",
+      "payload": {
+        "sha": "9799c96285ae11dc86621d23c3cdb2481db40d8f",
+        "node_id": "C_kwDOVEPRFdoAKDk3OTljOTYyODVhZTExZGM4NjYyMWQyM2MzY2RiMjQ4MWRiNDBkOGY",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/9799c96285ae11dc86621d23c3cdb2481db40d8f",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/9799c96285ae11dc86621d23c3cdb2481db40d8f",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:18Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:18Z"
+        },
+        "tree": {
+          "sha": "ca97152821bf4f1cf44d71473e4fdd99c8381c94",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/ca97152821bf4f1cf44d71473e4fdd99c8381c94"
+        },
+        "message": "Clarify service snapshot reconciliation after interrupted saves [no release]",
+        "parents": [
+          {
+            "sha": "cfaeecd4e84927ccbc2011ef2d563492fff3627c",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/cfaeecd4e84927ccbc2011ef2d563492fff3627c",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/cfaeecd4e84927ccbc2011ef2d563492fff3627c"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "50697fef4f043448a3040809d9c7e0f6239ce033",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/281aa0af6dabf90a6ca0955caf23830b0f906488",
+      "payload": {
+        "sha": "281aa0af6dabf90a6ca0955caf23830b0f906488",
+        "node_id": "C_kwDOVEPRFdoAKDI4MWFhMGFmNmRhYmY5MGE2Y2EwOTU1Y2FmMjM4MzBiMGY5MDY0ODg",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/281aa0af6dabf90a6ca0955caf23830b0f906488",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/281aa0af6dabf90a6ca0955caf23830b0f906488",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:18Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:18Z"
+        },
+        "tree": {
+          "sha": "aff284d02e07ae4efd2e8ce0707ac119f2ab7570",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/aff284d02e07ae4efd2e8ce0707ac119f2ab7570"
+        },
+        "message": "Cover service state after committed and rolled-back save failures [no release]",
+        "parents": [
+          {
+            "sha": "9799c96285ae11dc86621d23c3cdb2481db40d8f",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/9799c96285ae11dc86621d23c3cdb2481db40d8f",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/9799c96285ae11dc86621d23c3cdb2481db40d8f"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "38e2d98f010d04bb8b91328017f8ddde8801cdce",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/aeb54912923e570418409c36978f7c8f0aed8db1",
+      "payload": {
+        "sha": "aeb54912923e570418409c36978f7c8f0aed8db1",
+        "node_id": "C_kwDOVEPRFdoAKGFlYjU0OTEyOTIzZTU3MDQxODQwOWMzNjk3OGY3YzhmMGFlZDhkYjE",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/aeb54912923e570418409c36978f7c8f0aed8db1",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/aeb54912923e570418409c36978f7c8f0aed8db1",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:19Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:19Z"
+        },
+        "tree": {
+          "sha": "21b2801a76253519b05de7366a4c3a9deff43716",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/21b2801a76253519b05de7366a4c3a9deff43716"
+        },
+        "message": "Reconcile service state after interrupted snapshot saves [no release]",
+        "parents": [
+          {
+            "sha": "281aa0af6dabf90a6ca0955caf23830b0f906488",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/281aa0af6dabf90a6ca0955caf23830b0f906488",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/281aa0af6dabf90a6ca0955caf23830b0f906488"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "84a8d70269ae8fcd5a69c966c0c546ab1885a4d9",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/8181815c492e628a282e704e2b1d64fa61dfe04b",
+      "payload": {
+        "sha": "8181815c492e628a282e704e2b1d64fa61dfe04b",
+        "node_id": "C_kwDOVEPRFdoAKDgxODE4MTVjNDkyZTYyOGEyODJlNzA0ZTJiMWQ2NGZhNjFkZmUwNGI",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/8181815c492e628a282e704e2b1d64fa61dfe04b",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/8181815c492e628a282e704e2b1d64fa61dfe04b",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:20Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:20Z"
+        },
+        "tree": {
+          "sha": "363e43d22e441fca9fdbe4379526020c07f4bdae",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/363e43d22e441fca9fdbe4379526020c07f4bdae"
+        },
+        "message": "Clarify backup cancellation and staging cleanup outcomes [no release]",
+        "parents": [
+          {
+            "sha": "cfaeecd4e84927ccbc2011ef2d563492fff3627c",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/cfaeecd4e84927ccbc2011ef2d563492fff3627c",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/cfaeecd4e84927ccbc2011ef2d563492fff3627c"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "b04d7b98faa20170756a91519613862731dd227b",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/9c875b28c338a364546f880afe8c6039ee1300b6",
+      "payload": {
+        "sha": "9c875b28c338a364546f880afe8c6039ee1300b6",
+        "node_id": "C_kwDOVEPRFdoAKDljODc1YjI4YzMzOGEzNjQ1NDZmODgwYWZlOGM2MDM5ZWUxMzAwYjY",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/9c875b28c338a364546f880afe8c6039ee1300b6",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/9c875b28c338a364546f880afe8c6039ee1300b6",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:21Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:21Z"
+        },
+        "tree": {
+          "sha": "be2ee5a771a215ade7773792ce3d7fbdfc8d39bc",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/be2ee5a771a215ade7773792ce3d7fbdfc8d39bc"
+        },
+        "message": "Cover backup cleanup failures and consumed staging ownership [no release]",
+        "parents": [
+          {
+            "sha": "8181815c492e628a282e704e2b1d64fa61dfe04b",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/8181815c492e628a282e704e2b1d64fa61dfe04b",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/8181815c492e628a282e704e2b1d64fa61dfe04b"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "486db791620d94ae4b0d58593bad96d3cc6e8d6b",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/606c2b9bfac8a72e476707c1bccd9f9f5c24ecdf",
+      "payload": {
+        "sha": "606c2b9bfac8a72e476707c1bccd9f9f5c24ecdf",
+        "node_id": "C_kwDOVEPRFdoAKDYwNmMyYjliZmFjOGE3MmU0NzY3MDdjMWJjY2Q5ZjlmNWMyNGVjZGY",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/606c2b9bfac8a72e476707c1bccd9f9f5c24ecdf",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/606c2b9bfac8a72e476707c1bccd9f9f5c24ecdf",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:22Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:22Z"
+        },
+        "tree": {
+          "sha": "f6f2a59103388abeb1d28633e80b981832be90c1",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/f6f2a59103388abeb1d28633e80b981832be90c1"
+        },
+        "message": "Preserve backup failure and cancellation when stage cleanup fails [no release]",
+        "parents": [
+          {
+            "sha": "9c875b28c338a364546f880afe8c6039ee1300b6",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/9c875b28c338a364546f880afe8c6039ee1300b6",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/9c875b28c338a364546f880afe8c6039ee1300b6"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "4d3a60f8686bb80832e33d4fc01040daf7deaa09",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/8f2367a3d6f7316499d35eed0ffbf3a7181a5274",
+      "payload": {
+        "sha": "8f2367a3d6f7316499d35eed0ffbf3a7181a5274",
+        "node_id": "C_kwDOVEPRFdoAKDhmMjM2N2EzZDZmNzMxNjQ5OWQzNWVlZDBmZmJmM2E3MTgxYTUyNzQ",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/8f2367a3d6f7316499d35eed0ffbf3a7181a5274",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/8f2367a3d6f7316499d35eed0ffbf3a7181a5274",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:23Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:23Z"
+        },
+        "tree": {
+          "sha": "7b58a3f0b9627d006876641ed35accadb387d757",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/7b58a3f0b9627d006876641ed35accadb387d757"
+        },
+        "message": "Scope backup cleanup contract to its filesystem error boundary [no release]",
+        "parents": [
+          {
+            "sha": "606c2b9bfac8a72e476707c1bccd9f9f5c24ecdf",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/606c2b9bfac8a72e476707c1bccd9f9f5c24ecdf",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/606c2b9bfac8a72e476707c1bccd9f9f5c24ecdf"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "276fa8943da8931839a070e77addec585d21b5a0",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/0b18ba0ad09dedebb9ae27ec95cd56ffbb7843f8",
+      "payload": {
+        "sha": "0b18ba0ad09dedebb9ae27ec95cd56ffbb7843f8",
+        "node_id": "C_kwDOVEPRFdoAKDBiMThiYTBhZDA5ZGVkZWJiOWFlMjdlYzk1Y2Q1NmZmYmI3ODQzZjg",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/0b18ba0ad09dedebb9ae27ec95cd56ffbb7843f8",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/0b18ba0ad09dedebb9ae27ec95cd56ffbb7843f8",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:24Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:24Z"
+        },
+        "tree": {
+          "sha": "7710afe26bfb2c07eb76596c3ab5599c3c15ee11",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/7710afe26bfb2c07eb76596c3ab5599c3c15ee11"
+        },
+        "message": "Merge commit '4d3a60f8686bb80832e33d4fc01040daf7deaa09' into codex/patchtrace-recovery-search-20261121-837fe",
+        "parents": [
+          {
+            "sha": "aeb54912923e570418409c36978f7c8f0aed8db1",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/aeb54912923e570418409c36978f7c8f0aed8db1",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/aeb54912923e570418409c36978f7c8f0aed8db1"
+          },
+          {
+            "sha": "8f2367a3d6f7316499d35eed0ffbf3a7181a5274",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/8f2367a3d6f7316499d35eed0ffbf3a7181a5274",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/8f2367a3d6f7316499d35eed0ffbf3a7181a5274"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "5f24fe1ab3827bdcf8b8a779b6e34f189426a3c0",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/98fbc10f26db3647c53134cd066d2dea9eec67de",
+      "payload": {
+        "sha": "98fbc10f26db3647c53134cd066d2dea9eec67de",
+        "node_id": "C_kwDOVEPRFdoAKDk4ZmJjMTBmMjZkYjM2NDdjNTMxMzRjZDA2NmQyZGVhOWVlYzY3ZGU",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/98fbc10f26db3647c53134cd066d2dea9eec67de",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/98fbc10f26db3647c53134cd066d2dea9eec67de",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:25Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:25Z"
+        },
+        "tree": {
+          "sha": "b02bb369a80b3a972c1856fbe5c23a96989f3f56",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/b02bb369a80b3a972c1856fbe5c23a96989f3f56"
+        },
+        "message": "Require backup refusal while service save state is uncertain [no release]",
+        "parents": [
+          {
+            "sha": "aeb54912923e570418409c36978f7c8f0aed8db1",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/aeb54912923e570418409c36978f7c8f0aed8db1",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/aeb54912923e570418409c36978f7c8f0aed8db1"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "92091e1d0b8bb33fde2761cad499c741b0e0d225",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/d5230f6efa820a0cc6c8ecb031764a2765c89b05",
+      "payload": {
+        "sha": "d5230f6efa820a0cc6c8ecb031764a2765c89b05",
+        "node_id": "C_kwDOVEPRFdoAKGQ1MjMwZjZlZmE4MjBhMGNjNmM4ZWNiMDMxNzY0YTI3NjVjODliMDU",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/d5230f6efa820a0cc6c8ecb031764a2765c89b05",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/d5230f6efa820a0cc6c8ecb031764a2765c89b05",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:26Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:26Z"
+        },
+        "tree": {
+          "sha": "f9c80e37930463ddba84d041c219a8d0a57abbc0",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/f9c80e37930463ddba84d041c219a8d0a57abbc0"
+        },
+        "message": "Refuse backup recovery through an unreconciled service [no release]",
+        "parents": [
+          {
+            "sha": "98fbc10f26db3647c53134cd066d2dea9eec67de",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/98fbc10f26db3647c53134cd066d2dea9eec67de",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/98fbc10f26db3647c53134cd066d2dea9eec67de"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "3c08585c62ac9f5e3e662dad5df6c52e54b457b2",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/1e1eff49732fb09de65cd27eb4b3438ed140a3bd",
+      "payload": {
+        "sha": "1e1eff49732fb09de65cd27eb4b3438ed140a3bd",
+        "node_id": "C_kwDOVEPRFdoAKDFlMWVmZjQ5NzMyZmIwOWRlNjVjZDI3ZWI0YjM0MzhlZDE0MGEzYmQ",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/1e1eff49732fb09de65cd27eb4b3438ed140a3bd",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/1e1eff49732fb09de65cd27eb4b3438ed140a3bd",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:27Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:27Z"
+        },
+        "tree": {
+          "sha": "6b6db9bb3c783cc58e768ec94df482017fa95afb",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/6b6db9bb3c783cc58e768ec94df482017fa95afb"
+        },
+        "message": "Cover post-commit recovery failure during healthy project backup [no release]",
+        "parents": [
+          {
+            "sha": "d5230f6efa820a0cc6c8ecb031764a2765c89b05",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/d5230f6efa820a0cc6c8ecb031764a2765c89b05",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/d5230f6efa820a0cc6c8ecb031764a2765c89b05"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "1ce478b3f5dee036f54cb9e39353ef82cf1610c0",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/a53ec42e48b760321cf6080fe97514508544e790",
+      "payload": {
+        "sha": "a53ec42e48b760321cf6080fe97514508544e790",
+        "node_id": "C_kwDOVEPRFdoAKGE1M2VjNDJlNDhiNzYwMzIxY2Y2MDgwZmU5NzUxNDUwODU0NGU3OTA",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/a53ec42e48b760321cf6080fe97514508544e790",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/a53ec42e48b760321cf6080fe97514508544e790",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:28Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:28Z"
+        },
+        "tree": {
+          "sha": "52b9926d6db21b4f76140c6385f67380acd0b988",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/52b9926d6db21b4f76140c6385f67380acd0b988"
+        },
+        "message": "Reconcile snapshot outcomes across backup recovery failures [no release]",
+        "parents": [
+          {
+            "sha": "1e1eff49732fb09de65cd27eb4b3438ed140a3bd",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/1e1eff49732fb09de65cd27eb4b3438ed140a3bd",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/1e1eff49732fb09de65cd27eb4b3438ed140a3bd"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "b880c317add4de3ac22c87cd842abb0e7ccc615d",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/06d4237843b048116e645167ecca9ad9c29a7f57",
+      "payload": {
+        "sha": "06d4237843b048116e645167ecca9ad9c29a7f57",
+        "node_id": "C_kwDOVEPRFdoAKDA2ZDQyMzc4NDNiMDQ4MTE2ZTY0NTE2N2VjY2E5YWQ5YzI5YTdmNTc",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/06d4237843b048116e645167ecca9ad9c29a7f57",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/06d4237843b048116e645167ecca9ad9c29a7f57",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:29Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:29Z"
+        },
+        "tree": {
+          "sha": "74a4ee3714ea492e84c2a2a3aaf41fa54849e404",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/74a4ee3714ea492e84c2a2a3aaf41fa54849e404"
+        },
+        "message": "Merge commit '1ce478b3f5dee036f54cb9e39353ef82cf1610c0' into codex/patchtrace-recovery-search-20261121-837fe",
+        "parents": [
+          {
+            "sha": "0b18ba0ad09dedebb9ae27ec95cd56ffbb7843f8",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/0b18ba0ad09dedebb9ae27ec95cd56ffbb7843f8",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/0b18ba0ad09dedebb9ae27ec95cd56ffbb7843f8"
+          },
+          {
+            "sha": "a53ec42e48b760321cf6080fe97514508544e790",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/a53ec42e48b760321cf6080fe97514508544e790",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/a53ec42e48b760321cf6080fe97514508544e790"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "760c5e0b1320a6b08fc23d800c037c124488b4bc",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/a9711b078214312a1b50b342f213228617ef9edf",
+      "payload": {
+        "sha": "a9711b078214312a1b50b342f213228617ef9edf",
+        "node_id": "C_kwDOVEPRFdoAKGE5NzExYjA3ODIxNDMxMmExYjUwYjM0MmYyMTMyMjg2MTdlZjllZGY",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/a9711b078214312a1b50b342f213228617ef9edf",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/a9711b078214312a1b50b342f213228617ef9edf",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:30Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:30Z"
+        },
+        "tree": {
+          "sha": "79693e8cf73658ddd291fea4c1fd4bcc7ebe4680",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/79693e8cf73658ddd291fea4c1fd4bcc7ebe4680"
+        },
+        "message": "Record reviewed storage recovery, Search help and exact qualification evidence [no release] [no deploy]",
+        "parents": [
+          {
+            "sha": "06d4237843b048116e645167ecca9ad9c29a7f57",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/06d4237843b048116e645167ecca9ad9c29a7f57",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/06d4237843b048116e645167ecca9ad9c29a7f57"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "36ead053fdfd7a69cbd06bf2c60431bbc15bf471",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/a3b9f69ed855b6ebe2c0b34a00ae42ff125a0d39",
+      "payload": {
+        "sha": "a3b9f69ed855b6ebe2c0b34a00ae42ff125a0d39",
+        "node_id": "C_kwDOVEPRFdoAKGEzYjlmNjllZDg1NWI2ZWJlMmMwYjM0YTAwYWU0MmZmMTI1YTBkMzk",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/a3b9f69ed855b6ebe2c0b34a00ae42ff125a0d39",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/a3b9f69ed855b6ebe2c0b34a00ae42ff125a0d39",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:31Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:31Z"
+        },
+        "tree": {
+          "sha": "7db24ed0c0f8ff532fc01e80b0fa54ccaeca8cda",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/7db24ed0c0f8ff532fc01e80b0fa54ccaeca8cda"
+        },
+        "message": "Close publication evidence audit and retain independent verification [no release] [no deploy]",
+        "parents": [
+          {
+            "sha": "a9711b078214312a1b50b342f213228617ef9edf",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/a9711b078214312a1b50b342f213228617ef9edf",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/a9711b078214312a1b50b342f213228617ef9edf"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "36dd3a6f454ae856cf9c34bc05cd97bdaf165182",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/6c3832a81161d2dfff92fbcfd024a83d4dbba742",
+      "payload": {
+        "sha": "6c3832a81161d2dfff92fbcfd024a83d4dbba742",
+        "node_id": "C_kwDOVEPRFdoAKDZjMzgzMmE4MTE2MWQyZGZmZjkyZmJjZmQwMjRhODNkNGRiYmE3NDI",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/6c3832a81161d2dfff92fbcfd024a83d4dbba742",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/6c3832a81161d2dfff92fbcfd024a83d4dbba742",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:33Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:33Z"
+        },
+        "tree": {
+          "sha": "934ba927e87f4bb681a2941256cfebf4d1d00cdb",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/934ba927e87f4bb681a2941256cfebf4d1d00cdb"
+        },
+        "message": "Combine reviewed storage and Search fixes with released PR349 integration [no release] [no deploy]",
+        "parents": [
+          {
+            "sha": "11f51c105bf63946f59373ae605b937c4fee607a",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/11f51c105bf63946f59373ae605b937c4fee607a",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/11f51c105bf63946f59373ae605b937c4fee607a"
+          },
+          {
+            "sha": "a3b9f69ed855b6ebe2c0b34a00ae42ff125a0d39",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/a3b9f69ed855b6ebe2c0b34a00ae42ff125a0d39",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/a3b9f69ed855b6ebe2c0b34a00ae42ff125a0d39"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "d4ccc3a0d05442862feb6d2ac64bdf71525e5e03",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/e9dff78e125764fce4ca9ee8b8bc8ce8123c8a47",
+      "payload": {
+        "sha": "e9dff78e125764fce4ca9ee8b8bc8ce8123c8a47",
+        "node_id": "C_kwDOVEPRFdoAKGU5ZGZmNzhlMTI1NzY0ZmNlNGNhOWVlOGI4YmM4Y2U4MTIzYzhhNDc",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/e9dff78e125764fce4ca9ee8b8bc8ce8123c8a47",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/e9dff78e125764fce4ca9ee8b8bc8ce8123c8a47",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:34Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:34Z"
+        },
+        "tree": {
+          "sha": "3a1378eb5513bccbb5b4dbdfbbf0163e02de7c2a",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/3a1378eb5513bccbb5b4dbdfbbf0163e02de7c2a"
+        },
+        "message": "Specify reviewed immutable direct Action references [no release] [no deploy]",
+        "parents": [
+          {
+            "sha": "11f51c105bf63946f59373ae605b937c4fee607a",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/11f51c105bf63946f59373ae605b937c4fee607a",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/11f51c105bf63946f59373ae605b937c4fee607a"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "d66f170fdd54a6bac4b858467be7ecbc6aafed0d",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/33ff0d32fc6c97d5c139161093838487c1960b5a",
+      "payload": {
+        "sha": "33ff0d32fc6c97d5c139161093838487c1960b5a",
+        "node_id": "C_kwDOVEPRFdoAKDMzZmYwZDMyZmM2Yzk3ZDVjMTM5MTYxMDkzODM4NDg3YzE5NjBiNWE",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/33ff0d32fc6c97d5c139161093838487c1960b5a",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/33ff0d32fc6c97d5c139161093838487c1960b5a",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:35Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:35Z"
+        },
+        "tree": {
+          "sha": "e01d9afc3c295207d23697eaed36a2e5a3cb5679",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/e01d9afc3c295207d23697eaed36a2e5a3cb5679"
+        },
+        "message": "Pin reviewed direct Actions and enforce immutable workflow contracts [no release] [no deploy]",
+        "parents": [
+          {
+            "sha": "e9dff78e125764fce4ca9ee8b8bc8ce8123c8a47",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/e9dff78e125764fce4ca9ee8b8bc8ce8123c8a47",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/e9dff78e125764fce4ca9ee8b8bc8ce8123c8a47"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "ff6c79f1a9c97877d061995cae40be38e42154f9",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/e17bacd713c12234fe3a1ed6122d8d7bef867292",
+      "payload": {
+        "sha": "e17bacd713c12234fe3a1ed6122d8d7bef867292",
+        "node_id": "C_kwDOVEPRFdoAKGUxN2JhY2Q3MTNjMTIyMzRmZTNhMWVkNjEyMmQ4ZDdiZWY4NjcyOTI",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/e17bacd713c12234fe3a1ed6122d8d7bef867292",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/e17bacd713c12234fe3a1ed6122d8d7bef867292",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:36Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:36Z"
+        },
+        "tree": {
+          "sha": "82ea9ce307974544abd787e3649e2574e38036b5",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/82ea9ce307974544abd787e3649e2574e38036b5"
+        },
+        "message": "Keep workflow scalar checks strict while accepting version comments [no release] [no deploy]",
+        "parents": [
+          {
+            "sha": "33ff0d32fc6c97d5c139161093838487c1960b5a",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/33ff0d32fc6c97d5c139161093838487c1960b5a",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/33ff0d32fc6c97d5c139161093838487c1960b5a"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "ad0997044ddd2c957ad0de1ede8db4c7dab00317",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/dc3ef3445b1aaded26ee5380373494e6e0793d69",
+      "payload": {
+        "sha": "dc3ef3445b1aaded26ee5380373494e6e0793d69",
+        "node_id": "C_kwDOVEPRFdoAKGRjM2VmMzQ0NWIxYWFkZWQyNmVlNTM4MDM3MzQ5NGU2ZTA3OTNkNjk",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/dc3ef3445b1aaded26ee5380373494e6e0793d69",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/dc3ef3445b1aaded26ee5380373494e6e0793d69",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:37Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:37Z"
+        },
+        "tree": {
+          "sha": "504f322f13c4b89305defb39afd839557bee6f24",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/504f322f13c4b89305defb39afd839557bee6f24"
+        },
+        "message": "Record CODEX-1 source qualification and retained failing controls [no release] [no deploy]",
+        "parents": [
+          {
+            "sha": "e17bacd713c12234fe3a1ed6122d8d7bef867292",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/e17bacd713c12234fe3a1ed6122d8d7bef867292",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/e17bacd713c12234fe3a1ed6122d8d7bef867292"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "0542b3fb74a5c5dc6a28245145ea8e616012a925",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/8a3a8bea9b110abdb2004d9ad291199deda6aa5b",
+      "payload": {
+        "sha": "8a3a8bea9b110abdb2004d9ad291199deda6aa5b",
+        "node_id": "C_kwDOVEPRFdoAKDhhM2E4YmVhOWIxMTBhYmRiMjAwNGQ5YWQyOTExOTlkZWRhNmFhNWI",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/8a3a8bea9b110abdb2004d9ad291199deda6aa5b",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/8a3a8bea9b110abdb2004d9ad291199deda6aa5b",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:38Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:38Z"
+        },
+        "tree": {
+          "sha": "2d02bbddc395f76f060828e0e0ca8a8659948a8b",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/2d02bbddc395f76f060828e0e0ca8a8659948a8b"
+        },
+        "message": "Integrate direct Action pin source and preserved controls [no release] [no deploy]",
+        "parents": [
+          {
+            "sha": "6c3832a81161d2dfff92fbcfd024a83d4dbba742",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/6c3832a81161d2dfff92fbcfd024a83d4dbba742",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/6c3832a81161d2dfff92fbcfd024a83d4dbba742"
+          },
+          {
+            "sha": "dc3ef3445b1aaded26ee5380373494e6e0793d69",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/dc3ef3445b1aaded26ee5380373494e6e0793d69",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/dc3ef3445b1aaded26ee5380373494e6e0793d69"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "47d8228b10f330728eb20ed99a688074cd49bd17",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/0cb2420b30d4811581b266e33001016de2dd6ca1",
+      "payload": {
+        "sha": "0cb2420b30d4811581b266e33001016de2dd6ca1",
+        "node_id": "C_kwDOVEPRFdoAKDBjYjI0MjBiMzBkNDgxMTU4MWIyNjZlMzMwMDEwMTZkZTJkZDZjYTE",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/0cb2420b30d4811581b266e33001016de2dd6ca1",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/0cb2420b30d4811581b266e33001016de2dd6ca1",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:39Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:39Z"
+        },
+        "tree": {
+          "sha": "0957f7e5563fae5f4d11ace04045adf55aae53cd",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/0957f7e5563fae5f4d11ace04045adf55aae53cd"
+        },
+        "message": "Specify exact Windows executable names in Intel version probes [no release] [no deploy]",
+        "parents": [
+          {
+            "sha": "11f51c105bf63946f59373ae605b937c4fee607a",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/11f51c105bf63946f59373ae605b937c4fee607a",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/11f51c105bf63946f59373ae605b937c4fee607a"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "e18177302fce5d58e92a677bae89d7732d94a8d6",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/6095d4236e7d7bd574a2f88d6e0337fb3a2008c3",
+      "payload": {
+        "sha": "6095d4236e7d7bd574a2f88d6e0337fb3a2008c3",
+        "node_id": "C_kwDOVEPRFdoAKDYwOTVkNDIzNmU3ZDdiZDU3NGEyZjg4ZDZlMDMzN2ZiM2EyMDA4YzM",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/6095d4236e7d7bd574a2f88d6e0337fb3a2008c3",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/6095d4236e7d7bd574a2f88d6e0337fb3a2008c3",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:40Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:40Z"
+        },
+        "tree": {
+          "sha": "272004c2c5200c860d8b0dd863e0b0292c8ed579",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/272004c2c5200c860d8b0dd863e0b0292c8ed579"
+        },
+        "message": "Retain Windows Intel version-name regression controls [no release] [no deploy]",
+        "parents": [
+          {
+            "sha": "0cb2420b30d4811581b266e33001016de2dd6ca1",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/0cb2420b30d4811581b266e33001016de2dd6ca1",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/0cb2420b30d4811581b266e33001016de2dd6ca1"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "eeb7bc07eff8b1028adc40fbad8d04deecfdd539",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/222ee6dcca7e6b41c12a7f2b2aa2dd0a6fc8e607",
+      "payload": {
+        "sha": "222ee6dcca7e6b41c12a7f2b2aa2dd0a6fc8e607",
+        "node_id": "C_kwDOVEPRFdoAKDIyMmVlNmRjY2E3ZTZiNDFjMTJhN2YyYjJhYTJkZDBhNmZjOGU2MDc",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/222ee6dcca7e6b41c12a7f2b2aa2dd0a6fc8e607",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/222ee6dcca7e6b41c12a7f2b2aa2dd0a6fc8e607",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:41Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:41Z"
+        },
+        "tree": {
+          "sha": "e937a9b143b6513e7166bc318828a342127d58a7",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/e937a9b143b6513e7166bc318828a342127d58a7"
+        },
+        "message": "Accept literal Windows executable suffix in Intel version probes [no release] [no deploy]",
+        "parents": [
+          {
+            "sha": "6095d4236e7d7bd574a2f88d6e0337fb3a2008c3",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/6095d4236e7d7bd574a2f88d6e0337fb3a2008c3",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/6095d4236e7d7bd574a2f88d6e0337fb3a2008c3"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "3a3c6a687b3acef7ee8b38420b83398f5e2d1dab",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/912d74e927c1f7c6599222b44d85b0d46a8dd03f",
+      "payload": {
+        "sha": "912d74e927c1f7c6599222b44d85b0d46a8dd03f",
+        "node_id": "C_kwDOVEPRFdoAKDkxMmQ3NGU5MjdjMWY3YzY1OTkyMjJiNDRkODViMGQ0NmE4ZGQwM2Y",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/912d74e927c1f7c6599222b44d85b0d46a8dd03f",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/912d74e927c1f7c6599222b44d85b0d46a8dd03f",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:42Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:10:42Z"
+        },
+        "tree": {
+          "sha": "e2a71b1ac561bdfe7035c4a1f27276ea48d0bcef",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/e2a71b1ac561bdfe7035c4a1f27276ea48d0bcef"
+        },
+        "message": "Integrate Windows Intel version-name compatibility fix [no release] [no deploy]",
+        "parents": [
+          {
+            "sha": "8a3a8bea9b110abdb2004d9ad291199deda6aa5b",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/8a3a8bea9b110abdb2004d9ad291199deda6aa5b",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/8a3a8bea9b110abdb2004d9ad291199deda6aa5b"
+          },
+          {
+            "sha": "222ee6dcca7e6b41c12a7f2b2aa2dd0a6fc8e607",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/222ee6dcca7e6b41c12a7f2b2aa2dd0a6fc8e607",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/222ee6dcca7e6b41c12a7f2b2aa2dd0a6fc8e607"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "ceea21d41f9fc6c24b9b0b51be8db37de461df9a",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/d84ea37d66033246827d2c77e96358ab5eb416ee",
+      "payload": {
+        "sha": "d84ea37d66033246827d2c77e96358ab5eb416ee",
+        "node_id": "C_kwDOVEPRFdoAKGQ4NGVhMzdkNjYwMzMyNDY4MjdkMmM3N2U5NjM1OGFiNWViNDE2ZWU",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/d84ea37d66033246827d2c77e96358ab5eb416ee",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/d84ea37d66033246827d2c77e96358ab5eb416ee",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:18:24Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:18:24Z"
+        },
+        "tree": {
+          "sha": "4c95b3627063b14504ddae0fd71f4f7067a88754",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/4c95b3627063b14504ddae0fd71f4f7067a88754"
+        },
+        "message": "Specify bounded live Intel probe diagnostics without acceptance changes",
+        "parents": [
+          {
+            "sha": "11f51c105bf63946f59373ae605b937c4fee607a",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/11f51c105bf63946f59373ae605b937c4fee607a",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/11f51c105bf63946f59373ae605b937c4fee607a"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "de2f1b0aa13cdb8154c4a5a2d123e56ab6697f5b",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/e53310c5bde38cdce5ab0f4dd65a429685ffede2",
+      "payload": {
+        "sha": "e53310c5bde38cdce5ab0f4dd65a429685ffede2",
+        "node_id": "C_kwDOVEPRFdoAKGU1MzMxMGM1YmRlMzhjZGNlNWFiMGY0ZGQ2NWE0Mjk2ODVmZmVkZTI",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/e53310c5bde38cdce5ab0f4dd65a429685ffede2",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/e53310c5bde38cdce5ab0f4dd65a429685ffede2",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:18:25Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:18:25Z"
+        },
+        "tree": {
+          "sha": "b186aba05be43674f4b9ad39aadb11293b811219",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/b186aba05be43674f4b9ad39aadb11293b811219"
+        },
+        "message": "Retain failing controls for missing live Intel probe evidence",
+        "parents": [
+          {
+            "sha": "d84ea37d66033246827d2c77e96358ab5eb416ee",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/d84ea37d66033246827d2c77e96358ab5eb416ee",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/d84ea37d66033246827d2c77e96358ab5eb416ee"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "03db821b65b19ebe57044d2e1eee2da0c3605a08",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/3f3971b0d7b25c1fb5bfafef09a82ea7454d0f6b",
+      "payload": {
+        "sha": "3f3971b0d7b25c1fb5bfafef09a82ea7454d0f6b",
+        "node_id": "C_kwDOVEPRFdoAKDNmMzk3MWIwZDdiMjVjMWZiNWJmYWZlZjA5YTgyZWE3NDU0ZDBmNmI",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/3f3971b0d7b25c1fb5bfafef09a82ea7454d0f6b",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/3f3971b0d7b25c1fb5bfafef09a82ea7454d0f6b",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:18:26Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:18:26Z"
+        },
+        "tree": {
+          "sha": "a783e551564db1ce65c81f4483e9488f0c57daf3",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/a783e551564db1ce65c81f4483e9488f0c57daf3"
+        },
+        "message": "Preserve bounded existing Intel version probes in live acceptance evidence",
+        "parents": [
+          {
+            "sha": "e53310c5bde38cdce5ab0f4dd65a429685ffede2",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/e53310c5bde38cdce5ab0f4dd65a429685ffede2",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/e53310c5bde38cdce5ab0f4dd65a429685ffede2"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "4ca982e708685889ac2c6f8bedecf79443e6664c",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/4ef6f5f8ba92a8818e7cd464df416c1c43ad345b",
+      "payload": {
+        "sha": "4ef6f5f8ba92a8818e7cd464df416c1c43ad345b",
+        "node_id": "C_kwDOVEPRFdoAKDRlZjZmNWY4YmE5MmE4ODE4ZTdjZDQ2NGRmNDE2YzFjNDNhZDM0NWI",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/4ef6f5f8ba92a8818e7cd464df416c1c43ad345b",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/4ef6f5f8ba92a8818e7cd464df416c1c43ad345b",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:18:27Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:18:27Z"
+        },
+        "tree": {
+          "sha": "6a4f9124f9e9e1af6621975fe8c8fc1a1f0cacac",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/6a4f9124f9e9e1af6621975fe8c8fc1a1f0cacac"
+        },
+        "message": "Retain bounded evidence from actual live Intel probes [no release] [no deploy]",
+        "parents": [
+          {
+            "sha": "912d74e927c1f7c6599222b44d85b0d46a8dd03f",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/912d74e927c1f7c6599222b44d85b0d46a8dd03f",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/912d74e927c1f7c6599222b44d85b0d46a8dd03f"
+          },
+          {
+            "sha": "3f3971b0d7b25c1fb5bfafef09a82ea7454d0f6b",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/3f3971b0d7b25c1fb5bfafef09a82ea7454d0f6b",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/3f3971b0d7b25c1fb5bfafef09a82ea7454d0f6b"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    },
+    {
+      "original": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/commits/61b26107d77fb632571ede932e0796d4b643f50c",
+      "payload": {
+        "sha": "61b26107d77fb632571ede932e0796d4b643f50c",
+        "node_id": "C_kwDOVEPRFdoAKDYxYjI2MTA3ZDc3ZmI2MzI1NzFlZGU5MzJlMDc5NmQ0YjY0M2Y1MGM",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/61b26107d77fb632571ede932e0796d4b643f50c",
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/61b26107d77fb632571ede932e0796d4b643f50c",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:18:28Z"
+        },
+        "committer": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T06:18:28Z"
+        },
+        "tree": {
+          "sha": "2666e72d5efd51600b170cef033103c9947bae3b",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/trees/2666e72d5efd51600b170cef033103c9947bae3b"
+        },
+        "message": "Register current CI specifications and preserve acceptance boundaries [no release] [no deploy]",
+        "parents": [
+          {
+            "sha": "4ef6f5f8ba92a8818e7cd464df416c1c43ad345b",
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/4ef6f5f8ba92a8818e7cd464df416c1c43ad345b",
+            "html_url": "https://github.com/djshellshoxxx/patchtrace/commit/4ef6f5f8ba92a8818e7cd464df416c1c43ad345b"
+          }
+        ],
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      }
+    }
+  ]
+}

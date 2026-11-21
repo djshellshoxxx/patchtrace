@@ -1,0 +1,17 @@
+{
+  "source_commit": "11f51c105bf63946f59373ae605b937c4fee607a",
+  "job_id": 136743396623,
+  "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44870397228/job/136743396623",
+  "completed_at": "2026-11-21T06:28:01Z",
+  "passed": 23935,
+  "failed": 1,
+  "skipped": 185,
+  "xfailed": 3,
+  "warnings": 22,
+  "pytest_seconds": 3753.59,
+  "only_failure": "tests/test_spec_registry.py::test_registry_cites_spec_file_by_path[docs/specs/pages-deployment-control.md]",
+  "fix_source": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
+  "fix_status": "unchanged maintained registry test passes108 on combined source; new-head hosted qualification still required",
+  "log_sha256": "d49edfda099cadb33efecba75b4f8963a812ab066347db78a06dbbbc9b32b692",
+  "source": "GitHub decoded job-log response; original decoded text including CRLF/BOM retained"
+}

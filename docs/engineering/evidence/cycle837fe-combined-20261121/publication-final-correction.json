@@ -1,0 +1,79 @@
+{
+  "schema": "patchtrace.combined-publication-correction/1",
+  "time": "2026-11-21T06:33:14.037733+00:00",
+  "initial_commit": "451ab3eb6ba2e44ab0decf3c0c1c048e834a9520",
+  "final_commit": "eff71f218a3eab4fe4d7acc3cc9fff28e83e651d",
+  "final_tree": "d8c1a3f9e3fbd1a06ac1c07e59f555f64eac45c3",
+  "code_checkpoint": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
+  "changed_paths": [
+    "docs/engineering/cycle837fe-combined-pr349-20261121.md",
+    "docs/engineering/evidence/cycle837fe-combined-20261121/manifest.json",
+    "docs/engineering/evidence/cycle837fe-combined-20261121/pr349-qa-jobs-20261121T061932Z.json",
+    "docs/engineering/task-ledger.json"
+  ],
+  "files": {
+    "docs/engineering/cycle837fe-combined-pr349-20261121.md": {
+      "bytes": 13029,
+      "sha256": "504cfd1791ea30e4d77d0061ebf693aff202182c4f6b3c8f51975c5612f97e1c",
+      "git_blob": "8ac28668c47f74e2f894bf12d6f06bc4221f1075"
+    },
+    "docs/engineering/evidence/cycle837fe-combined-20261121/manifest.json": {
+      "bytes": 3383,
+      "sha256": "5d3cf5552e994779bdadf9380949d493e0e1fc4ab38f7340c1cfc34ff18575fd",
+      "git_blob": "0354fcc35dcdc245059d809012caa19746c23f6f"
+    },
+    "docs/engineering/evidence/cycle837fe-combined-20261121/pr349-qa-jobs-20261121T061932Z.json": {
+      "bytes": 35491,
+      "sha256": "12a96ffe81a32c034cde1758399a7de05450b6a144d61a556062d195ccdeef97",
+      "git_blob": "37b4aada666f56277ba192232a9127d8ed93284c"
+    },
+    "docs/engineering/task-ledger.json": {
+      "bytes": 143204,
+      "sha256": "a52f4ca34ee43570377b41ae358677cf3d550f3eb35c1e2b49397ecd720e017c",
+      "git_blob": "055f281c3d007e771b287b311d464b101b9601bc"
+    }
+  },
+  "manifest": {
+    "payloads": 22,
+    "payload_bytes": 1645090,
+    "sha256": "5d3cf5552e994779bdadf9380949d493e0e1fc4ab38f7340c1cfc34ff18575fd"
+  },
+  "C-PUB-E1": {
+    "status": "CLOSED",
+    "snapshot": "2026-11-21T06:19:32Z",
+    "snapshot_head": "11f51c105bf63946f59373ae605b937c4fee607a",
+    "qt_successes": 5,
+    "windows_qa": "in_progress",
+    "timestamp_basis": "UTC clock read immediately after this GitHub API response in the same orchestration call; source remains the original PR349 head."
+  },
+  "C-PUB-O1": {
+    "status": "CLOSED",
+    "current_continuation": {
+      "status": "TESTING",
+      "owner": "root837FE",
+      "handoff": "docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md",
+      "code_commit": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
+      "target_pr": 349,
+      "next_action": "Publish the reviewed combined candidate to existing PR349 with an expected-head fast-forward guard, inspect exact-head hosted full/Qt/native/package/frozen results and Intel diagnostics, resolve applicable blockers, and use guarded REST main merge with both [no release] [no deploy]. Preserve the separate remaining release gates and existing continuation cadence."
+    },
+    "local_integration_branch": "integration/patchtrace-20261121-837fe-combined",
+    "prior_continuation_preserved_unchanged": true,
+    "prior_local_branch_preserved": true,
+    "worker_status_counts": {
+      "completed": 24,
+      "COMPLETE": 16,
+      "completed-source-review-or-census": 3,
+      "TESTING-root-owned": 1
+    }
+  },
+  "unchanged_subtrees": {
+    "src": "528c5e6b2f75902394d192ee8b21cbf4b33901f2",
+    "tests": "10d944f55c2ccb6ef1b05000c2d5ec23df273e03",
+    "tools": "697bb76c56f66d68dde904b560d6480dd3b6e68a",
+    ".github": "e2f940b4aa933fe39f60b7072646809441429d0b",
+    "docs/specs": "25927e89a9ef513cf870963c3afbcc39f6802b51"
+  },
+  "final_worktree_clean": true,
+  "whitespace_pass": true,
+  "remaining_blockers": []
+}

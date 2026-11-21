@@ -86,6 +86,34 @@
       "bytes": 28553,
       "sha256": "f475a95308fcb04630f6ebb65801510c419ec5f6446653a04cd3610b4503e01f"
     },
+    "pr349-windows-final.json": {
+      "bytes": 846,
+      "sha256": "3eca68280d77ebba9da9887f8cc20054a794e02f5bde80ae3be5641fa1dc455f"
+    },
+    "pr349-windows-registry-failure.zip": {
+      "bytes": 15535,
+      "sha256": "5dbb4b68177085420b100b4484091255d6df32ff6a032086806bc81c629a0979"
+    },
+    "publication-final-correction.json": {
+      "bytes": 3611,
+      "sha256": "405f21e6da4f3a40c286194a327468ede3ae82e15d0795e6dd84ed0101fd8d95"
+    },
+    "publication-integrity.json": {
+      "bytes": 8485,
+      "sha256": "2ac548dbbd3878449d47fdd309b6c4a8ad38560b1e602a65d0ca34c99767941e"
+    },
+    "publication-remote-objects.json": {
+      "bytes": 66198,
+      "sha256": "efda0ebf0e6edf7a6da207b8fad400df85ef81c6aa9dae1c216c9e9e28057888"
+    },
+    "publication-review.json": {
+      "bytes": 7317,
+      "sha256": "948bf529f8254c700cc248c730eaac70e8723a37640ba592ab69c61f6b1f228d"
+    },
+    "publication-review.md": {
+      "bytes": 827,
+      "sha256": "60196fa79da1e6b8598bb17596fea30575006894af702be1a9abdbee169e402f"
+    },
     "source-history-verification.json": {
       "bytes": 586,
       "sha256": "0b1c84ba4769fd41022cce8a6c3e7804b14f7b84c51367c923a163a73e634d23"

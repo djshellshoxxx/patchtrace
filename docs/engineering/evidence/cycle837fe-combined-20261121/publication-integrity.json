@@ -1,0 +1,221 @@
+{
+  "commit": "451ab3eb6ba2e44ab0decf3c0c1c048e834a9520",
+  "tree": "7f5dec4cbf852a4f3bb69b6126ff615ed175f448",
+  "code": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
+  "time": "2026-11-21T06:30:42.612363+00:00",
+  "subtrees": {
+    "src": "528c5e6b2f75902394d192ee8b21cbf4b33901f2",
+    "tests": "10d944f55c2ccb6ef1b05000c2d5ec23df273e03",
+    "tools": "697bb76c56f66d68dde904b560d6480dd3b6e68a",
+    ".github": "e2f940b4aa933fe39f60b7072646809441429d0b",
+    "docs/specs": "25927e89a9ef513cf870963c3afbcc39f6802b51"
+  },
+  "no_product_tests": true,
+  "no_source_ref_remote_changes": true,
+  "changed_paths": [
+    "docs/engineering-handoffs/README.md",
+    "docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md",
+    "docs/engineering/AUDIT_FINDINGS.md",
+    "docs/engineering/BRANCH_INVENTORY.md",
+    "docs/engineering/CONSOLIDATION_LEDGER.md",
+    "docs/engineering/FEATURE_MATRIX.md",
+    "docs/engineering/INTEGRATION_QUEUE.md",
+    "docs/engineering/WORKER_HANDOFF.md",
+    "docs/engineering/cycle837fe-combined-pr349-20261121.md",
+    "docs/engineering/evidence/cycle837fe-combined-20261121/README.md",
+    "docs/engineering/evidence/cycle837fe-combined-20261121/code-publication-mapping.json",
+    "docs/engineering/evidence/cycle837fe-combined-20261121/codex1-independent-review.zip",
+    "docs/engineering/evidence/cycle837fe-combined-20261121/combined-dependencies.json",
+    "docs/engineering/evidence/cycle837fe-combined-20261121/combined-dependencies.log",
+    "docs/engineering/evidence/cycle837fe-combined-20261121/combined-focused.json",
+    "docs/engineering/evidence/cycle837fe-combined-20261121/combined-focused.log",
+    "docs/engineering/evidence/cycle837fe-combined-20261121/combined-focused.xml",
+    "docs/engineering/evidence/cycle837fe-combined-20261121/combined-ruff.json",
+    "docs/engineering/evidence/cycle837fe-combined-20261121/combined-ruff.log",
+    "docs/engineering/evidence/cycle837fe-combined-20261121/combined-source-binding.json",
+    "docs/engineering/evidence/cycle837fe-combined-20261121/combined-source-binding.log",
+    "docs/engineering/evidence/cycle837fe-combined-20261121/historical-followup-dispositions.json",
+    "docs/engineering/evidence/cycle837fe-combined-20261121/historical-followup-review.zip",
+    "docs/engineering/evidence/cycle837fe-combined-20261121/intel-independent-review.zip",
+    "docs/engineering/evidence/cycle837fe-combined-20261121/intel-probe-author.zip",
+    "docs/engineering/evidence/cycle837fe-combined-20261121/intel-version-author.zip",
+    "docs/engineering/evidence/cycle837fe-combined-20261121/manifest.json",
+    "docs/engineering/evidence/cycle837fe-combined-20261121/original-source-history.bundle",
+    "docs/engineering/evidence/cycle837fe-combined-20261121/pr349-initial-native-evidence.zip",
+    "docs/engineering/evidence/cycle837fe-combined-20261121/pr349-registry-failure-evidence.zip",
+    "docs/engineering/evidence/cycle837fe-combined-20261121/source-history-verification.json",
+    "docs/engineering/task-ledger.json",
+    "docs/modules.md",
+    "docs/qa.md",
+    "tasks/todo.md"
+  ],
+  "manifest": {
+    "payloads": 21,
+    "bytes": 1609599,
+    "sha256": "bef040254103c42e6bfce6fd86fd57bc72eeb8d1f493592e47e5d67e1e9796cd"
+  },
+  "whitespace_pass": true,
+  "archives": {
+    "codex1-independent-review.zip": {
+      "members": 25,
+      "uncompressed_bytes": 116879,
+      "sha256": "4dba68d80225f03fcda6e52dd692408f6159acbae305bc268fbf78df3d461c65",
+      "all_crc_valid": true,
+      "all_original_bytes_match": true,
+      "internal_hash_references": 24
+    },
+    "historical-followup-review.zip": {
+      "members": 18,
+      "uncompressed_bytes": 131298,
+      "sha256": "9a365f08ff2d357ffd29b4a5e0d49c8d2313e66c4657269c16cc94d4b3e09dfc",
+      "all_crc_valid": true,
+      "all_original_bytes_match": true,
+      "internal_hash_references": 17
+    },
+    "intel-independent-review.zip": {
+      "members": 20,
+      "uncompressed_bytes": 88831,
+      "sha256": "eb192aeb146b0c4ff06364db620fa085a9e3a83b4f720c6ab94eabd27e039cce",
+      "all_crc_valid": true,
+      "all_original_bytes_match": true,
+      "internal_hash_references": 19
+    },
+    "intel-probe-author.zip": {
+      "members": 22,
+      "uncompressed_bytes": 86427,
+      "sha256": "7763d4e604000386beb67d10b74c0a359b28b2627a0d014c7c8270336d1d0c9b",
+      "all_crc_valid": true,
+      "all_original_bytes_match": true,
+      "internal_hash_references": 21
+    },
+    "intel-version-author.zip": {
+      "members": 16,
+      "uncompressed_bytes": 78966,
+      "sha256": "25e0707bb73000a2bd68e979430f78d555a18a0c93425b60ff53af55f3742c74",
+      "all_crc_valid": true,
+      "all_original_bytes_match": true,
+      "internal_hash_references": 15
+    },
+    "pr349-initial-native-evidence.zip": {
+      "members": 23,
+      "uncompressed_bytes": 959391,
+      "sha256": "1464db5f37289fa94fb67d40f794df6cccbd31f4428085ff6034b63c50550150",
+      "all_crc_valid": true,
+      "all_original_bytes_match": true,
+      "internal_hash_references": 30
+    },
+    "pr349-registry-failure-evidence.zip": {
+      "members": 13,
+      "uncompressed_bytes": 142927,
+      "sha256": "f475a95308fcb04630f6ebb65801510c419ec5f6446653a04cd3610b4503e01f",
+      "all_crc_valid": true,
+      "all_original_bytes_match": true,
+      "internal_hash_references": 12
+    }
+  },
+  "junit": {
+    "codex1-independent-review.zip/independent-controls.xml": {
+      "cases": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "codex1-independent-review.zip/maintained-selection.xml": {
+      "cases": 273,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1
+    },
+    "intel-independent-review.zip/diagnostics-final.xml": {
+      "cases": 110,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "intel-independent-review.zip/version-baseline.xml": {
+      "cases": 16,
+      "failures": 8,
+      "errors": 0,
+      "skipped": 0
+    },
+    "intel-independent-review.zip/version-final.xml": {
+      "cases": 185,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "intel-probe-author.zip/author-controls.xml": {
+      "cases": 15,
+      "failures": 3,
+      "errors": 0,
+      "skipped": 0
+    },
+    "intel-probe-author.zip/baseline.xml": {
+      "cases": 2,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0
+    },
+    "intel-probe-author.zip/corrected-controls.xml": {
+      "cases": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "intel-probe-author.zip/final-focused.xml": {
+      "cases": 105,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "intel-version-author.zip/baseline.xml": {
+      "cases": 34,
+      "failures": 10,
+      "errors": 0,
+      "skipped": 0
+    },
+    "intel-version-author.zip/final-focused.xml": {
+      "cases": 169,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "combined_results": {
+    "passed": 1296,
+    "xfailed": 1,
+    "failed": 0,
+    "errors": 0,
+    "ordinary_skips": 0,
+    "distinct_cases": 1297,
+    "selectors": 57,
+    "expected_failure": [
+      "tests.test_codex_pkg_workflows::test_pip_downloads_require_hashes"
+    ],
+    "source_receipts_clean": true,
+    "seconds": 95.946
+  },
+  "mapping": {
+    "original_commits": 35,
+    "original_trees_parents_messages_verified": true,
+    "ordered_parent_remapping_verified": true,
+    "all_35_remote_objects_freshly_read_and_matched": true,
+    "remote_code": "61b26107d77fb632571ede932e0796d4b643f50c",
+    "remote_tree": "2666e72d5efd51600b170cef033103c9947bae3b",
+    "remote_receipt_sha256": "efda0ebf0e6edf7a6da207b8fad400df85ef81c6aa9dae1c216c9e9e28057888"
+  },
+  "bundle": {
+    "bytes": 1049086,
+    "sha256": "41b82d2f6998e621dc3ded24df8dc4f73f97effa16d8676e3829600ec8cdea30",
+    "head": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
+    "prerequisites": [
+      "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+      "11f51c105bf63946f59373ae605b937c4fee607a"
+    ],
+    "verified": true,
+    "strict_pack_verified": true,
+    "exact_35_original_commit_objects_in_pack": true,
+    "stdout": "The bundle contains this ref:\n2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c HEAD\nThe bundle requires these 2 refs:\n6b6fcd3597a604212032ffc453477aeb6edc69ff \n11f51c105bf63946f59373ae605b937c4fee607a \nThe bundle uses this hash algorithm: sha1\n",
+    "stderr": "/workspace/scratch/837fe19aae3a/evidence/combined-publication-audit/snapshot-451ab3e/original-source-history.bundle is okay\n"
+  }
+}
