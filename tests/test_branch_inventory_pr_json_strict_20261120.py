@@ -54,3 +54,17 @@ def test_invalid_saved_pr_json_preserves_previous_inventory_output(tmp_path, cap
     assert caught.value.code == 2
     assert "invalid pull-request metadata" in capsys.readouterr().err
     assert previous.read_bytes() == b"previous verified inventory\n"
+
+
+@pytest.mark.parametrize(
+    ("name", "raw"),
+    [
+        ("invalid-json", "{"),
+        ("deeply-nested", "[" * 10000 + "{}" + "]" * 10000),
+    ],
+)
+def test_saved_pr_json_rejects_malformed_or_excessively_nested_documents(tmp_path, name, raw):
+    source = tmp_path / f"{name}.json"
+    source.write_text(raw, encoding="utf-8")
+    with pytest.raises(ValueError, match="invalid pull-request metadata JSON"):
+        tool.read_json(source)
