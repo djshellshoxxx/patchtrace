@@ -255,3 +255,50 @@ def test_invalid_snapshot_headers_leave_previous_published_evidence_unchanged(gr
     assert error.value.code == 2
     assert "invalid branch snapshot TSV" in capsys.readouterr().err
     assert output.read_text(encoding="utf-8") == "previous successful evidence\n"
+
+
+
+@pytest.mark.parametrize("shape", [
+    "head-reference", "abbreviated-object", "revision-expression",
+    "uppercase-object", "late-invalid-after-valid",
+])
+def test_snapshot_rejects_noncanonical_tip_before_any_git_access(graph, tmp_path, shape):
+    repo, _, _, _, topic, *_ = graph
+    invalid_tips = {
+        "head-reference": "HEAD",
+        "abbreviated-object": topic[:10],
+        "revision-expression": "HEAD~0",
+        "uppercase-object": topic.upper(),
+        "late-invalid-after-valid": "HEAD",
+    }
+    rows = ([f"valid\t{topic}"] if shape == "late-invalid-after-valid" else [])
+    rows.append(f"topic\t{invalid_tips[shape]}")
+    snapshot = tmp_path / "tip-expressions.tsv"
+    snapshot.write_text("branch\ttip_sha\n" + "\n".join(rows) + "\n", encoding="utf-8")
+
+    class NoGitCalls:
+        def commit(self, ref):
+            pytest.fail(f"invalid snapshot reached Git with {ref!r}")
+
+    old_limit = csv.field_size_limit()
+    with pytest.raises(ValueError, match="invalid branch snapshot TSV rows"):
+        tool.branches(NoGitCalls(), "origin", snapshot)
+    assert csv.field_size_limit() == old_limit
+
+
+def test_snapshot_refuses_tag_object_peeling_to_commit(graph, tmp_path):
+    repo, _, _, _, topic, *_ = graph
+    run(repo, "tag", "-a", "evidence-tag", "-m", "retained evidence", topic)
+    tag_object = run(repo, "rev-parse", "refs/tags/evidence-tag")
+    assert tag_object != topic and len(tag_object) == len(topic)
+    snapshot = tmp_path / "tag-object.tsv"
+    snapshot.write_text(f"branch\ttip_sha\nindexed\t{tag_object}\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="branch snapshot tip does not match commit object"):
+        tool.branches(tool.Git(repo), "origin", snapshot)
+
+
+def test_snapshot_full_commit_oid_remains_exact(graph, tmp_path):
+    repo, _, _, _, topic, *_ = graph
+    snapshot = tmp_path / "exact-oid.tsv"
+    snapshot.write_text(f"tip_sha\tbranch\tnote\n{topic}\tindexed\tretained\n", encoding="utf-8")
+    assert tool.branches(tool.Git(repo), "origin", snapshot) == [("indexed", topic)]
