@@ -1,6 +1,22 @@
 # PR #349 Windows Intel and C4 follow-up — 837FE
 
-## Current source and purpose
+## Current Tier R test repair and qualification
+
+Tested source `829600f8d667b74329a79dd0b0d7964c2e092fd0`, tree `306c4d58fe6c0902c4c1b0fbbc3cddd64aed1c4b`, maps to remote code `175909a0b5ea0f1d2ef77012c672935698793dea` and directly follows published `a73cea498d93e353eb49ef08aff785bd0c0a768c`. Only `tests/test_tier_r_shard.py` changes after that publication. Runtime, workflows, tools and specifications retain their bytes. Resolve live [PR #349](https://github.com/djshellshoxxx/PatchTrace/pull/349) for the final records head and current checks.
+
+The retained, cancelled predecessor Windows [QA job 136761991553](https://github.com/djshellshoxxx/PatchTrace/actions/runs/44876416755/job/136761991553) exposed a stale `@v` assertion against pinned Actions. Its interrupted summary was **1 failed, 19,776 passed, 181 skipped and 2 xfailed**; this was not a completed full suite. The unchanged maintained test reproduced one failure on a73. The initial CODEX-1 review omitted this Tier R test; its coverage miss and the actual failed log remain preserved.
+
+The repaired contract enforces all seven exact reviewed Action commits and their identity set. Independent AST and byte comparisons confirm preservation of every workflow byte, both archive digests, jobs, triggers, permissions, compiler requirements and all other test-module statements. The reviewer parsed all **984 Python test blobs** at a73 and inspected **55 workflow-related files**, finding no second concrete stale mutable-tag assertion. This bounded audit does not replace full CI.
+
+On clean 829600f8, the 65-selector run completed **1,444 passed and 1 existing CODEX-5 xfailed**, with **1,445 distinct JUnit identities**, zero failures, errors or ordinary skips, and 91.481 seconds of command time. Whole-tree Ruff, pip check and isolated import binding passed. Independent review passed **67 cases**: 48 maintained cases plus 19 controls covering the original failure and refusal of incorrect commits, mutable tags, unknown or comment-only Actions, and changed existing requirements. Counts overlap and are not added.
+
+Actual Intel [run 44880309380](https://github.com/djshellshoxxx/PatchTrace/actions/runs/44880309380) on **a73** independently confirms the Windows identity repair: Linux **4 passed**; Windows **3 passed and 1 skipped**. Capa 9.4.0, FLOSS 3.1.1 and DIE 3.21 reproduce the authored synthetic-pair goldens. The Windows skip is the unavailable offline network namespace. Both logs prove checkout d6d08f6d and both downloaded artifact digests were verified. This is native evidence on the predecessor, not transferred qualification of the revised test head. Capa's exact historical missing module remains unproven.
+
+Main remains `fdc2696c23bdbfe7668348f25e3b336ce33039f7` until applicable final full, Qt, native, package and both Ubuntu frozen checks complete and the expected-head guarded REST merge succeeds with **[no release] [no deploy]**. Broader CODEX-5, Tier R coverage gaps, native/manual/trust/accessibility, full provenance, historical semantic review and separate L1/L2/L3 release gates remain open.
+
+Evidence: [qualification](evidence/cycle837fe-tier-r-20261121/qualification.json), [independent review](evidence/cycle837fe-tier-r-20261121/independent-review.md), [original cancelled failure](evidence/cycle837fe-tier-r-20261121/prior-cancelled-failure.json), [native a73 observations](evidence/cycle837fe-tier-r-20261121/a73-intel-summary.json), and [hash manifest](evidence/cycle837fe-tier-r-20261121/manifest.json). The earlier sections below preserve their source-specific observations; this section supersedes their current-source and next-action claims.
+
+## Historical Intel and C4 source checkpoint
 
 The actual Windows Intel failure on published `daee337c48c63dda8aeac149c407e900c79dcc86` is diagnosed and repaired in source. This continuation also consumes the completed, independently reviewed C4 Build environment and Pages work into the same PR #349 candidate. Main promotion remains pending the exact new publication's hosted gates.
 

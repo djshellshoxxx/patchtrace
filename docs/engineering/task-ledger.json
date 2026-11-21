@@ -1,24 +1,24 @@
 {
   "schema": "patchtrace-engineering-task-ledger/1",
-  "updated_at": "2026-11-21T07:12:59.325233+00:00",
+  "updated_at": "2026-11-21T07:43:03.236769+00:00",
   "repository": "https://github.com/djshellshoxxx/PatchTrace",
   "integration_branch": "integration/patchtrace-20261121-95fe-c3",
-  "checkpoint_local_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+  "checkpoint_local_commit": "829600f8d667b74329a79dd0b0d7964c2e092fd0",
   "starting_candidate": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
   "main_at_discovery": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
   "remote_publication": {
-    "status": "reviewed combined follow-up awaiting guarded PR349 publication and hosted qualification",
+    "status": "reviewed Tier R repair awaiting guarded PR349 publication and final hosted qualification",
     "branch": "integration/patchtrace-20261121-95fe-c3",
     "base_branch": "main",
     "base_commit": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
-    "previous_source_head": "daee337c48c63dda8aeac149c407e900c79dcc86",
+    "previous_source_head": "a73cea498d93e353eb49ef08aff785bd0c0a768c",
     "pr_number": 349,
     "head_rule": "Resolve live PR349 body/head, mapped source/tree and current CI; do not mutate a running head merely to record status.",
-    "original_source_evidence": "docs/engineering/evidence/cycle837fe-native-c4-20261121/combined-original-source.bundle",
+    "original_source_evidence": "docs/engineering/evidence/cycle837fe-tier-r-20261121/root-evidence.zip",
     "publication_transport": "GitHub REST Git Data; exact trees and ordered mapped parents; guarded non-force ref update",
-    "verified_code_remote_commit": "9545c03961deb33f19db8a92dfe77f413e189209",
-    "verified_code_tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
-    "commit_mapping": "docs/engineering/evidence/cycle837fe-native-c4-20261121/code-publication-mapping.json"
+    "verified_code_remote_commit": "175909a0b5ea0f1d2ef77012c672935698793dea",
+    "verified_code_tree": "306c4d58fe6c0902c4c1b0fbbc3cddd64aed1c4b",
+    "commit_mapping": "docs/engineering/evidence/cycle837fe-tier-r-20261121/code-publication-mapping.json"
   },
   "release_ready": false,
   "main_merge_eligible": false,
@@ -75,7 +75,7 @@
       "owner": "cycle3 independent census reviewer",
       "source_commit": "e5a531668ef523cd6faa26d5fec59aa552749134",
       "evidence": "docs/engineering/evidence/cycle3-95fe/inventory-summary.json",
-      "result_or_next_action": "364 branches and338 all-state PRs (82open/172merged/84closed-unmerged), fully paginated 04:55:49–04:57:48UTC.10new names vs frozen354-branch cycle95fe; no moved/missing names.23new vs explicit341-branch g30-at-PR348 file. Reference census only; historical semantic backlog remains.",
+      "result_or_next_action": "364 branches and338 all-state PRs (82open/172merged/84closed-unmerged), fully paginated 04:55:49\u201304:57:48UTC.10new names vs frozen354-branch cycle95fe; no moved/missing names.23new vs explicit341-branch g30-at-PR348 file. Reference census only; historical semantic backlog remains.",
       "snapshot_note": "Frozen 341-branch / 330-PR observation predates PR342 publication; all 671 recorded branch/PR SHAs resolve. Classification is not full semantic verification.",
       "latest_evidence": "docs/engineering/evidence/cycle2-coordinator-20261121-2bad.json"
     },
@@ -1275,9 +1275,9 @@
         "docs/specs/ci-action-pinning.md"
       ],
       "test_results": "178 direct uses pinned; 272 maintained passed / 1 CODEX-5 xfailed; 13 separate independent controls passed.",
-      "audit_findings": "No source blocker; parsed/text workflow preservation and all 11 official mappings verified.",
+      "audit_findings": "No source blocker; parsed/text workflow preservation and all 11 official mappings verified. Later hosted QA found a missed Tier R mutable-tag assertion; repaired/reviewed in829600f8; original review coverage miss retained.",
       "evidence": "docs/engineering/codex1-direct-action-pins-20261121.md",
-      "next_action": "Inspect exact combined-head hosted outcomes; preserve source/native/release distinctions."
+      "next_action": "Qualify corrected combined head; preserve original coverage miss and cancelled failure."
     },
     {
       "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
@@ -1469,21 +1469,21 @@
         "tests/test_intel_tools_runner.py"
       ],
       "implementation_status": "COMPLETE",
-      "test_results": "130 author and130 overlapping peer passes;1314+1 Intel-only and1396+1 combined selections separate.",
+      "test_results": "130 author and130 overlapping peer passes;1314+1 Intel-only and1396+1 combined selections separate. Actual a73 native run44880309380: Linux4passed; Windows3passed/1offline-namespace skip; all three engine goldens pass.",
       "audit_findings": "No blocker;real getpass red/pass/removal,privacy/extras/adapter controls.",
       "dependencies": [
-        "new-source Windows Intel",
-        "PR349 full qualification"
+        "PR349 exact final-head qualification"
       ],
       "blockers": [
-        "fresh actual Windows acceptance pending"
+        "final revised-head full/native/package qualification pending"
       ],
       "evidence_links": [
         "docs/engineering/cycle837fe-native-c4-20261121.md",
         "docs/engineering/evidence/cycle837fe-native-c4-20261121/intel-identity-independent.json",
-        "docs/engineering/evidence/cycle837fe-native-c4-20261121/daee-intel-summary.json"
+        "docs/engineering/evidence/cycle837fe-native-c4-20261121/daee-intel-summary.json",
+        "docs/engineering/evidence/cycle837fe-tier-r-20261121/a73-intel-summary.json"
       ],
-      "next_action": "Inspect fresh actual Windows probe/analysis;preserve original failures."
+      "next_action": "Preserve actual a73 native pass and qualify final revised head."
     },
     {
       "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
@@ -1556,9 +1556,37 @@
         "docs/engineering/evidence/cycle837fe-native-c4-20261121/codex5-bounded-assessment.md"
       ],
       "next_action": "Complete remaining scoped closures;Pages does not close all CODEX-5;preserve strict failure."
+    },
+    {
+      "id": "837fe-tier-r-immutable-pin-contract",
+      "status": "TESTING",
+      "description": "Repair missed Tier R mutable Action-tag test after immutable pinning",
+      "source_branch": "codex/patchtrace-tier-r-pin-contract-20261121-837fe",
+      "source_commit": "829600f8d667b74329a79dd0b0d7964c2e092fd0",
+      "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
+      "assigned_worker": "root837FE author; completed codex1_independent_review; root qualification",
+      "files_owned": [
+        "tests/test_tier_r_shard.py"
+      ],
+      "implementation_status": "COMPLETE",
+      "test_results": "Baseline1failure;combined1444passed/1CODEX-5xfail;independent67passed including19controls;Ruff/pip/binding pass.",
+      "audit_findings": "CODEX1-TIER-R-STALE-TAG resolved;exact7reviewed commits enforced;all prior workflow/digests/permissions/triggers/compiler assertions preserved.",
+      "dependencies": [
+        "PR349 exact final-head hosted qualification"
+      ],
+      "blockers": [
+        "final full/Qt/native/package/frozen results pending"
+      ],
+      "merge_status": "not merged to main",
+      "evidence_links": [
+        "docs/engineering/evidence/cycle837fe-tier-r-20261121/qualification.json",
+        "docs/engineering/evidence/cycle837fe-tier-r-20261121/independent-review.json",
+        "docs/engineering/evidence/cycle837fe-tier-r-20261121/prior-cancelled-failure.json"
+      ],
+      "next_action": "Publish reviewed Tier R test repair to existing PR349; inspect exact-source full/Qt/native/package/frozen gates; expected-head guarded REST main merge only when qualified, with [no release] [no deploy]."
     }
   ],
-  "aggregate_source_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+  "aggregate_source_commit": "829600f8d667b74329a79dd0b0d7964c2e092fd0",
   "workers": [
     {
       "name": "repository_inventory",
@@ -1792,11 +1820,21 @@
     },
     {
       "name": "837fe-native-c4-publication-and-hosted-qualification",
+      "status": "COMPLETE",
+      "owner": "root837FE",
+      "scope": "a73 publication and actual Intel pass retained; Tier R successor below"
+    },
+    {
+      "name": "837fe-tier-r-repair-and-review",
+      "status": "COMPLETE"
+    },
+    {
+      "name": "837fe-final-pr349-qualification",
       "status": "TESTING",
       "owner": "root837FE"
     }
   ],
-  "local_integration_branch": "integration/patchtrace-20261121-837fe-native-followup",
+  "local_integration_branch": "codex/patchtrace-tier-r-pin-contract-20261121-837fe",
   "hosted_initial_candidate": {
     "head": "3862cb5de3256efec8f6392a3b6fb4d9e600c377",
     "captured_at": "2026-11-20T01:03:45Z",
@@ -1914,17 +1952,17 @@
       "later_evidence_only_commits": "Resolve current PR head; runtime/test/tool identities remain the recorded 97ca0adf checkpoint."
     }
   },
-  "aggregate_source_tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
+  "aggregate_source_tree": "306c4d58fe6c0902c4c1b0fbbc3cddd64aed1c4b",
   "current_qualification": {
-    "source_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
-    "source_tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
+    "source_commit": "829600f8d667b74329a79dd0b0d7964c2e092fd0",
+    "source_tree": "306c4d58fe6c0902c4c1b0fbbc3cddd64aed1c4b",
     "parents": [
-      "d628749401f61d3653b5e066ff38245b938c5dcd",
-      "39a95c549d48eb523e9efdfda394bb9f184e2b16"
+      "a73cea498d93e353eb49ef08aff785bd0c0a768c"
     ],
-    "distinct_affected_passed": 1396,
-    "case_count": 1397,
-    "selection_node_selectors": 64,
+    "remote_code_commit": "175909a0b5ea0f1d2ef77012c672935698793dea",
+    "distinct_affected_passed": 1444,
+    "case_count": 1445,
+    "selection_node_selectors": 65,
     "failed": 0,
     "errors": 0,
     "ordinary_skipped": 0,
@@ -1932,13 +1970,15 @@
     "expected_failures": [
       "CODEX-5"
     ],
+    "command_seconds": 91.481,
     "whole_tree_ruff": "passed",
     "dependencies": "passed",
-    "isolated_source_import": "passed; clean source-bound checkout",
-    "independent_review": "Exact complete-tree union;141 maintained checks and independent identity controls passed;no source blocker.",
+    "isolated_source_import": "passed; clean source-bound checkout before and after",
+    "independent_review": "No blocker; 48 maintained Tier R cases plus19 independent controls; counts overlap root selection",
+    "test_tree_audit": "984 immutable Python test blobs parsed;55 workflow-related files inspected; no second concrete stale tag assertion found",
     "final_source_hosted": "pending exact final PR349 publication head",
-    "full_suite": "No successful local full aggregate claimed. Preserve earlier AF_UNIX EPERM and independently unexplained SIGKILL.",
-    "evidence": "docs/engineering/evidence/cycle837fe-native-c4-20261121/combined-focused.json"
+    "full_suite": "Earlier incomplete local and cancelled hosted attempts retained; no completed full suite for this revision yet",
+    "evidence": "docs/engineering/evidence/cycle837fe-tier-r-20261121/combined-focused.json"
   },
   "current_handoff": "docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md",
   "previous_session_qualification": {
@@ -2013,9 +2053,9 @@
     "status": "TESTING",
     "owner": "root837FE",
     "handoff": "docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md",
-    "code_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+    "code_commit": "829600f8d667b74329a79dd0b0d7964c2e092fd0",
     "target_pr": 349,
-    "next_action": "Publish reviewed Intel+C4 exact source to PR349; inspect full/Qt/native/package/frozen gates and actual Windows Intel; guarded REST main merge only when qualified, with both opt-out flags."
+    "next_action": "Publish reviewed Tier R test repair to existing PR349; inspect exact-source full/Qt/native/package/frozen gates; expected-head guarded REST main merge only when qualified, with [no release] [no deploy]."
   },
   "sibling_95fe_qualification": {
     "source_commit": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
@@ -2285,7 +2325,7 @@
       "xfailed": 5
     },
     "qa_qt_native_package_smokes": "all-current-non-release-checks-success",
-    "source_scope": "PR348 only; tree identity independently verified. PR345–347 also green on their own retained heads.",
+    "source_scope": "PR348 only; tree identity independently verified. PR345\u2013347 also green on their own retained heads.",
     "evidence": "docs/engineering/evidence/cycle3-95fe/hosted-qualification.json"
   },
   "parallel_continuation_837fe": {
@@ -2332,21 +2372,21 @@
     "status": "TESTING",
     "owner": "root837fe",
     "base_pr": 349,
-    "base_commit": "daee337c48c63dda8aeac149c407e900c79dcc86",
+    "base_commit": "a73cea498d93e353eb49ef08aff785bd0c0a768c",
     "reviewed_application_commit": "b880c317add4de3ac22c87cd842abb0e7ccc615d",
     "publication_evidence_commit": "36ead053fdfd7a69cbd06bf2c60431bbc15bf471",
     "target_branch": "integration/patchtrace-20261121-95fe-c3",
-    "source_merge": "Disjoint runtime/workflow changes; historical records retained from both parents.",
+    "source_merge": "Only Tier R workflow test changes after a73; runtime/workflows/tools/specifications unchanged.",
     "qualification": {
-      "source_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
-      "source_tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
+      "source_commit": "829600f8d667b74329a79dd0b0d7964c2e092fd0",
+      "source_tree": "306c4d58fe6c0902c4c1b0fbbc3cddd64aed1c4b",
       "parents": [
-        "d628749401f61d3653b5e066ff38245b938c5dcd",
-        "39a95c549d48eb523e9efdfda394bb9f184e2b16"
+        "a73cea498d93e353eb49ef08aff785bd0c0a768c"
       ],
-      "distinct_affected_passed": 1396,
-      "case_count": 1397,
-      "selection_node_selectors": 64,
+      "remote_code_commit": "175909a0b5ea0f1d2ef77012c672935698793dea",
+      "distinct_affected_passed": 1444,
+      "case_count": 1445,
+      "selection_node_selectors": 65,
       "failed": 0,
       "errors": 0,
       "ordinary_skipped": 0,
@@ -2354,19 +2394,21 @@
       "expected_failures": [
         "CODEX-5"
       ],
+      "command_seconds": 91.481,
       "whole_tree_ruff": "passed",
       "dependencies": "passed",
-      "isolated_source_import": "passed; clean source-bound checkout",
-      "independent_review": "Exact complete-tree union;141 maintained checks and independent identity controls passed;no source blocker.",
+      "isolated_source_import": "passed; clean source-bound checkout before and after",
+      "independent_review": "No blocker; 48 maintained Tier R cases plus19 independent controls; counts overlap root selection",
+      "test_tree_audit": "984 immutable Python test blobs parsed;55 workflow-related files inspected; no second concrete stale tag assertion found",
       "final_source_hosted": "pending exact final PR349 publication head",
-      "full_suite": "No successful local full aggregate claimed. Preserve earlier AF_UNIX EPERM and independently unexplained SIGKILL.",
-      "evidence": "docs/engineering/evidence/cycle837fe-native-c4-20261121/combined-focused.json"
+      "full_suite": "Earlier incomplete local and cancelled hosted attempts retained; no completed full suite for this revision yet",
+      "evidence": "docs/engineering/evidence/cycle837fe-tier-r-20261121/combined-focused.json"
     },
-    "next_action": "Publish reviewed Intel+C4 exact source to PR349; inspect full/Qt/native/package/frozen gates and actual Windows Intel; guarded REST main merge only when qualified, with both opt-out flags.",
-    "code_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
-    "code_tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
+    "next_action": "Publish reviewed Tier R test repair to existing PR349; inspect exact-source full/Qt/native/package/frozen gates; expected-head guarded REST main merge only when qualified, with [no release] [no deploy].",
+    "code_commit": "829600f8d667b74329a79dd0b0d7964c2e092fd0",
+    "code_tree": "306c4d58fe6c0902c4c1b0fbbc3cddd64aed1c4b",
     "remote_code_identity": "Resolve final current code mapping in live PR349 body; prior61b identity remains in continuation history.",
-    "remote_code_commit": "9545c03961deb33f19db8a92dfe77f413e189209"
+    "remote_code_commit": "175909a0b5ea0f1d2ef77012c672935698793dea"
   },
   "continuation_history": [
     {
@@ -2467,6 +2509,159 @@
           "remote_code_commit": "61b26107d77fb632571ede932e0796d4b643f50c"
         }
       }
+    },
+    {
+      "context": "Completed a73 publication before Tier R stale assertion repair; original source-specific records retained",
+      "published_head": "a73cea498d93e353eb49ef08aff785bd0c0a768c",
+      "published_tree": "1c59af32db14e351c05e0be32c1dde59dc489d43",
+      "checkpoint_local_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+      "current_qualification": {
+        "source_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+        "source_tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
+        "parents": [
+          "d628749401f61d3653b5e066ff38245b938c5dcd",
+          "39a95c549d48eb523e9efdfda394bb9f184e2b16"
+        ],
+        "distinct_affected_passed": 1396,
+        "case_count": 1397,
+        "selection_node_selectors": 64,
+        "failed": 0,
+        "errors": 0,
+        "ordinary_skipped": 0,
+        "xfailed": 1,
+        "expected_failures": [
+          "CODEX-5"
+        ],
+        "whole_tree_ruff": "passed",
+        "dependencies": "passed",
+        "isolated_source_import": "passed; clean source-bound checkout",
+        "independent_review": "Exact complete-tree union;141 maintained checks and independent identity controls passed;no source blocker.",
+        "final_source_hosted": "pending exact final PR349 publication head",
+        "full_suite": "No successful local full aggregate claimed. Preserve earlier AF_UNIX EPERM and independently unexplained SIGKILL.",
+        "evidence": "docs/engineering/evidence/cycle837fe-native-c4-20261121/combined-focused.json"
+      },
+      "remote_publication": {
+        "status": "reviewed combined follow-up awaiting guarded PR349 publication and hosted qualification",
+        "branch": "integration/patchtrace-20261121-95fe-c3",
+        "base_branch": "main",
+        "base_commit": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+        "previous_source_head": "daee337c48c63dda8aeac149c407e900c79dcc86",
+        "pr_number": 349,
+        "head_rule": "Resolve live PR349 body/head, mapped source/tree and current CI; do not mutate a running head merely to record status.",
+        "original_source_evidence": "docs/engineering/evidence/cycle837fe-native-c4-20261121/combined-original-source.bundle",
+        "publication_transport": "GitHub REST Git Data; exact trees and ordered mapped parents; guarded non-force ref update",
+        "verified_code_remote_commit": "9545c03961deb33f19db8a92dfe77f413e189209",
+        "verified_code_tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
+        "commit_mapping": "docs/engineering/evidence/cycle837fe-native-c4-20261121/code-publication-mapping.json"
+      },
+      "continuation": {
+        "status": "TESTING",
+        "owner": "root837FE",
+        "handoff": "docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md",
+        "code_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+        "target_pr": 349,
+        "next_action": "Publish reviewed Intel+C4 exact source to PR349; inspect full/Qt/native/package/frozen gates and actual Windows Intel; guarded REST main merge only when qualified, with both opt-out flags."
+      },
+      "combined_followup_837fe": {
+        "status": "TESTING",
+        "owner": "root837fe",
+        "base_pr": 349,
+        "base_commit": "daee337c48c63dda8aeac149c407e900c79dcc86",
+        "reviewed_application_commit": "b880c317add4de3ac22c87cd842abb0e7ccc615d",
+        "publication_evidence_commit": "36ead053fdfd7a69cbd06bf2c60431bbc15bf471",
+        "target_branch": "integration/patchtrace-20261121-95fe-c3",
+        "source_merge": "Disjoint runtime/workflow changes; historical records retained from both parents.",
+        "qualification": {
+          "source_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+          "source_tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
+          "parents": [
+            "d628749401f61d3653b5e066ff38245b938c5dcd",
+            "39a95c549d48eb523e9efdfda394bb9f184e2b16"
+          ],
+          "distinct_affected_passed": 1396,
+          "case_count": 1397,
+          "selection_node_selectors": 64,
+          "failed": 0,
+          "errors": 0,
+          "ordinary_skipped": 0,
+          "xfailed": 1,
+          "expected_failures": [
+            "CODEX-5"
+          ],
+          "whole_tree_ruff": "passed",
+          "dependencies": "passed",
+          "isolated_source_import": "passed; clean source-bound checkout",
+          "independent_review": "Exact complete-tree union;141 maintained checks and independent identity controls passed;no source blocker.",
+          "final_source_hosted": "pending exact final PR349 publication head",
+          "full_suite": "No successful local full aggregate claimed. Preserve earlier AF_UNIX EPERM and independently unexplained SIGKILL.",
+          "evidence": "docs/engineering/evidence/cycle837fe-native-c4-20261121/combined-focused.json"
+        },
+        "next_action": "Publish reviewed Intel+C4 exact source to PR349; inspect full/Qt/native/package/frozen gates and actual Windows Intel; guarded REST main merge only when qualified, with both opt-out flags.",
+        "code_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+        "code_tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
+        "remote_code_identity": "Resolve final current code mapping in live PR349 body; prior61b identity remains in continuation history.",
+        "remote_code_commit": "9545c03961deb33f19db8a92dfe77f413e189209"
+      },
+      "updated_tasks_before_followup": [
+        {
+          "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
+          "assigned_worker": "completed scoped author and independent reviewer; root837FE integration",
+          "implementation_status": "COMPLETE",
+          "merge_status": "not merged to main",
+          "dependencies": [
+            "PR349 combined exact-head hosted qualification"
+          ],
+          "blockers": [
+            "new-source hosted checks pending"
+          ],
+          "status": "TESTING",
+          "id": "837fe-codex1-direct-actions",
+          "description": "Complete immutable direct Action references",
+          "source_branch": "codex/patchtrace-codex1-direct-action-pins-20261121-837fe",
+          "source_commit": "ad0997044ddd2c957ad0de1ede8db4c7dab00317",
+          "files_owned": [
+            ".github/workflows/",
+            "tests workflow contracts",
+            "docs/specs/ci-action-pinning.md"
+          ],
+          "test_results": "178 direct uses pinned; 272 maintained passed / 1 CODEX-5 xfailed; 13 separate independent controls passed.",
+          "audit_findings": "No source blocker; parsed/text workflow preservation and all 11 official mappings verified.",
+          "evidence": "docs/engineering/codex1-direct-action-pins-20261121.md",
+          "next_action": "Inspect exact combined-head hosted outcomes; preserve source/native/release distinctions."
+        },
+        {
+          "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
+          "merge_status": "not merged to main",
+          "id": "837fe-intel-synthetic-windows-identity",
+          "status": "TESTING",
+          "description": "Repair actual Windows getpass/pwd failure without inheriting caller identity",
+          "source_branch": "codex/patchtrace-intel-windows-identity-20261121-837fe",
+          "source_commit": "d628749401f61d3653b5e066ff38245b938c5dcd",
+          "assigned_worker": "completed intel_live_triage author and intel_windows_identity_review;root integration",
+          "files_owned": [
+            "src/patchtrace/intelligence/tools/process.py",
+            "docs/specs/three-tool-evidence-adapters.md",
+            "tests/test_intel_tools_environment.py",
+            "tests/test_intel_tools_runner.py"
+          ],
+          "implementation_status": "COMPLETE",
+          "test_results": "130 author and130 overlapping peer passes;1314+1 Intel-only and1396+1 combined selections separate.",
+          "audit_findings": "No blocker;real getpass red/pass/removal,privacy/extras/adapter controls.",
+          "dependencies": [
+            "new-source Windows Intel",
+            "PR349 full qualification"
+          ],
+          "blockers": [
+            "fresh actual Windows acceptance pending"
+          ],
+          "evidence_links": [
+            "docs/engineering/cycle837fe-native-c4-20261121.md",
+            "docs/engineering/evidence/cycle837fe-native-c4-20261121/intel-identity-independent.json",
+            "docs/engineering/evidence/cycle837fe-native-c4-20261121/daee-intel-summary.json"
+          ],
+          "next_action": "Inspect fresh actual Windows probe/analysis;preserve original failures."
+        }
+      ]
     }
   ],
   "parallel_followup_cycle4": {
@@ -2584,5 +2779,53 @@
       "verdict": "No remaining blocker;N-PUB-H1 closed",
       "evidence": "docs/engineering/evidence/cycle837fe-native-c4-20261121/publication-audit.json"
     }
+  },
+  "tier_r_followup_837fe": {
+    "status": "TESTING",
+    "owner": "root837FE",
+    "code_commit": "829600f8d667b74329a79dd0b0d7964c2e092fd0",
+    "code_tree": "306c4d58fe6c0902c4c1b0fbbc3cddd64aed1c4b",
+    "parent": "a73cea498d93e353eb49ef08aff785bd0c0a768c",
+    "qualification": {
+      "source_commit": "829600f8d667b74329a79dd0b0d7964c2e092fd0",
+      "source_tree": "306c4d58fe6c0902c4c1b0fbbc3cddd64aed1c4b",
+      "parents": [
+        "a73cea498d93e353eb49ef08aff785bd0c0a768c"
+      ],
+      "remote_code_commit": "175909a0b5ea0f1d2ef77012c672935698793dea",
+      "distinct_affected_passed": 1444,
+      "case_count": 1445,
+      "selection_node_selectors": 65,
+      "failed": 0,
+      "errors": 0,
+      "ordinary_skipped": 0,
+      "xfailed": 1,
+      "expected_failures": [
+        "CODEX-5"
+      ],
+      "command_seconds": 91.481,
+      "whole_tree_ruff": "passed",
+      "dependencies": "passed",
+      "isolated_source_import": "passed; clean source-bound checkout before and after",
+      "independent_review": "No blocker; 48 maintained Tier R cases plus19 independent controls; counts overlap root selection",
+      "test_tree_audit": "984 immutable Python test blobs parsed;55 workflow-related files inspected; no second concrete stale tag assertion found",
+      "final_source_hosted": "pending exact final PR349 publication head",
+      "full_suite": "Earlier incomplete local and cancelled hosted attempts retained; no completed full suite for this revision yet",
+      "evidence": "docs/engineering/evidence/cycle837fe-tier-r-20261121/combined-focused.json"
+    },
+    "finding": "CODEX1-TIER-R-STALE-TAG",
+    "finding_status": "source repaired and independently reviewed",
+    "evidence": "docs/engineering/evidence/cycle837fe-tier-r-20261121/manifest.json",
+    "a73_intel": {
+      "head": "a73cea498d93e353eb49ef08aff785bd0c0a768c",
+      "run_id": 44880309380,
+      "linux_passed": 4,
+      "windows_passed": 3,
+      "windows_skipped": 1,
+      "skip_reason": "offline network namespace unavailable on Windows",
+      "scope": "actual synthetic-pair checks; not revised-head qualification"
+    },
+    "main_merge_eligible": false,
+    "release_ready": false
   }
 }

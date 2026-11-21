@@ -1,6 +1,14 @@
 # Combined PR #349 handoff — 837FE
 
-## Current Intel + C4 follow-up
+## Current Tier R repair and final qualification
+
+Tested code `829600f8d667b74329a79dd0b0d7964c2e092fd0` / tree `306c4d58fe6c0902c4c1b0fbbc3cddd64aed1c4b`, mapped remote `175909a0b5ea0f1d2ef77012c672935698793dea`, directly follows a73 and changes only the Tier R workflow test. Combined **1,444 passed / 1 CODEX-5 xfailed**, 1,445 distinct cases, 65 selectors; clean source, Ruff, pip and isolated binding pass. Independent **67 passed** (48 overlapping maintained cases plus 19 controls); all original requirements preserved and 984-test audit complete. No source blocker. [Current report](../engineering/cycle837fe-native-c4-20261121.md) and [qualification](../engineering/evidence/cycle837fe-tier-r-20261121/qualification.json).
+
+Preserve the original cancelled Windows failure and original CODEX-1 coverage miss. Actual a73 Intel passes Linux 4 and Windows 3 engine checks; one Windows offline namespace test is skipped. These observations do not qualify the revised head. Root 837FE owns PR349 integration and final full/Qt/native/package/frozen qualification. Read its live head/body and ownership prompt. Do not duplicate active CI or mutate the running source just to record status.
+
+Main is still fdc2696c. Merge after all applicable checks pass and blockers close, using REST with a fresh expected-head guard and both `[no release] [no deploy]` in the actual merge commit. Confirm main/tree and reconcile historical PR345–348 metadata. PR350 was incorporated into the PR349 candidate ancestry, not promoted independently to main. All broader release and historical gates remain. Earlier sections below are source-specific history.
+
+## Historical Intel + C4 follow-up
 
 Tested source `6bf79feffe68a9fdc1293a69900320e12be662bc`, tree `dc659c7ef80e317b6c13c120e09f47c5d313f3ca`, combines reviewed Intel `d628749401f61d3653b5e066ff38245b938c5dcd` with completed C4 `39a95c549d48eb523e9efdfda394bb9f184e2b16`. [Current report](../engineering/cycle837fe-native-c4-20261121.md) and [qualification](../engineering/evidence/cycle837fe-native-c4-20261121/qualification.json) supersede earlier current-source/next-action claims for these scopes; prior evidence remains historical.
 

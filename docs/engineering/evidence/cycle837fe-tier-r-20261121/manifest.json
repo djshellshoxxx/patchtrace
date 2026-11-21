@@ -1,0 +1,62 @@
+{
+  "source_commit": "829600f8d667b74329a79dd0b0d7964c2e092fd0",
+  "source_tree": "306c4d58fe6c0902c4c1b0fbbc3cddd64aed1c4b",
+  "created_at": "2026-11-21T07:43:03.243819+00:00",
+  "payloads": [
+    {
+      "path": "a73-intel-evidence.zip",
+      "bytes": 120988,
+      "sha256": "0823a5638221d921f1a5dcf8e34a228f2c77baeeb45157f1b5c846337dba88b6"
+    },
+    {
+      "path": "a73-intel-summary.json",
+      "bytes": 34619,
+      "sha256": "be05833c65f9e6b7c8db4eb0f423fd546ca9ba4a36ca0a957ce6d0121766f64a"
+    },
+    {
+      "path": "code-publication-mapping.json",
+      "bytes": 224,
+      "sha256": "c48b1fea419b7ba61b5997a3fbfadefd3aee786e082a7e8641a52ddd9e0619af"
+    },
+    {
+      "path": "combined-focused.json",
+      "bytes": 3745,
+      "sha256": "62c75dfdbc5f24b7e537dc2dc783112c92935a4adf65db3157b44498c3f1a3e4"
+    },
+    {
+      "path": "daee-cancelled-windows-qa.log.gz",
+      "bytes": 13939,
+      "sha256": "e45d0320a115a531f3cea973646272b86156ab873319e65bfee6f5241b37a09d"
+    },
+    {
+      "path": "independent-evidence.zip",
+      "bytes": 13001,
+      "sha256": "5a762cf591a5cb01e241844200ed8fb4b284ed3b3b3905fdf6bd4d343016f61c"
+    },
+    {
+      "path": "independent-review.json",
+      "bytes": 2738,
+      "sha256": "d61c31e28a0d1050afaf83b90dd1e006c06edcb9c71d64cdc9a2f0ebc4ac4de0"
+    },
+    {
+      "path": "independent-review.md",
+      "bytes": 3149,
+      "sha256": "5fc6e810e376917e98ff402254b83119f1be9bb5675ca5f4e255fb495128d8ee"
+    },
+    {
+      "path": "prior-cancelled-failure.json",
+      "bytes": 662,
+      "sha256": "5e6ca3f684792c39648d82b81a8794ebecc14fd059e50ac5289527d8b5591df9"
+    },
+    {
+      "path": "qualification.json",
+      "bytes": 1204,
+      "sha256": "06cbc774a0c2884d6116bd1b5c852dc7d76d927d73e28b8ba90371f195b38f00"
+    },
+    {
+      "path": "root-evidence.zip",
+      "bytes": 36294,
+      "sha256": "7156cd90f46796b06c240408680d53fcf6ed10a23e06e26be333c55074217fc8"
+    }
+  ]
+}
