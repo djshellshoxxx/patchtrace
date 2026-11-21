@@ -201,3 +201,40 @@ def test_intermediate_is_not_integrated_merely_because_surviving_pr_contains_it(
     assert note["main_ancestor"] is False
     assert note["retained_unmerged_stack"]["tip"] == candidate
     assert rows[0]["delete_safe"] == "no"
+
+
+@pytest.mark.parametrize("shape", [
+    "duplicate-header", "extra-cell", "missing-cell", "missing-tip-header",
+    "blank-tip", "blank-branch",
+])
+def test_snapshot_refuses_malformed_columns_before_any_git_lookup(graph, tmp_path, shape):
+    repo, _, _, _, topic, *_ = graph
+    layouts = {
+        "duplicate-header": f"branch\t tip_sha\tbranch\noriginal\t{topic}\tforged\n".replace(" tip_sha", "tip_sha"),
+        "extra-cell": f"branch\ttip_sha\tnote\noriginal\t{topic}\tretained\textra\n",
+        "missing-cell": f"branch\ttip_sha\tnote\noriginal\t{topic}\n",
+        "missing-tip-header": "branch\tnote\noriginal\tretained\n",
+        "blank-tip": "branch\ttip_sha\noriginal\t\n",
+        "blank-branch": f"branch\ttip_sha\n \t{topic}\n",
+    }
+    snapshot = tmp_path / "malformed.tsv"
+    snapshot.write_text(layouts[shape], encoding="utf-8")
+
+    class NoGitCalls:
+        def commit(self, ref):
+            pytest.fail(f"invalid snapshot reached Git with {ref!r}")
+
+    old_limit = csv.field_size_limit()
+    with pytest.raises(ValueError, match="invalid branch snapshot TSV"):
+        tool.branches(NoGitCalls(), "origin", snapshot)
+    assert csv.field_size_limit() == old_limit
+
+
+def test_snapshot_accepts_reordered_columns_and_extra_named_metadata(graph, tmp_path):
+    repo, _, _, _, topic, *_ = graph
+    snapshot = tmp_path / "compatible.tsv"
+    snapshot.write_text(f"note\ttip_sha\tbranch\textra\nretained\t{topic}\ttopic\tdata\n",
+                        encoding="utf-8")
+    old_limit = csv.field_size_limit()
+    assert tool.branches(tool.Git(repo), "origin", snapshot) == [("topic", topic)]
+    assert csv.field_size_limit() == old_limit
