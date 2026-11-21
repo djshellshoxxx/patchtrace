@@ -188,7 +188,7 @@ These entries describe implemented candidate scope, not qualification on main. T
 
 | File | Proposed canonical alias | Owner | Candidate scope and acceptance boundary |
 |---|---|---|---|
-| `docs/specs/pages-deployment-control.md` | SPEC-CI-PAGES-01 (proposed; cite by path) | `.github/workflows/pages.yml` | Push-head `[no deploy]` veto for the deploy job, preserving build/artifact flow and manual dispatch. Source checks cover the workflow contract; no hosted deployment acceptance is claimed. |
+| `docs/specs/pages-deployment-control.md` | SPEC-CI-PAGES-01 (proposed; cite by path) | `.github/workflows/pages.yml` | Push-head `[no deploy]` veto for Pages configuration and the deploy job, preserving unconditional tests/build/artifact flow and manual dispatch. Source checks cover the workflow contract; no hosted deployment acceptance is claimed. |
 | `docs/specs/ci-action-pinning.md` | SPEC-CI-ACTIONS-01 (proposed; cite by path) | `.github/workflows/` and workflow contract tests | Direct remote Action references use reviewed full commit pins with release comments. Transitive references, CODEX-5 package hashes and exact-source hosted qualification remain separate gates. |
 | `docs/specs/live-intel-probe-diagnostics.md` | SPEC-CI-INTEL-PROBES-01 (proposed; cite by path) | Live Intel acceptance harness and `build/live-status/` artifacts | Retain bounded, redacted diagnostics from existing version probes without additional processes or altered acceptance predicates. Controlled fixture checks do not establish native capa/FLOSS compatibility. |
 
