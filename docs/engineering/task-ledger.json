@@ -46,7 +46,9 @@
     "Current session distinguishes completed selections from interrupted runs. Missing summaries and dot counts are not passes. This ledger is authoritative; prior generation narratives retain historical source-specific claims.",
     "PR345/346 sibling reconciliation, 2026-11-20: both draft heads refreshed unchanged (39c38a02 and c07774ec), PR345 kept as source base. Recovered exact donor blobs for pre-service candidate admission, malformed candidate tests, bounded 32 MiB TSV replay tool and tests; retained PR345 TaskRunner/report/Linux refusal and more-complete Evidence/table GUI tests. Ported two Qt diagnostic controls and two Strings form-feed CSV/JSON controls only; did not overwrite Linux force-refusal expectations. No tested complete combined source yet; PR345/346 native and QA queues pending. No main/release merge.",
     "Shared header-help/Evidence implementation recovered once: src/patchtrace/gui/qt/table.py and gui/table_spec.py are byte-identical across PR345/346; ui_evidence.py differs only formatting. 95fe GUI worker's separate 212-case selection not added to 2bad counts. 95fe bounded 212 distinct passing test identities belong only to ccc3664f source, not this combined branch. Original SIGKILLs and historic native Qt remain open.",
-    "Isolated PR347 successor source review found a new provenance-mapping admission: csv.DictReader silently accepts duplicate branch headers, extra TSV cells, and missing values, potentially misassociating a retained Git tip with a forged branch label. SPEC-first, six malformed parametrized regression shapes, valid reordered-column control, and one CLI prior-output test authored; exact-source repository pytest/Ruff and independent signoff pending. Manual Python stdlib red/green algorithm controls: original six malformed shapes accepted at parse; repaired algorithm refuses six, compatible case accepted. PR347 QA/native still active; no duplicate workflow, main merge or release."
+    "Isolated PR347 successor source review found a new provenance-mapping admission: csv.DictReader silently accepts duplicate branch headers, extra TSV cells, and missing values, potentially misassociating a retained Git tip with a forged branch label. SPEC-first, six malformed parametrized regression shapes, valid reordered-column control, and one CLI prior-output test authored; exact-source repository pytest/Ruff and independent signoff pending. Manual Python stdlib red/green algorithm controls: original six malformed shapes accepted at parse; repaired algorithm refuses six, compatible case accepted. PR347 QA/native still active; no duplicate workflow, main merge or release.",
+    "2026-11-20 exact-source hosted disposition: PR345 Windows QA 44840721370/136648122555 failed after 23,847 pytest passes, 181 skips and five xfails, at Chocolatey NSIS 3.13 installation with HTTP 503 from community.chocolatey.org. This is a real failed workflow from external package feed; no production failure attributed and no rerun scheduled. PR347 five native jobs passed only on its own head; its Linux/Windows Qt and QA were partially active. This is not successor qualification.",
+    "Inventory tip OID continuation: previously retained TSV tip_sha was passed verbatim to git rev-parse and could be HEAD, abbreviated sha or HEAD~0, so replay could silently resolve changed history. On isolated successor to inventory TSV shape, contract/test-first strict full lowercase SHA-1/SHA-256 commit IDs are admitted before any Git access; resolved OID must equal requested OID (no tag peeling). Seven repository pytest cases authored, synthetic Git controls verified 6 pre-Git refusals, 1 positive, 1 tag-peeling refusal, and 3 original mutable ref admissions. Actual repository pytest/Ruff/CI and genuinely independent review pending."
   ],
   "tasks": [
     {
@@ -805,6 +807,19 @@
       "handoff": "docs/engineering-handoffs/inventory-tsv-shape-20261120.md",
       "receipt": "docs/engineering/evidence/inventory-tsv-shape-20261120.json",
       "result_or_next_action": "No actual checked-out pytest/Ruff or independent review yet. Run branch-inventory pytest and whole-tree Ruff on supported source-bound checkout, then exact source-hosted QA/native/Qt/package only when active parent PR347 checks are terminal. Preserve previous published evidence and all historical failure receipts; do not mark branch semantic review or release complete."
+    },
+    {
+      "id": "inventory-snapshot-immutable-tip-oid-20261120",
+      "owner": "isolated immutable Git tip snapshot validation; independent review unassigned",
+      "status": "branch-published-contract-test-source-synthetic-controls-only",
+      "branch": "codex/patchtrace-inventory-tip-oid-20261120",
+      "base_commit": "eaae7e504f8b43051f0c0d6d57c314d37c66d7ff",
+      "contract_commit": "f9feb421e0e5d880429556dba734acdf675fedcf",
+      "test_commit": "2d0ddf8347093bb79d28959ebf23376bc38d75b8",
+      "runtime_commit": "30411f9a344be757da26aa0f9b914605c7699353",
+      "evidence": "docs/engineering/evidence/inventory-tip-oid-controls-20261120.json",
+      "handoff": "docs/engineering-handoffs/inventory-tip-oid-20261120.md",
+      "result_or_next_action": "Get source-bound actual tests/test_branch_inventory.py, whole-tree Ruff, synthetic Git SHA1/SHA256 compatibility, independent reviewer and exact source hosted qualification after parent PR347 jobs complete. Main and release blocked. PR345 external NSIS 503 retained, do not assume product failure or automatically retry."
     }
   ],
   "aggregate_source_commit": "1d0f60f3004db9e32f314518d5be661b85ef4d71",
