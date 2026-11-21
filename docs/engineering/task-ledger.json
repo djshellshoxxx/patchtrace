@@ -49,7 +49,8 @@
     "Isolated PR347 successor source review found a new provenance-mapping admission: csv.DictReader silently accepts duplicate branch headers, extra TSV cells, and missing values, potentially misassociating a retained Git tip with a forged branch label. SPEC-first, six malformed parametrized regression shapes, valid reordered-column control, and one CLI prior-output test authored; exact-source repository pytest/Ruff and independent signoff pending. Manual Python stdlib red/green algorithm controls: original six malformed shapes accepted at parse; repaired algorithm refuses six, compatible case accepted. PR347 QA/native still active; no duplicate workflow, main merge or release.",
     "2026-11-20 exact-source hosted disposition: PR345 Windows QA 44840721370/136648122555 failed after 23,847 pytest passes, 181 skips and five xfails, at Chocolatey NSIS 3.13 installation with HTTP 503 from community.chocolatey.org. This is a real failed workflow from external package feed; no production failure attributed and no rerun scheduled. PR347 five native jobs passed only on its own head; its Linux/Windows Qt and QA were partially active. This is not successor qualification.",
     "Inventory tip OID continuation: previously retained TSV tip_sha was passed verbatim to git rev-parse and could be HEAD, abbreviated sha or HEAD~0, so replay could silently resolve changed history. On isolated successor to inventory TSV shape, contract/test-first strict full lowercase SHA-1/SHA-256 commit IDs are admitted before any Git access; resolved OID must equal requested OID (no tag peeling). Seven repository pytest cases authored, synthetic Git controls verified 6 pre-Git refusals, 1 positive, 1 tag-peeling refusal, and 3 original mutable ref admissions. Actual repository pytest/Ruff/CI and genuinely independent review pending.",
-    "Follow-up author-side regression review corrected a new test fixture's unused local binding (F841 risk) at 18b400c699b4e0bed512be6f45ed720749ed4faa. Full repository Ruff remains unrun; this does not constitute a separate independent reviewer."
+    "Follow-up author-side regression review corrected a new test fixture's unused local binding (F841 risk) at 18b400c699b4e0bed512be6f45ed720749ed4faa. Full repository Ruff remains unrun; this does not constitute a separate independent reviewer.",
+    "Strict PR JSON continuation: saved all-pages JSON accepted duplicate PR/head/repo keys and nonfinite constants under default Python decoder. Contract/test-first isolated branch adds strict duplicate and parse_constant rejection, fixed malformed/deep errors, and validates saved PR metadata before any branch Git lookup. Eleven authored regression cases and nine copied-parser controls, no checked-out pytest/Ruff or independent review yet. Existing prior-output and historical failures retained."
   ],
   "tasks": [
     {
@@ -822,6 +823,20 @@
       "handoff": "docs/engineering-handoffs/inventory-tip-oid-20261120.md",
       "result_or_next_action": "Get source-bound actual tests/test_branch_inventory.py, whole-tree Ruff, synthetic Git SHA1/SHA256 compatibility, independent reviewer and exact source hosted qualification after parent PR347 jobs complete. Main and release blocked. PR345 external NSIS 503 retained, do not assume product failure or automatically retry.",
       "test_cleanup_commit": "18b400c699b4e0bed512be6f45ed720749ed4faa"
+    },
+    {
+      "id": "inventory-strict-saved-pr-json-20261120",
+      "owner": "isolated offline PR metadata parser worker; independent reviewer unassigned",
+      "status": "contract-tests-source-published-local-mirror-only",
+      "branch": "codex/patchtrace-pr-snapshot-json-strict-20261120",
+      "base_commit": "a63a20b2a272d53a09422222050080823fc3c664",
+      "contract_commit": "1b0c90a82846c9c3d4c284306aa7c3a973d27be4",
+      "source_commit": "9def9acd7ab131bc28adf6c30b518638bf307269",
+      "test_source": "tests/test_branch_inventory_pr_json_strict_20261120.py",
+      "receipt": "docs/engineering/evidence/inventory-pr-json-strict-controls-20261120.json",
+      "handoff": "docs/engineering-handoffs/inventory-pr-json-strict-20261120.md",
+      "review_status": "author source inspection only; independent signoff outstanding",
+      "result_or_next_action": "Run 11 new tests plus existing branch inventory, whole-tree Ruff, dependency checks, and source-pinned hosted QA/native/package after PR347 jobs finish; independent reviewer to test malformed PR bytes and retained-output guarantees. Do not merge/release."
     }
   ],
   "aggregate_source_commit": "1d0f60f3004db9e32f314518d5be661b85ef4d71",
