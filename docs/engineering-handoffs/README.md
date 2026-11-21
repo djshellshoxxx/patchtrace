@@ -1,3 +1,7 @@
+## Current parallel storage/Search candidate — 837fe
+
+Read the [scoped handoff](cycle837fe-20261121.md) and authoritative ledger. Final code b880c317 passes 450 affected cases and independent review. Exact-head hosted qualification and the separate 95FE-C3 integration ownership remain gates. This parallel checkpoint does not replace the owning coordinator's latest handoff.
+
 # Current continuation — cycle 2
 
 Start with [cycle2 handoff](cycle2-20261121-2bad.md) and the [task ledger](../engineering/task-ledger.json). Inventory successors are actually repository-tested and independently reviewed; malformed quoted TSV is repaired; all eight Strings headers now expose registered help. Clean combined source 3cf7ad23 passes 188 cases, Ruff/dependencies/source binding and independent review. New-source hosted qualification remains pending. Preserve original failures and inspect the one PR #345 failed-job retry.

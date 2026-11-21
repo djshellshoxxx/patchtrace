@@ -1665,3 +1665,17 @@ for exact commits and limitations. No main merge/release.
 - [ ] On a supported checked-out source, verify seven exact Git SHA replay regressions and the full `tests/test_branch_inventory.py` suite; run whole-tree Ruff and source-bound focused/full checks with termination evidence. See `docs/engineering-handoffs/inventory-tip-oid-20261120.md`.
 - [ ] Obtain independent review of exact SHA-1/SHA-256 admission, annotated-tag mismatch, all-rows prevalidation and TSV prior-output preservation; do not equate synthetic Git control success with repository pytest.
 - [ ] Retain PR345 Windows QA failure (Chocolatey NSIS v3.13 feed HTTP 503) as a packaging availability gate; inspect terminal PR347 QA/Qt/package and qualify successor exact source without duplicate jobs. No main/release merge while other blockers remain.
+
+
+## Parallel 837fe — reviewed source, hosted integration pending
+
+- [x] Complete six Search header explanations and real-host audit coverage; independently close the help-text overclaim.
+- [x] Reconcile service state after save/backup post-commit interruption; refuse edits and backup when committed state cannot be reread. Close SVC-R1/R2 with independent controls.
+- [x] Preserve backup cancellation/primary errors across filesystem cleanup failure and leave consumed staging names untouched after publication.
+- [x] Qualify combined source `b880c317` with 450 affected cases, Ruff/dependency/source checks and independent reviews. Retain original failures.
+- [x] Expand 364 live heads into exact Git metadata, join 338 captured PRs and retain 59 tags; preserve partial semantic scope and the existing backlog.
+- [x] Verify the upstream Action pin map; implementation remains with the workflow owner.
+- [ ] Inspect this candidate's exact published-head hosted qualification and reconcile with the separate 95FE-C3 integration after ownership permits it. Merge only with green applicable checks and a fresh expected-head REST guard.
+- [ ] Retain the local AF_UNIX restriction and unexplained SIGKILL as unsuccessful source-specific evidence. Do not claim release, native accessibility, trust, provenance or L1/L2/L3 closure.
+
+[Report](../docs/engineering/cycle837fe-recovery-and-search-20261121.md) · [Scoped handoff](../docs/engineering-handoffs/cycle837fe-20261121.md) · [Authoritative ledger](../docs/engineering/task-ledger.json).

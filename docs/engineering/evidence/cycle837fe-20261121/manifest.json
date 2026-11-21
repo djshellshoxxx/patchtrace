@@ -1,0 +1,77 @@
+{
+  "code_source": "b880c317add4de3ac22c87cd842abb0e7ccc615d",
+  "files": {
+    "action-pin-census.json": {
+      "bytes": 16606,
+      "sha256": "0c4044e5ebe2e0ec2a4b751fe810ef21d8bf3dcae3ffb4345f5926307445344a"
+    },
+    "action-pin-map.json": {
+      "bytes": 20694,
+      "sha256": "6a62192db7bf6f0b8a6e0611a688d205962ba83ecd45f141e1928482d851e981"
+    },
+    "action-pin-research.md": {
+      "bytes": 5047,
+      "sha256": "8c757cdd694fca604643f9a4b0f3d0bab19c29469b5377220d8ee781cd2649d8"
+    },
+    "baseline-hosted-results.json": {
+      "bytes": 4427,
+      "sha256": "5554d6e8c9a51e2c3f747f25bc86793f50a09877a264d52762a4db4138644e8b"
+    },
+    "captured-references.json.gz": {
+      "bytes": 58873,
+      "sha256": "d39780beedda256aafd40d7b023f90b19b15fe8e6b54aea430e0156bf9994cfe"
+    },
+    "full-suite-diagnosis.json": {
+      "bytes": 1803,
+      "sha256": "f2088d77be7436d06d99a079f86575e1aadfecc1f40eb0d6539f75b4f07d85ec"
+    },
+    "full-suite-diagnosis.md": {
+      "bytes": 3330,
+      "sha256": "15de7a007ebc37bcd3ffb56cb7b91f437933826dac8321cc5a686ed99d0893e5"
+    },
+    "historical-semantic-dispositions.json": {
+      "bytes": 18863,
+      "sha256": "0281ef584300e937ef58b2dc59174598ecb0ac31baac1fee3612772737bdc1e4"
+    },
+    "references/README.md": {
+      "bytes": 4458,
+      "sha256": "02690c35cdf8db0d9924e2eb721d8c16ac0a1fda8f11cd2f839bb24027fee6d0"
+    },
+    "references/build_inventory.py": {
+      "bytes": 10494,
+      "sha256": "63620c92289e4ce5a6df9cea242fdd68ac660f8b1da9d1ba7f83b8d1a2717e4b"
+    },
+    "references/compact_inventory.py": {
+      "bytes": 6829,
+      "sha256": "9a4f8f51dd8db5f1c2beed8bd8264d8cd47ce8081f01affbb00053153af648c5"
+    },
+    "references/manifest.json": {
+      "bytes": 911,
+      "sha256": "d120925f653c919b51ef065e1d9390f7cf078225c32f27eb8f9a453cfe4f6f54"
+    },
+    "references/summary.json": {
+      "bytes": 2275,
+      "sha256": "64b5eb05a21f87a53aa21d2cd23daa988ddd158c171fa94cf7f5f2280578673c"
+    },
+    "references/technical-inventory.compact.json.gz": {
+      "bytes": 253016,
+      "sha256": "f92aff6d25907458dee2d39953b17a296c6da9d7a94365119c56c940d6ee3a07"
+    },
+    "references/validation.json": {
+      "bytes": 550,
+      "sha256": "990778152be37296608b41a2efc32efed3a0ff1763b5d996a24e7d1c1d4fc135"
+    },
+    "review-and-test-evidence.zip": {
+      "bytes": 556506,
+      "sha256": "243ee1816c4ad62f8bf43b9331f2dbf868d3d28dbafe7ce3d53c2512c56d3b27"
+    },
+    "source-history-verification.txt": {
+      "bytes": 266,
+      "sha256": "f920cb9485381e4c85e02772a4bd2f1bd0c2cf2d78d6ee61c37baa2cfe21bfe6"
+    },
+    "source-history.bundle": {
+      "bytes": 18099,
+      "sha256": "52e97b051b68dd1de43b8c73a9c082fc471b55d70b98e98e70ce614106f77d17"
+    }
+  }
+}

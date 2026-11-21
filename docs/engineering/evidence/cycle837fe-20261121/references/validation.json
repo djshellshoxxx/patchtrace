@@ -1,0 +1,12 @@
+{
+  "recorded_at_utc": "2026-11-21T05:34:33.166255+00:00",
+  "git_version": "git version 2.56.1",
+  "branch_head_mapping_matches_capture": true,
+  "all_364_technical_records_complete": true,
+  "unique_nonmerge_counts_bounded_by_ahead_counts": true,
+  "whole_branch_semantic_classifications_unchanged": true,
+  "input_and_method_sha256_rechecked": true,
+  "lossless_compact_roundtrip": "verified by compact_inventory.py against original JSON equality and canonical SHA-256",
+  "repository_tests_executed": false,
+  "target_binaries_executed": false
+}

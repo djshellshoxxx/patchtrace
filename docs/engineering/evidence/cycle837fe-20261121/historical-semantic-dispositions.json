@@ -1,0 +1,425 @@
+{
+  "schema": "patchtrace.bounded-historical-review/1",
+  "observed_at_utc": "2026-11-21T05:10:36.996929+00:00",
+  "reviewer": "pr_reconciliation independent read-only worker",
+  "repository": "https://github.com/djshellshoxxx/PatchTrace",
+  "baseline_commit": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+  "baseline_tree": "9cb2ba74b088dfce7d87d37403108bcd3aa05326",
+  "active_commit": "e5a531668ef523cd6faa26d5fec59aa552749134",
+  "active_tree": "e622ff8f5624ce73bac63c0976af01c614ce05bb",
+  "source_inventory": "docs/engineering/branch-recovery-20261120-2bad.json",
+  "prior_reviews_read": [
+    "docs/engineering/cycle-95fe-semantic-review.md",
+    "docs/engineering/cycle2-historical-ui-review-20261121-2bad.md"
+  ],
+  "new_test_execution": false,
+  "writes_to_repository": false,
+  "scope_limit": "No all-branch disposition, new runtime acceptance, release qualification, or census-count decrement. No branch/ref/test/code changes.",
+  "branches": [
+    {
+      "branch": "codex/pr110-persistence-feedback-20261029",
+      "head": "3e9cedb012b4c82da3b0e5f9bc977ecd7313b64c",
+      "pr": 119,
+      "minimal_commits": [
+        "239ac1ea3e8685bbdf8848cc969ee129d5f3a3ff",
+        "db427bb227949690cfd65aad1963b6caf9c63df7",
+        "3e9cedb012b4c82da3b0e5f9bc977ecd7313b64c"
+      ],
+      "scope": "GUI save, bookmark, finding-review, note-draft persistence feedback only",
+      "excluded": "Older acquisition/symbol changes, Diaphora help, remaining docs and entire-branch equivalence",
+      "behavior": "Shared commit-result helper reports success only after writer returns. Save and bookmark use it. Finding refresh and note clear/refresh execute only on successful persistence; original four failure regressions remain identical.",
+      "mechanical_classification_at_capture": "unmatched-patches-review-required",
+      "scoped_classification": "SUPERSEDED",
+      "branch_review_status": "PARTIALLY_REVIEWED",
+      "unique_runtime_recovery_required": false,
+      "delete_authorized": false,
+      "live_ref_verified": true,
+      "live_ref_endpoint": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/ref/heads/codex/pr110-persistence-feedback-20261029",
+      "comparisons": [
+        {
+          "path": "src/patchtrace/ui_persistence.py",
+          "donor_blob": "c4e39b4f6a4f92609d076d038f38da10c3493b94",
+          "pr348_blob": "c4e39b4f6a4f92609d076d038f38da10c3493b94",
+          "active_blob": "c4e39b4f6a4f92609d076d038f38da10c3493b94",
+          "donor_byte_identical": true,
+          "pr348_active_byte_identical": true,
+          "selected_declarations": [
+            "commit_and_report"
+          ],
+          "identical_declarations": [
+            "commit_and_report"
+          ],
+          "changed_declarations": [],
+          "missing_declarations": []
+        },
+        {
+          "path": "src/patchtrace/ui.py",
+          "donor_blob": "65feadc08f40082a7506abec11b1578c11f3451a",
+          "pr348_blob": "d2a797f0dfb50aed50594e3e3b81a1d7c0e740d9",
+          "active_blob": "d2a797f0dfb50aed50594e3e3b81a1d7c0e740d9",
+          "donor_byte_identical": false,
+          "pr348_active_byte_identical": true,
+          "selected_declarations": [
+            "MainWindow.save_project",
+            "MainWindow.bookmark_evidence",
+            "MainWindow.review_finding",
+            "MainWindow.save_note"
+          ],
+          "identical_declarations": [
+            "MainWindow.save_project",
+            "MainWindow.bookmark_evidence",
+            "MainWindow.review_finding",
+            "MainWindow.save_note"
+          ],
+          "changed_declarations": [],
+          "missing_declarations": []
+        },
+        {
+          "path": "tests/test_ui.py",
+          "donor_blob": "88edb600c3751ac6ad3a0e80489346e4726b31a5",
+          "pr348_blob": "2ff125e4f7d78e5b6dd228d626f8c4f24bd3cc70",
+          "active_blob": "2ff125e4f7d78e5b6dd228d626f8c4f24bd3cc70",
+          "donor_byte_identical": false,
+          "pr348_active_byte_identical": true,
+          "selected_declarations": [
+            "test_failed_note_save_keeps_analyst_text",
+            "test_failed_bookmark_does_not_claim_success",
+            "test_failed_project_save_does_not_claim_success",
+            "test_failed_finding_review_preserves_draft"
+          ],
+          "identical_declarations": [
+            "test_failed_note_save_keeps_analyst_text",
+            "test_failed_bookmark_does_not_claim_success",
+            "test_failed_project_save_does_not_claim_success",
+            "test_failed_finding_review_preserves_draft"
+          ],
+          "changed_declarations": [],
+          "missing_declarations": []
+        }
+      ]
+    },
+    {
+      "branch": "codex/essential-project-safety-20261031",
+      "head": "c3868d8335a8f32f676905032dc1a6d0e9f22fd6",
+      "pr": 148,
+      "minimal_commits": [
+        "c3868d8335a8f32f676905032dc1a6d0e9f22fd6"
+      ],
+      "scope": "Project-safe report destination protection and committed-snapshot export only",
+      "excluded": "KB/advisory/binary pairing/investigation behavior, project adoption, remaining docs and entire-branch equivalence",
+      "behavior": "Destination ownership guard, ProjectService.export_report and ProjectStore.load remain donor-identical ASTs. Export retains project protection before rendering/publication, reads persisted snapshot without recovering live runs, and retains previous reports; later v2 and cleanup repairs extend the donor. Entire original destination regression file is byte-identical.",
+      "mechanical_classification_at_capture": "unmatched-patches-review-required",
+      "scoped_classification": "SUPERSEDED",
+      "branch_review_status": "PARTIALLY_REVIEWED",
+      "unique_runtime_recovery_required": false,
+      "delete_authorized": false,
+      "live_ref_verified": true,
+      "live_ref_endpoint": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/ref/heads/codex/essential-project-safety-20261031",
+      "comparisons": [
+        {
+          "path": "src/patchtrace/reports.py",
+          "donor_blob": "123c244c0d16f58e3e48d66a4ce2e6c71fb3160b",
+          "pr348_blob": "d3450d7610593ea89294fc59ce73a5c40db08e92",
+          "active_blob": "d3450d7610593ea89294fc59ce73a5c40db08e92",
+          "donor_byte_identical": false,
+          "pr348_active_byte_identical": true,
+          "selected_declarations": [
+            "_check_destination",
+            "_keep_previous",
+            "export_project"
+          ],
+          "identical_declarations": [
+            "_check_destination",
+            "_keep_previous"
+          ],
+          "changed_declarations": [
+            "export_project"
+          ],
+          "missing_declarations": []
+        },
+        {
+          "path": "src/patchtrace/service.py",
+          "donor_blob": "d463af4f12820efd737c334a42e2c7e83db05726",
+          "pr348_blob": "fe6a446457db956308d7faecf6f0914f76885361",
+          "active_blob": "fe6a446457db956308d7faecf6f0914f76885361",
+          "donor_byte_identical": false,
+          "pr348_active_byte_identical": true,
+          "selected_declarations": [
+            "ProjectService.export_report"
+          ],
+          "identical_declarations": [
+            "ProjectService.export_report"
+          ],
+          "changed_declarations": [],
+          "missing_declarations": []
+        },
+        {
+          "path": "src/patchtrace/persistence.py",
+          "donor_blob": "8d74478dbac74122b7b2aa6a4a43e23a58ecf229",
+          "pr348_blob": "ba7adbde847d646dcc7420149da2dea013f597d3",
+          "active_blob": "ba7adbde847d646dcc7420149da2dea013f597d3",
+          "donor_byte_identical": false,
+          "pr348_active_byte_identical": true,
+          "selected_declarations": [
+            "ProjectStore.load"
+          ],
+          "identical_declarations": [
+            "ProjectStore.load"
+          ],
+          "changed_declarations": [],
+          "missing_declarations": []
+        },
+        {
+          "path": "tests/test_export_destination_guard.py",
+          "donor_blob": "a020f5db1cc89af3ed34b7a97a397c97634a6bfd",
+          "pr348_blob": "a020f5db1cc89af3ed34b7a97a397c97634a6bfd",
+          "active_blob": "a020f5db1cc89af3ed34b7a97a397c97634a6bfd",
+          "donor_byte_identical": true,
+          "pr348_active_byte_identical": true,
+          "selected_declarations": [
+            "test_export_cannot_replace_open_project_database",
+            "test_export_refuses_project_evidence_aliases_without_side_effects",
+            "test_reports_and_previous_backups_remain_supported",
+            "test_main_window_routes_export_through_service",
+            "test_existing_report_export_never_walks_project_tree",
+            "test_export_uses_committed_snapshot_without_recovering_live_runs"
+          ],
+          "identical_declarations": [
+            "test_export_cannot_replace_open_project_database",
+            "test_export_refuses_project_evidence_aliases_without_side_effects",
+            "test_reports_and_previous_backups_remain_supported",
+            "test_main_window_routes_export_through_service",
+            "test_existing_report_export_never_walks_project_tree",
+            "test_export_uses_committed_snapshot_without_recovering_live_runs"
+          ],
+          "changed_declarations": [],
+          "missing_declarations": []
+        }
+      ]
+    },
+    {
+      "branch": "feat/enrichment-cache",
+      "head": "0368fd9b5453ab50166c08cf8dfc493e57b0ee52",
+      "pr": null,
+      "minimal_commits": [
+        "0368fd9b5453ab50166c08cf8dfc493e57b0ee52"
+      ],
+      "scope": "Existing cache persistence, publication, integrity, leases, pruning and interruption handling only",
+      "excluded": "Earlier enrichment identity/ranking/contracts implementation bafd62a52c2cc397698fd993ea21cf56c3ef4936; analysis/accuracy/native acceptance; other branch docs and entire-branch equivalence",
+      "behavior": "All 47 donor cache declarations and all 40 donor test/helper declarations remain. Current source retains strict manifest identity/hash/size checks and crash-safe staged admission, adds duplicate/nonfinite JSON refusal, budget bounds, locked revalidation before quarantine, hard-link owner publication with the existing exclusive-create fallback, in-process lease retention, quarantine accounting and recoverable prune. Two original tests change only NTFS timestamp spacing and unsupported-symlink skip handling; original assertions otherwise retained.",
+      "mechanical_classification_at_capture": "unmatched-patches-review-required",
+      "scoped_classification": "SUPERSEDED",
+      "branch_review_status": "PARTIALLY_REVIEWED",
+      "unique_runtime_recovery_required": false,
+      "delete_authorized": false,
+      "live_ref_verified": true,
+      "live_ref_endpoint": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/ref/heads/feat/enrichment-cache",
+      "comparisons": [
+        {
+          "path": "src/patchtrace/enrichment/cache.py",
+          "donor_blob": "f6b0729854b7666d5ca03adf3f5d44b4b92459c1",
+          "pr348_blob": "fd8ae260a9a9e40b61db84d2d2940ea0576a68e4",
+          "active_blob": "fd8ae260a9a9e40b61db84d2d2940ea0576a68e4",
+          "donor_byte_identical": false,
+          "pr348_active_byte_identical": true,
+          "selected_declarations": [
+            "_config_error",
+            "CacheConfig",
+            "CacheConfig.__post_init__",
+            "RuntimeFingerprint",
+            "RuntimeFingerprint.as_dict",
+            "RuntimeFingerprint.eligible",
+            "RuntimeFingerprint.raw_key",
+            "_is_link_or_junction",
+            "_pid_alive",
+            "_read_owner",
+            "_owner_dead",
+            "_new_owner",
+            "_check_args",
+            "_Unsafe",
+            "DerivedCache",
+            "DerivedCache.__init__",
+            "DerivedCache._safe_dir",
+            "DerivedCache._shard",
+            "DerivedCache._entry",
+            "DerivedCache._lock_path",
+            "DerivedCache._try_lock",
+            "DerivedCache._recover",
+            "DerivedCache._unlock",
+            "DerivedCache._load",
+            "DerivedCache._quarantine",
+            "DerivedCache.get",
+            "DerivedCache.put",
+            "DerivedCache._admit",
+            "DerivedCache._stage_and_publish",
+            "DerivedCache.lease",
+            "DerivedCache.put_raw",
+            "DerivedCache.get_raw",
+            "DerivedCache._entries",
+            "DerivedCache._entry_bytes",
+            "DerivedCache._usage",
+            "DerivedCache._leased",
+            "DerivedCache._clean_orphans",
+            "DerivedCache._quarantined",
+            "DerivedCache.status",
+            "DerivedCache.verify",
+            "DerivedCache.prune",
+            "_Corrupt",
+            "_write_file",
+            "_write_payload",
+            "_write_manifest",
+            "_publish",
+            "_discard_staging"
+          ],
+          "identical_declarations": [
+            "_config_error",
+            "CacheConfig",
+            "CacheConfig.__post_init__",
+            "RuntimeFingerprint.as_dict",
+            "RuntimeFingerprint.raw_key",
+            "_is_link_or_junction",
+            "_read_owner",
+            "_owner_dead",
+            "_new_owner",
+            "_Unsafe",
+            "DerivedCache.__init__",
+            "DerivedCache._safe_dir",
+            "DerivedCache._shard",
+            "DerivedCache._entry",
+            "DerivedCache._lock_path",
+            "DerivedCache._recover",
+            "DerivedCache._unlock",
+            "DerivedCache.get",
+            "DerivedCache.put",
+            "DerivedCache._stage_and_publish",
+            "DerivedCache.put_raw",
+            "DerivedCache.get_raw",
+            "DerivedCache._entries",
+            "DerivedCache._entry_bytes",
+            "DerivedCache._clean_orphans",
+            "DerivedCache._quarantined",
+            "DerivedCache.status",
+            "DerivedCache.verify",
+            "_Corrupt",
+            "_write_payload",
+            "_write_manifest",
+            "_publish",
+            "_discard_staging"
+          ],
+          "changed_declarations": [
+            "RuntimeFingerprint",
+            "RuntimeFingerprint.eligible",
+            "_pid_alive",
+            "_check_args",
+            "DerivedCache",
+            "DerivedCache._try_lock",
+            "DerivedCache._load",
+            "DerivedCache._quarantine",
+            "DerivedCache._admit",
+            "DerivedCache.lease",
+            "DerivedCache._usage",
+            "DerivedCache._leased",
+            "DerivedCache.prune",
+            "_write_file"
+          ],
+          "missing_declarations": []
+        },
+        {
+          "path": "tests/test_enrichment_cache.py",
+          "donor_blob": "3d52de4e60165125f142fae185bc7afc575e3c03",
+          "pr348_blob": "0a2c8c4eaec6b6033794bfe058833de0f7c75542",
+          "active_blob": "0a2c8c4eaec6b6033794bfe058833de0f7c75542",
+          "donor_byte_identical": false,
+          "pr348_active_byte_identical": true,
+          "selected_declarations": [
+            "fp",
+            "cache",
+            "entry_dir",
+            "staging_dirs",
+            "test_no_cache_with_refresh_is_config_error",
+            "test_invalid_arguments_raise_config",
+            "test_roundtrip_and_layout",
+            "test_swapped_pair_misses",
+            "test_each_fingerprint_field_change_misses",
+            "test_ineligible_fingerprints_refuse_raw",
+            "test_raw_size_bound",
+            "test_targeted_invalidation_at_key_level",
+            "test_two_writers_same_key",
+            "test_many_threads_same_key",
+            "test_leased_reader_survives_prune",
+            "test_lru_evicts_least_recently_accessed",
+            "test_budget_enforced_on_put",
+            "SimulatedCrash",
+            "test_crash_at_each_promotion_point",
+            "test_prune_also_cleans_orphan_staging",
+            "test_cancellation_cleans_up_and_releases_lock",
+            "test_windows_style_rename_failure_returns_false",
+            "_quarantine_count",
+            "test_corrupt_entries_quarantined",
+            "test_verify_counts",
+            "test_disk_full_put_returns_false",
+            "test_permission_error_put_returns_false",
+            "test_readonly_root_put_returns_false",
+            "test_root_is_a_file_put_returns_false",
+            "test_symlink_escape_refused",
+            "test_symlinked_entry_payload_is_not_served",
+            "_dead_pid",
+            "_plant_lock",
+            "test_stale_lock_with_dead_pid_recovered",
+            "test_live_pid_lock_not_stolen",
+            "test_foreign_host_or_unreadable_lock_not_stolen",
+            "test_no_cache_touches_nothing",
+            "test_refresh_bypasses_reads_only_for_selected_stages",
+            "test_status_reports_usage",
+            "test_cache_module_has_no_forbidden_imports"
+          ],
+          "identical_declarations": [
+            "fp",
+            "cache",
+            "entry_dir",
+            "staging_dirs",
+            "test_no_cache_with_refresh_is_config_error",
+            "test_invalid_arguments_raise_config",
+            "test_roundtrip_and_layout",
+            "test_swapped_pair_misses",
+            "test_each_fingerprint_field_change_misses",
+            "test_ineligible_fingerprints_refuse_raw",
+            "test_raw_size_bound",
+            "test_targeted_invalidation_at_key_level",
+            "test_two_writers_same_key",
+            "test_many_threads_same_key",
+            "test_leased_reader_survives_prune",
+            "test_budget_enforced_on_put",
+            "SimulatedCrash",
+            "test_crash_at_each_promotion_point",
+            "test_prune_also_cleans_orphan_staging",
+            "test_cancellation_cleans_up_and_releases_lock",
+            "test_windows_style_rename_failure_returns_false",
+            "_quarantine_count",
+            "test_corrupt_entries_quarantined",
+            "test_verify_counts",
+            "test_disk_full_put_returns_false",
+            "test_permission_error_put_returns_false",
+            "test_readonly_root_put_returns_false",
+            "test_root_is_a_file_put_returns_false",
+            "test_symlink_escape_refused",
+            "_dead_pid",
+            "_plant_lock",
+            "test_stale_lock_with_dead_pid_recovered",
+            "test_live_pid_lock_not_stolen",
+            "test_foreign_host_or_unreadable_lock_not_stolen",
+            "test_no_cache_touches_nothing",
+            "test_refresh_bypasses_reads_only_for_selected_stages",
+            "test_status_reports_usage",
+            "test_cache_module_has_no_forbidden_imports"
+          ],
+          "changed_declarations": [
+            "test_lru_evicts_least_recently_accessed",
+            "test_symlinked_entry_payload_is_not_served"
+          ],
+          "missing_declarations": []
+        }
+      ]
+    }
+  ]
+}
