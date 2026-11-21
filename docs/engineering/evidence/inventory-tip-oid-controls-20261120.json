@@ -1,0 +1,38 @@
+{
+  "scope": "Exact Git commit OID admission for retained branch-inventory TSV tips",
+  "branch": "codex/patchtrace-inventory-tip-oid-20261120",
+  "parent": "eaae7e504f8b43051f0c0d6d57c314d37c66d7ff",
+  "contract_commit": "f9feb421e0e5d880429556dba734acdf675fedcf",
+  "regression_commit": "2d0ddf8347093bb79d28959ebf23376bc38d75b8",
+  "implementation_commit": "30411f9a344be757da26aa0f9b914605c7699353",
+  "method": "Offline source-equivalent function with synthetic local Git objects, not PatchTrace checked-out pytest, not independently reviewed",
+  "baseline_observation": "Previous git rev-parse <value>^{commit} accepted HEAD, abbreviated SHA and HEAD~0, each resolving to a commit without storing exact immutable tip identity",
+  "synthetic_checks": {
+    "early_refusals": 6,
+    "valid_exact_oid": 1,
+    "annotated_tag_object_peeling_refused": 1,
+    "field_limit_restorations": 6,
+    "baseline_mutable_ref_resolutions": 3
+  },
+  "regression_cases": "5 parametrized early refusals plus 1 tag-object peeling refusal and 1 exact-ID acceptance: seven authored repository pytest identities",
+  "source_bound_pytest": "pending: full repository checkout unavailable in this runtime",
+  "ruff": "pending: source checkout unavailable and Ruff not installed",
+  "independent_review": "pending, author-side code inspection only",
+  "ci_context": {
+    "pr345_windows_qa": {
+      "run": 44840721370,
+      "job": 136648122555,
+      "conclusion": "failure",
+      "original_cause": "Chocolatey NSIS 3.13 download returned external community.chocolatey.org 503 Service Unavailable after 23847 tests passed, 181 skipped, 5 xfailed; not proof of source regression"
+    },
+    "pr347_native": {
+      "run": 44843482467,
+      "result": "five jobs completed success, predecessor source only"
+    },
+    "pr347_qa": {
+      "run": 44843482603,
+      "result": "Linux QA and 3/4 Linux Qt shards success; other QA/Qt jobs still in progress at observation"
+    }
+  },
+  "constraints": "No analyzed target binary execution; no branch deletion/merge/rebase/force push/release/deploy; unknown historic semantic backlog and Windows release gates unchanged"
+}
