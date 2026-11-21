@@ -259,6 +259,9 @@ def test_every_registry_id_is_applied_somewhere(window, qtbot, tmp_path, setting
     # the real host so its empty table has the same headers a user can inspect.
     assert window.panels.show_panel('strings') is not None
     assert window.panels.controller('strings').panel.table.horizontalHeader().count() == 8
+    # Build environment also prepares its columns on the real project hook.
+    assert window.panels.show_panel('build_env') is not None
+    assert window.panels.controller('build_env').table.horizontalHeader().count() == 5
     first, second = QDockWidget('A', window), QDockWidget('B', window)
     first.setObjectName('zz_a.dock'), second.setObjectName('zz_b.dock')
     window.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, first)
