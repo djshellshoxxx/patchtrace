@@ -92,6 +92,9 @@ a fixed diagnostic requiring the project to be reopened. The same service must
 refuse further snapshot commits, even if storage becomes readable later. Preserve
 all project/history/raw evidence and the existing lock until normal close; a new
 service opened from the persisted snapshot restores the normal editing path.
+This refusal applies before `ProjectService.backup` reads or stages anything:
+its normal `load()` may recover an interrupted run and write a snapshot/history
+row. A healthy or reopened service retains that existing backup recovery behavior.
 Tests use authored project files, the real deferred-prune boundary, a transaction
 rollback control, and a second edit after each outcome. No schema or history
 retention policy changes.

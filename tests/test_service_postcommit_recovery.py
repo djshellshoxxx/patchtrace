@@ -145,3 +145,56 @@ def test_failed_reconciliation_preserves_original_error_and_refuses_later_edits(
     with ProjectService.open(service.root, maintenance=False) as reopened:
         reopened.annotate(reopened.project.artifacts[0].id, 'note after reopening')
         assert _notes(reopened.project) == ['first committed note', 'note after reopening']
+
+
+def test_unreconciled_backup_cannot_recover_running_job_and_reopen_restores_backup(
+        service, monkeypatch, tmp_path):
+    candidate = service.project.model_copy(deep=True)
+    candidate.runs.append(AnalysisRun(status='running'))
+    service._commit(candidate)
+    monkeypatch.setattr(persistence, 'HISTORY_KEEP', 1)
+    interruption = KeyboardInterrupt('authored post-commit interruption')
+
+    def interrupted_backup(*_args, **_kwargs):
+        raise interruption
+
+    def unreadable_snapshot(*, recover_interrupted=True):
+        assert not recover_interrupted
+        raise ValueError('authored unavailable snapshot')
+
+    with monkeypatch.context() as patch:
+        patch.setattr(verified_backup, 'ensure_verified_backup', interrupted_backup)
+        patch.setattr(service.store, 'load', unreadable_snapshot)
+        with pytest.raises(KeyboardInterrupt) as caught:
+            service.annotate(service.project.artifacts[0].id, 'first committed note')
+    assert caught.value is interruption
+    committed = service.store.load(recover_interrupted=False)
+    history = service.store.history()
+    assert _notes(committed) == ['first committed note']
+    assert committed.runs[0].status == 'running'
+    destination = tmp_path / 'unreconciled-copy'
+    with pytest.raises(ValueError, match='PT-STORAGE:.*reopen'):
+        service.backup(destination)
+    assert not destination.exists()
+    assert not list(tmp_path.glob('.patchtrace-backup-*'))
+    assert service.store.load(recover_interrupted=False) == committed
+    assert service.store.history() == history
+    service.close()
+    with ProjectService.open(service.root, maintenance=False) as reopened:
+        assert reopened.project.runs[0].status == 'failed'
+        assert _notes(reopened.project) == ['first committed note']
+        assert reopened.backup(destination) == destination
+        with ProjectService.open(destination, maintenance=False) as restored:
+            assert restored.project == reopened.project
+
+
+def test_healthy_backup_keeps_normal_running_job_recovery(service, tmp_path):
+    candidate = service.project.model_copy(deep=True)
+    candidate.runs.append(AnalysisRun(status='running'))
+    service._commit(candidate)
+    destination = tmp_path / 'healthy-copy'
+    assert service.backup(destination) == destination
+    assert service.project.runs[0].status == 'failed'
+    assert service.project == service.store.load(recover_interrupted=False)
+    with ProjectService.open(destination, maintenance=False) as restored:
+        assert restored.project == service.project
