@@ -66,7 +66,23 @@ def read_json(path: Path) -> Any:
         raw = stream.read(MAX_METADATA_BYTES + 1)
     if len(raw) > MAX_METADATA_BYTES:
         raise ValueError("pull-request metadata exceeds 32 MiB")
-    value = json.loads(raw)
+    # Raw snapshots are identity evidence: default JSON decoding silently
+    # overwrites duplicate keys and accepts non-finite numeric extensions.
+    def unique_object(pairs):
+        result = {}
+        for key, item in pairs:
+            if key in result:
+                raise ValueError("invalid pull-request metadata: duplicate JSON key")
+            result[key] = item
+        return result
+
+    def reject_nonfinite(_constant):
+        raise ValueError("invalid pull-request metadata: non-finite JSON number")
+
+    try:
+        value = json.loads(raw, object_pairs_hook=unique_object, parse_constant=reject_nonfinite)
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        raise ValueError("invalid pull-request metadata JSON") from None
     if not isinstance(value, list) or not all(isinstance(row, dict) for row in value):
         raise ValueError("pull-request metadata must be an all-pages JSON array")
     return value
@@ -271,8 +287,9 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         git = Git(args.repo)
+        pulls = read_json(args.pulls_json)
         refs = branches(git, args.remote, args.refs_tsv)
-        rows, summary = inventory(git, args.main, args.candidate, refs, read_json(args.pulls_json), args.repository)
+        rows, summary = inventory(git, args.main, args.candidate, refs, pulls, args.repository)
         publish(args.output, render(rows))
     except (ValueError, KeyError, OSError, subprocess.SubprocessError) as exc:
         parser.exit(2, f"branch inventory failed: {exc}\n")
