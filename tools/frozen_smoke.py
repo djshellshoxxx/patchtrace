@@ -1,6 +1,6 @@
-"""Headless smoke of the frozen desktop executable (windows-acceptance spec section 2).
+"""Headless smoke of the frozen desktop executable (Windows and Linux acceptance).
 
-usage: frozen_smoke.py PATH_TO_PatchTrace.exe
+usage: frozen_smoke.py PATH_TO_PatchTrace_EXECUTABLE
 
 Checks (each prints PASS/FAIL; any FAIL gives exit 1):
   A1  every command answers --help with exit 0 and `usage:` on stdout
@@ -15,7 +15,7 @@ Checks (each prints PASS/FAIL; any FAIL gives exit 1):
       one three-node chain, `series chains --json` parses. The native `--run` variant (real Ghidra) is not done.
   B1  `secondary binexport-check` on a host-generated minimal BinExport2: exit 0, one JSON document, pinned
       protobuf with upb in the worker (SPEC-10b §9.3). The program under test spawns its own worker child
-      (frozen: the exe itself) through run_process and the Job Object memory cap, so this is the production route.
+      (frozen: the packaged executable itself) through run_process and platform-specific resource controls.
   B2  a JSON lookalike and a structurally invalid export exit 2 with their reason slugs and no traceback.
   C1-C4 `intelligence import` and `explain` on the sample project and the SYNTHETIC CSAF fixture: one JSON document,
       the report contract and applicability, an escaped LF-only Markdown export, and exit 2 for a document that
@@ -30,7 +30,7 @@ Checks (each prints PASS/FAIL; any FAIL gives exit 1):
 Project and series fixtures are written by the host interpreter (the source tree, `pip install -e`); only the
 program under test is launched as a subprocess. `run_checks` is also used by tests/test_acceptance_smoke.py
 with `python -m patchtrace` as the launcher, which verifies the logic everywhere but proves nothing about the
-frozen package: only the Windows CI step does.
+frozen package: Windows QA and the extracted-artifact Linux smoke jobs do.
 """
 from __future__ import annotations
 
