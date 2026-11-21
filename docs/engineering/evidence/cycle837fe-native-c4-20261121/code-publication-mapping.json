@@ -1,0 +1,285 @@
+{
+  "repository": "djshellshoxxx/PatchTrace",
+  "base": "daee337c48c63dda8aeac149c407e900c79dcc86",
+  "code_local": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+  "code_remote": "9545c03961deb33f19db8a92dfe77f413e189209",
+  "commits": [
+    {
+      "local": "18af36fd40289df30d135599891df102af64441d",
+      "remote": "99c3f041f1937f072f2942c7b9b5fb7ddf47ea39",
+      "tree": "96d52924895ed4e89a2087472b16e05a98d78209",
+      "local_parents": [
+        "11f51c105bf63946f59373ae605b937c4fee607a"
+      ],
+      "remote_parents": [
+        "11f51c105bf63946f59373ae605b937c4fee607a"
+      ],
+      "message": "test(gui): observe Build environment headers through the real host\n\nOriginal-local-commit: 18af36fd40289df30d135599891df102af64441d\nExact-local-tree: 96d52924895ed4e89a2087472b16e05a98d78209",
+      "verified": true
+    },
+    {
+      "local": "17f9f95894e05b709f734c1c00c7ed09087adb72",
+      "remote": "23da96fec720bd5e51c7432a0c6d3065a0ee2d27",
+      "tree": "23f99418fc57e7e4f3924ef7e01a2134637ab40a",
+      "local_parents": [
+        "11f51c105bf63946f59373ae605b937c4fee607a"
+      ],
+      "remote_parents": [
+        "11f51c105bf63946f59373ae605b937c4fee607a"
+      ],
+      "message": "docs(gui): specify Build environment header help\n\nOriginal-local-commit: 17f9f95894e05b709f734c1c00c7ed09087adb72\nExact-local-tree: 23f99418fc57e7e4f3924ef7e01a2134637ab40a",
+      "verified": true
+    },
+    {
+      "local": "957a0f695e9a31cb3469dfb25c8e5e2ecac528cf",
+      "remote": "a79bea96246cff84a7fa9472d5702dcf8d3f43f5",
+      "tree": "d7587a4efd4c209c87b2e4da3818c45f0f69ee60",
+      "local_parents": [
+        "17f9f95894e05b709f734c1c00c7ed09087adb72"
+      ],
+      "remote_parents": [
+        "23da96fec720bd5e51c7432a0c6d3065a0ee2d27"
+      ],
+      "message": "test(gui): cover Build environment header help through real models\n\nOriginal-local-commit: 957a0f695e9a31cb3469dfb25c8e5e2ecac528cf\nExact-local-tree: d7587a4efd4c209c87b2e4da3818c45f0f69ee60",
+      "verified": true
+    },
+    {
+      "local": "0c06ca541ea486d2c96d9e27798bcfd7a1937bfa",
+      "remote": "a601d75e75770e0f7922167893872fbaf099c075",
+      "tree": "fa63227cab2e6f924415134fee0b06c2ea63960b",
+      "local_parents": [
+        "957a0f695e9a31cb3469dfb25c8e5e2ecac528cf"
+      ],
+      "remote_parents": [
+        "a79bea96246cff84a7fa9472d5702dcf8d3f43f5"
+      ],
+      "message": "feat(gui): explain all Build environment table headers\n\nOriginal-local-commit: 0c06ca541ea486d2c96d9e27798bcfd7a1937bfa\nExact-local-tree: fa63227cab2e6f924415134fee0b06c2ea63960b",
+      "verified": true
+    },
+    {
+      "local": "b65fba2f5567f0b129331364bbf6db1cd699c901",
+      "remote": "a1bc8c5c4668b9e3632496f84ba8d628a522ebea",
+      "tree": "889c6383fb4d231fd6698b71511214e8c9c8fac0",
+      "local_parents": [
+        "18af36fd40289df30d135599891df102af64441d",
+        "0c06ca541ea486d2c96d9e27798bcfd7a1937bfa"
+      ],
+      "remote_parents": [
+        "99c3f041f1937f072f2942c7b9b5fb7ddf47ea39",
+        "a601d75e75770e0f7922167893872fbaf099c075"
+      ],
+      "message": "Merge branch 'codex/patchtrace-buildenv-header-help-20261121-95fe' into codex/patchtrace-continuation-20261121-95fe-c4\n\nOriginal-local-commit: b65fba2f5567f0b129331364bbf6db1cd699c901\nExact-local-tree: 889c6383fb4d231fd6698b71511214e8c9c8fac0",
+      "verified": true
+    },
+    {
+      "local": "cde114219932f3c93ace1bab516b554b264a7e93",
+      "remote": "344f41b752360abaa153dfaf1169c0a2bfcc7ee5",
+      "tree": "6050dae306f80e483f7f5a17148db83373d97e12",
+      "local_parents": [
+        "11f51c105bf63946f59373ae605b937c4fee607a"
+      ],
+      "remote_parents": [
+        "11f51c105bf63946f59373ae605b937c4fee607a"
+      ],
+      "message": "docs(pages): specify isolated tests and hashed Linux build dependencies\n\nOriginal-local-commit: cde114219932f3c93ace1bab516b554b264a7e93\nExact-local-tree: 6050dae306f80e483f7f5a17148db83373d97e12",
+      "verified": true
+    },
+    {
+      "local": "f4ed82d8292bf4b1c06244ebc0befa936ba242b7",
+      "remote": "fd4350c8a6161de14a082730df07409de5eb2b45",
+      "tree": "8e68968c4a00abc025586b471ad3452aba582b3e",
+      "local_parents": [
+        "cde114219932f3c93ace1bab516b554b264a7e93"
+      ],
+      "remote_parents": [
+        "344f41b752360abaa153dfaf1169c0a2bfcc7ee5"
+      ],
+      "message": "test(pages): require a complete hashed isolated site environment\n\nOriginal-local-commit: f4ed82d8292bf4b1c06244ebc0befa936ba242b7\nExact-local-tree: 8e68968c4a00abc025586b471ad3452aba582b3e",
+      "verified": true
+    },
+    {
+      "local": "305d2d10fafeb4a7c8e566cdd0a3f67cccd97ec1",
+      "remote": "39acdac6cd5511dd4d1848e66fd43b707f5841bf",
+      "tree": "9bb0dd33372693c0ccf3836d39c97d7c6afca94f",
+      "local_parents": [
+        "f4ed82d8292bf4b1c06244ebc0befa936ba242b7"
+      ],
+      "remote_parents": [
+        "fd4350c8a6161de14a082730df07409de5eb2b45"
+      ],
+      "message": "fix(pages): isolate site tests and verify every CI dependency wheel\n\nOriginal-local-commit: 305d2d10fafeb4a7c8e566cdd0a3f67cccd97ec1\nExact-local-tree: 9bb0dd33372693c0ccf3836d39c97d7c6afca94f",
+      "verified": true
+    },
+    {
+      "local": "8c5e77e2c1ad3f6cfa62c2e474f7bcc2f4af1dd5",
+      "remote": "2162708d86bb655f85410d8064aea04c396d5e6e",
+      "tree": "6fe242cc10a5e7c3afe74c40a0f701cbab73aef1",
+      "local_parents": [
+        "b65fba2f5567f0b129331364bbf6db1cd699c901",
+        "305d2d10fafeb4a7c8e566cdd0a3f67cccd97ec1"
+      ],
+      "remote_parents": [
+        "a1bc8c5c4668b9e3632496f84ba8d628a522ebea",
+        "39acdac6cd5511dd4d1848e66fd43b707f5841bf"
+      ],
+      "message": "Merge commit '305d2d10fafeb4a7c8e566cdd0a3f67cccd97ec1' into codex/patchtrace-continuation-20261121-95fe-c4\n\nOriginal-local-commit: 8c5e77e2c1ad3f6cfa62c2e474f7bcc2f4af1dd5\nExact-local-tree: 6fe242cc10a5e7c3afe74c40a0f701cbab73aef1",
+      "verified": true
+    },
+    {
+      "local": "36584f8153983d64605dd7f4141e88c9fabfa6ef",
+      "remote": "f1f8ef664fd6ee88bf47a375538e4be0d8f11992",
+      "tree": "377a07bdde10a13bb46b0f5bef5c2b96af9d7210",
+      "local_parents": [
+        "8c5e77e2c1ad3f6cfa62c2e474f7bcc2f4af1dd5"
+      ],
+      "remote_parents": [
+        "2162708d86bb655f85410d8064aea04c396d5e6e"
+      ],
+      "message": "docs(site): state pytest prerequisite for isolated site tests\n\nOriginal-local-commit: 36584f8153983d64605dd7f4141e88c9fabfa6ef\nExact-local-tree: 377a07bdde10a13bb46b0f5bef5c2b96af9d7210",
+      "verified": true
+    },
+    {
+      "local": "a76189cc0e7ec4312baf3662da5946d39bdd019c",
+      "remote": "c3bf637cd12f8f18e8ccbed74456787fd521f161",
+      "tree": "8c4ee69d38e8066a18cad28ecb7e171ca97ba960",
+      "local_parents": [
+        "36584f8153983d64605dd7f4141e88c9fabfa6ef"
+      ],
+      "remote_parents": [
+        "f1f8ef664fd6ee88bf47a375538e4be0d8f11992"
+      ],
+      "message": "docs(engineering): retain cycle4 reviews and qualified follow-up [no release] [no deploy]\n\nOriginal-local-commit: a76189cc0e7ec4312baf3662da5946d39bdd019c\nExact-local-tree: 8c4ee69d38e8066a18cad28ecb7e171ca97ba960",
+      "verified": true
+    },
+    {
+      "local": "e7391634a46bbb1f9f1fdc3563abadb837d1b45b",
+      "remote": "fe99eaf35e74073821dc365fe54955345fe5439f",
+      "tree": "419af4313bc711437886c4d2bd6c72c8062bf679",
+      "local_parents": [
+        "a76189cc0e7ec4312baf3662da5946d39bdd019c",
+        "daee337c48c63dda8aeac149c407e900c79dcc86"
+      ],
+      "remote_parents": [
+        "c3bf637cd12f8f18e8ccbed74456787fd521f161",
+        "daee337c48c63dda8aeac149c407e900c79dcc86"
+      ],
+      "message": "Merge published PR349 updates into separate C4 follow-up [no release] [no deploy]\n\nOriginal-local-commit: e7391634a46bbb1f9f1fdc3563abadb837d1b45b\nExact-local-tree: 419af4313bc711437886c4d2bd6c72c8062bf679",
+      "verified": true
+    },
+    {
+      "local": "111803d54cfebc1b779f4832a069904b3ee91a7c",
+      "remote": "7ddb1130ca501b9cfda9949aa49e684f9f4b8f26",
+      "tree": "d3264bf26f83d039fa212c26b47c094f86691c3f",
+      "local_parents": [
+        "e7391634a46bbb1f9f1fdc3563abadb837d1b45b"
+      ],
+      "remote_parents": [
+        "fe99eaf35e74073821dc365fe54955345fe5439f"
+      ],
+      "message": "Register C4 Build environment and Pages specifications [no release] [no deploy]\n\nOriginal-local-commit: 111803d54cfebc1b779f4832a069904b3ee91a7c\nExact-local-tree: d3264bf26f83d039fa212c26b47c094f86691c3f",
+      "verified": true
+    },
+    {
+      "local": "39a95c549d48eb523e9efdfda394bb9f184e2b16",
+      "remote": "3cd795d8a8bbb3d5eceabf101ceed5a23b291920",
+      "tree": "f53e92d6bc128c929295f6baf3c6241081ee6ed2",
+      "local_parents": [
+        "111803d54cfebc1b779f4832a069904b3ee91a7c"
+      ],
+      "remote_parents": [
+        "7ddb1130ca501b9cfda9949aa49e684f9f4b8f26"
+      ],
+      "message": "Record qualified C4 parent integration and preserved evidence [no release] [no deploy]\n\nOriginal-local-commit: 39a95c549d48eb523e9efdfda394bb9f184e2b16\nExact-local-tree: f53e92d6bc128c929295f6baf3c6241081ee6ed2",
+      "verified": true
+    },
+    {
+      "local": "5abccd25f558c9d9733470b0109bbec908980d83",
+      "remote": "f928a0cef29eac2b603d390c40fb86448111b91b",
+      "tree": "a47f16d86f0fa1fb54234aefd335ae08a85821af",
+      "local_parents": [
+        "39a95c549d48eb523e9efdfda394bb9f184e2b16"
+      ],
+      "remote_parents": [
+        "3cd795d8a8bbb3d5eceabf101ceed5a23b291920"
+      ],
+      "message": "Preserve independent final C4 record audit [no release] [no deploy]\n\nOriginal-local-commit: 5abccd25f558c9d9733470b0109bbec908980d83\nExact-local-tree: a47f16d86f0fa1fb54234aefd335ae08a85821af",
+      "verified": true
+    },
+    {
+      "local": "d628749401f61d3653b5e066ff38245b938c5dcd",
+      "remote": "3cd03ab51feb9d18c21aedceef59406a8a44062e",
+      "tree": "5d4f2d3beff122b352d0d62a15ea0800c578c0b9",
+      "local_parents": [
+        "daee337c48c63dda8aeac149c407e900c79dcc86"
+      ],
+      "remote_parents": [
+        "daee337c48c63dda8aeac149c407e900c79dcc86"
+      ],
+      "message": "Fix synthetic Windows identity for Intel tools [no release] [no deploy]"
+    },
+    {
+      "local": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+      "remote": "9545c03961deb33f19db8a92dfe77f413e189209",
+      "tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
+      "local_parents": [
+        "d628749401f61d3653b5e066ff38245b938c5dcd",
+        "39a95c549d48eb523e9efdfda394bb9f184e2b16"
+      ],
+      "remote_parents": [
+        "3cd03ab51feb9d18c21aedceef59406a8a44062e",
+        "3cd795d8a8bbb3d5eceabf101ceed5a23b291920"
+      ],
+      "message": "Combine reviewed C4 follow-up with Windows Intel identity repair [no release] [no deploy]"
+    },
+    {
+      "local": "6547c1479cb38c25d46debcc1541b3467ad4fd9f",
+      "remote": "3bd3581e7d5e36db2b806331a203e5c9ed888119",
+      "tree": "0e0427559ef58cbed923ef93230fe71a12025f32",
+      "local_parents": [
+        "6bf79feffe68a9fdc1293a69900320e12be662bc"
+      ],
+      "remote_parents": [
+        "9545c03961deb33f19db8a92dfe77f413e189209"
+      ],
+      "message": "Retain Intel failure repair and combined C4 qualification [no release] [no deploy]"
+    },
+    {
+      "local": "717027dec2f3d4b1c6ee67c0c663f6505f7bf34a",
+      "remote": "c4aeebb8cf678d8e33e184656e5470e596f1c06d",
+      "tree": "dc8b45543f4ddd517aad239a5945f67dbf30ed59",
+      "local_parents": [
+        "6547c1479cb38c25d46debcc1541b3467ad4fd9f"
+      ],
+      "remote_parents": [
+        "3bd3581e7d5e36db2b806331a203e5c9ed888119"
+      ],
+      "message": "Clarify follow-up records and current source identity [no release] [no deploy]"
+    },
+    {
+      "local": "7ace25243baffe92533e472ef7c0e8229b734e77",
+      "remote": "37a29386c0a88907f7ec6349286674d741513c19",
+      "tree": "0b8901f8be25c0a6721fb10c79f128fd3a183e81",
+      "local_parents": [
+        "717027dec2f3d4b1c6ee67c0c663f6505f7bf34a",
+        "5abccd25f558c9d9733470b0109bbec908980d83"
+      ],
+      "remote_parents": [
+        "c4aeebb8cf678d8e33e184656e5470e596f1c06d",
+        "f928a0cef29eac2b603d390c40fb86448111b91b"
+      ],
+      "message": "Preserve final published C4 audit records [no release] [no deploy]"
+    },
+    {
+      "local": "5435d9cdb7daf272156916dd32034d103fa8988c",
+      "remote": "62849bc43bb285642ef4dae5bdd283bb4abc89f8",
+      "tree": "754a90a94ed60cda2293c3c332e5778cda65c0a2",
+      "local_parents": [
+        "7ace25243baffe92533e472ef7c0e8229b734e77"
+      ],
+      "remote_parents": [
+        "37a29386c0a88907f7ec6349286674d741513c19"
+      ],
+      "message": "Restore immutable prior qualification history after review [no release] [no deploy]"
+    }
+  ]
+}

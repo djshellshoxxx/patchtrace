@@ -15,7 +15,10 @@
     "pr_number": 349,
     "head_rule": "Resolve live PR349 body/head, mapped source/tree and current CI; do not mutate a running head merely to record status.",
     "original_source_evidence": "docs/engineering/evidence/cycle837fe-native-c4-20261121/combined-original-source.bundle",
-    "publication_transport": "GitHub REST Git Data; exact trees and ordered mapped parents; guarded non-force ref update"
+    "publication_transport": "GitHub REST Git Data; exact trees and ordered mapped parents; guarded non-force ref update",
+    "verified_code_remote_commit": "9545c03961deb33f19db8a92dfe77f413e189209",
+    "verified_code_tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
+    "commit_mapping": "docs/engineering/evidence/cycle837fe-native-c4-20261121/code-publication-mapping.json"
   },
   "release_ready": false,
   "main_merge_eligible": false,
@@ -2362,7 +2365,8 @@
     "next_action": "Publish reviewed Intel+C4 exact source to PR349; inspect full/Qt/native/package/frozen gates and actual Windows Intel; guarded REST main merge only when qualified, with both opt-out flags.",
     "code_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
     "code_tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
-    "remote_code_identity": "Resolve final current code mapping in live PR349 body; prior61b identity remains in continuation history."
+    "remote_code_identity": "Resolve final current code mapping in live PR349 body; prior61b identity remains in continuation history.",
+    "remote_code_commit": "9545c03961deb33f19db8a92dfe77f413e189209"
   },
   "continuation_history": [
     {
@@ -2568,6 +2572,17 @@
     "evidence": "docs/engineering/evidence/cycle837fe-native-c4-20261121/manifest.json",
     "native_predecessor": "daee337c48c63dda8aeac149c407e900c79dcc86",
     "consumed_c4_source": "39a95c549d48eb523e9efdfda394bb9f184e2b16",
-    "release_ready": false
+    "release_ready": false,
+    "consumed_c4_final_records": {
+      "local": "5abccd25f558c9d9733470b0109bbec908980d83",
+      "remote": "f928a0cef29eac2b603d390c40fb86448111b91b",
+      "tree": "a47f16d86f0fa1fb54234aefd335ae08a85821af",
+      "scope": "Three final audit files, source unchanged from consumed39a"
+    },
+    "publication_audit": {
+      "reviewed_local": "5435d9cdb7daf272156916dd32034d103fa8988c",
+      "verdict": "No remaining blocker;N-PUB-H1 closed",
+      "evidence": "docs/engineering/evidence/cycle837fe-native-c4-20261121/publication-audit.json"
+    }
   }
 }

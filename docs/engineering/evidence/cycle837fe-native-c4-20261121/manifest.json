@@ -4,6 +4,11 @@
   "created_at": "2026-11-21T07:12:59.325233+00:00",
   "payloads": [
     {
+      "path": "code-publication-mapping.json",
+      "bytes": 12620,
+      "sha256": "010b8ffa7c64ea5b9da317eec3fe5e918635779197c18606028e50619af4803d"
+    },
+    {
       "path": "codex5-bounded-assessment.md",
       "bytes": 11798,
       "sha256": "f8f5d1505dfc78e6f29bfff3a8074a4d21ee0f25cc264a36969c1170b4cf9250"
@@ -212,6 +217,21 @@
       "path": "native-c4-independent.zip",
       "bytes": 475912,
       "sha256": "c64f0c51cf295bf257f7bc251fac69110107f089f71e422cfc3bec9fc4fa74a9"
+    },
+    {
+      "path": "native-publication-audit.zip",
+      "bytes": 30449,
+      "sha256": "97063ea37880005d9c84fbdd6a7fd152bb4e0ffac69638fa4c8f45bc6709a295"
+    },
+    {
+      "path": "publication-audit.json",
+      "bytes": 2083,
+      "sha256": "fe00e21de221ce7ae14886009a0f2ac91b89a14bf0e7181b205d73b9d91810a8"
+    },
+    {
+      "path": "publication-audit.md",
+      "bytes": 8418,
+      "sha256": "7d29f9204f67da18dd0a6048fd9519570908c1028c462a9d408f5d1780baa1b1"
     },
     {
       "path": "qualification.json",
