@@ -1,3 +1,7 @@
+# Current handoff — PR345/PR346 selective reconciliation (2026-11-20)
+
+Start with [the new handoff](sibling-reconciliation-20261120.md) and the authoritative task ledger. Unique PR346 candidate ordering/inventory replay has been selectively recovered onto an isolated PR345-based source, with two Qt and two CSV controls; shared Evidence/header-help runtime is retained once. All full/new-head hosted/native/independent acceptance is pending. No release or merge.
+
 # Current handoff — 20 November 2026, session 2bad
 
 Start with [the consolidated handoff](session-20261120-2bad.md). The task ledger is authoritative. Four reviewed repair/recovery areas are integrated; hosted/full/native qualification remains pending. All generation narratives below are historical source-specific checkpoints.
