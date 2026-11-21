@@ -1345,6 +1345,24 @@
       "audit_findings": "All scoped independent source findings closed; exact new-head hosted/platform acceptance pending.",
       "evidence": "docs/engineering/cycle837fe-combined-pr349-20261121.md",
       "next_action": "Inspect exact combined-head hosted outcomes; preserve source/native/release distinctions."
+    },
+    {
+      "id": "837fe-historical-retention-six-scopes",
+      "status": "COMPLETE",
+      "description": "Account for six additional high-value historical behavior scopes without duplicate ports",
+      "source_branch": "six exact donor branches in linked disposition record",
+      "source_commit": "4ca982e708685889ac2c6f8bedecf79443e6664c",
+      "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
+      "assigned_worker": "completed independent historical_semantics_followup",
+      "files_owned": [],
+      "implementation_status": "not needed; scoped behavior retained",
+      "test_results": "No execution;12 production-file/8 test-file comparisons,53 AST-identical test-source declarations including helpers, not a test-pass count.",
+      "audit_findings": "Four scoped DUPLICATE and two scoped SUPERSEDED; all whole branches PARTIALLY_REVIEWED with exclusions.",
+      "dependencies": [],
+      "blockers": [],
+      "merge_status": "No code port required in reviewed scopes; preserve donor branches",
+      "evidence": "docs/engineering/evidence/cycle837fe-combined-20261121/historical-followup-dispositions.json",
+      "next_action": "Continue remaining semantic backlog without resetting prior source-retention evidence."
     }
   ],
   "aggregate_source_commit": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
@@ -1554,7 +1572,7 @@
     },
     {
       "name": "837fe-historical-semantics-followup",
-      "status": "OWNED-read-only"
+      "status": "COMPLETE"
     },
     {
       "name": "837fe-combined-publication",

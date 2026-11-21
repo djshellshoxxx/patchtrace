@@ -50,6 +50,14 @@
       "bytes": 79,
       "sha256": "a652ebbb0145cc583ecbcbe9aa47297c133cd72de813e2dc00dab2a1c744d66d"
     },
+    "historical-followup-dispositions.json": {
+      "bytes": 57217,
+      "sha256": "c4a258a4a0f71024430e93ea75bc8fe9a1b8c4e52a82a9232f2c4227c57e91da"
+    },
+    "historical-followup-review.zip": {
+      "bytes": 41564,
+      "sha256": "9a365f08ff2d357ffd29b4a5e0d49c8d2313e66c4657269c16cc94d4b3e09dfc"
+    },
     "intel-independent-review.zip": {
       "bytes": 22633,
       "sha256": "eb192aeb146b0c4ff06364db620fa085a9e3a83b4f720c6ab94eabd27e039cce"
