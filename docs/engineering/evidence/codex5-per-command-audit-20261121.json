@@ -90,5 +90,44 @@
       "existing manual/native/provenance/L1/L2/L3 acceptance"
     ],
     "protected_scope": "Workflow bytes, original CODEX-5 test, dependency manifest, runtime sources, ledger and QA files are unchanged."
+  },
+  "process_substitution_repair": {
+    "blocked_second_repair": "4cbe479023067b05b688cd1c1b02994b0228e305",
+    "finding": "Executable process substitution in literal-output commands could produce an empty scan; quoted literals remained data.",
+    "change": "Use the existing opaque substitution span for unquoted <(...) and >(...); no shell evaluation or dependency/workflow changes.",
+    "candidate_source_blobs": {
+      "tools/ci_pip_install_audit.py": {
+        "blob": "ec868e949d5f15db3450d4c25827702a82c39d26",
+        "sha256": "9f92bcf8140031484ddb536ef59b38339850e6a2578055f9eeeb73b661ed2812"
+      },
+      "tests/test_codex5_command_audit_20261121.py": {
+        "blob": "1e5d374a48c17cd7dcc8b6027d1f58b53d514cac",
+        "sha256": "cf1cedff8256c244afc5aa2faef771fcfdb228d107d6cd8b75bf16c78de32a8a"
+      }
+    },
+    "red_controls": "4 executable input/output, single/multiline cases failed on unchanged v2; all 4 single/double-quoted literal companions passed.",
+    "additional_positive_controls": "Escaped markers remain data; completed unrelated process substitutions do not hide the later independent installer.",
+    "author_targeted_validation": "226 passed, 2 strict CODEX-5 xfailed, including unchanged workflow-audit and specification-registry modules.",
+    "source_census": {
+      "workflows": 21,
+      "step_run_scalars": 200,
+      "pip_installs": 42,
+      "unprotected_installs": 41
+    },
+    "receipt_directory": "/workspace/scratch/837fe19aae3a/evidence/codex5-command-audit-repair-v3",
+    "prior_full_attempt": {
+      "source": "93b053a88e4373d9f5c69cd68f96e1a49305d579",
+      "started_as": "dirty pre-commit source based on ae69; source hashes unchanged",
+      "child_exit_code": -9,
+      "elapsed_seconds": 498.536,
+      "outcome": "SIGKILL with undetermined cause; no pytest summary; not a passing full gate and not corrected-source qualification.",
+      "repeated": false
+    },
+    "remaining_gates": [
+      "corrected-source independent review",
+      "supported hosted qualification on final combined source",
+      "broad CODEX-5 complete hashed closure",
+      "retained manual/native/provenance/L1/L2/L3 gates"
+    ]
   }
 }

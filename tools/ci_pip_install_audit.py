@@ -146,7 +146,9 @@ def _command_segments(body: str) -> list[tuple[str, bool]]:
                 word_start = False
                 index += 2
             continue
-        if quote != "'" and (char == "`" or body.startswith("$(", index)):
+        command_substitution = quote != "'" and (char == "`" or body.startswith("$(", index))
+        process_substitution = quote is None and body.startswith(("<(", ">("), index)
+        if command_substitution or process_substitution:
             end = _substitution_end(body, index)
             current.append(body[index:end])
             substitution = True

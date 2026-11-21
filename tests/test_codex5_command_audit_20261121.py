@@ -300,3 +300,27 @@ def test_lexical_spans_keep_independent_commands_and_literals_distinct(
             unhashed_installs(_workflow(command))
     else:
         assert len(unhashed_installs(_workflow(command))) == expected
+
+
+@pytest.mark.parametrize(("command", "expected"), [
+    ("echo <(python -m pip install sample-package)", None),
+    ("echo >(python -m pip install sample-package)", None),
+    ("echo '<(python -m pip install sample-package)'", 0),
+    ("echo '>(python -m pip install sample-package)'", 0),
+    ('echo "<(python -m pip install sample-package)"', 0),
+    ('echo ">(python -m pip install sample-package)"', 0),
+    ("echo <(\npython -m pip install sample-package\n)", None),
+    ("echo >(\npython -m pip install sample-package\n)", None),
+    (r"echo \<\(python -m pip install sample-package\)", 0),
+    (r"echo \>\(python -m pip install sample-package\)", 0),
+    ("echo <(printf safe); python -m pip install unsafe", 1),
+    ("echo >(cat); python -m pip install unsafe", 1),
+])
+def test_executable_process_substitution_is_refused_but_quoted_literals_are_data(
+    command: str, expected: int | None,
+) -> None:
+    if expected is None:
+        with pytest.raises(WorkflowAuditError):
+            unhashed_installs(_workflow(command))
+    else:
+        assert len(unhashed_installs(_workflow(command))) == expected

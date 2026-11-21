@@ -59,6 +59,9 @@ not just on the physical line containing the installer. Single-quoted literal
 substitution text and substitution text wholly in comments remain data.
 A completed substitution without installer text does not hide or block a later
 independent direct install in the same scalar; its lexical span is kept intact.
+This refusal also covers executable input/output process substitution, `<(...)`
+and `>(...)`, including multiline forms. Those markers inside single- or
+double-quoted literal output are data, not executable process substitution.
 
 Only literal `--require-hashes` or `--no-index` tokens associated with the same
 recognized install qualify as the syntactic boundary. Comments, neighboring

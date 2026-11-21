@@ -84,3 +84,23 @@ hosted qualification remain separate gates. Author receipts are under
 structured evidence file retains the donor record and adds the repair's source
 blob identities, scope, controls and remaining gates. No remote ref, publication,
 main merge, release, deployment, global ledger or QA edit is made by this task.
+
+
+### V3 process-substitution correction
+
+Independent review of `4cbe479023067b05b688cd1c1b02994b0228e305` confirmed
+one remaining unsupported executable form: process substitution inside a
+literal-output command could be missed. A separate V3 checkout/environment
+adds quote-aware refusal of `<(...)` and `>(...)` using the existing opaque
+span, including multiline forms. Quoted and escaped literal companions remain
+data; completed unrelated substitutions preserve the later independent install.
+Four executable controls reproduced failures on unchanged V2 before the repair;
+the corrected targeted selection reports **226 passed, two strict CODEX-5
+expected failures**. Earlier source and qualification records above remain
+historical evidence. Corrected-source peer/hosted acceptance is pending.
+
+The sole original full attempt ended with child exit **-9** after **498.536
+seconds**, without a pytest summary; its cause is undetermined. Its recorded
+source hashes remained unchanged. No V2/V3 full rerun or full-suite success is
+claimed. Final local receipts are under
+`/workspace/scratch/837fe19aae3a/evidence/codex5-command-audit-repair-v3`.
