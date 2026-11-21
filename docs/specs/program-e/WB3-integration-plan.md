@@ -427,3 +427,13 @@ export's original values. Regression tests must exercise these fields through
 `render(document, 'json')` as an unchanged control. These tests assert the
 existing protection boundary; no new prefix policy, data model, analysis,
 external transmission or publication semantics are authorized.
+
+
+### 2026-11-20 sibling test reconciliation: CSV form-feed controls
+
+The existing Strings CSV export prefix policy treats a form-feed before a
+formula-like value as an ignorable prefix for formula detection, while preserving
+original bytes. A form-feed before ordinary text does not by itself require a
+formula marker. Maintain explicit distinct parameterized CSV/JSON presentation
+regressions for these two cases. These tests do not change the Linux final-name
+publication refusal, strict redaction, provenance or export contract.
