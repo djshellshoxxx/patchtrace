@@ -1,0 +1,38 @@
+{
+  "archive": {
+    "bytes": 670271,
+    "name": "cycle-95fe-evidence.zip",
+    "sha256": "06e115ed85de8fd85315d2bef465d7eff60833179f520cbd9fa3801f95669525"
+  },
+  "bundle": {
+    "bytes": 16743,
+    "commits": 9,
+    "contained_commit_objects_match_exactly": true,
+    "head": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
+    "internal_pack_verified": true,
+    "name": "local-code-history.bundle",
+    "prerequisite": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+    "sha256": "81d15e5383e3aa7ddd7a8826122f4499789f2c97375525eebaf4316bcdf93517",
+    "unbundle_verified": true
+  },
+  "checks": [
+    "all raw source hashes unchanged",
+    "all extracted member bytes and hashes verified",
+    "ZIP CRC test passed",
+    "deterministic second ZIP build byte-identical",
+    "exact JUnit union independently checked",
+    "git bundle verification passed with required base available",
+    "temporary-repository unbundle and internal git verify-pack passed; exactly nine expected commit objects contained",
+    "narrow credential signature screen found zero matches"
+  ],
+  "member_manifest": {
+    "bytes": 26265,
+    "name": "member-manifest.json",
+    "sha256": "105d701f56bc35a517e4df072c5edfe2ec195d7a6db71bee6f8502e0710563aa"
+  },
+  "raw_file_count": 74,
+  "schema": "patchtrace-evidence-pack-validation/1",
+  "source_commit": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
+  "source_tree": "a72efdcbf503e0480a182fd323c5c4320d27c098",
+  "zip_entry_count": 80
+}

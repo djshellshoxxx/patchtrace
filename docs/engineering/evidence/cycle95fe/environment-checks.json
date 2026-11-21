@@ -1,0 +1,85 @@
+{
+  "schema": "patchtrace-environment-receipts/1",
+  "reason": "Standalone durable receipts added after independent publication audit; original archive remains unchanged.",
+  "checks": [
+    {
+      "receipt": {
+        "label": "environment-pip-check",
+        "command": [
+          "/workspace/scratch/8c4bcaaa669f/qualification-venv/bin/python",
+          "-m",
+          "pip",
+          "check"
+        ],
+        "cwd": "/tmp/patchtrace-95fe-qualify",
+        "head": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
+        "tree": "a72efdcbf503e0480a182fd323c5c4320d27c098",
+        "dirty_before": "",
+        "started_at": "2026-11-20T23:58:59.278108+00:00",
+        "qt_platform": "offscreen",
+        "pythonpath": "/tmp/patchtrace-95fe-qualify/src",
+        "pid": 16,
+        "returncode": 0,
+        "seconds": 0.34,
+        "finished_at": "2026-11-20T23:58:59.617834+00:00",
+        "head_after": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
+        "dirty_after": ""
+      },
+      "stdout_stderr": "No broken requirements found.\n",
+      "original_receipt_sha256": "1cd15395573de178f5a7bced054e0d5d492b623b3467a8d00d4fe5458ce7f3ae",
+      "original_log_sha256": "9261363b733079a641c2e4cc9bc46ffa1d8336945a87f807b6cf68847dbc9b09"
+    },
+    {
+      "receipt": {
+        "label": "environment-protobuf-check",
+        "command": [
+          "/workspace/scratch/8c4bcaaa669f/qualification-venv/bin/python",
+          "tools/check_protobuf_runtime.py"
+        ],
+        "cwd": "/tmp/patchtrace-95fe-qualify",
+        "head": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
+        "tree": "a72efdcbf503e0480a182fd323c5c4320d27c098",
+        "dirty_before": "",
+        "started_at": "2026-11-20T23:58:59.275776+00:00",
+        "qt_platform": "offscreen",
+        "pythonpath": "/tmp/patchtrace-95fe-qualify/src",
+        "pid": 16,
+        "returncode": 0,
+        "seconds": 0.068,
+        "finished_at": "2026-11-20T23:58:59.344234+00:00",
+        "head_after": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
+        "dirty_after": ""
+      },
+      "stdout_stderr": "protobuf pin=7.36.2 installed=7.36.2 backend=upb\n",
+      "original_receipt_sha256": "b29c5ea3b9c953c9bfd13fa57ffaba10bb472ed682ca3e3fa9a5e6e2b2edc785",
+      "original_log_sha256": "00ebc0b5ecfb2d924ffa6d2fbddaff0738bd64108b6777e7abf6a12c1cb3b983"
+    },
+    {
+      "receipt": {
+        "label": "environment-cli-help",
+        "command": [
+          "/workspace/scratch/8c4bcaaa669f/qualification-venv/bin/python",
+          "-m",
+          "patchtrace",
+          "--help"
+        ],
+        "cwd": "/tmp/patchtrace-95fe-qualify",
+        "head": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
+        "tree": "a72efdcbf503e0480a182fd323c5c4320d27c098",
+        "dirty_before": "",
+        "started_at": "2026-11-20T23:58:59.278058+00:00",
+        "qt_platform": "offscreen",
+        "pythonpath": "/tmp/patchtrace-95fe-qualify/src",
+        "pid": 16,
+        "returncode": 0,
+        "seconds": 0.276,
+        "finished_at": "2026-11-20T23:58:59.554573+00:00",
+        "head_after": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
+        "dirty_after": ""
+      },
+      "stdout_stderr": "usage: patchtrace [-h]\n                  {rank,flags,correlate,cache,acquire,series,secondary,intelligence,unified,intel-tools,backend,build-env,compare,corrections,diaphora,doctor,export,fabric,graph,inspect,kb,kev,panels,pilot,profile,project,review,rules,runtime,search,strings}\n                  ...\n\nPatchTrace headless enrichment commands. Launch without arguments to open the\ndesktop.\n\npositional arguments:\n  {rank,flags,correlate,cache,acquire,series,secondary,intelligence,unified,intel-tools,backend,build-env,compare,corrections,diaphora,doctor,export,fabric,graph,inspect,kb,kev,panels,pilot,profile,project,review,rules,runtime,search,strings}\n    rank                rank changed functions by attention/1 change signals\n    flags               list WIL feature-flag transitions\n    correlate           rerank with CVE context (base ranking unchanged)\n    cache               inspect or maintain the global derived/raw cache\n    acquire             download two builds from the Microsoft symbol server\n                        (SPEC-08)\n    series              N-way build series over adjacent pair projects\n                        (SPEC-09)\n    secondary           second-opinion match sets: BinDiff import, rz-diff\n                        (SPEC-10/11)\n    intelligence        advisory (CSAF) intelligence: import, fetch, explain\n    unified             unified match analysis (experimental, derived,\n                        ordinal); the Ghidriff result stays primary\n    intel-tools         capa / FLOSS / Detect It Easy evidence (SPEC-29;\n                        static, no execution)\n    backend             bundled analysis runtime: status, verify, selftest,\n                        diagnose\n    build-env           build environment of the older and newer file (reads\n                        only)\n    compare             run the primary Ghidriff analysis for one project pair\n                        (static only)\n    corrections         manual match corrections: list, export, import, undo\n    diaphora            import an existing Diaphora result as optional\n                        evidence\n    doctor              health report: version, dependencies, verbs, bundle,\n                        runtime candidates\n    export              export a project as a report (json, md, html; report/1\n                        or 2)\n    fabric              read the anchor fabric: list, show, resolve or stats\n                        (read-only)\n    graph               call-graph explorer over stored Ghidriff call lists\n                        (read-only)\n    inspect             version, manifest and signature facts of both files\n                        (static; no execution)\n    kb                  KB / CVE advisory correlation (offline; coverage\n                        always stated)\n    kev                 CISA KEV catalog: status, plan, fetch, import, lookup\n    panels              list or check the GUI panel manifest\n    pilot               rank changed functions against an advisory: leads,\n                        why, review\n    profile             analysis profiles: list, show, validate, save, delete\n    project             create, inspect, import into, back up and re-orient a\n                        project\n    review              set the review state of a match or finding, add an\n                        analyst note\n    rules               detection rules: probe, propose, show, decide, test,\n                        export, history\n    runtime             inspect or install a local offline runtime archive\n    search              search a project's saved names, strings, APIs, code,\n                        notes (offline)\n    strings             string changes between the two builds (static; never\n                        executes them)\n\noptions:\n  -h, --help            show this help message and exit\n",
+      "original_receipt_sha256": "43a529a306ecefb4ed3e20c5463d8d39a72e741d6a17e4f38e3b0eb3b3458e8a",
+      "original_log_sha256": "11e7aab80b117648d63dfa13212c715fa028c46cde914e059d7330ba0c4e806e"
+    }
+  ]
+}

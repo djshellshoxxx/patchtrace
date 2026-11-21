@@ -1,0 +1,118 @@
+{
+  "repository": "djshellshoxxx/PatchTrace",
+  "method": "GitHub Git Data API; identical trees and preserved parent topology; author/committer metadata yields different commit IDs",
+  "base": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+  "local_code_head": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
+  "remote_code_head": "406acf96f5b1a299aca940f98eeb69d0b9583729",
+  "commits": {
+    "67f7e08ea9bee61653f8ab5ad66048d3e7141810": {
+      "remote_sha": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+      "base": true
+    },
+    "baaf4b1e36f69734a5ac2535fc7f25c066a9f17f": {
+      "remote_sha": "0bc0dd8f446dc9a92e1587ff85b638f5edfb633b",
+      "tree": "8e94769e56e51e4bc33f77b5d5c2069a510a29b0",
+      "parents": [
+        "67f7e08ea9bee61653f8ab5ad66048d3e7141810"
+      ],
+      "remote_parents": [
+        "67f7e08ea9bee61653f8ab5ad66048d3e7141810"
+      ],
+      "tree_verified_equal": true
+    },
+    "076c1ffaea35e922b206da5818023fe96459de23": {
+      "remote_sha": "66256fcee3f9e39512e1d6346f195bcf1facc9c9",
+      "tree": "8a836c1f8450a6efa97cb6041b62798b8d097c27",
+      "parents": [
+        "baaf4b1e36f69734a5ac2535fc7f25c066a9f17f"
+      ],
+      "remote_parents": [
+        "0bc0dd8f446dc9a92e1587ff85b638f5edfb633b"
+      ],
+      "tree_verified_equal": true
+    },
+    "c46b5efd45381ffbad6beeaeac27162ea4220e9b": {
+      "remote_sha": "cf14b3447bd1d46c52832626c9a507317bfe0e08",
+      "tree": "aa548f0ea219a99b2fac8d287fba8eb263c87a96",
+      "parents": [
+        "67f7e08ea9bee61653f8ab5ad66048d3e7141810"
+      ],
+      "remote_parents": [
+        "67f7e08ea9bee61653f8ab5ad66048d3e7141810"
+      ],
+      "tree_verified_equal": true
+    },
+    "649ed46ead79ad12c9fa35085e704ac3f0d32631": {
+      "remote_sha": "1bb822cdabc4da6a5834c4399d1d17ff468215bd",
+      "tree": "8493ce6f93b0b81b6505359555f937a398ab14d3",
+      "parents": [
+        "c46b5efd45381ffbad6beeaeac27162ea4220e9b"
+      ],
+      "remote_parents": [
+        "cf14b3447bd1d46c52832626c9a507317bfe0e08"
+      ],
+      "tree_verified_equal": true
+    },
+    "50be55ec94905fd329a451f66ea0c4c3ac54fdbb": {
+      "remote_sha": "3d3c4b21f4ddb0054af595a541934670b502977c",
+      "tree": "8e6fe771f16e5d41b4099801f624e49e7c270003",
+      "parents": [
+        "076c1ffaea35e922b206da5818023fe96459de23",
+        "649ed46ead79ad12c9fa35085e704ac3f0d32631"
+      ],
+      "remote_parents": [
+        "66256fcee3f9e39512e1d6346f195bcf1facc9c9",
+        "1bb822cdabc4da6a5834c4399d1d17ff468215bd"
+      ],
+      "tree_verified_equal": true
+    },
+    "2c7f506b61ad1f8010c82c1303dd181baf8c0158": {
+      "remote_sha": "0f4fc0f7d712bae9a87569d1d51dbbd34d6260e4",
+      "tree": "02f706349c0bfa88638ab39750835f4ba5896a28",
+      "parents": [
+        "67f7e08ea9bee61653f8ab5ad66048d3e7141810"
+      ],
+      "remote_parents": [
+        "67f7e08ea9bee61653f8ab5ad66048d3e7141810"
+      ],
+      "tree_verified_equal": true
+    },
+    "ecaf2ebf76b56fa5f753d9eab691e9f2a9c9fdaf": {
+      "remote_sha": "d1b0216d63792e443fc55444cbb5d45f9ae030ab",
+      "tree": "0ba28ee14616afe3d2e7c72ce2dd628af568a5d8",
+      "parents": [
+        "50be55ec94905fd329a451f66ea0c4c3ac54fdbb",
+        "2c7f506b61ad1f8010c82c1303dd181baf8c0158"
+      ],
+      "remote_parents": [
+        "3d3c4b21f4ddb0054af595a541934670b502977c",
+        "0f4fc0f7d712bae9a87569d1d51dbbd34d6260e4"
+      ],
+      "tree_verified_equal": true
+    },
+    "c71d604edbd63e3b8d0f10b120c775acd1c5f8b4": {
+      "remote_sha": "f30f4a88bfd2731198ade24aea65cf95ead0ee85",
+      "tree": "2a4e0ccbc543cc2b803f890c5eada931962d1363",
+      "parents": [
+        "67f7e08ea9bee61653f8ab5ad66048d3e7141810"
+      ],
+      "remote_parents": [
+        "67f7e08ea9bee61653f8ab5ad66048d3e7141810"
+      ],
+      "tree_verified_equal": true
+    },
+    "ccc3664f11a81d3d30f907da36fc3d22da0063d0": {
+      "remote_sha": "406acf96f5b1a299aca940f98eeb69d0b9583729",
+      "tree": "a72efdcbf503e0480a182fd323c5c4320d27c098",
+      "parents": [
+        "ecaf2ebf76b56fa5f753d9eab691e9f2a9c9fdaf",
+        "c71d604edbd63e3b8d0f10b120c775acd1c5f8b4"
+      ],
+      "remote_parents": [
+        "d1b0216d63792e443fc55444cbb5d45f9ae030ab",
+        "f30f4a88bfd2731198ade24aea65cf95ead0ee85"
+      ],
+      "tree_verified_equal": true
+    }
+  }
+}
