@@ -5,7 +5,7 @@ The offline branch inventory tool previously used permissive `json.loads` on the
 retained all-pages PR JSON, allowing duplicate nested keys and non-finite
 numbers. An isolated successor of the immutable-tip branch updates the parser
 contract and eleven authored cases, rejects ambiguous JSON with fixed errors,
-and reads PR metadata before Git ref replay. Nine copied-algorithm local
+and reads PR metadata before Git ref replay. Eleven copied-algorithm local
 controls passed; **these are not checked-out repository pytest or Ruff**.
 PR347 hosted Windows QA/Qt remained active at source inspection, so no
 competing full workflow was started. Independent reviewer and exact-source
