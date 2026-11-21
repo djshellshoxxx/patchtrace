@@ -75,6 +75,7 @@ class ProjectService:
         self.root = Path(root).resolve()
         self.project = project
         self.store = store
+        self._commit_uncertain = False
         self._prepared: dict[str, tuple[PreparedImport, AnalysisRun, tuple[FunctionMatch, ...],
                                         tuple[tuple[Path, os.stat_result], ...]]] = {}
 
@@ -119,7 +120,20 @@ class ProjectService:
         return create_sample(root)
 
     def _commit(self, candidate: ComparisonProject) -> None:
-        self.project = self.store.save(candidate)
+        if self._commit_uncertain:
+            raise ValueError('PT-STORAGE: project save outcome is uncertain; reopen the project before editing')
+        try:
+            self.project = self.store.save(candidate)
+        except BaseException as failure:
+            # Deferred history maintenance may fail after the snapshot committed.
+            # Read the actual outcome without recovering jobs or writing another snapshot.
+            try:
+                self.project = self.store.load(recover_interrupted=False)
+            except BaseException:
+                self._commit_uncertain = True
+                failure.add_note('PT-STORAGE: committed snapshot could not be reloaded; '
+                                 'reopen the project before editing')
+            raise
 
     def save(self) -> None:
         self._commit(self.project)
