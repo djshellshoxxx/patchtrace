@@ -389,3 +389,28 @@ ambiguity and missing-counterpart rules remain; no matching or label derivation
 algorithm changes. These changes preserve the existing public wire contracts
 and require no generated schema change. Synthetic record regressions establish
 these invariants, without native-tool, corpus, or evaluation acceptance claims.
+
+
+## Tier R CI tool-cache integrity amendment (2026-11-21, CODEX-6)
+
+The `.github/workflows/corpus-tier-r.yml` shard job MUST cache only the
+**original immutable tool archives**, never an extracted executable tree.
+The SHA-256 values in the workflow environment are source-reviewed pins, not
+trusted verification supplied by the cache key. On every run, **including
+cache hits**, the workflow MUST verify each archive against its pinned SHA-256
+*before* extraction and before launching its corresponding executable. The
+rizin tool is required; Ghidra installation is conditional on a Ghidriff
+engine being requested. A missing cache archive may be downloaded from the
+existing pinned URL before verifying. A cache hit with corrupt bytes MUST
+fail closed; it must not execute previously extracted data or silently
+replace the pin. Extraction MUST target a fresh directory in the job
+workspace. No extracted tree is stored in the actions/cache namespace.
+The existing install of Ghidriff and Java is not counted as covered by the
+rizin/Ghidra archive pins.
+
+The test boundary is source/YAML structural admission plus negative
+mutations, followed by a source-specific hosted Tier R shard run (with the
+Ghidriff path separately verified when available). Hermetic tests must not
+fetch or execute either native tool. A correct static workflow alone does
+not prove real cached-artifact behavior, upstream archive availability or
+native comparative accuracy.
