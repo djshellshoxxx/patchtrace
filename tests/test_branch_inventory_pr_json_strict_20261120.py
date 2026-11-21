@@ -48,6 +48,7 @@ def test_invalid_saved_pr_json_preserves_previous_inventory_output(tmp_path, cap
     snapshot.write_text("branch\ttip_sha\n", encoding="utf-8")
     previous = tmp_path / "inventory.tsv"
     previous.write_bytes(b"previous verified inventory\n")
+
     def unexpected_replay(*args, **kwargs):
         pytest.fail("invalid PR metadata must be refused before Git inventory replay")
 
@@ -72,3 +73,11 @@ def test_saved_pr_json_rejects_malformed_or_excessively_nested_documents(tmp_pat
     source.write_text(raw, encoding="utf-8")
     with pytest.raises(ValueError, match="invalid pull-request metadata JSON"):
         tool.read_json(source)
+
+
+def test_saved_pr_json_invalid_utf8_returns_fixed_input_error(tmp_path):
+    path = tmp_path / "malformed-utf8.json"
+    path.write_bytes(b'[{"head":{"ref":"\\xff"}}]')
+    with pytest.raises(ValueError, match="invalid pull-request metadata JSON") as caught:
+        tool.read_json(path)
+    assert "ref" not in str(caught.value)
