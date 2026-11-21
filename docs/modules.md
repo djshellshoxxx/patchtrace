@@ -1413,3 +1413,14 @@ unchanged. Tests: `test_kb_product_start_20261106.py`,
 | `gui/table_spec.py`, `gui/qt/table.py`, `ui_evidence.py` | Optional registered header help and host state announcements; column mapping pending | Table, tooltip and Evidence host/state tests |
 
 Evidence: [current report](engineering/session-20261120-2bad.md).
+
+
+## PR345/PR346 uniquely reconciled modules — 2026-11-20
+
+| Existing module | Narrow ownership | Distinct verification |
+| --- | --- | --- |
+| `kbcorrelation/investigation_service.py` | Candidate operation type/start-mode admission before current-input verification or service creation | PR346 exact reviewed donor blob and focused candidate tests; new combined source pending |
+| `tools/branch_inventory.py` | Bounded, lossless read-only TSV evidence replay and global CSV limit restoration | PR346 exact donor/tool regression blobs; new combined source pending |
+| `tests/test_ui_kb_investigation.py`, `tests/test_strings_export.py` | Safe diagnostic fallback and form-feed CSV/JSON regression-only coverage | Tests only; preserve strict Qt budget and Linux overwrite refusal |
+
+See [combined-source handoff](engineering-handoffs/sibling-reconciliation-20261120.md). No new binary analysis capability or empirical accuracy claim.
