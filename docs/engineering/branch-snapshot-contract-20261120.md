@@ -32,3 +32,29 @@ UTF-8, 32 MiB limit, large quoted `note` support, CSV field-limit restoration,
 atomic prior-output preservation and `delete_safe=no`. This does **not** prove
 that a complete/all-head snapshot was supplied; provenance completeness and
 semantic branch review remain separate gates.
+
+
+## Follow-up: bind replay tips to exact Git commit object IDs (2026-11-20)
+
+The `tip_sha` value in a saved branch snapshot is an exact commit-object identity,
+**not** a Git revision expression or a symbolic reference to resolve at replay
+time. `git rev-parse --verify <value>^{commit}` currently accepts values such
+as `HEAD`, abbreviated hashes and `HEAD~0`; these can resolve to a different
+tip after the original inventory was recorded, while still appearing valid in
+a replay. An annotated-tag object's SHA can also peel to a different commit.
+
+Before issuing *any* Git lookup for snapshot rows, require every `tip_sha`
+to be a canonical lowercase full 40-character SHA-1 or 64-character SHA-256
+hexadecimal identifier. Keep this check alongside column/header and branch
+shape validation so a late malformed record cannot trigger partial Git access.
+After Git resolves the requested object, require the canonical returned commit
+ID to equal the supplied tip exactly, refusing tag-object peeling and any
+other object-to-commit substitution. Preserve mixed column ordering, unrelated
+named metadata, bounded large quoted fields, CSV limit restoration, previous
+published outputs, branch retention and `delete_safe=no` unchanged.
+
+A full-length hash alone is a syntactic commitment, not proof of branch
+provenance or completeness; it must still exist and resolve to the same commit
+in the local object database. Tests must use synthetic Git objects, not
+analyzed target binaries. Do not infer semantic uniqueness or release
+eligibility from this admission control.
