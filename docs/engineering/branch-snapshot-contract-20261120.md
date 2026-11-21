@@ -58,3 +58,19 @@ provenance or completeness; it must still exist and resolve to the same commit
 in the local object database. Tests must use synthetic Git objects, not
 analyzed target binaries. Do not infer semantic uniqueness or release
 eligibility from this admission control.
+
+
+## Follow-up: strict saved all-pages PR JSON admission (2026-11-20)
+
+The saved `--pulls-json` document is immutable review evidence, not an
+untrusted object whose identity fields may be silently overwritten during
+parsing. Before using it for branch-to-PR association, reject repeated JSON
+object keys at **every nesting level** (including PR number, head/ref/repo and
+head SHA), and reject non-finite JSON numeric constants (`NaN`, `Infinity`,
+`-Infinity`). Python's default `json.loads` accepts both categories, so
+strict admission is required before any inventory Git analysis or publication.
+Preserve the existing 32 MiB byte limit, ordinary Unicode JSON, valid all-pages
+array shape, existing output on failure and unmodified valid PR records.
+Error messages must be fixed and must not echo private PR payload contents.
+This is a parser integrity repair, not authentication of the saved PR dataset,
+all-pages completeness proof, or permission to merge/delete any branch.
