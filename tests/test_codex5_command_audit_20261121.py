@@ -209,7 +209,7 @@ def test_missing_yaml_dependency_is_an_import_failure(monkeypatch: pytest.Monkey
 
 def test_actual_workflow_scan_matches_reviewed_source_census() -> None:
     expected = {
-        "backend-bundle.yml": (26, 3, 3), "codex-cloud.yml": (1, 0, 0),
+        "backend-bundle.yml": (26, 3, 2), "codex-cloud.yml": (1, 0, 0),
         "corpus-tier-r.yml": (19, 6, 6), "diff-and-score.yml": (6, 1, 1),
         "live-backend.yml": (8, 1, 1), "live-bindiff.yml": (6, 1, 1),
         "live-capa.yml": (5, 1, 1), "live-intel-tools.yml": (10, 2, 2),
@@ -230,6 +230,8 @@ def test_actual_workflow_scan_matches_reviewed_source_census() -> None:
         protected.extend((path.name, item.command) for item in installs if item.has_boundary)
     assert actual == expected
     assert protected == [
+        ("backend-bundle.yml", "python -m pip install --require-hashes --only-binary=:all: "
+         "-r tools/requirements-sigstore-ci.lock"),
         ("pages.yml", "python -m pip install --require-hashes --only-binary=:all: -r tools/site/requirements-ci.lock"),
         ("pilot-eval.yml", "python -m pip install --require-hashes --only-binary=:all: "
          "-r tools/calibration/pilot/requirements-ci.lock"),
