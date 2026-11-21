@@ -1,3 +1,12 @@
+# Current bounded successor — Tier R archive-cache integrity
+
+See [CODEX-6 handoff](codex6-corpus-cache-archive-20261121.md).
+The isolated PR348-based branch caches original rizin/Ghidra archives,
+verifies pinned SHA-256 on every use and unpacks only after verification.
+Author source and synthetic tamper checks pass; full repository/hosted
+qualification and independent review remain open. CODEX-14 is separate.
+No main merge, release or deployment.
+
 # Current continuation — cycle 2
 
 Start with [cycle2 handoff](cycle2-20261121-2bad.md) and the [task ledger](../engineering/task-ledger.json). Inventory successors are actually repository-tested and independently reviewed; malformed quoted TSV is repaired; all eight Strings headers now expose registered help. Clean combined source 3cf7ad23 passes 188 cases, Ruff/dependencies/source binding and independent review. New-source hosted qualification remains pending. Preserve original failures and inspect the one PR #345 failed-job retry.
