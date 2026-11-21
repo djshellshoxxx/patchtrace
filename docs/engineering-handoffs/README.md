@@ -1,3 +1,11 @@
+# Current continuation — cycle 2
+
+Start with [cycle2 handoff](cycle2-20261121-2bad.md) and the [task ledger](../engineering/task-ledger.json). Inventory successors are actually repository-tested and independently reviewed; malformed quoted TSV is repaired; all eight Strings headers now expose registered help. Clean combined source 3cf7ad23 passes 188 cases, Ruff/dependencies/source binding and independent review. New-source hosted qualification remains pending. Preserve original failures and inspect the one PR #345 failed-job retry.
+
+## Historical source-specific checkpoints
+
+The dated entries below retain their original observations. Use the current task ledger and checkpoint above for present status.
+
 # Current continuation — strict saved all-pages PR JSON admission (2026-11-20)
 
 Read [the new handoff](inventory-pr-json-strict-20261120.md). A contract-first isolated successor of the immutable-tip inventory branch refuses duplicate nested PR JSON keys, nonfinite constants and excessive nesting before any branch Git replay. Eleven repository cases authored; nine stand-alone mirrored parser controls passed. Exact source pytest/Ruff/hosted CI and independent review remain pending. Parent PR347 Windows QA/Qt still active at last inspection. No main merge or release.

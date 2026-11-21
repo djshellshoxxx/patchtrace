@@ -1,0 +1,1047 @@
+{
+  "schema": "patchtrace/cycle2-qualification/1",
+  "recorded_at_utc": "2026-11-21T02:49:19.534442+00:00",
+  "source_commit": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
+  "source_tree": "60ed420c11116f1b92bdbedae34e3e82269458e5",
+  "starting_source": "91618abec4c4f13a27fd5821a25d1500f17601e4",
+  "pull_request_base": "b461ac64eb9beb74449ce2b18b6795a2af34a02a",
+  "publication_parent": "e2385c22c0397a547b15b2fbca9f0c07dc4ac199",
+  "integration_branch": "codex/patchtrace-integration-20261121-2bad",
+  "clean_unchanged_combined_selection": {
+    "passed": 188,
+    "skipped": 0,
+    "failed": 0,
+    "files": 7
+  },
+  "source_runs": [
+    {
+      "name": "integrated-final",
+      "source_commit": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
+      "command": [
+        "/tmp/patchtrace-2bad-cycle2-venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "tests/test_branch_inventory.py",
+        "tests/test_branch_inventory_pr_json_strict_20261120.py",
+        "tests/test_ui_strings_panel.py",
+        "tests/test_strings_view_model.py",
+        "tests/test_tooltips.py",
+        "tests/test_strings_export.py",
+        "tests/test_kb_candidate_component_type_20261120.py",
+        "--junitxml=/tmp/patchtrace-2bad-cycle2-evidence/integrated-final.xml"
+      ],
+      "cwd": "/tmp/patchtrace-2bad-cycle2",
+      "returncode": 0,
+      "elapsed_seconds": 19.766
+    },
+    {
+      "name": "final-ruff",
+      "source_commit": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
+      "command": [
+        "/tmp/patchtrace-2bad-cycle2-venv/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "src",
+        "tests",
+        "tools"
+      ],
+      "cwd": "/tmp/patchtrace-2bad-cycle2",
+      "returncode": 0,
+      "elapsed_seconds": 0.048
+    },
+    {
+      "name": "final-dependencies",
+      "source_commit": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
+      "command": [
+        "/tmp/patchtrace-2bad-cycle2-venv/bin/python",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "cwd": "/tmp/patchtrace-2bad-cycle2",
+      "returncode": 0,
+      "elapsed_seconds": 0.222
+    },
+    {
+      "name": "final-isolated-import",
+      "source_commit": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
+      "command": [
+        "/tmp/patchtrace-2bad-cycle2-venv/bin/python",
+        "-I",
+        "-c",
+        "import patchtrace; print(patchtrace.__file__); assert patchtrace.__file__.startswith(\"/tmp/patchtrace-2bad-cycle2/src/\")"
+      ],
+      "cwd": "/tmp/patchtrace-2bad-cycle2",
+      "returncode": 0,
+      "elapsed_seconds": 0.01
+    }
+  ],
+  "source_blobs": {
+    "tools/branch_inventory.py": "d1950b12bf83fbc826ae5f913f2bca1226e8e6c3",
+    "src/patchtrace/strings/panel.py": "29ec3ebf8437362c1a1b3008b436c809e615270f",
+    "src/patchtrace/strings/qt_panel.py": "074f9629c1c963cb152a35df6a2be90e05ddff03",
+    "src/patchtrace/strings/tooltip_entries.py": "914db52d387c4b833e03be32fe31bfd2cd97a75b",
+    "src/patchtrace/kbcorrelation/investigation_service.py": "00aa0ebcd3d3a507046b3825715e490d866f1eef"
+  },
+  "independent_peer_review": "docs/engineering/cycle2-peer-review-20261121-2bad.md",
+  "review_status": "no-blocking-finding-in-reviewed-scope",
+  "root_admission_review": {
+    "candidate-baseline": {
+      "cases": 21,
+      "failed": 4,
+      "skipped": 0,
+      "case_ids": [
+        "patchtrace-2bad-cycle2-evidence.test_candidate_admission_review::test_candidates_refuse_non_text_component_without_index_read[null-candidate_pairs]",
+        "patchtrace-2bad-cycle2-evidence.test_candidate_admission_review::test_candidates_refuse_non_text_component_without_index_read[null-candidate_preview]",
+        "patchtrace-2bad-cycle2-evidence.test_candidate_admission_review::test_candidates_refuse_non_text_component_without_index_read[number-candidate_pairs]",
+        "patchtrace-2bad-cycle2-evidence.test_candidate_admission_review::test_candidates_refuse_non_text_component_without_index_read[number-candidate_preview]",
+        "patchtrace-2bad-cycle2-evidence.test_candidate_admission_review::test_candidates_refuse_non_text_component_without_index_read[bytes-candidate_pairs]",
+        "patchtrace-2bad-cycle2-evidence.test_candidate_admission_review::test_candidates_refuse_non_text_component_without_index_read[bytes-candidate_preview]",
+        "patchtrace-2bad-cycle2-evidence.test_candidate_admission_review::test_candidates_refuse_non_text_component_without_index_read[strip-capable-object-candidate_pairs]",
+        "patchtrace-2bad-cycle2-evidence.test_candidate_admission_review::test_candidates_refuse_non_text_component_without_index_read[strip-capable-object-candidate_preview]",
+        "patchtrace-2bad-cycle2-evidence.test_candidate_admission_review::test_candidates_refuse_non_text_component_without_index_read[overriding-str-subclass-candidate_pairs]",
+        "patchtrace-2bad-cycle2-evidence.test_candidate_admission_review::test_candidates_refuse_non_text_component_without_index_read[overriding-str-subclass-candidate_preview]",
+        "patchtrace-2bad-cycle2-evidence.test_candidate_admission_review::test_invalid_component_precedes_current_input_reads_and_service[no-current-inputs-candidate_pairs]",
+        "patchtrace-2bad-cycle2-evidence.test_candidate_admission_review::test_invalid_component_precedes_current_input_reads_and_service[no-current-inputs-candidate_preview]",
+        "patchtrace-2bad-cycle2-evidence.test_candidate_admission_review::test_invalid_component_precedes_current_input_reads_and_service[captured-current-inputs-candidate_pairs]",
+        "patchtrace-2bad-cycle2-evidence.test_candidate_admission_review::test_invalid_component_precedes_current_input_reads_and_service[captured-current-inputs-candidate_preview]",
+        "patchtrace-2bad-cycle2-evidence.test_candidate_admission_review::test_candidate_admission_preserves_cancellation_and_start_mode_precedence[cancelled-PT-KBC-CANCEL-The local operation was cancelled before its next commit.-candidate_pairs]",
+        "patchtrace-2bad-cycle2-evidence.test_candidate_admission_review::test_candidate_admission_preserves_cancellation_and_start_mode_precedence[cancelled-PT-KBC-CANCEL-The local operation was cancelled before its next commit.-candidate_preview]",
+        "patchtrace-2bad-cycle2-evidence.test_candidate_admission_review::test_candidate_admission_preserves_cancellation_and_start_mode_precedence[product-PT-KBC-INPUT-Product-only mode uses a fresh local pair without KB/CVE or download requests.-candidate_pairs]",
+        "patchtrace-2bad-cycle2-evidence.test_candidate_admission_review::test_candidate_admission_preserves_cancellation_and_start_mode_precedence[product-PT-KBC-INPUT-Product-only mode uses a fresh local pair without KB/CVE or download requests.-candidate_preview]",
+        "patchtrace-2bad-cycle2-evidence.test_candidate_admission_review::test_candidate_admission_preserves_cancellation_and_start_mode_precedence[binary-PT-KBC-INPUT-Saved-index pairing requires an explicit advisory product.-candidate_pairs]",
+        "patchtrace-2bad-cycle2-evidence.test_candidate_admission_review::test_candidate_admission_preserves_cancellation_and_start_mode_precedence[binary-PT-KBC-INPUT-Saved-index pairing requires an explicit advisory product.-candidate_preview]",
+        "patchtrace-2bad-cycle2-evidence.test_candidate_admission_review::test_candidates_preserve_trimmed_plain_component_name"
+      ]
+    },
+    "sibling-reviewed": {
+      "cases": 38,
+      "failed": 0,
+      "skipped": 0,
+      "case_ids": [
+        "tests.test_kb_candidate_component_type_20261120::test_candidates_refuse_non_text_component_without_index_read[null-candidate_pairs]",
+        "tests.test_kb_candidate_component_type_20261120::test_candidates_refuse_non_text_component_without_index_read[null-candidate_preview]",
+        "tests.test_kb_candidate_component_type_20261120::test_candidates_refuse_non_text_component_without_index_read[number-candidate_pairs]",
+        "tests.test_kb_candidate_component_type_20261120::test_candidates_refuse_non_text_component_without_index_read[number-candidate_preview]",
+        "tests.test_kb_candidate_component_type_20261120::test_candidates_refuse_non_text_component_without_index_read[bytes-candidate_pairs]",
+        "tests.test_kb_candidate_component_type_20261120::test_candidates_refuse_non_text_component_without_index_read[bytes-candidate_preview]",
+        "tests.test_kb_candidate_component_type_20261120::test_candidates_refuse_non_text_component_without_index_read[strip-capable-object-candidate_pairs]",
+        "tests.test_kb_candidate_component_type_20261120::test_candidates_refuse_non_text_component_without_index_read[strip-capable-object-candidate_preview]",
+        "tests.test_kb_candidate_component_type_20261120::test_candidates_refuse_non_text_component_without_index_read[overriding-str-subclass-candidate_pairs]",
+        "tests.test_kb_candidate_component_type_20261120::test_candidates_refuse_non_text_component_without_index_read[overriding-str-subclass-candidate_preview]",
+        "tests.test_kb_candidate_component_type_20261120::test_invalid_component_precedes_current_input_reads_and_service[no-current-inputs-candidate_pairs]",
+        "tests.test_kb_candidate_component_type_20261120::test_invalid_component_precedes_current_input_reads_and_service[no-current-inputs-candidate_preview]",
+        "tests.test_kb_candidate_component_type_20261120::test_invalid_component_precedes_current_input_reads_and_service[captured-current-inputs-candidate_pairs]",
+        "tests.test_kb_candidate_component_type_20261120::test_invalid_component_precedes_current_input_reads_and_service[captured-current-inputs-candidate_preview]",
+        "tests.test_kb_candidate_component_type_20261120::test_candidate_admission_preserves_cancellation_and_start_mode_precedence[cancelled-PT-KBC-CANCEL-The local operation was cancelled before its next commit.-candidate_pairs]",
+        "tests.test_kb_candidate_component_type_20261120::test_candidate_admission_preserves_cancellation_and_start_mode_precedence[cancelled-PT-KBC-CANCEL-The local operation was cancelled before its next commit.-candidate_preview]",
+        "tests.test_kb_candidate_component_type_20261120::test_candidate_admission_preserves_cancellation_and_start_mode_precedence[product-PT-KBC-INPUT-Product-only mode uses a fresh local pair without KB/CVE or download requests.-candidate_pairs]",
+        "tests.test_kb_candidate_component_type_20261120::test_candidate_admission_preserves_cancellation_and_start_mode_precedence[product-PT-KBC-INPUT-Product-only mode uses a fresh local pair without KB/CVE or download requests.-candidate_preview]",
+        "tests.test_kb_candidate_component_type_20261120::test_candidate_admission_preserves_cancellation_and_start_mode_precedence[binary-PT-KBC-INPUT-Saved-index pairing requires an explicit advisory product.-candidate_pairs]",
+        "tests.test_kb_candidate_component_type_20261120::test_candidate_admission_preserves_cancellation_and_start_mode_precedence[binary-PT-KBC-INPUT-Saved-index pairing requires an explicit advisory product.-candidate_preview]",
+        "tests.test_kb_candidate_component_type_20261120::test_candidates_preserve_trimmed_plain_component_name",
+        "tests.test_strings_export::test_csv_formula_guard_considers_leading_ignorable_prefixes[direct-formula]",
+        "tests.test_strings_export::test_csv_formula_guard_considers_leading_ignorable_prefixes[space-formula]",
+        "tests.test_strings_export::test_csv_formula_guard_considers_leading_ignorable_prefixes[line-formula]",
+        "tests.test_strings_export::test_csv_formula_guard_considers_leading_ignorable_prefixes[bom-formula]",
+        "tests.test_strings_export::test_csv_formula_guard_considers_leading_ignorable_prefixes[space-tab-formula]",
+        "tests.test_strings_export::test_csv_formula_guard_considers_leading_ignorable_prefixes[line-control]",
+        "tests.test_strings_export::test_csv_formula_guard_considers_leading_ignorable_prefixes[tab-control]",
+        "tests.test_strings_export::test_csv_formula_guard_considers_leading_ignorable_prefixes[carriage-control]",
+        "tests.test_strings_export::test_csv_formula_guard_considers_leading_ignorable_prefixes[vertical-tab-formula]",
+        "tests.test_strings_export::test_csv_formula_guard_considers_leading_ignorable_prefixes[form-feed-formula]",
+        "tests.test_strings_export::test_csv_formula_guard_considers_leading_ignorable_prefixes[ordinary-form-feed]",
+        "tests.test_strings_export::test_csv_formula_guard_considers_leading_ignorable_prefixes[literal-backslash-prose]",
+        "tests.test_strings_export::test_csv_formula_guard_considers_leading_ignorable_prefixes[ordinary-space]",
+        "tests.test_strings_export::test_csv_formula_guard_considers_leading_ignorable_prefixes[ordinary-bom]",
+        "tests.test_strings_export::test_csv_formula_guard_considers_leading_ignorable_prefixes[direct-minus]",
+        "tests.test_ui_kb_investigation::test_settled_timeout_handles_unavailable_busy_state_and_unknown_operation[busy-read-fails]",
+        "tests.test_ui_kb_investigation::test_settled_timeout_handles_unavailable_busy_state_and_unknown_operation[unknown-operation]"
+      ]
+    },
+    "source_blobs": {
+      "src/patchtrace/kbcorrelation/investigation_service.py": "00aa0ebcd3d3a507046b3825715e490d866f1eef",
+      "tests/test_kb_candidate_component_type_20261120.py": "fa9e623e44bbfb681815409ef7150eeacf78abd0",
+      "tests/test_strings_export.py": "23abcdf8e4012b48d6dd97eee516aacccf7e7a1b",
+      "tests/test_ui_kb_investigation.py": "f3e2a41c6e3782570323c09c34c26d56c88fff0e"
+    },
+    "head": "91618abec4c4f13a27fd5821a25d1500f17601e4",
+    "tree": "27e500d05e69dd80d5627d07e7c0593f7353bc16",
+    "retained_test_sha256": "2f4640512f8161398f1ebed183a0071e18671c814e7dbe48762507c503db24f9"
+  },
+  "reference_delta": {
+    "schema": "patchtrace/reference-delta/1",
+    "observed_utc": "2026-11-21T02:38:13.575090+00:00",
+    "frozen_source": "91618abec4c4f13a27fd5821a25d1500f17601e4",
+    "prior_snapshot": "2026-11-20T23:27:34.782439+00:00",
+    "prior_count": 354,
+    "current_count": 360,
+    "tags": 59,
+    "pr_head_refs_fetched": 337,
+    "new": [
+      {
+        "branch": "codex/autonomous-consolidation-20261120-2bad",
+        "head": "39c38a02f126963fc03827fa49741255590227ad",
+        "ancestor_of_frozen_source": true
+      },
+      {
+        "branch": "codex/patchtrace-inventory-tip-oid-20261120",
+        "head": "a63a20b2a272d53a09422222050080823fc3c664",
+        "ancestor_of_frozen_source": true
+      },
+      {
+        "branch": "codex/patchtrace-inventory-tsv-shape-20261120",
+        "head": "eaae7e504f8b43051f0c0d6d57c314d37c66d7ff",
+        "ancestor_of_frozen_source": true
+      },
+      {
+        "branch": "codex/patchtrace-pr-snapshot-json-strict-20261120",
+        "head": "91618abec4c4f13a27fd5821a25d1500f17601e4",
+        "ancestor_of_frozen_source": true
+      },
+      {
+        "branch": "codex/patchtrace-pr345-346-unique-recovery-20261120",
+        "head": "b461ac64eb9beb74449ce2b18b6795a2af34a02a",
+        "ancestor_of_frozen_source": true
+      },
+      {
+        "branch": "consolidation/patchtrace-20261120-95fe",
+        "head": "c07774ecf5a3f7337834f95a9a4c51c8ec5fad44",
+        "ancestor_of_frozen_source": false
+      }
+    ],
+    "moved": [],
+    "missing": [],
+    "limit": "Ref delta and ancestry only, not a new all-pages PR metadata inventory or semantic reclassification. Fetch preserved every existing ref; initial mixed PR-ref destination conflicts were resolved using a separate pr-cycle2 namespace without pruning/deleting.",
+    "late_reference_updates": [
+      {
+        "branch": "codex/patchtrace-pr-snapshot-json-strict-20261120",
+        "before": "91618abec4c4f13a27fd5821a25d1500f17601e4",
+        "after": "e2385c22c0397a547b15b2fbca9f0c07dc4ac199",
+        "commits": 6,
+        "scope": "documentation/evidence only; no source/test/tool/workflow change; merged locally without rewriting retained refs"
+      }
+    ]
+  },
+  "header_scan": {
+    "direct_named_ColumnSpec_calls": 90,
+    "constant_help_ids": 8,
+    "limit": "Syntactic construction sites, not every runtime column instance."
+  },
+  "hosted_receipt": "docs/engineering/hosted-qualification-cycle2-20261120-2bad.json",
+  "ci_coordination": {
+    "schema": "patchtrace/cycle2-ci-coordination/1",
+    "retry": {
+      "run_id": 44840721370,
+      "original_failed_job": 136648122555,
+      "reason": "Confirmed NSIS Chocolatey HTTP 503 after successful Windows pytest/Ruff/build/frozen/portable steps",
+      "accepted": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Action completed."
+          }
+        ],
+        "structuredContent": {
+          "success": true
+        },
+        "isError": false
+      },
+      "original_terminal_runs": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Action completed."
+          }
+        ],
+        "structuredContent": {
+          "workflow_runs": [
+            {
+              "id": 44840721268,
+              "name": "Native Windows Ghidriff acceptance",
+              "status": "completed",
+              "conclusion": "success",
+              "run_number": 832,
+              "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44840721268/jobs",
+              "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44840721268/logs",
+              "workflow_id": 381129156
+            },
+            {
+              "id": 44840721370,
+              "name": "QA and Windows standalone",
+              "status": "completed",
+              "conclusion": "failure",
+              "run_number": 1137,
+              "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44840721370/jobs",
+              "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44840721370/logs",
+              "workflow_id": 381129157
+            }
+          ]
+        },
+        "isError": false
+      }
+    },
+    "observed_runs": {
+      "345": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Action completed."
+          }
+        ],
+        "structuredContent": {
+          "workflow_runs": [
+            {
+              "id": 44840721268,
+              "name": "Native Windows Ghidriff acceptance",
+              "status": "completed",
+              "conclusion": "success",
+              "run_number": 832,
+              "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44840721268/jobs",
+              "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44840721268/logs",
+              "workflow_id": 381129156
+            },
+            {
+              "id": 44840721370,
+              "name": "QA and Windows standalone",
+              "status": "in_progress",
+              "conclusion": null,
+              "run_number": 1137,
+              "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44840721370/jobs",
+              "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44840721370/logs",
+              "workflow_id": 381129157
+            }
+          ]
+        },
+        "isError": false
+      },
+      "346": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Action completed."
+          }
+        ],
+        "structuredContent": {
+          "workflow_runs": [
+            {
+              "id": 44841261831,
+              "name": "Native Windows Ghidriff acceptance",
+              "status": "completed",
+              "conclusion": "success",
+              "run_number": 834,
+              "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44841261831/jobs",
+              "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44841261831/logs",
+              "workflow_id": 381129156
+            },
+            {
+              "id": 44841261805,
+              "name": "QA and Windows standalone",
+              "status": "completed",
+              "conclusion": "success",
+              "run_number": 1139,
+              "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44841261805/jobs",
+              "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44841261805/logs",
+              "workflow_id": 381129157
+            }
+          ]
+        },
+        "isError": false
+      },
+      "347": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Action completed."
+          }
+        ],
+        "structuredContent": {
+          "workflow_runs": [
+            {
+              "id": 44843482467,
+              "name": "Native Windows Ghidriff acceptance",
+              "status": "completed",
+              "conclusion": "success",
+              "run_number": 836,
+              "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44843482467/jobs",
+              "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44843482467/logs",
+              "workflow_id": 381129156
+            },
+            {
+              "id": 44843482603,
+              "name": "QA and Windows standalone",
+              "status": "in_progress",
+              "conclusion": null,
+              "run_number": 1140,
+              "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44843482603/jobs",
+              "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44843482603/logs",
+              "workflow_id": 381129157
+            }
+          ]
+        },
+        "isError": false
+      }
+    },
+    "pr347_jobs": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "jobs": [
+          {
+            "id": 136657396037,
+            "name": "qa (ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "run_id": 44843482603,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Run actions/setup-python@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5
+              },
+              {
+                "name": "Run python -m pip check",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 6
+              },
+              {
+                "name": "protobuf equals the pin and runs the upb backend (SPEC-10b)",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 7
+              },
+              {
+                "name": "Native pair-publication boundary controls",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 8
+              },
+              {
+                "name": "Run python -m pytest -q --junitxml=qa-results.xml",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 9
+              },
+              {
+                "name": "Run python -m ruff check src tests tools",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 10
+              },
+              {
+                "name": "BinExport worker memory cap measurement (SPEC-10b U7, non-gating)",
+                "status": "completed",
+                "conclusion": "skipped",
+                "number": 11
+              },
+              {
+                "name": "Run python tools/build_windows.py",
+                "status": "completed",
+                "conclusion": "skipped",
+                "number": 12
+              },
+              {
+                "name": "Frozen EXE headless smoke (A1-A4) and self-test",
+                "status": "completed",
+                "conclusion": "skipped",
+                "number": 13
+              },
+              {
+                "name": "Extract and run portable Windows ZIP outside checkout",
+                "status": "completed",
+                "conclusion": "skipped",
+                "number": 14
+              },
+              {
+                "name": "Install pinned NSIS compiler",
+                "status": "completed",
+                "conclusion": "skipped",
+                "number": 15
+              },
+              {
+                "name": "Build per-user Windows installer",
+                "status": "completed",
+                "conclusion": "skipped",
+                "number": 16
+              },
+              {
+                "name": "Install, launch, and uninstall the setup package",
+                "status": "completed",
+                "conclusion": "skipped",
+                "number": 17
+              },
+              {
+                "name": "Record this matrix leg's own result for the release notes",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 18
+              },
+              {
+                "name": "Run actions/upload-artifact@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 19
+              },
+              {
+                "name": "Run actions/upload-artifact@v4",
+                "status": "completed",
+                "conclusion": "skipped",
+                "number": 20
+              },
+              {
+                "name": "Post Run actions/setup-python@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 39
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 40
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 41
+              }
+            ]
+          },
+          {
+            "id": 136657396306,
+            "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+            "status": "completed",
+            "conclusion": "success",
+            "run_id": 44843482603,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Run actions/setup-python@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5
+              },
+              {
+                "name": "Run python tools/qt_gate.py --repeat 20 --shard 3/4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 6
+              },
+              {
+                "name": "Post Run actions/setup-python@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 11
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 12
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 13
+              }
+            ]
+          },
+          {
+            "id": 136657396352,
+            "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+            "status": "completed",
+            "conclusion": "success",
+            "run_id": 44843482603,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Run actions/setup-python@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5
+              },
+              {
+                "name": "Run python tools/qt_gate.py --repeat 20 --shard 2/4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 6
+              },
+              {
+                "name": "Post Run actions/setup-python@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 11
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 12
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 13
+              }
+            ]
+          },
+          {
+            "id": 136657396370,
+            "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+            "status": "completed",
+            "conclusion": "success",
+            "run_id": 44843482603,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Run actions/setup-python@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5
+              },
+              {
+                "name": "Run python tools/qt_gate.py --repeat 20 --shard 1/4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 6
+              },
+              {
+                "name": "Post Run actions/setup-python@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 11
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 12
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 13
+              }
+            ]
+          },
+          {
+            "id": 136657396502,
+            "name": "qa (windows-latest)",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_id": 44843482603,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Run actions/setup-python@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+                "status": "completed",
+                "conclusion": "skipped",
+                "number": 4
+              },
+              {
+                "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5
+              },
+              {
+                "name": "Run python -m pip check",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 6
+              },
+              {
+                "name": "protobuf equals the pin and runs the upb backend (SPEC-10b)",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 7
+              },
+              {
+                "name": "Native pair-publication boundary controls",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 8
+              },
+              {
+                "name": "Run python -m pytest -q --junitxml=qa-results.xml",
+                "status": "in_progress",
+                "conclusion": null,
+                "number": 9
+              },
+              {
+                "name": "Run python -m ruff check src tests tools",
+                "status": "pending",
+                "conclusion": null,
+                "number": 10
+              },
+              {
+                "name": "BinExport worker memory cap measurement (SPEC-10b U7, non-gating)",
+                "status": "pending",
+                "conclusion": null,
+                "number": 11
+              },
+              {
+                "name": "Run python tools/build_windows.py",
+                "status": "pending",
+                "conclusion": null,
+                "number": 12
+              },
+              {
+                "name": "Frozen EXE headless smoke (A1-A4) and self-test",
+                "status": "pending",
+                "conclusion": null,
+                "number": 13
+              },
+              {
+                "name": "Extract and run portable Windows ZIP outside checkout",
+                "status": "pending",
+                "conclusion": null,
+                "number": 14
+              },
+              {
+                "name": "Install pinned NSIS compiler",
+                "status": "pending",
+                "conclusion": null,
+                "number": 15
+              },
+              {
+                "name": "Build per-user Windows installer",
+                "status": "pending",
+                "conclusion": null,
+                "number": 16
+              },
+              {
+                "name": "Install, launch, and uninstall the setup package",
+                "status": "pending",
+                "conclusion": null,
+                "number": 17
+              },
+              {
+                "name": "Record this matrix leg's own result for the release notes",
+                "status": "pending",
+                "conclusion": null,
+                "number": 18
+              },
+              {
+                "name": "Run actions/upload-artifact@v4",
+                "status": "pending",
+                "conclusion": null,
+                "number": 19
+              },
+              {
+                "name": "Run actions/upload-artifact@v4",
+                "status": "pending",
+                "conclusion": null,
+                "number": 20
+              },
+              {
+                "name": "Post Run actions/setup-python@v5",
+                "status": "pending",
+                "conclusion": null,
+                "number": 39
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "status": "pending",
+                "conclusion": null,
+                "number": 40
+              }
+            ]
+          },
+          {
+            "id": 136657396510,
+            "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+            "status": "completed",
+            "conclusion": "success",
+            "run_id": 44843482603,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Run actions/setup-python@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5
+              },
+              {
+                "name": "Run python tools/qt_gate.py --repeat 20 --shard 4/4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 6
+              },
+              {
+                "name": "Post Run actions/setup-python@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 11
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 12
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 13
+              }
+            ]
+          },
+          {
+            "id": 136657396560,
+            "name": "qt-gate (windows-latest, 5, 1/1)",
+            "status": "completed",
+            "conclusion": "success",
+            "run_id": 44843482603,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Run actions/setup-python@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+                "status": "completed",
+                "conclusion": "skipped",
+                "number": 4
+              },
+              {
+                "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5
+              },
+              {
+                "name": "Run python tools/qt_gate.py --repeat 5 --shard 1/1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 6
+              },
+              {
+                "name": "Post Run actions/setup-python@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 11
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 12
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 13
+              }
+            ]
+          },
+          {
+            "id": 136657398406,
+            "name": "release-gate",
+            "status": "completed",
+            "conclusion": "skipped",
+            "run_id": 44843482603,
+            "logs_url": null,
+            "steps": null
+          }
+        ]
+      },
+      "isError": false
+    },
+    "captured_at_utc": "2026-11-21 02:44:09 UTC"
+  },
+  "coordinator_archive": {
+    "path": "docs/engineering/evidence/cycle2-coordinator-20261121-2bad.zip",
+    "bytes": 28442,
+    "sha256": "4ec0938f77baf907cd8b26bd62e5b95f633f0bb70dcf8f8a62be9388fe881096",
+    "payloads": 20
+  },
+  "history_bundle": {
+    "path": "docs/engineering/evidence/cycle2-local-history-20261121-2bad.bundle",
+    "through_local_commit": "6ed9642bae637cb73b17de03a2a67eb659c4f301",
+    "refs": [
+      "codex/patchtrace-integration-20261121-2bad",
+      "codex/patchtrace-inventory-review-20261121-2bad",
+      "codex/patchtrace-header-help-20261121-2bad",
+      "codex/patchtrace-cycle2-hosted-receipts-20261120",
+      "codex/patchtrace-cycle2-peer-review-20261121",
+      "codex/patchtrace-cycle2-historical-ui-review-2bad"
+    ],
+    "bytes": 264415,
+    "sha256": "e9c9b749471429b862f4686128e3db1eabd21f3cd5b9861d7c2486387e057d60",
+    "verification": "The bundle contains these 6 refs:\n6ed9642bae637cb73b17de03a2a67eb659c4f301 refs/heads/codex/patchtrace-integration-20261121-2bad\naddb5281e99bb595b69ee84328568a0350eb6d3d refs/heads/codex/patchtrace-inventory-review-20261121-2bad\n528e2c05087a772b678cdad4d4a41cfd395cacf9 refs/heads/codex/patchtrace-header-help-20261121-2bad\nb8a3b5422ffd4aa7067168a8b4ff30c859c0ac2a refs/heads/codex/patchtrace-cycle2-hosted-receipts-20261120\n55f42d31e39d3f57ab352451d320d82640d9976b refs/heads/codex/patchtrace-cycle2-peer-review-20261121\n384511f39efae043b36956044d08e9befa1bc2c8 refs/heads/codex/patchtrace-cycle2-historical-ui-review-2bad\nThe bundle requires these 2 refs:\na63a20b2a272d53a09422222050080823fc3c664 \n91618abec4c4f13a27fd5821a25d1500f17601e4 \nThe bundle uses this hash algorithm: sha1\n/tmp/patchtrace-2bad-cycle2/docs/engineering/evidence/cycle2-local-history-20261121-2bad.bundle is okay\n"
+  },
+  "full_suite": "not-repeated-locally-after-retained-unexplained-SIGKILLs; new-head hosted gate pending",
+  "main_merge_eligible": false,
+  "release_ready": false
+}

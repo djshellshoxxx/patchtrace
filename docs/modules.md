@@ -6,7 +6,7 @@
 | `intelligence/tools/admission.py` | Opt-in owner-thread admission of current stored tool rows, evidence and cache origins; used by the Strings CLI without changing legacy ToolStore readers or running tools | `test_intel_tools_admission.py`, `test_strings_stored_source_admission.py`; synthetic projects and authored producer only |
 | `tools/branch_inventory.py` | Read-only full-history branch ancestry, patch evidence and exact-tip inventory replay; no ref mutation or deletion authorization | Real authored Git graphs and atomic report preservation in `tests/test_branch_inventory.py` |
 | `tools/research_qualification/receipt.py:git_head` | Bounded SHA-1 source observation for ordinary and linked checkouts, including gitfiles and common/private refs; no Git subprocess or clean-source attestation | `test_research_qualification_git_identity.py`, existing receipt/CLI callers, and independent real Git-layout controls |
-| `owned_publication.py` (recovered, 2026-11-19) | Reusable held-source, parent-bound exclusive publication from PW-01; strings no-force export refuses collisions and unsupported capabilities. Bounded source verification and explicit Windows held-handle replacement support Strings exports; Linux forced replacement uses rooted directory descriptors in `strings/export.py` but retains a documented final source-name race. | `test_owned_publication.py`, `test_owned_publication_integrity.py`, `test_owned_publication_replace.py`, strings source/parent ownership and capability-refusal controls; native Windows qualification remains separate |
+| `owned_publication.py` (recovered, 2026-11-19) | Reusable held-source, parent-bound exclusive publication from PW-01. Linux Strings export refuses existing or concurrently arriving destinations, including with `--force`; compatible Linux overwrite remains unavailable. Windows held-handle replacement remains supported. Descriptor cleanup preserves an active failure or cancellation. | `test_owned_publication.py`, `test_owned_publication_integrity.py`, `test_owned_publication_replace.py`, strings source/parent ownership and capability-refusal controls; native Windows qualification remains separate |
 | `tools/verify_backend_pins.py:open_https`, `tools/build_backend_bundle.py:download` | Shared pre-dispatch HTTPS redirect checks, bounded hops, response closure and target-specific headers; payload/signature/pin rules unchanged | `test_backend_https_redirects.py` plus existing verifier/builder/pin tests; authored transports, no live vendor qualification |
 
 ### November 2026 continuation interfaces
@@ -1410,7 +1410,7 @@ unchanged. Tests: `test_kb_product_start_20261106.py`,
 | `reports.py` | Preserve outcomes when staging cleanup fails; never unlink a consumed stage | Report cleanup, backup and destination controls |
 | `gui/qt/tasks.py` | Recheck ownership after final progress; discard or park outcomes correctly | TaskRunner and maintained GUI consumers |
 | `strings/export.py`, `owned_publication.py` | Linux exclusive creation/refusal and exception-aware close; Windows replacement retained | Capability and shared publisher controls |
-| `gui/table_spec.py`, `gui/qt/table.py`, `ui_evidence.py` | Optional registered header help and host state announcements; column mapping pending | Table, tooltip and Evidence host/state tests |
+| `gui/table_spec.py`, `gui/qt/table.py`, `ui_evidence.py` | Registered header help and host state announcements; all eight Strings columns mapped, other panels pending | Table, tooltip and Evidence host/state tests |
 
 Evidence: [current report](engineering/session-20261120-2bad.md).
 
@@ -1424,3 +1424,12 @@ Evidence: [current report](engineering/session-20261120-2bad.md).
 | `tests/test_ui_kb_investigation.py`, `tests/test_strings_export.py` | Safe diagnostic fallback and form-feed CSV/JSON regression-only coverage | Tests only; preserve strict Qt budget and Linux overwrite refusal |
 
 See [combined-source handoff](engineering-handoffs/sibling-reconciliation-20261120.md). No new binary analysis capability or empirical accuracy claim.
+
+## Cycle 2 reviewed tooling and header help
+
+| Existing module | Current scope | Verification |
+| --- | --- | --- |
+| `tools/branch_inventory.py` | Bounded strict TSV/JSON, exact commit IDs and damaged-quote refusal before Git/publication |40 maintained inventory cases, 11 independent controls, retained 353-row replay and combined 188 selection |
+| `strings/panel.py`, `strings/qt_panel.py`, `strings/tooltip_entries.py` | Register and wire eight existing column-help IDs with precise help text |17 failing-before/passing-after header controls, real-host audit and fresh mutation review |
+
+[Reviewed combined checkpoint](engineering/cycle2-consolidation-20261121-2bad.md); no new stored schema or analysis capability.

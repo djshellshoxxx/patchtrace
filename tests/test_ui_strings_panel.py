@@ -12,11 +12,12 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
-from PySide6.QtCore import QTimer
+from PySide6.QtCore import Qt, QTimer
 from PySide6.QtWidgets import QApplication
 from qt_support import a11y_audit, join_gui_threads, top_level_windows  # noqa: F401
 from test_strings_view_model import change, delta
 
+from patchtrace import tooltips
 from patchtrace.gui import registry
 from patchtrace.gui.anchors import AnchorRef
 from patchtrace.gui.projection import ProjectKey
@@ -261,6 +262,46 @@ def test_new_window_is_never_opened(qtbot):
 
 
 # ---- accessibility -----------------------------------------------------------------------------------------------
+
+@pytest.mark.parametrize('scan', [False, True], ids=['idle', 'ready'])
+@pytest.mark.parametrize(('column', 'title', 'tip_id'), [
+    (0, 'Change', 'strings.col.change'),
+    (1, 'String', 'strings.col.string'),
+    (2, 'Type', 'strings.col.type'),
+    (3, 'Older', 'strings.col.older'),
+    (4, 'Newer', 'strings.col.newer'),
+    (5, 'Function', 'strings.col.function'),
+    (6, 'Cues', 'strings.col.cues'),
+    (7, 'Source', 'strings.col.source'),
+])
+def test_each_table_header_explains_its_column_without_changing_its_label(qtbot, scan, column, title, tip_id):
+    controller, *_ = start(qtbot, scan=scan)
+    model = controller.panel.table.table_model
+    horizontal = Qt.Orientation.Horizontal
+    assert model.columnCount() == 8
+    assert tip_id in tooltips.REGISTRY, 'a displayed column must register its help'
+    assert model.headerData(column, horizontal, Qt.ItemDataRole.ToolTipRole) == tooltips.tooltip(tip_id)
+    assert model.headerData(column, horizontal, Qt.ItemDataRole.DisplayRole) == title
+    assert model.headerData(column, horizontal, Qt.ItemDataRole.AccessibleTextRole) == title
+
+
+def test_column_help_escapes_registry_text_and_does_not_replace_cell_content(qtbot, monkeypatch):
+    controller, *_ = start(qtbot)
+    model = controller.panel.table.table_model
+    horizontal = Qt.Orientation.Horizontal
+    before = model.index(0, 1).data(Qt.ItemDataRole.DisplayRole)
+    monkeypatch.setitem(tooltips.REGISTRY, 'strings.col.string', tooltips.TooltipEntry(
+        'Text containing <sample> & literal quotes.', 'Keep the literal text visible.', 'Read-only.'))
+    help_text = model.headerData(1, horizontal, Qt.ItemDataRole.ToolTipRole)
+    assert '&lt;sample&gt;' in help_text and '&amp;' in help_text
+    assert '<sample>' not in help_text
+    assert model.headerData(1, horizontal, Qt.ItemDataRole.DisplayRole) == 'String'
+    assert model.headerData(1, horizontal, Qt.ItemDataRole.AccessibleTextRole) == 'String'
+    assert model.index(0, 1).data(Qt.ItemDataRole.DisplayRole) == before
+    assert model.index(0, 1).data(Qt.ItemDataRole.ToolTipRole) == before
+    monkeypatch.delitem(tooltips.REGISTRY, 'strings.col.string')
+    assert model.headerData(1, horizontal, Qt.ItemDataRole.ToolTipRole) == 'String'
+
 
 def test_a11y_audit_is_clean_in_every_state(qtbot):
     controller, *_ = start(qtbot)

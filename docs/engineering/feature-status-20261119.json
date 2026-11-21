@@ -1,7 +1,7 @@
 {
   "schema": "patchtrace-feature-status/1",
-  "updated_at": "2026-11-21T00:21:36.958Z",
-  "checkpoint_local_commit": "1d0f60f3004db9e32f314518d5be661b85ef4d71",
+  "updated_at": "2026-11-21T02:49:19.534442+00:00",
+  "checkpoint_local_commit": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
   "release_ready": false,
   "features": [
     {
@@ -84,9 +84,10 @@
         "docs/engineering/raw-alignment-peer-review.md",
         "docs/engineering-handoffs/generation-24-20261120.md",
         "docs/engineering/strings-shutdown-independent-review-20261120.md",
-        "docs/engineering/generation33-qualification-20261120.md"
+        "docs/engineering/generation33-qualification-20261120.md",
+        "docs/engineering/cycle2-peer-review-20261121-2bad.md"
       ],
-      "latest_verified_scope": "TaskRunner progress ownership repaired; Evidence announcements connected; header-help framework recovered. Per-column IDs and native screen-reader qualification remain open. Shared PR345 accessibility runtime retained once; new Qt diagnostic fallback cases added without weakening 10-second budget. Native/manual screen-reader remains open.",
+      "latest_verified_scope": "TaskRunner/Evidence recovery retained; all eight Strings headers now carry registered escaped help and real-host coverage. Other panels and native screen-reader acceptance remain open.",
       "historical_qualification_notes": "Original unsplit suite ended SIGKILL with two failure markers. The separately verified harness ownership repair retains all thresholds. Current-source full suite, native Windows, accessibility and manual desktop gates remain. Generation-24 actual source-pinned repository pytest/Ruff, hosted Linux/Windows QA, Qt/native/package, and genuinely independent review remain pending; this is not an empirical accuracy claim or Linux forced-export race fix."
     },
     {
@@ -100,7 +101,7 @@
         "docs/engineering/accuracy-peer-review-20261119.md",
         "docs/engineering-handoffs/generation-34-20261120.md"
       ],
-      "latest_verified_scope": "Report cleanup outcomes preserved; Linux unsafe overwrite removed and Windows replacement retained. Existing CSV-prefix controls now have source-pinned focused repository evidence. Added two form-feed presentation controls; Linux overwrite refusal and source-identity mitigation preserved.",
+      "latest_verified_scope": "Linux overwrite remains refused including --force; Windows replacement retained. CSV formula-prefix cases now also assert original JSON display, including real form-feed controls. No serializer runtime change.",
       "previous_remaining_snapshot": "Final Linux forced replacement source-name race and native publication acceptance remain open. No new empirical accuracy evidence is claimed. Corrected g35 control-character fixtures need source-pinned pytest and separate reviewer before parent integration."
     },
     {
@@ -121,12 +122,12 @@
         "docs/engineering/generation3-qualification-review.md",
         "docs/engineering/generation33-qualification-20261120.md"
       ],
-      "latest_verified_scope": "bbdef5a6 passes 606 affected cases with 1 native Windows skip; Ruff/dependencies/whitespace pass. Original full-suite SIGKILL and native java=unverified gate remain open. Bounded diagnostic retention has independent fake-based acceptance, not native acceptance. PR345/346 combination is a new unqualified source; both predecessor CI queues at handoff remained queued, not green.",
+      "latest_verified_scope": "Exact combined 3cf7ad23:188 passed, no skips; Ruff/dependencies/import identity pass and independent review clear. PR #346 all hosted QA/Qt/native/package/smoke passed on its own tree. PR #345 original Windows NSIS 503 remains recorded and one retry is active. Successor hosted qualification pending.",
       "historical_qualification_notes": "Incomplete full-suite qualification; native Qt disposition; remaining Linux forced-source race; Windows/trust/clean-machine/native and layer-specific accuracy gates remain. PR339 Linux/Windows pytest and Qt successes were not combined acceptance because Ruff I001 failed; generation29 corrected source remains unqualified pending own hosted gates and review.",
       "previous_remaining_snapshot": "Exact final-head full QA/Qt/package/native acceptance, native Qt disposition, Linux forced-export race, full raw-input membership, Windows trust/manual and separate accuracy gates remain open."
     }
   ],
-  "current_handoff": "docs/engineering-handoffs/inventory-tsv-shape-20261120.md",
+  "current_handoff": "docs/engineering-handoffs/cycle2-20261121-2bad.md",
   "generation36_note": "Isolated, test-only cross-column Strings CSV regression extension: source-level review found prior 13 cases checked display only; two additional parameterized cases guard cues, functions, lineage_groups, reasons and assert JSON remains unchanged. Two stand-alone source-equivalent controls passed, repository pytest/Ruff and external independent review pending. PR342 source-specific native/live/Linux QA success does not qualify g36 or erase initial native cache failure.",
   "generation37_note": "Evidence-only successor parsed PR342 exact-head successful Windows native raw-cache artifact: both Java 25.0.5 probes returned 0, raw hashes matched, second run contains cache-origin and recorded reuse, acceptance result passed. Original 5cc java=unverified failure remained without diagnostic artifact and unexplained; no runtime/cache rule change or release gate closure. G36 CSV tests remain independent, unqualified.",
   "generation38_note": "Exact PR342 Windows Qt 5x repeat shard failed 2 investigation project create waitUntil timeouts after 10,423 passed. Generation38 isolated test-only diagnostics preserve original 10000ms and cause while recording safe pending operation/worker busy/flags. Four regression cases authored; seven synthetic controls pass, not native Qt/repository source. A review-found unhashable operation masking path was corrected. Full QA/Ruff and independent post-change review pending; original failure and release blockers retained.",
@@ -137,5 +138,19 @@
   "sibling_reconciliation_note": "PR345/346 reviewed unique candidate admission ordering and bounded inventory replay selectively recovered on a new PR345-based branch; shared header-help/Evidence code remains PR345 exact, PR345 Linux no-replacement rule and enhanced GUI tests retained. Added 2 form-feed CSV and 2 Qt fallback diagnostics. Original 95fe 212 distinct passing bounded cases and 2bad 429/2 scopes are source-specific and not combined-source acceptance. Current branch full pytest/Ruff, native Windows/Qt/package and independent signoff pending; main and release blocked.",
   "inventory_tsv_shape_note": "2026-11-20 isolated PR347 successor: strict replay header and row-shape checks before Git disallow duplicate names, extra/missing cells and blank identifiers while preserving reordered/extra named metadata and bounded large quoted notes. Contract/code/8 authored test cases; six red/new algorithm controls and one compatibility control passed only in reconstructed stdlib Python, not checked-out repository. Independent review and exact-head tests/hosted/native release gates pending; no main merge/release.",
   "inventory_tip_oid_note": "2026-11-20 isolated PR347/TSV-shape successor: snapshot tip_sha now canonical lowercase full 40/64-hex ID and must resolve to the exact commit, with all-row prevalidation before Git. Synthetic Git controls verified 6 early refusals, 1 canonical success, 1 annotated-tag refusal and 3 old mutable-ref resolutions; 7 repository cases authored, checked-out pytest/Ruff and independent signoff pending. PR345 Windows QA external Chocolatey NSIS 503 is a failed CI leg, distinct from PR347's successful native predecessor. No main/release promotion.",
-  "inventory_strict_saved_pr_json_note": "Unqualified isolated successor: strict all-pages PR JSON duplicate key, NaN/Infinity and malformed/deep input refusal before Git replay. Eleven authored repository regressions, 11 local copied-reader controls; actual checkout pytest/Ruff, independent review and source-specific hosted qualification pending. No semantic branch classification or release gain inferred."
+  "inventory_strict_saved_pr_json_note": "Unqualified isolated successor: strict all-pages PR JSON duplicate key, NaN/Infinity and malformed/deep input refusal before Git replay. Eleven authored repository regressions, 11 local copied-reader controls; actual checkout pytest/Ruff, independent review and source-specific hosted qualification pending. No semantic branch classification or release gain inferred.",
+  "cycle2_current_evidence": "docs/engineering/cycle2-consolidation-20261121-2bad.md",
+  "historical_note_keys": [
+    "generation36_note",
+    "generation37_note",
+    "generation38_note",
+    "generation39_note",
+    "generation40_note",
+    "generation41_note",
+    "sibling_reconciliation_note",
+    "inventory_tsv_shape_note",
+    "inventory_tip_oid_note",
+    "inventory_strict_saved_pr_json_note"
+  ],
+  "cycle2_current_note": "Clean combined188 passes, whole-tree Ruff/dependencies/source binding pass, independent review clear. Inventory large-field/TSV/OID/strictJSON repairs now repository-tested; damaged quoted TSV additionally fixed. All eight Strings headers wired. Hosted qualification for the successor remains pending; predecessor receipts remain source-specific."
 }

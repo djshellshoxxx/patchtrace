@@ -302,3 +302,44 @@ def test_snapshot_full_commit_oid_remains_exact(graph, tmp_path):
     snapshot = tmp_path / "exact-oid.tsv"
     snapshot.write_text(f"tip_sha\tbranch\tnote\n{topic}\tindexed\tretained\n", encoding="utf-8")
     assert tool.branches(tool.Git(repo), "origin", snapshot) == [("indexed", topic)]
+
+
+@pytest.mark.parametrize("note", ['"unterminated', '"closed"unexpected'])
+def test_snapshot_rejects_damaged_quoted_fields_before_git(tmp_path, note):
+    tip = "a" * 40
+    snapshot = tmp_path / "damaged-quoting.tsv"
+    snapshot.write_text(
+        f"branch\ttip_sha\tnote\nvalid\t{tip}\tretained\nbroken\t{tip}\t{note}",
+        encoding="utf-8",
+    )
+
+    class NoGitCalls:
+        def commit(self, ref):
+            pytest.fail("malformed quoted evidence reached Git")
+
+    old_limit = csv.field_size_limit()
+    with pytest.raises(ValueError, match="invalid branch snapshot TSV"):
+        tool.branches(NoGitCalls(), "origin", snapshot)
+    assert csv.field_size_limit() == old_limit
+
+
+def test_damaged_quoted_snapshot_preserves_previous_report(graph, tmp_path, capsys):
+    repo, _, main, candidate, topic, *_ = graph
+    snapshot = tmp_path / "unfinished-note.tsv"
+    snapshot.write_text(
+        f'branch\ttip_sha\tnote\ntopic\t{topic}\t"unfinished private evidence',
+        encoding="utf-8",
+    )
+    pulls = tmp_path / "pulls.json"
+    pulls.write_text("[]", encoding="utf-8")
+    output = tmp_path / "inventory.tsv"
+    output.write_bytes(b"previous successful evidence\n")
+
+    with pytest.raises(SystemExit) as error:
+        tool.main(["--repo", str(repo), "--main", main, "--candidate", candidate,
+                   "--pulls-json", str(pulls), "--refs-tsv", str(snapshot), "--output", str(output)])
+    assert error.value.code == 2
+    error_text = capsys.readouterr().err
+    assert "invalid branch snapshot TSV" in error_text
+    assert "unfinished private evidence" not in error_text
+    assert output.read_bytes() == b"previous successful evidence\n"

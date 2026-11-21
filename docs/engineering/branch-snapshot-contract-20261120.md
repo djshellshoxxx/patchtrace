@@ -33,6 +33,14 @@ atomic prior-output preservation and `delete_safe=no`. This does **not** prove
 that a complete/all-head snapshot was supplied; provenance completeness and
 semantic branch review remain separate gates.
 
+Quoted TSV fields must also have complete, valid CSV quoting. Refuse an
+unterminated quoted field or unexpected text after a closing quotation mark
+before any Git lookup, including when the damaged field is only a provenance
+note on a later row. Preserve embedded tabs/newlines and doubled quotation
+marks in valid fields, restore the process CSV limit after rejection, and keep
+previously published output unchanged. A row with the expected number of
+columns is not sufficient evidence that its quoted content was complete.
+
 
 ## Follow-up: bind replay tips to exact Git commit object IDs (2026-11-20)
 

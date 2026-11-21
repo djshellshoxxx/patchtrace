@@ -1,3 +1,13 @@
+## Cycle 2 current checkpoint
+
+Clean reviewed source 3cf7ad23 passes 188 affected cases with no skips/failures, whole-tree Ruff, dependencies and isolated import binding. The initial 187-pass/1-audit-failure run and Ruff finding are retained alongside corrected results. The fresh peer confirms the audit fails when an actual header mapping is removed. [Complete qualification](engineering/cycle2-consolidation-20261121-2bad.md).
+
+PR #346 completed all automated QA/Qt/native/package/smoke checks on its own source. PR #345's original NSIS 503 is retained and a single failed-job-only retry is active; PR #347 Windows QA remains active at the last read. These are predecessor receipts, not new-source full acceptance. Historical SIGKILL causes remain unestablished.
+
+## Historical source-specific checkpoints
+
+The dated entries below retain their original observations. Use the current task ledger and checkpoint above for present status.
+
 ## Current qualification — 20 November 2026
 
 See [the consolidated report](engineering/session-20261120-2bad.md). Final-source batch 3 completed 429 passes and two native Windows skips across 16 files. Full/combined attempts and two bounded batches ended SIGKILL without JUnit and remain incomplete. Scoped reviews and earlier focused successes are separate. Ruff and dependencies pass; no main/release acceptance. Older entries below retain their historical observations.

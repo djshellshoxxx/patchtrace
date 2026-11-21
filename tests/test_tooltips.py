@@ -24,6 +24,7 @@ from PySide6.QtWidgets import (
     QPlainTextEdit,
     QSlider,
     QTabBar,
+    QTableView,
     QTextEdit,
     QToolBar,
     QToolButton,
@@ -254,6 +255,10 @@ def test_every_registry_id_is_applied_somewhere(window, qtbot, tmp_path, setting
     qtbot.addWidget(holder)
     roots.append(holder)
     roots += [state] + [c.widget() for c in window.panels.build_all_for_test().values() if c.widget() is not None]
+    # A hidden controller has not received its project hook. Show Strings through
+    # the real host so its empty table has the same headers a user can inspect.
+    assert window.panels.show_panel('strings') is not None
+    assert window.panels.controller('strings').panel.table.horizontalHeader().count() == 8
     first, second = QDockWidget('A', window), QDockWidget('B', window)
     first.setObjectName('zz_a.dock'), second.setObjectName('zz_b.dock')
     window.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, first)
@@ -265,6 +270,14 @@ def test_every_registry_id_is_applied_somewhere(window, qtbot, tmp_path, setting
         names |= {a.objectName() for a in actions(root)}
     shown = {w.toolTip() for root in roots + [window] for w in controls(root)}
     shown |= {a.toolTip() for root in roots + [window] for a in actions(root)}
+    # Table headers are model roles, not widget tooltips. Count only help actually
+    # returned by a built view's model; declared but unwired ids still fail below.
+    for root in roots + [window]:
+        for view in root.findChildren(QTableView):
+            model = view.model()
+            if model is not None:
+                shown.update(model.headerData(column, Qt.Orientation.Horizontal, Qt.ItemDataRole.ToolTipRole)
+                             for column in range(view.horizontalHeader().count()))
     names |= {tip_id for tip_id in REGISTRY if tooltip(tip_id) in shown}  # a control may carry a per-panel name
     names |= {'dialog.text_view', 'dialog.close', 'confirm.yes', 'confirm.no', 'gui.graph'}  # FOCUSABLE lacks QGraphicsView
     names |= {n.rsplit('.', 1)[0] for n in names if n.startswith('profile.detector')}

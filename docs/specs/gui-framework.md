@@ -108,6 +108,16 @@ other states polite; blank and repeated state text do not emit. This recovers
 Offscreen checks verify the host call path. Actual Windows screen-reader output
 remains the separate native acceptance gate in SPEC-45.
 
+6.8 The Strings panel registers and assigns the existing eight
+`strings.col.{change,string,type,older,newer,function,cues,source}` ids to its
+corresponding `ColumnSpec` headers. The header help is available on the prepared
+empty table and after results arrive. Display and accessible header labels remain
+`Change`, `String`, `Type`, `Older`, `Newer`, `Function`, `Cues`, and `Source`;
+registry help is escaped rich text only in `ToolTipRole`. The registry coverage
+audit reads actual horizontal model-header tooltips as well as widget/action
+tooltips, without exempting registered column ids. Other panels retain their
+existing optional-id fallback until their own column mappings are implemented.
+
 The older workspace slice also proposed Alt+Up/Down/Backspace table sorting and
 a 400-entry empty-query palette. Those behaviors are not part of this recovery:
 Alt+Up/Down remain reserved for Previous/Next difference (section 3.7 and GUI plan

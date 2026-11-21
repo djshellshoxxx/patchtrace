@@ -144,6 +144,8 @@ def test_csv_formula_guard_considers_leading_ignorable_prefixes(delta, display, 
     assert json.loads(metadata)['contract'] == export.EXPORT_CONTRACT
     assert next(rows) == list(export.CSV_COLUMNS)
     assert next(rows)[3] == expected
+    # Formula protection belongs to CSV presentation, including form-feed prefixes.
+    assert json.loads(export.render(doc, 'json'))['changes'][0]['display'] == display
 
 
 @pytest.mark.parametrize(

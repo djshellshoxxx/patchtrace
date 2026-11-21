@@ -305,6 +305,18 @@ GUI (`ui_strings.py`, Qt only; logic in `strings/view_model.py`). **Where**: doc
 **Model/view**: `StringsTableModel(QAbstractTableModel)` over immutable view-model rows plus a Python index list for filter and sort (no `QSortFilterProxyModel`, as `EvidenceTableModel`); `data()` returns precomputed strings; one regular grid with header items (an Edited pair is one row, no merged cells; F16); the Change column carries a glyph and a word (`+ Only in newer`, `- Only in older`, `~ Edited`, `= In both`, `? Not compared`), never colour alone; AccessibleTextRole = row sentence ("Only in newer. Static string, 26 characters. Function ParseHeader, modified. Message with format specifier."), AccessibleDescriptionRole = reasons and link tier; ToolTipRole through `tooltips.template` (escaped, <= 300 chars). The default scope shows only changed strings (hundreds); All strings is a virtualized inventory (200k rows) with `resizeContentsPrecision(0)`, fixed header sections and font-metric row height (F16). Selection survives reloads by (value hash, side).
 **Keyboard**: Tab order source bar, filters, table, detail, buttons; arrows, PageUp/PageDown, Home/End in the table; Enter opens the function (else the hex view); Space focuses the detail; Ctrl+C copies the escaped single-line form of up to 200 rows / 16 KiB (as `evidence_view`); Ctrl+Shift+C copies exact text, after a confirmation when it holds control characters; Ctrl+F inside the dock focuses the filter (a widget-scoped shortcut, so it never competes with code-pane search), Esc clears it; F6 cycles panes.
 **Accessible names**: `Strings panel`, `Strings table`, `Change filter`, `Type filter`, `Side filter`, `Cue filter`, `Minimum length`, `Text filter`, `Scope`, `Comparison basis`, `String detail`, `Source`, `FLOSS path`, `Run with emulation`. **Tooltip ids** (What/Why/Effect/Source/Availability): `strings.dock`, `strings.action`, `strings.table`, `strings.col.{change,string,type,older,newer,function,cues,source}`, `strings.filter.{change,type,side,cue,minlen,text,scope,noise}`, `strings.run.{builtin,floss,emulation}`, `strings.{cancel,probe,browse,basis,detail,rescan}`, `strings.copy.{safe,exact}`, `strings.open.{function,hex}`, `strings.export`; entries live in `strings/tooltip_entries.py` (pure) and are merged by a `tooltips.register_entries()` hook (A7).
+
+**Shipped column-help wiring (2026-11-20, Pacific):** the panel's built-tip declaration
+includes all eight existing `strings.col.*` ids, and the corresponding
+`ColumnSpec.tip_id` values make their registered help available through the real
+table model's horizontal `ToolTipRole`, before and after results are loaded.
+Header display/accessibility labels and cell rendering, filtering, sorting,
+copying, and export data are unchanged. The Change help covers the recorded
+comparison state, including shared and unknown results. Function help describes
+an available link or a stated missing/unknown link; neither state proves that no
+function uses the string. Offscreen checks cover all eight headers, escaped
+registry text, and actual header participation in the global tooltip audit.
+Native Windows screen-reader acceptance remains separate.
 **States and exact copy** (checked against `BANNED`: no probab/likelihood/vulnerab/exploit/safe/secure/fixed/verified/proven/certain, also inside longer words):
 | state | text |
 |---|---|

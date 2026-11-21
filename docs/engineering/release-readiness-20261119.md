@@ -1,3 +1,12 @@
+## Cycle 2 current checkpoint
+
+The exact combined source 3cf7ad23 passes 188 affected tests, Ruff/dependencies/source binding and independent review. Current runtime repairs and eight Strings header mappings are integrated. Its hosted/full/native/package qualification remains pending, so this successor is not merge-eligible yet. Release readiness remains false, with manual/trust/accessibility, provenance and layer-specific evidence still open.
+
+PR #346's automated qualification is now successful on its exact source. PR #345's original Windows NSIS feed 503 is preserved and one failed-job-only retry is active. Those facts supersede the older queue snapshots only for their named sources. [Current report](cycle2-consolidation-20261121-2bad.md).
+
+## Historical source-specific checkpoints
+
+The dated entries below retain their original observations. Use the current task ledger and checkpoint above for present status.
 
 ## Pending isolated strict saved PR JSON continuation (2026-11-20)
 

@@ -1,3 +1,20 @@
+## Cycle 2 current checkpoint
+
+- [x] Independently qualify the recovered sibling admission and inventory successors using actual repository source.
+- [x] Repair damaged quoted TSV admission and preserve prior reports; correct real invalid UTF-8 coverage.
+- [x] Wire all eight Strings headers and verify the real-host tooltip audit without additional exemptions.
+- [x] Pass 188 combined affected tests, whole-tree Ruff, dependencies, isolated source binding and independent review.
+- [x] Refresh360 retained branch refs and add bounded historical UI/report review.
+- [ ] Qualify the exact new hosted source and inspect PR #345's one failed-job retry before any guarded merge.
+- [ ] Continue appropriate header mappings in other panels and native screen-reader acceptance.
+- [ ] Continue full provenance membership, historical branch review, Windows manual/trust and separate accuracy gates.
+
+Use [the task ledger](../docs/engineering/task-ledger.json) and [current handoff](../docs/engineering-handoffs/cycle2-20261121-2bad.md).
+
+## Historical source-specific checkpoints
+
+The dated entries below retain their original observations. Use the current task ledger and checkpoint above for present status.
+
 ## Inventory snapshot column-shape replay — 2026-11-20
 
 - [ ] On source-bound checkout run `python -m pytest -q tests/test_branch_inventory.py`, whole-tree `python -m ruff check src tests tools` and supported offscreen aggregate with explicit termination receipts; standalone stdlib controls are not repository acceptance.

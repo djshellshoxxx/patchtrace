@@ -65,6 +65,7 @@ def test_invalid_saved_pr_json_preserves_previous_inventory_output(tmp_path, cap
     ("name", "raw"),
     [
         ("invalid-json", "{"),
+        ("invalid-escape", '[{"head":{"ref":"\\xff"}}]'),
         ("deeply-nested", "[" * 10000 + "{}" + "]" * 10000),
     ],
 )
@@ -77,7 +78,10 @@ def test_saved_pr_json_rejects_malformed_or_excessively_nested_documents(tmp_pat
 
 def test_saved_pr_json_invalid_utf8_returns_fixed_input_error(tmp_path):
     path = tmp_path / "malformed-utf8.json"
-    path.write_bytes(b'[{"head":{"ref":"\\xff"}}]')
+    raw = b'[{"head":{"ref":"\xff"}}]'
+    with pytest.raises(UnicodeDecodeError):
+        raw.decode("utf-8")
+    path.write_bytes(raw)
     with pytest.raises(ValueError, match="invalid pull-request metadata JSON") as caught:
         tool.read_json(path)
     assert "ref" not in str(caught.value)

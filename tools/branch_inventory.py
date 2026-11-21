@@ -96,7 +96,9 @@ def branches(git: Git, remote: str, snapshot: Path | None = None) -> list[tuple[
             raise ValueError("branch snapshot exceeds the input byte limit")
         previous_limit = csv.field_size_limit(MAX_METADATA_BYTES)
         try:
-            reader = csv.DictReader(io.StringIO(raw.decode("utf-8"), newline=""), delimiter="\t")
+            reader = csv.DictReader(
+                io.StringIO(raw.decode("utf-8"), newline=""), delimiter="\t", strict=True,
+            )
             headers = reader.fieldnames
             if (not headers or len(headers) != len(set(headers))
                     or "branch" not in headers or "tip_sha" not in headers
