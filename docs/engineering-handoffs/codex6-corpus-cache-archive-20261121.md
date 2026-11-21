@@ -17,9 +17,9 @@ no foreground reviewer/worker is running in the background.
    after production repair, with positive cache archive/hash assertions;
    CODEX-1 and CODEX-5 strict xfails are retained.
 4. `tests/test_corpus_cache_archive_integrity_20261121.py`: hermetic
-   structural check plus ten individual negative mutation cases.
+   structural check plus twelve individual negative mutation cases.
 5. Evidence: `docs/engineering/evidence/codex6-archive-cache-controls-20261121.json`.
-   Exact source static checks 12/12; negative JS mutations 10/10;
+   Exact source static checks 12/12; negative JS mutations 12/12;
    synthetic shell archive verify + tamper refusal for both formats.
    This is author-side source review and shell-mechanism testing only.
 6. Ledger: `docs/engineering/task-ledger.json`, authoritative.
