@@ -98,6 +98,52 @@ def test_tsv_roundtrip_replays_exact_tips_after_branch_movement(graph, tmp_path)
     assert dict(tool.branches(replay_git, "origin"))["topic"] == base
 
 
+def test_snapshot_replays_large_quoted_evidence_and_restores_csv_limit(graph, tmp_path):
+    repo, base, main, candidate, topic, *_ = graph
+    git = tool.Git(repo)
+    refs = tool.branches(git, "origin")
+    rows, _ = tool.inventory(git, main, candidate, refs, [], "owner/repository")
+    rows[0]["note"] = json.dumps({"evidence": 'quoted "value"\t\n' + "x" * (128 * 1024)})
+    snapshot = tmp_path / "large-evidence.tsv"
+    tool.publish(snapshot, tool.render(rows))
+    run(repo, "update-ref", "refs/remotes/origin/topic", base)
+    previous_limit = csv.field_size_limit()
+
+    assert tool.branches(tool.Git(repo), "origin", snapshot) == refs
+    assert dict(refs)["topic"] == topic
+    assert csv.field_size_limit() == previous_limit
+
+
+def test_oversized_snapshot_preserves_previous_output(graph, tmp_path, monkeypatch, capsys):
+    repo, _, main, candidate, topic, *_ = graph
+    snapshot = tmp_path / "oversized.tsv"
+    snapshot.write_text("branch\ttip_sha\tnote\n" + f"topic\t{topic}\t" + "x" * 200 + "\n")
+    pulls = tmp_path / "pulls.json"
+    pulls.write_text("[]", encoding="utf-8")
+    previous = tmp_path / "previous.tsv"
+    previous.write_text("previous successful evidence\n", encoding="utf-8")
+    previous_limit = csv.field_size_limit()
+    monkeypatch.setattr(tool, "MAX_METADATA_BYTES", 128)
+
+    with pytest.raises(SystemExit) as error:
+        tool.main(["--repo", str(repo), "--main", main, "--candidate", candidate,
+                   "--pulls-json", str(pulls), "--refs-tsv", str(snapshot), "--output", str(previous)])
+    assert error.value.code == 2
+    assert "branch snapshot exceeds" in capsys.readouterr().err
+    assert previous.read_text() == "previous successful evidence\n"
+    assert csv.field_size_limit() == previous_limit
+
+
+def test_snapshot_decode_failure_restores_csv_limit(graph, tmp_path):
+    repo, *_ = graph
+    snapshot = tmp_path / "invalid-utf8.tsv"
+    snapshot.write_bytes(b"branch\ttip_sha\tnote\n\xff")
+    previous_limit = csv.field_size_limit()
+    with pytest.raises(UnicodeDecodeError):
+        tool.branches(tool.Git(repo), "origin", snapshot)
+    assert csv.field_size_limit() == previous_limit
+
+
 def test_refuses_shallow_history(graph, tmp_path):
     repo, _, main, candidate, *_ = graph
     clone = tmp_path / "shallow"
