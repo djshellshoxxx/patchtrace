@@ -357,8 +357,12 @@ def _fetch_one(request, headers, opener, cancel, clock, sleep, now, pacer=None) 
             deadline = clock() + TOTAL_TIMEOUT  # the 30 s budget starts at the actual send, not at pacing waits
             wall_deadline = time.monotonic() + TOTAL_TIMEOUT
         try:
-            return interruptible(partial(_attempt, request.url, headers, opener, cancel, clock, deadline, now),
-                                 _AttemptLimit(cancel, wall_deadline))
+            result = interruptible(partial(_attempt, request.url, headers, opener, cancel, clock, deadline, now),
+                                   _AttemptLimit(cancel, wall_deadline))
+            _cancelled(cancel)
+            if clock() >= deadline or time.monotonic() >= wall_deadline:
+                raise EnrichmentError('PT-ENRICH-NETWORK', 'total timeout exceeded', recoverable=True)
+            return result
         except Cancelled:
             if cancel is not None and cancel.is_set():
                 raise EnrichmentError('PT-ENRICH-CANCEL', 'CVE fetch cancelled', recoverable=True) from None
