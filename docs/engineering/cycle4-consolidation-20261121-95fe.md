@@ -1,5 +1,53 @@
 # PatchTrace cycle4 bounded follow-up — 21 November 2026 UTC
 
+## Current source after the PR349 parent update
+
+The separate follow-up now includes published PR #349 head `daee337c48c63dda8aeac149c407e900c79dcc86`. Its Search
+help, storage repairs, direct Action pins, tool-version parsing and probe diagnostics
+are preserved. Only the two reviewed C4 Build environment help files differ from the
+parent's production tree. PR #349 and main remain under the parallel 837FE owner's
+control and were not modified by this session.
+
+Merge `e7391634a46bbb1f9f1fdc3563abadb837d1b45b` preserves all 90 parent ledger tasks
+plus the three C4 tasks. The shared audit retains real-host Strings, Search and Build
+environment activation with 8/6/5 header sections. Pages retains all five parent Action
+pins and changes exactly the two intended install/test commands. Both C4 specifications
+are registered without changing the registry test.
+
+| Current qualification | Actual result |
+| --- | --- |
+| Registry test on clean merge before citation repair | 108 passed, 2 failed for the two new specifications |
+| Clean combined source, 21 maintained selectors | **580 passed, 1 CODEX-5 expected failure, 0 ordinary skips/failures/errors** |
+| Registry cases included above | 110 passed; not an additional count |
+| Required Ruff `src tests tools`, pip check and isolated source binding | Passed on the same clean source |
+| Independent implementation/standards merge review | Zero findings; all 670 other parent production files and every other workflow preserved |
+| Independent actual-model audit sensitivity | Normal 1 pass; missing Basis or Why each produces the exact intended failure |
+| Independent history/evidence review | All 93 task objects and 372 existing evidence files preserved; no blockers |
+
+Tested local `111803d54cfebc1b779f4832a069904b3ee91a7c` maps to REST checkpoint `7ddb1130ca501b9cfda9949aa49e684f9f4b8f26`, identical tree `d3264bf26f83d039fa212c26b47c094f86691c3f`.
+Later edits change documentation/evidence only. [Current qualification](evidence/cycle4-parent-20261121/qualification.json)
+and [reviews and original receipts](evidence/cycle4-parent-20261121/README.md) retain
+exact source, count and acceptance boundaries. Resolve the live follow-up PR body for
+final publication identity and hosted state.
+
+The earlier 391-pass/two-xfail results below remain pre-parent history. They are not
+added to the new total; CODEX-1 is closed by the parent source. The initial dirty-merge
+registry attempt is retained alongside the clean reproduction. An accidental
+`ruff check .` found 1,063 diagnostics in 138 docs/help files, all exact parent bytes;
+the required unchanged lint command passes. Two original literal trailing spaces in
+sealed raw bundle outputs remain intact. No test, failure or lint rule was suppressed.
+
+Hosted new-head QA, hosted Pages index/build acceptance, the parent's Windows Intel
+advisory disposition, wider CODEX-5 lanes and its per-command audit gap remain open.
+Native/manual/raw-provenance and layered release gates also remain. No Pages dispatch
+was performed. Any qualified main merge still requires fresh checks and both
+`[no release] [no deploy]` in the actual resulting commit.
+
+## Initial C4 source record
+
+The sections below retain the original pre-parent history. The current source and
+qualification above supersede only their pending combination state.
+
 ## Outcome and integration ownership
 
 Two unowned slices are implemented, independently reviewed and locally qualified:
