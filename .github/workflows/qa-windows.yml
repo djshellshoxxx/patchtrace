@@ -154,6 +154,15 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     steps:
+      # Host fixtures and the smoke driver come from this workflow's exact source SHA.
+      # Checkout must precede the artifact download: checkout cleans untracked files.
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: "python -m pip install --only-binary=:all: -e '.[dev,search,rules]'"
       - uses: actions/download-artifact@v4
         with:
           name: PatchTrace-linux-x86_64
@@ -174,6 +183,13 @@ jobs:
           LANG: C.UTF-8
       - run: QT_QPA_PLATFORM=xcb xvfb-run -a PatchTrace/PatchTrace --self-test
         env:
+          LANG: C.UTF-8
+      # CODEX-14: source CLI smoke is not proof that packaged frozen commands load.
+      # The verified tar extraction above is the only executable under test.
+      - name: Full frozen Linux CLI smoke (CODEX-14)
+        run: python tools/frozen_smoke.py "$PWD/PatchTrace/PatchTrace"
+        env:
+          QT_QPA_PLATFORM: offscreen
           LANG: C.UTF-8
   # Decides whether this push publishes a prerelease (tools/release_gate.py): every third counted merge, a v* tag, a
   # release marker in the head commit message, or no earlier prerelease. It fails open and says why in `reason`.

@@ -7,8 +7,6 @@ import re
 import tomllib
 from pathlib import Path
 
-import pytest
-
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -90,11 +88,43 @@ def test_full_payload_validation_parses_manifest():
     assert validates, 'Backend attachment checks presence but never parses/verifies the manifest'
 
 
-@pytest.mark.xfail(strict=True, reason='CODEX-14')
-def test_linux_package_runs_full_cli_smoke():
+def _linux_smoke_job():
     workflow = source('.github/workflows/qa-windows.yml')
-    linux = workflow.split('  linux-package:\n', 1)[1].split('  # Decides', 1)[0]
-    assert 'frozen_smoke' in linux or 'frozen_smoke' in source('tools/build_linux.py')
+    return workflow.split('  linux-smoke:\n', 1)[1].split('  # Decides', 1)[0]
+
+
+def test_linux_package_runs_full_cli_smoke():
+    """CODEX-14: qualify the unpacked release artifact, not a source CLI or the build folder."""
+    smoke = _linux_smoke_job()
+    required = [
+        'actions/download-artifact@v4',
+        'actions/checkout@v4',
+        'actions/setup-python@v5',
+        "pip install --only-binary=:all: -e '.[dev,search,rules]'",
+        'sha256sum -c PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256',
+        'tar xzf PatchTrace-0.1.0-linux-x86_64.tar.gz',
+        'test -x PatchTrace/PatchTrace',
+        'python tools/frozen_smoke.py "$PWD/PatchTrace/PatchTrace"',
+    ]
+    for term in required:
+        assert term in smoke, f'linux-smoke missing {term}'
+    assert smoke.index('actions/checkout@v4') < smoke.index('actions/download-artifact@v4')
+    assert 'persist-credentials: false' in smoke
+    assert smoke.index('actions/setup-python@v5') < smoke.index('python tools/frozen_smoke.py')
+    assert smoke.index('sha256sum -c ') < smoke.index('tar xzf ') < smoke.index('python tools/frozen_smoke.py')
+    assert 'QT_QPA_PLATFORM: offscreen' in smoke
+    assert 'LANG: C.UTF-8' in smoke
+    assert 'matrix:\n        os: [ubuntu-22.04, ubuntu-24.04]' in smoke
+
+
+def test_full_linux_frozen_smoke_preserves_both_qt_modes():
+    smoke = _linux_smoke_job()
+    assert 'QT_QPA_PLATFORM=offscreen PatchTrace/PatchTrace --self-test' in smoke
+    assert 'QT_QPA_PLATFORM=xcb xvfb-run -a PatchTrace/PatchTrace --self-test' in smoke
+    frozen = source('tools/frozen_smoke.py')
+    assert 'run_checks([exe], frozen=True)' in frozen
+    assert 'binexport_checks(launcher, frozen=frozen, check=check)' in frozen
+    assert 'intelligence_checks(launcher, frozen=frozen, check=check)' in frozen
 
 
 def test_full_bundle_pin_has_no_other_gpl_components():

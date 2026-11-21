@@ -1,3 +1,7 @@
+# Latest bounded continuation — CODEX-14 Linux frozen CLI acceptance
+
+[CODEX-14 handoff](codex14-linux-frozen-cli-smoke-20261121.md) tracks an isolated child of draft PR348. The extracted Linux archive now has a full CLI smoke invocation in the workflow and stronger packaging regressions; 13 source-only checks pass, but exact-source hosted Linux 22.04/24.04, full/Qt/native/package and independent review are pending. Do not merge or release yet.
+
 # Current continuation — cycle 2
 
 Start with [cycle2 handoff](cycle2-20261121-2bad.md) and the [task ledger](../engineering/task-ledger.json). Inventory successors are actually repository-tested and independently reviewed; malformed quoted TSV is repaired; all eight Strings headers now expose registered help. Clean combined source 3cf7ad23 passes 188 cases, Ruff/dependencies/source binding and independent review. New-source hosted qualification remains pending. Preserve original failures and inspect the one PR #345 failed-job retry.

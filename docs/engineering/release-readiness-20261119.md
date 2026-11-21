@@ -1,3 +1,14 @@
+## Pending CODEX-14 Linux frozen CLI qualification (2026-11-21)
+
+An isolated PR348 child now runs `tools/frozen_smoke.py` on the extracted
+checksum-verified Linux package after the previously present offscreen and
+xcb checks. Two static packaging assertions strengthen an inherited strict
+xfail. Thirteen author-side source checks pass; **actual Linux 22.04/24.04
+frozen execution has not run**, and current-source full QA/Qt/native/package
+plus independent peer remain required. The previous PR347 hosted jobs completed
+successfully but only qualify PR347. No main promotion/release is authorized.
+[Scope](codex14-linux-frozen-cli-smoke-20261121.md).
+
 ## Cycle 2 current checkpoint
 
 The exact combined source 3cf7ad23 passes 188 affected tests, Ruff/dependencies/source binding and independent review. Current runtime repairs and eight Strings header mappings are integrated. Its hosted/full/native/package qualification remains pending, so this successor is not merge-eligible yet. Release readiness remains false, with manual/trust/accessibility, provenance and layer-specific evidence still open.

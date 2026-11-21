@@ -1665,3 +1665,15 @@ for exact commits and limitations. No main merge/release.
 - [ ] On a supported checked-out source, verify seven exact Git SHA replay regressions and the full `tests/test_branch_inventory.py` suite; run whole-tree Ruff and source-bound focused/full checks with termination evidence. See `docs/engineering-handoffs/inventory-tip-oid-20261120.md`.
 - [ ] Obtain independent review of exact SHA-1/SHA-256 admission, annotated-tag mismatch, all-rows prevalidation and TSV prior-output preservation; do not equate synthetic Git control success with repository pytest.
 - [ ] Retain PR345 Windows QA failure (Chocolatey NSIS v3.13 feed HTTP 503) as a packaging availability gate; inspect terminal PR347 QA/Qt/package and qualify successor exact source without duplicate jobs. No main/release merge while other blockers remain.
+
+
+## CODEX-14 frozen Linux CLI source — 2026-11-21
+
+- [x] Specify full extracted-archive CLI smoke on both supported Ubuntu versions; keep offscreen/xcb self-tests, archive SHA-256 and immutable source/fixture identity.
+- [x] Add the complete `tools/frozen_smoke.py` invocation and strengthen inherited CODEX-14 static regression. Retain explicit top-level-only coverage limits.
+- [x] Record 13 author-side source invariants; no live execution or source-bound pytest falsely claimed.
+- [ ] After PR348 original runs finish, obtain source-specific hosted Linux 22.04/24.04 full CLI smoke, Qt/QA/native/package checks and an independent reviewer. Check frozen BinExport child and synthetic CSAF/series behavior. Use a guarded REST merge only if every applicable gate is green; no release.
+- [ ] Keep unrelated CODEX-1/5/6, manual Windows/trust/accessibility, raw index/entry membership, historical 181/16 branch reviews and L1/L2/L3 evidence open.
+
+Owner/branch: `codex/patchtrace-linux-frozen-cli-smoke-20261121`; handoff
+`docs/engineering-handoffs/codex14-linux-frozen-cli-smoke-20261121.md`.

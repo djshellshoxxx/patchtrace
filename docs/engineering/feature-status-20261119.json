@@ -152,5 +152,14 @@
     "inventory_tip_oid_note",
     "inventory_strict_saved_pr_json_note"
   ],
-  "cycle2_current_note": "Clean combined188 passes, whole-tree Ruff/dependencies/source binding pass, independent review clear. Inventory large-field/TSV/OID/strictJSON repairs now repository-tested; damaged quoted TSV additionally fixed. All eight Strings headers wired. Hosted qualification for the successor remains pending; predecessor receipts remain source-specific."
+  "cycle2_current_note": "Clean combined188 passes, whole-tree Ruff/dependencies/source binding pass, independent review clear. Inventory large-field/TSV/OID/strictJSON repairs now repository-tested; damaged quoted TSV additionally fixed. All eight Strings headers wired. Hosted qualification for the successor remains pending; predecessor receipts remain source-specific.",
+  "codex14_linux_frozen_cli_smoke": {
+    "status": "implemented-static-contract-hosted-pending",
+    "branch": "codex/patchtrace-linux-frozen-cli-smoke-20261121",
+    "parent": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+    "scope": "Run full frozen_smoke against extracted checksum-verified Linux x86-64 on Ubuntu 22.04/24.04; retain both offscreen/xcb self-tests.",
+    "source_controls": "13 author-side static source invariants passed; not repository pytest or frozen executable acceptance",
+    "remaining": "Live source-specific full CLI smoke both distros, full QA/Qt/native/package, independent review, and all unchanged release gates.",
+    "evidence": "docs/engineering/codex14-linux-frozen-cli-smoke-20261121.md"
+  }
 }
