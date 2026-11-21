@@ -94,7 +94,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: rizin-archive
-          key: rizin-${{ env.RIZIN_SHA256 }}
+          key: rizin-archive-v1-${{ env.RIZIN_SHA256 }}
       - name: Install pinned rizin (fail closed on missing or mismatched SHA-256)
         shell: bash
         run: |
@@ -123,7 +123,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ghidra-archive
-          key: ghidra-${{ env.GHIDRA_SHA256 }}
+          key: ghidra-archive-v1-${{ env.GHIDRA_SHA256 }}
       - name: Install Ghidra and Ghidriff (fail closed on digest mismatch)
         if: contains(env.ENGINES, 'ghidriff')
         shell: bash
