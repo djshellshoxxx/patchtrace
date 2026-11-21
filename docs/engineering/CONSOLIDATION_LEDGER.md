@@ -80,3 +80,7 @@ AST. The GUI recovery is therefore shared work and must be counted once. PR345
 also preserves additional header/Evidence assertions and tests. Its report,
 TaskRunner and Linux publication changes remain separately reviewed/qualified.
 See [publication receipt](evidence/cycle95fe/initial-publication.json).
+
+## Current combined PR349 candidate — 837FE
+
+[Combined report](cycle837fe-combined-pr349-20261121.md) and [authoritative ledger](task-ledger.json) supersede earlier next-action text only for the completed named scopes. Reviewed storage/Search, CODEX-1 and Intel repairs are integrated with the released 95FE Linux/cache/Pages source. Final code `2a67980c` passes 1,296 affected cases with 1 CODEX-5 xfail; new-head hosted qualification and main promotion remain pending. Preserve original failed controls, the PR349 registry failure, Windows Intel limits, all historical branches and separate release gates.

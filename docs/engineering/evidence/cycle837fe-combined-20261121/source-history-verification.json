@@ -1,0 +1,7 @@
+{
+  "returncode": 0,
+  "stdout": "The bundle contains this ref:\n2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c HEAD\nThe bundle requires these 2 refs:\n6b6fcd3597a604212032ffc453477aeb6edc69ff \n11f51c105bf63946f59373ae605b937c4fee607a \nThe bundle uses this hash algorithm: sha1\n",
+  "stderr": "/workspace/scratch/837fe19aae3a/PatchTrace-combined/docs/engineering/evidence/cycle837fe-combined-20261121/original-source-history.bundle is okay\n",
+  "source": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
+  "bundle_sha256": "41b82d2f6998e621dc3ded24df8dc4f73f97effa16d8676e3829600ec8cdea30"
+}

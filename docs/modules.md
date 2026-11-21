@@ -1444,3 +1444,7 @@ See [combined-source handoff](engineering-handoffs/sibling-reconciliation-202611
 | `search/qt_panel.py`, `search/tooltip_data.py` | Map six existing columns to accurate registered header explanations | Actual host/model roles, cells/navigation preservation and one-mapping negative audit |
 
 No schema, provider, new storage module or analysis capability is introduced. [Source-specific report](engineering/cycle837fe-recovery-and-search-20261121.md).
+
+## Current combined continuation index — 837FE
+
+The [combined PR349 report](engineering/cycle837fe-combined-pr349-20261121.md) and [handoff](engineering-handoffs/cycle837fe-combined-pr349-20261121.md) index the reviewed service/backup recovery, Search header help, direct Action pinning, capa/FLOSS version-name compatibility, and test-only live-probe observer. The existing [spec registry](specs/REGISTRY.md) now registers Pages control, direct Action pinning and live probe diagnostics. No new application framework or native engine is introduced.

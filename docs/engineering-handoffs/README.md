@@ -1,3 +1,7 @@
+## Current combined handoff — PR349 / 837FE
+
+Use [the combined handoff](cycle837fe-combined-pr349-20261121.md) and [authoritative ledger](../engineering/task-ledger.json). The code passes 1,296 affected cases with 1 CODEX-5 expected failure and has completed scoped independent review. Exact-publication-head hosted qualification remains pending. Earlier entries retain their source-specific history; this handoff supersedes their named ownership and next-action paragraphs.
+
 ## Current combined follow-up — PR #349 plus 837FE
 
 Root837FE has consumed the explicit completed 95FE-C3 handoff. The storage/Search fixes are combined locally with PR #349; combined qualification and CODEX-1 direct pinning are in progress. No ancestor result qualifies this new source. Preserve every earlier source-specific receipt and hold main promotion until the combined checks and blockers are resolved.

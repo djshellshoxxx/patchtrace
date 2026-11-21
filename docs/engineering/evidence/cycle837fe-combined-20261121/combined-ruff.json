@@ -1,0 +1,26 @@
+{
+  "label": "ruff",
+  "command": [
+    "/workspace/scratch/837fe19aae3a/combined-venv/bin/python",
+    "-m",
+    "ruff",
+    "check",
+    "src",
+    "tests",
+    "tools"
+  ],
+  "cwd": "/workspace/scratch/837fe19aae3a/PatchTrace-combined",
+  "head": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
+  "tree": "2666e72d5efd51600b170cef033103c9947bae3b",
+  "dirty_before": "",
+  "started_at": "2026-11-21T06:16:44.118132+00:00",
+  "qt_platform": "offscreen",
+  "pythonpath": null,
+  "pid": 17,
+  "returncode": 0,
+  "seconds": 0.333,
+  "finished_at": "2026-11-21T06:16:44.451701+00:00",
+  "head_after": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
+  "dirty_after": "",
+  "child_ru_maxrss_kib_observed": 40264
+}

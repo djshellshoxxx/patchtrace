@@ -55,3 +55,7 @@ implementation once. Read [the integration queue](INTEGRATION_QUEUE.md) and
 [exact publication receipt](evidence/cycle95fe/initial-publication.json) before
 assigning further GUI recovery or merging either ledger. Neither candidate is
 main-qualified by the publication observations.
+
+## Current combined PR349 candidate — 837FE
+
+[Combined report](cycle837fe-combined-pr349-20261121.md) and [authoritative ledger](task-ledger.json) supersede earlier next-action text only for the completed named scopes. Reviewed storage/Search, CODEX-1 and Intel repairs are integrated with the released 95FE Linux/cache/Pages source. Final code `2a67980c` passes 1,296 affected cases with 1 CODEX-5 xfail; new-head hosted qualification and main promotion remain pending. Preserve original failed controls, the PR349 registry failure, Windows Intel limits, all historical branches and separate release gates.
