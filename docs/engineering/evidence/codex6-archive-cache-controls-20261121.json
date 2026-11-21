@@ -15,7 +15,7 @@
       "failures": 0
     },
     "author_js_negative_mutations": {
-      "passes": 10,
+      "passes": 12,
       "failures": 0,
       "details": [
         "rizin cached tree substitution",
@@ -27,7 +27,9 @@
         "Ghidra clean destination omission",
         "rizin archive identity substitution",
         "Ghidra archive identity substitution",
-        "Ghidriff engine gate removal"
+        "Ghidriff engine gate removal",
+        "rizin checksum source substitution",
+        "rizin extraction source substitution"
       ]
     },
     "synthetic_local_shell_replay": {
