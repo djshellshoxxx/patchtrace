@@ -39,3 +39,11 @@ No target binary execution, force-push, rebase, branch deletion, release, deploy
 - Live repository census: 360 branch heads, 59 tag refs. Main remains `fdc2696c23bdbfe7668348f25e3b336ce33039f7`. This is an existence snapshot, **not** exhaustive semantic reconciliation of all heads.
 - PR347 remains draft at `b461ac64eb9beb74449ce2b18b6795a2af34a02a`, based on draft PR345's `39c38a02f126963fc03827fa49741255590227ad`. PR347 original QA workflow `44843482603`: Linux QA and all four Linux Qt shards succeeded; Windows QA and Windows Qt still in progress, release-gate skipped. Native workflow `44843482467` succeeded on its original source. No workflow was dispatched for this new branch while the parent CI remained active.
 - Author-side adversarial review of the final strict-reader path: duplicate nested keys reject before identity extraction, nonfinite constants reject with fixed text, normal Unicode nested records survive, malformed/deep JSON uses a fixed error, and the CLI verifies PR metadata before branch/Git replay. The 32 MiB read budget and late atomic output publication remain unchanged. This is **not** a separate independent reviewer.
+
+## Final isolated control extension
+
+An additional local stdlib replay verified invalid UTF-8 refusal and that an
+invalid saved PR document aborts before a Git-replay stand-in while preserving
+the exact previous output bytes. Combined with the nine previous local controls,
+**11 copied-function outcomes pass**, but no checked-out repository pytest,
+Ruff or independent worker is claimed. The machine receipt was updated.
