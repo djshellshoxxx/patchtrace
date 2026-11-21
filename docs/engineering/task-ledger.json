@@ -2437,15 +2437,11 @@
           "target_branch": "integration/patchtrace-20261121-95fe-c3",
           "source_merge": "Disjoint runtime/workflow changes; historical records retained from both parents.",
           "qualification": {
-            "source_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
-            "source_tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
-            "parents": [
-              "d628749401f61d3653b5e066ff38245b938c5dcd",
-              "39a95c549d48eb523e9efdfda394bb9f184e2b16"
-            ],
-            "distinct_affected_passed": 1396,
-            "case_count": 1397,
-            "selection_node_selectors": 64,
+            "source_commit": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
+            "source_tree": "2666e72d5efd51600b170cef033103c9947bae3b",
+            "distinct_affected_passed": 1296,
+            "case_count": 1297,
+            "selection_node_selectors": 57,
             "failed": 0,
             "errors": 0,
             "ordinary_skipped": 0,
@@ -2455,15 +2451,15 @@
             ],
             "whole_tree_ruff": "passed",
             "dependencies": "passed",
-            "isolated_source_import": "passed; clean source-bound checkout",
-            "independent_review": "Exact complete-tree union;141 maintained checks and independent identity controls passed;no source blocker.",
-            "final_source_hosted": "pending exact final PR349 publication head",
-            "full_suite": "No successful local full aggregate claimed. Preserve earlier AF_UNIX EPERM and independently unexplained SIGKILL.",
-            "evidence": "docs/engineering/evidence/cycle837fe-native-c4-20261121/combined-focused.json"
+            "isolated_source_import": "Verified exact combined checkout with python -I on the same clean final source.",
+            "independent_review": "Storage/Search, CODEX-1 and both Intel scopes have no remaining source blocker; root separately reviewed the unchanged-test registry repair.",
+            "final_source_hosted": "pending exact combined publication head",
+            "full_suite": "Earlier local b51 source unsuccessful: AF_UNIX EPERM and later unexplained SIGKILL; no final-source local full aggregate claimed.",
+            "evidence": "docs/engineering/evidence/cycle837fe-combined-20261121/combined-focused.json"
           },
-          "next_action": "Publish reviewed Intel+C4 exact source to PR349; inspect full/Qt/native/package/frozen gates and actual Windows Intel; guarded REST main merge only when qualified, with both opt-out flags.",
-          "code_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
-          "code_tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
+          "next_action": "Publish guarded fast-forward update to existing PR349, inspect exact new-head hosted and native diagnostics, resolve applicable blockers, then guarded REST main merge with no release/no deploy.",
+          "code_commit": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
+          "code_tree": "2666e72d5efd51600b170cef033103c9947bae3b",
           "remote_code_commit": "61b26107d77fb632571ede932e0796d4b643f50c"
         }
       }
