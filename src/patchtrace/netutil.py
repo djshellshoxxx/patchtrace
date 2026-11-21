@@ -1,6 +1,7 @@
 """Stdlib-only helper that makes a blocking network call observe cancellation promptly (H9)."""
 from __future__ import annotations
 
+import http.client
 import threading
 from collections.abc import Callable
 from functools import partial
@@ -58,15 +59,18 @@ def interruptible[T](call: Callable[[], T], cancel: threading.Event | None, *, p
             outcome = (None, exc)
         with _lock:
             late = state['abandoned']
-            if late:
-                _abandoned -= 1
-            else:
+            if not late:
                 state['outcome'] = outcome
-        if late and outcome[1] is None and cleanup is not None:
-            try:
-                cleanup(outcome[0])
-            except Exception:  # noqa: BLE001 - best effort close
-                pass
+        try:
+            if late and outcome[1] is None and cleanup is not None:
+                try:
+                    cleanup(outcome[0])
+                except Exception:  # noqa: BLE001 - best effort close
+                    pass
+        finally:
+            if late:
+                with _lock:
+                    _abandoned -= 1
         done.set()
 
     threading.Thread(target=worker, daemon=True, name='patchtrace-net').start()
@@ -84,6 +88,23 @@ def interruptible[T](call: Callable[[], T], cancel: threading.Event | None, *, p
     return value
 
 
+def _shorten_http_socket_timeout(response, remaining: float) -> None:
+    """Bound CPython's blocking HTTP read so response.close() need not await a stalled reader.
+
+    Never lengthen an existing per-operation timeout. Unknown response transports still use
+    the interruptible deadline watcher below, without assuming private socket attributes.
+    """
+    if not isinstance(response, http.client.HTTPResponse):
+        return
+    raw = getattr(getattr(response.fp, 'raw', None), '_sock', None)
+    if raw is None:
+        return
+    current = raw.gettimeout()
+    timeout = max(0.001, remaining)
+    if current is None or current > timeout:
+        raw.settimeout(timeout)
+
+
 def read_bounded(response, cap: int, *, deadline: float, clock: Callable[[], float],
                  cancel: threading.Event | None, chunk: int = 65536) -> bytes:
     """Read a whole body of at most ``cap`` bytes, honouring ``deadline`` and ``cancel`` on every read.
@@ -92,14 +113,34 @@ def read_bounded(response, cap: int, *, deadline: float, clock: Callable[[], flo
     single read open until a full chunk arrives; the deadline is re-checked after each small read.
     Raises `Cancelled`, `DeadlineExceeded` or `CapExceeded`; socket errors propagate to the caller.
     """
+    class _ReadStop:
+        def is_set(self) -> bool:
+            return (cancel is not None and cancel.is_set()) or clock() >= deadline
+
     read = getattr(response, 'read1', response.read)
+    stop = _ReadStop()
     data = bytearray()
     while True:
         if cancel is not None and cancel.is_set():
             raise Cancelled()
+        remaining = deadline - clock()
+        if remaining <= 0:
+            raise DeadlineExceeded()
+        _shorten_http_socket_timeout(response, remaining)
+        try:
+            piece = interruptible(partial(read, min(chunk, cap + 1 - len(data))), stop)
+        except Cancelled:
+            if cancel is not None and cancel.is_set():
+                raise
+            raise DeadlineExceeded() from None
+        except TimeoutError:
+            if clock() >= deadline:
+                raise DeadlineExceeded() from None
+            raise
+        if cancel is not None and cancel.is_set():
+            raise Cancelled()
         if clock() >= deadline:
             raise DeadlineExceeded()
-        piece = interruptible(partial(read, min(chunk, cap + 1 - len(data))), cancel)
         if not piece:
             return bytes(data)
         data.extend(piece)
