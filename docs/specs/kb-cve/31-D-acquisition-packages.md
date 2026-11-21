@@ -30,6 +30,168 @@ publication refuses an observed symlink or Windows junction at the workspace's
 It does not promise a sandbox against a noncooperating writer replacing parent
 directories or stage/final pathnames after ownership checks.
 
+### Offline index reader source-identity admission (2026-11-20)
+
+An offline Winbindex record is identified by its file basename and data date,
+with exactly one of the plain JSON or gzip encodings present for the selected
+newest date. The reader must refuse simultaneous plain/gzip records of the same
+basename and newest data date as an ambiguous input, regardless of directory
+iteration order; it must not arbitrarily choose one claim source. Historical
+older dates are still ignored when a unique newer record exists. A matching
+record path that is a symbolic link or junction, or an aliased index directory,
+invalidates the lookup before parsing any bytes; a missing ordinary record still
+returns no rows. These are fail-closed input admission checks, not assertions
+that the content is official or that a noncooperating writer cannot replace a
+file between checks and read. Do not merge different raw records or fabricate
+resolver membership from conflicting sources. This bounded safety repair is
+**not** the outstanding full raw entry/index capture or resolver-input replay.
+
+### Held offline reader and nonregular-source admission (2026-11-20, generation 17)
+
+A name/date-matching workspace record that is a directory, FIFO, device or
+other non-regular object is **not an absent record** and cannot silently make
+a prior dated record appear newest. Refuse it with `PT-KBC-SOURCE` before
+choosing any date. Ordinary absent filenames still return no rows; an alias
+remains rejected under the earlier source-identity contract.
+
+The selected record's prior pathname admission can become stale before open.
+Where the host supports `O_NOFOLLOW`, open the record with that flag and
+refuse a final-component symlink substitution as `PT-KBC-SOURCE`. Request
+nonblocking open where supported, then confirm the **opened descriptor** is
+regular before reading bytes; do not risk blocking on a substituted FIFO.
+A regular record can also become a directory **after** `_record` selects it
+but **before** the held `open`. On POSIX this may raise `EISDIR` from the
+Python file-open wrapper before descriptor `fstat` runs. Classify that
+specific nonregular-source substitution as `PT-KBC-SOURCE`, matching the
+original admission contract; do not misreport it as a generic unreadable
+input. Ordinary permission and I/O failures retain `PT-KBC-INPUT`. This
+classification is not proof of source authenticity, does not make the
+replacement atomic, and provides no Windows path race guarantee.
+
+Continue to cap the descriptor read to `MAX_COMPRESSED + 1`, leave existing
+valid rows and rejected-row counts intact, and never read a nonregular handle.
+On hosts without `O_NOFOLLOW`, this does not provide the same final-component
+race protection. No claim is made for parent-directory replacement, a swapped
+ordinary regular file, source authenticity, full raw-index retention or the
+separate Linux forced-export publisher race. The latter remains open.
+
+### Offline index reader read budget and rejected-row freshness (2026-11-20)
+
+The selected workspace record is untrusted and mutable. Once admitted, each
+read must take **at most MAX_COMPRESSED + 1 bytes** from the opened stream,
+refusing an over-budget body with `PT-KBC-LIMIT` before parsing; a preceding
+pathname size check is advisory and may be stale. Do not allocate the complete
+file via an unbounded read based only on an earlier `stat`. This guard does
+not authenticate the source, pin its pathname through a competing replacement,
+or close the Linux forced-export race in a separate publisher.
+
+The index adapter's `skipped_rows` is scoped to the **current read of that
+filename**, not to earlier records read by the same adapter instance. A missing
+record has no rows and **zero** rejected entries, even when a prior record was
+partially parsed; an unusable record reports its error rather than reusing an
+older count. Preserve valid current-record skipped counts and existing
+`index_rows` rejection accounting without inventing historical coverage.
+
+### Offline version/body coverage accounting (2026-11-20, generation 19)
+
+`parse_rows` exposes two independent rejected-input counters:
+`skipped` for unreadable top-level SHA entries, and `skipped_bodies`
+for unreadable Windows-version/KB bodies or version containers. The
+workspace `IndexPort.rows` gap count MUST carry **both** parser counts
+plus independent `lineage.index_rows` conversion rejections. A malformed
+version/body cannot silently disappear and make an otherwise usable index
+appear complete. Do not add successful normalized rows to the gap count,
+count a rejected input twice, or call these rejected *units* the exact
+number of missing builds. A missing current record still resets the count
+to zero. File import receipts must report a separate `skipped_bodies`
+field, preserving the existing meaning of `skipped`; human-readable import
+output must also show nonzero unreadable version/KB body counts without
+relabeling them as invalid top-level entries. Existing source
+bytes, parser warnings, consent and provenance are unchanged. This is
+bounded gap accounting, **not** full raw entry/index persistence or replay
+of resolver input membership.
+
+### Generation 20: Winbindex entry container loss accounting (2026-11-20)
+
+For a top-level SHA entry whose `fileInfo` is already accepted by
+`parse_rows`, an absent `windowsVersions` field or a present
+`windowsVersions` value that is not a JSON object is **one
+unreadable source container**. Count that unit in `skipped_bodies`,
+even when another SHA entry in the same index produces valid rows.
+Do not silently make the surviving rows appear to cover the entire index.
+
+An explicitly present **empty object** `windowsVersions: {}` is an
+observed empty set, not a rejected body; its loss count stays zero.
+Do not infer a missing KB, version, fixed build, or a precise number of
+unobserved builds from this container gap. Do not count one loss per
+nonexistent version key. Malformed top-level entries remain counted once
+under `skipped`, not a second time under `skipped_bodies`.
+Keep `parse` (the separate acquisition candidate parser) unchanged.
+
+The existing workspace index gap forwarding, import receipt's distinct
+`skipped_bodies`, and conditional plain-text disclosure apply to this
+new container-loss unit. No change is authorized to raw index retention,
+resolver membership, binary confidence, native accuracy, consent,
+source authenticity, limits, or release gates.
+
+### Generation 21: same-read offline index gap identity (2026-11-20)
+
+A single `WorkspaceFileIndex.rows(file_name, key)` result must bind its
+normalized row mappings and **all parser rejection counts** to the **same
+selected record read**. A concurrent or re-entrant `rows_for` call for the
+same filename must not overwrite or clear the first call's loss accounting
+between parsing and lineage conversion. Carry the count as call-local data,
+not mutable adapter-wide state; add downstream `index_rows` conversion rejects
+to that local count only. Preserve the separate `rows_for` mapping-only port,
+original record admission and size limits, and the no-record zero-gap behavior.
+
+This is distinct from generation 16's *sequential* missing-record freshness
+repair: even when both reads succeed, interleaving can combine one read's
+rows with another read's loss count, making an incomplete source look complete.
+No source byte retention, resolver membership replay, new serialization,
+source authenticity, cross-process snapshot, or Linux forced-export race
+closure is inferred from this narrower same-call accounting guarantee.
+
+### Generation 22: malformed BASE body loss accounting (2026-11-20)
+
+A `BASE` body is readable only when it is a JSON object with a
+`windowsVersionInfo` JSON object. If `BASE` has no
+`windowsVersionInfo` member or that member is not an object, count this
+as **one unreadable source body** in `skipped_bodies` and do not emit an
+apparently valid undated baseline row. The next valid sibling rows are
+preserved. This is independent of top-level SHA and version-container
+losses, and a rejected body must not also be counted as a successful row.
+
+An explicitly present `windowsVersionInfo: {}` is structurally readable
+but has no known release date; keep its baseline row with
+`release_date=None` and do not invent a date. Malformed or absent
+`releaseDate` inside a valid object also remains an unknown date, not
+a fabricated chronology fact. The ordinary KB `updateInfo` contract,
+separate acquisition `parse` API, raw source bytes, resolver membership,
+limits and existing public return shapes remain unchanged. This is only a
+source-loss accounting repair; not complete raw retention, provenance
+authentication, verified accuracy or release qualification.
+
+### Generation 23: source-file admission for offline Winbindex imports (2026-11-20)
+
+`save_winbindex_record` imports an existing local metadata **file**, not a pipe,
+device, directory or other streaming endpoint. On a host that exposes
+`os.O_NONBLOCK`, opening the user-selected source MUST request that flag,
+so a substituted named pipe cannot block the importer before any size or
+parser control runs. Check `fstat` on the opened descriptor and refuse
+all non-regular sources with `PT-KBC-INPUT` **before reading or publishing**.
+Do not rely only on a stale pathname inspection. On hosts without a supported
+nonblocking-open capability, do not claim this fully prevents pre-open blocking.
+
+A user-selected symbolic link resolving to a regular file remains supported,
+consistent with the existing manual import path. This check is a filesystem
+input and liveness guard, not vendor authentication or protection from a
+noncooperating replacement of one regular file with another. Keep the
+existing `MAX_COMPRESSED + 1` bound, strict parser, receipt schema, raw
+record bytes, destination publication semantics and error code for unrelated
+read failures. The separate Linux forced strings export replacement interval
+remains open; this import admission cannot close it.
+
 ## D3. Verification precedence and authenticity states
 
 Mandatory: stream to private non-executable staging, bounded size, SHA-256, final PE parse, supported architecture, filename identity, selected product/build association, chronology check, stable final bytes (no TOCTOU between verification and project copy). Promote only after re-opening/hash verification via existing ingestion path. Use private scratch names chosen by program; reject symlink traversal and path escape.

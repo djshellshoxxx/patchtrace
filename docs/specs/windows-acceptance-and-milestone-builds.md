@@ -259,6 +259,7 @@ A `fail` links to an issue and states observed behaviour. A check not performed 
 Commit: <full SHA> (<main | tag>) - Run: <run URL> (run number <n>)
 Assets:
 - PatchTrace-0.1.0-windows-x64.zip - <bytes> bytes - SHA-256 <hex>
+- PatchTrace-Windows-x64-Setup.exe - <bytes> bytes - SHA-256 <hex>
 - PatchTrace-0.1.0-linux-x86_64.tar.gz - <bytes> bytes - SHA-256 <hex>
 Verify: `sha256sum -c <file>.sha256`. Extract the whole ZIP before running PatchTrace.exe.
 

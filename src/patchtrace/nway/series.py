@@ -406,10 +406,15 @@ def staleness(series: Series, series_path: Path) -> Staleness:
     refs = [*series.pair_projects, *([series.direct_project] if series.direct_project else [])]
     for ref in refs:
         label = f'pair {ref.from_ordinal}→{ref.to_ordinal}'
-        target = (root / ref.path).resolve()
         reason = None
-        if not target.is_relative_to(root) or not (target / PROJECT_FILE).is_file():
-            reason = f'{label}: project {ref.path} is missing'
+        try:
+            target = (root / ref.path).resolve()
+            available = target.is_relative_to(root) and (target / PROJECT_FILE).is_file()
+        except (OSError, RuntimeError, ValueError):
+            target, available = None, False
+            reason = f'{label}: project path cannot be read'
+        if not available:
+            reason = reason or f'{label}: project {ref.path} is missing'
         else:
             try:
                 project = read_project(target)

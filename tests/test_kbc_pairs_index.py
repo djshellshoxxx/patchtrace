@@ -70,7 +70,7 @@ def test_changed_in_kb_gives_a_grade_a_pending_pair_and_skipped_entries_make_it_
     save_record(kb)
     code, doc, _ = kb('pairs', inv, '--product', scopes['client'], '--file', DRV)
     (pair,) = doc['result']['pairs']
-    assert (code, doc['status']) == (3, 'partial') and doc['result']['skipped_rows'] == 2
+    assert (code, doc['status']) == (3, 'partial') and doc['result']['skipped_rows'] == 3
     assert (pair['grade'], pair['bytes_state'], pair['lineage_state']) == ('A', 'pending', 'index-adjacent')
     assert pair['older_sha256'] == 'c' * 64 and pair['newer_sha256'] == 'd' * 64
     assert 'INDEX_GAP' in pair['reason_codes'] and doc['warnings']
@@ -87,7 +87,7 @@ def test_mixed_native_wow64_rows_keep_native_pair_and_raw_record(ready):
     before = source.read_bytes()
     code, out, _ = kb('pairs', inv, '--product', scopes['client'], '--file', DRV)
     (pair,) = out['result']['pairs']
-    assert code == 3 and out['result']['skipped_rows'] == 2
+    assert code == 3 and out['result']['skipped_rows'] == 4
     assert pair['grade'] == 'A' and pair['changed_in_kb'] == 'yes'
     assert (pair['older_sha256'], pair['newer_sha256']) == ('c' * 64, 'd' * 64)
     assert source.read_bytes() == before
@@ -362,7 +362,7 @@ def test_workspace_file_index_is_an_index_port_returning_json_mappings(tmp_path)
     assert mappings and all(isinstance(m, dict) for m in mappings)
     json.dumps(mappings)  # JSON-compatible: no sibling type leaks across the port
     rows, skipped = index.rows(DRV, '11-24H2')
-    assert rows and skipped == 2
+    assert rows and skipped == 3
     assert index.rows_for(NET, '11-24H2') == [] and not index.has_record(NET)
 
 

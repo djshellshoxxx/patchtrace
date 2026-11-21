@@ -103,12 +103,28 @@ def test_hostile_arguments_are_refused_before_execution(tmp_path, argv, timeout)
     assert not list(tmp_path.glob("*.json"))
 
 
-def test_plan_executes_nothing_and_names_only_env_names(tmp_path):
+@pytest.mark.parametrize("directory", ["output", "output-c-directory"])
+def test_plan_executes_nothing_and_names_only_env_names(tmp_path, monkeypatch, directory):
     marker = tmp_path / "ran"
-    out = P.plan([PY, "-c", f"open({str(marker)!r},'w')"], timeout_s=5, out_dir=str(tmp_path),
-                 env_allowlist=P.DEFAULT_ENV_ALLOWLIST)
+    payload = f"open({str(marker)!r},'w')  # RQ_PLAN_PRIVATE_PAYLOAD_81E4"
+    monkeypatch.setenv("RQ_PLAN_VISIBLE_NAME", "rq-plan-secret-value-81e4")
+    monkeypatch.setenv("RQ_PLAN_UNLISTED_NAME", "rq-plan-unlisted-value-81e4")
+    env_allowlist = P.DEFAULT_ENV_ALLOWLIST + ("RQ_PLAN_VISIBLE_NAME",)
+    out_dir = str(tmp_path / directory)
+    out = P.plan([PY, "-c", payload], timeout_s=5, out_dir=out_dir,
+                 env_allowlist=env_allowlist)
     assert out["executes"] is False and not marker.exists()
-    assert out["argv0"] == Path(PY).name and "-c" not in json.dumps(out)
+    assert out["argv0"] == Path(PY).name and out["argc"] == 3
+    assert out["out_dir"] == out_dir
+    # The requested output path is public and may contain the characters "-c".
+    preview = json.dumps({key: value for key, value in out.items() if key != "out_dir"})
+    assert "-c" not in preview
+    encoded = json.dumps(out)
+    assert "RQ_PLAN_PRIVATE_PAYLOAD_81E4" not in encoded
+    assert out["env_names_passed"] == sorted(key for key in env_allowlist if key in os.environ)
+    assert "rq-plan-secret-value-81e4" not in encoded
+    assert "RQ_PLAN_UNLISTED_NAME" not in encoded
+    assert "rq-plan-unlisted-value-81e4" not in encoded
 
 
 def test_two_runs_have_matching_deterministic_view(tmp_path):

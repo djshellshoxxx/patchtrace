@@ -1,0 +1,14 @@
+{
+  "schema": "patchtrace-remainder-archive/1",
+  "source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
+  "selected_nodes": 3881,
+  "previously_unreported_nodes": 3879,
+  "overlap_nodes": 2,
+  "passed": 3849,
+  "skipped": 32,
+  "failed": 0,
+  "errors": 0,
+  "processes": 14,
+  "archive_sha256": "7ec9492312239549d2411e1f0026db63dddaf9195ed091de20f3c7a9b3d5508c",
+  "details": "Original manifest, all exact node IDs, commands, raw logs/JUnit, runner and checksums are inside the archive. The original unsplit run remains incomplete."
+}

@@ -341,12 +341,22 @@ class TaskRunner:
             if replaced:
                 replaced.release()
             return
-        self._flush_progress(task)
-        callback = task.on_result if event.kind == 'result' else task.on_error
         try:
+            self._flush_progress(task)
+            # Progress callbacks may synchronously cancel, replace or hide this channel, or close its owner.
+            if self._closed or not self._current(task) or not isValid(self._bridge):
+                return
+            if task.channel in self._held:
+                replaced = self._parked.get(task.channel)
+                self._parked[task.channel] = event
+                if replaced:
+                    replaced.release()
+                return
+            callback = task.on_result if event.kind == 'result' else task.on_error
             self._apply(task.channel, callback, event.payload)
         finally:
-            event.release()
+            if self._parked.get(task.channel) is not event:
+                event.release()
 
     def _tick(self) -> None:
         pending = [t for t in self._running if t.on_progress]

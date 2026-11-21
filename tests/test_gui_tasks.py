@@ -142,6 +142,140 @@ def test_progress_text_is_bounded_and_stripped():
     assert '\x1b' not in progress.stage and '\u202e' not in progress.message and '\x00' not in progress.message
 
 
+def _submit_final_progress(runner, sink, on_progress, *, fails=False):
+    """Stop periodic progress so the real queued completion performs the final flush."""
+    def work(token, report):
+        report('complete', 1, 1)
+        if fails:
+            raise ValueError('not delivered')
+        return 'old'
+
+    runner.submit('c', work, sink.result, sink.error, on_progress)
+    runner._bridge.timer.stop()
+
+
+@pytest.mark.parametrize('fails', [False, True], ids=['result', 'error'])
+def test_final_progress_cancel_drops_the_following_outcome(runner, qtbot, fails):
+    sink, progress = Sink(), []
+
+    def cancel(value):
+        progress.append(value)
+        runner.cancel('c')
+
+    _submit_final_progress(runner, sink, cancel, fails=fails)
+    qtbot.waitUntil(lambda: bool(progress), timeout=5000)
+    assert sink.results == [] and sink.errors == []
+    assert not runner.busy('c') and not runner._running
+
+
+@pytest.mark.parametrize('fails', [False, True], ids=['result', 'error'])
+def test_final_progress_replacement_keeps_its_busy_state_and_drops_old_outcome(runner, qtbot, fails):
+    sink, progress, release = Sink(), [], threading.Event()
+
+    def replace(value):
+        progress.append(value)
+        runner.submit('c', lambda token, report: release.wait(5) and 'replacement', sink.result, sink.error)
+
+    try:
+        _submit_final_progress(runner, sink, replace, fails=fails)
+        qtbot.waitUntil(lambda: bool(progress), timeout=5000)
+        assert sink.results == [] and sink.errors == []
+        assert runner.busy('c')
+    finally:
+        release.set()
+    qtbot.waitUntil(lambda: not runner._running, timeout=5000)
+    assert sink.results == ['replacement'] and sink.errors == []
+
+
+@pytest.mark.parametrize('fails', [False, True], ids=['result', 'error'])
+def test_final_progress_hiding_parks_outcome_until_shown_without_replaying_progress(runner, qtbot, fails):
+    sink, progress = Sink(), []
+
+    def hide(value):
+        progress.append(value)
+        runner.set_applying('c', False)
+
+    _submit_final_progress(runner, sink, hide, fails=fails)
+    qtbot.waitUntil(lambda: bool(progress), timeout=5000)
+    assert sink.results == [] and sink.errors == []
+    runner.set_applying('c', True)
+    assert len(progress) == 1
+    assert sink.results == ([] if fails else ['old'])
+    assert sink.errors == ([TaskFailure('ValueError')] if fails else [])
+    runner.set_applying('c', True)
+    assert len(sink.results) + len(sink.errors) == 1
+
+
+@pytest.mark.parametrize('fails', [False, True], ids=['result', 'error'])
+def test_final_progress_bridge_deletion_drops_the_following_outcome(runner, qtbot, fails):
+    sink, progress = Sink(), []
+
+    def remove_bridge(value):
+        progress.append(value)
+        delete_qobject(runner._bridge)
+
+    _submit_final_progress(runner, sink, remove_bridge, fails=fails)
+    qtbot.waitUntil(lambda: bool(progress), timeout=5000)
+    assert sink.results == [] and sink.errors == []
+
+
+@pytest.mark.parametrize('fails', [False, True], ids=['result', 'error'])
+def test_final_progress_failure_releases_undelivered_callbacks(runner, qtbot, fails):
+    sink = Sink()
+
+    def fail(value):
+        raise RuntimeError('progress failed')
+
+    with qtbot.capture_exceptions() as caught:
+        _submit_final_progress(runner, sink, fail, fails=fails)
+        task = next(iter(runner._running))
+        qtbot.waitUntil(lambda: bool(caught), timeout=5000)
+    assert caught[0][0] is RuntimeError
+    assert sink.results == [] and sink.errors == []
+    assert task.fn is task.on_progress is task.on_result is task.on_error is None
+
+
+@pytest.mark.parametrize('fails', [False, True], ids=['result', 'error'])
+def test_final_progress_lane_coalesce_drops_old_outcome_and_keeps_replacement_busy(runner, qtbot, fails):
+    lane, sink, progress, release = runner.lane('reentrant', lambda: None), Sink(), [], threading.Event()
+
+    def work(state, token, report):
+        report('complete', 1, 1)
+        if fails:
+            raise ValueError('not delivered')
+        return 'old'
+
+    def replace(value):
+        progress.append(value)
+        lane.submit(lambda state, token, report: release.wait(5) and 'replacement',
+                    sink.result, sink.error, coalesce=True)
+
+    try:
+        lane.submit(work, sink.result, sink.error, replace, coalesce=True)
+        runner._bridge.timer.stop()
+        qtbot.waitUntil(lambda: bool(progress), timeout=5000)
+        assert sink.results == [] and sink.errors == []
+        assert runner.busy('lane:reentrant')
+    finally:
+        release.set()
+    qtbot.waitUntil(lambda: not runner._running, timeout=5000)
+    assert sink.results == ['replacement'] and sink.errors == []
+
+
+@pytest.mark.parametrize('fails', [False, True], ids=['result', 'error'])
+def test_final_progress_token_only_cancellation_can_deliver_worker_outcome(runner, qtbot, fails):
+    sink, progress = Sink(), []
+
+    def signal_cancel(value):
+        progress.append(value)
+        runner._tokens['c'].set()
+
+    _submit_final_progress(runner, sink, signal_cancel, fails=fails)
+    qtbot.waitUntil(lambda: bool(progress), timeout=5000)
+    assert sink.results == ([] if fails else ['old'])
+    assert sink.errors == ([TaskFailure('ValueError')] if fails else [])
+
+
 def test_idle_runner_has_no_active_timer(runner, qtbot):
     sink = Sink()
     runner.submit('p', lambda token, report: report('s', 1, 1) or 1, sink.result, None, sink.on_progress)

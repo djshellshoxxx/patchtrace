@@ -11,6 +11,33 @@ Helper: `python -m tools.research_qualification.winpairs --manifest CASES.json -
 - Exit codes: 0 at least one case found, 1 every requested case missing, 2 blocked or usage (bad manifest, unknown case id, unsafe name, path outside the allowed roots via `pathguard.confine`). Missing pairs are data, not errors.
 - Fetched binaries are never executed and never committed. The workflow uploads them as `winpairs-binaries` and the manifest as `winpairs-manifest`, both with 7-day retention.
 
+### Request and redirect boundary amendment (2026-11-19)
+
+Validate the original URL text before parsing or joining it. Raw whitespace,
+control characters, DEL and non-ASCII characters are refused; encoded path/query
+octets remain unchanged. The authority must have no userinfo, including empty
+userinfo, and an allowed HTTPS host and port. Malformed authority, bracket and
+port parsing failures become a fixed `WinpairsError` without the supplied URL.
+
+Validate a redirect's raw Location before relative resolution, then validate the
+resolved absolute target before dispatch. Relative paths, query-only redirects
+and signed query bytes retain their existing resolution behavior and encoding.
+The initial-host restriction, redirect-only Azure suffix and three-redirect
+limit remain unchanged. The one-hop urllib fetcher repeats target validation
+before constructing a request, with the allowed redirect-host policy because
+it also handles already checked redirect hops.
+
+Request construction and transport URL/encoding failures become redacted
+`WinpairsError` results. Protocol parse failures (`http.client.HTTPException`,
+including invalid status lines, oversized headers and incomplete responses) obey
+the same boundary. Error text includes only the exception type, never raw status,
+header or body fragments. An acquired response is closed when its read fails.
+HTTP error and redirect responses are closed without
+draining their bodies. A malformed redirect for one binary produces a missing
+side and preserves the other side's independent acquisition and pair receipt;
+the existing CLI exit codes and output schema remain unchanged. Offline request
+construction controls do not establish live service or native producer acceptance.
+
 ### Immutable output and retry amendment (2026-11-18)
 
 Use a new output location for each acquisition attempt. Existing binary paths,

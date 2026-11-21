@@ -42,7 +42,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from . import ui_export_v2
+from . import ui_export_v2, ui_profiles
 from .acquisition import quarantine, winbindex
 from .acquisition.contracts import AUTHENTICITY_NOTE, AcquisitionError, validate_file_name
 from .acquisition.transport import BLOB_SUFFIX, METADATA_HOST, SYMBOL_HOST, AcquisitionConsent, Transport
@@ -71,10 +71,11 @@ from .service import ProjectService
 from .tooltips import apply_tooltip, apply_tooltips
 from .ui_bundle_setup import BundleSetup
 from .ui_help import WORKFLOW_HELP_TEXT
-from .ui_inspection import InspectionThread, side_summary
+from .ui_inspection import make_inspection_thread, publish_metadata_cache, side_summary
 from .ui_job_events import JobEventRelay
 from .ui_persistence import commit_and_report
 from .ui_profiles import PROFILE_SETTING, profiles_dir, selected_profile
+from .ui_raw_alignment import RawAlignmentController, build_raw_navigation
 from .ui_symbols import SymbolChoice, config_kwargs, configured_symbol_mode, effective_profile_symbol_mode
 from .ui_timeout import TimeoutChoice
 
@@ -714,7 +715,8 @@ class ProfilesPanel(QWidget):
         self.list = QListWidget()
         self.list.setAccessibleName('Analysis profiles')
         apply_tooltip(self.list, 'profile.list')
-        self.list.currentItemChanged.connect(lambda *_: self._show_current())
+        self.list.currentItemChanged.connect(lambda current, previous:
+                                             ui_profiles.change_profile_selection(self, current, previous))
         left.addWidget(self.list)
         buttons = QHBoxLayout()
         self.new_button = QPushButton('New')
@@ -792,34 +794,24 @@ class ProfilesPanel(QWidget):
         self.reload(selected)
 
     def reload(self, select: str | None = None):
-        profiles, errors = self.store.list()
-        self.load_errors.setText('\n'.join(f'Skipped invalid file: {e}' for e in errors))
-        self.list.blockSignals(True)
-        self.list.clear()
-        for profile in profiles:
-            item = QListWidgetItem(profile.name + (' (built-in, read-only)' if profile.is_default else ''))
-            item.setData(Qt.ItemDataRole.UserRole, profile.name)
-            self.list.addItem(item)
-        self.list.blockSignals(False)
-        names = [p.name for p in profiles]
-        self.list.setCurrentRow(names.index(select) if select in names else 0)
-        self._show_current()
+        ui_profiles.reload_panel(self, select)
 
     def selected_name(self) -> str:
         item = self.list.currentItem()
         return item.data(Qt.ItemDataRole.UserRole) if item else 'default'
 
-    def _show_current(self):
+    def _show_current(self) -> bool:
         name = self.selected_name()
         try:
             profile = self.store.get(name)
         except Exception as exc:  # noqa: BLE001 - shown inline; file may have changed on disk
             self.error.setText(str(exc))
-            return
+            return False
         self._editing = None if profile.is_default else profile.name
         self._fill(profile)
         self._baseline = self.editor_data()
         self.error.setText('')
+        return True
 
     def is_dirty(self) -> bool:
         """True when the editor differs from the loaded, editable profile."""
@@ -876,10 +868,14 @@ class ProfilesPanel(QWidget):
         self.reload(new.name)
 
     def new_profile(self):
+        if not ui_profiles.resolve_unsaved_profile(self):
+            return
         from .enrichment.profiles import DEFAULT_PROFILE
         self._create_from(DEFAULT_PROFILE, 'profile')
 
     def duplicate_profile(self):
+        if not ui_profiles.resolve_unsaved_profile(self):
+            return
         from .enrichment.profiles import ProfileError
         try:
             source = self.store.get(self.selected_name())
@@ -1698,22 +1694,7 @@ class MainWindow(QMainWindow):
                             'Base64 (raw bytes)'])
         self.mode.currentTextChanged.connect(self._mode_changed)
         row.addWidget(self.mode)
-        self.raw_scope = QComboBox()
-        self.raw_scope.addItems(['Whole file', 'From function entry'])
-        self.raw_scope.currentIndexChanged.connect(self._raw_scope_changed)
-        row.addWidget(self.raw_scope)
-        self.raw_page = QSpinBox()
-        self.raw_page.setRange(1, 1)
-        self.raw_page.setPrefix('Page ')
-        self.raw_page.valueChanged.connect(lambda *_: self.render_match())
-        row.addWidget(self.raw_page)
-        self.raw_goto = QLineEdit()
-        self.raw_goto.setPlaceholderText('Go to file offset (hex)')
-        self.raw_goto.setMaximumWidth(170)
-        self.raw_goto.returnPressed.connect(self.raw_goto_offset)
-        row.addWidget(self.raw_goto)
-        for widget in (self.raw_scope, self.raw_page, self.raw_goto):
-            widget.setVisible(False)
+        build_raw_navigation(self, row)
         self.sync_scroll = QCheckBox('Sync scroll')
         self.sync_scroll.setChecked(True)
         row.addWidget(self.sync_scroll)
@@ -1764,6 +1745,7 @@ class MainWindow(QMainWindow):
         apply_tooltips(self, {'mode': 'viewer.mode', 'sync_scroll': 'viewer.sync_scroll',
                               'previous_diff': 'nav.previous_hunk', 'next_diff': 'nav.next_hunk',
                               'hunk_list': 'nav.hunk_list'})
+        self.raw_alignment = RawAlignmentController(self, pane, layout)
         self.workspace.addWidget(pane)
 
     def _build_findings(self):
@@ -2055,6 +2037,7 @@ class MainWindow(QMainWindow):
             self.panels.selection_changed(self.current_match())
 
     def render_match(self, *_):
+        self.raw_alignment.sync()
         match = self.current_match()
         self._render_signals(match)
         self._function_offsets = {}
@@ -2193,6 +2176,9 @@ class MainWindow(QMainWindow):
             return
         artifact = next(a for a in self.project.artifacts if a.side == side)
         text = f'PatchTrace project {self.project.id} / revision {self.project.revision}\n'
+        if self.raw_alignment.active():
+            self.raw_alignment.copy(side, text, artifact)
+            return
         if self._raw_mode():
             raw = self._raw_sides.get(side) if self._current_inspection() is not None else None
             if raw is None or raw.rendered is None:
@@ -2589,6 +2575,9 @@ class MainWindow(QMainWindow):
         return None
 
     def _render_raw(self, match, clamped_from: int | None = None):
+        if self.raw_alignment.active():
+            self.raw_alignment.render()
+            return
         self._hunks = []
         self._hunk_index = -1
         inspection = self._current_inspection()
@@ -2674,6 +2663,7 @@ class MainWindow(QMainWindow):
         if not sizes or offset < 0 or offset >= max(sizes):
             self.statusBar().showMessage('Offset is outside the verified artifact bytes.')
             return
+        self.raw_alignment.toggle.setChecked(False)
         self.raw_scope.blockSignals(True)
         self.raw_scope.setCurrentIndex(SCOPES.index('whole'))
         self.raw_scope.blockSignals(False)
@@ -2700,7 +2690,7 @@ class MainWindow(QMainWindow):
             if thread.key == key:
                 return
             thread.cancel.set()
-        thread = InspectionThread(self.project.id, self.project.artifacts, self.service.root, self, key)
+        thread = make_inspection_thread(self.service, self, key)
         queued = Qt.ConnectionType.QueuedConnection  # bound-method slots, always delivered on the GUI thread
         thread.inspection_ready.connect(self._inspection_ready, queued)
         thread.inspection_failed.connect(self._inspection_failed, queued)
@@ -2715,6 +2705,7 @@ class MainWindow(QMainWindow):
             return
         self._clear_inspection()
         self._inspection, self._inspection_key = result, key
+        publish_metadata_cache(self.service, result)
         self.inspection_status.emit('File inspection complete · ' + side_summary(result))
         if self._raw_mode():
             self.render_match()
@@ -2727,6 +2718,7 @@ class MainWindow(QMainWindow):
         self.logs.appendPlainText('File inspection failed: ' + message)
 
     def _clear_inspection(self):
+        self.raw_alignment.invalidate()
         if self._inspection is not None:
             self._inspection.close()
         self._inspection, self._inspection_key, self._raw_sides = None, None, {}
@@ -3065,6 +3057,7 @@ class MainWindow(QMainWindow):
         for name, splitter in [('workspace', self.workspace), ('vertical', self.vertical), ('code', self.code_split)]:
             self.settings.setValue('desktop/' + name, splitter.saveState())
         self.settings.setValue('desktop/sync', self.sync_scroll.isChecked())
+        self.raw_alignment.shutdown()
         self.panels.shutdown()
         self.settings.sync()
         self._stop_inspection()

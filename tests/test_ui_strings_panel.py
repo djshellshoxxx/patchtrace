@@ -11,10 +11,13 @@ import threading
 from pathlib import Path
 from types import SimpleNamespace
 
+import pytest
+from PySide6.QtCore import Qt, QTimer
 from PySide6.QtWidgets import QApplication
 from qt_support import a11y_audit, join_gui_threads, top_level_windows  # noqa: F401
 from test_strings_view_model import change, delta
 
+from patchtrace import tooltips
 from patchtrace.gui import registry
 from patchtrace.gui.anchors import AnchorRef
 from patchtrace.gui.projection import ProjectKey
@@ -260,6 +263,46 @@ def test_new_window_is_never_opened(qtbot):
 
 # ---- accessibility -----------------------------------------------------------------------------------------------
 
+@pytest.mark.parametrize('scan', [False, True], ids=['idle', 'ready'])
+@pytest.mark.parametrize(('column', 'title', 'tip_id'), [
+    (0, 'Change', 'strings.col.change'),
+    (1, 'String', 'strings.col.string'),
+    (2, 'Type', 'strings.col.type'),
+    (3, 'Older', 'strings.col.older'),
+    (4, 'Newer', 'strings.col.newer'),
+    (5, 'Function', 'strings.col.function'),
+    (6, 'Cues', 'strings.col.cues'),
+    (7, 'Source', 'strings.col.source'),
+])
+def test_each_table_header_explains_its_column_without_changing_its_label(qtbot, scan, column, title, tip_id):
+    controller, *_ = start(qtbot, scan=scan)
+    model = controller.panel.table.table_model
+    horizontal = Qt.Orientation.Horizontal
+    assert model.columnCount() == 8
+    assert tip_id in tooltips.REGISTRY, 'a displayed column must register its help'
+    assert model.headerData(column, horizontal, Qt.ItemDataRole.ToolTipRole) == tooltips.tooltip(tip_id)
+    assert model.headerData(column, horizontal, Qt.ItemDataRole.DisplayRole) == title
+    assert model.headerData(column, horizontal, Qt.ItemDataRole.AccessibleTextRole) == title
+
+
+def test_column_help_escapes_registry_text_and_does_not_replace_cell_content(qtbot, monkeypatch):
+    controller, *_ = start(qtbot)
+    model = controller.panel.table.table_model
+    horizontal = Qt.Orientation.Horizontal
+    before = model.index(0, 1).data(Qt.ItemDataRole.DisplayRole)
+    monkeypatch.setitem(tooltips.REGISTRY, 'strings.col.string', tooltips.TooltipEntry(
+        'Text containing <sample> & literal quotes.', 'Keep the literal text visible.', 'Read-only.'))
+    help_text = model.headerData(1, horizontal, Qt.ItemDataRole.ToolTipRole)
+    assert '&lt;sample&gt;' in help_text and '&amp;' in help_text
+    assert '<sample>' not in help_text
+    assert model.headerData(1, horizontal, Qt.ItemDataRole.DisplayRole) == 'String'
+    assert model.headerData(1, horizontal, Qt.ItemDataRole.AccessibleTextRole) == 'String'
+    assert model.index(0, 1).data(Qt.ItemDataRole.DisplayRole) == before
+    assert model.index(0, 1).data(Qt.ItemDataRole.ToolTipRole) == before
+    monkeypatch.delitem(tooltips.REGISTRY, 'strings.col.string')
+    assert model.headerData(1, horizontal, Qt.ItemDataRole.ToolTipRole) == 'String'
+
+
 def test_a11y_audit_is_clean_in_every_state(qtbot):
     controller, *_ = start(qtbot)
     allowed = 'QHeaderView#?: not keyboard focusable'
@@ -339,6 +382,39 @@ def test_shutdown_cancels_the_running_work_and_is_idempotent(qtbot):
     assert controller.loaded is None
     controller.scan()  # a closed panel starts nothing
     assert not controller.tasks.busy()
+
+
+@pytest.mark.parametrize('close_shared_runner', [False, True])
+def test_shutdown_refuses_queued_filter_work(qtbot, monkeypatch, close_shared_runner):
+    controller, _, shell, _ = start(qtbot)
+    before = table_texts(controller)
+    submitted = []
+    submit = shell.tasks.submit
+
+    def record_submit(channel, *args, **kwargs):
+        submitted.append(channel)
+        return submit(channel, *args, **kwargs)
+
+    monkeypatch.setattr(shell.tasks, 'submit', record_submit)
+    delivered = threading.Event()
+
+    def queued_filter_change():
+        panel = controller.panel
+        panel.change.setCurrentIndex(panel.change.findData('only-older'))
+        delivered.set()
+
+    QTimer.singleShot(0, queued_filter_change)
+    controller.shutdown()
+    if close_shared_runner:
+        shell.tasks.shutdown()
+    try:
+        with qtbot.captureExceptions() as errors:
+            qtbot.waitUntil(delivered.is_set)
+        assert submitted == [], 'a closed panel submitted new filter work'
+        assert errors == [], 'a queued filter touched the closed task runner'
+        assert controller.loaded is SAMPLE and table_texts(controller) == before
+    finally:
+        shell.tasks.shutdown()
 
 
 # ---- navigation --------------------------------------------------------------------------------------------------

@@ -1,0 +1,127 @@
+{
+  "captured_at": "2026-11-21T04:54:07.893053+00:00",
+  "source_commit": "c07774ecf5a3f7337834f95a9a4c51c8ec5fad44",
+  "scope": "Recover missing published PR346 engineering indexes and their original linked evidence; no runtime/source overwrite or whole-branch ancestry claim. Six navigation pages will receive separately versioned current-status additions.",
+  "files": [
+    {
+      "path": "docs/engineering-handoffs/cycle-95fe-20261120.md",
+      "git_blob": "c158e2f3d495ee71f0b37b9cd6b3b87c14a064de",
+      "sha256": "5a5490a329248d9ca17baf60cc0253b6745bc6f6197fac6a636e3f32276e6f51",
+      "bytes": 4510
+    },
+    {
+      "path": "docs/engineering/AUDIT_FINDINGS.md",
+      "git_blob": "392fad12b942f30309db378d4b049f3ebef9a417",
+      "sha256": "335fbe5ac4246e11fb152ed4cdd4915d2816f5151adbc7aaa7e5ecc698c30b66",
+      "bytes": 5980
+    },
+    {
+      "path": "docs/engineering/BRANCH_INVENTORY.md",
+      "git_blob": "c470d5587ad16c9fab610796374c0f24e7a2d81b",
+      "sha256": "a1ef6438c10e10247e18744b2b76a2d76ee3d1ea559f9a5d0ee08b50a17c4e4e",
+      "bytes": 3125
+    },
+    {
+      "path": "docs/engineering/CONSOLIDATION_LEDGER.md",
+      "git_blob": "f15a8d919bbee3b6847a4a6459b9062f2f5fd88e",
+      "sha256": "3184b6516cd104ec3e22428a17e13bdc0e943f4f8a0cf541264ed27cabfed6d5",
+      "bytes": 4984
+    },
+    {
+      "path": "docs/engineering/FEATURE_MATRIX.md",
+      "git_blob": "253877bec360f597bdc9f1eb7057e07097254cf5",
+      "sha256": "992d75d7f900b5c58cacc8330008f73e5458de7bf5919065fe6124f895570d15",
+      "bytes": 2609
+    },
+    {
+      "path": "docs/engineering/INTEGRATION_QUEUE.md",
+      "git_blob": "201fa218b6b16ccaede076ee9a6ddd0094f73e39",
+      "sha256": "1f49bf68405f5ce041f31cf04398274073a47fe71fd7da68562d0c217241ad76",
+      "bytes": 3500
+    },
+    {
+      "path": "docs/engineering/WORKER_HANDOFF.md",
+      "git_blob": "bee2613dc066647c864dcda81dc9f158bbb9fb9c",
+      "sha256": "5f34895bce01b09bd3f82248885f7a62c6a157b9ae14b1237d64f262b0dee181",
+      "bytes": 2764
+    },
+    {
+      "path": "docs/engineering/cycle-95fe-qualification.md",
+      "git_blob": "597ba15b8feaafe20be405965bb18c755b28d4e9",
+      "sha256": "c6b7547966843c1b3c0082b1ad8c74bc558b7a0598245573e03c5639dc17e45f",
+      "bytes": 5481
+    },
+    {
+      "path": "docs/engineering/cycle-95fe-semantic-review.json",
+      "git_blob": "9ac8f5c187beb75b0098b7dcc610cdf053088c90",
+      "sha256": "bce82ab4738271432aeee3e22ad8d2bda556a0d35f0448774571467a95636de6",
+      "bytes": 7842
+    },
+    {
+      "path": "docs/engineering/cycle-95fe-semantic-review.md",
+      "git_blob": "48d7ac7e9e71e88e2422e1c3dbae6fa8a5717161",
+      "sha256": "7e842a8e95069d8947011354b65767e0783663614a2c7dd14e48b133dfd6505f",
+      "bytes": 4755
+    },
+    {
+      "path": "docs/engineering/evidence/cycle95fe/README.md",
+      "git_blob": "3320c11628cb8fc7feb0e2cfa0e66882638027b1",
+      "sha256": "b911a0138ac0bd243d42f9d1066746a5b4e29ad9894f6868c58480da167729fc",
+      "bytes": 3367
+    },
+    {
+      "path": "docs/engineering/evidence/cycle95fe/code-commit-mapping.json",
+      "git_blob": "8865992034f96c67f9135ccb267c9a0d4af44682",
+      "sha256": "b8e2ead8c809d273fce8174c63d3aa0e819763fa442da592742c5e69d85ccbd4",
+      "bytes": 4242
+    },
+    {
+      "path": "docs/engineering/evidence/cycle95fe/cycle-95fe-evidence.zip",
+      "git_blob": "83f7301d7a9db0ece24a4fedc170d7903270ddda",
+      "sha256": "06e115ed85de8fd85315d2bef465d7eff60833179f520cbd9fa3801f95669525",
+      "bytes": 670271
+    },
+    {
+      "path": "docs/engineering/evidence/cycle95fe/environment-checks.json",
+      "git_blob": "9491367fbc51214d032b6071a3324da66f384549",
+      "sha256": "bb5b576566c648daf0e4265de2655074ebd7be576f5bf13780082432f82c2041",
+      "bytes": 7286
+    },
+    {
+      "path": "docs/engineering/evidence/cycle95fe/initial-publication.json",
+      "git_blob": "f4356e9e5ac9131f010bb3719677a43ea0951ca6",
+      "sha256": "1c8f972ede2b93875ca126b4755ce4ebdfd44ee792187be89dd7c260eaccfbf7",
+      "bytes": 7055
+    },
+    {
+      "path": "docs/engineering/evidence/cycle95fe/local-code-history.bundle",
+      "git_blob": "580e58bc4f15da8e1467e2b1b698e47980b0dcbc",
+      "sha256": "81d15e5383e3aa7ddd7a8826122f4499789f2c97375525eebaf4316bcdf93517",
+      "bytes": 16743
+    },
+    {
+      "path": "docs/engineering/evidence/cycle95fe/member-manifest.json",
+      "git_blob": "8c06b842b60449f6cb94d440807cf6c6bc16f163",
+      "sha256": "105d701f56bc35a517e4df072c5edfe2ec195d7a6db71bee6f8502e0710563aa",
+      "bytes": 26265
+    },
+    {
+      "path": "docs/engineering/evidence/cycle95fe/pack-validation.json",
+      "git_blob": "6b8e2c2edb63e447a2f2a1d1a42b43cccddef34d",
+      "sha256": "d71ce1ae6f2adaa9a48e60aaef1eb719b4786fee44ca155c37b6748c5c27093c",
+      "bytes": 1460
+    },
+    {
+      "path": "docs/engineering/evidence/cycle95fe/parent-ci-prepublication.json",
+      "git_blob": "cc4655d777d29943070444b6757093bf72072c99",
+      "sha256": "66cfdb0b40f6b69ebc346d522da314937f64f3f1445943b84df8ebc0ec8a5c54",
+      "bytes": 71356
+    },
+    {
+      "path": "docs/engineering/evidence/cycle95fe/publication-audit.md",
+      "git_blob": "c32b0e7b5c9a0490b3346f74bf5fdd85e3d747af",
+      "sha256": "befe9b523873fed5b76f1af99bb932615616454179509ee43ee49df4dcf1d54f",
+      "bytes": 2905
+    }
+  ]
+}

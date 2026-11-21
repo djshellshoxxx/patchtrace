@@ -31,7 +31,8 @@ from ..gui.tips import apply_tip, register_gui_tips, register_tips
 from . import view_model as vm
 from .contracts import CoverageEntry, SearchRequest, SearchResult
 from .errors import SearchError
-from .query import parse_query
+from .qt_saved import SavedController
+from .saved_actions import effective_plan
 from .tooltip_entries import TEMPLATES, TIPS
 
 DEBOUNCE_MS = 250
@@ -46,7 +47,8 @@ CHANNELS = ('search.query', 'search.build', 'search.coverage')
 _QUERY_HINT = 'Use words, "quoted phrases" and -excluded words; see the placeholder for filters.'
 
 # Cells: Side, Kind, Match, Where, Change, Why (widths from the spec, in em).
-COLUMNS = tuple(ColumnSpec(key, title, lambda r, i=i: r.cells[i], width_em=width, accessible=lambda r: r.accessible)
+COLUMNS = tuple(ColumnSpec(key, title, lambda r, i=i: r.cells[i], width_em=width, accessible=lambda r: r.accessible,
+                           tip_id=f'search.col.{key}')
                 for i, (key, title, width) in enumerate(zip(
                     ('side', 'kind', 'match', 'where', 'change', 'why'), vm.HEADERS, (10, 14, 36, 26, 20, 40),
                     strict=True)))
@@ -196,6 +198,7 @@ class SearchController(ControllerBase):
         self.debounce.setSingleShot(True)
         self.debounce.setInterval(DEBOUNCE_MS)
         self._wire()
+        self.saved = SavedController(self)
         self._render()
 
     # ---- wiring --------------------------------------------------------------------------------------
@@ -232,6 +235,7 @@ class SearchController(ControllerBase):
         self.key = key
         self.indexed, self.fetching, self.cancelled = True, False, False
         self._reset_results()
+        self.saved.project_changed()
         if key is not None:
             self._probe_index()
         self._render()
@@ -243,6 +247,7 @@ class SearchController(ControllerBase):
         return self.panel.query
 
     def shutdown(self) -> None:
+        self.saved.shutdown()
         self.debounce.stop()
         self._cancel_all()
         self.epoch += 1
@@ -253,6 +258,7 @@ class SearchController(ControllerBase):
     # ---- query ---------------------------------------------------------------------------------------
 
     def _typed(self, _text: str) -> None:
+        self.saved.enable()
         self.debounce.start()
 
     def service(self):
@@ -260,11 +266,8 @@ class SearchController(ControllerBase):
 
     def _plan(self):
         panel = self.panel
-        plan = parse_query(panel.query.text(), mode=panel.mode.currentData())
-        update = {'scope': panel.scope.currentData()}
-        if (side := panel.side.currentData()) is not None:
-            update['sides'] = (side,)
-        return plan.model_copy(update=update)
+        return effective_plan(panel.query.text(), mode=panel.mode.currentData(),
+                              side=panel.side.currentData(), scope=panel.scope.currentData())
 
     def submit(self) -> None:
         """Parse the query (the only grammar entry) and search the first page under a new generation."""
@@ -282,6 +285,7 @@ class SearchController(ControllerBase):
         except SearchError as exc:
             self.invalid = f'Search query is invalid: {sanitize_text(exc.message, 200)}. {_QUERY_HINT}'
             return self._render()
+        self.saved.remember(plan.text)
         self.generation += 1
         self.cancelled = False
         self.failure = None
@@ -344,6 +348,7 @@ class SearchController(ControllerBase):
 
     def build(self) -> None:
         service, builder, epoch = self.service(), self.builder, self.epoch
+        generation = self.generation
         if self.key is None or service is None:
             return
         self.cancelled = False
@@ -352,14 +357,15 @@ class SearchController(ControllerBase):
         def work(token, report):
             return _guarded(lambda: builder(service, token, lambda group, done, total: report(group, done, total)))
 
-        self.tasks.submit('search.build', work, lambda out: self._built(epoch, out), self._failed, self._build_progress)
+        self.tasks.submit('search.build', work, lambda out: self._built(epoch, generation, out),
+                          self._failed, self._build_progress)
         self._render()
 
     def _build_progress(self, progress: TaskProgress) -> None:
         self.progress = vm.Progress(progress.stage, progress.done, progress.total or 1)
         self._render()
 
-    def _built(self, epoch: int, outcome: Outcome) -> None:
+    def _built(self, epoch: int, generation: int, outcome: Outcome) -> None:
         if epoch != self.epoch:
             return
         self.progress = None
@@ -368,7 +374,7 @@ class SearchController(ControllerBase):
             self.failure = vm.Failure(outcome.code, outcome.message)
             return self._render()
         self._probe_index()
-        if self.panel.query.text().strip():
+        if generation == self.generation and self.panel.query.text().strip():
             self.submit()
         else:
             self._render()
@@ -385,6 +391,7 @@ class SearchController(ControllerBase):
         self.panel.detail.setPlainText('Coverage\n' + ('\n'.join(lines) or 'No search has run yet.'))
 
     def cancel(self) -> None:
+        self.debounce.stop()
         self._cancel_all()
         self.progress, self.fetching, self.cancelled = None, False, True
         self._render()
@@ -488,6 +495,7 @@ class SearchController(ControllerBase):
         self._enable()
 
     def _enable(self) -> None:
+        self.saved.enable()
         buttons = self.panel.buttons
         working = self.tasks.busy('search.query') or self.tasks.busy('search.build')
         has_project = self.key is not None

@@ -1,0 +1,20 @@
+{
+  "schema": "patchtrace-final-record-audit/1",
+  "audited_local_commit": "39a95c549d48eb523e9efdfda394bb9f184e2b16",
+  "audited_remote_commit": "3cd795d8a8bbb3d5eceabf101ceed5a23b291920",
+  "audited_tree": "f53e92d6bc128c929295f6baf3c6241081ee6ed2",
+  "result": "passed-zero-blocking-findings",
+  "source_qualification_unchanged": "111803d54cfebc1b779f4832a069904b3ee91a7c",
+  "files": [
+    {
+      "path": "audit-evidence.zip",
+      "bytes": 68240,
+      "sha256": "fc5b3fa4c7cfb92fce6abe44c4e8bc941356729470ed654bdca4de6b0a0c03db"
+    },
+    {
+      "path": "review.md",
+      "bytes": 10897,
+      "sha256": "9cacbb0133be442e18249fb736e30d30d346fde5f9762477e06f49d6f3ac26a7"
+    }
+  ]
+}

@@ -178,13 +178,145 @@ patchtrace strings explain PROJECT --id STRING_ID --json                        
 patchtrace strings scan    PROJECT --builtin [--min-length N] --json            # in-process scan, no FLOSS
 patchtrace strings export  PROJECT --out FILE --format json|csv [--scope changed|all] [--show-secrets] [--force]
 ```
-Export is atomic, redacted by default, never overwrites without `--force`, and records basis and lineage.
+Export is redacted by default and records basis and lineage.
+
+### Export encoding (CSV metadata repair, 2026-11-19)
+
+JSON retains `strings-export/1` unchanged. CSV uses `strings-export-csv/2`:
+
+1. The first CSV record has exactly two fields: the literal `strings-export-csv/2`
+   and a JSON object containing every document member except `changes`. This includes
+   the document contract, selected scope, redaction policy, extraction basis and
+   harmonized settings, basis notes, delta counts, truncation, anchor digest/hit count,
+   and the selected rows' lineage groups. JSON uses sorted keys, compact separators,
+   and escaped control/non-ASCII characters; it is one CSV field beginning with `{`,
+   so a formula-like value inside metadata cannot become a spreadsheet formula.
+2. The next CSV record is the existing eleven-column header, unchanged in names and
+   order: `id,status,review_tier,display,length,cues,older_offsets,newer_offsets,functions,lineage_groups,reasons`.
+3. Remaining records are selected string rows, with the existing cell meanings and
+   formula-prefix neutralization. No metadata record is a string finding. An empty
+   export contains the metadata record and column header only; its returned row
+   count remains zero. Delta `counts` retain their existing meaning and need not
+   equal the number of selected/exported rows.
+
+This deliberately replaces the older, unversioned header-first CSV encoding, which
+could not preserve document metadata. Consumers must validate and consume the first
+CSV record before reading the table. Existing column-oriented processing can then
+continue over the unchanged table; a header-first consumer needs this migration.
+Do not infer completeness from an older CSV without its missing metadata. For example:
+
+```python
+import csv
+import io
+import json
+
+MAX_EXPORT_BYTES = 8 * 1024 * 1024  # This reader's explicit policy, not an exporter limit.
+with open(path, 'rb') as source:
+    payload = source.read(MAX_EXPORT_BYTES + 1)
+if len(payload) > MAX_EXPORT_BYTES:
+    raise ValueError('Strings CSV exceeds this reader\'s 8 MiB budget')
+source = io.StringIO(payload.decode('utf-8'), newline='')
+previous_field_limit = csv.field_size_limit(MAX_EXPORT_BYTES)
+try:
+    marker, encoded_metadata = next(csv.reader(source))
+    if marker != 'strings-export-csv/2':
+        raise ValueError('Unsupported strings CSV encoding')
+    metadata = json.loads(encoded_metadata)
+    if not isinstance(metadata, dict) or metadata.get('contract') != 'strings-export/1':
+        raise ValueError('Unsupported strings export document')
+    rows = list(csv.DictReader(source))
+finally:
+    csv.field_size_limit(previous_field_limit)
+```
+
+This standalone reader assumes a locally produced export and accepts at most
+8 MiB of UTF-8 file bytes. It reads a bounded snapshot with a one-byte overflow
+sentinel; larger files are refused before decoding or CSV parsing. Its field
+limit is 8,388,608 characters, an upper bound for any field in that UTF-8 byte budget,
+and the previous process-global CSV limit is restored on success or failure.
+Run the example in its own process, or serialize changes to that global limit
+against other CSV readers when embedding it. Larger valid exports require a
+deliberately chosen reader budget; this policy does not cap the exporter or
+silently truncate metadata. Spreadsheet display/cell limits may hide a large
+metadata field, but do not truncate the bytes emitted in the CSV file.
+Importing untrusted files still requires the repository's strict JSON and
+resource-budget admission rules.
+The metadata does not include `changes` or revealed row values. Revealed values,
+when explicitly requested, remain only in their existing row cells. Publication,
+scope selection, returned row count and SHA-256 of the complete file are unchanged.
+
+### File publication
+
+Stored-source admission (2026-11-20): the Strings CLI must bind stored FLOSS
+results to the current project, artifact hash and side through SPEC-36 T14's
+opt-in admission helper. Swapping orientation must not relabel an earlier
+artifact's results. Auto falls back to verified built-in scanning when stored
+evidence is unavailable; explicit FLOSS selection refuses. Legitimate cached
+results retain their admitted originating run's recorded raw provenance even
+when the cache-hit run has no raw sidecar. This amendment changes no comparison,
+cue, ranking, function-linking, export, or dock behavior.
+
+Publication has explicit platform capabilities (2026-11-20 safety amendment):
+
+- Without `--force`, the selected parent must already exist. Publication holds the source bytes and
+  the selected parent identity, creates the destination exclusively, and refuses any existing or
+  concurrently arriving destination, including one containing identical bytes. An unavailable
+  platform or filesystem capability returns `PT-STR-EXPORT`; there is no pathname-replacement
+  fallback. The reusable runtime boundary is `owned_publication.py`, recovered from the existing
+  PW-01 publication design. Linux and Windows implementations require their own qualification;
+  Linux results do not qualify Windows.
+- With `--force`, Windows uses the same rooted, held-source publisher with explicit native
+  `ReplaceIfExists=True`. Its default remains no-replace; forced replacement cannot be combined
+  with immutable-evidence reuse. Cleanup discards only the held source handle. Native Windows
+  filesystem qualification remains separate from portable call assertions.
+- On Linux, `--force` can create a new destination but **cannot replace an existing destination**.
+  It uses the same held-descriptor exclusive publisher as the default path. Any existing or
+  concurrently arriving name, including a regular file with identical bytes, directory, live
+  symlink or dangling symlink, is refused with `PT-STR-EXPORT`. The error directs the caller to
+  choose a new destination; it must not suggest retrying with `--force`. There is no named source
+  stage, final pathname rename, pre-deletion, rollback or destructive fallback. The CLI help
+  states that replacement is available on Windows and Linux requires a new destination.
+  This is an explicit reduction of the previously supported Linux overwrite capability, not a
+  claim that Linux gained a held-inode replacement primitive. Exporting to a new filename
+  remains available with either flag value. Byte verification still reads at most the expected
+  length plus one byte and checks stable metadata before a successful digest receipt.
+- The historical Linux final check-to-rename source substitution finding is mitigated in the
+  exported operation by refusing replacement. A compatible, strongly owned Linux replacement
+  capability remains **UNIMPLEMENTED**. Do not restore the pathname implementation, or mark
+  native/platform acceptance complete, merely because the refusal controls pass.
+  The [native primitive assessment](../../engineering/linux-force-primitive-assessment-20261119.md)
+  records why descriptor linking, exchange, ordinary locks, a write lease and private-directory
+  permissions did not close this interval. Its original failure evidence is retained unchanged.
+- On forced failure, close only owned descriptors and preserve the original exception if close
+  also fails. The shared Linux publisher preserves this rule for both flag values. A cleanup
+  failure without an active operation failure still propagates, including when the caller is
+  handling an unrelated exception. Anonymous failures leave no stage name. After exclusive
+  publication, never unlink the destination on a later verification failure: it may now name a
+  foreign entry. Windows cleanup addresses only the held source handle. Ordinary
+  I/O and unsupported-capability failures retain `PT-STR-EXPORT`; cancellation and other
+  non-I/O exceptions propagate unchanged.
+
+These publication rules are independent of the encodings above and retain the redaction,
+basis, lineage and export-digest semantics. Verification includes concurrent destinations, substituted source/parent names,
+unsupported capabilities, descriptor-transfer failures and primary-exception preservation.
 
 GUI (`ui_strings.py`, Qt only; logic in `strings/view_model.py`). **Where**: dock `strings.dock` (objectName), tabified with the Evidence dock on the right (`tabifyDockWidget`), action in the Analysis menu, `Ctrl+Shift+T` (free: used are Ctrl+N O I E S R, Ctrl+Shift+E, planned Ctrl+Shift+F/G); uses the E-2 panel registry when merged, else the `EvidenceController` pattern (own controller, generation counters, unparented registered threads, `WindowPort` for project and `select_match`).
 **Widgets**: source bar (source combo Built-in scan/FLOSS, Scan, FLOSS path + Browse + Probe + pin status, "Run with emulation..." opening a consent dialog that defaults to Cancel, Cancel, elapsed indicator); basis banner (PlainLabel with harmonizations or the block reason and "Re-scan older with newer's settings"); filter bar (change, type buttons, side, cue, min length, text filter, function chip set from the navigator, scope Differences (diff view, default) / All strings (inventory), "Hide noise-like strings (N hidden)"); `QTableView` with columns Change, String, Type, Older, Newer, Function, Cues, Source; detail tabs Summary / Links / Provenance in read-only `QPlainTextEdit` (an Edited row shows both values with plain markers `[-old-]` and `{+new+}`, a look-alike row lists the differing code points with their Unicode names); buttons Open function (needs `match_id`), Open in hex (older/newer), Copy safe, Copy exact...; status line with coverage. The navigator gets a context action "Strings in this function" (A5) that sets the function chip (W4).
 **Model/view**: `StringsTableModel(QAbstractTableModel)` over immutable view-model rows plus a Python index list for filter and sort (no `QSortFilterProxyModel`, as `EvidenceTableModel`); `data()` returns precomputed strings; one regular grid with header items (an Edited pair is one row, no merged cells; F16); the Change column carries a glyph and a word (`+ Only in newer`, `- Only in older`, `~ Edited`, `= In both`, `? Not compared`), never colour alone; AccessibleTextRole = row sentence ("Only in newer. Static string, 26 characters. Function ParseHeader, modified. Message with format specifier."), AccessibleDescriptionRole = reasons and link tier; ToolTipRole through `tooltips.template` (escaped, <= 300 chars). The default scope shows only changed strings (hundreds); All strings is a virtualized inventory (200k rows) with `resizeContentsPrecision(0)`, fixed header sections and font-metric row height (F16). Selection survives reloads by (value hash, side).
 **Keyboard**: Tab order source bar, filters, table, detail, buttons; arrows, PageUp/PageDown, Home/End in the table; Enter opens the function (else the hex view); Space focuses the detail; Ctrl+C copies the escaped single-line form of up to 200 rows / 16 KiB (as `evidence_view`); Ctrl+Shift+C copies exact text, after a confirmation when it holds control characters; Ctrl+F inside the dock focuses the filter (a widget-scoped shortcut, so it never competes with code-pane search), Esc clears it; F6 cycles panes.
 **Accessible names**: `Strings panel`, `Strings table`, `Change filter`, `Type filter`, `Side filter`, `Cue filter`, `Minimum length`, `Text filter`, `Scope`, `Comparison basis`, `String detail`, `Source`, `FLOSS path`, `Run with emulation`. **Tooltip ids** (What/Why/Effect/Source/Availability): `strings.dock`, `strings.action`, `strings.table`, `strings.col.{change,string,type,older,newer,function,cues,source}`, `strings.filter.{change,type,side,cue,minlen,text,scope,noise}`, `strings.run.{builtin,floss,emulation}`, `strings.{cancel,probe,browse,basis,detail,rescan}`, `strings.copy.{safe,exact}`, `strings.open.{function,hex}`, `strings.export`; entries live in `strings/tooltip_entries.py` (pure) and are merged by a `tooltips.register_entries()` hook (A7).
+
+**Shipped column-help wiring (2026-11-20, Pacific):** the panel's built-tip declaration
+includes all eight existing `strings.col.*` ids, and the corresponding
+`ColumnSpec.tip_id` values make their registered help available through the real
+table model's horizontal `ToolTipRole`, before and after results are loaded.
+Header display/accessibility labels and cell rendering, filtering, sorting,
+copying, and export data are unchanged. The Change help covers the recorded
+comparison state, including shared and unknown results. Function help describes
+an available link or a stated missing/unknown link; neither state proves that no
+function uses the string. Offscreen checks cover all eight headers, escaped
+registry text, and actual header participation in the global tooltip audit.
+Native Windows screen-reader acceptance remains separate.
 **States and exact copy** (checked against `BANNED`: no probab/likelihood/vulnerab/exploit/safe/secure/fixed/verified/proven/certain, also inside longer words):
 | state | text |
 |---|---|
@@ -200,6 +332,8 @@ GUI (`ui_strings.py`, Qt only; logic in `strings/view_model.py`). **Where**: doc
 | FLOSS missing | "FLOSS is not set up. You do not need it for plain strings. It is only needed for stack, tight and decoded strings." |
 | FLOSS unsupported | "This FLOSS build is not supported: {reason}. PatchTrace is tested with FLOSS 3.1.1." |
 | cancelled | "Extraction cancelled. Earlier results are unchanged." |
+**Shutdown amendment (2026-11-20)**: closing the Strings controller ends admission of filter-preparation work as well as scans. A filter-control signal already queued before shutdown must not submit a new task afterward, whether the shared task runner is still serving another panel or has also shut down. Loaded rows and persistence remain unchanged. The existing generation/key guards continue to reject earlier results.
+
 **Qt pitfalls**: rich-text tooltips and the `accessibleDescription` fallback (F16); never `setHtml/setMarkdown`; QLabel autodetects rich text (use `PlainLabel`); worker QThreads unparented and registered (a parent deleting a running QThread aborts); results delivered by signal with a generation check; model reset only on the GUI thread; no proxy model at 100k rows; clipboard capped; `visibilityChanged` queued; sizes from `QFontMetrics` for DPI 125/150/200.
 **Performance budget**: model reset with 100k rows <= 300 ms; filter+sort <= 400 ms; `data()` O(1) on precomputed text; first paint of 40 rows x 8 columns <= 50 ms; GUI-process memory for two 200k tables <= 250 MiB (the pydantic path measured about 1 GiB, F15); the GUI thread never parses, hashes or reads artifacts.
 **Offscreen tests**: `QT_QPA_PLATFORM=offscreen`, the pytest-qt MainWindow fixture of `test_ui_engine_setup.py`; every state above; hostile strings; 100k-row `data()` call counters and a `tracemalloc` peak; thread join on dock close; tooltip audit; contrast test for any fill; 20 repeats in one session without abort.
@@ -259,3 +393,59 @@ Blocked external acceptance, reported separately and never counted as done: pinn
 | Q12 master/3.2 adapter | wait for a tagged release; HEAD-probe monthly |
 | Q13 shortcut and who applies A5/A7/A8 | `Ctrl+Shift+T`; A5 is in the F5 seam, A7 is `PANEL.tips`, A8 stays with the track as its adapter file |
 | Q14 series lifelines | later slice S11 |
+### WB3-S6 CSV leading-ignorable formula guard (generation 34, 2026-11-20)
+
+The eleven string-row CSV columns are untrusted text, including an explicitly
+revealed string display. For spreadsheet-oriented export, do not treat a leading
+ASCII space, ASCII control whitespace (`\\t\\r\\n\\f\\v`) or UTF-8 BOM
+character (`U+FEFF`) as proof that a formula-like token is harmless. If the
+first non-ignorable character after these prefixes is `=`, `+`, `-`, or
+`@`, emit an initial single-quote escape **before** the entire original cell
+text. An initial tab, carriage return or newline is guarded even when no
+formula token follows, consistent with the existing direct-control rule.
+Preserve every original character after that added quote, rather than stripping,
+normalizing or double-encoding it. Keep ordinary whitespace-prefixed prose
+unchanged; do not change JSON export, the versioned CSV metadata/header,
+row count, redaction, or publication paths.
+
+This is a conservative text-export guard, not proof of universal spreadsheet
+import behavior for every application/version or safe rendering of a malicious
+spreadsheet file. Tests must round-trip through the real CSV serializer and
+include both guarded formula-like prefixes and unchanged controls.
+
+
+### WB3-S6 source-literal regression control (generation 35, 2026-11-20)
+
+Tests asserting the CSV prefix guard MUST pass actual leading control
+characters (LF, CR, tab, vertical tab, form feed) and U+FEFF to the real
+serializer, not literal backslash-letter spellings such as the two-character
+string consisting of a backslash and "n". Python source fixtures should use
+single backslash escapes (`\n`, `\t`, `\ufeff`) and assert the corresponding
+decoded CSV values. Keep non-formula prose and JSON behavior unchanged.
+A literal backslash before "n" is benign prose, not a newline and not a
+basis for inserting an apostrophe. This clarifies the test fixture only;
+the production policy in the preceding section remains unchanged.
+
+
+### WB3-S6 cross-column CSV admission regression (generation 36, 2026-11-20)
+
+The same existing `_cell` formula-prefix contract applies to **every** of
+`CSV_COLUMNS`, not solely the visible string-display column. In particular,
+`cues`, `functions`, `lineage_groups` and `reasons` can include source-derived
+free text after aggregation; the serializer must guard formula-leading text
+in those columns without modifying benign prose or the underlying JSON
+export's original values. Regression tests must exercise these fields through
+`render(document, 'csv')` and a real Python CSV round trip, and must compare
+`render(document, 'json')` as an unchanged control. These tests assert the
+existing protection boundary; no new prefix policy, data model, analysis,
+external transmission or publication semantics are authorized.
+
+
+### 2026-11-20 sibling test reconciliation: CSV form-feed controls
+
+The existing Strings CSV export prefix policy treats a form-feed before a
+formula-like value as an ignorable prefix for formula detection, while preserving
+original bytes. A form-feed before ordinary text does not by itself require a
+formula marker. Maintain explicit distinct parameterized CSV/JSON presentation
+regressions for these two cases. These tests do not change the Linux final-name
+publication refusal, strict redaction, provenance or export contract.

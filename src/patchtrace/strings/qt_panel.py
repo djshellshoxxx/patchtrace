@@ -123,14 +123,16 @@ def _cell(value: str, empty: str) -> str:
 
 
 COLUMNS = (
-    ColumnSpec('change', 'Change', lambda r: r.change, width_em=20),
-    ColumnSpec('string', 'String', lambda r: r.text, width_em=50),
-    ColumnSpec('type', 'Type', lambda r: r.type, width_em=16),
-    ColumnSpec('older', 'Older', lambda r: _cell(r.older, 'No file offset'), width_em=22),
-    ColumnSpec('newer', 'Newer', lambda r: _cell(r.newer, 'No file offset'), width_em=22),
-    ColumnSpec('function', 'Function', lambda r: r.function_cell, width_em=34),
-    ColumnSpec('cues', 'Cues', lambda r: r.cue_text, width_em=24),
-    ColumnSpec('source', 'Source', lambda r: r.source or 'Not run', width_em=20))
+    ColumnSpec('change', 'Change', lambda r: r.change, width_em=20, tip_id='strings.col.change'),
+    ColumnSpec('string', 'String', lambda r: r.text, width_em=50, tip_id='strings.col.string'),
+    ColumnSpec('type', 'Type', lambda r: r.type, width_em=16, tip_id='strings.col.type'),
+    ColumnSpec('older', 'Older', lambda r: _cell(r.older, 'No file offset'), width_em=22,
+               tip_id='strings.col.older'),
+    ColumnSpec('newer', 'Newer', lambda r: _cell(r.newer, 'No file offset'), width_em=22,
+               tip_id='strings.col.newer'),
+    ColumnSpec('function', 'Function', lambda r: r.function_cell, width_em=34, tip_id='strings.col.function'),
+    ColumnSpec('cues', 'Cues', lambda r: r.cue_text, width_em=24, tip_id='strings.col.cues'),
+    ColumnSpec('source', 'Source', lambda r: r.source or 'Not run', width_em=20, tip_id='strings.col.source'))
 SPEC = TableSpec(row_key=lambda r: r.id, search_text=lambda r: r.text)
 
 
@@ -398,6 +400,8 @@ class StringsController(ControllerBase):
         self._render()
 
     def _refilter(self) -> None:
+        if self.closed:
+            return
         loaded = self.loaded
         if loaded is None:
             return self._render()

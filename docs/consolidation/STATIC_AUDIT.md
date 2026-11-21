@@ -1,0 +1,318 @@
+# Supplemental static security review — 2026-11-19
+
+## Scope and result
+
+This review classifies the **65 actual Ruff `S` findings** in
+`verification/security-static-current.json`, initially against source
+`69fa6b8b588645a895b3edbdeff3aa4b74856be7`. It traces reported operations and
+their callers; it is not a claim that the scanner is clean or the source secure.
+The normal configured Ruff gate and this supplemental rule selection are
+different checks.
+
+The tables below remain the frozen 65-site baseline. Phase 7's source-specific
+amendment at the end records the completed tools review and the current non-clean
+134-finding source/tools scan at `8efb7a45`; it does not rewrite historical counts.
+
+The baseline `fdc2696c` and current receipts contain the same **multiset** of
+normalized `(source path, rule, message)` findings, including repeated findings.
+That establishes no added findings under this comparison, not absence of defects.
+Indeed, review reproduced a malformed CSAF redirect escaping the typed error
+boundary. The narrow correction below was applied after integration head
+`af8772bf9f5abe54eee214f8b05f379389b2f076`.
+
+| Rule | Count | Classification |
+| --- | ---: | --- |
+| S608 | 21 | SQL fragments trace to placeholders, fixed dictionaries/constants, or literal internal callers; no injection path demonstrated at these sites. |
+| S105 | 14 | Lexical, display or algorithm tokens; no credential literal identified in the flagged expressions. |
+| S110 | 13 | Observer, cleanup, optional metadata and persistence-error suppression; the historical failure-history finding is updated by Phase 4 below. |
+| S101 | 9 | Internal state or source-definition assertions; no authorization boundary relying solely on these assertions found. |
+| S310 | 5 | Guarded URL-dispatch paths; one malformed-redirect error-contract defect reproduced and corrected. |
+| S603 | 1 | Deliberate configured-tool execution with argv/environment/supervision controls; execution still trusts the configured tool. |
+| S314 | 1 | Bounded XML decoded and scanned for DTD/entity declarations before ElementTree; parser/runtime qualification remains separate. |
+| S108 | 1 | Random staging directory under the project, with exclusive creation and containment check. |
+| **Total** | **65** | **All reported sites classified; no warning suppression added.** |
+
+Receipt SHA-256 values:
+
+- Baseline JSON: `36eb550cdb6e3125dc8978a8b0b4708d6d37b178c381a61b2177df0c5cc2d350`.
+- Current JSON: `3b80a80a61847a2e354d50db95f7a53296a375e83ad958ba971f958f7e3a7153`.
+
+## SQL construction: all 21 S608 sites
+
+Locations below identify the scan records. Paths are relative to
+`src/patchtrace/`; symbols are authoritative if later changes move line numbers.
+The SQL review also examined adjacent statements using the same builders.
+
+| Reported location | Evidence for classification |
+| --- | --- |
+| `diaphora/sqlite_guard.py:54,66` | `count`/`rows` first index `SCHEMA[table]`; only `config`, `results`, `unmatched` and their fixed columns qualify. Row limits are bound. Production callers supply those literals. |
+| `enrichment/storage.py:348,399` | Dynamic text consists only of comma-separated `?` markers. Kinds and deletion IDs remain bound; deletion chunks are capped at 400. |
+| `kbcorrelation/store.py:302` | `_dictionary` has literal production callers for `kbs`, `cves`, `products`; imported names are bound values. The helper's identifier itself is not a public input boundary. |
+| `kbcorrelation/store.py:320` | `_edges` receives only literal `kbs.name=?` or `cves.name=?` clauses; requested names remain bound. |
+| `persistence.py:546` | A placeholder list for at most 500 history sequence IDs; IDs remain bound. |
+| `pilot/store.py:387,427` | Placeholder lists for 400-ID chunks; retention kind and prefix pattern also remain bound. |
+| `project_cli.py:198` | Interpolated `LIMIT` is the source constant `DERIVED_KIND_LIMIT = 64`. |
+| `search/segment.py:199` | `_insert` receives keys created by `_rows`/validated `_fts_names`; `columns[table]` gates table/column names before execution. Rows remain bound. |
+| `search/service.py:140` | `_fetch` receives literal FTS table names. `_in` generates fixed-column placeholder clauses; expressions, filters and cap remain bound. |
+| `search/service.py:186,196` | `DOC_COLUMNS` is constant; the optional function-kind clause is literal; filter values and cap are bound. |
+| `search/service.py:229` | `where` is assembled from fixed SHA/RVA/subject templates and placeholders. Actual SHA, address-derived subjects and filter values are bound. |
+| `search/service.py:238` | Constant projection and placeholder list for fixed `NAME_KINDS`; values, flag and cap remain bound. |
+| `unified/ir/ingest.py:160` | `flush` iterates literal table names `fn`, `bb`, `str`, `cst`, `ref`, `ins`; row width determines markers and row content is bound. |
+| `unified/ir/reader.py:297` | Projection combines literal columns with source constant `FN_COLUMNS`. |
+| `unified/ir/schema.py:173` | `COLUMNS[table]` and `_ORDER[table]` gate identifiers and ordering before execution; normal callers iterate fixed `TABLES`. |
+| `unified/store.py:770,844` | Placeholder lists for chunks of at most 400 IDs; IDs and kinds remain bound. |
+
+Three independent, in-memory controls actually passed: a SQL-looking dictionary
+value remained literal and its table survived; a SQL-looking search filter
+became `AND d.kind IN (?)` plus a separate parameter; an unknown IR table name
+raised `KeyError` before executing SQL. These are narrow controls, not exhaustive
+fuzzing or a test-suite result. Existing search/Diaphora/retention tests were
+inspected, not rerun for this SQL review.
+
+Keep `_dictionary`, `_edges`, `_fetch` and `_in` internal or add explicit
+identifier/fragment allowlists before exposing new caller-controlled arguments.
+Parameterized values do not establish safe admission of attacker-authored
+SQLite schemas, virtual tables, triggers, retention identities or expensive
+queries; those are separate boundaries.
+
+## URL dispatch: all five S310 sites
+
+- `acquisition/transport.py:149`: public operations call `_consented`/`_check`
+  before the opener. Initial URLs require exact consent, HTTPS and approved
+  hosts. Winbindex redirects are refused; a symbol download permits one checked
+  Azure blob redirect. Fixed request headers and `ProxyHandler({})` are used.
+- `enrichment/intelligence.py:166`: plan/consent validation precedes fetch;
+  `_attempt` checks the HTTPS provider allowlist each hop. A cross-host redirect
+  removes the NVD `apiKey`. Environment proxies and automatic redirects are
+  disabled, with response/deadline bounds applied by the transport.
+- `intelligence/csaf/transport.py:111`: consent, HTTPS host/port/path restrictions
+  and per-hop checks precede dispatch; the default opener disables proxies and
+  automatic redirects. The malformed-target gap below occurred before the next
+  checked dispatch.
+- `kev/transport.py:99`: `KevConsent` admits fixed catalog URLs; redirect targets
+  must satisfy the strict HTTPS grammar and retain the initial host. Automatic
+  redirects and environment proxies are disabled.
+- `providers.py:126`: `ProviderConfig` and `request_completion` validate endpoint
+  shape. Remote OpenAI-compatible endpoints require HTTPS; Ollama requires a
+  loopback host and refuses mapped IPv6 literals. Redirects and environment
+  proxies are disabled. This review does not qualify the entire UI consent flow
+  or a configured remote provider's behavior.
+
+These arguments rely on the current guarded callers of the low-level opener
+helpers. No live request, DNS/TLS compatibility check or remote-provider
+qualification was performed.
+
+### Reproduced and corrected: malformed CSAF redirect
+
+A fake response to an allowed CSAF URL with status 302 and
+`Location: https://[` raised raw `ValueError('Invalid IPv6 URL')` from
+`urllib.parse.urljoin`. The response closed and only the initial allowed URL was
+requested. The transport's `IntelError` contract was bypassed; the CLI's typed
+error wrapper could not handle it through that contract. This did **not**
+demonstrate SSRF, an extra request or code execution.
+
+The CSAF transport file was identical in PR319 (`a56ab13a`), PR320 (`188b4962`)
+and the reviewed integration source, so those retained branches did not already
+correct this case. The repair catches only `ValueError` from joining the
+redirect URL and raises the existing
+`IntelError('PT-INTEL-CONFIG', 'invalid URL refused')`, matching `check_url`'s
+malformed-URL taxonomy. The existing `finally` still closes the response. No
+schema or public contract changed; SPEC-28 sections D/J/L already define the
+guarded transport and typed CLI mapping.
+
+[The ten regression controls](../../tests/test_csaf_redirect_integrity.py)
+cover four malformed bracketed targets, three valid relative/absolute redirects
+and three disallowed targets. They check response closure, no invalid-target
+dispatch/cache write, and exact original/final URL, body and SHA-256 preservation
+on success.
+
+| Verification | Actual result |
+| --- | --- |
+| New controls before runtime edit, integration base `af8772bf` | **4 failed, 6 passed in 1.63s**; the four raw `ValueError` cases failed. |
+| New controls plus existing `test_intel_transport.py`, final rerun | **33 passed in 1.08s**; `verification/static-csaf-green-v3.log/xml`. |
+| Changed transport/test files, configured Ruff | **Passed**. |
+| Other offline URL/environment/XML probes | **26 controls passed**; no network or tool subprocess launched. |
+
+The first green attempt was interrupted by an unavailable execution environment;
+its result is unknown. After recovery, a rerun had 30 passes and three fixture
+errors because its `/tmp` parent no longer existed. Recreating only that test
+directory allowed the final 33-case run above. Receipts retain both attempts.
+An automated cybersecurity-risk flag prevented a child agent's read-only
+follow-up review; no specific source finding was supplied. Root subsequently
+reviewed the exact correction and all ten controls and found no blocker. The
+filter outcome is not evidence that the reviewed code or review tools are unsafe.
+
+## Process, environment and XML findings
+
+**S603, `jobs.py:346`.** `run_process` requires an absolute executable, validates
+argv and environment entry structure, calls `Popen` with `shell=False`, closes
+stdin and supervises time/output/process-tree cleanup. Windows batch arguments
+have a separate metacharacter refusal. `backend.build_child_env` and
+`secondary.engine_env` constrain inherited variables; BinDiff uses private
+configuration locations. These controls govern deliberately configured analysis
+tools. Absolute paths do not authenticate tool bytes or sandbox their behavior.
+Explicit unrestricted-environment settings and retained library/plugin search
+variables remain trust choices; this review did not qualify native Windows
+launches or every engine.
+
+**S314, `pe_overview/manifest.py:148`.** `observe_manifest` caps bytes, strictly
+decodes supported UTF-8/UTF-16 forms, rejects DTD/entity markers in that decoded
+text, then passes that same text to ElementTree. Three fresh encoding controls
+verified that a DTD never reached the parser; a valid manifest and over-limit
+control behaved as expected. Existing entity, encoding, inert-include and
+malformed-XML tests provide further seams, but were not rerun here. The byte cap
+does not by itself prove a hard CPU/RSS bound for every tree or every packaged
+Expat build. No dependency vulnerability audit was performed.
+
+## Remaining 37 findings
+
+**S105 (14):** `enrichment/signals.py` has seven comparisons against punctuation
+tokens; `gui/qt/chips.py` has three `plain` style comparisons; `gui/qt/theme.py`
+has one; `rules/contracts.py` has the hex-token regex and wildcard comparison;
+`unified/ladder/types.py` compares pass ID `P00`. The flagged expressions contain
+parser/display/algorithm vocabulary, not session credentials.
+
+**S101 (9):** `callgraph/delta._change`, `callgraph/minimap_qt.model`,
+`enrichment/wil._region`, `kbcorrelation/store._cas`,
+`secondary/bindiff_probe.probe_report`, `secondary/bindiff_run.run_bindiff` and
+`ui_series._show_view` assert state established by their current callers or
+earlier results. `kbcorrelation/panel_qt` and `unified/ladder/passes` check static
+definition consistency. Optimized Python removes these checks; malformed-state
+recovery and `-O` behavior were not exhaustively tested. No sole authorization
+gate was found at these sites. If caller contracts change, replace boundary
+assertions with typed validation rather than relying on optimization-sensitive
+diagnostics.
+
+**S110 (13):**
+
+| Source | Count | Disposition and remaining limit |
+| --- | ---: | --- |
+| `jobs.notify_progress` | 1 | A failing observer is isolated from process supervision. |
+| `netutil.interruptible` | 1 | Late abandoned-result cleanup is best effort; its failure cannot publish a cancelled result. |
+| `secondary/scheduler` | 2 | Observer failure and delivery during exception unwinding are isolated; no failure-to-success conversion established. |
+| `service` creation rollback | 2 | Unprovable database state is retained; close is best effort. Cleanup failure can leave remnants. |
+| `ui_engine_setup` settings write | 1 | Preference persistence failure is ignored. |
+| `ui_evidence` settings/failure publication | 2 | One preference write; one failed/cancelled-run persistence handler. The latter can lose the attempt's durable history while still showing the engine error: a real observability gap, not a demonstrated successful-result promotion. |
+| `unified/extract/ghidra_script` | 4 | Two optional runtime-version probes and project/decompiler cleanup handlers. Missing provenance fields and cleanup failures need separate native qualification. |
+
+**S108 (1), `pilot/store.py:146`:** the string fragment `/tmp-` forms a directory
+under the contained project path `intelligence/pilot`, followed by
+`secrets.token_hex(8)`. `mkdir` uses exclusive creation. This is not a fixed
+shared temporary-directory name. Concurrent hostile filesystem substitution
+was not exercised by this classification.
+
+## Next checks and limits
+
+1. Qualify the final integration head with the normal repository gates and the
+   required hosted/platform checks. These scoped probes do not replace them.
+2. Retain the completed Phase 6 audits of the actual Python runtime/search/rules
+   graphs and the seven unresolved native Qt findings. Broader packaged
+   interpreter/Expat/native SBOM and supported-artifact qualification remain open.
+3. The Phase 4 diagnostic recovery and real post-write controls are complete;
+   the accepted Phase 6 retention repair fixes the reproduced malformed-row cause.
+   Generic post-write uncertainty and wider database/atomicity limits remain.
+4. Retain URL/parser negative controls on supported runtimes, and re-audit SQL
+   helpers if new callers can supply identifiers or SQL fragments.
+
+This report does not cover every unreported statement, filesystem race, native
+tool, network service or dependency. Existing PR319/320 work is neither repeated
+nor declared qualified by unchanged scanner findings.
+
+
+## Phase 4 disposition of failure-history observability
+
+The warning tables above describe the audited baseline. Recovered source `254190a0b36153d28f76782f8d5dae26e9d9a020`, integrated through `520b524b`, preserves bounded attempt-storage diagnostics without replacing original engine errors or prior trusted sets. Generic publication exceptions now say **"Attempt storage unconfirmed"** because a row may already have committed. Definite not-saved wording requires a returned ownership refusal; a result-kept claim requires confirmed publication. Lifecycle resets clear transient details. Malformed-row retention remained open at this historical checkpoint; the accepted Phase 6 repair below addresses the reproduced cause while preserving generic post-write uncertainty.
+
+Baseline: 12 failed/8 passed in 19.07s. Recovered slice: 79 passed in 42.63s. Real SQLite post-write controls: 2 failed in 3.59s. Final affected UI/host selection: 81 passed in 37.33s; whole-tree Ruff and whitespace checks pass. Independent source review found no blocker in the recovered diagnostics, scheduler/producer boundary or persistence ownership/refusal contract. Authored offscreen controls do not qualify native comparators or atomic storage.
+
+[History evidence](evidence/history-diagnostic-20261119.zip): 9 verified payloads, 16,801 bytes; SHA-256 `60248a2e1bc603b6dba92451df639d22b7c58cc0d8153262a387242ae4dc5f67`.
+
+This amendment does not rewrite baseline warning counts or claim a new complete static audit.
+
+
+## Final supplemental scan on the Phase 4 source
+
+The supplemental security-rule scan on `520b524b` reports **64 findings**. The
+normalized comparison adds no warning and removes one S110 finding: the swallowed
+`ui_evidence` attempt-publication failure addressed by the history diagnostic
+slice. Configured whole-tree Ruff passes. The original 65-finding inventory above
+remains the frozen `69fa6b8b` baseline; it is not rewritten as the final count.
+
+Raw final receipt: `diagnostic/security-static-final.json` in the verified
+[complete frozen diagnostic archive](evidence/candidate-partitioned-20261119.zip).
+These are scanner findings, not a clean security verdict. Later retention and
+dependency corrections have their own source and verification scopes below.
+
+## Phase 6 source and dependency observation
+
+Retention source `74d5f4bb` / integration `153f6cea` corrects the bounded
+admission/identity/protection/cap failures: 175 affected passes and independent
+NULL/BLOB preservation controls. [Batch 6](RECOVERY_BATCH_6.md) retains wider
+database and post-write limits. Original 65-site classification and Phase 4's
+64-finding scan keep their source identities and original receipts.
+
+Fresh source scan at `5208c758`: **64 findings**, SHA-256
+`4f1de97fd6d670524c040b720633ae83c77709744347545f38fbe34a2a65072f`.
+`security-static-phase6-comparison.json` records no added/removed normalized
+`(source path, rule, message)` findings versus `520b524b`. Counts: S608 21,
+S105 14, S110 12, S101 9, S310 5, S603 1, S314 1 and S108 1. Configured
+whole-tree Ruff and pip check separately pass at `5208c758`.
+
+The expanded source/tools scan recorded **70 additional findings in tools**;
+at that checkpoint they still required their own review. The Phase 7 amendment
+below records the completed dispositions. No warnings were suppressed. Raw scans, comparison
+and gate receipts are in the verified [retention/integrated archive](evidence/attempt-retention-20261119.zip).
+
+Pydantic 2.14.2/core 2.50.2 is separately qualified at `b28f6971` / `5208c758`.
+Both actual 15-package PyPI/OSV graph audits returned zero findings but omit known
+old-pin upstream advisories. Seven assessed native Qt findings remain unresolved.
+[Advisory audit](DEPENDENCY_ADVISORY_AUDIT_20261119.md) and [upgrade qualification](PYDANTIC_SECURITY_UPGRADE_20261119.md)
+retain exact scope. Lint, supplemental rules, advisory lookup and runtime checks
+establish different facts; none alone establishes clean security or acceptance.
+
+## Phase 7 tools dispositions and final-source comparison
+
+All **70 original tools findings** are classified in the verified
+[tools review archive](evidence/tools-static-review-20261119.zip), containing four
+payloads plus its manifest. Classification records fixed inputs, public behavior,
+retained risks and specific repairs; it does not establish a clean tools tree.
+The archive SHA-256 is
+`2c54df05af8ea3ffda68fdfd1978c0392aad0a18c599c0fe12087724b16b7a43`.
+
+Fresh supplemental scanning at accepted source `8efb7a45` yields **134 findings:
+64 in source and 70 in tools**. Relative to `5208c758`, the normalized comparison
+adds one S310 site in `tools/verify_backend_pins.py` and removes one S110 site in
+`tools/bundle_acceptance.py`. No warning was suppressed; scan exit 1 records the
+remaining findings. Raw `security-static-phase7.json` has SHA-256
+`e511c964668c70c5c54f84a9e498903abeb690f54b00438761f07d188bf78856`;
+`security-static-phase7-comparison.json` preserves the exact comparison in the
+[Phase 7 gates archive](evidence/phase7-gates-20261119.zip).
+
+The new S310 is the shared manually redirected HTTPS opener. Per-dispatch scheme
+and authority validation, bounded follow count, response closure, Host rebuild
+and cross-origin credential removal were checked against original and peer red
+controls. The [HTTPS review](BUILD_HTTPS_REVIEW_20261119.md) records 289 passes and
+one historical wheel skip, followed separately by that exact wheel test passing.
+Its static warning remains visible despite the reviewed guard.
+
+The removed S110 swallowed failed connection samples, allowing attempted polls
+to appear healthy. [Batch 8](RECOVERY_BATCH_8.md) requires three successful
+observations and preserves partial endpoints even through nonzero/timeout output.
+Independent Windows partial-output false passes preceded three added negative
+controls. Final evidence is 111 passes/3 existing unshare skips. Sampling is not
+OS-block proof; the positive block control is unchanged. The same batch bounds
+each JUnit body before parsing at 8 MiB plus a sentinel byte, without claiming an
+aggregate input-count bound.
+
+Configured whole-tree Ruff and pip check pass at `8efb7a45`; all 16 generators
+leave 301 schemas and the CSAF table unchanged. The 866-file combined diagnostic
+is still running with its original orchestration setup errors preserved. Native
+Qt, platform/manual acceptance and broader historical review remain separate
+gates. No aggregate test, clean-security or native qualification follows from
+these dispositions.
+
+### Subsequent bounded WinPairs URL finding
+
+Read-only authored probes against the unchanged `8efb7a45` helper (Git blob `d55f02578680f0234da6ebdbcd4b456182169d06`) confirmed remaining gaps at the previously qualified-as-limited caller-guarded S310 site. Malformed ports/brackets/NFKC authorities escape as `ValueError`; empty userinfo passes the truthiness check; raw controls and whitespace can be accepted or normalized before dispatch. Local stdlib request validation raises `http.client.InvalidURL` outside the actual CLI for the reproduced empty-userinfo and invalid-path cases. Normal relative, query-only and signed-query controls preserve their exact bytes.
+
+The controls use authored responses and local request construction only: no socket, network request, real download, target execution or unallowlisted contacted destination is claimed. A separate narrow correction is in progress and is **not part of accepted Phase 7 source**. Original scripts/results and the six-file manifest are preserved under `verification/winpairs-url-peer-*` (manifest SHA-256 `031bd386e3c5041e89c59115ff7d23f2626b66ecf0abc982e77e8330506dc8f2`). The baseline static table remains a historical classification with stated limits; this finding supplies later evidence, not a rewritten clean scan.

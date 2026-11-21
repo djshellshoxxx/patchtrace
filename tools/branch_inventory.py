@@ -13,6 +13,7 @@ import csv
 import io
 import json
 import os
+import re
 import subprocess
 import tempfile
 from collections import Counter
@@ -20,6 +21,7 @@ from pathlib import Path
 from typing import Any
 
 COLUMNS = ("branch", "tip_sha", "pr", "last_commit", "category", "delete_safe", "note")
+CANONICAL_COMMIT_OID = re.compile(r"(?:[0-9a-f]{40}|[0-9a-f]{64})\Z")
 MAX_METADATA_BYTES = 32 * 1024 * 1024
 PARTIAL_PRS = {144, 168, 174, 176, 289}
 DEFERRED_PRS = {61, 167, 170, 171, 186, 279}
@@ -64,7 +66,23 @@ def read_json(path: Path) -> Any:
         raw = stream.read(MAX_METADATA_BYTES + 1)
     if len(raw) > MAX_METADATA_BYTES:
         raise ValueError("pull-request metadata exceeds 32 MiB")
-    value = json.loads(raw)
+    # Raw snapshots are identity evidence: default JSON decoding silently
+    # overwrites duplicate keys and accepts non-finite numeric extensions.
+    def unique_object(pairs):
+        result = {}
+        for key, item in pairs:
+            if key in result:
+                raise ValueError("invalid pull-request metadata: duplicate JSON key")
+            result[key] = item
+        return result
+
+    def reject_nonfinite(_constant):
+        raise ValueError("invalid pull-request metadata: non-finite JSON number")
+
+    try:
+        value = json.loads(raw, object_pairs_hook=unique_object, parse_constant=reject_nonfinite)
+    except (json.JSONDecodeError, UnicodeDecodeError, RecursionError):
+        raise ValueError("invalid pull-request metadata JSON") from None
     if not isinstance(value, list) or not all(isinstance(row, dict) for row in value):
         raise ValueError("pull-request metadata must be an all-pages JSON array")
     return value
@@ -72,9 +90,35 @@ def read_json(path: Path) -> Any:
 
 def branches(git: Git, remote: str, snapshot: Path | None = None) -> list[tuple[str, str]]:
     if snapshot is not None:
-        with snapshot.open(encoding="utf-8", newline="") as stream:
-            rows = list(csv.DictReader(stream, delimiter="\t"))
-        result = [(row["branch"], git.commit(row["tip_sha"])) for row in rows]
+        with snapshot.open("rb") as stream:
+            raw = stream.read(MAX_METADATA_BYTES + 1)
+        if len(raw) > MAX_METADATA_BYTES:
+            raise ValueError("branch snapshot exceeds the input byte limit")
+        previous_limit = csv.field_size_limit(MAX_METADATA_BYTES)
+        try:
+            reader = csv.DictReader(
+                io.StringIO(raw.decode("utf-8"), newline=""), delimiter="\t", strict=True,
+            )
+            headers = reader.fieldnames
+            if (not headers or len(headers) != len(set(headers))
+                    or "branch" not in headers or "tip_sha" not in headers
+                    or any(not name.strip() for name in headers)):
+                raise ValueError("invalid branch snapshot TSV headers")
+            rows = list(reader)
+            if any(None in row or any(value is None for value in row.values())
+                   or not row["branch"].strip() or not CANONICAL_COMMIT_OID.fullmatch(row["tip_sha"])
+                   for row in rows):
+                raise ValueError("invalid branch snapshot TSV rows")
+        except csv.Error as exc:
+            raise ValueError("invalid branch snapshot TSV") from exc
+        finally:
+            csv.field_size_limit(previous_limit)
+        result = []
+        for row in rows:
+            resolved = git.commit(row["tip_sha"])
+            if resolved != row["tip_sha"]:
+                raise ValueError("branch snapshot tip does not match commit object")
+            result.append((row["branch"], resolved))
     else:
         if not remote or any(char in remote for char in "\r\n\t ") or remote.startswith("-"):
             raise ValueError("invalid remote name")
@@ -245,8 +289,9 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         git = Git(args.repo)
+        pulls = read_json(args.pulls_json)
         refs = branches(git, args.remote, args.refs_tsv)
-        rows, summary = inventory(git, args.main, args.candidate, refs, read_json(args.pulls_json), args.repository)
+        rows, summary = inventory(git, args.main, args.candidate, refs, pulls, args.repository)
         publish(args.output, render(rows))
     except (ValueError, KeyError, OSError, subprocess.SubprocessError) as exc:
         parser.exit(2, f"branch inventory failed: {exc}\n")

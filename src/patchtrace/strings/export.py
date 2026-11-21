@@ -1,8 +1,8 @@
 """Export of a strings delta as JSON or CSV (spec WB3 s8, WB3-S6). Pure but for the final file write.
 
 Redacted unless the caller passes the revealed values; the document records the basis digests, the harmonized
-settings and the lineage groups, so a file can be traced to the extraction it came from. The write is atomic (a
-temporary file in the same folder, then a rename) and never replaces an existing file without `force`.
+settings and the lineage groups, so a file can be traced to the extraction it came from. Publication binds
+the held source and parent. Linux requires a new destination; Windows also supports held-source replacement.
 """
 from __future__ import annotations
 
@@ -11,19 +11,28 @@ import hashlib
 import io
 import json
 import os
+import sys
 from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 
+from ..owned_publication import (
+    OwnedPublicationError,
+    directory_anchor,
+    publish_bytes,
+    publish_windows,
+)
 from .contracts import StringChange, StringsDelta, StringsError
 
 EXPORT_CONTRACT = 'strings-export/1'
+CSV_CONTRACT = 'strings-export-csv/2'
 Format = Literal['json', 'csv']
 Scope = Literal['changed', 'all']
 CSV_COLUMNS = ('id', 'status', 'review_tier', 'display', 'length', 'cues', 'older_offsets', 'newer_offsets',
                'functions', 'lineage_groups', 'reasons')
-_FORMULA_LEADS = ('=', '+', '-', '@', '\t', '\r')
+_FORMULA_LEADS = ('=', '+', '-', '@')
+_CSV_IGNORABLE_PREFIX = ' \t\r\n\f\v\ufeff'
 
 
 @dataclass(frozen=True, slots=True)
@@ -70,7 +79,10 @@ def document(delta: StringsDelta, *, scope: Scope = 'changed', reveal: Mapping[s
 
 def _cell(value: object) -> str:
     text = str(value)
-    return "'" + text if text.startswith(_FORMULA_LEADS) else text
+    # Some CSV viewers can ignore whitespace/BOM before interpreting a cell.
+    # Prefix the original bytes, never strip them, when a formula may follow.
+    guarded = text.startswith(('\t', '\r', '\n')) or text.lstrip(_CSV_IGNORABLE_PREFIX).startswith(_FORMULA_LEADS)
+    return "'" + text if guarded else text
 
 
 def _csv_row(record: dict) -> list[str]:
@@ -88,26 +100,51 @@ def render(doc: dict, fmt: Format) -> bytes:
         return (json.dumps(doc, sort_keys=True, indent=2) + '\n').encode('utf-8')
     out = io.StringIO(newline='')
     writer = csv.writer(out, lineterminator='\n')
+    metadata = {key: value for key, value in doc.items() if key != 'changes'}
+    writer.writerow((CSV_CONTRACT, json.dumps(metadata, sort_keys=True, separators=(',', ':'))))
     writer.writerow(CSV_COLUMNS)
     writer.writerows(_csv_row(r) for r in doc['changes'])
     return out.getvalue().encode('utf-8')
 
 
+def _write_new(path: Path, data: bytes) -> None:
+    """No stage pathname can substitute bytes or become an unsafe cleanup target."""
+    try:
+        target = Path(os.path.abspath(path))
+        anchor = directory_anchor(target.parent)  # the selected parent must already exist
+        publish_bytes(target, data, anchor=anchor)  # no reuse: identical content still refuses
+    except FileExistsError:
+        if sys.platform.startswith('linux'):
+            raise _fail(f'{path.name} already exists; replacement is unavailable on Linux; '
+                        'choose a new destination') from None
+        raise _fail(f'{path.name} already exists; pass --force to replace it') from None
+    except NotImplementedError:
+        raise _fail(f'{path.name}: safe publication capability is unavailable') from None
+    except (OSError, OwnedPublicationError) as exc:
+        reason = (exc.strerror or type(exc).__name__) if isinstance(exc, OSError) else str(exc)
+        raise _fail(f'could not write {path.name}: {reason}') from None
+
+
 def write_atomic(path: Path, data: bytes, *, force: bool) -> None:
-    if path.exists() and not force:
-        raise _fail(f'{path.name} already exists; pass --force to replace it')
+    # Linux cannot atomically select a held source inode while replacing a name.
+    # Both flag values use exclusive publication; an existing name is preserved.
+    if not force or sys.platform.startswith('linux'):
+        return _write_new(path, data)
     if path.is_dir():
         raise _fail(f'{path.name} is a folder')
-    temp = path.with_name(f'.{path.name}.{os.getpid()}.tmp')
     try:
-        with open(temp, 'wb') as stream:
-            stream.write(data)
-            stream.flush()
-            os.fsync(stream.fileno())
-        os.replace(temp, path)
-    except OSError as exc:
-        temp.unlink(missing_ok=True)
-        raise _fail(f'could not write {path.name}: {exc.strerror or type(exc).__name__}') from None
+        target = Path(os.path.abspath(path))
+        if os.name == 'nt':
+            publish_windows(target, data, anchor=directory_anchor(target.parent), replace=True)
+        else:
+            raise OwnedPublicationError('forced export is unsupported on this platform')
+    except FileExistsError:
+        raise _fail(f'{path.name} already exists; pass --force to replace it') from None
+    except NotImplementedError:
+        raise _fail(f'{path.name}: safe publication capability is unavailable') from None
+    except (OSError, OwnedPublicationError) as exc:
+        reason = (exc.strerror or type(exc).__name__) if isinstance(exc, OSError) else str(exc)
+        raise _fail(f'could not write {path.name}: {reason}') from None
 
 
 def export_delta(delta: StringsDelta, path: Path, *, fmt: Format, scope: Scope = 'changed',

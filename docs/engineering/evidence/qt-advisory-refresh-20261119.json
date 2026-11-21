@@ -1,0 +1,47 @@
+{
+  "observed_utc": "2026-11-19T23:42:46.956581+00:00",
+  "source_commit": "afa1af3c",
+  "sources": [
+    {
+      "url": "https://www.qt.io/blog/security-advisory-cve-2026-114369",
+      "title": "Qt WebSockets handshake resource exhaustion",
+      "published": "2026-11-12",
+      "retrieval": "successful official web open",
+      "affected": "Qt 5.15.0 through 6.8.9 and 6.9.0 through 6.12.0; QWebSocket starts 6.3.0",
+      "fixed": "6.8.10 or 6.12.1; vendor source patches also offered",
+      "assessment": "6.12.0 version match; 6.11.3 is not complete remediation; PatchTrace exploitability not established"
+    },
+    {
+      "url": "https://www.qt.io/blog/security-issue-cve-2026-116337?hsLang=en",
+      "title": "Qt Network HTTP response uncontrolled resource consumption",
+      "published": "2026-11-09",
+      "updated": "2026-11-11",
+      "retrieval": "successful official search result; later canonical open unavailable",
+      "affected": "Vendor prose: Qt4.5.0 to Qt6.8.10 or Qt6.12.1",
+      "fixed": "6.8.10 or6.12.1",
+      "assessment": "Preserve overlapping affected/fixed endpoints as vendor ambiguity; no safe6.11.3 conclusion"
+    },
+    {
+      "url": "https://www.qt.io/blog/security-advisory-cve-2026-105925",
+      "title": "QXmlSimpleReader denial of service",
+      "published": "2026-11-16",
+      "retrieval": "successful official search result; later canonical open unavailable",
+      "affected": "Qt5.0.0 through6.8.10,6.9.0 through6.11.2, and6.12.0",
+      "fixed": "6.8.10,6.11.3,6.12.1 or later",
+      "condition": "Specially crafted XML processed by QXmlSimpleReader::parse can cause excessive allocation",
+      "assessment": "Previously unclassified patch now has assessed6.12.0 component version match; no app reachability proof; vendor6.8.10 endpoint overlaps"
+    },
+    {
+      "url": "https://download.qt.io/official_releases/qt/6.12/",
+      "title": "Official Qt6.12 releases index",
+      "retrieval": "successful official web open",
+      "observation": "Only6.12.0 release directory listed; source patches for named advisories are present",
+      "assessment": "Does not prove absence from all vendor channels or qualify source-built backports"
+    }
+  ],
+  "limits": [
+    "No wheel installed or source backport built.",
+    "No native frozen-artifact SBOM or application exploitability qualification.",
+    "Reported seven earlier ranges remain prior evidence; this review adds one previously unclassified advisory disposition."
+  ]
+}

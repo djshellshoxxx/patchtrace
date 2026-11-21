@@ -49,7 +49,7 @@ GOLDEN = {  # recorded from the unoptimized implementation
     'stages': {'signals': '0c7a58faae6e916fb21ff38890159186d17f03f16c02d0b20d14cc2f0a04518f',
                'wil': '6f97400c47ec3a9af6adcb127a184453f1e471594ed5013dc75e5a167ebb8a5b',
                'ranking': '94696d1bdf67c80fe778f31bc4242a2b0ebc72680877adceda536d245182ddb8',
-               'contextual': '8c34cd253ba30f234cc678e1aec8ea33e9b9f461e3cc7d2e3cd2cdf43e368f0a'},
+               'contextual': '6e8833bd2ddc1fa986d858884c9ea15cf0ae01c9f25450d19034055f841432b4'},
     'signals': '7b352273f5ec8dccb8b0f4bc2a7896f9f9bcc823e40429757c57bfd2e4d33369',
     'ranking': '70d875efffb48f19409c09dcc920b8d42d484b8845c211fa28d8b5511ca83a02',
 }

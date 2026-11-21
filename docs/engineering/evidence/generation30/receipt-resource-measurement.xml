@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="1.051" timestamp="2026-11-20T07:50:30.704824-08:00" hostname="0e558e4650b0"><testcase classname="tests.test_research_qualification_perf_harness" name="test_resource_peaks_are_measured" time="0.894" /></testsuite></testsuites>

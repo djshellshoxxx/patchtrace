@@ -1,0 +1,27 @@
+{
+  "source_commit": "829600f8d667b74329a79dd0b0d7964c2e092fd0",
+  "source_tree": "306c4d58fe6c0902c4c1b0fbbc3cddd64aed1c4b",
+  "parents": [
+    "a73cea498d93e353eb49ef08aff785bd0c0a768c"
+  ],
+  "remote_code_commit": "175909a0b5ea0f1d2ef77012c672935698793dea",
+  "distinct_affected_passed": 1444,
+  "case_count": 1445,
+  "selection_node_selectors": 65,
+  "failed": 0,
+  "errors": 0,
+  "ordinary_skipped": 0,
+  "xfailed": 1,
+  "expected_failures": [
+    "CODEX-5"
+  ],
+  "command_seconds": 91.481,
+  "whole_tree_ruff": "passed",
+  "dependencies": "passed",
+  "isolated_source_import": "passed; clean source-bound checkout before and after",
+  "independent_review": "No blocker; 48 maintained Tier R cases plus19 independent controls; counts overlap root selection",
+  "test_tree_audit": "984 immutable Python test blobs parsed;55 workflow-related files inspected; no second concrete stale tag assertion found",
+  "final_source_hosted": "pending exact final PR349 publication head",
+  "full_suite": "Earlier incomplete local and cancelled hosted attempts retained; no completed full suite for this revision yet",
+  "evidence": "docs/engineering/evidence/cycle837fe-tier-r-20261121/combined-focused.json"
+}

@@ -1,0 +1,26 @@
+{
+  "label": "ruff",
+  "command": [
+    "/workspace/scratch/837fe19aae3a/native-followup-venv/bin/python",
+    "-m",
+    "ruff",
+    "check",
+    "src",
+    "tests",
+    "tools"
+  ],
+  "cwd": "/workspace/scratch/837fe19aae3a/PatchTrace-native-followup",
+  "head": "d628749401f61d3653b5e066ff38245b938c5dcd",
+  "tree": "5d4f2d3beff122b352d0d62a15ea0800c578c0b9",
+  "dirty_before": "",
+  "started_at": "2026-11-21T06:59:22.763593+00:00",
+  "qt_platform": "offscreen",
+  "pythonpath": null,
+  "pid": 17,
+  "returncode": 0,
+  "seconds": 0.206,
+  "finished_at": "2026-11-21T06:59:22.970081+00:00",
+  "head_after": "d628749401f61d3653b5e066ff38245b938c5dcd",
+  "dirty_after": "",
+  "child_ru_maxrss_kib_observed": 40848
+}

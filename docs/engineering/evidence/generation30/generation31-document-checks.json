@@ -1,0 +1,91 @@
+{
+  "link_checks": [
+    {
+      "file": "docs/engineering-handoffs/generation-30-31-20261120.md",
+      "target": "../engineering/consolidation-inventory-20261120-g30.json",
+      "exists": true
+    },
+    {
+      "file": "docs/engineering-handoffs/generation-30-31-20261120.md",
+      "target": "../engineering/feature-status-20261119.json",
+      "exists": true
+    },
+    {
+      "file": "docs/engineering-handoffs/generation-30-31-20261120.md",
+      "target": "../engineering/qt-disposition-refresh-20261120.md",
+      "exists": true
+    },
+    {
+      "file": "docs/engineering-handoffs/generation-30-31-20261120.md",
+      "target": "../engineering/task-ledger.json",
+      "exists": true
+    },
+    {
+      "file": "docs/engineering/generation30-independent-input-review.md",
+      "target": "evidence/generation30-independent-input-manifest.json",
+      "exists": true
+    },
+    {
+      "file": "docs/engineering/receipt-source-recovery-20261120.md",
+      "target": "receipt-source-independent-review-20261120.md",
+      "exists": true
+    },
+    {
+      "file": "docs/engineering/receipt-source-recovery-20261120.md",
+      "target": "evidence/generation30/",
+      "exists": true
+    },
+    {
+      "file": "docs/engineering/strings-stored-source-recovery-20261120.md",
+      "target": "evidence/generation31-strings-admission/manifest.json",
+      "exists": true
+    }
+  ],
+  "broken_links": [],
+  "census_lengths": {
+    "branches": 341,
+    "pull_requests": 330,
+    "tags": 59,
+    "latest_releases": 10
+  },
+  "coverage": {
+    "remote_branches": 341,
+    "all_state_prs": 330,
+    "open_prs": 74,
+    "closed_unmerged_prs": 84,
+    "merged_prs": 172,
+    "pr_head_objects_available": 330,
+    "tags": 59,
+    "releases": 59,
+    "initial_pr_head_objects_available": 304
+  },
+  "classifications_actual": {
+    "UNKNOWN \u2014 INVESTIGATE": 176,
+    "CONTAINED BY ANCESTRY": 146,
+    "PATCH EQUIVALENT \u2014 SEMANTICS UNREVIEWED": 16,
+    "EQUIVALENT \u2014 SKIP": 1,
+    "CURRENT CANDIDATE": 1,
+    "BASELINE": 1
+  },
+  "classifications_recorded": {
+    "UNKNOWN \u2014 INVESTIGATE": 176,
+    "CONTAINED BY ANCESTRY": 146,
+    "PATCH EQUIVALENT \u2014 SEMANTICS UNREVIEWED": 16,
+    "EQUIVALENT \u2014 SKIP": 1,
+    "CURRENT CANDIDATE": 1,
+    "BASELINE": 1
+  },
+  "pr_states": {
+    "open": 74,
+    "merged": 172,
+    "closed": 84
+  },
+  "unique_branches": 341,
+  "unique_pr_numbers": 330,
+  "pr_heads_available": 330,
+  "listed_census_intermediates": {
+    "patchtrace-remote-inventory.json": false,
+    "patchtrace-all-prs.json": false,
+    "build-patchtrace-inventory.py": false
+  }
+}

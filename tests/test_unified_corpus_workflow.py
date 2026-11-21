@@ -15,8 +15,12 @@ yaml = pytest.importorskip('yaml')
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 WORKFLOW = ROOT / '.github' / 'workflows' / 'unified-corpus.yml'
-ALLOWED_ACTIONS = {'actions/checkout@v4', 'actions/setup-python@v5', 'actions/upload-artifact@v4',
-                   'actions/download-artifact@v4'}
+ALLOWED_ACTIONS = {
+    'actions/checkout@11d5960a326750d5838078e36cf38b85af677262',
+    'actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065',
+    'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02',
+    'actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093',
+}
 JOBS = ('corpus', 'bench-windows', 'report')
 
 

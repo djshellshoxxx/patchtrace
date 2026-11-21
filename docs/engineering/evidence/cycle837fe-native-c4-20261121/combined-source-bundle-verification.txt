@@ -1,0 +1,7 @@
+/workspace/scratch/837fe19aae3a/PatchTrace-native-followup/docs/engineering/evidence/cycle837fe-native-c4-20261121/combined-original-source.bundle is okay
+The bundle contains this ref:
+6bf79feffe68a9fdc1293a69900320e12be662bc HEAD
+The bundle requires these 2 refs:
+111803d54cfebc1b779f4832a069904b3ee91a7c 
+d628749401f61d3653b5e066ff38245b938c5dcd 
+The bundle uses this hash algorithm: sha1

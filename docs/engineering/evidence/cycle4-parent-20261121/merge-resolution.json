@@ -1,0 +1,36 @@
+{
+  "recorded_at": "2026-11-21T06:49:26.815048+00:00",
+  "local_before": "a76189cc0e7ec4312baf3662da5946d39bdd019c",
+  "parent_merged": "daee337c48c63dda8aeac149c407e900c79dcc86",
+  "ledger": {
+    "base_tasks": 77,
+    "ours_tasks": 80,
+    "parent_tasks": 90,
+    "merged_tasks": 93,
+    "parent_tasks_exact_semantic_prefix": true,
+    "parent_nonmetadata_fields_preserved": true,
+    "c4_appended_task_ids": [
+      "buildenv-header-help-20261121-95fe",
+      "pages-site-isolation-and-hashes-20261121-95fe",
+      "codex5-per-command-audit-gap-20261121-95fe"
+    ],
+    "ours_top_level_field_preserved": "parallel_followup_cycle4",
+    "index_blob_sha256": {
+      "base": "83f5f0913f47350a2c86799aace913ee4c32971bc9313dcf117c47e2f1cb22f2",
+      "ours": "e9e02701e6f2be209ac6a01d48a2aeb28f5c96f6fa1b415dedc3e7d279734085",
+      "parent": "a52f4ca34ee43570377b41ae358677cf3d550f3eb35c1e2b49397ecd720e017c"
+    }
+  },
+  "tooltip_audit": "Preserved real-host Strings, Search and Build environment activation/count checks; no exemption added.",
+  "whitespace": {
+    "complete_merge_diff_returncode": 2,
+    "c4_delta_whitespace_returncode": 2,
+    "retained_raw_evidence_blobs": {
+      "docs/engineering/evidence/cycle837fe-20261121/source-history-verification.txt": "daee337c48c63dda8aeac149c407e900c79dcc86",
+      "docs/engineering/evidence/cycle4-95fe/source-bundle-verification.txt": "a76189cc0e7ec4312baf3662da5946d39bdd019c"
+    },
+    "raw_blobs_unchanged": true,
+    "all_other_paths_returncode": 0,
+    "disposition": "The two sealed raw git bundle verification receipts end their prerequisite line with a literal space. Their original bytes are preserved; all other merged paths pass whitespace validation."
+  }
+}

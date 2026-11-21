@@ -1,0 +1,228 @@
+{
+  "schema": "patchtrace-feature-status/1",
+  "updated_at": "2026-11-21T07:00:42.904420+00:00",
+  "checkpoint_local_commit": "e5a531668ef523cd6faa26d5fec59aa552749134",
+  "release_ready": false,
+  "features": [
+    {
+      "feature": "CVE-to-patch correlation",
+      "status": "partial",
+      "implemented": "Existing validated advisory/product/evidence services and provenance-preserving bindings.",
+      "remaining": "Frozen L1 remains 73 pass, 6 fail, 8 excluded; no new achieved accuracy claim.",
+      "evidence": [
+        "docs/consolidation/FEATURE_MATRIX.md",
+        "docs/plans/accuracy-program-handoff-20261107.md"
+      ]
+    },
+    {
+      "feature": "Binary comparison and matching",
+      "status": "partial",
+      "implemented": "Existing normalization, unified matching, ambiguity and one-sided results; paired physical byte windows are now integrated.",
+      "remaining": "Independent real-project L2/L3 labels and producer qualification remain required; physical alignment is not function equivalence.",
+      "evidence": [
+        "docs/engineering/raw-alignment-recovery.md",
+        "docs/specs/byte-representations.md"
+      ]
+    },
+    {
+      "feature": "Analysis adapters",
+      "status": "partial",
+      "implemented": "Earlier rz-diff native receipts and PR324 native Windows Ghidriff workflow success are retained, including a digest-verified authored-fixture execution receipt.",
+      "remaining": "Later acquisition follow-up needs its own exact-source hosted gates; authored native fixtures are not achieved general accuracy.",
+      "evidence": [
+        "docs/engineering/evidence/pr322-ci-retry-receipt.json",
+        "docs/engineering/evidence/pr324-native-patchtrace-clean.json"
+      ],
+      "latest_verified_scope": "Native cache diagnostics retain bounded existing Java-probe/run evidence; no adapter/cache policy changed. Actual initial-head java=unverified failure remains unresolved despite a passing counterpart."
+    },
+    {
+      "feature": "Winbindex and binary pairing",
+      "status": "partial",
+      "implemented": "Immutable source proposals/windows, normalized delivery rows, consent/verified receipts and recovered bounded input guards are implemented in the candidate. The g24–g29 review supplies 96 disjoint source-bound passes on g29; see the exact review scope.",
+      "remaining": "Full raw entry/index retention, exact resolver input membership/reconstruction, live/native acceptance and current-source full qualification remain incomplete. Earlier generation-specific claims are preserved as historical notes, not present review status. Exact combined-source candidate admission behavior and complete raw index/entry membership need acceptance.",
+      "evidence": [
+        "docs/engineering/winpairs-url-boundary.md",
+        "docs/engineering/winpairs-http-review.md",
+        "docs/engineering/acquisition-provenance-peer-review-20261120.md",
+        "docs/engineering-handoffs/generation-15-20261120.md",
+        "docs/engineering-handoffs/generation-16-20261120.md",
+        "docs/engineering-handoffs/generation-17-20261120.md",
+        "docs/engineering-handoffs/generation-18-20261120.md",
+        "docs/engineering-handoffs/generation-19-20261120.md",
+        "docs/engineering-handoffs/generation-20-20261120.md",
+        "docs/engineering-handoffs/generation-21-20261120.md",
+        "docs/engineering-handoffs/generation-22-20261120.md",
+        "docs/engineering-handoffs/generation-23-20261120.md",
+        "docs/engineering-handoffs/generation-25-20261120.md",
+        "docs/engineering-handoffs/generation-26-20261120.md",
+        "docs/engineering-handoffs/generation-27-20261120.md",
+        "docs/engineering-handoffs/generation-29-20261120.md",
+        "docs/engineering/generation30-independent-input-review.md",
+        "docs/engineering/acquisition-destination-recovery-20261120.md"
+      ],
+      "historical_implementation_notes": "Validated URL/HTTP handling and persisted immutable source proposals, windows, normalized delivery rows, approved request plans and verified download receipts; consent binds source metadata and recovery preserves it. New isolated generation-15 candidate rejects ambiguous newest-date plain/gzip records and aliased offline index paths; local isolated method controls pass, full-source CI and independent review pending. New isolated generation-16 candidate bounds the opened offline source read and resets skipped-entry counts when the source disappears; limited standard-library reproduction only. Generation-17 isolated candidate refuses matching nonregular records and final-component symlink swaps at descriptor open on hosts with O_NOFOLLOW; descriptor regularity checked and nonblocking open requested. Generation-18 isolated successor maps POSIX post-admission directory EISDIR to source refusal, with two new repository tests and five passing isolated mirror controls only. Generation-19 isolated candidate includes the previously omitted skipped_bodies source-loss count in offline resolver gap accounting, preserves distinct import receipt counters, and discloses nonzero invalid version/KB bodies in plain output. An inherited Windows CI I001 formatting issue is addressed in the same isolated successor. Generation-20 isolated candidate counts a missing or malformed whole windowsVersions container as a single coverage loss while retaining an explicitly empty object as zero loss; changes are spec-first and narrow. Generation-21 isolated successor removes shared mutable index-gap counters so row mappings and rejected source units come from one held record read; it also corrects three outdated fixture assertions behind four real PR330 hosted QA failures. Generation-22 isolated spec-first candidate treats a missing/nonobject BASE windowsVersionInfo as one unreadable body rather than emitting a false undated baseline row; valid empty object remains an observed unknown date. Generation-23 isolated importer source admission requests O_NONBLOCK on supported hosts and checks the held descriptor for regularity before reading, preserving regular-file and symlink-to-regular compatibility. Generation-25 isolated source candidate now selects the consented newer delivery row by resolver window_id version/KB (including explicitly recorded other_versions and native-body precedence) instead of SHA/basename alone. Generation-26 separate draft introduces a conservative older-side refusal for multiple distinct normalized source bodies with the selected binary SHA/basename; identical duplicates and unambiguous input are preserved. Generation-27 isolated successor now refuses distinct selected newer native-body rows (or distinct copied rows when no native exists), while preserving one native body's priority, unrelated KB exclusion and equal duplicates. The same successor removes a confirmed inherited I001 import-block layout error from generation-25 test source. Generation-28 successor contains test-only corrections to target the exact resolver-selected newer source window in the newly introduced no-transport integration test, and explicit pytest fixture re-exports for Ruff F401; product behavior is unchanged. Generation-29 test-only successor splits two fixture re-export import statements exactly as hosted Ruff I001 recommended; PR339 full offscreen pytest passed on Linux and Windows and its five Qt jobs succeeded, but its combined QA failed Ruff. No new runtime behavior.",
+      "historical_qualification_notes": "Complete raw entry/index retention, resolver-input reconstruction and native/live acquisition acceptance remain separate. Generation-16 actual repository tests/Ruff and independent review remain pending. Generation-17 repository tests/Ruff/source-pinned hosted CI and external independent review remain pending; ordinary-file and parent-path races are not closed. Generation-18 full-source CI, Windows native behavior and external independent review remain pending. Generation-19 four authored repository tests, updated affected assertions, full exact-source Linux/Windows QA/Ruff and external independent review remain pending; a small stdlib mirror is not repository acceptance. Generation-20 full-source regression, Linux/Windows Ruff/QA, native/Qt/package checks and independent review are unverified. Raw index/member retention remains open. Generation-21 three new repository tests and inherited fixture assertion corrections still need actual source-pinned pytest/Ruff/Qt/native/package qualification, independent review and supported OS behavior; the standalone demonstration is not product evidence. Generation-22 actual checked-out-source tests, current PR CI, independent review and supported native Windows behavior remain unverified; only standalone mirror controls passed. Generation-23 exact-source tests, Ruff, hosted QA/Qt/native/package and independent review pending; a standalone FIFO primitive is not repository test acceptance and does not fix Linux forced-export publication. Generation-25 source-specific repository tests, Ruff, hosted Linux/Windows QA/Qt/native/package and independent reviewer signoff pending. Its older predecessor selection and full raw resolver membership remain unimplemented. Generation-26 authored source tests, hosted combined QA, Ruff, package/native/Qt and independent review are pending. The guard does not retain the full raw index or reconstruct older input membership. Generation-27 eight authored repository cases, offscreen full QA, Ruff, native/Qt/package, genuinely independent review and exact-source hosted CI remain unverified; only original 4 red and corrected 6 green isolated selector controls ran. Neither raw index nor predecessor membership is retained. Generation-28 must pass its own actual hosted regression, full offscreen QA, whole-tree Ruff, native/Qt/package checks and independent source review; the previous PR338 full Linux run failed one test assertion, so it is not accepted. Generation29 exact-source full hosted pytest/Ruff/Qt/native/package acceptance and independent adversarial review pending; PR339 failures must not be misreported as passing combined CI.",
+      "latest_verified_scope": "Bounded independent source review of recent input guards/fixtures complete at 6c8b33b;96 shared cases, not per-feature or full-stack acceptance. Separate destination-guard recovery from ae67122c is donor-exact and independently reviewed; combined 71b535cc passes 493/1 native skip. Final-component checks are not atomic publication or exact raw resolver membership. New PR345-based candidate imports PR346's reviewed pre-service request ordering; original 183-case worker selection not transferable to this combined tree."
+    },
+    {
+      "feature": "Persistence and analysis history",
+      "status": "partial",
+      "implemented": "Existing validated runs/history and metadata cache; unsafe v2 facts now miss and are reparsed under cache v3.",
+      "remaining": "Broader run-to-run comparison and native lifecycle acceptance remain separate.",
+      "evidence": [
+        "docs/engineering/manifest-dtd-recovery.md"
+      ]
+    },
+    {
+      "feature": "GUI and CLI",
+      "status": "partial",
+      "implemented": "Saved-query operations, draft-preserving Profiles navigation, and bounded raw-offset controls integrated with independent reviews. Generation-24 isolated local advisory-file input candidate performs held regular-descriptor admission and nonblocking opens where supported for CVRF/CSAF imports shared by the CLI and investigation service.",
+      "remaining": "Current-source full/native Windows, manual/accessibility and packaging gates remain; the earlier local full run ended SIGKILL with origin unestablished.",
+      "evidence": [
+        "docs/engineering/profile-draft-recovery.md",
+        "docs/engineering/saved-search-peer-review.md",
+        "docs/engineering/raw-alignment-peer-review.md",
+        "docs/engineering-handoffs/generation-24-20261120.md",
+        "docs/engineering/strings-shutdown-independent-review-20261120.md",
+        "docs/engineering/generation33-qualification-20261120.md",
+        "docs/engineering/cycle2-peer-review-20261121-2bad.md"
+      ],
+      "latest_verified_scope": "TaskRunner/Evidence recovery retained; all eight Strings headers now carry registered escaped help and real-host coverage. Other panels and native screen-reader acceptance remain open.",
+      "historical_qualification_notes": "Original unsplit suite ended SIGKILL with two failure markers. The separately verified harness ownership repair retains all thresholds. Current-source full suite, native Windows, accessibility and manual desktop gates remain. Generation-24 actual source-pinned repository pytest/Ruff, hosted Linux/Windows QA, Qt/native/package, and genuinely independent review remain pending; this is not an empirical accuracy claim or Linux forced-export race fix."
+    },
+    {
+      "feature": "Reports and exports",
+      "status": "partial",
+      "implemented": "Structured reporting; held-source publication safeguards; CSV v2 metadata survives empty exports; cohort and repeated-project confidence reporting corrected.",
+      "remaining": "Strong Linux overwrite unavailable. Final-source hosted/full/native publication gates pending; no universal spreadsheet-client or empirical accuracy claim.",
+      "evidence": [
+        "docs/engineering/security-force-recovery-20261119.md",
+        "docs/engineering/strings-csv-peer-review.md",
+        "docs/engineering/accuracy-peer-review-20261119.md",
+        "docs/engineering-handoffs/generation-34-20261120.md"
+      ],
+      "latest_verified_scope": "Linux overwrite remains refused including --force; Windows replacement retained. CSV formula-prefix cases now also assert original JSON display, including real form-feed controls. No serializer runtime change.",
+      "previous_remaining_snapshot": "Final Linux forced replacement source-name race and native publication acceptance remain open. No new empirical accuracy evidence is claimed. Corrected g35 control-character fixtures need source-pinned pytest and separate reviewer before parent integration."
+    },
+    {
+      "feature": "Performance",
+      "status": "partial",
+      "implemented": "ASM investigation retained original failure and rejected unsupported optimizations; improved future failure diagnostics.",
+      "remaining": "No runtime lexer speedup or universal timing stability claimed; unchanged acceptance gate must pass combined verification.",
+      "evidence": [
+        "docs/consolidation/ASM_LEXER_PERFORMANCE_20261119.md"
+      ]
+    },
+    {
+      "feature": "Release qualification",
+      "status": "blocked",
+      "implemented": "Focused code repairs and reviews provide bounded evidence only.",
+      "remaining": "Final-source hosted QA/Qt/package/native, unexplained local SIGKILL, Qt disposition, complete raw-input membership, Windows trust/manual/accessibility and separate accuracy gates remain. Linux race mitigated by refusal.",
+      "evidence": [
+        "docs/engineering/generation3-qualification-review.md",
+        "docs/engineering/generation33-qualification-20261120.md"
+      ],
+      "latest_verified_scope": "Exact combined 3cf7ad23:188 passed, no skips; Ruff/dependencies/import identity pass and independent review clear. PR #346 all hosted QA/Qt/native/package/smoke passed on its own tree. PR #345 original Windows NSIS 503 remains recorded and one retry is active. Successor hosted qualification pending.",
+      "historical_qualification_notes": "Incomplete full-suite qualification; native Qt disposition; remaining Linux forced-source race; Windows/trust/clean-machine/native and layer-specific accuracy gates remain. PR339 Linux/Windows pytest and Qt successes were not combined acceptance because Ruff I001 failed; generation29 corrected source remains unqualified pending own hosted gates and review.",
+      "previous_remaining_snapshot": "Exact final-head full QA/Qt/package/native acceptance, native Qt disposition, Linux forced-export race, full raw-input membership, Windows trust/manual and separate accuracy gates remain open."
+    }
+  ],
+  "current_handoff": "docs/engineering-handoffs/cycle3-20261121-95fe.md",
+  "generation36_note": "Isolated, test-only cross-column Strings CSV regression extension: source-level review found prior 13 cases checked display only; two additional parameterized cases guard cues, functions, lineage_groups, reasons and assert JSON remains unchanged. Two stand-alone source-equivalent controls passed, repository pytest/Ruff and external independent review pending. PR342 source-specific native/live/Linux QA success does not qualify g36 or erase initial native cache failure.",
+  "generation37_note": "Evidence-only successor parsed PR342 exact-head successful Windows native raw-cache artifact: both Java 25.0.5 probes returned 0, raw hashes matched, second run contains cache-origin and recorded reuse, acceptance result passed. Original 5cc java=unverified failure remained without diagnostic artifact and unexplained; no runtime/cache rule change or release gate closure. G36 CSV tests remain independent, unqualified.",
+  "generation38_note": "Exact PR342 Windows Qt 5x repeat shard failed 2 investigation project create waitUntil timeouts after 10,423 passed. Generation38 isolated test-only diagnostics preserve original 10000ms and cause while recording safe pending operation/worker busy/flags. Four regression cases authored; seven synthetic controls pass, not native Qt/repository source. A review-found unhashable operation masking path was corrected. Full QA/Ruff and independent post-change review pending; original failure and release blockers retained.",
+  "generation39_note": "Isolated direct KB/CVE investigation Create destination now refuses observed final-component Windows junctions before resolution, distinct from previously integrated acquisition guard. Four regression functions authored; one native empty-target fixture corrected to expose the original defect. Three source-equivalent controls passed, not repository checkout pytest/Ruff, native Windows or independent review. PR343 full QA remains in progress and no duplicate suite started. No parent path/TOCTOU/forced-export closure; no release promotion.",
+  "generation40_note": "Unqualified isolated source-plan input type guard: SPEC/test before runtime; five malformed captured lead types including adversarial str subclass now PT-KBC-INPUT before network/workspace, valid whitespace text still accepted. Five old algorithm mismatches and six stand-alone source-equivalent expectations; actual repo pytest/Ruff, independent review, native/Qt and release gates remain pending. Parent PR343 CI active.",
+  "generation41_note": "Isolated source-plan-adjacent candidate basename type admission fix: invalid null/number/bytes/custom strip or overridden-str inputs now typed PT-KBC-INPUT before index lookup. Contract and 6 authored cases; 6 hand-copied Python controls passed only. Actual checked-out pytest, Ruff, hosted source qualification and independent signoff pending; no provenance/accuracy gain claimed.",
+  "authoritative_task_ledger": "docs/engineering/task-ledger.json",
+  "sibling_reconciliation_note": "PR345/346 reviewed unique candidate admission ordering and bounded inventory replay selectively recovered on a new PR345-based branch; shared header-help/Evidence code remains PR345 exact, PR345 Linux no-replacement rule and enhanced GUI tests retained. Added 2 form-feed CSV and 2 Qt fallback diagnostics. Original 95fe 212 distinct passing bounded cases and 2bad 429/2 scopes are source-specific and not combined-source acceptance. Current branch full pytest/Ruff, native Windows/Qt/package and independent signoff pending; main and release blocked.",
+  "inventory_tsv_shape_note": "2026-11-20 isolated PR347 successor: strict replay header and row-shape checks before Git disallow duplicate names, extra/missing cells and blank identifiers while preserving reordered/extra named metadata and bounded large quoted notes. Contract/code/8 authored test cases; six red/new algorithm controls and one compatibility control passed only in reconstructed stdlib Python, not checked-out repository. Independent review and exact-head tests/hosted/native release gates pending; no main merge/release.",
+  "inventory_tip_oid_note": "2026-11-20 isolated PR347/TSV-shape successor: snapshot tip_sha now canonical lowercase full 40/64-hex ID and must resolve to the exact commit, with all-row prevalidation before Git. Synthetic Git controls verified 6 early refusals, 1 canonical success, 1 annotated-tag refusal and 3 old mutable-ref resolutions; 7 repository cases authored, checked-out pytest/Ruff and independent signoff pending. PR345 Windows QA external Chocolatey NSIS 503 is a failed CI leg, distinct from PR347's successful native predecessor. No main/release promotion.",
+  "inventory_strict_saved_pr_json_note": "Unqualified isolated successor: strict all-pages PR JSON duplicate key, NaN/Infinity and malformed/deep input refusal before Git replay. Eleven authored repository regressions, 11 local copied-reader controls; actual checkout pytest/Ruff, independent review and source-specific hosted qualification pending. No semantic branch classification or release gain inferred.",
+  "cycle2_current_evidence": "docs/engineering/cycle2-consolidation-20261121-2bad.md",
+  "historical_note_keys": [
+    "generation36_note",
+    "generation37_note",
+    "generation38_note",
+    "generation39_note",
+    "generation40_note",
+    "generation41_note",
+    "sibling_reconciliation_note",
+    "inventory_tsv_shape_note",
+    "inventory_tip_oid_note",
+    "inventory_strict_saved_pr_json_note"
+  ],
+  "cycle2_current_note": "Clean combined188 passes, whole-tree Ruff/dependencies/source binding pass, independent review clear. Inventory large-field/TSV/OID/strictJSON repairs now repository-tested; damaged quoted TSV additionally fixed. All eight Strings headers wired. Hosted qualification for the successor remains pending; predecessor receipts remain source-specific.",
+  "codex14_linux_frozen_cli_smoke": {
+    "status": "reviewed-local-passed-hosted-frozen-pending",
+    "branch": "codex/patchtrace-linux-frozen-cli-smoke-20261121",
+    "parent": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+    "scope": "Run full frozen_smoke against extracted checksum-verified Linux x86-64 on Ubuntu 22.04/24.04; retain both offscreen/xcb self-tests.",
+    "source_controls": "13 author-side static source invariants passed; not repository pytest or frozen executable acceptance",
+    "remaining": "Exact-source Ubuntu22.04/24.04 full frozen CLI, applicable QA/Qt/native/package, unchanged manual/release gates.",
+    "evidence": "docs/engineering/evidence/cycle3-95fe/qualification.json",
+    "combined_source": "e5a531668ef523cd6faa26d5fec59aa552749134"
+  },
+  "ci_tier_r_cache_integrity_note": "Source repair53e02a47 and independent spec/standards review accepted within bounded scope; actual checked-out30pass/2xfail plus four real-workflow Bash fixture cases. Original validator and Ruff failures retained. Combined source e5a53166 passes469distinct affected cases; real hosted cache restore/save and Ghidriff path acceptance remain open.",
+  "cycle3_current_evidence": "docs/engineering/evidence/cycle3-95fe/qualification.json",
+  "cycle3_current_note": "469 distinct affected cases pass after replaying11 originally skipped site-tool cases with declared dependencies;2existingexpectedfailures CODEX1/5 remain. CODEX6/14/Pages independently reviewed and locally integrated; exact new-source hosted/native/cache acceptance remains pending. PR348 full Linux/Windows success is recorded separately.20 omitted PR346 indexes/evidence recovered. No main merge/release/deployment claimed.",
+  "cycle4_parallel_followup": {
+    "scope": "Separate bounded follow-up; does not replace the live PR349 integration owner.",
+    "base": "daee337c48c63dda8aeac149c407e900c79dcc86",
+    "branch": "integration/patchtrace-20261121-95fe-c4",
+    "tested_source": "111803d54cfebc1b779f4832a069904b3ee91a7c",
+    "tested_tree": "d3264bf26f83d039fa212c26b47c094f86691c3f",
+    "remote_code_checkpoint": "7ddb1130ca501b9cfda9949aa49e684f9f4b8f26",
+    "remote_reviewed_documentation_checkpoint": "7ddb1130ca501b9cfda9949aa49e684f9f4b8f26",
+    "status": "parent-integrated-reviewed-local-qualified-hosted-pending",
+    "report": "docs/engineering/cycle4-consolidation-20261121-95fe.md",
+    "handoff": "docs/engineering-handoffs/cycle4-20261121-95fe.md",
+    "evidence": "docs/engineering/evidence/cycle4-parent-20261121/qualification.json",
+    "qualification": {
+      "passed": 580,
+      "expected_failures": 1,
+      "expected_failure_ids": [
+        "CODEX-5"
+      ],
+      "ordinary_skips": 0,
+      "failures": 0,
+      "errors": 0,
+      "unique_identities": 581,
+      "selectors": 21,
+      "included_registry_identities": 110,
+      "receipt": "qualification-and-review-evidence.zip::root/combined-after.json"
+    },
+    "ownership": "837FE retains PR349/Search/storage/Action-pin integration; refresh live coordination before action.",
+    "live_head_rule": "Resolve this separate follow-up PR body and fresh remote branch for final publication head and checks.",
+    "original_base": "11f51c105bf63946f59373ae605b937c4fee607a",
+    "initial_source_history": {
+      "scope": "Separate bounded follow-up; does not replace the live PR349 integration owner.",
+      "base": "11f51c105bf63946f59373ae605b937c4fee607a",
+      "branch": "integration/patchtrace-20261121-95fe-c4",
+      "tested_source": "8c5e77e2c1ad3f6cfa62c2e474f7bcc2f4af1dd5",
+      "tested_tree": "6fe242cc10a5e7c3afe74c40a0f701cbab73aef1",
+      "remote_code_checkpoint": "2162708d86bb655f85410d8064aea04c396d5e6e",
+      "remote_reviewed_documentation_checkpoint": "f1f8ef664fd6ee88bf47a375538e4be0d8f11992",
+      "status": "implemented-reviewed-local-qualified-hosted-pending",
+      "report": "docs/engineering/cycle4-consolidation-20261121-95fe.md",
+      "handoff": "docs/engineering-handoffs/cycle4-20261121-95fe.md",
+      "evidence": "docs/engineering/evidence/cycle4-95fe/qualification.json",
+      "qualification": {
+        "passed": 391,
+        "expected_failures": 2,
+        "ordinary_skips": 0,
+        "failures": 0,
+        "errors": 0,
+        "unique_identities": 393,
+        "expected_failure_ids": [
+          "CODEX-1",
+          "CODEX-5"
+        ],
+        "receipt": "cycle4-review-evidence.zip::root/final-affected-selection.json"
+      },
+      "ownership": "837FE retains PR349/Search/storage/Action-pin integration; refresh live coordination before action.",
+      "live_head_rule": "Resolve this separate follow-up PR body and fresh remote branch for final publication head and checks."
+    },
+    "parent_integration": "Published PR349 source merged only into the separate C4 branch; no PR349 or main mutation."
+  }
+}

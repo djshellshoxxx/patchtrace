@@ -1,0 +1,29 @@
+{
+  "schema": "patchtrace-gui-counter-root-review/1",
+  "source_commit": "f7aa36c31456bbee19ad364785f89fefea859a13",
+  "disposition": "accepted-bounded-test-helper-correction",
+  "passed": 41,
+  "pytest_seconds": 7.62,
+  "application_source_changes": false,
+  "threshold_or_assertion_changes": false,
+  "original_aggregate_failure_cause": "unattributed",
+  "archive_sha256": "1c28a5e608ff9af6dcb5bc5ee99c31271906c100afa1f767e3549e3a7bac31eb",
+  "files": {
+    "pytest.log": {
+      "bytes": 1179,
+      "sha256": "ec35c44c6019fd1976335a751a44f2ab216cb2de573ed223dddeb363b8cde632"
+    },
+    "receipt.json": {
+      "bytes": 1234,
+      "sha256": "34c7ec6e626002c30157e35a780533438ed8c66e5c0afa32960116fe089e8c3a"
+    },
+    "results.xml": {
+      "bytes": 5144,
+      "sha256": "cee15b9251b9dde1155b276aec55aadc9aba96a57036c2aea85c3f0f042d4719"
+    },
+    "runner.py": {
+      "bytes": 1982,
+      "sha256": "55ced72dd37e9a51bb65b6cac21a0ba524853164e9b78912eadabe205f0551ce"
+    }
+  }
+}

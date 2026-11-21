@@ -85,6 +85,10 @@ def _finite_float(literal: str) -> float:
 
 
 def strict_json(text: bytes):
+    # Offline/raw imports bypass gzip, so the decoded-document cap belongs here
+    # as well as in the inflater. Refuse before decoding or allocating JSON objects.
+    if len(text) > MAX_DECOMPRESSED:
+        raise AcquisitionError('PT-ACQ-LIMIT', 'Winbindex record exceeds 256 MiB decompressed')
     try:
         # Syntax is document-wide; entry-specific Unicode is checked when hashing each record,
         # so one bad Winbindex entry does not discard unrelated valid builds.
@@ -328,7 +332,10 @@ def _body_facts(kb: str, body) -> tuple[str | None, str | None, str, tuple[str, 
         return None
     if kb == 'BASE':
         base = body.get('windowsVersionInfo')
-        return (_date(base.get('releaseDate')) if isinstance(base, dict) else None), None, '', ()
+        if not isinstance(base, dict):
+            # Do not manufacture an undated BASE row from unreadable metadata.
+            return None
+        return _date(base.get('releaseDate')), None, '', ()
     info = body.get('updateInfo')
     if not _KB.fullmatch(kb) or not isinstance(info, dict):
         return None
@@ -358,7 +365,11 @@ def _entry_rows(file_name: str, key: str, entry: dict, info: dict, source: str):
         record_sha256=hashlib.sha256(_canonical(entry)).hexdigest(), source=source)
     rows, bad = [], 0
     windows = entry.get('windowsVersions')
-    for version_key, updates in (windows.items() if isinstance(windows, dict) else ()):
+    if not isinstance(windows, dict):
+        # A valid SHA entry with an unreadable or absent version container
+        # must not disappear from coverage when sibling entries are usable.
+        return rows, 1
+    for version_key, updates in windows.items():
         if not isinstance(updates, dict) or not _VERSION_KEY.fullmatch(version_key):
             bad += 1
             continue

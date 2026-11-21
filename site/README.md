@@ -9,8 +9,12 @@ tree is `site/dist/`, deployed by `.github/workflows/pages.yml`. Canonical URL:
 
 1. **Enable Pages with the GitHub Actions source** (one time; repository settings cannot be changed from
    code). Repository **Settings -> Pages -> Build and deployment -> Source: GitHub Actions**. After that,
-   every push to `main` that touches `site/**` or `tools/site/**` deploys, and **Actions -> GitHub Pages ->
-   Run workflow** deploys on demand.
+   pushes to `main` that touch `site/**`, `tools/site/**` or the Pages workflow normally deploy after
+   a successful build. Put `[no deploy]` in the actual push head commit message to keep the site build
+   and artifact while skipping deployment; matching is case-insensitive. For a merge, use the resulting
+   merge commit title or body. **Actions -> GitHub Pages -> Run workflow** still deploys on demand.
+   The hold applies to one push and is separate from `[no release]`; see the
+   [deployment control contract](../docs/specs/pages-deployment-control.md).
 2. **Upload the logo.** Save the original square logo as `site/assets/source/logo-original.png` and
    commit it. The build turns it into `logo-512.png`, `logo-192.png`, `favicon-64.png`,
    `apple-touch-icon-180.png` and a 1200x630 `og-image.png` (Pillow, LANCZOS). The original itself is never
@@ -30,8 +34,28 @@ tree is `site/dist/`, deployed by `.github/workflows/pages.yml`. Canonical URL:
 python -m pip install -r tools/site/requirements.txt   # Pillow and segno; site tools only
 python tools/site/build_site.py                         # writes site/dist, prints warnings
 python tools/site/build_site.py --write-claims          # regenerates tests/site_claims.md after content edits
-python -m pytest -q tests/test_site_*.py
+python -m pytest --noconftest --disable-plugin-autoload -q tests/test_site_*.py
 ```
+
+Install the tested pytest version with `python -m pip install pytest==9.2.0`
+before running the test command. The `--disable-plugin-autoload` option requires
+pytest 8.4 or newer. The command runs the complete site-test selection
+without the application's shared test fixtures or unrelated installed pytest
+plugins. The existing screenshot-regeneration test still needs the application
+GUI and reports a skip when PySide6 is absent.
+
+For the same dependency set as Pages CI, use a clean **Linux x86-64, Python 3.12**
+environment and install its complete test/build lock instead:
+
+```sh
+python -m pip install --require-hashes --only-binary=:all: -r tools/site/requirements-ci.lock
+```
+
+This verifies the reviewed wheel hashes for Pillow, Segno, pytest and pytest's
+dependencies. The portable `requirements.txt` remains the build-only option for
+other platforms. See the [isolation and hash contract](../docs/specs/pages-build-isolation-and-hashes.md)
+for the lock's platform scope and update procedure. The application test suite
+continues to use its normal shared fixtures.
 
 Open `site/dist/index.html` in a browser. Exit codes: 0 built, 2 configuration or input error (for example
 an invalid address), 3 the built page failed its quality gate. The gate (`tools/site/checks.py`) fails the

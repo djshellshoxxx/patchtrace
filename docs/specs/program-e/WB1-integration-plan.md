@@ -6,6 +6,83 @@ as an empty recent list. This limit admits every serialized 20-query list under
 the existing 256-character query limit, including JSON escaping. Saved-search
 records and append-only project persistence are unchanged.
 
+## Saved and recent workflow amendment (2026-11-18)
+
+`search/saved_actions.py` supplies shared query preparation and existing-store
+actions. `search/qt_saved.py` owns desktop controls and a bounded settings
+adapter; neither introduces a project schema, store owner or index implementation.
+
+- Saving preserves the effective query mode and side/scope filters. The current
+  grammar reparses canonical query text with the validated mode. Stored clauses,
+  SQL expressions, terms and digests are never trusted for execution. Existing
+  `search-saved/1` rows remain unchanged; the `SavedQuery` read DTO adds a mode
+  defaulting to `auto`. Legacy rows without an explicit mode remain readable.
+- One shared helper canonicalizes explicit side/scope overrides outside quoted
+  phrases. Query length and grammar limits still apply after canonicalization.
+  CLI flags override corresponding textual filters only when supplied; absent
+  flags retain textual filters. Desktop side/scope controls retain their current
+  effective behavior and are restored when running a saved query.
+- The desktop exposes Save, project-owned Saved query selection, Run saved and
+  Delete saved. A name dialog writes only after acceptance against its captured
+  project/epoch. Merely selecting or listing a saved query does not execute it.
+  Every run/delete rechecks that the row is still live in the current project.
+  Project/revision changes invalidate captured actions, dismiss the name dialog,
+  clear prior selections and rebind the existing owner-thread store.
+- Saved operations use the already-open GUI service or the CLI's single existing
+  opener/finally-close path. List/save/delete never instantiate the search
+  service, build an index, execute a query, run a target or open the network.
+  Deletion appends the existing tombstone; no history row is rewritten.
+- Recent history is **per-user query text**, explicitly labelled in the desktop,
+  distinct from project-owned saved queries. Recalling recent text fills the
+  editor without submitting; Enter remains the explicit execution action.
+  A build already in flight may finish and refresh index coverage after recall,
+  but may auto-submit only the query generation that started that build. A
+  changed generation leaves recalled text inert; ordinary explicit Build keeps
+  its existing automatic submission when that generation is unchanged.
+  Recall restores filters parsed from the text and uses `auto` mode because
+  recent history stores no mode. Only successfully parsed submissions are added.
+  Clear history touches only this user's recent list.
+- The GUI settings adapter uses the existing bounded string-list API at
+  `search/recent`: at most 20 entries of at most 256 characters, and at most
+  8,192 UTF-8 bytes for their `search-recent/1` JSON representation. It removes
+  whole oldest entries until both bounds hold. Corrupt settings read as empty
+  or validated entries; settings failures do not interrupt searching. Generic
+  `PanelSettings` limits are unchanged.
+- All controls, including the actual name dialog, have registered tooltips and
+  accessible names/descriptions. No tooltip exemptions are introduced.
+
+Additional mutually exclusive CLI operations are:
+
+```text
+patchtrace search PROJECT --saved-list [--json]
+patchtrace search PROJECT --save NAME --query TEXT [--kind K]... [--side older|newer|both] [--scope indexed|changed] [--mode MODE] [--json]
+patchtrace search PROJECT --saved-run ID [normal result/paging/index options] [--json]
+patchtrace search PROJECT --saved-delete ID [--json]
+```
+
+They retain the `enrichment-cli/1`, `command: search` envelope. List/save/delete
+return an `operation` discriminator, saved item(s) or deletion boolean, and the
+unreadable-row count where applicable. A missing run target or invalid argument
+combination exits 2; store failures exit 3. Delete is idempotent and reports
+`deleted: false` when the row is already absent. Saved run returns the ordinary
+`SearchResult` and existing search exit codes. Query/filter flags cannot silently
+override a saved run. Listing or editing saved data does not require FTS5.
+
+### Search cancellation amendment (2026-11-20)
+
+Cancel ends pending input debounce as well as active search, index-build and
+coverage tasks. Text already present in the editor stays available, but a timer
+scheduled before cancellation must not submit it afterward. A subsequent edit,
+Enter, or other explicit search action can start a new request normally. Earlier
+results remain available under the existing cancellation presentation.
+
+Acceptance requires mode/filter round trips, legacy/corrupt rows, actual
+owner-thread project save/reopen, stale-dialog and deleted-selection refusal,
+bounded long-query settings/clear, no accidental execution, a current-source
+headless CLI journey, and the existing global tooltip/search regression checks.
+Native Windows/manual accessibility and combined actual-head gates remain
+separate from local offscreen acceptance.
+
 Research output, 2026-10-14, base `d972125` (`prep/program-e`). Reviewed: `workbench/01`, `workbench/04` (QW1, QW2, QW5), `plans/workbench-search-graph-floss-implementation.md` and the code they name. "Probe" = scratch scripts run in this session on a 4 vCPU Xeon 2.1 GHz, CPython 3.12.3, SQLite 3.45.1 (nothing committed; slice S0 ships `tools/bench_search.py` to reproduce them). `[F#]` points into the facts table.
 
 ## 1. Verdict and scope
@@ -264,6 +341,7 @@ patchtrace search PROJECT --anchors-from CVE-ID [--json]    # S10
 
 **Tooltips and accessibility**
 - Registry ids (What/Why/Effect/Source/Availability, no `<` `>`): `search.dock`, `search.action`, `search.query`, `search.side`, `search.kinds`, `search.scope`, `search.mode`, `search.sort`, `search.save`, `search.saved`, `search.rebuild`, `search.coverage`, `search.table`, `search.detail`, `search.goto`, `search.other_side`, `search.copy`; templates `search.row`, `search.suggestion`, `search.coverage_row`.
+- Header help (2026-11-20): `search.col.{side,kind,match,where,change,why}` describes the six existing result columns through `ColumnSpec.tip_id`. It is available on prepared empty and populated tables as escaped `ToolTipRole` text. Display and accessible header labels stay unchanged. Side includes recorded function counterparts and does not prove the query matched both builds; Kind and Match describe the first evidence item; Where identifies its location and may borrow a known counterpart RVA when the first item has no address. Change describes recorded pairing/presence context; Why summarizes up to two ranking reasons or the first item's match reasons, without a correctness score. Opening a lead continues to validate its recorded locator. The actual-header registry audit must activate Search through the host rather than exempting the six ids. No query, result, sort, navigation, copy, or stored-data behavior changes.
 - Accessible names (short, localized [F25]): "Search query", "Search side", "Search kinds", "Search scope", "Search mode", "Search sort order", "Search results", "Selected result details"; `accessibleIdentifier` = tip id is rule R9 (GUI plan). Status text is announced through `ctx.announce` (GUI plan F6), not by `setText` on an empty accessible name (C6 rule). `AccessibleTextRole` per row: "<kind> in <side>: <title>; <where>; <change>; <why>". 2 px focus ring; contrast test reused from `ui_evidence`.
 - Windows exposure is UI Automation [F19]; Narrator/NVDA, 125/150/200% DPI and High Contrast are owner gates [unverified here; Microsoft Learn blocked].
 

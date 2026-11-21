@@ -292,6 +292,20 @@ def test_windows_branch_full_order_and_subprocess_records(tmp_path, monkeypatch)
     blocked = []
     _recording_run(monkeypatch, events, connected=lambda: not blocked)
 
+    class AuthoredMonitor(ba.ConnectionMonitor):
+        def __enter__(self):
+            # This POSIX test owns no PowerShell observations. Supply explicit
+            # authored empty samples; Windows sampler health has separate controls.
+            self.sample = lambda: []
+            for _ in range(3):
+                self.poll()
+            return self
+
+        def __exit__(self, *exc):
+            return None
+
+    monkeypatch.setattr(ba, 'ConnectionMonitor', AuthoredMonitor)
+
     def hook(argv):
         if 'New-NetFirewallRule' in argv[-1]:
             blocked.append(argv)

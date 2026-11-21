@@ -1,6 +1,6 @@
 # PE version resource, manifest and Authenticode verification without execution (SPEC-51; SPEC-26 D2)
 
-Status: partly built (SPEC-51), written 2026-10-14, updated 2026-11-04; promoted from program-e/. Built: D2-1, D2-2 (`resources.py`, `version_info.py`, `manifest.py`), D2-3 (`der.py`, `signature.py`, `metadata.py`), D2-4 behind fakes only (`catalog_win.py`; the real WinVerifyTrust catalog call has NOT run on Windows: BLOCKED, needs Windows CI), D2-5 (`compare.compare_metadata`, `labels.py`, `cache.py` key and port with a fake store, `cli.py` + `cli_commands/inspect.py`, `signing_view.py` + the Files tab in `ui_inspection.py`), D2-6 (`rsa_verify.py`). Not wired: the `pe-metadata` sidecar kind (needs the one-line `enrichment/storage.py` KINDS edit) and moving the tab's read onto the existing inspection worker; the `--trust cache|online` modes exit 3 `PT-PE-TRUST-UNAVAILABLE` until D2-4 is accepted on Windows. Source check 2026-11-04: learn.microsoft.com and download.microsoft.com still return 403 (proxy), so the Microsoft facts stay [unverified: MS host blocked] at the primary source but are CORROBORATED against signify 0.7.1 (MIT, raw GitHub `signify/authenticode/signed_file/pe.py`, sdist `signify/asn1/spc.py`, `authenticode/structures.py`): CheckSum at optional header +64, Security directory entry at +128 (PE32) / +144 (PE32+), WIN_CERTIFICATE revision 0x200 type 2, omitted ranges = CheckSum, Security directory entry, certificate table, OIDs 1.3.6.1.4.1.311.2.1.4 (SpcIndirectDataContent) and .2.1.15 (SpcPeImageData), SpcIndirectDataContent {data, messageDigest DigestInfo}, nested signature 1.3.6.1.4.1.311.2.4.1, RFC 3161 attribute 1.3.6.1.4.1.311.3.3.1. Section order by PointerToRawData and the SUM_OF_BYTES_HASHED tail rule are the author's recollection of Authenticode_PE.docx and agree with signify only for contiguous sections; digest tests cross-check hashlib slicing against the three-range formulation. Deviations: `max_der_depth` is 32 (12 cannot read a timestamped signature, depth 18); labels added to the closed set (`Signature present, digest not computed`, `...signature math ok, chain not evaluated`, `...signature math does NOT verify`); accessible names are readable text with the spec ids as object names; the signature tree is an item model over materialised nodes; `pe.sig.chain` and `pe.sig.timestamp` are node tips until `tooltips.py` registers them. Extends `docs/specs/pe-overview.md` (SPEC-26 D) additively. Owner package: `src/patchtrace/pe_overview/`. Canonical alias: SPEC-51 (part D2 of SPEC-26).
+Status: partly built (SPEC-51), written 2026-10-14, updated 2026-11-19; promoted from program-e/. Built: D2-1, D2-2 (`resources.py`, `version_info.py`, `manifest.py`), D2-3 (`der.py`, `signature.py`, `metadata.py`), D2-4 behind fakes only (`catalog_win.py`; the real WinVerifyTrust catalog call has NOT run on Windows: BLOCKED, needs Windows CI), D2-5 (`compare.compare_metadata`, `labels.py`, `cache.py` key and port with a fake store, `cli.py` + `cli_commands/inspect.py`, `signing_view.py` + the Files tab in `ui_inspection.py`), D2-6 (`rsa_verify.py`). D2-5 integration (2026-11-19): the bounded `pe-metadata` store, owner-thread publication and existing inspection-worker metadata read are implemented; see section 7.6 for the exact cache and trust boundary. The `--trust cache|online` modes exit 3 `PT-PE-TRUST-UNAVAILABLE` until D2-4 is accepted on Windows. Source check 2026-11-04: learn.microsoft.com and download.microsoft.com still return 403 (proxy), so the Microsoft facts stay [unverified: MS host blocked] at the primary source but are CORROBORATED against signify 0.7.1 (MIT, raw GitHub `signify/authenticode/signed_file/pe.py`, sdist `signify/asn1/spc.py`, `authenticode/structures.py`): CheckSum at optional header +64, Security directory entry at +128 (PE32) / +144 (PE32+), WIN_CERTIFICATE revision 0x200 type 2, omitted ranges = CheckSum, Security directory entry, certificate table, OIDs 1.3.6.1.4.1.311.2.1.4 (SpcIndirectDataContent) and .2.1.15 (SpcPeImageData), SpcIndirectDataContent {data, messageDigest DigestInfo}, nested signature 1.3.6.1.4.1.311.2.4.1, RFC 3161 attribute 1.3.6.1.4.1.311.3.3.1. Section order by PointerToRawData and the SUM_OF_BYTES_HASHED tail rule are the author's recollection of Authenticode_PE.docx and agree with signify only for contiguous sections; digest tests cross-check hashlib slicing against the three-range formulation. Deviations: `max_der_depth` is 32 (12 cannot read a timestamped signature, depth 18); labels added to the closed set (`Signature present, digest not computed`, `...signature math ok, chain not evaluated`, `...signature math does NOT verify`); accessible names are readable text with the spec ids as object names; the signature tree is an item model over materialised nodes; `pe.sig.chain` and `pe.sig.timestamp` are node tips until `tooltips.py` registers them. Extends `docs/specs/pe-overview.md` (SPEC-26 D) additively. Owner package: `src/patchtrace/pe_overview/`. Canonical alias: SPEC-51 (part D2 of SPEC-26).
 
 Source-access note (whole file): `learn.microsoft.com` and `download.microsoft.com` are blocked from this sandbox (egress proxy returned 403 on 2026-10-14). Every Microsoft-format fact below is therefore marked `[unverified: MS host blocked]`: it is written from the documented format as the author knows it and the build slice must re-check it against the cited page before coding. Upstream facts that could be fetched carry a retrieval date.
 
@@ -69,7 +69,7 @@ Expected: version channel `1.0.0.0 -> 1.0.1.0` changed; manifest channel `asInvo
 | "Signed" read as "safe" | Closed label set (7.4); no label contains "valid", "verified" or "trusted" except the existing Windows text suffixed "(no revocation check)" |
 | Digest match mistaken for trust | Separate rows Structure, Digest, Chain, Revocation, Timestamp; each defaults to `not_evaluated` off Windows |
 | Hostile strings (bidi override, control characters, huge values) | UTF-16 decode with `errors='replace'`; drop C0/C1 and bidi controls U+202A-U+202E, U+2066-U+2069 (amended 2026-11-11, SEC-B: drop every character `patchtrace.hostile_text.is_hostile` rejects, that is categories `Cc`, `Cf`, `Cs`, `Zl`, `Zp`; the list before kept the soft hyphen, zero-width and tag characters); 1024 chars per value, 64 keys per table, `truncated` flag |
-| Manifest XML bombs, XXE | Reject any manifest containing `<!DOCTYPE` or `<!ENTITY` before parsing; 256 KiB cap; `xml.etree.ElementTree` only after that check; no URL resolution; `schemaLocation` shown as inert text |
+| Manifest XML bombs, XXE | Retain the conservative decoded-text `<!DOCTYPE`/`<!ENTITY` screen and independently reject every parser-recognized doctype before entity processing, including NUL-bearing text reinterpreted as UTF-16 and the pure-Python ElementTree fallback; retain the existing resource byte/time budgets; no URL resolution; `schemaLocation` stays inert |
 | Resource tree cycles and fan-out | Depth exactly 3, visited set of directory offsets, 512 entries per directory, 4096 nodes, data reads capped (version 64 KiB, manifest 256 KiB) |
 | Timestamp shown as signing or file date | Show "claimed signing time (not verified)" from timestamp or counter-signature attributes only; never a file date; expired-at-signing not evaluated |
 | CRL/OCSP/AIA URLs inside certificates are attacker data | Inert text only; revocation solely through OS APIs and consent (7.5) |
@@ -80,7 +80,23 @@ Expected: version channel `1.0.0.0 -> 1.0.1.0` changed; manifest channel `asInvo
 
 ## 7. Contracts
 
-All additive. New frozen slotted dataclasses in `pe_overview/models.py`; `PeOverview` gains optional fields defaulting to `None` or `()`. Persisted JSON carries `overview_version: 2` (class constant `OVERVIEW_VERSION`).
+### Manifest DTD boundary recovery (2026-11-19)
+
+The decoded-text screen alone cannot prove that ElementTree will not recognize a
+DTD: its input may contain NUL characters that the parser interprets as UTF-16.
+The XML parser must reject doctypes through its tree-builder callback. The
+pure-Python ElementTree fallback must install the same rejection callback on its
+exposed Expat parser, including internal-only doctypes. A refusal preserves the
+stored-byte SHA-256, returns `manifest_dtd_rejected`, and exposes no manifest
+facts. Existing accepted UTF-8/UTF-16 manifests, namespaces, limits and public
+metadata shapes remain unchanged. No target binary is executed.
+
+Metadata cache version 3 invalidates version 2 results that could contain facts
+expanded by the old manifest parser. Both the cache-key version and the envelope
+version change. Reopening a project reparses its verified bytes; old cache rows
+remain preserved as historical records and cannot supply current inspection facts.
+
+All additive. New frozen slotted dataclasses in `pe_overview/models.py`; `PeOverview` gains optional fields defaulting to `None` or `()`. Persisted metadata-cache JSON carries `overview_version: 3` (constant `OVERVIEW_VERSION`); the public metadata shape is unchanged.
 
 ### 7.1 Models
 
@@ -113,13 +129,53 @@ Setting `inspection/trust_mode`, default `offline`: `offline` (structure, digest
 
 Enrichment sidecar kind `pe-metadata` (amendment to `enrichment/storage.py` `KINDS`; treated as derived). Key = `sha256(artifact_sha256 | OVERVIEW_VERSION | limits_digest | trust_mode | trust_fingerprint)` with fingerprint `win32:<build>` or `portable`; a portable result is never reused as a Windows result. Error codes: `PT-PE-INPUT` (reader failure), `PT-PE-LIMIT` (cap, partial), `PT-PE-TRUST-UNAVAILABLE`, `PT-PE-CONSENT-REQUIRED`. Existing statuses `ok | partial | not_pe | cancelled` are unchanged; D2 findings are warnings.
 
+#### D2-5 integration amendment (2026-11-19)
+
+The `pe-metadata-cache/1` envelope stores offline structure and digest facts inline in
+the existing enrichment table. It includes the artifact SHA-256, exact cache key,
+overview version, limits digest, platform fingerprint, and explicit offline/no-network
+consent record. The limits digest includes both `Limits` and the resource-reader
+defaults. Cached bodies are capped at 8 MiB, validated against the complete frozen
+metadata shape with exact primitive types and fields, and reject hostile text and
+persisted chain/revocation claims. Computed digests require the algorithm's exact
+lowercase hexadecimal width; claimed digests preserve even-length hexadecimal
+values, including malformed-length claims reported by the parser. Positive RSA
+math claims require retained signers, matching certificate identity fields and
+supported signer algorithms; these consistency checks do not re-prove signature
+math. Only complete `ok` metadata without top-level parser warnings is reusable; partial,
+cancelled, failed, malformed, older-version, foreign-project, and wrong-key rows are
+misses. An interrupted read or failed cache publication preserves previous rows.
+
+The owner thread loads at most the two exact keyed rows through the new bounded
+`EnrichmentStore.entry(kind, entry_id)` lookup, then gives immutable metadata values
+to the existing artifact inspection worker. The byte predicate is repeated in the
+body SELECT so an oversized row is not materialized in Python after concurrent
+growth. This is not a bound on SQLite's internal page reads or cast allocations.
+Every cache hit still opens and hashes
+the current project-owned artifact before use. The worker reads missing metadata
+before handing its held readers to the GUI, so the Files tab no longer starts a
+second reader on those same handles. The owner publishes after checking the project
+identity and oriented artifact digests again. A cache failure cannot hide a live
+inspection result. OS trust is always evaluated separately for the current read;
+it is never restored from metadata cache. A freshly recomputed matching body
+renews stale/failed cache status rather than treating an unusable old row as a hit.
+Cache storage does not enable the blocked
+catalog or online-revocation modes.
+
+The metadata cache is recomputable, but this first integration deliberately keeps
+`pe-metadata` outside the existing pipeline-generation retention algorithm, whose
+guards describe analysis runs rather than artifact identities. There is at most one
+row per exact metadata key, the existing 128 MiB project cap still applies, and a
+refused publication leaves inspection available. No history or imported evidence is
+deleted to make the cache succeed.
+
 ## 8. CLI and GUI
 
 CLI: `patchtrace inspect <project> --side older|newer|both [--trust offline|cache|online --consent-online] --json`, envelope `enrichment-cli/1`, exit codes 0 ok, 2 invalid arguments, 3 runtime failure, 4 no PE input, 5 cancelled. `--trust online` without `--consent-online` exits 2 with `PT-PE-CONSENT-REQUIRED`. Output is stable-sorted and contains no absolute paths.
 
 GUI (single main window): File overview gains a **"Version and signing"** tab. Widgets: `QTabWidget` page with a `QTableView` over a `QAbstractTableModel` of `FieldComparison` rows (changed first; model already supports `unavailable`), a read-only `QPlainTextEdit` for the manifest text, and a `QTreeView` of signature, signer and certificate nodes with lazy children. Under 200 rows, so default Qt view virtualization suffices. Keyboard: Tab order tab bar, table, manifest, tree; Ctrl+C copies selected rows as TSV. Accessible names `pe.version.table`, `pe.manifest.view`, `pe.signature.tree`; tooltip ids `pe.version.fileversion`, `pe.manifest.execlevel`, `pe.sig.digest`, `pe.sig.chain`, `pe.sig.timestamp` registered in `tooltips.py` in the existing WHAT/WHY/SOURCE form.
 
-States and exact copy: empty "This file has no version resource."; no manifest "No embedded manifest was found. Sidecar .manifest files are not read."; loading "Reading version, manifest and signature (read-only)..."; blocked "Certificate chain trust is only evaluated on Windows. This platform reports the signature structure and whether the file digest matches the signature."; error "Could not read this section: <code>. Other sections are unaffected." File text renders as plain text: set `QLabel.setTextFormat(Qt.PlainText)` explicitly (auto-detect would render `<b>` from a vendor name), use `setPlainText`, never `QTextBrowser`. Parsing runs on the existing inspection worker; target under 150 ms for a 10 MB EXE excluding the cancellable digest pass. Offscreen tests build the model from fixtures, assert label strings, and run 20 times without abort.
+States and exact copy: empty "This file has no version resource."; no manifest "No embedded manifest was found. Sidecar .manifest files are not read."; loading "Reading version, manifest and signature (read-only)..."; blocked "Certificate chain trust is only evaluated on Windows. This platform reports the signature structure and whether the file digest matches the signature."; error "Could not read this section: <code>. Other sections are unaffected." File text renders as plain text: set `QLabel.setTextFormat(Qt.PlainText)` explicitly (auto-detect would render `<b>` from a vendor name), use `setPlainText`, never `QTextBrowser`. Partial metadata shows "Some version, manifest or signing facts could not be read. Available facts are shown below." without guessing a resource-limit cause. Missing metadata reports unavailable input, and the loading announcement precedes the existing worker's read. Parsing runs on the existing inspection worker; target under 150 ms for a 10 MB EXE excluding the cancellable digest pass. Offscreen tests build the model from fixtures, assert label strings, and run 20 times without abort.
 
 ## 9. Slice plan
 

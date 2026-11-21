@@ -1,0 +1,247 @@
+{
+  "schema": "patchtrace/hosted-source-qualification/1",
+  "sealed_at_utc": "2026-11-21 07:01:13 UTC",
+  "source": {
+    "head": "daee337c48c63dda8aeac149c407e900c79dcc86",
+    "tree": "6c2a8d018ccc00bf65ef074579604b40627f7658",
+    "main": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+    "synthetic_merge": "ba98225bc27e3bb4e8106948f32d6ab44e8c4eb0",
+    "synthetic_merge_parents": [
+      "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+      "daee337c48c63dda8aeac149c407e900c79dcc86"
+    ],
+    "synthetic_tree_equals_head": true,
+    "pr": 349,
+    "local_tree_equivalent": "0a270822935fb372fc181f3e2573fe60d9a16a53"
+  },
+  "workflows": [
+    {
+      "id": 44876415864,
+      "name": "Native Windows Ghidriff acceptance",
+      "head_sha": "daee337c48c63dda8aeac149c407e900c79dcc86",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "event": "pull_request",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44876415864"
+    },
+    {
+      "id": 44876415848,
+      "name": "Live rizin rz-diff acceptance",
+      "head_sha": "daee337c48c63dda8aeac149c407e900c79dcc86",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "event": "pull_request",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44876415848"
+    },
+    {
+      "id": 44876415845,
+      "name": "Live BinDiff acceptance",
+      "head_sha": "daee337c48c63dda8aeac149c407e900c79dcc86",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "event": "pull_request",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44876415845"
+    },
+    {
+      "id": 44876415859,
+      "name": "Optional dependency wheels probe",
+      "head_sha": "daee337c48c63dda8aeac149c407e900c79dcc86",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "event": "pull_request",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44876415859"
+    },
+    {
+      "id": 44876415888,
+      "name": "Corpus Tier R (sharded)",
+      "head_sha": "daee337c48c63dda8aeac149c407e900c79dcc86",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "event": "pull_request",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44876415888"
+    }
+  ],
+  "actual_results": {
+    "ghidriff": {
+      "ci_jobs_successful": 5,
+      "known_patch_positive_analyses": 3,
+      "known_patch_change_records_each": 1,
+      "negative_control": "Plain Ghidriff produced the expected cached-PDB FileExistsError.",
+      "raw_cache": {
+        "status": "passed",
+        "first_status": "completed",
+        "second_status": "completed",
+        "matches_each": 1,
+        "raw_sha256_both": "ed494c80a4a6aee562cff0d1850f709f45015571bc3d3f7233e6a31c920d9261"
+      },
+      "input_scope": "Authored, compiled PE fixtures; no general match-accuracy claim."
+    },
+    "rizin": {
+      "linux": {
+        "status": "passed",
+        "mocked": false,
+        "engine_run": "ok",
+        "match_count": 30
+      },
+      "windows": {
+        "status": "passed",
+        "mocked": false,
+        "engine_run": "ok",
+        "match_count": 322
+      },
+      "input_scope": "Compiled fixtures; match counts are observations, not accuracy."
+    },
+    "bindiff": {
+      "linux": {
+        "status": "passed",
+        "checks_passed": 7,
+        "checks_blocked": 0,
+        "checks_failed": 0,
+        "pytest_passed": 1
+      },
+      "windows": {
+        "status": "blocked",
+        "checks_passed": 6,
+        "checks_blocked": 1,
+        "checks_failed": 0,
+        "pytest_passed": 1,
+        "blocked_check": "no_network",
+        "reason": "Linux-only unshare -rn; Windows network behavior remains manual."
+      },
+      "input_scope": "SYNTHETIC tests/bindiff_live_pair.py, 20/21 functions; not real-driver evidence.",
+      "mocked": false,
+      "asset_trust": "Pinned TOFU official-release downloads; no independent authenticity claim."
+    },
+    "optional_dependencies": {
+      "platforms": [
+        "Linux",
+        "Windows"
+      ],
+      "missing": [],
+      "versions": {
+        "rapidfuzz": "3.14.6",
+        "yara-x": "1.21.0",
+        "iced-x86": "1.21.0"
+      },
+      "scope": "Availability probe, not exhaustive acceptance."
+    },
+    "tier_r": {
+      "status": "warning",
+      "engines": [
+        "rz-diff"
+      ],
+      "subset": "smoke",
+      "cases": {
+        "ok": 11,
+        "skipped": 1
+      },
+      "pairs": {
+        "attempted": 11,
+        "completed": 5,
+        "failed": 6,
+        "blocked": 0,
+        "completion": 0.454545
+      },
+      "reason": "All six tiny fixture failures reported no functions in the older file.",
+      "rizin_original_archive": {
+        "sha256": "9102249a9f0b6319c5334a2e5cf8d9cc3f2035e1d3def027c41f6a90f647e8cf",
+        "path": "rizin-archive/rizin-v0.9.1-static-x86_64.tar.xz",
+        "both_shards_actual_cache_hits": true,
+        "both_shards_checksum": "OK"
+      },
+      "ghidra": "Java, cache restore, and Ghidra/Ghidriff install explicitly skipped on both shards with ENGINES=rz-diff.",
+      "report_sha256": "364c87d3a16c6cca92c325eb2f4d593c5e9562561e39b787004c1d6248642b4a",
+      "repeat_merge_digest_equal": true,
+      "skipped_case": "zlib typo-only change produces byte-identical engine images.",
+      "windows_advisory": {
+        "job_success": true,
+        "cases": 11,
+        "case_status": "findings",
+        "each_reason": "exit 1",
+        "native_report": false
+      },
+      "msvc_advisory": "skipped",
+      "historical_comparison": {
+        "head": "11f51c105bf63946f59373ae605b937c4fee607a",
+        "run": 44870397157,
+        "artifact": 14694390478,
+        "artifact_sha256": "fd76df4149a9af8f9298f37dcef2664aff06f3571844d158afa567561e69ed23",
+        "pair_status_reason_mappings_equal": true,
+        "canonical_report_digest_equal": true,
+        "classification": "Previously observed coverage gap; no newly demonstrated regression. Historical comparison is not transferred acceptance."
+      }
+    }
+  },
+  "qa_snapshot": {
+    "observed_at_utc": "2026-11-21 07:01:13 UTC",
+    "run": 44876416755,
+    "status": "in_progress",
+    "conclusion": null,
+    "jobs": [
+      {
+        "id": 136761991112,
+        "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "id": 136761991274,
+        "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "id": 136761991276,
+        "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "id": 136761991278,
+        "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136761991294,
+        "name": "qt-gate (windows-latest, 5, 1/1)",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "id": 136761991347,
+        "name": "qa (ubuntu-latest)",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "id": 136761991553,
+        "name": "qa (windows-latest)",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "id": 136762027528,
+        "name": "release-gate",
+        "status": "completed",
+        "conclusion": "skipped"
+      }
+    ],
+    "full_test_counts": "unavailable: both pytest steps still in progress",
+    "windows_packaging": "pending",
+    "linux_package_and_both_ubuntu_frozen_cli": "pending/not instantiated",
+    "scope": "Snapshot only; subsequent QA observations remain separate from this sealed evidence."
+  },
+  "boundaries": [
+    "No merge qualification: full QA and packaging pending.",
+    "All native results apply only to daee337c and its exact tree; fresh source needs fresh native runs.",
+    "Earlier PR349 full-suite registry failures remain separately retained.",
+    "Intel workflow 44876415860 is owned and reported separately.",
+    "No workflow dispatch/rerun, source or ref write, merge, local native engine run, or analyzed-target execution performed by this observer."
+  ]
+}

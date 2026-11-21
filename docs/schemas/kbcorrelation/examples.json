@@ -1,4 +1,702 @@
 {
+  "AcquisitionEvidence": {
+    "invalid": [
+      {
+        "example": {
+          "contract": "kbcorrelation/1",
+          "downloads": [
+            {
+              "format": "PE32+",
+              "redirect_host": null,
+              "retrieved_at": "2099-03-01T00:00:00Z",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "side": "older",
+              "size": 1000,
+              "source_url": "https://example.invalid/older.dll",
+              "winbindex_record_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            },
+            {
+              "format": "PE32+",
+              "redirect_host": null,
+              "retrieved_at": "2099-03-01T00:00:00Z",
+              "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "side": "newer",
+              "size": 1000,
+              "source_url": "https://example.invalid/newer.dll",
+              "winbindex_record_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          ],
+          "evidence_id": "73343e5b59a6c35b1b230c5b7c8e2693e26964e36e63e7f1939b1abfa0d54015",
+          "evidence_version": 1,
+          "hosts": [
+            "example.invalid"
+          ],
+          "investigation_id": "12345678-1234-4234-8234-123456789abc",
+          "plan_sha": "7140582c056740b850ba6b2af115f234a1bcaadacd82eb6b17bb1446b7100f15",
+          "preview_revision": 2,
+          "requests": [
+            {
+              "method": "GET",
+              "target": "https://example.invalid/older.dll"
+            },
+            {
+              "method": "GET",
+              "target": "https://example.invalid/newer.dll"
+            }
+          ],
+          "source": {
+            "newer": {
+              "download": "direct",
+              "download_url": null,
+              "file_name": "examplesvc.dll",
+              "file_version": "10.0.26100.5000",
+              "heading": "Synthetic update",
+              "heading_class": "standard",
+              "kb": "KB5099001",
+              "last_section_raw": null,
+              "last_section_va": null,
+              "machine_type": 34404,
+              "other_versions": [],
+              "record_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+              "release_date": "2099-03-01",
+              "release_version": "26100.5001",
+              "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "size": 1000,
+              "source": "winbindex@2099-03-01",
+              "timestamp": 256,
+              "variant": "full",
+              "version_key": "11-24H2",
+              "virtual_size": 4096
+            },
+            "older": {
+              "download": "direct",
+              "download_url": null,
+              "file_name": "examplesvc.dll",
+              "file_version": "10.0.26100.5000",
+              "heading": "Synthetic update",
+              "heading_class": "standard",
+              "kb": "KB5099001",
+              "last_section_raw": null,
+              "last_section_va": null,
+              "machine_type": 34404,
+              "other_versions": [],
+              "record_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+              "release_date": "2099-03-01",
+              "release_version": "26100.5001",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "size": 1000,
+              "source": "winbindex@2099-03-01",
+              "timestamp": 256,
+              "variant": "full",
+              "version_key": "11-24H2",
+              "virtual_size": 4096
+            },
+            "proposal": {
+              "bytes_state": "pending",
+              "contract": "kbcorrelation/1",
+              "fix_boundary": "source-supported",
+              "grade": "A",
+              "lineage_state": "index-adjacent",
+              "newer": {
+                "authenticity": "hash-matched-to-index",
+                "availability": "direct",
+                "basename": "examplesvc.dll",
+                "build_ubr": "26100.5001",
+                "contract": "kbcorrelation/1",
+                "file_version": "10.0.26100.5001",
+                "machine": "amd64",
+                "origin": "index-row",
+                "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "size": 1000
+              },
+              "older": {
+                "authenticity": "hash-matched-to-index",
+                "availability": "direct",
+                "basename": "examplesvc.dll",
+                "build_ubr": "26100.5000",
+                "contract": "kbcorrelation/1",
+                "file_version": "10.0.26100.5000",
+                "machine": "amd64",
+                "origin": "index-row",
+                "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "size": 1000
+              },
+              "pair_id": "a7a3329407a3bf24243eb883d56482357491a35d32c9c3e14bcb60dd77343af6",
+              "reason_codes": [],
+              "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+              "tier": "B",
+              "window": [
+                "KB5099001"
+              ],
+              "window_complete": true,
+              "window_id": "w1"
+            }
+          },
+          "unexpected_field": 1,
+          "verified_pair": {
+            "bytes_state": "verified",
+            "contract": "kbcorrelation/1",
+            "fix_boundary": "unverified",
+            "grade": "B",
+            "lineage_state": "user-asserted",
+            "newer": {
+              "authenticity": "unverified-local-file",
+              "availability": "local",
+              "basename": "examplesvc.dll",
+              "build_ubr": "26100.5001",
+              "contract": "kbcorrelation/1",
+              "file_version": "10.0.26100.5001",
+              "machine": "amd64",
+              "origin": "local-file",
+              "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "size": 1000
+            },
+            "older": {
+              "authenticity": "unverified-local-file",
+              "availability": "local",
+              "basename": "examplesvc.dll",
+              "build_ubr": "26100.5000",
+              "contract": "kbcorrelation/1",
+              "file_version": "10.0.26100.5000",
+              "machine": "amd64",
+              "origin": "local-file",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "size": 1000
+            },
+            "pair_id": "b8b11723c430fb0260aaeb341d775618027043d1bd92078ff48feef619a8a0ea",
+            "reason_codes": [
+              "ORDER_UNVERIFIED"
+            ],
+            "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "tier": "E",
+            "window": [],
+            "window_complete": null,
+            "window_id": "manual"
+          }
+        },
+        "reason": "extra fields are forbidden"
+      },
+      {
+        "example": {
+          "contract": "kbcorrelation/2",
+          "downloads": [
+            {
+              "format": "PE32+",
+              "redirect_host": null,
+              "retrieved_at": "2099-03-01T00:00:00Z",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "side": "older",
+              "size": 1000,
+              "source_url": "https://example.invalid/older.dll",
+              "winbindex_record_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            },
+            {
+              "format": "PE32+",
+              "redirect_host": null,
+              "retrieved_at": "2099-03-01T00:00:00Z",
+              "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "side": "newer",
+              "size": 1000,
+              "source_url": "https://example.invalid/newer.dll",
+              "winbindex_record_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          ],
+          "evidence_id": "73343e5b59a6c35b1b230c5b7c8e2693e26964e36e63e7f1939b1abfa0d54015",
+          "evidence_version": 1,
+          "hosts": [
+            "example.invalid"
+          ],
+          "investigation_id": "12345678-1234-4234-8234-123456789abc",
+          "plan_sha": "7140582c056740b850ba6b2af115f234a1bcaadacd82eb6b17bb1446b7100f15",
+          "preview_revision": 2,
+          "requests": [
+            {
+              "method": "GET",
+              "target": "https://example.invalid/older.dll"
+            },
+            {
+              "method": "GET",
+              "target": "https://example.invalid/newer.dll"
+            }
+          ],
+          "source": {
+            "newer": {
+              "download": "direct",
+              "download_url": null,
+              "file_name": "examplesvc.dll",
+              "file_version": "10.0.26100.5000",
+              "heading": "Synthetic update",
+              "heading_class": "standard",
+              "kb": "KB5099001",
+              "last_section_raw": null,
+              "last_section_va": null,
+              "machine_type": 34404,
+              "other_versions": [],
+              "record_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+              "release_date": "2099-03-01",
+              "release_version": "26100.5001",
+              "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "size": 1000,
+              "source": "winbindex@2099-03-01",
+              "timestamp": 256,
+              "variant": "full",
+              "version_key": "11-24H2",
+              "virtual_size": 4096
+            },
+            "older": {
+              "download": "direct",
+              "download_url": null,
+              "file_name": "examplesvc.dll",
+              "file_version": "10.0.26100.5000",
+              "heading": "Synthetic update",
+              "heading_class": "standard",
+              "kb": "KB5099001",
+              "last_section_raw": null,
+              "last_section_va": null,
+              "machine_type": 34404,
+              "other_versions": [],
+              "record_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+              "release_date": "2099-03-01",
+              "release_version": "26100.5001",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "size": 1000,
+              "source": "winbindex@2099-03-01",
+              "timestamp": 256,
+              "variant": "full",
+              "version_key": "11-24H2",
+              "virtual_size": 4096
+            },
+            "proposal": {
+              "bytes_state": "pending",
+              "contract": "kbcorrelation/1",
+              "fix_boundary": "source-supported",
+              "grade": "A",
+              "lineage_state": "index-adjacent",
+              "newer": {
+                "authenticity": "hash-matched-to-index",
+                "availability": "direct",
+                "basename": "examplesvc.dll",
+                "build_ubr": "26100.5001",
+                "contract": "kbcorrelation/1",
+                "file_version": "10.0.26100.5001",
+                "machine": "amd64",
+                "origin": "index-row",
+                "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "size": 1000
+              },
+              "older": {
+                "authenticity": "hash-matched-to-index",
+                "availability": "direct",
+                "basename": "examplesvc.dll",
+                "build_ubr": "26100.5000",
+                "contract": "kbcorrelation/1",
+                "file_version": "10.0.26100.5000",
+                "machine": "amd64",
+                "origin": "index-row",
+                "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "size": 1000
+              },
+              "pair_id": "a7a3329407a3bf24243eb883d56482357491a35d32c9c3e14bcb60dd77343af6",
+              "reason_codes": [],
+              "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+              "tier": "B",
+              "window": [
+                "KB5099001"
+              ],
+              "window_complete": true,
+              "window_id": "w1"
+            }
+          },
+          "verified_pair": {
+            "bytes_state": "verified",
+            "contract": "kbcorrelation/1",
+            "fix_boundary": "unverified",
+            "grade": "B",
+            "lineage_state": "user-asserted",
+            "newer": {
+              "authenticity": "unverified-local-file",
+              "availability": "local",
+              "basename": "examplesvc.dll",
+              "build_ubr": "26100.5001",
+              "contract": "kbcorrelation/1",
+              "file_version": "10.0.26100.5001",
+              "machine": "amd64",
+              "origin": "local-file",
+              "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "size": 1000
+            },
+            "older": {
+              "authenticity": "unverified-local-file",
+              "availability": "local",
+              "basename": "examplesvc.dll",
+              "build_ubr": "26100.5000",
+              "contract": "kbcorrelation/1",
+              "file_version": "10.0.26100.5000",
+              "machine": "amd64",
+              "origin": "local-file",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "size": 1000
+            },
+            "pair_id": "b8b11723c430fb0260aaeb341d775618027043d1bd92078ff48feef619a8a0ea",
+            "reason_codes": [
+              "ORDER_UNVERIFIED"
+            ],
+            "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "tier": "E",
+            "window": [],
+            "window_complete": null,
+            "window_id": "manual"
+          }
+        },
+        "reason": "unsupported future contract version"
+      },
+      {
+        "example": {
+          "contract": "kbcorrelation/1",
+          "downloads": [
+            {
+              "format": "PE32+",
+              "redirect_host": null,
+              "retrieved_at": "2099-03-01T00:00:00Z",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "side": "older",
+              "size": 1000,
+              "source_url": "https://example.invalid/older.dll",
+              "winbindex_record_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            },
+            {
+              "format": "PE32+",
+              "redirect_host": null,
+              "retrieved_at": "2099-03-01T00:00:00Z",
+              "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "side": "newer",
+              "size": 1000,
+              "source_url": "https://example.invalid/newer.dll",
+              "winbindex_record_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          ],
+          "evidence_id": "73343e5b59a6c35b1b230c5b7c8e2693e26964e36e63e7f1939b1abfa0d54015",
+          "evidence_version": 1,
+          "hosts": [
+            "example.invalid"
+          ],
+          "investigation_id": "12345678-1234-4234-8234-123456789abc",
+          "plan_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "preview_revision": 2,
+          "requests": [
+            {
+              "method": "GET",
+              "target": "https://example.invalid/older.dll"
+            },
+            {
+              "method": "GET",
+              "target": "https://example.invalid/newer.dll"
+            }
+          ],
+          "source": {
+            "newer": {
+              "download": "direct",
+              "download_url": null,
+              "file_name": "examplesvc.dll",
+              "file_version": "10.0.26100.5000",
+              "heading": "Synthetic update",
+              "heading_class": "standard",
+              "kb": "KB5099001",
+              "last_section_raw": null,
+              "last_section_va": null,
+              "machine_type": 34404,
+              "other_versions": [],
+              "record_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+              "release_date": "2099-03-01",
+              "release_version": "26100.5001",
+              "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "size": 1000,
+              "source": "winbindex@2099-03-01",
+              "timestamp": 256,
+              "variant": "full",
+              "version_key": "11-24H2",
+              "virtual_size": 4096
+            },
+            "older": {
+              "download": "direct",
+              "download_url": null,
+              "file_name": "examplesvc.dll",
+              "file_version": "10.0.26100.5000",
+              "heading": "Synthetic update",
+              "heading_class": "standard",
+              "kb": "KB5099001",
+              "last_section_raw": null,
+              "last_section_va": null,
+              "machine_type": 34404,
+              "other_versions": [],
+              "record_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+              "release_date": "2099-03-01",
+              "release_version": "26100.5001",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "size": 1000,
+              "source": "winbindex@2099-03-01",
+              "timestamp": 256,
+              "variant": "full",
+              "version_key": "11-24H2",
+              "virtual_size": 4096
+            },
+            "proposal": {
+              "bytes_state": "pending",
+              "contract": "kbcorrelation/1",
+              "fix_boundary": "source-supported",
+              "grade": "A",
+              "lineage_state": "index-adjacent",
+              "newer": {
+                "authenticity": "hash-matched-to-index",
+                "availability": "direct",
+                "basename": "examplesvc.dll",
+                "build_ubr": "26100.5001",
+                "contract": "kbcorrelation/1",
+                "file_version": "10.0.26100.5001",
+                "machine": "amd64",
+                "origin": "index-row",
+                "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "size": 1000
+              },
+              "older": {
+                "authenticity": "hash-matched-to-index",
+                "availability": "direct",
+                "basename": "examplesvc.dll",
+                "build_ubr": "26100.5000",
+                "contract": "kbcorrelation/1",
+                "file_version": "10.0.26100.5000",
+                "machine": "amd64",
+                "origin": "index-row",
+                "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "size": 1000
+              },
+              "pair_id": "a7a3329407a3bf24243eb883d56482357491a35d32c9c3e14bcb60dd77343af6",
+              "reason_codes": [],
+              "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+              "tier": "B",
+              "window": [
+                "KB5099001"
+              ],
+              "window_complete": true,
+              "window_id": "w1"
+            }
+          },
+          "verified_pair": {
+            "bytes_state": "verified",
+            "contract": "kbcorrelation/1",
+            "fix_boundary": "unverified",
+            "grade": "B",
+            "lineage_state": "user-asserted",
+            "newer": {
+              "authenticity": "unverified-local-file",
+              "availability": "local",
+              "basename": "examplesvc.dll",
+              "build_ubr": "26100.5001",
+              "contract": "kbcorrelation/1",
+              "file_version": "10.0.26100.5001",
+              "machine": "amd64",
+              "origin": "local-file",
+              "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "size": 1000
+            },
+            "older": {
+              "authenticity": "unverified-local-file",
+              "availability": "local",
+              "basename": "examplesvc.dll",
+              "build_ubr": "26100.5000",
+              "contract": "kbcorrelation/1",
+              "file_version": "10.0.26100.5000",
+              "machine": "amd64",
+              "origin": "local-file",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "size": 1000
+            },
+            "pair_id": "b8b11723c430fb0260aaeb341d775618027043d1bd92078ff48feef619a8a0ea",
+            "reason_codes": [
+              "ORDER_UNVERIFIED"
+            ],
+            "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "tier": "E",
+            "window": [],
+            "window_complete": null,
+            "window_id": "manual"
+          }
+        },
+        "reason": "acquisition plan does not bind this source snapshot and requests"
+      }
+    ],
+    "valid": {
+      "contract": "kbcorrelation/1",
+      "downloads": [
+        {
+          "format": "PE32+",
+          "redirect_host": null,
+          "retrieved_at": "2099-03-01T00:00:00Z",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "side": "older",
+          "size": 1000,
+          "source_url": "https://example.invalid/older.dll",
+          "winbindex_record_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        },
+        {
+          "format": "PE32+",
+          "redirect_host": null,
+          "retrieved_at": "2099-03-01T00:00:00Z",
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "side": "newer",
+          "size": 1000,
+          "source_url": "https://example.invalid/newer.dll",
+          "winbindex_record_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        }
+      ],
+      "evidence_id": "73343e5b59a6c35b1b230c5b7c8e2693e26964e36e63e7f1939b1abfa0d54015",
+      "evidence_version": 1,
+      "hosts": [
+        "example.invalid"
+      ],
+      "investigation_id": "12345678-1234-4234-8234-123456789abc",
+      "plan_sha": "7140582c056740b850ba6b2af115f234a1bcaadacd82eb6b17bb1446b7100f15",
+      "preview_revision": 2,
+      "requests": [
+        {
+          "method": "GET",
+          "target": "https://example.invalid/older.dll"
+        },
+        {
+          "method": "GET",
+          "target": "https://example.invalid/newer.dll"
+        }
+      ],
+      "source": {
+        "newer": {
+          "download": "direct",
+          "download_url": null,
+          "file_name": "examplesvc.dll",
+          "file_version": "10.0.26100.5000",
+          "heading": "Synthetic update",
+          "heading_class": "standard",
+          "kb": "KB5099001",
+          "last_section_raw": null,
+          "last_section_va": null,
+          "machine_type": 34404,
+          "other_versions": [],
+          "record_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "release_date": "2099-03-01",
+          "release_version": "26100.5001",
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "size": 1000,
+          "source": "winbindex@2099-03-01",
+          "timestamp": 256,
+          "variant": "full",
+          "version_key": "11-24H2",
+          "virtual_size": 4096
+        },
+        "older": {
+          "download": "direct",
+          "download_url": null,
+          "file_name": "examplesvc.dll",
+          "file_version": "10.0.26100.5000",
+          "heading": "Synthetic update",
+          "heading_class": "standard",
+          "kb": "KB5099001",
+          "last_section_raw": null,
+          "last_section_va": null,
+          "machine_type": 34404,
+          "other_versions": [],
+          "record_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "release_date": "2099-03-01",
+          "release_version": "26100.5001",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "size": 1000,
+          "source": "winbindex@2099-03-01",
+          "timestamp": 256,
+          "variant": "full",
+          "version_key": "11-24H2",
+          "virtual_size": 4096
+        },
+        "proposal": {
+          "bytes_state": "pending",
+          "contract": "kbcorrelation/1",
+          "fix_boundary": "source-supported",
+          "grade": "A",
+          "lineage_state": "index-adjacent",
+          "newer": {
+            "authenticity": "hash-matched-to-index",
+            "availability": "direct",
+            "basename": "examplesvc.dll",
+            "build_ubr": "26100.5001",
+            "contract": "kbcorrelation/1",
+            "file_version": "10.0.26100.5001",
+            "machine": "amd64",
+            "origin": "index-row",
+            "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "size": 1000
+          },
+          "older": {
+            "authenticity": "hash-matched-to-index",
+            "availability": "direct",
+            "basename": "examplesvc.dll",
+            "build_ubr": "26100.5000",
+            "contract": "kbcorrelation/1",
+            "file_version": "10.0.26100.5000",
+            "machine": "amd64",
+            "origin": "index-row",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "size": 1000
+          },
+          "pair_id": "a7a3329407a3bf24243eb883d56482357491a35d32c9c3e14bcb60dd77343af6",
+          "reason_codes": [],
+          "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "tier": "B",
+          "window": [
+            "KB5099001"
+          ],
+          "window_complete": true,
+          "window_id": "w1"
+        }
+      },
+      "verified_pair": {
+        "bytes_state": "verified",
+        "contract": "kbcorrelation/1",
+        "fix_boundary": "unverified",
+        "grade": "B",
+        "lineage_state": "user-asserted",
+        "newer": {
+          "authenticity": "unverified-local-file",
+          "availability": "local",
+          "basename": "examplesvc.dll",
+          "build_ubr": "26100.5001",
+          "contract": "kbcorrelation/1",
+          "file_version": "10.0.26100.5001",
+          "machine": "amd64",
+          "origin": "local-file",
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "size": 1000
+        },
+        "older": {
+          "authenticity": "unverified-local-file",
+          "availability": "local",
+          "basename": "examplesvc.dll",
+          "build_ubr": "26100.5000",
+          "contract": "kbcorrelation/1",
+          "file_version": "10.0.26100.5000",
+          "machine": "amd64",
+          "origin": "local-file",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "size": 1000
+        },
+        "pair_id": "b8b11723c430fb0260aaeb341d775618027043d1bd92078ff48feef619a8a0ea",
+        "reason_codes": [
+          "ORDER_UNVERIFIED"
+        ],
+        "scope_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "tier": "E",
+        "window": [],
+        "window_complete": null,
+        "window_id": "manual"
+      }
+    }
+  },
   "AnalystDecision": {
     "invalid": [
       {

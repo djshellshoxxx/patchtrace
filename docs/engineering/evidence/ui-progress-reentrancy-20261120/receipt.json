@@ -1,0 +1,99 @@
+{
+  "schema": "patchtrace-ui-progress-reentrancy-evidence/1",
+  "baseline_source_commit": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+  "fixed_source_commit": "ffd50497b184aa81d908f9686d10f9720948daf6",
+  "scope": "TaskRunner final-progress reentrancy; ordinary GUI lifecycle only",
+  "environment": {
+    "python": "3.12.14",
+    "pyside6": "6.12.0",
+    "pytest": "9.2.0",
+    "pytest_qt": "4.5.0",
+    "qt_platform": "offscreen",
+    "native_windows": false
+  },
+  "source_files": {
+    "src/patchtrace/gui/qt/tasks.py": "0b08892fd383d91a5f4d1766ba932adc9c92507b",
+    "tests/test_gui_tasks.py": "b52517b4f3e2a7d90a172f7933d5afbab44e4ee4",
+    "docs/specs/program-e/GUI-integration-plan.md": "04f6ae798dac7038f90bcdd8c2b662f29b202aaa"
+  },
+  "baseline": {
+    "tests": 14,
+    "failures": 12,
+    "errors": 0,
+    "skipped": 0
+  },
+  "fixed_task_runner": {
+    "tests": 67,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "fixed_consumers": {
+    "tests": 128,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "unique_affected_cases": 195,
+  "selection_overlap": 0,
+  "consumer_files": [
+    "tests/stress/test_gui_stress_tasks.py",
+    "tests/test_ui_strings_run.py",
+    "tests/test_ui_search_panel.py",
+    "tests/test_ui_search_saved.py",
+    "tests/test_evidence_ui.py",
+    "tests/test_gui_host.py"
+  ],
+  "command_environment": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "QT_QPA_PLATFORM": "offscreen",
+    "PYTHONPATH": "/tmp/PatchTrace-ui-2bad/src"
+  },
+  "command_base": "/workspace/scratch/b1d1356aa953/patchtrace-venv/bin/python -m pytest -q -p no:cacheprovider",
+  "lint": "python -m ruff check --no-cache src/patchtrace/gui/qt/tasks.py tests/test_gui_tasks.py: passed",
+  "diff_check": "git diff --check: passed",
+  "environment_block": "First attempt stopped before collection because overlay was full. No product/test failure is inferred. Worktree relocated intact to tmpfs and Git registration repaired; subsequent tests disabled bytecode/cache and used tmpfs for test data.",
+  "files": {
+    "baseline-all.log": {
+      "artifact": "baseline-all.log.gz",
+      "sha256": "130ea444886d462f5ea12b030780cf3764ad858e7d245bee50304f37fc535a37",
+      "uncompressed_sha256": "cd2044f408a933d6840ff63b71a6235cc2b3b4ac9bede55e898fa5e96976d774",
+      "uncompressed_bytes": 18386
+    },
+    "baseline-all.xml": {
+      "artifact": "baseline-all.xml.gz",
+      "sha256": "4651a3590c868c2940d9a666583fb3698299ad6150abd0c83ebcc83835666cbd",
+      "uncompressed_sha256": "51dde91cd615b014fb0a4fc632342bc0f7102c49ee8687b68173256b0c521aa5",
+      "uncompressed_bytes": 19197
+    },
+    "fixed.log": {
+      "artifact": "fixed.log.gz",
+      "sha256": "f29ee7696b38d891a0607ec30a61cb8499bf8b7bd9dd5432793f50929d77c0bc",
+      "uncompressed_sha256": "7b3ce029409cd1a33cb2f29371a2ef7ab417ad8aad2e9f38660ba655f252b752",
+      "uncompressed_bytes": 99
+    },
+    "fixed.xml": {
+      "artifact": "fixed.xml.gz",
+      "sha256": "c6cc9c895cc7ecbbc2216c23d10139a94cb061f7b4221bca3fbc11ce59c88a72",
+      "uncompressed_sha256": "4d12e13b45c6f2fbda9012578a1b3ee1d68a8a16efe0151a705770ed04ded82c",
+      "uncompressed_bytes": 8614
+    },
+    "consumers.log": {
+      "artifact": "consumers.log.gz",
+      "sha256": "95d19c6c4ee2f6ac77fa4c2069b6367277c547c0001ef4c6570e9316e9f3d791",
+      "uncompressed_sha256": "531fcae9c8649023325c580b0e5d39f9a25dd44914a4f99a6aa2a4f6497bef7e",
+      "uncompressed_bytes": 181
+    },
+    "consumers.xml": {
+      "artifact": "consumers.xml.gz",
+      "sha256": "a019c6675e8b5a7af4ceea5b81fd12c28d91cf243d94c05adf38d441f5b69c48",
+      "uncompressed_sha256": "5cef5a88d850c249e69f41d63a08d6f7093595045f32bc31e75e325b5158b435",
+      "uncompressed_bytes": 15484
+    }
+  },
+  "limits": [
+    "Focused Linux offscreen results only; not complete repository QA or native Windows qualification.",
+    "No analyzed target binaries or live external tools executed.",
+    "Independent reviewer and combined/full gates remain coordinator-owned."
+  ]
+}

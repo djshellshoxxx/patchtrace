@@ -1,0 +1,51 @@
+{
+  "schema": "patchtrace-aggregate-qualification/1",
+  "source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
+  "qualification": "incomplete-sigkill",
+  "exit_code": -9,
+  "elapsed_seconds": 1729.332,
+  "junit_written": false,
+  "collected_nodes": 23756,
+  "progress": {
+    "reported": 19877,
+    "dots": 19776,
+    "skip_markers": 93,
+    "xfail_markers": 6,
+    "failure_markers": 2
+  },
+  "unreported_nodes": 3879,
+  "mapped_failure_nodes": [
+    "tests/test_gui_table.py::test_data_calls_are_independent_of_the_row_count",
+    "tests/test_network_consent_guard.py::test_a_local_unix_socket_is_not_network"
+  ],
+  "mapping_limit": "Aligned with a separate collection; no original traceback or terminal suite summary survived. A dot is recorded progress, not full-suite acceptance.",
+  "first_unreported_node": "tests/test_ui_engine_setup.py::test_discovery_prefills_one_and_runs_nothing",
+  "cause": "unestablished",
+  "archive_sha256": "231e9a81d49e46a8c3f0f5ea1503756b8934167d5d4b318e45a46dc65b15871d",
+  "files": {
+    "aggregate-1/pytest.log": {
+      "bytes": 22085,
+      "sha256": "7573af16dce3f1e5469e2895a8b363f8f3a5dd42eaa0dbe4648bdc78f7fbf4e7"
+    },
+    "aggregate-1/receipt.json": {
+      "bytes": 2488,
+      "sha256": "5146854f214a305d99e771ac142991d873cb16602fb7d8480bb2046d1f365663"
+    },
+    "collection-bffcfa99.txt": {
+      "bytes": 2096097,
+      "sha256": "47cd211309f777219ca1e8c73313b7783a8be561d5ef4068e7546ac2889a07d8"
+    },
+    "runtime-after-kill.json": {
+      "bytes": 2182,
+      "sha256": "7271790d72443d9134faf279f459e8349a7bc8be74d98d0c11b92b76349c1941"
+    },
+    "diagnostic-access.json": {
+      "bytes": 491,
+      "sha256": "5ccac198836328066032f3a088ed163835546611478ce78c0648aa4ba5d3f3ec"
+    },
+    "runner.py": {
+      "bytes": 2551,
+      "sha256": "6c5cd7cb5dbad20c1abc3a126abfb8bb001c4fcc6aa630f9dd04b434cd62edb0"
+    }
+  }
+}

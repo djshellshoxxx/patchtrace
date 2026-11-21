@@ -79,3 +79,28 @@ python -m pytest tests/test_codex_pkg_workflows.py -rx -q
 ```
 
 Tests use source reads, AST and pure release-gate helpers only; no network, credentials, git subprocesses, Actions or target binary execution. New test files are added in the third commit.
+
+
+## Isolated CODEX-6 remediation candidate (2026-11-21)
+
+The original CODEX-6 cache-hit finding remains historically valid on the
+original audited source. An isolated descendant of draft PR #348 implements
+original-archive-only rizin/Ghidra caching with pinned SHA-256 verification
+on every applicable cache hit and a clean unpack after verification. On this
+branch alone the CODEX-6 strict xfail was promoted to a positive regression;
+fourteen extra mutation cases are authored. Author static source checks and synthetic
+archive corruption refusals pass. No exact-source pytest/Ruff, real Tier R run,
+independent reviewer, main merge or release success is claimed. CODEX-1 and
+CODEX-5 are untouched. See [scope](../engineering/codex6-corpus-cache-archive-20261121.md).
+
+## CODEX-1 direct-reference remediation candidate (2026-11-21)
+
+The original mutable-tag finding remains valid for its audited snapshot. The
+PR #349 descendant `ff6c79f1a9c97877d061995cae40be38e42154f9` replaces all
+176 remaining mutable direct uses with reviewed commit pins; the two previously
+pinned uses are preserved. The maintained CODEX-1 check is now a positive gate.
+Its affected selection passes 272 cases with one remaining CODEX-5 expected
+failure. Workflow behavior is preserved; local source checks do not establish
+hosted/native acceptance or a fully immutable transitive dependency closure.
+See the [source-specific result and retained failures](../engineering/codex1-direct-action-pins-20261121.md)
+and [direct-reference contract](../specs/ci-action-pinning.md).

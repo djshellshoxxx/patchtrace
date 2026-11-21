@@ -1,0 +1,58 @@
+{
+  "reviewed_commit": "9997aaa912d484c63c35582f8de547735f6ac0bb",
+  "parent": "5cc3f2a540f2e49e8b86e20decf7d4f62ce89d0a",
+  "parent_matches_requested_base": true,
+  "baseline_source_sha256": "576ae0bf2c9d04b25ba2755ebd5c62d80fc300f0645cea8fa7dba5b12247692f",
+  "baseline_log_sha256": "138912449de8dd57c7178a43292e63608259fec4868de589ae40f30bbf2b3a8c",
+  "ruff": {
+    "command": [
+      "python",
+      "-m",
+      "ruff",
+      "check",
+      "src/patchtrace/strings/qt_panel.py",
+      "tests/test_ui_strings_panel.py",
+      "/workspace/scratch/b1d1356aa953/strings-shutdown-peer/test_strings_shutdown_peer.py"
+    ],
+    "return_code": 0,
+    "stdout": "All checks passed!\n"
+  },
+  "complete_commit_diff_check": {
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "5cc3f2a540f2e49e8b86e20decf7d4f62ce89d0a..9997aaa912d484c63c35582f8de547735f6ac0bb"
+    ],
+    "return_code": 2,
+    "trailing_whitespace_file": "docs/engineering/evidence/strings-shutdown-20261120/baseline.log",
+    "lines": [
+      15,
+      19,
+      22,
+      27,
+      38,
+      60,
+      64,
+      67,
+      72,
+      83
+    ]
+  },
+  "author_identity_fields_match": {
+    "baseline_source_sha256": true,
+    "repaired_source_sha256": true,
+    "regression_test_file_sha256": true
+  },
+  "test_accounting": {
+    "total": 100,
+    "maintained_cases_replayed": 96,
+    "additional_independent_cases": [
+      "test_queued_filter_before_shutdown_still_changes_visible_rows",
+      "test_filter_result_queued_before_close_respects_controller_lifetime[open]",
+      "test_filter_result_queued_before_close_respects_controller_lifetime[controller]",
+      "test_filter_result_queued_before_close_respects_controller_lifetime[controller-and-runner]"
+    ],
+    "classification": "External scratch cases have empty JUnit classname; matched exact test function names from independent test AST."
+  }
+}

@@ -1,0 +1,186 @@
+{
+  "head": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+  "tree": "1eb4f2197e22c9e46d25bded163ee241835572e6",
+  "comparisons": [
+    {
+      "scope": "receipt donor",
+      "path": "tools/research_qualification/receipt.py",
+      "source": "0f63e0dcb6b53ef4b57550b183b42f80f376eaa8",
+      "source_blob": "6b826bd41bec664506b10217b867a1bc7cb8bb02",
+      "candidate_blob": "6b826bd41bec664506b10217b867a1bc7cb8bb02",
+      "equal": true
+    },
+    {
+      "scope": "receipt donor",
+      "path": "tests/test_research_qualification_git_identity.py",
+      "source": "0f63e0dcb6b53ef4b57550b183b42f80f376eaa8",
+      "source_blob": "3766937fa8afa8442b065003c3a5a63874734eb3",
+      "candidate_blob": "3766937fa8afa8442b065003c3a5a63874734eb3",
+      "equal": true
+    },
+    {
+      "scope": "search reviewed",
+      "path": "src/patchtrace/search/qt_panel.py",
+      "source": "5d06ec7dd5ce8a75ef49d300a282fcf8b4955377",
+      "source_blob": "b285c1a594437c642842c32eef5603dd772cd245",
+      "candidate_blob": "b285c1a594437c642842c32eef5603dd772cd245",
+      "equal": true
+    },
+    {
+      "scope": "search reviewed",
+      "path": "tests/test_ui_search_panel.py",
+      "source": "5d06ec7dd5ce8a75ef49d300a282fcf8b4955377",
+      "source_blob": "ab3c92a285c4b7df3f0ed645d9640047d90d9f72",
+      "candidate_blob": "ab3c92a285c4b7df3f0ed645d9640047d90d9f72",
+      "equal": true
+    },
+    {
+      "scope": "search reviewed",
+      "path": "docs/specs/program-e/WB1-integration-plan.md",
+      "source": "5d06ec7dd5ce8a75ef49d300a282fcf8b4955377",
+      "source_blob": "c8db5e1817e6250701feb250ace05cff6a94762d",
+      "candidate_blob": "c8db5e1817e6250701feb250ace05cff6a94762d",
+      "equal": true
+    },
+    {
+      "scope": "strings reviewed",
+      "path": "src/patchtrace/intelligence/tools/admission.py",
+      "source": "cf71c457665092b11448c6515c33360f68a590dd",
+      "source_blob": "ae64016dc65d575d649aafae1264d15d6d434e3c",
+      "candidate_blob": "ae64016dc65d575d649aafae1264d15d6d434e3c",
+      "equal": true
+    },
+    {
+      "scope": "strings reviewed",
+      "path": "src/patchtrace/strings/cli.py",
+      "source": "cf71c457665092b11448c6515c33360f68a590dd",
+      "source_blob": "6c1979dad11052a05ed225d75082d54f1dd1e527",
+      "candidate_blob": "6c1979dad11052a05ed225d75082d54f1dd1e527",
+      "equal": true
+    },
+    {
+      "scope": "strings reviewed",
+      "path": "tests/test_intel_tools_admission.py",
+      "source": "cf71c457665092b11448c6515c33360f68a590dd",
+      "source_blob": "626e95da8297eea959d7c9b0344e1e32eecc3e4d",
+      "candidate_blob": "626e95da8297eea959d7c9b0344e1e32eecc3e4d",
+      "equal": true
+    },
+    {
+      "scope": "strings reviewed",
+      "path": "tests/test_strings_stored_source_admission.py",
+      "source": "cf71c457665092b11448c6515c33360f68a590dd",
+      "source_blob": "a4b05d79b4f20834cb754ae74f56ae0267186a06",
+      "candidate_blob": "a4b05d79b4f20834cb754ae74f56ae0267186a06",
+      "equal": true
+    },
+    {
+      "scope": "strings reviewed",
+      "path": "docs/specs/three-tool-evidence-adapters.md",
+      "source": "cf71c457665092b11448c6515c33360f68a590dd",
+      "source_blob": "7edb2ec2953829f16f1349671f129a77dbfbc276",
+      "candidate_blob": "7edb2ec2953829f16f1349671f129a77dbfbc276",
+      "equal": true
+    },
+    {
+      "scope": "strings reviewed",
+      "path": "docs/specs/program-e/WB3-integration-plan.md",
+      "source": "cf71c457665092b11448c6515c33360f68a590dd",
+      "source_blob": "07b9df218502aee9bf1519437811acd974b5ad2d",
+      "candidate_blob": "07b9df218502aee9bf1519437811acd974b5ad2d",
+      "equal": true
+    },
+    {
+      "scope": "strings donor",
+      "path": "src/patchtrace/intelligence/tools/admission.py",
+      "source": "2042e24dc7f3eac265e0eb183c738527852b22cf",
+      "source_blob": "ae64016dc65d575d649aafae1264d15d6d434e3c",
+      "candidate_blob": "ae64016dc65d575d649aafae1264d15d6d434e3c",
+      "equal": true
+    },
+    {
+      "scope": "strings donor",
+      "path": "tests/test_intel_tools_admission.py",
+      "source": "2042e24dc7f3eac265e0eb183c738527852b22cf",
+      "source_blob": "626e95da8297eea959d7c9b0344e1e32eecc3e4d",
+      "candidate_blob": "626e95da8297eea959d7c9b0344e1e32eecc3e4d",
+      "equal": true
+    },
+    {
+      "scope": "unchanged",
+      "path": "src/patchtrace/strings/export.py",
+      "source": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+      "source_blob": "f78dc3a529a654a5a34fc3c02c280b62241b173c",
+      "candidate_blob": "f78dc3a529a654a5a34fc3c02c280b62241b173c",
+      "equal": true
+    },
+    {
+      "scope": "unchanged",
+      "path": "src/patchtrace/owned_publication.py",
+      "source": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+      "source_blob": "63d75f40c33e08c969fec425e6d89973b0947d83",
+      "candidate_blob": "63d75f40c33e08c969fec425e6d89973b0947d83",
+      "equal": true
+    },
+    {
+      "scope": "unchanged",
+      "path": "src/patchtrace/kbcorrelation/acquire.py",
+      "source": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+      "source_blob": "12d64c46da0d7016288620b9c77c9fd8a7bf8ffe",
+      "candidate_blob": "12d64c46da0d7016288620b9c77c9fd8a7bf8ffe",
+      "equal": true
+    },
+    {
+      "scope": "unchanged",
+      "path": "src/patchtrace/kbcorrelation/wiring.py",
+      "source": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+      "source_blob": "1b92737ed623155ef7020861412937faee5eb86e",
+      "candidate_blob": "1b92737ed623155ef7020861412937faee5eb86e",
+      "equal": true
+    },
+    {
+      "scope": "unchanged",
+      "path": "src/patchtrace/acquisition/winbindex.py",
+      "source": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+      "source_blob": "2ef16398529a147b2fb73145b0fae4e63f8d6dcc",
+      "candidate_blob": "2ef16398529a147b2fb73145b0fae4e63f8d6dcc",
+      "equal": true
+    },
+    {
+      "scope": "unchanged",
+      "path": "src/patchtrace/intelligence/tools/store.py",
+      "source": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+      "source_blob": "7e38298266e02eb52ea86c66e0f086a7bb9fd7d1",
+      "candidate_blob": "7e38298266e02eb52ea86c66e0f086a7bb9fd7d1",
+      "equal": true
+    },
+    {
+      "scope": "unchanged",
+      "path": "pyproject.toml",
+      "source": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+      "source_blob": "497c952b6103c1022e99a32ebc1566511f8afa3e",
+      "candidate_blob": "497c952b6103c1022e99a32ebc1566511f8afa3e",
+      "equal": true
+    },
+    {
+      "scope": "unchanged",
+      "path": ".github/workflows/qa-windows.yml",
+      "source": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+      "source_blob": "4f40db05893e436230d2f739efe2d3ca87e5e8aa",
+      "candidate_blob": "4f40db05893e436230d2f739efe2d3ca87e5e8aa",
+      "equal": true
+    }
+  ],
+  "plan_original_prefix_retained": true,
+  "runtime_diff_after_c010": "",
+  "changed_code_paths": [
+    "src/patchtrace/intelligence/tools/admission.py",
+    "src/patchtrace/search/qt_panel.py",
+    "src/patchtrace/strings/cli.py",
+    "tests/test_intel_tools_admission.py",
+    "tests/test_research_qualification_git_identity.py",
+    "tests/test_strings_stored_source_admission.py",
+    "tests/test_ui_search_panel.py",
+    "tools/research_qualification/receipt.py"
+  ]
+}

@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="18" skipped="0" tests="29" time="0.214" timestamp="2026-11-20T07:45:47.450577-08:00" hostname="0e558e4650b0"><testcase classname="generation30-evidence.test_donor_git_identity" name="test_regular_checkout_uses_exact_branch_ref[False]" time="0.004" /><testcase classname="generation30-evidence.test_donor_git_identity" name="test_regular_checkout_uses_exact_branch_ref[True]" time="0.001" /><testcase classname="generation30-evidence.test_donor_git_identity" name="test_linked_checkout_uses_its_own_head_and_declared_common_refs[False-detached]" time="0.002"><failure message="AssertionError: assert None == 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'&#10; +  where None = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_linked_checkout_uses_its_0/checkout'))">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-32/test_linked_checkout_uses_its_0')
+mode = 'detached', absolute = False
+
+    @pytest.mark.parametrize('mode', ['detached', 'loose', 'packed', 'worktree-ref'])
+    @pytest.mark.parametrize('absolute', [False, True])
+    def test_linked_checkout_uses_its_own_head_and_declared_common_refs(tmp_path, mode, absolute):
+        root, common = tmp_path / 'checkout', tmp_path / 'shared.git'
+        private = common / 'worktrees/linked'
+        locator = str(private) if absolute else '../shared.git/worktrees/linked'
+        put(root / '.git', 'gitdir: ' + locator + '\n')
+        put(private / 'commondir', str(common) + '\n' if absolute else '../..\n')
+        put(common / 'HEAD', OTHER + '\n')
+        if mode == 'detached':
+            put(private / 'HEAD', SHA + '\n')
+        else:
+            ref = 'refs/worktree/probe' if mode == 'worktree-ref' else 'refs/heads/topic'
+            put(private / 'HEAD', f'ref: {ref}\n')
+            if mode == 'packed':
+                put(common / 'packed-refs', f'{SHA} {ref}\n')
+            else:
+                put((private if mode == 'worktree-ref' else common) / ref, SHA + '\n')
+&gt;       assert git_head(root) == SHA
+E       AssertionError: assert None == 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+E        +  where None = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_linked_checkout_uses_its_0/checkout'))
+
+../generation30-evidence/test_donor_git_identity.py:47: AssertionError</failure></testcase><testcase classname="generation30-evidence.test_donor_git_identity" name="test_linked_checkout_uses_its_own_head_and_declared_common_refs[False-loose]" time="0.001"><failure message="AssertionError: assert None == 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'&#10; +  where None = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_linked_checkout_uses_its_1/checkout'))">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-32/test_linked_checkout_uses_its_1')
+mode = 'loose', absolute = False
+
+    @pytest.mark.parametrize('mode', ['detached', 'loose', 'packed', 'worktree-ref'])
+    @pytest.mark.parametrize('absolute', [False, True])
+    def test_linked_checkout_uses_its_own_head_and_declared_common_refs(tmp_path, mode, absolute):
+        root, common = tmp_path / 'checkout', tmp_path / 'shared.git'
+        private = common / 'worktrees/linked'
+        locator = str(private) if absolute else '../shared.git/worktrees/linked'
+        put(root / '.git', 'gitdir: ' + locator + '\n')
+        put(private / 'commondir', str(common) + '\n' if absolute else '../..\n')
+        put(common / 'HEAD', OTHER + '\n')
+        if mode == 'detached':
+            put(private / 'HEAD', SHA + '\n')
+        else:
+            ref = 'refs/worktree/probe' if mode == 'worktree-ref' else 'refs/heads/topic'
+            put(private / 'HEAD', f'ref: {ref}\n')
+            if mode == 'packed':
+                put(common / 'packed-refs', f'{SHA} {ref}\n')
+            else:
+                put((private if mode == 'worktree-ref' else common) / ref, SHA + '\n')
+&gt;       assert git_head(root) == SHA
+E       AssertionError: assert None == 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+E        +  where None = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_linked_checkout_uses_its_1/checkout'))
+
+../generation30-evidence/test_donor_git_identity.py:47: AssertionError</failure></testcase><testcase classname="generation30-evidence.test_donor_git_identity" name="test_linked_checkout_uses_its_own_head_and_declared_common_refs[False-packed]" time="0.001"><failure message="AssertionError: assert None == 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'&#10; +  where None = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_linked_checkout_uses_its_2/checkout'))">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-32/test_linked_checkout_uses_its_2')
+mode = 'packed', absolute = False
+
+    @pytest.mark.parametrize('mode', ['detached', 'loose', 'packed', 'worktree-ref'])
+    @pytest.mark.parametrize('absolute', [False, True])
+    def test_linked_checkout_uses_its_own_head_and_declared_common_refs(tmp_path, mode, absolute):
+        root, common = tmp_path / 'checkout', tmp_path / 'shared.git'
+        private = common / 'worktrees/linked'
+        locator = str(private) if absolute else '../shared.git/worktrees/linked'
+        put(root / '.git', 'gitdir: ' + locator + '\n')
+        put(private / 'commondir', str(common) + '\n' if absolute else '../..\n')
+        put(common / 'HEAD', OTHER + '\n')
+        if mode == 'detached':
+            put(private / 'HEAD', SHA + '\n')
+        else:
+            ref = 'refs/worktree/probe' if mode == 'worktree-ref' else 'refs/heads/topic'
+            put(private / 'HEAD', f'ref: {ref}\n')
+            if mode == 'packed':
+                put(common / 'packed-refs', f'{SHA} {ref}\n')
+            else:
+                put((private if mode == 'worktree-ref' else common) / ref, SHA + '\n')
+&gt;       assert git_head(root) == SHA
+E       AssertionError: assert None == 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+E        +  where None = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_linked_checkout_uses_its_2/checkout'))
+
+../generation30-evidence/test_donor_git_identity.py:47: AssertionError</failure></testcase><testcase classname="generation30-evidence.test_donor_git_identity" name="test_linked_checkout_uses_its_own_head_and_declared_common_refs[False-worktree-ref]" time="0.002"><failure message="AssertionError: assert None == 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'&#10; +  where None = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_linked_checkout_uses_its_3/checkout'))">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-32/test_linked_checkout_uses_its_3')
+mode = 'worktree-ref', absolute = False
+
+    @pytest.mark.parametrize('mode', ['detached', 'loose', 'packed', 'worktree-ref'])
+    @pytest.mark.parametrize('absolute', [False, True])
+    def test_linked_checkout_uses_its_own_head_and_declared_common_refs(tmp_path, mode, absolute):
+        root, common = tmp_path / 'checkout', tmp_path / 'shared.git'
+        private = common / 'worktrees/linked'
+        locator = str(private) if absolute else '../shared.git/worktrees/linked'
+        put(root / '.git', 'gitdir: ' + locator + '\n')
+        put(private / 'commondir', str(common) + '\n' if absolute else '../..\n')
+        put(common / 'HEAD', OTHER + '\n')
+        if mode == 'detached':
+            put(private / 'HEAD', SHA + '\n')
+        else:
+            ref = 'refs/worktree/probe' if mode == 'worktree-ref' else 'refs/heads/topic'
+            put(private / 'HEAD', f'ref: {ref}\n')
+            if mode == 'packed':
+                put(common / 'packed-refs', f'{SHA} {ref}\n')
+            else:
+                put((private if mode == 'worktree-ref' else common) / ref, SHA + '\n')
+&gt;       assert git_head(root) == SHA
+E       AssertionError: assert None == 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+E        +  where None = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_linked_checkout_uses_its_3/checkout'))
+
+../generation30-evidence/test_donor_git_identity.py:47: AssertionError</failure></testcase><testcase classname="generation30-evidence.test_donor_git_identity" name="test_linked_checkout_uses_its_own_head_and_declared_common_refs[True-detached]" time="0.001"><failure message="AssertionError: assert None == 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'&#10; +  where None = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_linked_checkout_uses_its_4/checkout'))">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-32/test_linked_checkout_uses_its_4')
+mode = 'detached', absolute = True
+
+    @pytest.mark.parametrize('mode', ['detached', 'loose', 'packed', 'worktree-ref'])
+    @pytest.mark.parametrize('absolute', [False, True])
+    def test_linked_checkout_uses_its_own_head_and_declared_common_refs(tmp_path, mode, absolute):
+        root, common = tmp_path / 'checkout', tmp_path / 'shared.git'
+        private = common / 'worktrees/linked'
+        locator = str(private) if absolute else '../shared.git/worktrees/linked'
+        put(root / '.git', 'gitdir: ' + locator + '\n')
+        put(private / 'commondir', str(common) + '\n' if absolute else '../..\n')
+        put(common / 'HEAD', OTHER + '\n')
+        if mode == 'detached':
+            put(private / 'HEAD', SHA + '\n')
+        else:
+            ref = 'refs/worktree/probe' if mode == 'worktree-ref' else 'refs/heads/topic'
+            put(private / 'HEAD', f'ref: {ref}\n')
+            if mode == 'packed':
+                put(common / 'packed-refs', f'{SHA} {ref}\n')
+            else:
+                put((private if mode == 'worktree-ref' else common) / ref, SHA + '\n')
+&gt;       assert git_head(root) == SHA
+E       AssertionError: assert None == 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+E        +  where None = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_linked_checkout_uses_its_4/checkout'))
+
+../generation30-evidence/test_donor_git_identity.py:47: AssertionError</failure></testcase><testcase classname="generation30-evidence.test_donor_git_identity" name="test_linked_checkout_uses_its_own_head_and_declared_common_refs[True-loose]" time="0.001"><failure message="AssertionError: assert None == 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'&#10; +  where None = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_linked_checkout_uses_its_5/checkout'))">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-32/test_linked_checkout_uses_its_5')
+mode = 'loose', absolute = True
+
+    @pytest.mark.parametrize('mode', ['detached', 'loose', 'packed', 'worktree-ref'])
+    @pytest.mark.parametrize('absolute', [False, True])
+    def test_linked_checkout_uses_its_own_head_and_declared_common_refs(tmp_path, mode, absolute):
+        root, common = tmp_path / 'checkout', tmp_path / 'shared.git'
+        private = common / 'worktrees/linked'
+        locator = str(private) if absolute else '../shared.git/worktrees/linked'
+        put(root / '.git', 'gitdir: ' + locator + '\n')
+        put(private / 'commondir', str(common) + '\n' if absolute else '../..\n')
+        put(common / 'HEAD', OTHER + '\n')
+        if mode == 'detached':
+            put(private / 'HEAD', SHA + '\n')
+        else:
+            ref = 'refs/worktree/probe' if mode == 'worktree-ref' else 'refs/heads/topic'
+            put(private / 'HEAD', f'ref: {ref}\n')
+            if mode == 'packed':
+                put(common / 'packed-refs', f'{SHA} {ref}\n')
+            else:
+                put((private if mode == 'worktree-ref' else common) / ref, SHA + '\n')
+&gt;       assert git_head(root) == SHA
+E       AssertionError: assert None == 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+E        +  where None = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_linked_checkout_uses_its_5/checkout'))
+
+../generation30-evidence/test_donor_git_identity.py:47: AssertionError</failure></testcase><testcase classname="generation30-evidence.test_donor_git_identity" name="test_linked_checkout_uses_its_own_head_and_declared_common_refs[True-packed]" time="0.001"><failure message="AssertionError: assert None == 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'&#10; +  where None = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_linked_checkout_uses_its_6/checkout'))">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-32/test_linked_checkout_uses_its_6')
+mode = 'packed', absolute = True
+
+    @pytest.mark.parametrize('mode', ['detached', 'loose', 'packed', 'worktree-ref'])
+    @pytest.mark.parametrize('absolute', [False, True])
+    def test_linked_checkout_uses_its_own_head_and_declared_common_refs(tmp_path, mode, absolute):
+        root, common = tmp_path / 'checkout', tmp_path / 'shared.git'
+        private = common / 'worktrees/linked'
+        locator = str(private) if absolute else '../shared.git/worktrees/linked'
+        put(root / '.git', 'gitdir: ' + locator + '\n')
+        put(private / 'commondir', str(common) + '\n' if absolute else '../..\n')
+        put(common / 'HEAD', OTHER + '\n')
+        if mode == 'detached':
+            put(private / 'HEAD', SHA + '\n')
+        else:
+            ref = 'refs/worktree/probe' if mode == 'worktree-ref' else 'refs/heads/topic'
+            put(private / 'HEAD', f'ref: {ref}\n')
+            if mode == 'packed':
+                put(common / 'packed-refs', f'{SHA} {ref}\n')
+            else:
+                put((private if mode == 'worktree-ref' else common) / ref, SHA + '\n')
+&gt;       assert git_head(root) == SHA
+E       AssertionError: assert None == 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+E        +  where None = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_linked_checkout_uses_its_6/checkout'))
+
+../generation30-evidence/test_donor_git_identity.py:47: AssertionError</failure></testcase><testcase classname="generation30-evidence.test_donor_git_identity" name="test_linked_checkout_uses_its_own_head_and_declared_common_refs[True-worktree-ref]" time="0.001"><failure message="AssertionError: assert None == 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'&#10; +  where None = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_linked_checkout_uses_its_7/checkout'))">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-32/test_linked_checkout_uses_its_7')
+mode = 'worktree-ref', absolute = True
+
+    @pytest.mark.parametrize('mode', ['detached', 'loose', 'packed', 'worktree-ref'])
+    @pytest.mark.parametrize('absolute', [False, True])
+    def test_linked_checkout_uses_its_own_head_and_declared_common_refs(tmp_path, mode, absolute):
+        root, common = tmp_path / 'checkout', tmp_path / 'shared.git'
+        private = common / 'worktrees/linked'
+        locator = str(private) if absolute else '../shared.git/worktrees/linked'
+        put(root / '.git', 'gitdir: ' + locator + '\n')
+        put(private / 'commondir', str(common) + '\n' if absolute else '../..\n')
+        put(common / 'HEAD', OTHER + '\n')
+        if mode == 'detached':
+            put(private / 'HEAD', SHA + '\n')
+        else:
+            ref = 'refs/worktree/probe' if mode == 'worktree-ref' else 'refs/heads/topic'
+            put(private / 'HEAD', f'ref: {ref}\n')
+            if mode == 'packed':
+                put(common / 'packed-refs', f'{SHA} {ref}\n')
+            else:
+                put((private if mode == 'worktree-ref' else common) / ref, SHA + '\n')
+&gt;       assert git_head(root) == SHA
+E       AssertionError: assert None == 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+E        +  where None = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_linked_checkout_uses_its_7/checkout'))
+
+../generation30-evidence/test_donor_git_identity.py:47: AssertionError</failure></testcase><testcase classname="generation30-evidence.test_donor_git_identity" name="test_separate_gitdir_without_commondir_is_supported" time="0.001"><failure message="AssertionError: assert None == 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'&#10; +  where None = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_separate_gitdir_without_c0/checkout'))">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-32/test_separate_gitdir_without_c0')
+
+    def test_separate_gitdir_without_commondir_is_supported(tmp_path):
+        root, metadata = tmp_path / 'checkout', tmp_path / 'module.git'
+        put(root / '.git', 'gitdir: ../module.git\n')
+        put(metadata / 'HEAD', SHA + '\n')
+&gt;       assert git_head(root) == SHA
+E       AssertionError: assert None == 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+E        +  where None = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_separate_gitdir_without_c0/checkout'))
+
+../generation30-evidence/test_donor_git_identity.py:54: AssertionError</failure></testcase><testcase classname="generation30-evidence.test_donor_git_identity" name="test_invalid_or_oversized_head_cannot_be_a_receipt_commit[not-a-commit]" time="0.001"><failure message="AssertionError: assert 'not-a-commit' is None&#10; +  where 'not-a-commit' = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_invalid_or_oversized_head0'))">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-32/test_invalid_or_oversized_head0')
+text = 'not-a-commit'
+
+    @pytest.mark.parametrize('text', ['not-a-commit', 'a' * 39, 'a' * 41, 'A' * 40,
+                                      SHA + '\n' + OTHER, 'x' * 65537])
+    def test_invalid_or_oversized_head_cannot_be_a_receipt_commit(tmp_path, text):
+        put(tmp_path / '.git/HEAD', text)
+&gt;       assert git_head(tmp_path) is None
+E       AssertionError: assert 'not-a-commit' is None
+E        +  where 'not-a-commit' = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_invalid_or_oversized_head0'))
+
+../generation30-evidence/test_donor_git_identity.py:61: AssertionError</failure></testcase><testcase classname="generation30-evidence.test_donor_git_identity" name="test_invalid_or_oversized_head_cannot_be_a_receipt_commit[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa]" time="0.001"><failure message="AssertionError: assert 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' is None&#10; +  where 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_invalid_or_oversized_head1'))">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-32/test_invalid_or_oversized_head1')
+text = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+
+    @pytest.mark.parametrize('text', ['not-a-commit', 'a' * 39, 'a' * 41, 'A' * 40,
+                                      SHA + '\n' + OTHER, 'x' * 65537])
+    def test_invalid_or_oversized_head_cannot_be_a_receipt_commit(tmp_path, text):
+        put(tmp_path / '.git/HEAD', text)
+&gt;       assert git_head(tmp_path) is None
+E       AssertionError: assert 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' is None
+E        +  where 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_invalid_or_oversized_head1'))
+
+../generation30-evidence/test_donor_git_identity.py:61: AssertionError</failure></testcase><testcase classname="generation30-evidence.test_donor_git_identity" name="test_invalid_or_oversized_head_cannot_be_a_receipt_commit[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa]" time="0.001"><failure message="AssertionError: assert 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' is None&#10; +  where 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_invalid_or_oversized_head2'))">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-32/test_invalid_or_oversized_head2')
+text = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+
+    @pytest.mark.parametrize('text', ['not-a-commit', 'a' * 39, 'a' * 41, 'A' * 40,
+                                      SHA + '\n' + OTHER, 'x' * 65537])
+    def test_invalid_or_oversized_head_cannot_be_a_receipt_commit(tmp_path, text):
+        put(tmp_path / '.git/HEAD', text)
+&gt;       assert git_head(tmp_path) is None
+E       AssertionError: assert 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' is None
+E        +  where 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_invalid_or_oversized_head2'))
+
+../generation30-evidence/test_donor_git_identity.py:61: AssertionError</failure></testcase><testcase classname="generation30-evidence.test_donor_git_identity" name="test_invalid_or_oversized_head_cannot_be_a_receipt_commit[AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA]" time="0.001"><failure message="AssertionError: assert 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' is None&#10; +  where 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_invalid_or_oversized_head3'))">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-32/test_invalid_or_oversized_head3')
+text = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+
+    @pytest.mark.parametrize('text', ['not-a-commit', 'a' * 39, 'a' * 41, 'A' * 40,
+                                      SHA + '\n' + OTHER, 'x' * 65537])
+    def test_invalid_or_oversized_head_cannot_be_a_receipt_commit(tmp_path, text):
+        put(tmp_path / '.git/HEAD', text)
+&gt;       assert git_head(tmp_path) is None
+E       AssertionError: assert 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' is None
+E        +  where 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_invalid_or_oversized_head3'))
+
+../generation30-evidence/test_donor_git_identity.py:61: AssertionError</failure></testcase><testcase classname="generation30-evidence.test_donor_git_identity" name="test_invalid_or_oversized_head_cannot_be_a_receipt_commit[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb]" time="0.001"><failure message="AssertionError: assert 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb' is None&#10; +  where 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb' = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_invalid_or_oversized_head4'))">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-32/test_invalid_or_oversized_head4')
+text = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
+
+    @pytest.mark.parametrize('text', ['not-a-commit', 'a' * 39, 'a' * 41, 'A' * 40,
+                                      SHA + '\n' + OTHER, 'x' * 65537])
+    def test_invalid_or_oversized_head_cannot_be_a_receipt_commit(tmp_path, text):
+        put(tmp_path / '.git/HEAD', text)
+&gt;       assert git_head(tmp_path) is None
+E       AssertionError: assert 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb' is None
+E        +  where 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb' = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_invalid_or_oversized_head4'))
+
+../generation30-evidence/test_donor_git_identity.py:61: AssertionError</failure></testcase><testcase classname="generation30-evidence.test_donor_git_identity" name="test_invalid_or_oversized_head_cannot_be_a_receipt_commit[text5]" time="0.001"><failure message="AssertionError: assert 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' is None&#10;[+1 more line; full report in element text]">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-32/test_invalid_or_oversized_head5')
+text = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+
+    @pytest.mark.parametrize('text', ['not-a-commit', 'a' * 39, 'a' * 41, 'A' * 40,
+                                      SHA + '\n' + OTHER, 'x' * 65537])
+    def test_invalid_or_oversized_head_cannot_be_a_receipt_commit(tmp_path, text):
+        put(tmp_path / '.git/HEAD', text)
+&gt;       assert git_head(tmp_path) is None
+E       AssertionError: assert 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' is None
+E        +  where 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_invalid_or_oversized_head5'))
+
+../generation30-evidence/test_donor_git_identity.py:61: AssertionError</failure></testcase><testcase classname="generation30-evidence.test_donor_git_identity" name="test_symbolic_ref_cannot_escape_metadata_namespace[../secret]" time="0.001"><failure message="AssertionError: assert 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' is None&#10; +  where 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_symbolic_ref_cannot_escap0'))">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-32/test_symbolic_ref_cannot_escap0')
+ref = '../secret'
+
+    @pytest.mark.parametrize('ref', ['../secret', 'refs/../secret', '/absolute', 'refs//heads/topic',
+                                     'refs/heads/./topic', r'refs\heads\topic'])
+    def test_symbolic_ref_cannot_escape_metadata_namespace(tmp_path, ref):
+        put(tmp_path / '.git/HEAD', 'ref: ' + ref + '\n')
+        put(tmp_path / '.git/secret', SHA + '\n')
+        put(tmp_path / 'secret', SHA + '\n')
+&gt;       assert git_head(tmp_path) is None
+E       AssertionError: assert 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' is None
+E        +  where 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_symbolic_ref_cannot_escap0'))
+
+../generation30-evidence/test_donor_git_identity.py:70: AssertionError</failure></testcase><testcase classname="generation30-evidence.test_donor_git_identity" name="test_symbolic_ref_cannot_escape_metadata_namespace[refs/../secret]" time="0.001" /><testcase classname="generation30-evidence.test_donor_git_identity" name="test_symbolic_ref_cannot_escape_metadata_namespace[/absolute]" time="0.001" /><testcase classname="generation30-evidence.test_donor_git_identity" name="test_symbolic_ref_cannot_escape_metadata_namespace[refs//heads/topic]" time="0.001" /><testcase classname="generation30-evidence.test_donor_git_identity" name="test_symbolic_ref_cannot_escape_metadata_namespace[refs/heads/./topic]" time="0.001" /><testcase classname="generation30-evidence.test_donor_git_identity" name="test_symbolic_ref_cannot_escape_metadata_namespace[refs\\heads\\topic]" time="0.001" /><testcase classname="generation30-evidence.test_donor_git_identity" name="test_conflicting_packed_refs_are_unknown" time="0.001"><failure message="AssertionError: assert 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' is None&#10; +  where 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_conflicting_packed_refs_a0'))">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-32/test_conflicting_packed_refs_a0')
+
+    def test_conflicting_packed_refs_are_unknown(tmp_path):
+        put(tmp_path / '.git/HEAD', 'ref: refs/heads/topic\n')
+        put(tmp_path / '.git/packed-refs', f'{SHA} refs/heads/topic\n{OTHER} refs/heads/topic\n')
+&gt;       assert git_head(tmp_path) is None
+E       AssertionError: assert 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' is None
+E        +  where 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_conflicting_packed_refs_a0'))
+
+../generation30-evidence/test_donor_git_identity.py:76: AssertionError</failure></testcase><testcase classname="generation30-evidence.test_donor_git_identity" name="test_loose_ref_has_precedence_over_older_packed_ref" time="0.001" /><testcase classname="generation30-evidence.test_donor_git_identity" name="test_missing_checkout_is_unknown" time="0.000" /><testcase classname="generation30-evidence.test_donor_git_identity" name="test_cyclic_metadata_location_is_unknown" time="0.000" /><testcase classname="generation30-evidence.test_donor_git_identity" name="test_nonregular_head_is_unknown" time="0.000" /><testcase classname="generation30-evidence.test_donor_git_identity" name="test_oversized_packed_refs_are_unknown_without_returning_a_prefix_match" time="0.072"><failure message="AssertionError: assert 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' is None&#10; +  where 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_oversized_packed_refs_are0'))">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-32/test_oversized_packed_refs_are0')
+
+    def test_oversized_packed_refs_are_unknown_without_returning_a_prefix_match(tmp_path):
+        put(tmp_path / '.git/HEAD', 'ref: refs/heads/topic\n')
+        path = tmp_path / '.git/packed-refs'
+        with path.open('wb') as stream:
+            stream.write(f'{SHA} refs/heads/topic\n'.encode())
+            stream.truncate(8 * 1024 * 1024 + 1)
+&gt;       assert git_head(tmp_path) is None
+E       AssertionError: assert 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' is None
+E        +  where 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' = git_head(PosixPath('/tmp/pytest-of-agent/pytest-32/test_oversized_packed_refs_are0'))
+
+../generation30-evidence/test_donor_git_identity.py:111: AssertionError</failure></testcase></testsuite></testsuites>

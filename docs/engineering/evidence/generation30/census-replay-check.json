@@ -1,0 +1,32 @@
+{
+  "schema": "patchtrace-census-replay-inputs/1",
+  "candidate": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+  "reviewed_integration": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+  "files": {
+    "patchtrace-remote-inventory.json": {
+      "bytes": 620236,
+      "sha256": "4c937d6d9a3f48087f6eadd9c3c86407c93760a5cf2572304f0e4a494285bfb9"
+    },
+    "patchtrace-all-prs.json": {
+      "bytes": 191641,
+      "sha256": "139f22da1497169f0918e00456b2a1fe728c71f69308045734f9afc55c1adaa1"
+    },
+    "build-patchtrace-inventory.py": {
+      "bytes": 7815,
+      "sha256": "359624e85671b5c909331fdc0740c2caeacf1f457448057a4602c517965bbf8c"
+    }
+  },
+  "notes": [
+    "These are the actual retained scratch inputs and read-only census generator, copied without alteration.",
+    "The generator retains its original absolute workspace paths; adjust them when replaying in a different environment.",
+    "Generation30 census separately records the later fetch of all PR heads.",
+    "Metadata is a frozen observation, not a semantic or current-CI qualification."
+  ],
+  "archive": {
+    "name": "generation31-census-replay.zip",
+    "bytes": 147135,
+    "sha256": "e32f5dc05e45d3247b49a77bc2bf5bfe664a6453747b446347434ba7a775085b"
+  },
+  "recorded_branch_pr_objects_verified": 671,
+  "missing_or_noncommit_objects": []
+}

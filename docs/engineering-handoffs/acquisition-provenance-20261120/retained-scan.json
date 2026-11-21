@@ -1,0 +1,4683 @@
+{
+  "blob_counts": {
+    "src/patchtrace/kbcorrelation/acquire.py": 1,
+    "src/patchtrace/kbcorrelation/context.py": 15,
+    "src/patchtrace/kbcorrelation/contracts.py": 2,
+    "src/patchtrace/kbcorrelation/inventory_contracts.py": 5,
+    "src/patchtrace/kbcorrelation/inventory_service.py": 3,
+    "src/patchtrace/kbcorrelation/inventory_store.py": 5,
+    "src/patchtrace/kbcorrelation/service.py": 35,
+    "src/patchtrace/kbcorrelation/store.py": 12
+  },
+  "blobs": [
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "7844040814e230b7ab73f633475254e32d6a49c3",
+      "path": "src/patchtrace/kbcorrelation/acquire.py",
+      "publication_calls": [],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "cee3b741af97bc50c000f1ae6314e77b72042525",
+      "path": "src/patchtrace/kbcorrelation/context.py",
+      "publication_calls": [],
+      "record_fields": {
+        "ContextBundle": [
+          "context_key",
+          "investigation_id",
+          "base_revision",
+          "lead",
+          "scope_id",
+          "pair_id",
+          "older_sha",
+          "newer_sha",
+          "edge_set_digest",
+          "rules_digest",
+          "lexicon_digest",
+          "sources",
+          "context",
+          "cwe_profiles",
+          "hypotheses",
+          "card_facts"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "356be7e49278ff65b4fef0c67c85fbaa5b0dba85",
+      "path": "src/patchtrace/kbcorrelation/contracts.py",
+      "publication_calls": [],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "6997d9555b3f523c281d9722b50eae4e01b85cfe0f01c9c5711a9c96d252fbdb",
+      "binding_only_tokens": [
+        "acquisition-pair-binding",
+        "source_pair_id"
+      ],
+      "blob": "bf574cdc825706dcdb26fc5c639744d22930c62b",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, cancel=cancel, import_pair=import_current)",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha, selected_product=selected_product)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "b5c27a2aee319269be746804025b055b0bc680f2",
+      "path": "src/patchtrace/kbcorrelation/store.py",
+      "publication_calls": [],
+      "record_fields": {
+        "AttachRequest": [
+          "revision",
+          "pair_id",
+          "older_path",
+          "newer_path",
+          "older_sha",
+          "newer_sha",
+          "directory",
+          "source_shas",
+          "plan_sha",
+          "selected_product"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "a6f6f279dbaf09a543f456a6d40a829fb10f922d",
+      "path": "src/patchtrace/kbcorrelation/contracts.py",
+      "publication_calls": [],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "a1b19a0d0d89537f126e0d9ebcbfa61bf6eed53e",
+      "path": "src/patchtrace/kbcorrelation/inventory_contracts.py",
+      "publication_calls": [],
+      "record_fields": {
+        "CsvDiagnostic": [
+          "code",
+          "message",
+          "level",
+          "reference"
+        ],
+        "CsvInventory": [
+          "contract",
+          "parser_version",
+          "inventory_id",
+          "raw_sha256",
+          "raw_size",
+          "encoding",
+          "context",
+          "limits",
+          "entries",
+          "sections",
+          "diagnostics",
+          "records_scanned",
+          "accepted_count",
+          "rejected_count",
+          "duplicate_count",
+          "conflict_count",
+          "diagnostics_omitted",
+          "truncated",
+          "status"
+        ],
+        "CsvInventoryPage": [
+          "contract",
+          "parser_version",
+          "limits",
+          "entries",
+          "accepted_count",
+          "duplicate_count",
+          "conflict_count",
+          "retention",
+          "scan_complete",
+          "matching_count",
+          "excluded_count",
+          "omitted_count",
+          "conflict_witnesses"
+        ],
+        "CsvRecordRef": [
+          "raw_sha256",
+          "logical_record",
+          "line_start",
+          "line_end",
+          "section_index"
+        ],
+        "InventoryConflictWitness": [
+          "conflict_group",
+          "field",
+          "first",
+          "second"
+        ],
+        "InventoryContext": [
+          "kb",
+          "product_scope_id",
+          "product",
+          "release",
+          "build",
+          "architecture",
+          "delimiter",
+          "locale"
+        ],
+        "InventoryEntry": [
+          "entry_id",
+          "reference",
+          "original_fields",
+          "original_filename",
+          "basename",
+          "original_version",
+          "version_components",
+          "original_size",
+          "size_bytes",
+          "date_text",
+          "time_text",
+          "architecture",
+          "architecture_basis",
+          "product",
+          "release",
+          "build",
+          "state",
+          "duplicate_of",
+          "conflict_group",
+          "diagnostics"
+        ],
+        "InventoryLimits": [
+          "max_bytes",
+          "max_text_chars",
+          "max_field_chars",
+          "max_record_chars",
+          "max_columns",
+          "max_records",
+          "max_entries",
+          "max_diagnostics",
+          "max_sections",
+          "max_seconds"
+        ],
+        "InventoryPageEntry": [],
+        "InventoryPageLimits": [
+          "max_entries"
+        ],
+        "InventoryRetention": [
+          "architecture",
+          "page"
+        ],
+        "InventorySection": [
+          "index",
+          "banner",
+          "architecture",
+          "reference"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "44757c9c85f8f79c13f248fef44258d540482564",
+      "path": "src/patchtrace/kbcorrelation/inventory_service.py",
+      "publication_calls": [],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "287cb37d2163ea6b35c1a36d8b3a113c5ecfca6f",
+      "path": "src/patchtrace/kbcorrelation/inventory_store.py",
+      "publication_calls": [],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "2b77cb645a18fba5586744ed49c8e281766af6d782c88b83c5c006479dce5756",
+      "binding_only_tokens": [],
+      "blob": "fc687d1f02fdc1bff414c9fca32785f744e3c636",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, cancel=cancel, import_pair=import_current)",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha, selected_product=selected_product)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "041ecc6e819759e5255489abdace418975fde76e",
+      "path": "src/patchtrace/kbcorrelation/store.py",
+      "publication_calls": [],
+      "record_fields": {
+        "AttachRequest": [
+          "revision",
+          "pair_id",
+          "older_path",
+          "newer_path",
+          "older_sha",
+          "newer_sha",
+          "directory",
+          "source_shas",
+          "plan_sha",
+          "selected_product"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "98bdbf29e0083d857ecd504dedac3661c3a271a6129dbcdc406e4c95e97ba520",
+      "binding_only_tokens": [],
+      "blob": "44f187d5cd50a39ced5084de8f4b668d0792521f",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, cancel=cancel, import_pair=import_current)",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha, selected_product=selected_product)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "95e67d8816b288b5af06e1659a8b2101bb2137c8",
+      "path": "src/patchtrace/kbcorrelation/store.py",
+      "publication_calls": [],
+      "record_fields": {
+        "AttachRequest": [
+          "revision",
+          "pair_id",
+          "older_path",
+          "newer_path",
+          "older_sha",
+          "newer_sha",
+          "directory",
+          "source_shas",
+          "plan_sha",
+          "selected_product"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "2b77cb645a18fba5586744ed49c8e281766af6d782c88b83c5c006479dce5756",
+      "binding_only_tokens": [],
+      "blob": "d40b4b2a12c24275604611eae6b97c34495376e1",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, cancel=cancel, import_pair=import_current)",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha, selected_product=selected_product)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "db5ba94c49e1d29ab77210e1e14226139f61d41f",
+      "path": "src/patchtrace/kbcorrelation/store.py",
+      "publication_calls": [],
+      "record_fields": {
+        "AttachRequest": [
+          "revision",
+          "pair_id",
+          "older_path",
+          "newer_path",
+          "older_sha",
+          "newer_sha",
+          "directory",
+          "source_shas",
+          "plan_sha",
+          "selected_product"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "0fe83a4b330b4ea63cdfe2ead019176b94d3a12d",
+      "path": "src/patchtrace/kbcorrelation/store.py",
+      "publication_calls": [],
+      "record_fields": {
+        "AttachRequest": [
+          "revision",
+          "pair_id",
+          "older_path",
+          "newer_path",
+          "older_sha",
+          "newer_sha",
+          "directory",
+          "source_shas",
+          "plan_sha",
+          "selected_product"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "dd814eb665af9c27aeb79d01219b4c9d941e614d",
+      "path": "src/patchtrace/kbcorrelation/store.py",
+      "publication_calls": [],
+      "record_fields": {
+        "AttachRequest": [
+          "revision",
+          "pair_id",
+          "older_path",
+          "newer_path",
+          "older_sha",
+          "newer_sha",
+          "directory",
+          "source_shas",
+          "plan_sha",
+          "selected_product"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "2b77cb645a18fba5586744ed49c8e281766af6d782c88b83c5c006479dce5756",
+      "binding_only_tokens": [],
+      "blob": "ca036db7f5391579a0c7a4b2e5c6066826fee4d1",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, cancel=cancel, import_pair=import_current)",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha, selected_product=selected_product)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "2b77cb645a18fba5586744ed49c8e281766af6d782c88b83c5c006479dce5756",
+      "binding_only_tokens": [],
+      "blob": "f2e116482ea43a3ee1bb16a2db07e2e195d7b708",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, cancel=cancel, import_pair=import_current)",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha, selected_product=selected_product)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "01c0afaecd8c44762bd413dcda1565ce857870e1",
+      "path": "src/patchtrace/kbcorrelation/context.py",
+      "publication_calls": [],
+      "record_fields": {
+        "ContextBundle": [
+          "context_key",
+          "investigation_id",
+          "base_revision",
+          "lead",
+          "scope_id",
+          "pair_id",
+          "older_sha",
+          "newer_sha",
+          "edge_set_digest",
+          "rules_digest",
+          "lexicon_digest",
+          "sources",
+          "context",
+          "cwe_profiles",
+          "hypotheses",
+          "card_facts"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "9eef9c5d759d61e8f20ef0e95f43b414daf019f181c7176c84368a57c4acb3bc",
+      "binding_only_tokens": [],
+      "blob": "385d47a86e05ae572182c9db0a25be775fc55434",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, cancel=cancel, import_pair=import_current)",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha, selected_product=selected_product)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "9eef9c5d759d61e8f20ef0e95f43b414daf019f181c7176c84368a57c4acb3bc",
+      "binding_only_tokens": [],
+      "blob": "f8c2072ef41fb1c054b8e4cb0762a6247c457f8b",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, cancel=cancel, import_pair=import_current)",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha, selected_product=selected_product)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "c59b93be042e383185619950946efcb67d95e73c",
+      "path": "src/patchtrace/kbcorrelation/inventory_store.py",
+      "publication_calls": [],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "dbd6e69880de8defcea1cbaad27ffd06bfa94d8b",
+      "path": "src/patchtrace/kbcorrelation/store.py",
+      "publication_calls": [],
+      "record_fields": {
+        "AttachRequest": [
+          "revision",
+          "pair_id",
+          "older_path",
+          "newer_path",
+          "older_sha",
+          "newer_sha",
+          "directory",
+          "source_shas",
+          "plan_sha",
+          "selected_product"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "6e487131dde4ab50fba332970afa3f7c1fe02fe1",
+      "path": "src/patchtrace/kbcorrelation/inventory_contracts.py",
+      "publication_calls": [],
+      "record_fields": {
+        "CsvDiagnostic": [
+          "code",
+          "message",
+          "level",
+          "reference"
+        ],
+        "CsvInventory": [
+          "contract",
+          "parser_version",
+          "inventory_id",
+          "raw_sha256",
+          "raw_size",
+          "encoding",
+          "context",
+          "limits",
+          "entries",
+          "sections",
+          "diagnostics",
+          "records_scanned",
+          "accepted_count",
+          "rejected_count",
+          "duplicate_count",
+          "conflict_count",
+          "diagnostics_omitted",
+          "truncated",
+          "status"
+        ],
+        "CsvInventoryPage": [
+          "contract",
+          "parser_version",
+          "entries",
+          "retention",
+          "scan_complete",
+          "matching_count",
+          "excluded_count",
+          "omitted_count",
+          "conflict_witnesses"
+        ],
+        "CsvRecordRef": [
+          "raw_sha256",
+          "logical_record",
+          "line_start",
+          "line_end",
+          "section_index"
+        ],
+        "InventoryConflictWitness": [
+          "conflict_group",
+          "field",
+          "first",
+          "second"
+        ],
+        "InventoryContext": [
+          "kb",
+          "product_scope_id",
+          "product",
+          "release",
+          "build",
+          "architecture",
+          "delimiter",
+          "locale"
+        ],
+        "InventoryEntry": [
+          "entry_id",
+          "reference",
+          "original_fields",
+          "original_filename",
+          "basename",
+          "original_version",
+          "version_components",
+          "original_size",
+          "size_bytes",
+          "date_text",
+          "time_text",
+          "architecture",
+          "architecture_basis",
+          "product",
+          "release",
+          "build",
+          "state",
+          "duplicate_of",
+          "conflict_group",
+          "diagnostics"
+        ],
+        "InventoryLimits": [
+          "max_bytes",
+          "max_text_chars",
+          "max_field_chars",
+          "max_record_chars",
+          "max_columns",
+          "max_records",
+          "max_entries",
+          "max_diagnostics",
+          "max_sections",
+          "max_seconds"
+        ],
+        "InventoryPageEntry": [],
+        "InventoryRetention": [
+          "architecture",
+          "page"
+        ],
+        "InventorySection": [
+          "index",
+          "banner",
+          "architecture",
+          "reference"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "64939fbeb7465abf0b2a1ebb36d7105786c7901c",
+      "path": "src/patchtrace/kbcorrelation/inventory_store.py",
+      "publication_calls": [],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "a9ecdefbd463d854dd8bbf2032b818bca8785082",
+      "path": "src/patchtrace/kbcorrelation/inventory_contracts.py",
+      "publication_calls": [],
+      "record_fields": {
+        "CsvDiagnostic": [
+          "code",
+          "message",
+          "level",
+          "reference"
+        ],
+        "CsvInventory": [
+          "contract",
+          "parser_version",
+          "inventory_id",
+          "raw_sha256",
+          "raw_size",
+          "encoding",
+          "context",
+          "limits",
+          "entries",
+          "sections",
+          "diagnostics",
+          "records_scanned",
+          "accepted_count",
+          "rejected_count",
+          "duplicate_count",
+          "conflict_count",
+          "diagnostics_omitted",
+          "truncated",
+          "status"
+        ],
+        "CsvRecordRef": [
+          "raw_sha256",
+          "logical_record",
+          "line_start",
+          "line_end",
+          "section_index"
+        ],
+        "InventoryContext": [
+          "kb",
+          "product_scope_id",
+          "product",
+          "release",
+          "build",
+          "architecture",
+          "delimiter",
+          "locale"
+        ],
+        "InventoryEntry": [
+          "entry_id",
+          "reference",
+          "original_fields",
+          "original_filename",
+          "basename",
+          "original_version",
+          "version_components",
+          "original_size",
+          "size_bytes",
+          "date_text",
+          "time_text",
+          "architecture",
+          "architecture_basis",
+          "product",
+          "release",
+          "build",
+          "state",
+          "duplicate_of",
+          "conflict_group",
+          "diagnostics"
+        ],
+        "InventoryLimits": [
+          "max_bytes",
+          "max_text_chars",
+          "max_field_chars",
+          "max_record_chars",
+          "max_columns",
+          "max_records",
+          "max_entries",
+          "max_diagnostics",
+          "max_sections",
+          "max_seconds"
+        ],
+        "InventorySection": [
+          "index",
+          "banner",
+          "architecture",
+          "reference"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "1b1ffc4817489a42e6fa71365ebc3cf4c73d88c6",
+      "path": "src/patchtrace/kbcorrelation/inventory_service.py",
+      "publication_calls": [],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "f44e518358086f47b546a86507ecec98ad0401cb",
+      "path": "src/patchtrace/kbcorrelation/inventory_store.py",
+      "publication_calls": [],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "9eef9c5d759d61e8f20ef0e95f43b414daf019f181c7176c84368a57c4acb3bc",
+      "binding_only_tokens": [],
+      "blob": "ef502ea9923d3301c02f6c208f49e2b47702f2a4",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, cancel=cancel, import_pair=import_current)",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha, selected_product=selected_product)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "9eef9c5d759d61e8f20ef0e95f43b414daf019f181c7176c84368a57c4acb3bc",
+      "binding_only_tokens": [],
+      "blob": "fea8d13fe5e3fb6e4295992b2cce80ec1fc8390e",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, cancel=cancel, import_pair=import_current)",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha, selected_product=selected_product)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "9eef9c5d759d61e8f20ef0e95f43b414daf019f181c7176c84368a57c4acb3bc",
+      "binding_only_tokens": [],
+      "blob": "741b99ad12b2141971ba94881d9d86e544e8c9b0",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, cancel=cancel, import_pair=import_current)",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha, selected_product=selected_product)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "9eef9c5d759d61e8f20ef0e95f43b414daf019f181c7176c84368a57c4acb3bc",
+      "binding_only_tokens": [],
+      "blob": "40752a85a00de9dd510fcafd84e953070718a834",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, cancel=cancel, import_pair=import_current)",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha, selected_product=selected_product)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "9eef9c5d759d61e8f20ef0e95f43b414daf019f181c7176c84368a57c4acb3bc",
+      "binding_only_tokens": [],
+      "blob": "af39a6230e306d7cce201ab382cad37a9f75c042",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, cancel=cancel, import_pair=import_current)",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha, selected_product=selected_product)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "b93a18858e7a323ea52651c826d5c84d29585070",
+      "path": "src/patchtrace/kbcorrelation/inventory_contracts.py",
+      "publication_calls": [],
+      "record_fields": {
+        "CsvDiagnostic": [
+          "code",
+          "message",
+          "level",
+          "reference"
+        ],
+        "CsvInventory": [
+          "contract",
+          "parser_version",
+          "inventory_id",
+          "raw_sha256",
+          "raw_size",
+          "encoding",
+          "context",
+          "limits",
+          "entries",
+          "sections",
+          "diagnostics",
+          "records_scanned",
+          "accepted_count",
+          "rejected_count",
+          "duplicate_count",
+          "conflict_count",
+          "diagnostics_omitted",
+          "truncated",
+          "status"
+        ],
+        "CsvRecordRef": [
+          "raw_sha256",
+          "logical_record",
+          "line_start",
+          "line_end",
+          "section_index"
+        ],
+        "InventoryContext": [
+          "kb",
+          "product_scope_id",
+          "product",
+          "release",
+          "build",
+          "architecture",
+          "delimiter",
+          "locale"
+        ],
+        "InventoryEntry": [
+          "entry_id",
+          "reference",
+          "original_fields",
+          "original_filename",
+          "basename",
+          "original_version",
+          "version_components",
+          "original_size",
+          "size_bytes",
+          "date_text",
+          "time_text",
+          "architecture",
+          "architecture_basis",
+          "product",
+          "release",
+          "build",
+          "state",
+          "duplicate_of",
+          "conflict_group",
+          "diagnostics"
+        ],
+        "InventoryLimits": [
+          "max_bytes",
+          "max_text_chars",
+          "max_field_chars",
+          "max_record_chars",
+          "max_columns",
+          "max_records",
+          "max_entries",
+          "max_diagnostics",
+          "max_sections",
+          "max_seconds"
+        ],
+        "InventorySection": [
+          "index",
+          "banner",
+          "architecture",
+          "reference"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "9eef9c5d759d61e8f20ef0e95f43b414daf019f181c7176c84368a57c4acb3bc",
+      "binding_only_tokens": [],
+      "blob": "8fb1afb825198aeeb025c7c69f4609665a5acd41",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, cancel=cancel, import_pair=import_current)",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha, selected_product=selected_product)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "f492691261d5682de3303c70a8f9a59ae3891a71",
+      "path": "src/patchtrace/kbcorrelation/inventory_service.py",
+      "publication_calls": [],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "e288514e62820bd7e8300304502302a973416b3b",
+      "path": "src/patchtrace/kbcorrelation/inventory_store.py",
+      "publication_calls": [],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "fa0b711892a7a9ef5d1992b0d4c6a3db65a511bd",
+      "path": "src/patchtrace/kbcorrelation/inventory_contracts.py",
+      "publication_calls": [],
+      "record_fields": {
+        "CsvDiagnostic": [
+          "code",
+          "message",
+          "level",
+          "reference"
+        ],
+        "CsvInventory": [
+          "contract",
+          "parser_version",
+          "inventory_id",
+          "raw_sha256",
+          "raw_size",
+          "encoding",
+          "context",
+          "limits",
+          "entries",
+          "sections",
+          "diagnostics",
+          "records_scanned",
+          "accepted_count",
+          "rejected_count",
+          "duplicate_count",
+          "conflict_count",
+          "diagnostics_omitted",
+          "truncated",
+          "status"
+        ],
+        "CsvRecordRef": [
+          "raw_sha256",
+          "logical_record",
+          "line_start",
+          "line_end",
+          "section_index"
+        ],
+        "InventoryContext": [
+          "kb",
+          "product_scope_id",
+          "product",
+          "release",
+          "build",
+          "architecture",
+          "delimiter",
+          "locale"
+        ],
+        "InventoryEntry": [
+          "entry_id",
+          "reference",
+          "original_fields",
+          "original_filename",
+          "basename",
+          "original_version",
+          "version_components",
+          "original_size",
+          "size_bytes",
+          "date_text",
+          "time_text",
+          "architecture",
+          "architecture_basis",
+          "product",
+          "release",
+          "build",
+          "state",
+          "duplicate_of",
+          "conflict_group",
+          "diagnostics"
+        ],
+        "InventoryLimits": [
+          "max_bytes",
+          "max_text_chars",
+          "max_field_chars",
+          "max_record_chars",
+          "max_columns",
+          "max_records",
+          "max_entries",
+          "max_diagnostics",
+          "max_sections",
+          "max_seconds"
+        ],
+        "InventorySection": [
+          "index",
+          "banner",
+          "architecture",
+          "reference"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "4ad318aca517a09928c9f76c369e97b71229424e",
+      "path": "src/patchtrace/kbcorrelation/context.py",
+      "publication_calls": [],
+      "record_fields": {
+        "ContextBundle": [
+          "context_key",
+          "investigation_id",
+          "base_revision",
+          "lead",
+          "scope_id",
+          "pair_id",
+          "older_sha",
+          "newer_sha",
+          "edge_set_digest",
+          "rules_digest",
+          "lexicon_digest",
+          "sources",
+          "context",
+          "cwe_profiles",
+          "hypotheses",
+          "card_facts"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "9eef9c5d759d61e8f20ef0e95f43b414daf019f181c7176c84368a57c4acb3bc",
+      "binding_only_tokens": [],
+      "blob": "2e456bcacf298e1b1c369e9a7703961b9eba2f3d",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, cancel=cancel, import_pair=import_current)",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha, selected_product=selected_product)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "9eef9c5d759d61e8f20ef0e95f43b414daf019f181c7176c84368a57c4acb3bc",
+      "binding_only_tokens": [],
+      "blob": "3fe6625e32b507fc84428ff1d1bcf508c2d7a1da",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, cancel=cancel, import_pair=import_current)",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha, selected_product=selected_product)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "e744c7d9af22d0dcac05e63caf65d94ac05f24ad",
+      "path": "src/patchtrace/kbcorrelation/context.py",
+      "publication_calls": [],
+      "record_fields": {
+        "ContextBundle": [
+          "context_key",
+          "investigation_id",
+          "base_revision",
+          "lead",
+          "scope_id",
+          "pair_id",
+          "older_sha",
+          "newer_sha",
+          "edge_set_digest",
+          "rules_digest",
+          "lexicon_digest",
+          "sources",
+          "context",
+          "cwe_profiles",
+          "hypotheses",
+          "card_facts"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "268ba0b4d662b94e5d0399ef58b6d21ab9b37cedf7767ac4da21e48f1fda5e17",
+      "binding_only_tokens": [],
+      "blob": "d09d0c55bc550abee960c0d27f6d81b5779998cd",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, import_pair=lambda o, n, d: self.import_pair(rev.investigation_id, o, n, d, name=name))",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "d4ef8aa4ff22aebf1a32f0901ddd76179a172703",
+      "path": "src/patchtrace/kbcorrelation/store.py",
+      "publication_calls": [],
+      "record_fields": {
+        "AttachRequest": [
+          "revision",
+          "pair_id",
+          "older_path",
+          "newer_path",
+          "older_sha",
+          "newer_sha",
+          "directory",
+          "source_shas",
+          "plan_sha"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "a358087974d96090a4dcbd6fec629b14b4fb93882e5affcb68e5b3c77532c237",
+      "binding_only_tokens": [],
+      "blob": "74ddfd80e6d00d71ba6b06d98f010087e4f6d57e",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, cancel=cancel, import_pair=import_current)",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "747cbf331c6805d9675a0b2ed839aa3ce9d22575",
+      "path": "src/patchtrace/kbcorrelation/store.py",
+      "publication_calls": [],
+      "record_fields": {
+        "AttachRequest": [
+          "revision",
+          "pair_id",
+          "older_path",
+          "newer_path",
+          "older_sha",
+          "newer_sha",
+          "directory",
+          "source_shas",
+          "plan_sha"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "4c462fe0a67d3a61d143b4f158a57ef36a107ff1fe12f78926529c50de0ae235",
+      "binding_only_tokens": [],
+      "blob": "910f31ebd6b4d6740b1e5ba8b852789cd61f7dbc",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, cancel=cancel, import_pair=import_current)",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "48eaf035cf2eff12708b83f7cb201e29624668746c6abd06ee36410833699f55",
+      "binding_only_tokens": [],
+      "blob": "eb186644fceaa12a0bbfd0bffeb6cb58dbd5e7de",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, cancel=cancel, import_pair=import_current)",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "bf7397a8087d1675f423716b6c0acacd4f79f2a1",
+      "path": "src/patchtrace/kbcorrelation/store.py",
+      "publication_calls": [],
+      "record_fields": {
+        "AttachRequest": [
+          "revision",
+          "pair_id",
+          "older_path",
+          "newer_path",
+          "older_sha",
+          "newer_sha",
+          "directory",
+          "source_shas",
+          "plan_sha"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "8c3aee042277618dbedc2716746a6a8ca358dbddc6cb52e71bd0d29c3ae76409",
+      "binding_only_tokens": [],
+      "blob": "25fb333561aeae79ef079f202a5aa30da24aa8bd",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, import_pair=lambda o, n, d: self.import_pair(rev.investigation_id, o, n, d, name=name))",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "8e72a55fa975606613534cd6088dc63f7dce80a2",
+      "path": "src/patchtrace/kbcorrelation/context.py",
+      "publication_calls": [],
+      "record_fields": {
+        "ContextBundle": [
+          "context_key",
+          "investigation_id",
+          "base_revision",
+          "lead",
+          "scope_id",
+          "pair_id",
+          "older_sha",
+          "newer_sha",
+          "edge_set_digest",
+          "rules_digest",
+          "lexicon_digest",
+          "sources",
+          "context",
+          "cwe_profiles",
+          "hypotheses",
+          "card_facts"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "054cbf136d94f36048530b9885d288c73d3f7da0619ca48e00cdd8c6dc4dee21",
+      "binding_only_tokens": [
+        "acquisition-pair-binding",
+        "source_pair_id"
+      ],
+      "blob": "7bf9eca283ceb96bc0a5aa89be8d5644e37d4d1b",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, import_pair=lambda o, n, d: self._import_pair(rev.investigation_id, o, n, d, name=name, acquired=(rev, plan)))",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "56ea05cfe3edf0a6b096dc577d0fb6155d7c5a79",
+      "path": "src/patchtrace/kbcorrelation/store.py",
+      "publication_calls": [],
+      "record_fields": {
+        "AttachRequest": [
+          "revision",
+          "pair_id",
+          "older_path",
+          "newer_path",
+          "older_sha",
+          "newer_sha",
+          "directory",
+          "source_shas",
+          "plan_sha"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "8d5247aafaa6875ea877da083d34156895beb582",
+      "path": "src/patchtrace/kbcorrelation/context.py",
+      "publication_calls": [],
+      "record_fields": {
+        "ContextBundle": [
+          "context_key",
+          "investigation_id",
+          "base_revision",
+          "lead",
+          "scope_id",
+          "pair_id",
+          "older_sha",
+          "newer_sha",
+          "edge_set_digest",
+          "rules_digest",
+          "lexicon_digest",
+          "sources",
+          "context",
+          "cwe_profiles",
+          "hypotheses",
+          "card_facts"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "054cbf136d94f36048530b9885d288c73d3f7da0619ca48e00cdd8c6dc4dee21",
+      "binding_only_tokens": [
+        "acquisition-pair-binding",
+        "source_pair_id"
+      ],
+      "blob": "7601c2a45f29552049143fa6cc4170ad52a271f9",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, import_pair=lambda o, n, d: self._import_pair(rev.investigation_id, o, n, d, name=name, acquired=(rev, plan)))",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "f2aca96f7ab382c722df37c137d8fa39a4c1d4f1",
+      "path": "src/patchtrace/kbcorrelation/context.py",
+      "publication_calls": [],
+      "record_fields": {
+        "ContextBundle": [
+          "context_key",
+          "investigation_id",
+          "base_revision",
+          "lead",
+          "scope_id",
+          "pair_id",
+          "older_sha",
+          "newer_sha",
+          "edge_set_digest",
+          "rules_digest",
+          "lexicon_digest",
+          "sources",
+          "context",
+          "cwe_profiles",
+          "hypotheses",
+          "card_facts"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "054cbf136d94f36048530b9885d288c73d3f7da0619ca48e00cdd8c6dc4dee21",
+      "binding_only_tokens": [
+        "acquisition-pair-binding",
+        "source_pair_id"
+      ],
+      "blob": "e01cf10e10b94a6c31c03cc1c74c2d9b17931a25",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, import_pair=lambda o, n, d: self._import_pair(rev.investigation_id, o, n, d, name=name, acquired=(rev, plan)))",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "054cbf136d94f36048530b9885d288c73d3f7da0619ca48e00cdd8c6dc4dee21",
+      "binding_only_tokens": [
+        "acquisition-pair-binding",
+        "source_pair_id"
+      ],
+      "blob": "6e72d4523ef4acca323e3075d1e1161e1919343d",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, import_pair=lambda o, n, d: self._import_pair(rev.investigation_id, o, n, d, name=name, acquired=(rev, plan)))",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "054cbf136d94f36048530b9885d288c73d3f7da0619ca48e00cdd8c6dc4dee21",
+      "binding_only_tokens": [
+        "acquisition-pair-binding",
+        "source_pair_id"
+      ],
+      "blob": "b48f0f10888c8a301457f315a2f54cb3744fc5dc",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, import_pair=lambda o, n, d: self._import_pair(rev.investigation_id, o, n, d, name=name, acquired=(rev, plan)))",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "16b0fb4e76891ce2ee659a1bfa365da6e2b5eac2",
+      "path": "src/patchtrace/kbcorrelation/context.py",
+      "publication_calls": [],
+      "record_fields": {
+        "ContextBundle": [
+          "context_key",
+          "investigation_id",
+          "base_revision",
+          "lead",
+          "scope_id",
+          "pair_id",
+          "older_sha",
+          "newer_sha",
+          "edge_set_digest",
+          "rules_digest",
+          "lexicon_digest",
+          "sources",
+          "context",
+          "cwe_profiles",
+          "hypotheses",
+          "card_facts"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "cf8fb2e7d0be6d61b1db4ae811b09559d69a0dee5122715495dc2f7a83cf4558",
+      "binding_only_tokens": [
+        "acquisition-pair-binding",
+        "source_pair_id"
+      ],
+      "blob": "685d04e125c0f72e4cc339a9184d6c7077d24873",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, import_pair=lambda o, n, d: self._import_pair(rev.investigation_id, o, n, d, name=name, acquired=(rev, plan)))",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "2858492c2e489fda57faa5ce16aba14fa1da8a68",
+      "path": "src/patchtrace/kbcorrelation/context.py",
+      "publication_calls": [],
+      "record_fields": {
+        "ContextBundle": [
+          "context_key",
+          "investigation_id",
+          "base_revision",
+          "lead",
+          "scope_id",
+          "pair_id",
+          "older_sha",
+          "newer_sha",
+          "edge_set_digest",
+          "rules_digest",
+          "lexicon_digest",
+          "sources",
+          "context",
+          "cwe_profiles",
+          "hypotheses",
+          "card_facts"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "1298a7f7a4ce0956e231772b1205c586e3ac7f1b",
+      "path": "src/patchtrace/kbcorrelation/context.py",
+      "publication_calls": [],
+      "record_fields": {
+        "ContextBundle": [
+          "context_key",
+          "investigation_id",
+          "base_revision",
+          "lead",
+          "scope_id",
+          "pair_id",
+          "older_sha",
+          "newer_sha",
+          "edge_set_digest",
+          "rules_digest",
+          "lexicon_digest",
+          "sources",
+          "context",
+          "cwe_profiles",
+          "hypotheses",
+          "card_facts"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "37caf54c6e971f218eb33bdaf0ac7d5fb50992e4",
+      "path": "src/patchtrace/kbcorrelation/context.py",
+      "publication_calls": [],
+      "record_fields": {
+        "ContextBundle": [
+          "context_key",
+          "investigation_id",
+          "base_revision",
+          "lead",
+          "scope_id",
+          "pair_id",
+          "older_sha",
+          "newer_sha",
+          "edge_set_digest",
+          "rules_digest",
+          "lexicon_digest",
+          "sources",
+          "context",
+          "cwe_profiles",
+          "hypotheses"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "23d6fb1aa7dcbaceac4979c5c31c320e5e7b5bec",
+      "path": "src/patchtrace/kbcorrelation/context.py",
+      "publication_calls": [],
+      "record_fields": {
+        "ContextBundle": [
+          "context_key",
+          "investigation_id",
+          "base_revision",
+          "lead",
+          "scope_id",
+          "pair_id",
+          "older_sha",
+          "newer_sha",
+          "edge_set_digest",
+          "rules_digest",
+          "lexicon_digest",
+          "sources",
+          "context",
+          "cwe_profiles",
+          "hypotheses"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "b1d64ee04a29418f67167a637737b66c890ddb81",
+      "path": "src/patchtrace/kbcorrelation/context.py",
+      "publication_calls": [],
+      "record_fields": {
+        "ContextBundle": [
+          "context_key",
+          "investigation_id",
+          "base_revision",
+          "lead",
+          "scope_id",
+          "pair_id",
+          "older_sha",
+          "newer_sha",
+          "edge_set_digest",
+          "rules_digest",
+          "lexicon_digest",
+          "sources",
+          "context",
+          "cwe_profiles",
+          "hypotheses"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "93a87623ef25c8bdf8d4fbe0265e0dd1c7f297b9",
+      "path": "src/patchtrace/kbcorrelation/context.py",
+      "publication_calls": [],
+      "record_fields": {
+        "ContextBundle": [
+          "context_key",
+          "investigation_id",
+          "base_revision",
+          "lead",
+          "scope_id",
+          "pair_id",
+          "older_sha",
+          "newer_sha",
+          "edge_set_digest",
+          "rules_digest",
+          "lexicon_digest",
+          "sources",
+          "context",
+          "cwe_profiles",
+          "hypotheses"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "7da3f2372df4d4b4aa456dbe65388d8416d9b271",
+      "path": "src/patchtrace/kbcorrelation/context.py",
+      "publication_calls": [],
+      "record_fields": {
+        "ContextBundle": [
+          "context_key",
+          "investigation_id",
+          "base_revision",
+          "lead",
+          "scope_id",
+          "pair_id",
+          "older_sha",
+          "newer_sha",
+          "edge_set_digest",
+          "rules_digest",
+          "lexicon_digest",
+          "sources",
+          "context",
+          "cwe_profiles",
+          "hypotheses"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "9847770c6316b5adc9b96bb8213b4d383185e11721896c443b899fd68921d8b1",
+      "binding_only_tokens": [
+        "acquisition-pair-binding",
+        "source_pair_id"
+      ],
+      "blob": "e08172348a066bfd72d66d25ac96d1b72b3e4b34",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, import_pair=lambda o, n, d: self._import_pair(rev.investigation_id, o, n, d, name=name, acquired=(rev, plan)))",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "8c3aee042277618dbedc2716746a6a8ca358dbddc6cb52e71bd0d29c3ae76409",
+      "binding_only_tokens": [],
+      "blob": "d27b92e36153cf40b99b7784b755f2ee76d855cf",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, import_pair=lambda o, n, d: self.import_pair(rev.investigation_id, o, n, d, name=name))",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "8c3aee042277618dbedc2716746a6a8ca358dbddc6cb52e71bd0d29c3ae76409",
+      "binding_only_tokens": [],
+      "blob": "b6d310621eddc206820306abc7238bdf37605b2b",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, import_pair=lambda o, n, d: self.import_pair(rev.investigation_id, o, n, d, name=name))",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "7d1d030b31b049ee00fb67c25179cf344ac776c369165ade1944565af6d25343",
+      "binding_only_tokens": [],
+      "blob": "32bdb9c82aa921f97db658819047a46584ddafad",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, import_pair=lambda o, n, d: self.import_pair(rev.investigation_id, o, n, d, name=name))",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "7d1d030b31b049ee00fb67c25179cf344ac776c369165ade1944565af6d25343",
+      "binding_only_tokens": [],
+      "blob": "78240ba2bd0935e179a9126b60bcf5c0c77ed3cb",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, import_pair=lambda o, n, d: self.import_pair(rev.investigation_id, o, n, d, name=name))",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": null,
+      "binding_only_tokens": [],
+      "blob": "cb97a07106dac68dc6ee2e28bbf9b0d8386dc917",
+      "path": "src/patchtrace/kbcorrelation/store.py",
+      "publication_calls": [],
+      "record_fields": {
+        "AttachRequest": [
+          "revision",
+          "pair_id",
+          "older_path",
+          "newer_path",
+          "older_sha",
+          "newer_sha",
+          "directory",
+          "source_shas",
+          "plan_sha"
+        ]
+      },
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "7d1d030b31b049ee00fb67c25179cf344ac776c369165ade1944565af6d25343",
+      "binding_only_tokens": [],
+      "blob": "3ee62debb6e0967dbde63b0f4748324332bd8220",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "build_plan(pair, older_row, newer_row, self.env.acquirer)",
+        "run_acquire(plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline, import_pair=lambda o, n, d: self.import_pair(rev.investigation_id, o, n, d, name=name))",
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "a68999a5ae26e1b319266c70d46f0b9659e24a7cf3900eb60c2e2f11df67db84",
+      "binding_only_tokens": [],
+      "blob": "4861bd330c308642fe5a2e1db30b070cb986a909",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha)"
+      ],
+      "snapshot_tokens": []
+    },
+    {
+      "acquisition_method_family": "a68999a5ae26e1b319266c70d46f0b9659e24a7cf3900eb60c2e2f11df67db84",
+      "binding_only_tokens": [],
+      "blob": "4af504be6f97af2066a1e357c8634434342249c2",
+      "path": "src/patchtrace/kbcorrelation/service.py",
+      "publication_calls": [
+        "AttachRequest(revision=rev, pair_id=pair.pair_id, older_path=older, newer_path=newer, older_sha=pair.older.sha256, newer_sha=pair.newer.sha256, directory=directory, source_shas=tuple((d.sha256 for d in bundle.sources)), plan_sha=plan.plan_sha)"
+      ],
+      "snapshot_tokens": []
+    }
+  ],
+  "captured_at": "2026-11-20T00:29:16.862150+00:00",
+  "ref_counts": {
+    "all": 717,
+    "local": 20,
+    "origin": 326,
+    "pull": 312,
+    "tags": 59
+  },
+  "refs": [
+    [
+      "refs/heads/codex/accuracy-peer-20261119-4c8d",
+      "9e8f941ba1966352b8ea60beb8404daa5e122d5a"
+    ],
+    [
+      "refs/heads/codex/accuracy-review-20261119-4c8d",
+      "eed3ddbbd69f5675c2f0ebf0bdabe01cea868db8"
+    ],
+    [
+      "refs/heads/codex/acquisition-peer-20261120-4c8d",
+      "860fdf24d228fa49dd41d5cf7050b88048442f0e"
+    ],
+    [
+      "refs/heads/codex/acquisition-provenance-20261119-4c8d",
+      "860fdf24d228fa49dd41d5cf7050b88048442f0e"
+    ],
+    [
+      "refs/heads/codex/adversarial-20261119-4c8d",
+      "87439ea400995df04d5d095f462ef80d9657c45d"
+    ],
+    [
+      "refs/heads/codex/archaeology-20261119-4c8d",
+      "52fa66e063689a790ea986f3ace5d7883efa2165"
+    ],
+    [
+      "refs/heads/codex/asm-lexer-performance-20261119",
+      "f2458aae22ea6177be64cfc2fb439a79950f00ff"
+    ],
+    [
+      "refs/heads/codex/bugfix-20261119-4c8d",
+      "f5807559c777858e30e3436a5abd5e4642421dca"
+    ],
+    [
+      "refs/heads/codex/csv-metadata-20261119-4c8d",
+      "53d9b33da5081bb080623049a2f1759522461188"
+    ],
+    [
+      "refs/heads/codex/csv-peer-20261119-4c8d",
+      "bbdc8d201fa025165886784af3575ab517dd106e"
+    ],
+    [
+      "refs/heads/codex/force-design-20261119-4c8d",
+      "24608fa7fe4f46686e2f194d26d77d42e276ba75"
+    ],
+    [
+      "refs/heads/codex/maximum-completion-20261119-4c8d",
+      "79f5abf0baa8e9d85aefd91cf8de5d1a6c02bebd"
+    ],
+    [
+      "refs/heads/codex/profile-drafts-20261119-4c8d",
+      "31052db31054590c75c6c636c2ac49cc934f0668"
+    ],
+    [
+      "refs/heads/codex/qa-diagnosis-20261120-4c8d",
+      "bffcfa99d6a5044024256edbc0457ab20c92cbae"
+    ],
+    [
+      "refs/heads/codex/qualification-20261119-4c8d",
+      "cb3b6d491afb22497e4002a267d8f3a738cea7c8"
+    ],
+    [
+      "refs/heads/codex/raw-alignment-recovery-20261119-4c8d",
+      "46afcb216ef2b9430ce95b32e00944e7eaaa99ac"
+    ],
+    [
+      "refs/heads/codex/saved-search-recovery-20261119-4c8d",
+      "f632e50655b47a71aff314cdba941641356d16a3"
+    ],
+    [
+      "refs/heads/codex/security-20261119-4c8d",
+      "88a82576e2fc7a07d86036af900de3469d878bed"
+    ],
+    [
+      "refs/heads/codex/winpairs-http-20261119-4c8d",
+      "6a778ebe8d74ac594a8ce8fa394e23a58b7ce121"
+    ],
+    [
+      "refs/heads/codex/winpairs-http-review-20261119-4c8d",
+      "b763f4ab7d90d70c825eae4f3e271c88fb4198a4"
+    ],
+    [
+      "refs/remotes/origin/HEAD",
+      "4c96c483295e8a43ea58ab8c5689f8c9eb40de4d"
+    ],
+    [
+      "refs/remotes/origin/access-test-noprefix",
+      "726a371ab34d4589b0456d059865ade6b82fac88"
+    ],
+    [
+      "refs/remotes/origin/audit/ai-reports",
+      "dd6402b9c00d5aae79f152f4fe5ce0fa8597dc24"
+    ],
+    [
+      "refs/remotes/origin/audit/core",
+      "fae13b2ed3043ddce00bbf387e386e93e7b3ee06"
+    ],
+    [
+      "refs/remotes/origin/audit/desktop",
+      "4d5e48ab7df30f6318a8f3177b37ac98741e2b1f"
+    ],
+    [
+      "refs/remotes/origin/audit/enrichment",
+      "cbc5b079ad2c8cdea4ec161b1afe9ac554b8ed39"
+    ],
+    [
+      "refs/remotes/origin/audit/integration",
+      "f6505928d8264343caa33f878deb253626752944"
+    ],
+    [
+      "refs/remotes/origin/audit/kb-correlation-20261107",
+      "c760e6ccea0d3e4df04bf76e58139d9a7fc9e9e6"
+    ],
+    [
+      "refs/remotes/origin/audit/random-boundaries-20261105",
+      "802b5b1bb5f5e64118256e75414b7ca74ad61fcc"
+    ],
+    [
+      "refs/remotes/origin/audit/random-invariants-20261105",
+      "7716e2b02feaa04e59dce302c1c6cacbe800634b"
+    ],
+    [
+      "refs/remotes/origin/audit/random-lifecycle-20261105",
+      "f2b7d1786f60df27b0228f247aab9a00bd7c1078"
+    ],
+    [
+      "refs/remotes/origin/audit/runtime",
+      "9f32a6ecbd056249373b82bc1e814bd938da8c70"
+    ],
+    [
+      "refs/remotes/origin/audit/trust-boundaries-20261107",
+      "d75c0490aa0109e3a983c5e6baea2cea1855f956"
+    ],
+    [
+      "refs/remotes/origin/automation/api-funded-persistent-codex-20261103",
+      "6fe6c4b1be060eb6e9d5208a68f0d68e1082b59c"
+    ],
+    [
+      "refs/remotes/origin/automation/parallel-api-eight-agents-20261103",
+      "f8050a1fef23b71fd3a02b216c5035bcac3f4889"
+    ],
+    [
+      "refs/remotes/origin/automation/patchtrace-api-agent-pilot-20261103",
+      "def36c822a80c77ae94b8e9a77da6f1ee9de1160"
+    ],
+    [
+      "refs/remotes/origin/chatgpt/corpus-1",
+      "b7a0f0a45d2de1462367d877b7386091b4d275ce"
+    ],
+    [
+      "refs/remotes/origin/chatgpt/deferred-audit-fixes-1",
+      "2174837f3172c3ff2a3c676da106f42b55648a70"
+    ],
+    [
+      "refs/remotes/origin/chatgpt/ghidriff-sequential-lock-fix-20261017",
+      "f6b7545bcc7a161440ab7119233c204510571370"
+    ],
+    [
+      "refs/remotes/origin/chatgpt/help-docs-1",
+      "e5bee6fe157c90a40f2d9f458768e2169ce123e5"
+    ],
+    [
+      "refs/remotes/origin/chatgpt/java-probe-boundaries-20261016",
+      "09bb4519d7d8e9ff8f40abcba7e11cb297d8b61e"
+    ],
+    [
+      "refs/remotes/origin/chatgpt/java-probe-ci-fix-20261016",
+      "0254841e3e635ed717e35abcf83021f001d7df29"
+    ],
+    [
+      "refs/remotes/origin/chatgpt/java-probe-qa-fix-20261016",
+      "89500e12068656fa1958443ef634064effcbc40b"
+    ],
+    [
+      "refs/remotes/origin/chatgpt/kb-fixtures-1",
+      "781b36fb60e775ce01bf0c114e6a17b609fdb475"
+    ],
+    [
+      "refs/remotes/origin/chatgpt/lbl30-prereg-guard-20261016",
+      "6ae2c079e6cafa2b7bd5396cac443cd34ba7138a"
+    ],
+    [
+      "refs/remotes/origin/chatgpt/lbl31-coff-quoted-rip-20261016",
+      "6e71bfabbf5ef75449b46981e9e822f7e555a6bf"
+    ],
+    [
+      "refs/remotes/origin/chatgpt/lbl31-coff-symbol-mask-20261016",
+      "9622704d5c751d55700c4b642111131a7135d139"
+    ],
+    [
+      "refs/remotes/origin/chatgpt/lbl31-output-persistence-20261015",
+      "2019a37fa65fc37f4758469143c2daadc07e0098"
+    ],
+    [
+      "refs/remotes/origin/chatgpt/lbl31-windows-qa-fixes-20261016-a",
+      "ddb2ff077a21c1f0053ba8079564f6f86c3e155f"
+    ],
+    [
+      "refs/remotes/origin/chatgpt/lbl32-card-controls-20261016",
+      "9513bc05229dd7a8460fc229d7420154d61498db"
+    ],
+    [
+      "refs/remotes/origin/chatgpt/lbl32-recipe-aa-noise-20261016",
+      "eaa30013794a9bd0fedc9ec34bbe374d6db0cfc9"
+    ],
+    [
+      "refs/remotes/origin/chatgpt/merge-first-handoff-20261016",
+      "19153f10780e783bc931739dd26db97d8eaf2b92"
+    ],
+    [
+      "refs/remotes/origin/chatgpt/nway-external-note-qa-20261016",
+      "8c7288276d3e49b7794b7fd80db4b02d5891cf00"
+    ],
+    [
+      "refs/remotes/origin/chatgpt/panels-1",
+      "cfd7cfff52f4f9b8b1264e8b7d70ef1bbef2d63f"
+    ],
+    [
+      "refs/remotes/origin/chatgpt/patchwatch-reuse-roadmap-20261026",
+      "4eabf8dff2c4094681da70c7bd85ecd0da5aed9f"
+    ],
+    [
+      "refs/remotes/origin/chatgpt/r5-calibration-research-20261030",
+      "4d9d9051aea87319847a0b321a14d37b95cb8abd"
+    ],
+    [
+      "refs/remotes/origin/chatgpt/semantic-analysis-r3-20261030",
+      "2698b9a04d33b2d04f49c1ab737636539c6ef6f7"
+    ],
+    [
+      "refs/remotes/origin/chatgpt/ue-r3-retain-decompiled-20261016",
+      "ebbd621d4f557905892aee5f7cf8cb7b0e2addc2"
+    ],
+    [
+      "refs/remotes/origin/chatgpt/ue-r7-p15-unresolved-20261016-a",
+      "292dc3953dd2b8f157752d12251aff68b6e5bda5"
+    ],
+    [
+      "refs/remotes/origin/chatgpt/ue-r7-strict-worker-report-20261016-a",
+      "9c5f9a42b499133b842b14b9619bf8390010e1ff"
+    ],
+    [
+      "refs/remotes/origin/chatgpt/unified-fixture-collection-fix-20261016",
+      "941c617b6854291e2448cad6d7d5710a24a8543d"
+    ],
+    [
+      "refs/remotes/origin/chatgpt/unified-fixtures-1",
+      "161a88345efc6484f4d7809fc6963a0193bd0057"
+    ],
+    [
+      "refs/remotes/origin/chatgpt/unified-sort-perf-qa-20261016",
+      "27b0a48bb8007f504b4a127a099136a6ea5c00b7"
+    ],
+    [
+      "refs/remotes/origin/claude/access-test-1791773355",
+      "726a371ab34d4589b0456d059865ade6b82fac88"
+    ],
+    [
+      "refs/remotes/origin/claude/affectionate-galileo-bqd3tw",
+      "b29351d41060f8e9330fc9673457d835e188f993"
+    ],
+    [
+      "refs/remotes/origin/claude/audit-beta",
+      "c93ff945b9b523abe0b829247137105788a5ea27"
+    ],
+    [
+      "refs/remotes/origin/claude/autonomous-finish-20261104",
+      "ad4c49282a65d17d2ef23dfcc03e82be065c9021"
+    ],
+    [
+      "refs/remotes/origin/claude/awesome-ramanujan-o3pxx3-ci",
+      "0bf1f8309e8425ba34199657009d3055215336f1"
+    ],
+    [
+      "refs/remotes/origin/claude/awesome-ramanujan-o3pxx3-hostile",
+      "077b04e681ac74b20c0ff8bf367aa720c277f2d2"
+    ],
+    [
+      "refs/remotes/origin/claude/awesome-ramanujan-o3pxx3-win1",
+      "7ac57759f3b9b332eaafb48c82f366566892f1b1"
+    ],
+    [
+      "refs/remotes/origin/claude/bugfix-kbc-20261029",
+      "653f384d1ca60b7e943bd658698e0989d826b696"
+    ],
+    [
+      "refs/remotes/origin/claude/bugfix-kev-acq-20261029",
+      "fbe58d800da27aff2544c6a478f0a591ff7dad3b"
+    ],
+    [
+      "refs/remotes/origin/claude/bugfix-rules-cg-20261029",
+      "78d48cf80bf9a8c698e604dc1ce58e8aecedca45"
+    ],
+    [
+      "refs/remotes/origin/claude/bugfix-rules-cg-rest-20261111",
+      "67b2bc456c59a510b854b0cdd9e85ed29d00b17d"
+    ],
+    [
+      "refs/remotes/origin/claude/bugfix-search-pilot-20261111",
+      "d1f7d9aa64b28c8a8ca0a1065bb88e1e2f15b7f0"
+    ],
+    [
+      "refs/remotes/origin/claude/bugfix-strings-pe-20261029",
+      "7ae041e79e419159299c32df98b8e69ab176e859"
+    ],
+    [
+      "refs/remotes/origin/claude/bundle-license-gate",
+      "d3617acf9af7834582b4962a8c149969a7d55a22"
+    ],
+    [
+      "refs/remotes/origin/claude/clever-clarke-s4nhi6",
+      "502402684b0d0aa35d7719bb5a3467de035982bc"
+    ],
+    [
+      "refs/remotes/origin/claude/compassionate-goldberg-5uuqks",
+      "198eb21e8813b28de361422cfe3c002bdb9e3970"
+    ],
+    [
+      "refs/remotes/origin/claude/fix-deadline-test",
+      "22ff025a7710d07d7ad74be2c8f7cc0b4db0daf7"
+    ],
+    [
+      "refs/remotes/origin/claude/funny-feynman-d2m0b5",
+      "770c11f40ef70e11dfeb3fbc2f5646cc2b4b97b9"
+    ],
+    [
+      "refs/remotes/origin/claude/gallant-knuth-8gxuzd",
+      "f249edc8ee70ae003a1478eae5418d85ed629d87"
+    ],
+    [
+      "refs/remotes/origin/claude/instance-b-features",
+      "9237c2601c0f25d306b51883875c339bab8ed82b"
+    ],
+    [
+      "refs/remotes/origin/claude/instance-c-research",
+      "6f767ccef8ebfffd1d2373c5124d8a961dc54b41"
+    ],
+    [
+      "refs/remotes/origin/claude/instance-d-gui",
+      "2fa113889d1ffee6b68496993d3b3b6ebb0ba035"
+    ],
+    [
+      "refs/remotes/origin/claude/java-version-retry-integration",
+      "45fa67ad7e924cb4e2df1cd487c04a2c0ddab381"
+    ],
+    [
+      "refs/remotes/origin/claude/jolly-fermi-eghaxy",
+      "99f8328ce89d02f200cf9fbc5852d9801761af28"
+    ],
+    [
+      "refs/remotes/origin/claude/live-harness-infra-20261111",
+      "c59ccada97b649366af808a6d83bb465078c9011"
+    ],
+    [
+      "refs/remotes/origin/claude/live-proof-20261111",
+      "18efb7ef6d196775645f195552a32ad08e277459"
+    ],
+    [
+      "refs/remotes/origin/claude/modest-hamilton-kz2gta",
+      "280bf05856eb60f4ddb0d58210616f65a3735816"
+    ],
+    [
+      "refs/remotes/origin/claude/patchtrace-cli-dotpath-spec-er6hha",
+      "62b9a3de4d1036a6e4b9bd2618372f4042b15f7f"
+    ],
+    [
+      "refs/remotes/origin/claude/patchtrace-features",
+      "66e9adc50fb118c04e5e24eacd0c221ca483a130"
+    ],
+    [
+      "refs/remotes/origin/claude/patchtrace-haiku-agent-motpbx",
+      "cbabc09e9df8a8190c769164ef0fae44f9c5cb1b"
+    ],
+    [
+      "refs/remotes/origin/claude/patchtrace-kbf04-fp-tests-20261118",
+      "16ab88b0626ef05700c4199e926103932312e5c7"
+    ],
+    [
+      "refs/remotes/origin/claude/patchtrace-multi-worker-consolidate-24ct7v",
+      "ca10acb506fbf61db8142a836acfbd1e50a2aeb3"
+    ],
+    [
+      "refs/remotes/origin/claude/patchtrace-search-anchors-circularity-20261118",
+      "f6ef1528c15b2281ee7b6f32625d02a5211c926d"
+    ],
+    [
+      "refs/remotes/origin/claude/patchtraces-consolidation-trngn0",
+      "faddea300daf4058d38d24ff04a270be6f3d832b"
+    ],
+    [
+      "refs/remotes/origin/claude/quirky-curie-n5pxf5",
+      "a5593fa58b2ead6ecf6adfe045db242232cd52a3"
+    ],
+    [
+      "refs/remotes/origin/claude/serene-heisenberg-2y5kz6",
+      "7ed5cebfdaee4dc508b0cc739e86c18c1ff34a97"
+    ],
+    [
+      "refs/remotes/origin/claude/sleepy-fermi-cli-parity-1",
+      "cf50b4e8725cb1291ac6150667f2e136f023aff3"
+    ],
+    [
+      "refs/remotes/origin/claude/sleepy-fermi-kbc-1",
+      "53f5dd2611b38e3f69f8d72c3ca7cf73e9e896ab"
+    ],
+    [
+      "refs/remotes/origin/claude/sleepy-fermi-na-rzdiff-ownership",
+      "aacb984e9d627be051ca8c8c3b88d5ceca0ff505"
+    ],
+    [
+      "refs/remotes/origin/claude/sleepy-fermi-rq-l1-runner",
+      "e88d748cf9846e04c0c81449976f530519da83a9"
+    ],
+    [
+      "refs/remotes/origin/claude/sleepy-fermi-security-1",
+      "1d5a022d2840c5c071ccece503664c8c961d63f1"
+    ],
+    [
+      "refs/remotes/origin/claude/sleepy-fermi-test-reliability",
+      "37d9e47ca202b33f737b15f7af724649db8c3e15"
+    ],
+    [
+      "refs/remotes/origin/claude/sleepy-fermi-y3z4yj",
+      "160a60e838742b21f70effedb8e7bb48886d9266"
+    ],
+    [
+      "refs/remotes/origin/claude/spec53-diagnose-launcher",
+      "a00fcc14ea11751ce5ca05271e2be32d06dd4535"
+    ],
+    [
+      "refs/remotes/origin/claude/symbol-policy-isolated-settings",
+      "5db597257decc219db520c0dab8369b4d4e2ea5e"
+    ],
+    [
+      "refs/remotes/origin/claude/ws-a-20261104",
+      "dabba4aea4ba0fa19e71ede05ce4fb8ab6741942"
+    ],
+    [
+      "refs/remotes/origin/claude/ws-a2-ci-speed-20261104",
+      "bef720fdd50c0ab7c93a10955b3e5ec7d2a5f992"
+    ],
+    [
+      "refs/remotes/origin/claude/ws-bc-20261104",
+      "e1193c8896e009930dae4edec974d9795876f0e0"
+    ],
+    [
+      "refs/remotes/origin/claude/ws-i-20261104",
+      "b03a77b8a2fe9e4fa65fbe43889e06f4e68180e9"
+    ],
+    [
+      "refs/remotes/origin/claude/ws-p-20261104",
+      "597a8b106491cd587cedf1273ee5ef6d56d71508"
+    ],
+    [
+      "refs/remotes/origin/codex/advisory-read-bounds-20261118",
+      "a4061979547ef88855fbdb085228a42c3be21603"
+    ],
+    [
+      "refs/remotes/origin/codex/agent-skills-spec56-20261014",
+      "4467d1f3c6e113a7da808a67e8dee9d4aa5083d8"
+    ],
+    [
+      "refs/remotes/origin/codex/analyst-accessibility-20261109",
+      "b90a2cd49fa4ba71050a378abc753fe8c90733fd"
+    ],
+    [
+      "refs/remotes/origin/codex/asm-lexer-performance-20261119",
+      "4c96c483295e8a43ea58ab8c5689f8c9eb40de4d"
+    ],
+    [
+      "refs/remotes/origin/codex/audit-1",
+      "c2070cf8b4e7b0ade76cb000a5805009754eec55"
+    ],
+    [
+      "refs/remotes/origin/codex/audit-2",
+      "08b12f1b279d917736cfc17d4b8e447c8f552616"
+    ],
+    [
+      "refs/remotes/origin/codex/autonomous-checkpoint-20261102-0945",
+      "d038ddea43182b8709afd447140dc74fded487c5"
+    ],
+    [
+      "refs/remotes/origin/codex/autonomous-checkpoint-20261102-1020",
+      "c13d3257c88140c23fb585a8a59a4dce81e81928"
+    ],
+    [
+      "refs/remotes/origin/codex/autonomous-reconcile-20261101",
+      "0130bf81e2fe3154f30af7b68a0e6ab197946040"
+    ],
+    [
+      "refs/remotes/origin/codex/codespaces-cs1-20261109",
+      "a5f049cd777d3d885ec8e1572f94ea8935c9cbb6"
+    ],
+    [
+      "refs/remotes/origin/codex/consolidate-backup-stability-20261102",
+      "f1a55c4cf21ddb0dea243bd417b74f86caaed142"
+    ],
+    [
+      "refs/remotes/origin/codex/consolidate-prereg-prefix-20261102",
+      "9b9452b4677ee3809a6e0f43d49567a8d15602e6"
+    ],
+    [
+      "refs/remotes/origin/codex/consolidate-replay-schema-20261102",
+      "ca411e77f43a9fd95ca5e0bcc7d2b58071ccae37"
+    ],
+    [
+      "refs/remotes/origin/codex/consolidated-reviewed-20261102",
+      "6e82fd70f315b99c6798a42c9061a1424a02933e"
+    ],
+    [
+      "refs/remotes/origin/codex/consolidation-audit-20261104",
+      "fbd9595351bf50217402b7a62b3e057de79f45f0"
+    ],
+    [
+      "refs/remotes/origin/codex/consolidation-cve-reviewed-20261118",
+      "d8c02caea407f6d323eecd636735849c1eb31a2d"
+    ],
+    [
+      "refs/remotes/origin/codex/consolidation-evidence-20261102",
+      "44c320e37b84a38259f13fa8f0f444b542b96f2c"
+    ],
+    [
+      "refs/remotes/origin/codex/consolidation-integrity-20261103",
+      "b58bb53debcb3323e5d8d634e09397cb7e02965f"
+    ],
+    [
+      "refs/remotes/origin/codex/consolidation-reviewed-20261118",
+      "121ffb0bcdd6af4f24e5035389d4709dffddf263"
+    ],
+    [
+      "refs/remotes/origin/codex/coordinator-rule-repairs-20261031",
+      "798e11ef345ed7a7a65508a466eaf77ee85ef77c"
+    ],
+    [
+      "refs/remotes/origin/codex/corpus-integrity-20261116",
+      "6a5b6f2609604fe34a8da9cf347c713b21578834"
+    ],
+    [
+      "refs/remotes/origin/codex/corpus-output-main-20261101",
+      "874e9a267fdc589a796ce573f2958e1aa84ea0f6"
+    ],
+    [
+      "refs/remotes/origin/codex/deep-review-consolidation-20261030",
+      "95e09548a82202ae4cfd9380522f36513da87a66"
+    ],
+    [
+      "refs/remotes/origin/codex/essential-combined-verification-20261030",
+      "a7f13e13ffb512f8e9621753a0ae162d78942f3b"
+    ],
+    [
+      "refs/remotes/origin/codex/essential-integration-20261029",
+      "5ed624e91468c410f2cf738ed4e36c2be3e0201d"
+    ],
+    [
+      "refs/remotes/origin/codex/essential-project-safety-20261031",
+      "c3868d8335a8f32f676905032dc1a6d0e9f22fd6"
+    ],
+    [
+      "refs/remotes/origin/codex/fix-pr110-ci-gates-20261029",
+      "c0d1c38aee74461969ff0a8b4d61179c3dbb9b0b"
+    ],
+    [
+      "refs/remotes/origin/codex/gt01-extraction-recovery-20261030",
+      "d76d23372acef4049115e9ae176acbeb538a82e5"
+    ],
+    [
+      "refs/remotes/origin/codex/gui-bounded-ambiguous-candidates-20261029",
+      "3287cb3d36052bd6e44420f631ed033baf939d64"
+    ],
+    [
+      "refs/remotes/origin/codex/identity-main-repair-20261101",
+      "4eebea4a5389af16bffe32a2bf9285c406d95fb1"
+    ],
+    [
+      "refs/remotes/origin/codex/java-version-retry-20261015",
+      "8ee61c623fa37c5a219f912cf7870bfeddcb1f70"
+    ],
+    [
+      "refs/remotes/origin/codex/kb-explicit-filename-selection-20261104",
+      "761b6b885f00143597c74f0457b1165a144fbdd4"
+    ],
+    [
+      "refs/remotes/origin/codex/kb-fixture-contract-repairs-20261030",
+      "a4d1e6a38c34d1952584aa65d7f5f908c45547b3"
+    ],
+    [
+      "refs/remotes/origin/codex/manifest-dtd-reviewed-20261118",
+      "23fbe4a54880319f62f40f3196794f85b6cdaec5"
+    ],
+    [
+      "refs/remotes/origin/codex/manual-correction-completeness-20261104",
+      "65f979a163a88ec5b32b3eb4173fa4a50ee9c920"
+    ],
+    [
+      "refs/remotes/origin/codex/master-foundation-scope-20261118-4a7",
+      "88b0b52281dd314aa72f93819145a73135618bc4"
+    ],
+    [
+      "refs/remotes/origin/codex/maximum-completion-20261119-4c8d",
+      "3862cb5de3256efec8f6392a3b6fb4d9e600c377"
+    ],
+    [
+      "refs/remotes/origin/codex/msrc-mixed-format-revision-20261102",
+      "e1b79e048d3963d747bc9f07448b039a250180ed"
+    ],
+    [
+      "refs/remotes/origin/codex/msrc-reconcile-integration-20261102",
+      "56374f867594dd923383c91ea71970cb7d24d173"
+    ],
+    [
+      "refs/remotes/origin/codex/parser-test-cpu-budget-20261104",
+      "cb204f7625d4de496642926bbda37d07e2888131"
+    ],
+    [
+      "refs/remotes/origin/codex/patchtrace-beta",
+      "c7937246a5bf3f1a09c7d121c0d438088b02040c"
+    ],
+    [
+      "refs/remotes/origin/codex/patchtrace-checkpoint-20261119-81e4",
+      "bdc929ebd3c6aaa2563c758936beb315a10eeea0"
+    ],
+    [
+      "refs/remotes/origin/codex/patchtrace-completion-20261119-81e4",
+      "f2458aae22ea6177be64cfc2fb439a79950f00ff"
+    ],
+    [
+      "refs/remotes/origin/codex/patchtrace-stabilization-20261119",
+      "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5"
+    ],
+    [
+      "refs/remotes/origin/codex/pilot-current-evidence-reviewed-20261118",
+      "b41d6631e679ad2777d248fa087ea71582a5bf63"
+    ],
+    [
+      "refs/remotes/origin/codex/post-consolidation-20261116",
+      "2d330075fbe00209fbe096ee29b60dcfd0e347b4"
+    ],
+    [
+      "refs/remotes/origin/codex/pr110-ci-repairs-20261029",
+      "bb42828d05b775c59b73a7bbd02c0113b9b9bb3b"
+    ],
+    [
+      "refs/remotes/origin/codex/pr110-kb-arch-scope-20261029",
+      "40e02daf93c8e13a94b74f5b80d86c1680fea7ad"
+    ],
+    [
+      "refs/remotes/origin/codex/pr110-persistence-feedback-20261029",
+      "3e9cedb012b4c82da3b0e5f9bc977ecd7313b64c"
+    ],
+    [
+      "refs/remotes/origin/codex/pr110-qa-wbjson-diaphora-help-20261029",
+      "aba4c2001a6b093f7f8cdc8b0ac20ab074ed57b8"
+    ],
+    [
+      "refs/remotes/origin/codex/pr111-bounded-nav-into-integration-20261029",
+      "025300f8e169556f84b6a8cfed20413e0a26b019"
+    ],
+    [
+      "refs/remotes/origin/codex/primary-environment-20261118",
+      "09b032f205f4ffa1838bef56007ebdb7a2308420"
+    ],
+    [
+      "refs/remotes/origin/codex/project-safe-export-20261101",
+      "e90254424c26ecd00e4c10c3c638e76d11b35841"
+    ],
+    [
+      "refs/remotes/origin/codex/pw01-kb-inventory-20261118",
+      "2b697222b34359bb46adc90aad69fd0a12708601"
+    ],
+    [
+      "refs/remotes/origin/codex/pw01-retained-source-pages-20261118",
+      "58fc130631f602b6e907bb054d30c21d810551d4"
+    ],
+    [
+      "refs/remotes/origin/codex/r1-ground-truth-research-20261030",
+      "10856edf05afae8166291f09fb3ead92f297360d"
+    ],
+    [
+      "refs/remotes/origin/codex/r1-receipt-publication-20261031",
+      "8c9eafc79b007a963453d8edf6cb40c804c9bc3d"
+    ],
+    [
+      "refs/remotes/origin/codex/r2-unified-matching-research-20261030",
+      "b3ceb8b30d7a83da5e22c231c3b8c28179246816"
+    ],
+    [
+      "refs/remotes/origin/codex/raw-alignment-reviewed-20261118",
+      "3c9d3f074481b2f609330fa49ab9019eb6637849"
+    ],
+    [
+      "refs/remotes/origin/codex/real-msrc-adapter-20261101",
+      "d99cd7712b76e9e42661ef0b268417d7ca322d3e"
+    ],
+    [
+      "refs/remotes/origin/codex/receipt-parent-race-20261101",
+      "2fdac2ea9042985ac3c98545d38ac3461d00f4cc"
+    ],
+    [
+      "refs/remotes/origin/codex/release-integration-20261116",
+      "95db052a11cce162d2d633cae805f28119f783a1"
+    ],
+    [
+      "refs/remotes/origin/codex/release-qualification-reviewed-20261118",
+      "573829f33c84e9b2d53ba51ebd7f699e39f406fe"
+    ],
+    [
+      "refs/remotes/origin/codex/repair-openai-agent-20261104",
+      "f019606665a740dc252e745913924debf73adc48"
+    ],
+    [
+      "refs/remotes/origin/codex/rzdiff-164-investigation",
+      "20ef68eaab59a2941bd2fb0db918eee36107c75f"
+    ],
+    [
+      "refs/remotes/origin/codex/saved-search-reviewed-20261118",
+      "26558cd0723aa5fa6d883f2935ad3c43cef94a86"
+    ],
+    [
+      "refs/remotes/origin/codex/semantic-proof-reconciliation-20261031",
+      "745e93426a16e0a91a961b6e0bbcb71be69f2a7e"
+    ],
+    [
+      "refs/remotes/origin/codex/storage-integrity-20261101",
+      "9911af4d9130b81b1875f82179e03e0a89e89794"
+    ],
+    [
+      "refs/remotes/origin/codex/strings-export-publication-20261118",
+      "92a411bf02fc8beb00b7a148e39db2bf68efa061"
+    ],
+    [
+      "refs/remotes/origin/codex/t9-qa-20261020",
+      "ecc4f2054c00dc2b324bb71134595c48dc4b6a18"
+    ],
+    [
+      "refs/remotes/origin/codex/tier-w-fetch-20261015",
+      "5b7b2591e616e8c28c05c7070661b33e2ca0435c"
+    ],
+    [
+      "refs/remotes/origin/codex/training-prereg-identity-20261101",
+      "dfe8f421db390ccd3158393a60205fa5dd25df0b"
+    ],
+    [
+      "refs/remotes/origin/codex/verified-followup-integration-20261118",
+      "f2b6827fc6270b96fb241b0722f2878de5a17361"
+    ],
+    [
+      "refs/remotes/origin/codex/windows-branding-reconcile-20261030",
+      "8f4c4a2e0021d424d403317c6780b6db026ad76b"
+    ],
+    [
+      "refs/remotes/origin/codex/windows-setup-installer-20261017",
+      "9c5fe67bd10a5d1342440bb8ea6a524cca3ce1f2"
+    ],
+    [
+      "refs/remotes/origin/consolidate/docs-20261104",
+      "ed70e6ddac449a42f843f1c60aa878416ab31727"
+    ],
+    [
+      "refs/remotes/origin/consolidate/kb-fixtures-20261104",
+      "820d70744dff58ef484299791d073b2e712f0524"
+    ],
+    [
+      "refs/remotes/origin/consolidate/research-r7-20261104",
+      "552c29453c5de93e22c65e47ad4187ded91e993a"
+    ],
+    [
+      "refs/remotes/origin/consolidate/rules-callgraph-20261104",
+      "7b3fcbaca88256971eafd55b8fb8fe9f44634a9e"
+    ],
+    [
+      "refs/remotes/origin/consolidate/test-stability-20261104",
+      "64e8374d5d3ae97a719a2bb3ac800497c50892af"
+    ],
+    [
+      "refs/remotes/origin/consolidation/desktop-keyboard-accessibility-20261116",
+      "45997cfc997b06996a982705e6cd60dc73a8fae1"
+    ],
+    [
+      "refs/remotes/origin/consolidation/patchtrace-continuation-20261119",
+      "f851d74d134a09cb9b12013d2c1adba1fde0c24f"
+    ],
+    [
+      "refs/remotes/origin/consolidation/patchtrace-reviewed-20261119",
+      "8d130aefe1be6e737cff1d90d2a5b1658d60a3a6"
+    ],
+    [
+      "refs/remotes/origin/docs/claude-autonomous-alpha-handoff-20261013",
+      "1038d3f13f214d55c28ceeb51c1c13c9b43b1d3f"
+    ],
+    [
+      "refs/remotes/origin/docs/codespaces-plan-20261107",
+      "c3536288ee3745826be814afb4d8fd07a53c526b"
+    ],
+    [
+      "refs/remotes/origin/docs/csaf-patch-intelligence-specs",
+      "24244831ec443fa19555586835e71da6dd4aac98"
+    ],
+    [
+      "refs/remotes/origin/docs/diaphora-optional-engine-20261014",
+      "b75ac57d85c75e8d61c61af8d104119bb1c65587"
+    ],
+    [
+      "refs/remotes/origin/docs/dockable-workspace-spec-20261030",
+      "6a1e3ce348a7e5f67bbabfe388315812cc830b03"
+    ],
+    [
+      "refs/remotes/origin/docs/findings-20261107",
+      "9d72402cc3fd884203c7a759f714fd0a4bd2c51f"
+    ],
+    [
+      "refs/remotes/origin/docs/handoff-20261107",
+      "39db34c5beaaf16cc60fec30f084acfde4035316"
+    ],
+    [
+      "refs/remotes/origin/docs/kbc-live-probe-result-20261107",
+      "c21d0ab8471ac1a541eb6d2ff929cce1fb34a2fd"
+    ],
+    [
+      "refs/remotes/origin/docs/nway-matches",
+      "f748cc48ea07b9af189d967979aa078610550eea"
+    ],
+    [
+      "refs/remotes/origin/docs/post-consolidation-gap-analysis-20261030",
+      "61b5c2bade71a8cec58ca9e1514141f4508b7c79"
+    ],
+    [
+      "refs/remotes/origin/docs/r8-reconciliation-20261106",
+      "5e1e19828b3801a2f0f7d50b4250ff9a273264ef"
+    ],
+    [
+      "refs/remotes/origin/docs/ranking-reuse-20261105",
+      "bc52940fb32d5b5f6d1a58a860062ec60d423d1e"
+    ],
+    [
+      "refs/remotes/origin/docs/readme-and-wiki",
+      "ad8fbe9f2f041653760c02e9d18a91a66dd11c39"
+    ],
+    [
+      "refs/remotes/origin/docs/refresh-accuracy-handoff-20261109",
+      "2e408e3c24c2efad6144bf8953d639edcf9fc489"
+    ],
+    [
+      "refs/remotes/origin/docs/research-reconciliation-20261105",
+      "febc9de57e61162da12fb1cc9280aef9b3ec2a99"
+    ],
+    [
+      "refs/remotes/origin/docs/research-tools-execution-plan-20261106",
+      "40da817650498eb7b87502016d2be90062467c50"
+    ],
+    [
+      "refs/remotes/origin/docs/semantic-ghidra-roadmap",
+      "8b9ebc01bb221a60ee65838dfdafd59d66e15f5d"
+    ],
+    [
+      "refs/remotes/origin/docs/sonar235-package-path-20261105",
+      "c30f11fb6f94ab3325e3bf6252326004f792294d"
+    ],
+    [
+      "refs/remotes/origin/docs/spec-31-kb-cve-correlation-20261014",
+      "9088bf0e2e452c5d792f2a9e6e879f417e9fc120"
+    ],
+    [
+      "refs/remotes/origin/docs/spec-32-kb-patch-search-20261014",
+      "d0ceb56f30f81f881f1f25fb4d1dba772ff476b9"
+    ],
+    [
+      "refs/remotes/origin/docs/specs-plan",
+      "a5194581396b67395a0ae8453d73eec5ab024e54"
+    ],
+    [
+      "refs/remotes/origin/docs/workbench-search-graph-floss-20261014",
+      "af15701d13b516662a36f20a00ece01b8462160f"
+    ],
+    [
+      "refs/remotes/origin/feat/acquisition",
+      "293362a2d8cee7d5cc373439436945888b3b805a"
+    ],
+    [
+      "refs/remotes/origin/feat/acquisition-gui",
+      "7ae34d8fa26a6b6c8b7acf40f5c16d99643151ce"
+    ],
+    [
+      "refs/remotes/origin/feat/alpha-ui-integration",
+      "c7ed1d90a890afa9eb67c238f9f52f458db96432"
+    ],
+    [
+      "refs/remotes/origin/feat/artifact-bytes-seam",
+      "91b35d09afd29e9c78169a3b095d9ea3be6c31b1"
+    ],
+    [
+      "refs/remotes/origin/feat/byte-representations",
+      "303bc452d0bb6cd46ee67f731f64ec951e1ee215"
+    ],
+    [
+      "refs/remotes/origin/feat/diffscore-workflow-20261107",
+      "a3aa53744006845e782c154ca6b51eb4ffcb6e1e"
+    ],
+    [
+      "refs/remotes/origin/feat/enrichment-cache",
+      "0368fd9b5453ab50166c08cf8dfc493e57b0ee52"
+    ],
+    [
+      "refs/remotes/origin/feat/enrichment-contracts",
+      "010d809d2581d3a8ed8208e83325ba29f91b2419"
+    ],
+    [
+      "refs/remotes/origin/feat/enrichment-cve",
+      "49bf245583d040a8b29d80daee8666d8c7f7b8d4"
+    ],
+    [
+      "refs/remotes/origin/feat/enrichment-signals",
+      "e96441a1a90478d5b06e7b0d9b4320695a2018ed"
+    ],
+    [
+      "refs/remotes/origin/feat/enrichment-wil",
+      "9a6999a0e644ef03670d10fc0b08524345c6c709"
+    ],
+    [
+      "refs/remotes/origin/feat/local-runtime-discovery",
+      "b9198705ab4c144746214c1e42c15b6098063009"
+    ],
+    [
+      "refs/remotes/origin/feat/nway",
+      "44d431788bcc55429a033049ed997fa33c92289b"
+    ],
+    [
+      "refs/remotes/origin/feat/pe-overview",
+      "4b78a6d3c0015a5fd46d557cde6cc8f0a583795b"
+    ],
+    [
+      "refs/remotes/origin/feat/phase2-finish",
+      "86afe3f6563b71e1fff5ed56a907f29c6703b96e"
+    ],
+    [
+      "refs/remotes/origin/feat/phase3-batch",
+      "3581b520207b464b35a7baa39d188fb4f2a08cf1"
+    ],
+    [
+      "refs/remotes/origin/feat/profiles",
+      "d21b5917a66041cb1ffa4f46931e551e55f3165a"
+    ],
+    [
+      "refs/remotes/origin/feat/raw-cache",
+      "28bc476713fc9b77b876cfc8f5454760ea23d4e0"
+    ],
+    [
+      "refs/remotes/origin/feat/rq-engine-adapters-20261107",
+      "b561ed60db9e9bed77b37faa76d875c93e7f3364"
+    ],
+    [
+      "refs/remotes/origin/feat/rq-parity-20261107",
+      "f8806bb7210793efdc8d0e2f8848c3452afd5d69"
+    ],
+    [
+      "refs/remotes/origin/feat/secondary",
+      "b932ae1a1c8916aeac7be2d49ce27c24717f2846"
+    ],
+    [
+      "refs/remotes/origin/feat/tooltip-registry",
+      "0a3843ea2abe37d42ff0291d621fa9a7c9744bbc"
+    ],
+    [
+      "refs/remotes/origin/feat/verified-offline-runtime-bundle",
+      "1724503d01be7aee13cb43a3a7a28b8a9ff54ece"
+    ],
+    [
+      "refs/remotes/origin/feat/winpairs-workflow-20261107",
+      "2e43d3f4d7ee6327f1f95e20c5f5b505bcd8b624"
+    ],
+    [
+      "refs/remotes/origin/feature/alpha-file-overview-20261013",
+      "476016590be5cd1315613759af18ff61c7c27851"
+    ],
+    [
+      "refs/remotes/origin/feature/current-project-investigation-20261105",
+      "ef70e0bdf02a202cf7ce4780da37bba8ed63fafd"
+    ],
+    [
+      "refs/remotes/origin/feature/evidence-reconciliation-confidence",
+      "ddda35f40b94c145b2a9a9b68509b4ddb76a090a"
+    ],
+    [
+      "refs/remotes/origin/feature/gui-inspection-preview",
+      "8b94227a81b71841c65783c775f704a538d35710"
+    ],
+    [
+      "refs/remotes/origin/fix/backend-exit-diagnostics",
+      "bc00a6912dde57482a301bf64ef6fbc3f324cb92"
+    ],
+    [
+      "refs/remotes/origin/fix/codetext-budget-wave3",
+      "c7fb422c750f1d0e5591277b91492874afd79af7"
+    ],
+    [
+      "refs/remotes/origin/fix/codex-cloud-secret-preflight-20261103",
+      "bd3dbcae9254853f534b735864c0709f6766ced3"
+    ],
+    [
+      "refs/remotes/origin/fix/explicit-offline-symbol-policy",
+      "2e6618762ab6e15e5be0be60aec3fb8f56af44f3"
+    ],
+    [
+      "refs/remotes/origin/fix/ghidra-dot-paths",
+      "5c3b1df94c0d2a908bb0459caceb336912527555"
+    ],
+    [
+      "refs/remotes/origin/fix/ghidriff-timeout-progress-20261106",
+      "7e5d981935e2f8190790de90c2cc261834f9b519"
+    ],
+    [
+      "refs/remotes/origin/fix/isolate-ghidra-scratch",
+      "7ea7272311271a540a188e5d0de6d3aaa8864611"
+    ],
+    [
+      "refs/remotes/origin/fix/pe-inspection-row-tooltips-20261013",
+      "0182a8035d64071fc88b5f299edc3ef3760946b5"
+    ],
+    [
+      "refs/remotes/origin/fix/pr110-ci-regressions-20261029",
+      "979ddfad860c95ceabeb5b670b771900b5617098"
+    ],
+    [
+      "refs/remotes/origin/fix/pr205-partial-pe-inspect-20261106",
+      "cce47934dfc4184bc33df63b712e188e9bca25ac"
+    ],
+    [
+      "refs/remotes/origin/fix/pr205-review-contracts-20261106",
+      "4f3e62c4f130227b6ff1201f798b3f449ab89c60"
+    ],
+    [
+      "refs/remotes/origin/fix/pr205-ui-seam-help-extraction-20261106",
+      "a53c7d1bd360f2dbc3c75ead8da8e978cbb4c314"
+    ],
+    [
+      "refs/remotes/origin/fix/remediation-53088704-982db3",
+      "15370a0bf690ea65f49d1f6cc67c40f73fd3d77c"
+    ],
+    [
+      "refs/remotes/origin/fix/remediation-a58defa8-139db0",
+      "6d9c06c2d82cb778712cf2e3c963b63c6363f7c9"
+    ],
+    [
+      "refs/remotes/origin/fix/remediation-b1ab7332-a8fac4",
+      "3feec96f6546e755061a458ce0dc6e8ee0fab640"
+    ],
+    [
+      "refs/remotes/origin/fix/windows-posix-mingw-workflow-20261115",
+      "3b3ad32f60df9fd6994e25a8920cfb335cc3d602"
+    ],
+    [
+      "refs/remotes/origin/haiku/cli-help-suppress-20261027",
+      "37940b706f117f9786109433aed7751eca4e52a6"
+    ],
+    [
+      "refs/remotes/origin/haiku/phase2-handoff-import-20261027",
+      "4522030ff3ff76d720a5efc33953aaa5e5837398"
+    ],
+    [
+      "refs/remotes/origin/haiku/skills-manifest-import-20261027",
+      "039b0ef8a5d0cb5136aca72be5c65d11867c19af"
+    ],
+    [
+      "refs/remotes/origin/integrate/autonomous-20261105",
+      "3d6c37e665bd3039aa374dbb58e1dde4e8dd7d0e"
+    ],
+    [
+      "refs/remotes/origin/integrate/calibration-prereg-20261105",
+      "57f95e09d8a924b8469490cfa08387b849065179"
+    ],
+    [
+      "refs/remotes/origin/integrate/calibration-replay-20261105",
+      "f8ed23564166f1952512ae004543c91e85c4a6ee"
+    ],
+    [
+      "refs/remotes/origin/integrate/continuation-20261106",
+      "37b771300053e8872febead1fc384fea9126ae90"
+    ],
+    [
+      "refs/remotes/origin/integrate/gui-inspection-20261105",
+      "3fa22c611697d7593755c329fd762bfb47b39b84"
+    ],
+    [
+      "refs/remotes/origin/integrate/independent-wave4-20261105",
+      "6e9f4524776abb95a7da7f4f49de01483a2c5330"
+    ],
+    [
+      "refs/remotes/origin/integrate/kb-20261105",
+      "75c01a29ea791a2a5859d18d54f8e6db06f255b8"
+    ],
+    [
+      "refs/remotes/origin/integrate/kb-investigation-20261105",
+      "bdbfd7dc45083dd7439f4591f17724b6de651412"
+    ],
+    [
+      "refs/remotes/origin/integrate/merge-readiness-20261106",
+      "f393bb68ddc11eabb95a6598aa6f86650bd9aa37"
+    ],
+    [
+      "refs/remotes/origin/integrate/native-controls-20261105",
+      "a0f417466da80ddc18ee05cc31b8d3492e7cb98b"
+    ],
+    [
+      "refs/remotes/origin/integrate/project-adoption-20261105",
+      "1c97defacd54a593a8ecdcda2b9c11c85b073791"
+    ],
+    [
+      "refs/remotes/origin/integrate/recovery-forward-wave3-20261106",
+      "a1ed8c9167529fbf855d7dc088132379ee385cf4"
+    ],
+    [
+      "refs/remotes/origin/integrate/rules-20261105",
+      "c849d0087b7dbb647d887a2501259a87c79579f4"
+    ],
+    [
+      "refs/remotes/origin/integrate/secondary-prep-20261105",
+      "b6b5bf6c65611f50b9fa6524ce980a0ff07511ee"
+    ],
+    [
+      "refs/remotes/origin/integrate/swarm-followups-20261105",
+      "c6691ab1ca143930f746f5c5087d3f492fd544d1"
+    ],
+    [
+      "refs/remotes/origin/integrate/swarm-qualified-20261105",
+      "4e9f1d5d71cf1f193fb7ed500daf852e5156304f"
+    ],
+    [
+      "refs/remotes/origin/integrate/swarm-wave3-20261105",
+      "a0e2c80eda74b70be370bf5f6a93424365230b89"
+    ],
+    [
+      "refs/remotes/origin/integration/controlled-consolidation-20261030",
+      "f18687fd035b67961c1072af84f8c2b3442979e0"
+    ],
+    [
+      "refs/remotes/origin/integration/exhaustive-patchtrace-consolidation-20261119",
+      "6096e64d4e7b8f0ecc6af884f7d220e07790d85a"
+    ],
+    [
+      "refs/remotes/origin/integration/kb-fixtures-pr69-20261030",
+      "2fcd627e52a6d784d5c2e5b4ea8105e90b8589b3"
+    ],
+    [
+      "refs/remotes/origin/main",
+      "fdc2696c23bdbfe7668348f25e3b336ce33039f7"
+    ],
+    [
+      "refs/remotes/origin/qualify/native-cli-seeding-20261105",
+      "8fae317bcac6cb125956965cd3ebbb39e9f9bbd2"
+    ],
+    [
+      "refs/remotes/origin/qualify/native-controls-20261105",
+      "dc3bf773fead3f10d3e825d56ccf035741f29c28"
+    ],
+    [
+      "refs/remotes/origin/qualify/native-provision-20261105",
+      "c50ab287de13982b132716d67f9e5fabe22799cb"
+    ],
+    [
+      "refs/remotes/origin/qualify/offline-tooling-20261105",
+      "c3370578086cbfda7b971a031d173b82e860a1f5"
+    ],
+    [
+      "refs/remotes/origin/repair/gt01-consolidated-native-evidence-20261030",
+      "c04ad725551fe8daa139b37aa2cdf46d6d161b65"
+    ],
+    [
+      "refs/remotes/origin/repair/gt01-native-identical-controls-20261030",
+      "fb91cff6d91c77a2c539c896b670d81180dcc637"
+    ],
+    [
+      "refs/remotes/origin/repair/gt01-unified-live-gates-20261030",
+      "ca1a36c0caea44a9225e487f3ba7b0828c90a567"
+    ],
+    [
+      "refs/remotes/origin/repair/kb-ui-import-boundary-20261105",
+      "226ac7e514fd90ddb71ec7e3d295bb4aa5bc06b6"
+    ],
+    [
+      "refs/remotes/origin/repair/native-input-open-20261105",
+      "0526d546a247f47411b088ac083d6f1fe1e10781"
+    ],
+    [
+      "refs/remotes/origin/repair/native-normalizer-wave3-20261105",
+      "cf9cefff88b71dbae6af9131b8f59a1fbb82c894"
+    ],
+    [
+      "refs/remotes/origin/repair/native-source-identity-20261105",
+      "c3be348b544b5022b3f92858923d6d890538aa53"
+    ],
+    [
+      "refs/remotes/origin/repair/normalizer-address-identity-20261105",
+      "631b5e919699e722e0ce3e3dee11b29c9c40ce10"
+    ],
+    [
+      "refs/remotes/origin/repair/parity-parser-budget-20261105",
+      "c923039bd311449d8c97bee8ed09e97b339b6653"
+    ],
+    [
+      "refs/remotes/origin/repair/pr205-main-reconciliation-20261106",
+      "96e8e085cb95f2b75bd75b63c8ede436e2152499"
+    ],
+    [
+      "refs/remotes/origin/repair/pr205-qualification-20261106",
+      "4465a0492367d08f324e80b290a594791921691c"
+    ],
+    [
+      "refs/remotes/origin/repair/project-create-rollback-20261105",
+      "2a3639adde50585dd7ac6dbcb029f085ac0856c6"
+    ],
+    [
+      "refs/remotes/origin/repair/rzdiff-native-callback-size-20261103",
+      "edab7d916970144b33c98384834369773e5b0e62"
+    ],
+    [
+      "refs/remotes/origin/repair/rzdiff-native-red-control-20261103",
+      "b304034e3c310528f7e0a3206eda48c94e0a6873"
+    ],
+    [
+      "refs/remotes/origin/repair/rzdiff-producer-ownership",
+      "4d66af5577e6f6ad8f6e21440f6fe4187e0c8fe5"
+    ],
+    [
+      "refs/remotes/origin/repair/streamed-series-recovery-20261105",
+      "20a60f9d12d75b8df9d4f70f96a0fd27bd038331"
+    ],
+    [
+      "refs/remotes/origin/repair/subprocess-venv-20261106",
+      "c804e4d94430368c0eafe1da899493a8cf6520aa"
+    ],
+    [
+      "refs/remotes/origin/repair/unified-ci-20261105",
+      "b5f6e1381dfbe98ccc71d1e126a6fd02fc95aa81"
+    ],
+    [
+      "refs/remotes/origin/repair/unified-support-evidence-20261105",
+      "95749419783e6be7548be613e1000113497c6d2a"
+    ],
+    [
+      "refs/remotes/origin/repair/verified-bytes-20261105",
+      "e5f9302e20ee37e8e3323a8d8b177fd8b0649e6a"
+    ],
+    [
+      "refs/remotes/origin/repair/winbindex-metadata-budget-20261105",
+      "64eb58ece2f44914e8f94135ab1caefbb5a83f6b"
+    ],
+    [
+      "refs/remotes/origin/repair/wizard-lock-retry-20261105",
+      "38be184cda6fbe6f79a6f265b04e2efc6a2688dd"
+    ],
+    [
+      "refs/remotes/origin/repair/workflow-fragment-20261105",
+      "1229ca3bba6bc099d040c279ed9ebc8b91ae913e"
+    ],
+    [
+      "refs/remotes/origin/research/additional-reuse-claude-20261103",
+      "be4a58ff7d8facc57e99faac9c743cb8d60b36f4"
+    ],
+    [
+      "refs/remotes/origin/research/kbc-live-probe-20261106",
+      "3839f3b62c923a80340c40c44855305890604f78"
+    ],
+    [
+      "refs/remotes/origin/research/l1-join-corpus-20261107",
+      "ca3572e7d7a5cf78d45732c18af7ebfe4922d350"
+    ],
+    [
+      "refs/remotes/origin/research/qualification-tools-rq00-rq01-20261106",
+      "941c0da4431f682537e99aa230df0da04013b4e1"
+    ],
+    [
+      "refs/remotes/origin/research/r4-vulnerability-correlation-20261030",
+      "ff570bdd784d02f745e4ad21d8aa7b4f1f776344"
+    ],
+    [
+      "refs/remotes/origin/research/r6-final-integration-engineering-notes-20261030",
+      "3010f289dbb46a1db62218a35cca03420090e306"
+    ],
+    [
+      "refs/remotes/origin/research/r7-advanced-binary-analysis-20261030",
+      "c9d1aab6a78847ce1632fe833d15af2e3b9c6e9b"
+    ],
+    [
+      "refs/remotes/origin/research/r8-deep-uncertainty-20261030",
+      "12dd4f2b41b468b0eb566bd502219daa821012df"
+    ],
+    [
+      "refs/remotes/origin/research/windows-candidates-gaps-20261107",
+      "1f11a43ba1904e5c6c9d5d4f261fa606347da6ca"
+    ],
+    [
+      "refs/remotes/origin/research/windows-candidates-github-20261107",
+      "35d7e3c980c0e04c7b6319bfd8fc6c7898c31226"
+    ],
+    [
+      "refs/remotes/origin/research/windows-candidates-sources-20261107",
+      "740961828e22ca8048cd881f21ef9c028955ab73"
+    ],
+    [
+      "refs/remotes/origin/research/windows-pair-candidates-20261107",
+      "e5e783f6b8ffae83341092f5915ba02b9856ecc1"
+    ],
+    [
+      "refs/remotes/origin/research/windows-pins-20261107",
+      "ac826a2efe428de7dbf290aa5894a2d357d7da0c"
+    ],
+    [
+      "refs/remotes/origin/resume/desktop-index-refresh-20261106",
+      "c9cea0671442a6051b068acfb69d17aabcf674ae"
+    ],
+    [
+      "refs/remotes/origin/resume/kb-acquire-lifecycle-20261106",
+      "b8bda98452b2f742ad55064aa2e1452700658a33"
+    ],
+    [
+      "refs/remotes/origin/security/offline-bundle-no-overwrite-20261013",
+      "a39cab81de3e0eeadf57e6255d2fe3e131b3294a"
+    ],
+    [
+      "refs/remotes/origin/test/advisory-acceptance-20261105",
+      "69c705d052e6b6fb3c96ea49062d6a207829c1b8"
+    ],
+    [
+      "refs/remotes/origin/test/product-acceptance-20261106",
+      "81825ee9638454737d3fb7efa3e6c73b8f3eb105"
+    ],
+    [
+      "refs/remotes/origin/test/recovery-diagnostics-20261106",
+      "064f1c0075a4cfe5ec1eba2f9a04d3f1058ecf0c"
+    ],
+    [
+      "refs/remotes/origin/work/calibration-invariants-20261105",
+      "a6948be8049591247f0bc19a601645b85bc03eb7"
+    ],
+    [
+      "refs/remotes/origin/work/candidate-correlation-20261105",
+      "fee7c3664a2050aed30a3c3d43ea28c0c3621ee3"
+    ],
+    [
+      "refs/remotes/origin/work/consented-winbindex-refresh-20261105",
+      "83320a32c7249f92a1d7ba708c8fc8e12e4aa15c"
+    ],
+    [
+      "refs/remotes/origin/work/investigation-accessibility-20261105",
+      "b5d4bceabdc34f520120d9dc336d975768e20483"
+    ],
+    [
+      "refs/remotes/origin/work/investigation-candidates-20261105",
+      "bf3661966785a971f484b6339af81274278d1434"
+    ],
+    [
+      "refs/remotes/origin/work/online-adapter-20261105",
+      "e14b4445fd0705e2ecffa1bc4842ab73bce373e9"
+    ],
+    [
+      "refs/remotes/origin/work/online-investigation-20261105",
+      "bf46954ef2c6c9a278d9b78f5b4274242e617e09"
+    ],
+    [
+      "refs/remotes/origin/work/pe-parser-security-20261105",
+      "8975c517af22aca0c0f90eb931b8a06ab18687b5"
+    ],
+    [
+      "refs/remotes/origin/work/persistence-security-20261105",
+      "1a1e1951c55cdef46ff248145031639674ce1c63"
+    ],
+    [
+      "refs/remotes/origin/work/product-start-20261106",
+      "0b7d858149db0c88ffcf8f3e6ba474d99f39afeb"
+    ],
+    [
+      "refs/remotes/origin/work/product-start-wave3",
+      "7e7a52ebf4de1529cfc5da7274820a5e955126fc"
+    ],
+    [
+      "refs/remotes/origin/work/winbindex-publication-20261105",
+      "2afe874d6be17a4596d3955b71b493d5e0e4ed00"
+    ],
+    [
+      "refs/remotes/origin/work/windows-package-preflight-20261105",
+      "93b4b9a80d31c97659269429e0b680c9218fdf70"
+    ],
+    [
+      "refs/remotes/origin/worker/patchtrace-cli-help-20261104",
+      "81a9fb28f30630e2fd168422dc4672af3a34aa52"
+    ],
+    [
+      "refs/remotes/pull/1",
+      "c7937246a5bf3f1a09c7d121c0d438088b02040c"
+    ],
+    [
+      "refs/remotes/pull/10",
+      "010d809d2581d3a8ed8208e83325ba29f91b2419"
+    ],
+    [
+      "refs/remotes/pull/100",
+      "66e9adc50fb118c04e5e24eacd0c221ca483a130"
+    ],
+    [
+      "refs/remotes/pull/101",
+      "4eabf8dff2c4094681da70c7bd85ecd0da5aed9f"
+    ],
+    [
+      "refs/remotes/pull/102",
+      "9fddf99e2635e28129b2deda0ff155b00d9ba471"
+    ],
+    [
+      "refs/remotes/pull/103",
+      "a5593fa58b2ead6ecf6adfe045db242232cd52a3"
+    ],
+    [
+      "refs/remotes/pull/106",
+      "45fa67ad7e924cb4e2df1cd487c04a2c0ddab381"
+    ],
+    [
+      "refs/remotes/pull/107",
+      "fbe58d800da27aff2544c6a478f0a591ff7dad3b"
+    ],
+    [
+      "refs/remotes/pull/108",
+      "7ae041e79e419159299c32df98b8e69ab176e859"
+    ],
+    [
+      "refs/remotes/pull/109",
+      "653f384d1ca60b7e943bd658698e0989d826b696"
+    ],
+    [
+      "refs/remotes/pull/11",
+      "f6505928d8264343caa33f878deb253626752944"
+    ],
+    [
+      "refs/remotes/pull/110",
+      "5ed624e91468c410f2cf738ed4e36c2be3e0201d"
+    ],
+    [
+      "refs/remotes/pull/111",
+      "3287cb3d36052bd6e44420f631ed033baf939d64"
+    ],
+    [
+      "refs/remotes/pull/112",
+      "aba4c2001a6b093f7f8cdc8b0ac20ab074ed57b8"
+    ],
+    [
+      "refs/remotes/pull/113",
+      "979ddfad860c95ceabeb5b670b771900b5617098"
+    ],
+    [
+      "refs/remotes/pull/114",
+      "c0d1c38aee74461969ff0a8b4d61179c3dbb9b0b"
+    ],
+    [
+      "refs/remotes/pull/115",
+      "bb42828d05b775c59b73a7bbd02c0113b9b9bb3b"
+    ],
+    [
+      "refs/remotes/pull/117",
+      "025300f8e169556f84b6a8cfed20413e0a26b019"
+    ],
+    [
+      "refs/remotes/pull/119",
+      "3e9cedb012b4c82da3b0e5f9bc977ecd7313b64c"
+    ],
+    [
+      "refs/remotes/pull/12",
+      "86afe3f6563b71e1fff5ed56a907f29c6703b96e"
+    ],
+    [
+      "refs/remotes/pull/122",
+      "40e02daf93c8e13a94b74f5b80d86c1680fea7ad"
+    ],
+    [
+      "refs/remotes/pull/123",
+      "99f8328ce89d02f200cf9fbc5852d9801761af28"
+    ],
+    [
+      "refs/remotes/pull/124",
+      "95e09548a82202ae4cfd9380522f36513da87a66"
+    ],
+    [
+      "refs/remotes/pull/125",
+      "198eb21e8813b28de361422cfe3c002bdb9e3970"
+    ],
+    [
+      "refs/remotes/pull/126",
+      "280bf05856eb60f4ddb0d58210616f65a3735816"
+    ],
+    [
+      "refs/remotes/pull/127",
+      "6a1e3ce348a7e5f67bbabfe388315812cc830b03"
+    ],
+    [
+      "refs/remotes/pull/128",
+      "10856edf05afae8166291f09fb3ead92f297360d"
+    ],
+    [
+      "refs/remotes/pull/129",
+      "2698b9a04d33b2d04f49c1ab737636539c6ef6f7"
+    ],
+    [
+      "refs/remotes/pull/13",
+      "3581b520207b464b35a7baa39d188fb4f2a08cf1"
+    ],
+    [
+      "refs/remotes/pull/130",
+      "ff570bdd784d02f745e4ad21d8aa7b4f1f776344"
+    ],
+    [
+      "refs/remotes/pull/131",
+      "b3ceb8b30d7a83da5e22c231c3b8c28179246816"
+    ],
+    [
+      "refs/remotes/pull/132",
+      "4d9d9051aea87319847a0b321a14d37b95cb8abd"
+    ],
+    [
+      "refs/remotes/pull/133",
+      "3010f289dbb46a1db62218a35cca03420090e306"
+    ],
+    [
+      "refs/remotes/pull/134",
+      "c9d1aab6a78847ce1632fe833d15af2e3b9c6e9b"
+    ],
+    [
+      "refs/remotes/pull/135",
+      "12dd4f2b41b468b0eb566bd502219daa821012df"
+    ],
+    [
+      "refs/remotes/pull/136",
+      "2fcd627e52a6d784d5c2e5b4ea8105e90b8589b3"
+    ],
+    [
+      "refs/remotes/pull/137",
+      "61b5c2bade71a8cec58ca9e1514141f4508b7c79"
+    ],
+    [
+      "refs/remotes/pull/138",
+      "ca1a36c0caea44a9225e487f3ba7b0828c90a567"
+    ],
+    [
+      "refs/remotes/pull/139",
+      "c04ad725551fe8daa139b37aa2cdf46d6d161b65"
+    ],
+    [
+      "refs/remotes/pull/14",
+      "8b9ebc01bb221a60ee65838dfdafd59d66e15f5d"
+    ],
+    [
+      "refs/remotes/pull/140",
+      "fb91cff6d91c77a2c539c896b670d81180dcc637"
+    ],
+    [
+      "refs/remotes/pull/141",
+      "d76d23372acef4049115e9ae176acbeb538a82e5"
+    ],
+    [
+      "refs/remotes/pull/142",
+      "a4d1e6a38c34d1952584aa65d7f5f908c45547b3"
+    ],
+    [
+      "refs/remotes/pull/143",
+      "a7f13e13ffb512f8e9621753a0ae162d78942f3b"
+    ],
+    [
+      "refs/remotes/pull/144",
+      "745e93426a16e0a91a961b6e0bbcb71be69f2a7e"
+    ],
+    [
+      "refs/remotes/pull/145",
+      "8c9eafc79b007a963453d8edf6cb40c804c9bc3d"
+    ],
+    [
+      "refs/remotes/pull/146",
+      "798e11ef345ed7a7a65508a466eaf77ee85ef77c"
+    ],
+    [
+      "refs/remotes/pull/147",
+      "8f4c4a2e0021d424d403317c6780b6db026ad76b"
+    ],
+    [
+      "refs/remotes/pull/148",
+      "c3868d8335a8f32f676905032dc1a6d0e9f22fd6"
+    ],
+    [
+      "refs/remotes/pull/149",
+      "e90254424c26ecd00e4c10c3c638e76d11b35841"
+    ],
+    [
+      "refs/remotes/pull/15",
+      "8b94227a81b71841c65783c775f704a538d35710"
+    ],
+    [
+      "refs/remotes/pull/150",
+      "2fdac2ea9042985ac3c98545d38ac3461d00f4cc"
+    ],
+    [
+      "refs/remotes/pull/151",
+      "9911af4d9130b81b1875f82179e03e0a89e89794"
+    ],
+    [
+      "refs/remotes/pull/152",
+      "0130bf81e2fe3154f30af7b68a0e6ab197946040"
+    ],
+    [
+      "refs/remotes/pull/153",
+      "d99cd7712b76e9e42661ef0b268417d7ca322d3e"
+    ],
+    [
+      "refs/remotes/pull/154",
+      "dfe8f421db390ccd3158393a60205fa5dd25df0b"
+    ],
+    [
+      "refs/remotes/pull/155",
+      "15370a0bf690ea65f49d1f6cc67c40f73fd3d77c"
+    ],
+    [
+      "refs/remotes/pull/156",
+      "4eebea4a5389af16bffe32a2bf9285c406d95fb1"
+    ],
+    [
+      "refs/remotes/pull/157",
+      "874e9a267fdc589a796ce573f2958e1aa84ea0f6"
+    ],
+    [
+      "refs/remotes/pull/158",
+      "e1b79e048d3963d747bc9f07448b039a250180ed"
+    ],
+    [
+      "refs/remotes/pull/159",
+      "56374f867594dd923383c91ea71970cb7d24d173"
+    ],
+    [
+      "refs/remotes/pull/16",
+      "ddda35f40b94c145b2a9a9b68509b4ddb76a090a"
+    ],
+    [
+      "refs/remotes/pull/160",
+      "ca411e77f43a9fd95ca5e0bcc7d2b58071ccae37"
+    ],
+    [
+      "refs/remotes/pull/161",
+      "9b9452b4677ee3809a6e0f43d49567a8d15602e6"
+    ],
+    [
+      "refs/remotes/pull/162",
+      "f1a55c4cf21ddb0dea243bd417b74f86caaed142"
+    ],
+    [
+      "refs/remotes/pull/163",
+      "6e82fd70f315b99c6798a42c9061a1424a02933e"
+    ],
+    [
+      "refs/remotes/pull/164",
+      "b58bb53debcb3323e5d8d634e09397cb7e02965f"
+    ],
+    [
+      "refs/remotes/pull/165",
+      "4d66af5577e6f6ad8f6e21440f6fe4187e0c8fe5"
+    ],
+    [
+      "refs/remotes/pull/166",
+      "edab7d916970144b33c98384834369773e5b0e62"
+    ],
+    [
+      "refs/remotes/pull/167",
+      "def36c822a80c77ae94b8e9a77da6f1ee9de1160"
+    ],
+    [
+      "refs/remotes/pull/168",
+      "b304034e3c310528f7e0a3206eda48c94e0a6873"
+    ],
+    [
+      "refs/remotes/pull/169",
+      "bd3dbcae9254853f534b735864c0709f6766ced3"
+    ],
+    [
+      "refs/remotes/pull/17",
+      "24244831ec443fa19555586835e71da6dd4aac98"
+    ],
+    [
+      "refs/remotes/pull/170",
+      "6fe6c4b1be060eb6e9d5208a68f0d68e1082b59c"
+    ],
+    [
+      "refs/remotes/pull/171",
+      "f8050a1fef23b71fd3a02b216c5035bcac3f4889"
+    ],
+    [
+      "refs/remotes/pull/172",
+      "7ed5cebfdaee4dc508b0cc739e86c18c1ff34a97"
+    ],
+    [
+      "refs/remotes/pull/173",
+      "b03a77b8a2fe9e4fa65fbe43889e06f4e68180e9"
+    ],
+    [
+      "refs/remotes/pull/174",
+      "e1193c8896e009930dae4edec974d9795876f0e0"
+    ],
+    [
+      "refs/remotes/pull/175",
+      "dabba4aea4ba0fa19e71ede05ce4fb8ab6741942"
+    ],
+    [
+      "refs/remotes/pull/176",
+      "597a8b106491cd587cedf1273ee5ef6d56d71508"
+    ],
+    [
+      "refs/remotes/pull/177",
+      "bef720fdd50c0ab7c93a10955b3e5ec7d2a5f992"
+    ],
+    [
+      "refs/remotes/pull/178",
+      "be4a58ff7d8facc57e99faac9c743cb8d60b36f4"
+    ],
+    [
+      "refs/remotes/pull/179",
+      "ca10acb506fbf61db8142a836acfbd1e50a2aeb3"
+    ],
+    [
+      "refs/remotes/pull/18",
+      "a39cab81de3e0eeadf57e6255d2fe3e131b3294a"
+    ],
+    [
+      "refs/remotes/pull/180",
+      "a7689119fc25be61a4ac1b65619d6968859a136f"
+    ],
+    [
+      "refs/remotes/pull/181",
+      "7b3fcbaca88256971eafd55b8fb8fe9f44634a9e"
+    ],
+    [
+      "refs/remotes/pull/182",
+      "820d70744dff58ef484299791d073b2e712f0524"
+    ],
+    [
+      "refs/remotes/pull/183",
+      "ed70e6ddac449a42f843f1c60aa878416ab31727"
+    ],
+    [
+      "refs/remotes/pull/184",
+      "64e8374d5d3ae97a719a2bb3ac800497c50892af"
+    ],
+    [
+      "refs/remotes/pull/185",
+      "81a9fb28f30630e2fd168422dc4672af3a34aa52"
+    ],
+    [
+      "refs/remotes/pull/186",
+      "f019606665a740dc252e745913924debf73adc48"
+    ],
+    [
+      "refs/remotes/pull/187",
+      "fbd9595351bf50217402b7a62b3e057de79f45f0"
+    ],
+    [
+      "refs/remotes/pull/188",
+      "65f979a163a88ec5b32b3eb4173fa4a50ee9c920"
+    ],
+    [
+      "refs/remotes/pull/189",
+      "cb204f7625d4de496642926bbda37d07e2888131"
+    ],
+    [
+      "refs/remotes/pull/19",
+      "476016590be5cd1315613759af18ff61c7c27851"
+    ],
+    [
+      "refs/remotes/pull/190",
+      "761b6b885f00143597c74f0457b1165a144fbdd4"
+    ],
+    [
+      "refs/remotes/pull/191",
+      "c849d0087b7dbb647d887a2501259a87c79579f4"
+    ],
+    [
+      "refs/remotes/pull/192",
+      "b5f6e1381dfbe98ccc71d1e126a6fd02fc95aa81"
+    ],
+    [
+      "refs/remotes/pull/193",
+      "75c01a29ea791a2a5859d18d54f8e6db06f255b8"
+    ],
+    [
+      "refs/remotes/pull/194",
+      "3d6c37e665bd3039aa374dbb58e1dde4e8dd7d0e"
+    ],
+    [
+      "refs/remotes/pull/195",
+      "a0f417466da80ddc18ee05cc31b8d3492e7cb98b"
+    ],
+    [
+      "refs/remotes/pull/196",
+      "3fa22c611697d7593755c329fd762bfb47b39b84"
+    ],
+    [
+      "refs/remotes/pull/197",
+      "b6b5bf6c65611f50b9fa6524ce980a0ff07511ee"
+    ],
+    [
+      "refs/remotes/pull/198",
+      "1c97defacd54a593a8ecdcda2b9c11c85b073791"
+    ],
+    [
+      "refs/remotes/pull/199",
+      "e5f9302e20ee37e8e3323a8d8b177fd8b0649e6a"
+    ],
+    [
+      "refs/remotes/pull/2",
+      "5c3b1df94c0d2a908bb0459caceb336912527555"
+    ],
+    [
+      "refs/remotes/pull/20",
+      "1038d3f13f214d55c28ceeb51c1c13c9b43b1d3f"
+    ],
+    [
+      "refs/remotes/pull/200",
+      "802b5b1bb5f5e64118256e75414b7ca74ad61fcc"
+    ],
+    [
+      "refs/remotes/pull/201",
+      "bdbfd7dc45083dd7439f4591f17724b6de651412"
+    ],
+    [
+      "refs/remotes/pull/202",
+      "f2b7d1786f60df27b0228f247aab9a00bd7c1078"
+    ],
+    [
+      "refs/remotes/pull/203",
+      "95749419783e6be7548be613e1000113497c6d2a"
+    ],
+    [
+      "refs/remotes/pull/204",
+      "1229ca3bba6bc099d040c279ed9ebc8b91ae913e"
+    ],
+    [
+      "refs/remotes/pull/205",
+      "4e9f1d5d71cf1f193fb7ed500daf852e5156304f"
+    ],
+    [
+      "refs/remotes/pull/206",
+      "0526d546a247f47411b088ac083d6f1fe1e10781"
+    ],
+    [
+      "refs/remotes/pull/207",
+      "20a60f9d12d75b8df9d4f70f96a0fd27bd038331"
+    ],
+    [
+      "refs/remotes/pull/208",
+      "dc3bf773fead3f10d3e825d56ccf035741f29c28"
+    ],
+    [
+      "refs/remotes/pull/209",
+      "c3370578086cbfda7b971a031d173b82e860a1f5"
+    ],
+    [
+      "refs/remotes/pull/21",
+      "91b35d09afd29e9c78169a3b095d9ea3be6c31b1"
+    ],
+    [
+      "refs/remotes/pull/210",
+      "2a3639adde50585dd7ac6dbcb029f085ac0856c6"
+    ],
+    [
+      "refs/remotes/pull/211",
+      "c923039bd311449d8c97bee8ed09e97b339b6653"
+    ],
+    [
+      "refs/remotes/pull/212",
+      "c3be348b544b5022b3f92858923d6d890538aa53"
+    ],
+    [
+      "refs/remotes/pull/213",
+      "c6691ab1ca143930f746f5c5087d3f492fd544d1"
+    ],
+    [
+      "refs/remotes/pull/214",
+      "ef70e0bdf02a202cf7ce4780da37bba8ed63fafd"
+    ],
+    [
+      "refs/remotes/pull/215",
+      "57f95e09d8a924b8469490cfa08387b849065179"
+    ],
+    [
+      "refs/remotes/pull/216",
+      "7716e2b02feaa04e59dce302c1c6cacbe800634b"
+    ],
+    [
+      "refs/remotes/pull/217",
+      "f8ed23564166f1952512ae004543c91e85c4a6ee"
+    ],
+    [
+      "refs/remotes/pull/218",
+      "a0e2c80eda74b70be370bf5f6a93424365230b89"
+    ],
+    [
+      "refs/remotes/pull/219",
+      "38be184cda6fbe6f79a6f265b04e2efc6a2688dd"
+    ],
+    [
+      "refs/remotes/pull/22",
+      "4b78a6d3c0015a5fd46d557cde6cc8f0a583795b"
+    ],
+    [
+      "refs/remotes/pull/220",
+      "cf9cefff88b71dbae6af9131b8f59a1fbb82c894"
+    ],
+    [
+      "refs/remotes/pull/221",
+      "7e7a52ebf4de1529cfc5da7274820a5e955126fc"
+    ],
+    [
+      "refs/remotes/pull/222",
+      "c50ab287de13982b132716d67f9e5fabe22799cb"
+    ],
+    [
+      "refs/remotes/pull/223",
+      "631b5e919699e722e0ce3e3dee11b29c9c40ce10"
+    ],
+    [
+      "refs/remotes/pull/224",
+      "8fae317bcac6cb125956965cd3ebbb39e9f9bbd2"
+    ],
+    [
+      "refs/remotes/pull/225",
+      "e14b4445fd0705e2ecffa1bc4842ab73bce373e9"
+    ],
+    [
+      "refs/remotes/pull/226",
+      "b5d4bceabdc34f520120d9dc336d975768e20483"
+    ],
+    [
+      "refs/remotes/pull/227",
+      "1a1e1951c55cdef46ff248145031639674ce1c63"
+    ],
+    [
+      "refs/remotes/pull/228",
+      "93b4b9a80d31c97659269429e0b680c9218fdf70"
+    ],
+    [
+      "refs/remotes/pull/229",
+      "fee7c3664a2050aed30a3c3d43ea28c0c3621ee3"
+    ],
+    [
+      "refs/remotes/pull/23",
+      "303bc452d0bb6cd46ee67f731f64ec951e1ee215"
+    ],
+    [
+      "refs/remotes/pull/230",
+      "a6948be8049591247f0bc19a601645b85bc03eb7"
+    ],
+    [
+      "refs/remotes/pull/231",
+      "febc9de57e61162da12fb1cc9280aef9b3ec2a99"
+    ],
+    [
+      "refs/remotes/pull/232",
+      "bc52940fb32d5b5f6d1a58a860062ec60d423d1e"
+    ],
+    [
+      "refs/remotes/pull/233",
+      "69c705d052e6b6fb3c96ea49062d6a207829c1b8"
+    ],
+    [
+      "refs/remotes/pull/234",
+      "bf46954ef2c6c9a278d9b78f5b4274242e617e09"
+    ],
+    [
+      "refs/remotes/pull/235",
+      "6e9f4524776abb95a7da7f4f49de01483a2c5330"
+    ],
+    [
+      "refs/remotes/pull/236",
+      "8975c517af22aca0c0f90eb931b8a06ab18687b5"
+    ],
+    [
+      "refs/remotes/pull/237",
+      "64eb58ece2f44914e8f94135ab1caefbb5a83f6b"
+    ],
+    [
+      "refs/remotes/pull/238",
+      "2afe874d6be17a4596d3955b71b493d5e0e4ed00"
+    ],
+    [
+      "refs/remotes/pull/239",
+      "83320a32c7249f92a1d7ba708c8fc8e12e4aa15c"
+    ],
+    [
+      "refs/remotes/pull/24",
+      "0a3843ea2abe37d42ff0291d621fa9a7c9744bbc"
+    ],
+    [
+      "refs/remotes/pull/240",
+      "bf3661966785a971f484b6339af81274278d1434"
+    ],
+    [
+      "refs/remotes/pull/241",
+      "c30f11fb6f94ab3325e3bf6252326004f792294d"
+    ],
+    [
+      "refs/remotes/pull/242",
+      "b8bda98452b2f742ad55064aa2e1452700658a33"
+    ],
+    [
+      "refs/remotes/pull/243",
+      "c9cea0671442a6051b068acfb69d17aabcf674ae"
+    ],
+    [
+      "refs/remotes/pull/244",
+      "f393bb68ddc11eabb95a6598aa6f86650bd9aa37"
+    ],
+    [
+      "refs/remotes/pull/245",
+      "4465a0492367d08f324e80b290a594791921691c"
+    ],
+    [
+      "refs/remotes/pull/246",
+      "c804e4d94430368c0eafe1da899493a8cf6520aa"
+    ],
+    [
+      "refs/remotes/pull/247",
+      "37b771300053e8872febead1fc384fea9126ae90"
+    ],
+    [
+      "refs/remotes/pull/248",
+      "a1ed8c9167529fbf855d7dc088132379ee385cf4"
+    ],
+    [
+      "refs/remotes/pull/249",
+      "5e1e19828b3801a2f0f7d50b4250ff9a273264ef"
+    ],
+    [
+      "refs/remotes/pull/25",
+      "c7ed1d90a890afa9eb67c238f9f52f458db96432"
+    ],
+    [
+      "refs/remotes/pull/250",
+      "96e8e085cb95f2b75bd75b63c8ede436e2152499"
+    ],
+    [
+      "refs/remotes/pull/251",
+      "7e5d981935e2f8190790de90c2cc261834f9b519"
+    ],
+    [
+      "refs/remotes/pull/252",
+      "4f3e62c4f130227b6ff1201f798b3f449ab89c60"
+    ],
+    [
+      "refs/remotes/pull/253",
+      "cce47934dfc4184bc33df63b712e188e9bca25ac"
+    ],
+    [
+      "refs/remotes/pull/254",
+      "a53c7d1bd360f2dbc3c75ead8da8e978cbb4c314"
+    ],
+    [
+      "refs/remotes/pull/256",
+      "941c0da4431f682537e99aa230df0da04013b4e1"
+    ],
+    [
+      "refs/remotes/pull/257",
+      "3839f3b62c923a80340c40c44855305890604f78"
+    ],
+    [
+      "refs/remotes/pull/258",
+      "c21d0ab8471ac1a541eb6d2ff929cce1fb34a2fd"
+    ],
+    [
+      "refs/remotes/pull/259",
+      "f249edc8ee70ae003a1478eae5418d85ed629d87"
+    ],
+    [
+      "refs/remotes/pull/26",
+      "0182a8035d64071fc88b5f299edc3ef3760946b5"
+    ],
+    [
+      "refs/remotes/pull/260",
+      "e5e783f6b8ffae83341092f5915ba02b9856ecc1"
+    ],
+    [
+      "refs/remotes/pull/261",
+      "6d9c06c2d82cb778712cf2e3c963b63c6363f7c9"
+    ],
+    [
+      "refs/remotes/pull/262",
+      "9d72402cc3fd884203c7a759f714fd0a4bd2c51f"
+    ],
+    [
+      "refs/remotes/pull/263",
+      "f8806bb7210793efdc8d0e2f8848c3452afd5d69"
+    ],
+    [
+      "refs/remotes/pull/264",
+      "740961828e22ca8048cd881f21ef9c028955ab73"
+    ],
+    [
+      "refs/remotes/pull/265",
+      "b561ed60db9e9bed77b37faa76d875c93e7f3364"
+    ],
+    [
+      "refs/remotes/pull/266",
+      "35d7e3c980c0e04c7b6319bfd8fc6c7898c31226"
+    ],
+    [
+      "refs/remotes/pull/267",
+      "3feec96f6546e755061a458ce0dc6e8ee0fab640"
+    ],
+    [
+      "refs/remotes/pull/268",
+      "b29351d41060f8e9330fc9673457d835e188f993"
+    ],
+    [
+      "refs/remotes/pull/269",
+      "ca3572e7d7a5cf78d45732c18af7ebfe4922d350"
+    ],
+    [
+      "refs/remotes/pull/27",
+      "da32cf0a4028e7a6fb33a172f41c9c9937c6486f"
+    ],
+    [
+      "refs/remotes/pull/270",
+      "39db34c5beaaf16cc60fec30f084acfde4035316"
+    ],
+    [
+      "refs/remotes/pull/271",
+      "2e43d3f4d7ee6327f1f95e20c5f5b505bcd8b624"
+    ],
+    [
+      "refs/remotes/pull/272",
+      "a3aa53744006845e782c154ca6b51eb4ffcb6e1e"
+    ],
+    [
+      "refs/remotes/pull/273",
+      "c3536288ee3745826be814afb4d8fd07a53c526b"
+    ],
+    [
+      "refs/remotes/pull/274",
+      "1f11a43ba1904e5c6c9d5d4f261fa606347da6ca"
+    ],
+    [
+      "refs/remotes/pull/275",
+      "d75c0490aa0109e3a983c5e6baea2cea1855f956"
+    ],
+    [
+      "refs/remotes/pull/276",
+      "c760e6ccea0d3e4df04bf76e58139d9a7fc9e9e6"
+    ],
+    [
+      "refs/remotes/pull/277",
+      "ac826a2efe428de7dbf290aa5894a2d357d7da0c"
+    ],
+    [
+      "refs/remotes/pull/278",
+      "2e408e3c24c2efad6144bf8953d639edcf9fc489"
+    ],
+    [
+      "refs/remotes/pull/279",
+      "a5f049cd777d3d885ec8e1572f94ea8935c9cbb6"
+    ],
+    [
+      "refs/remotes/pull/28",
+      "f75723672ee382a9dc7683bd00c5bb1a24fc1f24"
+    ],
+    [
+      "refs/remotes/pull/280",
+      "a00fcc14ea11751ce5ca05271e2be32d06dd4535"
+    ],
+    [
+      "refs/remotes/pull/281",
+      "cbabc09e9df8a8190c769164ef0fae44f9c5cb1b"
+    ],
+    [
+      "refs/remotes/pull/282",
+      "552c29453c5de93e22c65e47ad4187ded91e993a"
+    ],
+    [
+      "refs/remotes/pull/283",
+      "6f767ccef8ebfffd1d2373c5124d8a961dc54b41"
+    ],
+    [
+      "refs/remotes/pull/284",
+      "160a60e838742b21f70effedb8e7bb48886d9266"
+    ],
+    [
+      "refs/remotes/pull/285",
+      "67b2bc456c59a510b854b0cdd9e85ed29d00b17d"
+    ],
+    [
+      "refs/remotes/pull/286",
+      "c59ccada97b649366af808a6d83bb465078c9011"
+    ],
+    [
+      "refs/remotes/pull/287",
+      "770c11f40ef70e11dfeb3fbc2f5646cc2b4b97b9"
+    ],
+    [
+      "refs/remotes/pull/288",
+      "d1f7d9aa64b28c8a8ca0a1065bb88e1e2f15b7f0"
+    ],
+    [
+      "refs/remotes/pull/289",
+      "ad4c49282a65d17d2ef23dfcc03e82be065c9021"
+    ],
+    [
+      "refs/remotes/pull/29",
+      "8c78d9479e89f4760546594a16418fd23fa317a1"
+    ],
+    [
+      "refs/remotes/pull/290",
+      "1d5a022d2840c5c071ccece503664c8c961d63f1"
+    ],
+    [
+      "refs/remotes/pull/291",
+      "53f5dd2611b38e3f69f8d72c3ca7cf73e9e896ab"
+    ],
+    [
+      "refs/remotes/pull/292",
+      "cf50b4e8725cb1291ac6150667f2e136f023aff3"
+    ],
+    [
+      "refs/remotes/pull/293",
+      "aacb984e9d627be051ca8c8c3b88d5ceca0ff505"
+    ],
+    [
+      "refs/remotes/pull/294",
+      "e88d748cf9846e04c0c81449976f530519da83a9"
+    ],
+    [
+      "refs/remotes/pull/295",
+      "37d9e47ca202b33f737b15f7af724649db8c3e15"
+    ],
+    [
+      "refs/remotes/pull/296",
+      "3b3ad32f60df9fd6994e25a8920cfb335cc3d602"
+    ],
+    [
+      "refs/remotes/pull/297",
+      "95db052a11cce162d2d633cae805f28119f783a1"
+    ],
+    [
+      "refs/remotes/pull/298",
+      "2d330075fbe00209fbe096ee29b60dcfd0e347b4"
+    ],
+    [
+      "refs/remotes/pull/299",
+      "6a5b6f2609604fe34a8da9cf347c713b21578834"
+    ],
+    [
+      "refs/remotes/pull/3",
+      "7ea7272311271a540a188e5d0de6d3aaa8864611"
+    ],
+    [
+      "refs/remotes/pull/30",
+      "15d8ce87b10ce94a828e6ec4ddf16462596c5ec8"
+    ],
+    [
+      "refs/remotes/pull/300",
+      "45997cfc997b06996a982705e6cd60dc73a8fae1"
+    ],
+    [
+      "refs/remotes/pull/301",
+      "faddea300daf4058d38d24ff04a270be6f3d832b"
+    ],
+    [
+      "refs/remotes/pull/302",
+      "121ffb0bcdd6af4f24e5035389d4709dffddf263"
+    ],
+    [
+      "refs/remotes/pull/303",
+      "2b697222b34359bb46adc90aad69fd0a12708601"
+    ],
+    [
+      "refs/remotes/pull/304",
+      "d8c02caea407f6d323eecd636735849c1eb31a2d"
+    ],
+    [
+      "refs/remotes/pull/305",
+      "16ab88b0626ef05700c4199e926103932312e5c7"
+    ],
+    [
+      "refs/remotes/pull/306",
+      "f6ef1528c15b2281ee7b6f32625d02a5211c926d"
+    ],
+    [
+      "refs/remotes/pull/307",
+      "58fc130631f602b6e907bb054d30c21d810551d4"
+    ],
+    [
+      "refs/remotes/pull/308",
+      "92a411bf02fc8beb00b7a148e39db2bf68efa061"
+    ],
+    [
+      "refs/remotes/pull/309",
+      "3c9d3f074481b2f609330fa49ab9019eb6637849"
+    ],
+    [
+      "refs/remotes/pull/31",
+      "6e8edb67c21ca7a2a6ed5363fceb79ac3227ece4"
+    ],
+    [
+      "refs/remotes/pull/310",
+      "26558cd0723aa5fa6d883f2935ad3c43cef94a86"
+    ],
+    [
+      "refs/remotes/pull/311",
+      "09b032f205f4ffa1838bef56007ebdb7a2308420"
+    ],
+    [
+      "refs/remotes/pull/312",
+      "573829f33c84e9b2d53ba51ebd7f699e39f406fe"
+    ],
+    [
+      "refs/remotes/pull/313",
+      "a4061979547ef88855fbdb085228a42c3be21603"
+    ],
+    [
+      "refs/remotes/pull/314",
+      "b41d6631e679ad2777d248fa087ea71582a5bf63"
+    ],
+    [
+      "refs/remotes/pull/315",
+      "23fbe4a54880319f62f40f3196794f85b6cdaec5"
+    ],
+    [
+      "refs/remotes/pull/316",
+      "f2b6827fc6270b96fb241b0722f2878de5a17361"
+    ],
+    [
+      "refs/remotes/pull/317",
+      "88b0b52281dd314aa72f93819145a73135618bc4"
+    ],
+    [
+      "refs/remotes/pull/318",
+      "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5"
+    ],
+    [
+      "refs/remotes/pull/319",
+      "8d130aefe1be6e737cff1d90d2a5b1658d60a3a6"
+    ],
+    [
+      "refs/remotes/pull/32",
+      "2e9c3d70ed77cd5a6e7d16f1fa33983e282b0124"
+    ],
+    [
+      "refs/remotes/pull/320",
+      "6096e64d4e7b8f0ecc6af884f7d220e07790d85a"
+    ],
+    [
+      "refs/remotes/pull/321",
+      "f851d74d134a09cb9b12013d2c1adba1fde0c24f"
+    ],
+    [
+      "refs/remotes/pull/322",
+      "f2458aae22ea6177be64cfc2fb439a79950f00ff"
+    ],
+    [
+      "refs/remotes/pull/33",
+      "655ecc400123400801078412da5faec46a16740c"
+    ],
+    [
+      "refs/remotes/pull/34",
+      "302387f28b3a6792f331af109311d0a237024ca2"
+    ],
+    [
+      "refs/remotes/pull/37",
+      "b75ac57d85c75e8d61c61af8d104119bb1c65587"
+    ],
+    [
+      "refs/remotes/pull/38",
+      "ce108cd8a98095e0b28257ef9f94e1fd1fd36005"
+    ],
+    [
+      "refs/remotes/pull/4",
+      "2e6618762ab6e15e5be0be60aec3fb8f56af44f3"
+    ],
+    [
+      "refs/remotes/pull/40",
+      "9088bf0e2e452c5d792f2a9e6e879f417e9fc120"
+    ],
+    [
+      "refs/remotes/pull/41",
+      "d0ceb56f30f81f881f1f25fb4d1dba772ff476b9"
+    ],
+    [
+      "refs/remotes/pull/42",
+      "2a5b2fb8d240f558ede688984bfe7f53e1f287a3"
+    ],
+    [
+      "refs/remotes/pull/43",
+      "af15701d13b516662a36f20a00ece01b8462160f"
+    ],
+    [
+      "refs/remotes/pull/44",
+      "48f2eed37bcedaed4d871e42af2a6a7ab4c0f773"
+    ],
+    [
+      "refs/remotes/pull/45",
+      "a20e067d66b906e7f8985f9df38a5ff130e56eab"
+    ],
+    [
+      "refs/remotes/pull/46",
+      "7dc64e5ce70d66590061d9c962dd9c1a11c9fb22"
+    ],
+    [
+      "refs/remotes/pull/47",
+      "37920a005eeb63e1cb49c6c4c265751c2beb3aca"
+    ],
+    [
+      "refs/remotes/pull/48",
+      "24b72112ca3a658d32972d924f83e43247953f1d"
+    ],
+    [
+      "refs/remotes/pull/49",
+      "70be874a3447c379f71e6e81b69674e3e6b581a2"
+    ],
+    [
+      "refs/remotes/pull/5",
+      "b9198705ab4c144746214c1e42c15b6098063009"
+    ],
+    [
+      "refs/remotes/pull/50",
+      "5c0ccdcc06c0661c65be9ca6328f8650a1adaa67"
+    ],
+    [
+      "refs/remotes/pull/51",
+      "42b75e938b4e8f6271118eeaaa712bd649d4fce8"
+    ],
+    [
+      "refs/remotes/pull/52",
+      "166c426102ee62002a7d253d6e42fc0858141ceb"
+    ],
+    [
+      "refs/remotes/pull/53",
+      "697018f6d3a1f31b3a15f92d72a976eb21b5a923"
+    ],
+    [
+      "refs/remotes/pull/54",
+      "24a38ded19a1c19382d47f887d90c8be7721a598"
+    ],
+    [
+      "refs/remotes/pull/55",
+      "86614baeccdaa89d67773ab1a7bdbf0769c4e0fb"
+    ],
+    [
+      "refs/remotes/pull/56",
+      "08b12f1b279d917736cfc17d4b8e447c8f552616"
+    ],
+    [
+      "refs/remotes/pull/57",
+      "d6bd42b509470ab5953af19196aa5ad9c79fa740"
+    ],
+    [
+      "refs/remotes/pull/58",
+      "b93a6adbb1a191f1ac50aa0a840e31a9bc1cc69b"
+    ],
+    [
+      "refs/remotes/pull/59",
+      "a51d97fc7d3848c6fec48b4f63b609757b1d32a1"
+    ],
+    [
+      "refs/remotes/pull/6",
+      "bc00a6912dde57482a301bf64ef6fbc3f324cb92"
+    ],
+    [
+      "refs/remotes/pull/60",
+      "785998a0a9c1c6dda46d81097ce861fb5cd648e4"
+    ],
+    [
+      "refs/remotes/pull/61",
+      "4467d1f3c6e113a7da808a67e8dee9d4aa5083d8"
+    ],
+    [
+      "refs/remotes/pull/62",
+      "b18a12db7ff6d41d931c0e6e810601a48504d852"
+    ],
+    [
+      "refs/remotes/pull/63",
+      "502402684b0d0aa35d7719bb5a3467de035982bc"
+    ],
+    [
+      "refs/remotes/pull/64",
+      "2fa113889d1ffee6b68496993d3b3b6ebb0ba035"
+    ],
+    [
+      "refs/remotes/pull/65",
+      "d3617acf9af7834582b4962a8c149969a7d55a22"
+    ],
+    [
+      "refs/remotes/pull/66",
+      "393d09b6533e2ae1c2bb4f84b18591feef5611a7"
+    ],
+    [
+      "refs/remotes/pull/67",
+      "2174837f3172c3ff2a3c676da106f42b55648a70"
+    ],
+    [
+      "refs/remotes/pull/68",
+      "b7a0f0a45d2de1462367d877b7386091b4d275ce"
+    ],
+    [
+      "refs/remotes/pull/69",
+      "781b36fb60e775ce01bf0c114e6a17b609fdb475"
+    ],
+    [
+      "refs/remotes/pull/7",
+      "1724503d01be7aee13cb43a3a7a28b8a9ff54ece"
+    ],
+    [
+      "refs/remotes/pull/70",
+      "e5bee6fe157c90a40f2d9f458768e2169ce123e5"
+    ],
+    [
+      "refs/remotes/pull/71",
+      "161a88345efc6484f4d7809fc6963a0193bd0057"
+    ],
+    [
+      "refs/remotes/pull/72",
+      "cfd7cfff52f4f9b8b1264e8b7d70ef1bbef2d63f"
+    ],
+    [
+      "refs/remotes/pull/73",
+      "974e2696b692e7d03389f2b9d41f3db008184848"
+    ],
+    [
+      "refs/remotes/pull/74",
+      "0500a78b0d96e54c083613c50a3bacdb8aeecb1c"
+    ],
+    [
+      "refs/remotes/pull/75",
+      "5b9cd96119966c421f9a7f140c1dd8b1211bddb9"
+    ],
+    [
+      "refs/remotes/pull/76",
+      "8ee61c623fa37c5a219f912cf7870bfeddcb1f70"
+    ],
+    [
+      "refs/remotes/pull/77",
+      "cebf38a30ce3d4967ed00a4773f8f9898a9ea708"
+    ],
+    [
+      "refs/remotes/pull/78",
+      "2019a37fa65fc37f4758469143c2daadc07e0098"
+    ],
+    [
+      "refs/remotes/pull/79",
+      "9513bc05229dd7a8460fc229d7420154d61498db"
+    ],
+    [
+      "refs/remotes/pull/8",
+      "48b944fa09c5e1f4946a7f38a4b54e521b4b1eeb"
+    ],
+    [
+      "refs/remotes/pull/80",
+      "89500e12068656fa1958443ef634064effcbc40b"
+    ],
+    [
+      "refs/remotes/pull/81",
+      "0254841e3e635ed717e35abcf83021f001d7df29"
+    ],
+    [
+      "refs/remotes/pull/82",
+      "eaa30013794a9bd0fedc9ec34bbe374d6db0cfc9"
+    ],
+    [
+      "refs/remotes/pull/83",
+      "292dc3953dd2b8f157752d12251aff68b6e5bda5"
+    ],
+    [
+      "refs/remotes/pull/84",
+      "09bb4519d7d8e9ff8f40abcba7e11cb297d8b61e"
+    ],
+    [
+      "refs/remotes/pull/85",
+      "6ae2c079e6cafa2b7bd5396cac443cd34ba7138a"
+    ],
+    [
+      "refs/remotes/pull/86",
+      "ebbd621d4f557905892aee5f7cf8cb7b0e2addc2"
+    ],
+    [
+      "refs/remotes/pull/87",
+      "19153f10780e783bc931739dd26db97d8eaf2b92"
+    ],
+    [
+      "refs/remotes/pull/88",
+      "9c5f9a42b499133b842b14b9619bf8390010e1ff"
+    ],
+    [
+      "refs/remotes/pull/89",
+      "8c7288276d3e49b7794b7fd80db4b02d5891cf00"
+    ],
+    [
+      "refs/remotes/pull/9",
+      "5db597257decc219db520c0dab8369b4d4e2ea5e"
+    ],
+    [
+      "refs/remotes/pull/90",
+      "941c617b6854291e2448cad6d7d5710a24a8543d"
+    ],
+    [
+      "refs/remotes/pull/91",
+      "9622704d5c751d55700c4b642111131a7135d139"
+    ],
+    [
+      "refs/remotes/pull/92",
+      "6e71bfabbf5ef75449b46981e9e822f7e555a6bf"
+    ],
+    [
+      "refs/remotes/pull/93",
+      "ddb2ff077a21c1f0053ba8079564f6f86c3e155f"
+    ],
+    [
+      "refs/remotes/pull/94",
+      "27b0a48bb8007f504b4a127a099136a6ea5c00b7"
+    ],
+    [
+      "refs/remotes/pull/95",
+      "9c5fe67bd10a5d1342440bb8ea6a524cca3ce1f2"
+    ],
+    [
+      "refs/remotes/pull/96",
+      "f6b7545bcc7a161440ab7119233c204510571370"
+    ],
+    [
+      "refs/remotes/pull/97",
+      "ecc4f2054c00dc2b324bb71134595c48dc4b6a18"
+    ],
+    [
+      "refs/remotes/pull/98",
+      "ad8fbe9f2f041653760c02e9d18a91a66dd11c39"
+    ],
+    [
+      "refs/remotes/pull/99",
+      "22ff025a7710d07d7ad74be2c8f7cc0b4db0daf7"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.101",
+      "4d9fa9f06b1f744fc948413167a97f4241313666"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.103",
+      "0a4bc09bb0f658a8b39a799e489b0239620504f0"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.1035",
+      "1836eb120571bb3c3a09fd3014447498621e2103"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.109",
+      "3c1e81cb29ed99bc152f3a8d2e1faf45d373a2f5"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.110",
+      "f0086f797556afca5848c2b68a3819be5c0c0064"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.112",
+      "0ec471016d2838a90753e014a0d647dd90168e87"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.116",
+      "f1d95e154738e8cfc99f91d6f2bc06615f7bf1b1"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.117",
+      "34d2b480921769fa699997993265e2b4d10ce15e"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.118",
+      "1e6703a81c068201758179f5ac884e4fd5375eb7"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.120",
+      "58578e176ff420f0e80eb1d41c740d43bd01ea4a"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.127",
+      "7cdb12053dd053e6a4a444a2a70e24a06ce0b4ed"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.129",
+      "df6004ffb1eac44d12c58bc987d8ee694680306f"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.13",
+      "5667b759f553e946885d0998953c301666907de6"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.131",
+      "b7e819a3b4ff580654d37a666117f1b3305a051b"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.142",
+      "ac97541bc88582745e268df6101d71c5b07efa69"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.144",
+      "f689d33f506c8ce37e626712c042f8560523e02c"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.146",
+      "cda7fe8630a76ff321f9cbd114b4a69fe7d9a71a"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.148",
+      "29a4d3f3a76ac398fe53b9f47dd5d2fa7341cf99"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.158",
+      "011e20c36e307717e5a32fe790ce0030631751b6"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.162",
+      "b38ad2bc35fa670398a85c25e349a6b8d64f30c0"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.163",
+      "4fa554a05a5051f0ae2da749ad12e2ec92e094dd"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.167",
+      "cb25132b0ebd12abb2f15bdc60324b8d177bef25"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.176",
+      "9403d1dc92537cee4341db21b3b48cb4a5ac183f"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.177",
+      "1560531c7522b10fa5d18ef744ac5a068936ef31"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.202",
+      "67e5a6c6919ee711c99d334ed58e3e91298c3038"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.21",
+      "97dda86615fd21a74ad0568301b24368e9efd070"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.211",
+      "46dfac1751a2d7d1fe9d296a53535c2ed95e3c6c"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.220",
+      "ea5be5ea5a2c3db75eac176ed7b4303df07624b3"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.222",
+      "0142c5de8081d3d017eca4b6b727c128533e304f"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.225",
+      "98182e514c0fe6fd5840634358905c6df23f7f1c"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.243",
+      "c2070cf8b4e7b0ade76cb000a5805009754eec55"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.281",
+      "21a005e242177f07a984937a7cd924e826c17b9f"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.29",
+      "0f1b4ce5a0b51526fdceb5533f0553321899fd2a"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.36",
+      "736332cf63d3c7927f5c17f4aea5150f624bf957"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.372",
+      "eb0960710216bb0ebb4053597f6f12d1cbd183fc"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.402",
+      "70e33fd77570329ba23afc58a38616270636d37c"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.505",
+      "08f6a5ff5bb4304287aec2ab30546d841c63665a"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.541",
+      "94bd6a41ca309d7110e077c3a3d7a6fca07bdaf2"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.543",
+      "f4063c3cc7e0c9d02d972e798699ad206628a5f1"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.62",
+      "4848c5479658a68fbf16bb6caebf369476472e56"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.63",
+      "615b9354fe8b5a8954d71f212ecf76f5a8d08c0e"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.698",
+      "6579ed83211b7ff2039e3152728ac1cddc3e93d6"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.70",
+      "2148a3fba9d41a11cd0d60215b4c7926196bf4fc"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.72",
+      "2d889417ed2e43d28485dac267d0da1ce2b29e6c"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.736",
+      "ce8c65bf41541cf6adb52289d2a530ce2817a53a"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.751",
+      "b77d84e5decf736b031f0a24094001274de41178"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.8",
+      "e7bd3dd4ac908adea3442056852f916ee3ea0b38"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.80",
+      "0d22e9cdd833528e7b355051613c9deceb929f52"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.82",
+      "1223cdd5517c2d49423210a6c7a35b5946679a07"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.85",
+      "20a843348dc125346af346ec32c815c469c67283"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.90",
+      "7eea00147d2c9c898725c973aa2854aabcdeff9a"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.907",
+      "d02b94bcedb29dae201941f01f2c94d42ebbb297"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.926",
+      "365bf1f20f481d7c49c4d15bd90a3bde4b697038"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.95",
+      "cae86740db7ba7d1fbe33212997a782ddf5df08c"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.96",
+      "6764acb5dc99e39c94655188a1548225c10ac656"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.97",
+      "e43611651c3a08ba47d9d66cb0d77f4d40fca818"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.972",
+      "a6f6eb1169208b253e4f7fac7bf034443447fcd2"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.98",
+      "be8577c0344023a0c2f7e3a43aeed2daa2c5d950"
+    ],
+    [
+      "refs/tags/v0.1.0-beta.991",
+      "77055d4f0f435a457ae6d7d9e9a1d78f4ef8601b"
+    ]
+  ],
+  "scan_version": 1,
+  "scope": "All reachable history at the captured refs for the eight named KB implementation paths; token search is supporting evidence, method publication calls and record fields are retained for semantic review.",
+  "service_method_families": {
+    "054cbf136d94f36048530b9885d288c73d3f7da0619ca48e00cdd8c6dc4dee21": [
+      "7bf9eca283ceb96bc0a5aa89be8d5644e37d4d1b",
+      "7601c2a45f29552049143fa6cc4170ad52a271f9",
+      "e01cf10e10b94a6c31c03cc1c74c2d9b17931a25",
+      "6e72d4523ef4acca323e3075d1e1161e1919343d",
+      "b48f0f10888c8a301457f315a2f54cb3744fc5dc"
+    ],
+    "268ba0b4d662b94e5d0399ef58b6d21ab9b37cedf7767ac4da21e48f1fda5e17": [
+      "d09d0c55bc550abee960c0d27f6d81b5779998cd"
+    ],
+    "2b77cb645a18fba5586744ed49c8e281766af6d782c88b83c5c006479dce5756": [
+      "fc687d1f02fdc1bff414c9fca32785f744e3c636",
+      "d40b4b2a12c24275604611eae6b97c34495376e1",
+      "ca036db7f5391579a0c7a4b2e5c6066826fee4d1",
+      "f2e116482ea43a3ee1bb16a2db07e2e195d7b708"
+    ],
+    "48eaf035cf2eff12708b83f7cb201e29624668746c6abd06ee36410833699f55": [
+      "eb186644fceaa12a0bbfd0bffeb6cb58dbd5e7de"
+    ],
+    "4c462fe0a67d3a61d143b4f158a57ef36a107ff1fe12f78926529c50de0ae235": [
+      "910f31ebd6b4d6740b1e5ba8b852789cd61f7dbc"
+    ],
+    "6997d9555b3f523c281d9722b50eae4e01b85cfe0f01c9c5711a9c96d252fbdb": [
+      "bf574cdc825706dcdb26fc5c639744d22930c62b"
+    ],
+    "7d1d030b31b049ee00fb67c25179cf344ac776c369165ade1944565af6d25343": [
+      "32bdb9c82aa921f97db658819047a46584ddafad",
+      "78240ba2bd0935e179a9126b60bcf5c0c77ed3cb",
+      "3ee62debb6e0967dbde63b0f4748324332bd8220"
+    ],
+    "8c3aee042277618dbedc2716746a6a8ca358dbddc6cb52e71bd0d29c3ae76409": [
+      "25fb333561aeae79ef079f202a5aa30da24aa8bd",
+      "d27b92e36153cf40b99b7784b755f2ee76d855cf",
+      "b6d310621eddc206820306abc7238bdf37605b2b"
+    ],
+    "9847770c6316b5adc9b96bb8213b4d383185e11721896c443b899fd68921d8b1": [
+      "e08172348a066bfd72d66d25ac96d1b72b3e4b34"
+    ],
+    "98bdbf29e0083d857ecd504dedac3661c3a271a6129dbcdc406e4c95e97ba520": [
+      "44f187d5cd50a39ced5084de8f4b668d0792521f"
+    ],
+    "9eef9c5d759d61e8f20ef0e95f43b414daf019f181c7176c84368a57c4acb3bc": [
+      "385d47a86e05ae572182c9db0a25be775fc55434",
+      "f8c2072ef41fb1c054b8e4cb0762a6247c457f8b",
+      "ef502ea9923d3301c02f6c208f49e2b47702f2a4",
+      "fea8d13fe5e3fb6e4295992b2cce80ec1fc8390e",
+      "741b99ad12b2141971ba94881d9d86e544e8c9b0",
+      "40752a85a00de9dd510fcafd84e953070718a834",
+      "af39a6230e306d7cce201ab382cad37a9f75c042",
+      "8fb1afb825198aeeb025c7c69f4609665a5acd41",
+      "2e456bcacf298e1b1c369e9a7703961b9eba2f3d",
+      "3fe6625e32b507fc84428ff1d1bcf508c2d7a1da"
+    ],
+    "a358087974d96090a4dcbd6fec629b14b4fb93882e5affcb68e5b3c77532c237": [
+      "74ddfd80e6d00d71ba6b06d98f010087e4f6d57e"
+    ],
+    "a68999a5ae26e1b319266c70d46f0b9659e24a7cf3900eb60c2e2f11df67db84": [
+      "4861bd330c308642fe5a2e1db30b070cb986a909",
+      "4af504be6f97af2066a1e357c8634434342249c2"
+    ],
+    "cf8fb2e7d0be6d61b1db4ae811b09559d69a0dee5122715495dc2f7a83cf4558": [
+      "685d04e125c0f72e4cc339a9184d6c7077d24873"
+    ]
+  },
+  "worktree_base": "860fdf24d228fa49dd41d5cf7050b88048442f0e"
+}

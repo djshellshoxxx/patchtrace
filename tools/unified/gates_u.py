@@ -442,6 +442,17 @@ def _read(path: str) -> bytes:
         raise ContractError(f'cannot read {path}: {exc.strerror or exc}') from None
 
 
+def _read_junit(path: str) -> bytes:
+    try:
+        with Path(path).open('rb') as stream:
+            data = stream.read(MAX_JUNIT_BYTES + 1)
+    except OSError as exc:
+        raise ContractError(f'cannot read {path}: {exc.strerror or exc}') from None
+    if len(data) > MAX_JUNIT_BYTES:
+        raise ContractError('the JUnit file is larger than 8 MiB')
+    return data
+
+
 def expand_inputs(directory: str) -> dict[str, list[str]]:
     """The files of a download directory by role, sorted; links and sub-directories are ignored, never followed."""
     root = Path(directory)
@@ -491,13 +502,15 @@ def main(argv: Sequence[str] | None = None) -> int:
         inputs.benches, inputs.digests['bench'] = [bench.load(r) for r in raws], [hashlib.sha256(r).hexdigest() for r in raws]
         raws = [_read(p) for p in args.outcomes]
         inputs.outcomes, inputs.digests['outcomes'] = [outcomes.load(r) for r in raws], [hashlib.sha256(r).hexdigest() for r in raws]
-        raws = [_read(p) for p in args.junit]
-        if raws:
+        del raws
+        if args.junit:
             inputs.junit = {}
-            for raw in raws:
+            inputs.digests['junit'] = []
+            for path in args.junit:
+                raw = _read_junit(path)
                 for key, results in parse_junit(raw).items():
                     inputs.junit.setdefault(key, []).extend(results)
-            inputs.digests['junit'] = [hashlib.sha256(r).hexdigest() for r in raws]
+                inputs.digests['junit'].append(hashlib.sha256(raw).hexdigest())
         report = build_report(inputs)
     except ContractError as exc:
         print(f'error: {exc}', file=sys.stderr)

@@ -1,0 +1,691 @@
+{
+  "$defs": {
+    "AcquisitionRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "enum": [
+            "GET",
+            "HEAD"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "target": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Target",
+          "type": "string"
+        }
+      },
+      "required": [
+        "method",
+        "target"
+      ],
+      "title": "AcquisitionRequest",
+      "type": "object"
+    },
+    "AcquisitionSource": {
+      "additionalProperties": false,
+      "properties": {
+        "newer": {
+          "$ref": "#/$defs/IndexEntry"
+        },
+        "older": {
+          "$ref": "#/$defs/IndexEntry"
+        },
+        "proposal": {
+          "$ref": "#/$defs/PairProposal"
+        }
+      },
+      "required": [
+        "proposal",
+        "older",
+        "newer"
+      ],
+      "title": "AcquisitionSource",
+      "type": "object"
+    },
+    "BinaryRef": {
+      "additionalProperties": false,
+      "properties": {
+        "authenticity": {
+          "enum": [
+            "hash-matched-to-index",
+            "signature-unknown",
+            "embedded-signature-valid",
+            "unverified-local-file",
+            "hash-mismatch"
+          ],
+          "title": "Authenticity",
+          "type": "string"
+        },
+        "availability": {
+          "enum": [
+            "local",
+            "direct",
+            "candidates",
+            "delta-only",
+            "unavailable"
+          ],
+          "title": "Availability",
+          "type": "string"
+        },
+        "basename": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Basename",
+          "type": "string"
+        },
+        "build_ubr": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{1,6}\\.[0-9]{1,6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Build Ubr"
+        },
+        "contract": {
+          "const": "kbcorrelation/1",
+          "default": "kbcorrelation/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "file_version": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{1,5}(\\.[0-9]{1,5}){3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "File Version"
+        },
+        "machine": {
+          "enum": [
+            "amd64",
+            "arm64",
+            "x86",
+            "unknown"
+          ],
+          "title": "Machine",
+          "type": "string"
+        },
+        "origin": {
+          "enum": [
+            "index-row",
+            "local-file",
+            "download"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "size": {
+          "minimum": 0,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "sha256",
+        "size",
+        "basename",
+        "machine",
+        "origin",
+        "availability",
+        "authenticity"
+      ],
+      "title": "BinaryRef",
+      "type": "object"
+    },
+    "DownloadReceipt": {
+      "additionalProperties": false,
+      "properties": {
+        "format": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Format",
+          "type": "string"
+        },
+        "redirect_host": {
+          "anyOf": [
+            {
+              "maxLength": 253,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Redirect Host"
+        },
+        "retrieved_at": {
+          "maxLength": 40,
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,9})?(Z|[+-][0-9]{2}:[0-9]{2})$",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "side": {
+          "enum": [
+            "older",
+            "newer"
+          ],
+          "title": "Side",
+          "type": "string"
+        },
+        "size": {
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "source_url": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Source Url",
+          "type": "string"
+        },
+        "winbindex_record_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Winbindex Record Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "side",
+        "sha256",
+        "size",
+        "format",
+        "source_url",
+        "redirect_host",
+        "retrieved_at",
+        "winbindex_record_sha256"
+      ],
+      "title": "DownloadReceipt",
+      "type": "object"
+    },
+    "IndexEntry": {
+      "additionalProperties": false,
+      "description": "Exactly one normalized Winbindex delivery row, not an asserted resolver endpoint.",
+      "properties": {
+        "download": {
+          "enum": [
+            "direct",
+            "candidates",
+            "unavailable"
+          ],
+          "title": "Download",
+          "type": "string"
+        },
+        "download_url": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Download Url"
+        },
+        "file_name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "File Name",
+          "type": "string"
+        },
+        "file_version": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "File Version"
+        },
+        "heading": {
+          "maxLength": 300,
+          "title": "Heading",
+          "type": "string"
+        },
+        "heading_class": {
+          "enum": [
+            "standard",
+            "preview",
+            "out-of-band",
+            "expired",
+            "none"
+          ],
+          "title": "Heading Class",
+          "type": "string"
+        },
+        "kb": {
+          "anyOf": [
+            {
+              "pattern": "^KB[0-9]{4,10}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Kb"
+        },
+        "last_section_raw": {
+          "anyOf": [
+            {
+              "maximum": 4294967295,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Last Section Raw"
+        },
+        "last_section_va": {
+          "anyOf": [
+            {
+              "maximum": 4294967295,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Last Section Va"
+        },
+        "machine_type": {
+          "anyOf": [
+            {
+              "maximum": 65535,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Machine Type"
+        },
+        "other_versions": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,39}$",
+            "type": "string"
+          },
+          "maxItems": 4096,
+          "title": "Other Versions",
+          "type": "array"
+        },
+        "record_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Record Sha256",
+          "type": "string"
+        },
+        "release_date": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Release Date"
+        },
+        "release_version": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Release Version"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "maximum": 4294967295,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Size"
+        },
+        "source": {
+          "pattern": "^winbindex@[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "title": "Source",
+          "type": "string"
+        },
+        "timestamp": {
+          "anyOf": [
+            {
+              "maximum": 4294967295,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Timestamp"
+        },
+        "variant": {
+          "enum": [
+            "full",
+            "delta+",
+            "delta",
+            "raw"
+          ],
+          "title": "Variant",
+          "type": "string"
+        },
+        "version_key": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,39}$",
+          "title": "Version Key",
+          "type": "string"
+        },
+        "virtual_size": {
+          "anyOf": [
+            {
+              "maximum": 4294967295,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Virtual Size"
+        }
+      },
+      "required": [
+        "file_name",
+        "sha256",
+        "version_key",
+        "kb",
+        "release_date",
+        "release_version",
+        "heading",
+        "heading_class",
+        "other_versions",
+        "variant",
+        "download",
+        "size",
+        "machine_type",
+        "timestamp",
+        "virtual_size",
+        "last_section_va",
+        "last_section_raw",
+        "file_version",
+        "record_sha256",
+        "source"
+      ],
+      "title": "IndexEntry",
+      "type": "object"
+    },
+    "PairProposal": {
+      "additionalProperties": false,
+      "description": "A proposed older/newer pair. Three orthogonal proofs (bytes, lineage, fix boundary) plus reason codes; the\ngrade is derived from them and never exceeds what they support.",
+      "properties": {
+        "bytes_state": {
+          "enum": [
+            "verified",
+            "pending",
+            "mismatch",
+            "incompatible"
+          ],
+          "title": "Bytes State",
+          "type": "string"
+        },
+        "contract": {
+          "const": "kbcorrelation/1",
+          "default": "kbcorrelation/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "fix_boundary": {
+          "enum": [
+            "source-supported",
+            "unverified",
+            "contradicted"
+          ],
+          "title": "Fix Boundary",
+          "type": "string"
+        },
+        "grade": {
+          "enum": [
+            "A",
+            "B",
+            "X"
+          ],
+          "title": "Grade",
+          "type": "string"
+        },
+        "lineage_state": {
+          "enum": [
+            "index-adjacent",
+            "compatible-branch",
+            "user-asserted",
+            "unverified",
+            "incompatible"
+          ],
+          "title": "Lineage State",
+          "type": "string"
+        },
+        "newer": {
+          "$ref": "#/$defs/BinaryRef"
+        },
+        "older": {
+          "$ref": "#/$defs/BinaryRef"
+        },
+        "pair_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Pair Id",
+          "type": "string"
+        },
+        "reason_codes": {
+          "default": [],
+          "items": {
+            "enum": [
+              "IDENTICAL_CONTENT",
+              "DELTA_ONLY",
+              "ARCH",
+              "CROSS_PRODUCT",
+              "ORDER_UNVERIFIED",
+              "DIGEST_MISMATCH",
+              "NO_OLDER",
+              "NO_NEWER",
+              "WINDOW_CONFOUNDED",
+              "SERVER_NOT_COVERED",
+              "NAME_MISMATCH",
+              "INDEX_GAP"
+            ],
+            "type": "string"
+          },
+          "title": "Reason Codes",
+          "type": "array"
+        },
+        "scope_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Scope Id",
+          "type": "string"
+        },
+        "tier": {
+          "enum": [
+            "A",
+            "B",
+            "C",
+            "D",
+            "E"
+          ],
+          "title": "Tier",
+          "type": "string"
+        },
+        "window": {
+          "default": [],
+          "items": {
+            "pattern": "^KB[0-9]{4,10}$",
+            "type": "string"
+          },
+          "title": "Window",
+          "type": "array"
+        },
+        "window_complete": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Window Complete"
+        },
+        "window_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Window Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pair_id",
+        "older",
+        "newer",
+        "scope_id",
+        "window_id",
+        "bytes_state",
+        "lineage_state",
+        "fix_boundary",
+        "grade",
+        "tier"
+      ],
+      "title": "PairProposal",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/kbcorrelation/1/AcquisitionEvidence.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "kbcorrelation/1",
+      "default": "kbcorrelation/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "downloads": {
+      "items": {
+        "$ref": "#/$defs/DownloadReceipt"
+      },
+      "maxItems": 2,
+      "minItems": 2,
+      "title": "Downloads",
+      "type": "array"
+    },
+    "evidence_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Evidence Id",
+      "type": "string"
+    },
+    "evidence_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Evidence Version",
+      "type": "integer"
+    },
+    "hosts": {
+      "items": {
+        "maxLength": 1000,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 8,
+      "minItems": 1,
+      "title": "Hosts",
+      "type": "array"
+    },
+    "investigation_id": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "title": "Investigation Id",
+      "type": "string"
+    },
+    "plan_sha": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Plan Sha",
+      "type": "string"
+    },
+    "preview_revision": {
+      "minimum": 1,
+      "title": "Preview Revision",
+      "type": "integer"
+    },
+    "requests": {
+      "items": {
+        "$ref": "#/$defs/AcquisitionRequest"
+      },
+      "maxItems": 514,
+      "minItems": 2,
+      "title": "Requests",
+      "type": "array"
+    },
+    "source": {
+      "$ref": "#/$defs/AcquisitionSource"
+    },
+    "verified_pair": {
+      "$ref": "#/$defs/PairProposal"
+    }
+  },
+  "required": [
+    "evidence_id",
+    "investigation_id",
+    "preview_revision",
+    "plan_sha",
+    "source",
+    "hosts",
+    "requests",
+    "verified_pair",
+    "downloads"
+  ],
+  "title": "AcquisitionEvidence",
+  "type": "object"
+}

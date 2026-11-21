@@ -14,9 +14,12 @@ by ``SnapshotProjectPort`` (store-threading-spec section 4a).
 """
 from __future__ import annotations
 
+import errno
 import hashlib
 import json
+import os
 import re
+import stat
 import struct
 from collections.abc import Mapping, Sequence
 from pathlib import Path
@@ -42,52 +45,89 @@ class WorkspaceFileIndex:
 
     def __init__(self, root: Path):
         self.directory = Path(root) / INDEX_DIR
-        self._skipped: dict[str, int] = {}
+
+    def _check_directory(self) -> None:
+        if self.directory.is_symlink() or self.directory.is_junction():
+            raise KbcStoreError('PT-KBC-SOURCE', 'the workspace Winbindex directory is an alias')
 
     def _record(self, file_name: str) -> tuple[Path, str, bool] | None:
+        self._check_directory()
         found = []
         if self.directory.is_dir():
             for path in self.directory.iterdir():
                 match = INDEX_RECORD.fullmatch(path.name)
-                if match and match['name'] == file_name and path.is_file():
+                if match and match['name'] == file_name:
+                    if path.is_symlink() or path.is_junction():
+                        raise KbcStoreError('PT-KBC-SOURCE', 'the workspace Winbindex record is an alias')
+                    if not path.is_file():
+                        raise KbcStoreError('PT-KBC-SOURCE', 'the workspace Winbindex record is not regular')
                     found.append((match['date'], path, bool(match['gz'])))
         if not found:
             return None
-        date, path, gz = max(found, key=lambda f: f[0])
+        newest = max(item[0] for item in found)
+        selected = [item for item in found if item[0] == newest]
+        if len(selected) != 1:
+            raise KbcStoreError('PT-KBC-SOURCE', 'ambiguous same-date Winbindex records; remove the conflict')
+        date, path, gz = selected[0]
         return path, date, gz
 
     def available(self) -> bool:
+        self._check_directory()
         return self.directory.is_dir() and any(INDEX_RECORD.fullmatch(p.name) for p in self.directory.iterdir())
 
-    def rows_for(self, file_name: str, winbindex_key: str) -> list[dict]:
-        """Every row of the file's record; ``winbindex_key`` is applied later by ``lineage.timeline`` because shared
-        rows are copied between keys. A missing record is no rows."""
+    def _read_rows(self, file_name: str) -> tuple[list[dict], int]:
+        """Return mappings and rejected source units from one record read.
+
+        The rejection count travels with its rows, never through shared
+        adapter state that another read can change before conversion.
+        """
         from ..acquisition.contracts import AcquisitionError
         from ..acquisition.winbindex import MAX_COMPRESSED, parse_rows
         found = self._record(file_name)
         if found is None:
-            return []
+            return [], 0
         path, date, compressed = found
         try:
-            if path.stat().st_size > MAX_COMPRESSED:
+            # A path-size probe can become stale between stat and read. Read no more
+            # than the accepted budget plus one sentinel byte from the opened file.
+            def no_follow_open(name, flags):
+                # The post-scan path may now be an alias or a FIFO. Use the host's
+                # no-follow admission when available and never wait on a FIFO open.
+                return os.open(name, flags | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0))
+
+            with open(path, 'rb', opener=no_follow_open) as handle:
+                if not stat.S_ISREG(os.fstat(handle.fileno()).st_mode):
+                    raise KbcStoreError('PT-KBC-SOURCE', 'the opened Winbindex record is not regular')
+                raw = handle.read(MAX_COMPRESSED + 1)
+            if len(raw) > MAX_COMPRESSED:
                 raise KbcStoreError('PT-KBC-LIMIT', 'a Winbindex record in the workspace exceeds its size limit')
-            parsed = parse_rows(path.read_bytes(), file_name, date, compressed=compressed)
-        except OSError:
+            parsed = parse_rows(raw, file_name, date, compressed=compressed)
+        except OSError as exc:
+            if exc.errno == errno.ELOOP:
+                raise KbcStoreError('PT-KBC-SOURCE', 'the Winbindex record changed into an alias') from None
+            if exc.errno == errno.EISDIR:
+                raise KbcStoreError('PT-KBC-SOURCE', 'the opened Winbindex record is not regular') from None
             raise KbcStoreError('PT-KBC-INPUT', 'a Winbindex record in the workspace cannot be read') from None
         except AcquisitionError as exc:
             raise KbcStoreError('PT-KBC-SOURCE', f'a Winbindex record in the workspace is unusable: {exc.message}'
                                 ) from None
-        self._skipped[file_name] = parsed.skipped
-        return [row.as_mapping() for row in parsed.rows]
+        # Count malformed SHA entries and unreadable version/KB bodies only
+        # for this same held record. Lineage conversion may add later rejects.
+        return [row.as_mapping() for row in parsed.rows], parsed.skipped + parsed.skipped_bodies
+
+    def rows_for(self, file_name: str, winbindex_key: str) -> list[dict]:
+        """Every row of the file's record; downstream timeline chooses the version key."""
+        mappings, _skipped = self._read_rows(file_name)
+        return mappings
 
     def has_record(self, file_name: str) -> bool:
         return self._record(file_name) is not None
 
     def rows(self, file_name: str, winbindex_key: str) -> tuple[tuple[IndexRow, ...], int]:
         """Index rows and the number of index entries that could not become rows (a gap in coverage)."""
-        mappings = self.rows_for(file_name, winbindex_key)
+        mappings, skipped = self._read_rows(file_name)
         rows, rejected = index_rows(mappings, file_name=file_name)
-        return rows, self._skipped.get(file_name, 0) + rejected
+        return rows, skipped + rejected
 
 
 def save_winbindex_record(root: Path, source: Path, file_name: str, data_date: str) -> dict:
@@ -100,7 +140,14 @@ def save_winbindex_record(root: Path, source: Path, file_name: str, data_date: s
     from ..acquisition.winbindex import MAX_COMPRESSED, parse_rows
     name = normalise_file(file_name)
     try:
-        with open(source, 'rb') as handle:
+        def source_open(path, flags):
+            # A user-selected local file must not block on a substituted FIFO.
+            # Keep existing symlink-to-regular-file import compatibility.
+            return os.open(path, flags | getattr(os, 'O_NONBLOCK', 0))
+
+        with open(source, 'rb', opener=source_open) as handle:
+            if not stat.S_ISREG(os.fstat(handle.fileno()).st_mode):
+                raise KbcStoreError('PT-KBC-INPUT', 'the Winbindex source is not a regular file')
             raw = handle.read(MAX_COMPRESSED + 1)
     except OSError:
         raise KbcStoreError('PT-KBC-INPUT', 'the Winbindex record cannot be read') from None
@@ -127,7 +174,8 @@ def save_winbindex_record(root: Path, source: Path, file_name: str, data_date: s
         raise KbcStoreError('PT-KBC-STORAGE', 'the workspace cannot be written') from None
     return {'file_name': name, 'data_date': data_date, 'stored_as': f'{INDEX_DIR}/{target.name}',
             'sha256': hashlib.sha256(raw).hexdigest(), 'bytes': len(raw), 'rows': len(parsed.rows),
-            'skipped': parsed.skipped, 'warnings': list(parsed.warnings), 'replaced': replaced}
+            'skipped': parsed.skipped, 'skipped_bodies': parsed.skipped_bodies,
+            'warnings': list(parsed.warnings), 'replaced': replaced}
 
 
 class IntelligenceAdvisory:
@@ -298,14 +346,64 @@ class RealProjectPort:
         finally:
             service.close()
 
+    @staticmethod
+    def _owned_acquisition(service, project_id: str, body: bytes):
+        from .acquisition_evidence import read_evidence
+        try:
+            evidence = read_evidence(body)
+            sides = {a.side: a.sha256 for a in service.project.artifacts}
+            if service.store.project_id != project_id or (evidence.verified_pair.older.sha256,
+                                                          evidence.verified_pair.newer.sha256) != (
+                    sides.get('older'), sides.get('newer')):
+                raise ValueError('acquisition evidence belongs to another project pair')
+            return evidence
+        except (ValueError, TypeError):
+            raise KbcStoreError('PT-KBC-VERIFY', 'the acquisition row has invalid identity or ownership') from None
+
+    def write_acquisition_sidecar(self, project_id: str, body: bytes) -> None:
+        from ..owned_publication import OwnedPublicationError, directory_anchor, publish_bytes
+        from ..service import ProjectService
+        from .acquisition_evidence import MAX_EVIDENCE_BYTES
+        try:
+            root = self._directory(project_id)
+            anchor = directory_anchor(root)
+            with ProjectService.open(root, maintenance=False) as service:
+                evidence = self._owned_acquisition(service, project_id, body)
+                data = evidence.as_bytes()
+
+                def identical(prior):
+                    if prior != data:
+                        raise KbcStoreError('PT-KBC-STATE', 'the acquisition sidecar already holds different evidence')
+
+                publish_bytes(root / evidence.relative_path, data, validate_existing=identical,
+                              maximum=MAX_EVIDENCE_BYTES, anchor=anchor)
+        except (OwnedPublicationError, NotImplementedError):
+            raise KbcStoreError('PT-KBC-STORAGE', 'the acquisition sidecar cannot preserve publication ownership'
+                                ) from None
+
     def put_row(self, project_id: str, kind: str, key: str, body: bytes) -> None:
         from ..enrichment.storage import EnrichmentStore, Guard
         from ..service import ProjectService
+        from .acquisition_evidence import MAX_EVIDENCE_BYTES, read_evidence
         service = ProjectService.open(self._directory(project_id), maintenance=False)
         try:
+            storage = EnrichmentStore(service.store)
+            if kind == 'kb-acquisition':
+                try:
+                    evidence = self._owned_acquisition(service, project_id, body)
+                    if evidence.evidence_id != key:
+                        raise ValueError('acquisition row has another content identity')
+                    prior = storage.entry(kind, f'{kind}:{key}', max_bytes=MAX_EVIDENCE_BYTES)
+                    if prior is not None:
+                        if prior.guard.project_id != service.store.project_id or read_evidence(
+                                prior.body_json.encode('utf-8')) != evidence:
+                            raise ValueError('acquisition row already holds different evidence')
+                        return  # identical content is immutable; keep its original publication receipt
+                except (ValueError, TypeError):
+                    raise KbcStoreError('PT-KBC-VERIFY', 'the acquisition row has invalid identity or ownership'
+                                        ) from None
             guard = Guard(project_id, 'kb', hashlib.sha256(body).hexdigest(), f'{kind}:{key}')
-            EnrichmentStore(service.store).publish(kind, guard, guard, service.project.revision, 'ok',
-                                                   json.loads(body), f'{kind}:{key}')
+            storage.publish(kind, guard, guard, service.project.revision, 'ok', json.loads(body), f'{kind}:{key}')
         finally:
             service.close()
 
@@ -349,6 +447,9 @@ class SnapshotProjectPort:
         return self.list_rows(project_id, kind).get(key)
 
     def create_project(self, older_path: str, newer_path: str, *, directory: str) -> Mapping[str, Any]:
+        raise KbcStoreError('PT-KBC-UNSUPPORTED', 'a project snapshot is read-only')
+
+    def write_acquisition_sidecar(self, project_id: str, body: bytes) -> None:
         raise KbcStoreError('PT-KBC-UNSUPPORTED', 'a project snapshot is read-only')
 
     def put_row(self, project_id: str, kind: str, key: str, body: bytes) -> None:

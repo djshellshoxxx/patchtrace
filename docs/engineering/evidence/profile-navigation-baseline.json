@@ -1,0 +1,31 @@
+{
+  "source_baseline": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+  "source_test_commit": "8d130aefe1be6e737cff1d90d2a5b1658d60a3a6",
+  "source_test_path": "tests/test_ui_profile_navigation.py",
+  "source_test_blob": "3f528304506ac7e856527e4548909231fc22e19e",
+  "test_sha256": "783a4fa950a9bfc844655fde4c026d4765077c112a3effd0e1ce9bc98362cbad",
+  "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src /workspace/scratch/4c8dc848d760/venv/bin/python -m pytest -q /workspace/scratch/4c8dc848d760/archaeology-evidence/test_ui_profile_navigation.py --junitxml=/workspace/scratch/4c8dc848d760/archaeology-evidence/profile-baseline.xml",
+  "cwd": "/workspace/scratch/4c8dc848d760/pt-archaeology",
+  "python": "3.12.14",
+  "pytest": "9.2.0",
+  "PySide6": "6.12.0",
+  "pydantic": "2.14.2",
+  "passed": 1,
+  "failed": 8,
+  "seconds": 1.09,
+  "exit_code": 1,
+  "limitations": [
+    "Authored offscreen Qt regression, not native acceptance.",
+    "No production source changes in this worker."
+  ],
+  "files": {
+    "profile-navigation-baseline.log": {
+      "sha256": "74518cdb8dc3b15c676a031462674f4d450ca8555fa6be45394c5cf82447a783",
+      "bytes": 7009
+    },
+    "profile-navigation-baseline.xml": {
+      "sha256": "5d868f9702668c43106777ac099b662efe00fead672082259a3b52538c85b2c7",
+      "bytes": 7412
+    }
+  }
+}

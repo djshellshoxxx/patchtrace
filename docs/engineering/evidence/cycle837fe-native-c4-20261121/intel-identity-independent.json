@@ -1,0 +1,105 @@
+{
+  "reviewed_head": "d628749401f61d3653b5e066ff38245b938c5dcd",
+  "reviewed_tree": "5d4f2d3beff122b352d0d62a15ea0800c578c0b9",
+  "base_head": "daee337c48c63dda8aeac149c407e900c79dcc86",
+  "base_tree": "6c2a8d018ccc00bf65ef074579604b40627f7658",
+  "worktree": "/workspace/scratch/837fe19aae3a/review-intel-windows-identity",
+  "working_tree_clean": true,
+  "source_edits": false,
+  "remote_mutations": false,
+  "full_suite_run": false,
+  "recorded_utc": "2026-11-21T06:58:57.974491+00:00",
+  "standards_findings": [],
+  "spec_findings": [],
+  "verdict": "No blocking code or specification findings for the scoped Windows synthetic identity repair; ready for guarded publication and fresh native acceptance.",
+  "getpass": {
+    "baseline": {
+      "actual_helper_output": {
+        "error": "ModuleNotFoundError",
+        "message": "No module named 'pwd'",
+        "module": "pwd",
+        "pwd_import_attempts": 1
+      },
+      "fixed_identity_control": {
+        "value": "patchtrace",
+        "pwd_import_attempts": 0
+      },
+      "identity_removed_control": {
+        "error": "ModuleNotFoundError",
+        "message": "No module named 'pwd'",
+        "module": "pwd",
+        "pwd_import_attempts": 1
+      }
+    },
+    "candidate": {
+      "actual_helper_output": {
+        "value": "patchtrace",
+        "pwd_import_attempts": 0
+      },
+      "fixed_identity_control": {
+        "value": "patchtrace",
+        "pwd_import_attempts": 0
+      },
+      "identity_removed_control": {
+        "error": "ModuleNotFoundError",
+        "message": "No module named 'pwd'",
+        "module": "pwd",
+        "pwd_import_attempts": 1
+      }
+    }
+  },
+  "controls": {
+    "identity_case_variants": 432,
+    "extra_rejected_cases": 894,
+    "actual_adapter_fake_runner_calls": 24,
+    "call_path_groups": 8,
+    "tools": [
+      "capa vivisect",
+      "capa Ghidra",
+      "FLOSS",
+      "DIE"
+    ],
+    "platforms": [
+      "POSIX",
+      "simulated Windows platform branches"
+    ],
+    "private_paths_and_cleanup_verified": true,
+    "java_and_diec_additions_preserved": true,
+    "nonzero_analysis_exit_preserved": 7
+  },
+  "maintained_selection": {
+    "passed": 130,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 7.64,
+    "scope": "Seven named maintained test files in maintained-tests.json; not the full suite.",
+    "banner_note": "LIVE ACCEPTANCE BLOCKED is intentional output from a controlled unsupported-probe observer test."
+  },
+  "other_checks": {
+    "whole_ruff": true,
+    "pip_check": true,
+    "isolated_source_binding": true,
+    "diff_check": true
+  },
+  "unchanged_git_blobs": [
+    "src/patchtrace/secondary/engine_env.py",
+    "src/patchtrace/backend.py",
+    "src/patchtrace/intelligence/tools/runner.py",
+    "src/patchtrace/intelligence/tools/capa.py",
+    "src/patchtrace/intelligence/tools/floss.py",
+    "src/patchtrace/intelligence/tools/diec.py"
+  ],
+  "native_evidence": {
+    "prior_head": "daee337c48c63dda8aeac149c407e900c79dcc86",
+    "workflow_run": 44876415860,
+    "bundle_sha256": "c5e4718313eb99fdca0da7739978097d30be65468173f533831132de9e3e0430",
+    "floss": "Actual retained Windows stderr directly shows vivisect.defconfig -> getpass.getuser -> ModuleNotFoundError: pwd. Version and help each exit 1 with complete stderr.",
+    "capa": "Actual version/help each exit 0; later analysis has generic ModuleNotFoundError. The same getpass cause remains inference."
+  },
+  "limits": [
+    "No actual native Windows runtime was exercised by this independent review.",
+    "No upstream tools or analyzed target binaries were executed. Maintained tests use authored fake producers.",
+    "The source fix establishes the identity fallback mechanism, not final native tool acceptance.",
+    "Fresh Windows and all applicable CI remain required before merge or release acceptance."
+  ]
+}

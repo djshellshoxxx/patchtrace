@@ -1,0 +1,129 @@
+{
+  "schema": "patchtrace-cycle3-qualification/1",
+  "captured_at": "2026-11-21T05:10:18.976908+00:00",
+  "source_commit": "e5a531668ef523cd6faa26d5fec59aa552749134",
+  "source_tree": "e622ff8f5624ce73bac63c0976af01c614ce05bb",
+  "base": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+  "main_at_capture": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+  "selection": {
+    "initial_run": {
+      "passed": 458,
+      "skipped": 11,
+      "xfailed": 2,
+      "failed": 0
+    },
+    "prerequisite_replay": {
+      "passed": 11,
+      "skipped": 0,
+      "xfailed": 0,
+      "failed": 0
+    },
+    "distinct_passed": 469,
+    "remaining_expected_failures": [
+      "tests.test_codex_pkg_workflows::test_pip_downloads_require_hashes",
+      "tests.test_codex_pkg_workflows::test_remote_actions_are_immutable"
+    ],
+    "remaining_skips": 0,
+    "not_a_full_suite": true,
+    "selection_files": 14
+  },
+  "whole_tree_ruff": "passed",
+  "dependency_check": "passed-after-declared-site-build-dependencies-installed",
+  "source_binding": "python -I verified the exact root checkout at487e08113c86636ef9a87aaae8a1b88b224d9f04; application src tree is identical through e5a53166. Both completed test processes, final Ruff and dependency checks have clean before/after receipts at e5a53166. No new final-head isolated-import execution is claimed.",
+  "reviewed_blob_comparisons": [
+    {
+      "path": ".github/workflows/qa-windows.yml",
+      "reviewed_source": "5fa47ac7b03451f404c2f0acd871e8700067c13f",
+      "blob": "b3a33dc2981aa85d4862c77be034c11306c224e4",
+      "equal": true
+    },
+    {
+      "path": ".github/workflows/corpus-tier-r.yml",
+      "reviewed_source": "53e02a478235498563a092d7943c7feaf40adda6",
+      "blob": "c15784337596d03de29a144980312872830b8aa4",
+      "equal": true
+    },
+    {
+      "path": ".github/workflows/pages.yml",
+      "reviewed_source": "e54e4d0afbcdc3916539c62810877faa65842d5e",
+      "blob": "f192b5099eeedcf04309a9b29667ecbaa48fd19c",
+      "equal": true
+    },
+    {
+      "path": "tools/frozen_smoke.py",
+      "reviewed_source": "5fa47ac7b03451f404c2f0acd871e8700067c13f",
+      "blob": "84e462135b793134720dba2125182e848f0a94fa",
+      "equal": true
+    },
+    {
+      "path": "tests/test_codex_pkg_packaging.py",
+      "reviewed_source": "5fa47ac7b03451f404c2f0acd871e8700067c13f",
+      "blob": "4003317c7726a67ef7fadc0816713d0a1650e7a0",
+      "equal": true
+    },
+    {
+      "path": "tests/test_codex_pkg_workflows.py",
+      "reviewed_source": "53e02a478235498563a092d7943c7feaf40adda6",
+      "blob": "379bcc5daff743446976ec6874a107970b5e53a8",
+      "equal": true
+    },
+    {
+      "path": "tests/test_corpus_archive_cache_hit_shell_20261121.py",
+      "reviewed_source": "53e02a478235498563a092d7943c7feaf40adda6",
+      "blob": "bff4a96c992bc1caae666846c5d1ce9216326b13",
+      "equal": true
+    },
+    {
+      "path": "tests/test_corpus_cache_archive_integrity_20261121.py",
+      "reviewed_source": "53e02a478235498563a092d7943c7feaf40adda6",
+      "blob": "d32d234bc6a2bbe62bdd5295447f14da9c0edce2",
+      "equal": true
+    },
+    {
+      "path": "tests/test_site_workflow.py",
+      "reviewed_source": "e54e4d0afbcdc3916539c62810877faa65842d5e",
+      "blob": "8c0e2cf8deb7d85af1d9b06581495929a7fd22c8",
+      "equal": true
+    }
+  ],
+  "application_src_tree_unchanged_from_pr348": true,
+  "frozen_smoke_runtime_ast_unchanged_from_pr348": true,
+  "hosted_current_candidate": "pending",
+  "baseline_hosted_evidence": "hosted-qualification.json",
+  "baseline_failures_preserved": [
+    "CODEX-6 d2507b14: 1 failed,29 passed,2 xfailed; missing full rizin step heading",
+    "CODEX-6 d2507b14: Ruff 2 I001",
+    "CODEX-14 e4854b66: Ruff F401 unused pytest import",
+    "Pages red control:1 failed,6 passed before deploy condition",
+    "Linux reviewer initial YAML-environment assumption failed; original control and corrected receipt retained",
+    "PR345 NSIS HTTP503 before its single successful retry; prior SIGKILL receipts recovered unchanged from PR346"
+  ],
+  "review_disposition": "No blocking finding in these reviewed changes; P3 author-control count summary reconciled; no repository-wide audit claim",
+  "local_history": {
+    "bundle": "local-source-history.bundle",
+    "sha256": "98465e2b10954c4bb3d111f60e71e23ef326e6710ed8a17e2a91b9c3937ad2aa",
+    "commits": [
+      "5fa47ac7b03451f404c2f0acd871e8700067c13f",
+      "be40e159208bffded53d57cbdfcf3abfaf8a714f",
+      "53e02a478235498563a092d7943c7feaf40adda6",
+      "c94eeade5f587a8fd9beef3c74084455c9f845d7",
+      "19601a604e8ce06e7c52a79394a502a5f3839d71",
+      "487e08113c86636ef9a87aaae8a1b88b224d9f04",
+      "00183247016fef5668beb3c6d07aedaa9f451262",
+      "e54e4d0afbcdc3916539c62810877faa65842d5e",
+      "e5a531668ef523cd6faa26d5fec59aa552749134"
+    ],
+    "verification": "The bundle contains this ref:\ne5a531668ef523cd6faa26d5fec59aa552749134 HEAD\nThe bundle requires these 3 refs:\nd2507b1415fd0917fcda6b9f26565d0467d7b9ba \ne4854b66ae37024d734e22ae978dedca90a7f3f7 \n6b6fcd3597a604212032ffc453477aeb6edc69ff \nThe bundle uses this hash algorithm: sha1\n/workspace/scratch/patchtrace-95fe-c3/PatchTrace/docs/engineering/evidence/cycle3-95fe/local-source-history.bundle is okay\n",
+    "scope": "All new local code/spec/test commits and prequalification documentation through the tested source. Later coordinator records are published separately."
+  },
+  "release_ready": false,
+  "main_merge_eligible_at_capture": false,
+  "merge_commit_markers": [
+    "[no release]",
+    "[no deploy]"
+  ],
+  "remote_source_commit": "e15584e2fe474ddcbe01501d380d626cc00c8402",
+  "source_publication_mapping": "code-publication-mapping.json",
+  "final_record_audit": "passed; exact counts,source boundaries,recovery,bundle,members and links verified; isolated-import wording corrected",
+  "final_record_review": "final-record-review.md"
+}

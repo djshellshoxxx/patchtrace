@@ -415,3 +415,50 @@ def test_column_tooltip_replaces_the_cell_text_tooltip(table):
     model = table.table_model
     assert model.index(0, 0).data(Qt.ItemDataRole.ToolTipRole) == '<p>fn000000!</p>'
     assert model.index(0, 1).data(Qt.ItemDataRole.ToolTipRole) == 'note 0'
+
+
+def test_a_column_tip_id_serves_the_header_tooltip_and_a_missing_id_falls_back(qapp):
+    from patchtrace import tooltips
+    tip = next(iter(tooltips.REGISTRY))
+    columns = (ColumnSpec('a', 'Alpha', lambda r: r[0], tip_id=tip),
+               ColumnSpec('b', 'Beta', lambda r: r[0], unit='ms', tip_id='no.such.tip'),
+               ColumnSpec('c', 'Gamma', lambda r: r[0]))
+    model = VirtualTableModel()
+    model.set_prepared(prepare(3, columns))
+    tooltip = Qt.ItemDataRole.ToolTipRole
+    assert model.headerData(0, Qt.Orientation.Horizontal, tooltip) == tooltips.tooltip(tip)
+    assert model.headerData(1, Qt.Orientation.Horizontal, tooltip) == 'Beta (ms)'
+    assert model.headerData(2, Qt.Orientation.Horizontal, tooltip) == 'Gamma'
+    assert model.headerData(0, Qt.Orientation.Horizontal, Qt.ItemDataRole.AccessibleTextRole) == 'Alpha'
+    assert model.headerData(1, Qt.Orientation.Horizontal, Qt.ItemDataRole.AccessibleTextRole) == 'Beta (ms)'
+    assert model.headerData(0, Qt.Orientation.Horizontal, Qt.ItemDataRole.DisplayRole) == 'Alpha'
+    assert model.headerData(1, Qt.Orientation.Horizontal, Qt.ItemDataRole.DisplayRole) == 'Beta\nms'
+    assert model.headerData(0, Qt.Orientation.Vertical, tooltip) is None
+    assert model.headerData(-1, Qt.Orientation.Horizontal, tooltip) is None
+    assert model.headerData(len(columns), Qt.Orientation.Horizontal, tooltip) is None
+
+
+def test_header_help_can_register_later_without_changing_cell_or_accessible_text(qapp, monkeypatch):
+    from patchtrace import tooltips
+
+    tip_id = 'recovery.late_header_help'
+    monkeypatch.delitem(tooltips.REGISTRY, tip_id, raising=False)
+    columns = (ColumnSpec('name', 'Name', lambda row: row[0], unit='text', tip_id=tip_id,
+                          tooltip=lambda _row: '<p>Cell help</p>',
+                          accessible=lambda _row: 'Cell accessible text'),)
+    model = VirtualTableModel()
+    model.set_prepared(prepare(1, columns))
+    tooltip = Qt.ItemDataRole.ToolTipRole
+    accessible = Qt.ItemDataRole.AccessibleTextRole
+    horizontal = Qt.Orientation.Horizontal
+    assert model.headerData(0, horizontal, tooltip) == 'Name (text)'
+
+    monkeypatch.setitem(tooltips.REGISTRY, tip_id,
+                        tooltips.TooltipEntry('<header> & details', 'Help for this column', 'Read only'))
+    header = model.headerData(0, horizontal, tooltip)
+    assert '&lt;header&gt; &amp; details' in header and '<header>' not in header
+    assert model.headerData(0, horizontal, accessible) == 'Name (text)'
+    assert model.index(0, 0).data(tooltip) == '<p>Cell help</p>'
+    assert model.index(0, 0).data(accessible) == 'Cell accessible text'
+    monkeypatch.delitem(tooltips.REGISTRY, tip_id)
+    assert model.headerData(0, horizontal, tooltip) == 'Name (text)'

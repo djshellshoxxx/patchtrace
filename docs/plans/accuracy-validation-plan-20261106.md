@@ -14,8 +14,53 @@ Ghidra, BinDiff or Rizin run has happened yet; every accuracy number below is a 
 | L3 Windows reality | same, on Microsoft-shipped stripped PE | published patch analyses | 15 first, grow to 29 | >= 82% at 15/0 errors, >= 90% at 29/0 |
 
 Bounds are one-sided exact (Clopper-Pearson, alpha 0.05): `python -m tools.research_qualification samplesize`.
+
+### Scoring admission correction (2026-11-19)
+
+The shared `scoring.score_case` boundary accepts a case for ranking only when
+`facts` is exactly `verified`. Unverified, missing or unsupported facts produce
+`BLOCKED`, a null rank and `reason: facts_not_verified`, even if a reported name
+matches the expected function, an accepted alternative, or an empty no-change
+result. Existing malformed-result validation remains in force. The `score`
+aggregate excludes these rows from scored counts, hits, misses, false positives,
+top-one counts and the confidence denominator. The `parity` aggregate excludes
+them from comparisons, disagreements and overlap/Jaccard averages. Public CLI
+commands must not report success when only blocked cases are supplied.
+
+This enforces the existing prohibition on scoring unverified facts at every
+public scorer entry point. It does not verify source claims, alter real case
+manifests or promote their facts. Unit fixtures marked verified are authored
+mechanical controls with explicit synthetic byte hashes, never real accuracy
+evidence. L1/L2/L3 and native acceptance remain separate.
+
 Cases from one project or release are not independent; count distinct projects. Report per stratum
 (compiler family, release-vs-own-build), never pooled.
+
+### Cohort and confidence-bound admission (2026-11-19)
+
+The generic `score` and `parity` commands aggregate exactly one explicit
+`(layer, stratum, holdout)` cohort. Mixed cohorts or missing/invalid cohort
+metadata are usage errors (exit 2), including when a different cohort contains
+only blocked cases. A successful result identifies its layer, stratum and
+holdout flag. An empty manifest has null cohort fields and no scored result.
+Keep frozen manifests intact; establish separate cohorts before running an
+accuracy experiment, rather than pooling incompatible evidence afterward.
+
+Per-case verdicts are not independent statistical trials when several scored
+cases share a project. The generic scorer and L3 `scorerun` retain every
+per-case verdict and descriptive count, but set `lower_bound` to null when
+scored project identities are missing or repeated. They report
+`scored_projects` and an explicit `bound_reason`; they do not invent a rule for
+combining several case outcomes into one project outcome. Blocked and
+unverified cases do not enter this decision. A bound for distinct project
+labels remains conditional on justified independence under the frozen
+protocol; the labels alone do not establish it.
+
+L3 `scorerun` continues to separate development and holdout results and reject
+non-L3 cases individually. It reports each stratum separately and withholds a
+pooled bound across different scored strata. The markdown summary presents the
+bound reason alongside each count. These are reporting safeguards, not new
+ground truth, live tool qualification, or a real-pair accuracy result.
 
 ## Case sources (cheapest first)
 
@@ -85,3 +130,26 @@ the available log does not establish which original Win32 parameter or call caus
 Primary API contracts: [NtSetInformationFile](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-ntsetinformationfile),
 [FILE_RENAME_INFORMATION](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/ns-ntifs-_file_rename_information),
 and [FILE_DISPOSITION_INFORMATION](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/ns-ntddk-_file_disposition_information).
+
+## Receipt source identity in linked worktrees (2026-11-18)
+
+The shared research receipt helper must identify the requested checkout's HEAD
+without invoking Git, loading configuration or running hooks. Support ordinary
+`.git` directories and the documented `gitdir:` pointer used by linked worktrees
+and submodule checkouts. Read worktree-local HEAD; read shared branch refs and
+packed refs from the declared `commondir`, retaining per-worktree ref exceptions.
+Relative pointer paths resolve against the containing Git metadata location.
+See the [Git repository layout](https://git-scm.com/docs/gitrepository-layout)
+and [worktree details](https://git-scm.com/docs/git-worktree).
+
+Return only a validated lowercase 40-character commit identity. Missing, invalid,
+ambiguous, oversized or nonregular metadata yields unknown (`None`), never an
+arbitrary text value presented as a commit. Bound individual metadata files to
+64 KiB and packed refs to 8 MiB. Ref names must remain relative inside their Git
+metadata namespace; reject traversal and absolute paths. Do not substitute the
+main checkout's HEAD for a linked worktree's detached or branch HEAD.
+
+This metadata observation does not independently verify clean source content or
+authenticity. Exact-tree/dirty-state evidence and input hashes remain separate.
+Old receipts remain immutable; new execution produces new receipts with the
+resolved identity. No accuracy claim follows from source identification.

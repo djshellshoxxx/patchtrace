@@ -1,0 +1,88 @@
+........................................................................ [ 56%]
+..........................................F............                  [100%]
+=================================== FAILURES ===================================
+_________________ test_every_registry_id_is_applied_somewhere __________________
+
+window = <patchtrace.ui.MainWindow(0x3bbc0680, name="main") at 0x7f5ae3cc0f00>
+qtbot = <pytestqt.qtbot.QtBot object at 0x7f5ae167ab70>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-15/test_every_registry_id_is_appl0')
+settings = <PySide6.QtCore.QSettings(0x3bc7ce80) at 0x7f5ae0970440>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f5ae1679a00>
+
+    def test_every_registry_id_is_applied_somewhere(window, qtbot, tmp_path, settings, monkeypatch):
+        monkeypatch.setattr(ui_module, 'discover_local_runtimes',
+                            lambda: SimpleNamespace(python_executables=[], ghidra_roots=[]))
+        from patchtrace.kbcorrelation.investigation_qt import InvestigationDialog
+    
+        investigation = InvestigationDialog(window, workspace=tmp_path / 'kb-workspace', tasks=window.panels.tasks)
+        qtbot.addWidget(investigation)
+        names = {investigation.status.objectName()}
+        roots = [window, investigation]
+        context = build_context(window.project, [window.current_match().id])
+        roots += [NewProjectDialog(), AcquisitionDialog(), SetupDialog(settings, None, tmp_path / 'p2'),
+                  ContextDialog(context, settings, window),
+                  CorrectMatchDialog(window.project, window.current_match(), window),
+                  ExportDialog(window.project, window.service.root, [], window)]
+        for root in roots[1:]:
+            qtbot.addWidget(root)
+        window.show_file_overview()
+        series = window.panels.show_panel('series') and window.panels.controller('series').open_series(
+            tmp_path / 'no-series.json')
+        qtbot.waitUntil(lambda: series.loaded is not None, timeout=5000)
+        roots.append(series)
+        names |= {series.objectName(), series.banner.objectName()}
+        # C6: the dock and stale banner are containers/labels, not focusable controls.
+        names |= {window.panels.controller('evidence').dock.objectName(), window.panels.controller('evidence').panel.stale_banner.objectName()}
+        # M3: the series and files docks are containers too.
+        names |= {window.panels.panels[panel_id].dock.objectName() for panel_id in ('series', 'files')}
+        names |= {'unified.dock', 'unified.tab', 'unified.source.unknown', 'leads.dock'}
+        # Track G: the BinDiff setup group and its warning label are a container and a label.
+        setup = window.panels.controller('evidence').panel.bindiff_setup
+        names |= {setup.objectName(), setup.warning.objectName()}
+        # F5: framework widgets and every panel the manifest has built, without listing panel roots by hand.
+        from PySide6.QtWidgets import QDockWidget, QWidget
+    
+        from patchtrace.gui.qt.canvas import GraphCanvas
+        from patchtrace.gui.qt.codediff import CodeDiffView
+        from patchtrace.gui.qt.docks import name_tab_bars
+        from patchtrace.gui.qt.state_view import StateView
+        state = StateView('zz', 'Zz')
+        qtbot.addWidget(state)
+        holder = QWidget()  # findChildren skips the root, so the shared widgets that no built panel shows yet sit in it
+        CodeDiffView(holder), GraphCanvas(parent=holder)
+        qtbot.addWidget(holder)
+        roots.append(holder)
+        roots += [state] + [c.widget() for c in window.panels.build_all_for_test().values() if c.widget() is not None]
+        first, second = QDockWidget('A', window), QDockWidget('B', window)
+        first.setObjectName('zz_a.dock'), second.setObjectName('zz_b.dock')
+        window.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, first)
+        window.tabifyDockWidget(first, second)
+        name_tab_bars(window)
+        names |= {window.panels.strip.objectName()}
+        for root in roots + [window]:
+            names |= {w.objectName() for w in controls(root)}
+            names |= {a.objectName() for a in actions(root)}
+        shown = {w.toolTip() for root in roots + [window] for w in controls(root)}
+        shown |= {a.toolTip() for root in roots + [window] for a in actions(root)}
+        names |= {tip_id for tip_id in REGISTRY if tooltip(tip_id) in shown}  # a control may carry a per-panel name
+        names |= {'dialog.text_view', 'dialog.close', 'confirm.yes', 'confirm.no', 'gui.graph'}  # FOCUSABLE lacks QGraphicsView
+        names |= {n.rsplit('.', 1)[0] for n in names if n.startswith('profile.detector')}
+        # Every built panel's dock is a container (like series/files above).
+        names |= {controller.dock.objectName() for controller in window.panels.panels.values()
+                  if getattr(controller, 'dock', None) is not None}
+        # Tips registered by the 2026-10-15 panel batch for sub-features or states that build_all_for_test does not
+        # show (graph tabs/diagram/status are not reachable by the FOCUSABLE sweep; the rest appear only in states each panel's own
+        # tests drive). Shrink this set as those features land; never grow it for an existing control.
+        names |= PANEL_BATCH_PENDING_TIPS
+        # The Related panel (FAB-6) is not in the shipped manifest yet, but its controller registers its tips globally as
+        # soon as any test builds it; the ids then show up here depending on test order. Drop this line when it ships.
+        names |= {tip_id for tip_id in REGISTRY if tip_id.startswith('related.')}
+        missing = set(REGISTRY) - names - EXEMPT_IDS
+>       assert not missing, sorted(missing)
+E       AssertionError: ['profile.navigation.cancel', 'profile.navigation.discard', 'profile.navigation.save']
+E       assert not {'profile.navigation.cancel', 'profile.navigation.discard', 'profile.navigation.save'}
+
+tests/test_tooltips.py:272: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_tooltips.py::test_every_registry_id_is_applied_somewhere - ...
+1 failed, 126 passed in 19.38s

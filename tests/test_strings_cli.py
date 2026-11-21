@@ -1,8 +1,11 @@
 """`patchtrace strings` through the real `cli.main` on the synthetic SYN-WB3-1 pair (built-in scan; no FLOSS)."""
 from __future__ import annotations
 
+import csv
 import hashlib
+import io
 import json
+import sys
 import threading
 
 import pytest
@@ -130,10 +133,30 @@ def test_export_writes_atomically_and_refuses_to_clobber(root, tmp_path, capsys,
     result = document(out)['result']
     assert code == 0 and result['file'] == target.name and result['redacted'] and result['rows'] > 0
     assert hashlib.sha256(target.read_bytes()).hexdigest() == result['sha256'] and str(tmp_path) not in out
+    if fmt == 'csv':
+        records = list(csv.reader(io.StringIO(target.read_text(encoding='utf-8'), newline='')))
+        assert records[0][0] == 'strings-export-csv/2'
+        metadata = json.loads(records[0][1])
+        assert metadata['contract'] == 'strings-export/1' and metadata['redacted'] is True
+        assert metadata['scope'] == result['scope'] and len(records) == result['rows'] + 2
     code, out, _err = invoke(capsys, 'export', str(root), '--out', str(target), '--format', fmt, '--json')
     assert code == 2 and document(out)['status'] == 'failed'
-    code, _out, _err = invoke(capsys, 'export', str(root), '--out', str(target), '--format', fmt, '--force')
-    assert code == 0 and [p.name for p in tmp_path.iterdir()] == [target.name]
+    original = target.read_bytes()
+    code, out, err = invoke(capsys, 'export', str(root), '--out', str(target), '--format', fmt, '--force', '--json')
+    if sys.platform.startswith('linux'):
+        assert code == 2 and document(out)['status'] == 'failed'
+        assert 'replacement is unavailable on Linux' in err and 'choose a new destination' in err
+        assert target.read_bytes() == original
+    else:
+        assert code == 0
+    assert [p.name for p in tmp_path.iterdir()] == [target.name]
+
+
+def test_export_help_states_platform_replacement_capability(capsys):
+    assert cli.main(['strings', 'export', '--help']) == 0
+    out, _err = capsys.readouterr()
+    help_text = ' '.join(out.split())
+    assert 'replace an existing file on Windows; Linux requires a new destination' in help_text
 
 
 def test_cancelled_scan_is_exit_5(root):

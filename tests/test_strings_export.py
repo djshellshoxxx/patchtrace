@@ -4,6 +4,7 @@ from __future__ import annotations
 import csv
 import io
 import json
+import sys
 
 import pytest
 from test_strings_delta import PAIRING, sha, table
@@ -50,7 +51,10 @@ def test_json_records_basis_and_lineage(delta, tmp_path):
 
 def test_csv_neutralises_formulas_and_round_trips(delta, tmp_path):
     export.export_delta(delta, tmp_path / 'out.csv', fmt='csv')
-    rows = list(csv.DictReader(io.StringIO(read(tmp_path / 'out.csv'), newline='')))
+    source = io.StringIO(read(tmp_path / 'out.csv'), newline='')
+    marker, metadata = next(csv.reader(source))
+    assert marker == 'strings-export-csv/2' and json.loads(metadata)['redacted'] is True
+    rows = list(csv.DictReader(source))
     shown = {r['display'] for r in rows}
     assert "'=cmd|calc!A1 injected" in shown and 'Old message here' in shown
     assert list(rows[0]) == list(export.CSV_COLUMNS) and b'\r\n' not in (tmp_path / 'out.csv').read_bytes()
@@ -68,16 +72,21 @@ def test_never_overwrites_without_force(delta, tmp_path):
     with pytest.raises(StringsError) as raised:
         export.export_delta(delta, target, fmt='json')
     assert raised.value.code == 'PT-STR-EXPORT' and read(target) == 'precious'
-    export.export_delta(delta, target, fmt='json', force=True)
-    assert json.loads(read(target))['contract'] == 'strings-export/1'
+    if sys.platform.startswith('linux'):
+        with pytest.raises(StringsError, match='replacement is unavailable on Linux'):
+            export.export_delta(delta, target, fmt='json', force=True)
+        assert read(target) == 'precious'
+    else:
+        export.export_delta(delta, target, fmt='json', force=True)
+        assert json.loads(read(target))['contract'] == 'strings-export/1'
 
 
-def test_failed_write_leaves_no_partial_file(delta, tmp_path, monkeypatch):
+def test_failed_no_force_write_leaves_no_partial_file(delta, tmp_path, monkeypatch):
     target = tmp_path / 'out.json'
 
-    def broken(src, dst):
+    def broken(_descriptor):
         raise OSError(13, 'denied')
-    monkeypatch.setattr(export.os, 'replace', broken)
+    monkeypatch.setattr(export.os, 'fsync', broken)
     with pytest.raises(StringsError) as raised:
         export.export_delta(delta, target, fmt='json')
     assert raised.value.code == 'PT-STR-EXPORT' and list(tmp_path.iterdir()) == []
@@ -102,3 +111,72 @@ def test_not_comparable_delta_is_refused(tmp_path):
     with pytest.raises(StringsError) as raised:
         export.export_delta(refused, tmp_path / 'out.json', fmt='json')
     assert raised.value.code == 'PT-STR-BASIS' and not (tmp_path / 'out.json').exists()
+
+
+@pytest.mark.parametrize(('display', 'expected'), [
+    ('=1+1', "'=1+1"),
+    ('  =1+1', "'  =1+1"),
+    ('\n=1+1', "'\n=1+1"),
+    ('\ufeff+1', "'\ufeff+1"),
+    (' \t@cmd', "' \t@cmd"),
+    ('\nordinary', "'\nordinary"),
+    ('\tordinary', "'\tordinary"),
+    ('\rordinary', "'\rordinary"),
+    ('\v@cmd', "'\v@cmd"),
+    ('\f=1+1', "'\f=1+1"),
+    ('\fordinary', '\fordinary'),
+    ('\\n=1+1', '\\n=1+1'),
+    ('   ordinary', '   ordinary'),
+    ('\ufeffordinary', '\ufeffordinary'),
+    ('-7', "'-7"),
+], ids=['direct-formula', 'space-formula', 'line-formula', 'bom-formula',
+        'space-tab-formula', 'line-control', 'tab-control', 'carriage-control',
+        'vertical-tab-formula', 'form-feed-formula', 'ordinary-form-feed',
+        'literal-backslash-prose', 'ordinary-space',
+        'ordinary-bom', 'direct-minus'])
+def test_csv_formula_guard_considers_leading_ignorable_prefixes(delta, display, expected):
+    doc = export.document(delta)
+    doc['changes'][0]['display'] = display
+    raw = export.render(doc, 'csv')
+    rows = csv.reader(io.StringIO(raw.decode('utf-8'), newline=''))
+    marker, metadata = next(rows)
+    assert marker == export.CSV_CONTRACT
+    assert json.loads(metadata)['contract'] == export.EXPORT_CONTRACT
+    assert next(rows) == list(export.CSV_COLUMNS)
+    assert next(rows)[3] == expected
+    # Formula protection belongs to CSV presentation, including form-feed prefixes.
+    assert json.loads(export.render(doc, 'json'))['changes'][0]['display'] == display
+
+
+@pytest.mark.parametrize(
+    ('cue', 'reason', 'function', 'lineage', 'expected'),
+    [
+        (' \t=cue', '\n@reason', '\ufeff+call', '\v-lineage',
+         ("' \t=cue", "'\n@reason", "'\ufeff+call", "'\v-lineage")),
+        ('  ordinary', '\ufeffordinary', '\\n=literal', 'group',
+         ('  ordinary', '\ufeffordinary', '\\n=literal', 'group')),
+    ],
+    ids=['guard-all-source-text-columns', 'preserve-benign-source-text-columns'],
+)
+def test_csv_formula_guard_covers_aggregated_source_columns(delta, cue, reason, function, lineage, expected):
+    doc = export.document(delta)
+    entry = doc['changes'][0]
+    entry['cues'] = [cue]
+    entry['reasons'] = [reason]
+    entry['links'] = [{'function': {'name': function}, 'lineage_group': lineage}]
+
+    reader = csv.reader(io.StringIO(export.render(doc, 'csv').decode('utf-8'), newline=''))
+    marker, metadata = next(reader)
+    assert marker == export.CSV_CONTRACT
+    assert json.loads(metadata)['contract'] == export.EXPORT_CONTRACT
+    assert next(reader) == list(export.CSV_COLUMNS)
+    found = dict(zip(export.CSV_COLUMNS, next(reader), strict=True))
+    assert tuple(found[key] for key in ('cues', 'reasons', 'functions', 'lineage_groups')) == (
+        expected[0], expected[1], expected[2], expected[3])
+
+    # The CSV protection is presentation-only: JSON retains the exact source-derived text.
+    json_entry = json.loads(export.render(doc, 'json'))['changes'][0]
+    assert json_entry['cues'] == [cue]
+    assert json_entry['reasons'] == [reason]
+    assert json_entry['links'][0]['function']['name'] == function
+    assert json_entry['links'][0]['lineage_group'] == lineage

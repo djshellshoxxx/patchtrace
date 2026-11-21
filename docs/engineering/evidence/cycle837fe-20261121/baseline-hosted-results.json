@@ -1,0 +1,120 @@
+{
+  "baseline": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+  "workflows": [
+    {
+      "pr": 345,
+      "id": 44840721370,
+      "head_sha": "39c38a02f126963fc03827fa49741255590227ad",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 2,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44840721370",
+      "created_at": "2026-11-20T23:59:26Z",
+      "updated_at": "2026-11-21T03:48:45Z"
+    },
+    {
+      "pr": 345,
+      "id": 44840721268,
+      "head_sha": "39c38a02f126963fc03827fa49741255590227ad",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44840721268",
+      "created_at": "2026-11-20T23:59:26Z",
+      "updated_at": "2026-11-21T00:49:57Z"
+    },
+    {
+      "pr": 346,
+      "id": 44841261805,
+      "head_sha": "c07774ecf5a3f7337834f95a9a4c51c8ec5fad44",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44841261805",
+      "created_at": "2026-11-21T00:03:55Z",
+      "updated_at": "2026-11-21T02:32:21Z"
+    },
+    {
+      "pr": 346,
+      "id": 44841261831,
+      "head_sha": "c07774ecf5a3f7337834f95a9a4c51c8ec5fad44",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44841261831",
+      "created_at": "2026-11-21T00:03:55Z",
+      "updated_at": "2026-11-21T01:06:28Z"
+    },
+    {
+      "pr": 347,
+      "id": 44843482603,
+      "head_sha": "b461ac64eb9beb74449ce2b18b6795a2af34a02a",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44843482603",
+      "created_at": "2026-11-21T00:23:22Z",
+      "updated_at": "2026-11-21T03:06:57Z"
+    },
+    {
+      "pr": 347,
+      "id": 44843482467,
+      "head_sha": "b461ac64eb9beb74449ce2b18b6795a2af34a02a",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44843482467",
+      "created_at": "2026-11-21T00:23:22Z",
+      "updated_at": "2026-11-21T01:44:44Z"
+    },
+    {
+      "pr": 348,
+      "id": 44858504288,
+      "head_sha": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44858504288",
+      "created_at": "2026-11-21T02:56:00Z",
+      "updated_at": "2026-11-21T04:33:09Z"
+    },
+    {
+      "pr": 348,
+      "id": 44858504326,
+      "head_sha": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44858504326",
+      "created_at": "2026-11-21T02:56:00Z",
+      "updated_at": "2026-11-21T03:28:01Z"
+    }
+  ],
+  "job_log_excerpts": [
+    {
+      "job": 136706199528,
+      "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44858504288/job/136706199528",
+      "lines": [
+        "2026-11-21T03:09:18.4902140Z 108 passed, 2 skipped in 3.56s",
+        "2026-11-21T03:50:03.2923187Z 24043 passed, 53 skipped, 6 xfailed, 21 warnings in 2442.94s (0:40:42)",
+        "2026-11-21T03:50:07.2838812Z All checks passed!"
+      ]
+    },
+    {
+      "job": 136706199689,
+      "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44858504288/job/136706199689",
+      "lines": [
+        "2026-11-21T03:28:32.6483434Z 107 passed, 3 skipped in 2.39s",
+        "2026-11-21T04:25:00.2851888Z 23916 passed, 181 skipped, 5 xfailed, 22 warnings in 3384.88s (0:56:24)",
+        "2026-11-21T04:25:05.8966385Z All checks passed!",
+        "2026-11-21T04:27:25.4509037Z Portable checksum, clean extraction, Qt plugin, dependencies, and frozen executable smoke passed.",
+        "2026-11-21T04:28:03.9295283Z Installer registration, Qt/runtime checks, frozen self-test, non-destructive uninstall passed."
+      ]
+    }
+  ],
+  "source_notes": [
+    "Results are specific to their recorded heads. Search successor needs its own qualification.",
+    "Linux and Windows totals are separate and must not be summed.",
+    "PR345's original NSIS HTTP 503 failure remains retained; attempt 2 succeeded."
+  ]
+}

@@ -8,7 +8,7 @@ How a PatchTrace package is built (PyInstaller), checked (frozen smoke), publish
 - Standalone includes Python and Qt (PySide6 6.12.0). **Ghidra, Java and Ghidriff are external**, and so are all optional tools (BinDiff, rizin, capa, FLOSS, diec), unless a *full* bundle is attached.
 - **Keep Qt DLLs replaceable**: one-folder (`onedir`) distribution, never one-file; LGPL notices ship (`qtbase-6.12.0/LICENSES/LGPL-3.0-only.txt`).
 - Unsigned portable zip; no installer, no elevation (signing policy SPEC-52).
-- Dependencies are exact pins: `PySide6==6.12.0`, `shiboken6==6.12.0`, `pydantic==2.13.5`, `protobuf==7.36.2` (core; the upb C implementation is required and checked at build time by `require_upb_protobuf`, `tools/check_protobuf_runtime.py`), dev `pyinstaller==6.22.3`. Extras: `search` (`rapidfuzz==3.14.6`), `rules` (`yara-x>=1.0,<2`), `calibration-dev` (never imported at runtime or frozen). Installs use `pip --only-binary=:all:`.
+- Dependencies are exact pins: `PySide6==6.12.0`, `shiboken6==6.12.0`, `pydantic==2.14.2`, `protobuf==7.36.2` (core; the upb C implementation is required and checked at build time by `require_upb_protobuf`, `tools/check_protobuf_runtime.py`), dev `pyinstaller==6.22.3`. Extras: `search` (`rapidfuzz==3.14.6`), `rules` (`yara-x>=1.0,<2`), `calibration-dev` (never imported at runtime or frozen). Installs use `pip --only-binary=:all:`.
 
 ## The build scripts
 

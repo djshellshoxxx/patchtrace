@@ -1,0 +1,35 @@
+{
+  "reviewed_source_commit": "cf71c457665092b11448c6515c33360f68a590dd",
+  "observed_head": "9ea3797fc857b396336fcfc519278c165e30f9b9",
+  "source": {
+    "src/patchtrace/intelligence/tools/admission.py": {
+      "git_blob": "ae64016dc65d575d649aafae1264d15d6d434e3c",
+      "sha256": "7a06f5087927e263b2433e820ed1b1f5c3c80a6c517d445a342523685c77c373"
+    },
+    "src/patchtrace/strings/cli.py": {
+      "git_blob": "6c1979dad11052a05ed225d75082d54f1dd1e527",
+      "sha256": "3bebbfa170a41e09a26dfc5fdb793532c885a5f8497f90d6b1f312dbe0076fad"
+    },
+    "tests/test_intel_tools_admission.py": {
+      "git_blob": "626e95da8297eea959d7c9b0344e1e32eecc3e4d",
+      "sha256": "7b9de0cb4f716df0fc940cb64854a4f686f6fd85db67fe8cc18e3c95fa194e11"
+    },
+    "tests/test_strings_stored_source_admission.py": {
+      "git_blob": "a4b05d79b4f20834cb754ae74f56ae0267186a06",
+      "sha256": "ce8482d7cbf9a8d51063bc433fb51e44367f4b45c7f707b0041306c9a7aa5897"
+    },
+    "docs/specs/three-tool-evidence-adapters.md": {
+      "git_blob": "7edb2ec2953829f16f1349671f129a77dbfbc276",
+      "sha256": "014622ac327be2b4e1ecb602eb2bd5993ca5c600952d0e011ec2e5ccf2e97ed6"
+    },
+    "docs/specs/program-e/WB3-integration-plan.md": {
+      "git_blob": "07b9df218502aee9bf1519437811acd974b5ad2d",
+      "sha256": "1e57716c8f152a06175a026eb7462b25e1d78afef6a2595e8d02b1650b8cb55b"
+    }
+  },
+  "artifacts": {
+    "strings-peer-suite.xml": "98374487823ec34eff368d6e59b0df4b677348f0b3377bc1016ce07c45997c4d",
+    "strings-peer-history.xml": "583b66cb3425c223b56aab6f9fea39852d58150c24e4badca962d58c2c6c2081",
+    "test_strings_peer_history.py": "3417bbc34df90c018abc8f9be74a731322c1a240baf26638885b818ef4b1fe0e"
+  }
+}

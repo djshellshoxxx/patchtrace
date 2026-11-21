@@ -7,7 +7,7 @@ How a PatchTrace prerelease is produced and published. Sources: `tools/release_g
 A push to `main` (or a `v*` tag) runs `qa-windows.yml`:
 
 1. `qa` on Ubuntu and Windows: the test suite and Ruff. The Windows job also builds the one-folder package with `tools/build_windows.py`, runs the frozen-app smoke (`tools/frozen_smoke.py dist/PatchTrace/PatchTrace.exe`, includes the self-test) and checks a clean portable ZIP extraction under a Unicode path, builds the NSIS 3.13 per-user installer, verifies installation/frozen startup/uninstallation while retaining user-created project files, and uploads the Windows ZIP, Setup.exe, and both `.sha256` sidecars. The Linux build job uploads `PatchTrace-0.1.0-linux-x86_64.tar.gz` and its `.sha256`.
-2. `linux-smoke` downloads the Linux artifact, checks `sha256sum -c`, extracts it and runs the offscreen self-test on Ubuntu 22.04 and 24.04.
+2. `linux-smoke` downloads the Linux artifact, checks `sha256sum -c`, extracts it and runs both offscreen/Xvfb self-tests plus the full `tools/frozen_smoke.py` CLI harness against the extracted executable on Ubuntu 22.04 and 24.04. See [Linux acceptance](linux.md).
 3. `release-gate` runs `tools/release_gate.py` and decides whether to publish.
 4. `release` runs only if the ref is a `v*` tag or the gate says `publish=true`, and only after `qa`, `linux-smoke` and `release-gate` succeeded. It generates evidence notes (`tools/milestone_notes.py`; if that fails, a static preamble is used and the release is neither blocked nor faked), then creates a GitHub **prerelease** named `PatchTrace beta <run number>` tagged `v0.1.0-beta.<run number>` (or the pushed tag) at the run's commit, with the Windows ZIP, Windows Setup.exe, Linux tar.gz, and their SHA-256 checksum files attached.
 
@@ -35,6 +35,12 @@ case-insensitively and stays skipped even if the cadence gate says yes or fails
 open. QA, repeated Qt tests, native checks, package builds, smoke tests and
 Actions artifacts still run. The hold applies only to that push; it does not
 change the cadence for later unmarked commits. This marker is not a CI skip.
+
+For an integration that must also avoid site deployment, include `[no deploy]`
+in the same actual merge commit message. The Pages deploy job honors that
+push-only hold while site tests, build and artifact upload remain enabled.
+Manual dispatch retains its existing deployment behavior and is not authorized
+by an integration-only instruction. See [Pages deployment control](specs/pages-deployment-control.md).
 
 ### Skip-marker hazard
 

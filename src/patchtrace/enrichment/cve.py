@@ -17,7 +17,15 @@ import json
 import re
 from collections.abc import Iterable, Mapping, Sequence
 from datetime import UTC, datetime
-from decimal import Decimal, InvalidOperation
+from decimal import (
+    ROUND_HALF_EVEN,
+    Context,
+    Decimal,
+    DecimalException,
+    Inexact,
+    InvalidOperation,
+    localcontext,
+)
 
 from pydantic import ValidationError
 
@@ -191,12 +199,13 @@ def _tenths(value) -> int | None:
     if isinstance(value, bool) or not isinstance(value, (int, Decimal, str)):
         raise _err('CVSS base score has an unexpected type')
     try:
-        number = Decimal(value) * 10
+        number = Decimal(value)
     except InvalidOperation:
         raise _err('CVSS base score is not a number') from None
-    if number != number.to_integral_value() or not 0 <= number <= 100:
+    if not number.is_finite() or not 0 <= number <= 10:
         raise _err('CVSS base score is not a tenth in 0.0..10.0')
-    return int(number)
+    # normalize() traps Inexact: only redundant zeroes may be removed before scaling.
+    return int(number.quantize(Decimal('0.1')) * 10)
 
 
 def _str(value, what: str, limit: int = 2000) -> str:
@@ -347,6 +356,10 @@ def _timestamp(value: str) -> datetime:
         parsed = None
     if parsed is None or parsed.tzinfo is None:
         raise EnrichmentError('PT-ENRICH-INPUT', 'timestamp must be ISO 8601 with a timezone')
+    try:
+        parsed.astimezone(UTC)
+    except (OverflowError, ValueError):
+        raise EnrichmentError('PT-ENRICH-INPUT', 'timestamp must be representable in UTC') from None
     return parsed
 
 
@@ -357,7 +370,12 @@ def normalize(cve_id: str, responses: Mapping[str, bytes], retrieved_at: str) ->
     if not responses or any(p not in _PARSERS for p in responses):
         raise EnrichmentError('PT-ENRICH-INPUT', 'responses must be a non-empty mapping of msrc/nvd bytes')
     try:
-        return _snapshot(cve_id, responses, retrieved_at)
+        # Four digits hold the largest exact scaled score (10.0 * 10). Never inherit caller rounding/traps;
+        # Inexact rejects sub-tenth values before multiplication can round or underflow them into a score.
+        with localcontext(Context(prec=4, rounding=ROUND_HALF_EVEN, traps=[InvalidOperation, Inexact])):
+            return _snapshot(cve_id, responses, retrieved_at)
+    except DecimalException:
+        raise _err('a provider value is outside the supported decimal range') from None
     except ValidationError:  # a value the strict snapshot models refuse (empty, over-long): never a raw pydantic error
         raise _err('a provider value does not fit the enrichment/1 snapshot contract') from None
 
@@ -391,7 +409,11 @@ def is_stale(snapshot: CveSnapshot, now: datetime, max_age_days: int) -> bool:
         raise EnrichmentError('PT-ENRICH-CONFIG', 'max_age_days must be a non-negative integer')
     if now.tzinfo is None:
         raise EnrichmentError('PT-ENRICH-INPUT', 'now must be timezone-aware')
-    age = now.astimezone(UTC) - _timestamp(snapshot.retrieved_at).astimezone(UTC)
+    try:
+        now_utc = now.astimezone(UTC)
+    except (OverflowError, ValueError):
+        raise EnrichmentError('PT-ENRICH-INPUT', 'now must be representable in UTC') from None
+    age = now_utc - _timestamp(snapshot.retrieved_at).astimezone(UTC)
     # A retrieval time in the future cannot be trusted as fresh.
     return age.total_seconds() < 0 or age.days * 86400 + age.seconds > max_age_days * 86400
 

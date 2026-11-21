@@ -56,6 +56,16 @@ def test_counts_results_and_assets(tmp_path):
     assert 'Not implemented or not run: A6 native' in text
 
 
+def test_the_setup_installer_is_listed_with_its_digest(tmp_path):
+    # Recover the installer receipt from 0bf1f830 without its workflow redesign.
+    assets = tmp_path / 'assets'
+    assets.mkdir()
+    (assets / 'PatchTrace-Windows-x64-Setup.exe').write_bytes(b'MZ-setup')
+    text = gen(tmp_path, '--assets', str(assets))
+    assert ('- PatchTrace-Windows-x64-Setup.exe - 8 bytes - SHA-256 '
+            'a6b24f3fb53315c9534aab8657ffa76402a7c1180adea39eaa4f00b50659b8c8') in text
+
+
 def test_manual_pass_needs_evidence_and_all_18_close_the_gate(tmp_path):
     manual = tmp_path / 'm.json'
     manual.write_text(json.dumps({'M01': {'result': 'pass'}, 'M02': {'result': 'fail', 'evidence': 'x'}}))

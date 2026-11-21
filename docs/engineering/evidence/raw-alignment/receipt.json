@@ -1,0 +1,129 @@
+{
+  "base_commit": "afa1af3cafc00cf4df5fe27778f91332180756d4",
+  "branch": "codex/raw-alignment-recovery-20261119-4c8d",
+  "donors": {
+    "bounded_ui_patch_commit": "ee41edbd2406dc6ca400bd8824a111358ac8a2a7",
+    "pr309_head": "3c9d3f074481b2f609330fa49ab9019eb6637849",
+    "pr319_head": "8d130aefe1be6e737cff1d90d2a5b1658d60a3a6",
+    "unchanged_controller_git_blob": "538921688e7ee749d1adce8da80b32def947c836"
+  },
+  "environment": {
+    "packages": {
+      "PySide6": "6.12.0",
+      "pydantic": "2.14.2",
+      "pytest": "9.2.0",
+      "pytest-qt": "4.5.0",
+      "ruff": "0.17.6",
+      "shiboken6": "6.12.0"
+    },
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "qt_platform": "offscreen"
+  },
+  "notes": [
+    "The 22 baseline failures prove one missing desktop workflow, not 22 separate defects.",
+    "Run counts overlap and must not be added together.",
+    "The first expanded integration run exposed a missing raw_alignment invalidation dependency in the metadata-cache test Owner. Only that fixture was adapted before the final expanded run.",
+    "No target binaries executed; synthetic artifacts are inspected as bytes.",
+    "Local offscreen regression evidence only; full-suite, native/manual acceptance and independent review are not claimed.",
+    "Failing-run logs and JUnit XML are losslessly gzip-compressed to retain pytest output exactly, including its trailing whitespace. Use gzip -dc to read them."
+  ],
+  "quality": {
+    "diff_check_exit_code": 0,
+    "log": "docs/engineering/evidence/raw-alignment/quality.log",
+    "ruff_exit_code": 0,
+    "ui_lines": 3072,
+    "unchanged_ui_line_ceiling": 3077
+  },
+  "recorded_at_utc": "2026-11-19T23:48:21.189361+00:00",
+  "runs": [
+    {
+      "command": "QT_QPA_PLATFORM=offscreen /workspace/scratch/4c8dc848d760/venv/bin/python -m pytest -q tests/test_ui_raw_alignment.py --junitxml=docs/engineering/evidence/raw-alignment/baseline.xml",
+      "junit": {
+        "errors": "0",
+        "failures": "22",
+        "hostname": "636643ecc05a",
+        "name": "pytest",
+        "skipped": "0",
+        "tests": "22",
+        "time": "12.604",
+        "timestamp": "2026-11-19T15:42:14.754102-08:00"
+      },
+      "log": "docs/engineering/evidence/raw-alignment/baseline.log.gz",
+      "name": "baseline",
+      "xml": "docs/engineering/evidence/raw-alignment/baseline.xml.gz"
+    },
+    {
+      "command": "QT_QPA_PLATFORM=offscreen /workspace/scratch/4c8dc848d760/venv/bin/python -m pytest -q tests/test_ui_raw_alignment.py tests/test_raw_alignment_view.py tests/test_representation_alignment.py --junitxml=docs/engineering/evidence/raw-alignment/recovered.xml",
+      "junit": {
+        "errors": "0",
+        "failures": "0",
+        "hostname": "636643ecc05a",
+        "name": "pytest",
+        "skipped": "0",
+        "tests": "77",
+        "time": "14.516",
+        "timestamp": "2026-11-19T15:42:46.224966-08:00"
+      },
+      "log": "docs/engineering/evidence/raw-alignment/recovered.log",
+      "name": "recovered",
+      "xml": "docs/engineering/evidence/raw-alignment/recovered.xml"
+    },
+    {
+      "command": "QT_QPA_PLATFORM=offscreen /workspace/scratch/4c8dc848d760/venv/bin/python -m pytest -q tests/test_ui_raw_alignment_boundary.py tests/test_ui_raw_alignment.py tests/test_raw_alignment_view.py tests/test_representation_alignment.py tests/test_representations.py tests/test_gui_host_seam.py tests/test_tooltips.py tests/test_pe_metadata_cache_qt.py tests/test_audit116_stale_inspection_failure.py --junitxml=docs/engineering/evidence/raw-alignment/integration.xml",
+      "junit": {
+        "errors": "4",
+        "failures": "4",
+        "hostname": "636643ecc05a",
+        "name": "pytest",
+        "skipped": "0",
+        "tests": "195",
+        "time": "111.823",
+        "timestamp": "2026-11-19T15:44:06.131842-08:00"
+      },
+      "log": "docs/engineering/evidence/raw-alignment/integration-initial.log.gz",
+      "name": "integration-initial",
+      "xml": "docs/engineering/evidence/raw-alignment/integration-initial.xml.gz"
+    },
+    {
+      "command": "QT_QPA_PLATFORM=offscreen /workspace/scratch/4c8dc848d760/venv/bin/python -m pytest -q tests/test_ui_raw_alignment_boundary.py tests/test_ui_raw_alignment.py tests/test_raw_alignment_view.py tests/test_representation_alignment.py tests/test_representations.py tests/test_gui_host_seam.py tests/test_tooltips.py tests/test_pe_metadata_cache_qt.py tests/test_audit116_stale_inspection_failure.py --junitxml=docs/engineering/evidence/raw-alignment/integration.xml",
+      "junit": {
+        "errors": "0",
+        "failures": "0",
+        "hostname": "636643ecc05a",
+        "name": "pytest",
+        "skipped": "0",
+        "tests": "191",
+        "time": "27.141",
+        "timestamp": "2026-11-19T15:46:28.043291-08:00"
+      },
+      "log": "docs/engineering/evidence/raw-alignment/integration.log",
+      "name": "integration",
+      "xml": "docs/engineering/evidence/raw-alignment/integration.xml"
+    }
+  ],
+  "schema": "patchtrace-local-recovery-receipt/1",
+  "sha256": {
+    "docs/engineering/evidence/raw-alignment/baseline.log.gz": "a17aa5078f904f182a447a129d2cf9ceb28fa872ee5187aea5369744d7c3f4ba",
+    "docs/engineering/evidence/raw-alignment/baseline.xml.gz": "5b720a9051f00f2f52257e91f0b1270a5f0df8174e605a2e905a8fb6f00e4edf",
+    "docs/engineering/evidence/raw-alignment/integration-initial.log.gz": "d58d9ecc9efd3f1a7125f88a2f375b5e3fb868205c7be111692f40f6cc0b607b",
+    "docs/engineering/evidence/raw-alignment/integration-initial.xml.gz": "ca1180fe8d49eb44560e8be02efa2c161972bbbdf559337278232fa9b07f15ae",
+    "docs/engineering/evidence/raw-alignment/integration.log": "1b7c6d9487ea8f3ce7eabd85137bc0b45bd8ff04b2750fa65d19ebed7b4e7f63",
+    "docs/engineering/evidence/raw-alignment/integration.xml": "af7db2234a555be8713c999f95ba66a8a8c96402694aee5842921900a86ea2a8",
+    "docs/engineering/evidence/raw-alignment/quality.log": "1de690070de87ffd073e15a76a2aee7ad8cd3d4e3702f97f4fadfccfed6d7e23",
+    "docs/engineering/evidence/raw-alignment/recovered.log": "6ba0c8908420c6fa70d4dac8942b67ec24280f97c7ca201c1bb8493caf9593e4",
+    "docs/engineering/evidence/raw-alignment/recovered.xml": "376ba0f1fe30a5eb8122a92496ec05f9b1ed069c33c1e4e47608bc7eac9cf029",
+    "docs/engineering/raw-alignment-recovery.md": "e62e2caff0e638e2117e472e1ce08209dddef76d516582c297df2d89be83dc6e",
+    "docs/modules.md": "9420eda10aa7446aa99af76843f5b80dfcd6fa88fd755c7a635eeed93047e7e2",
+    "docs/specs/byte-representations.md": "8d3cc9887af5363e8d2c2efeb583d0584fcffa4c5f8f321210a1d2d34894192d",
+    "src/patchtrace/gui/qt/tasks.py": "f94759608980ccc096470ec7efa013f043146579911c680835d346c61a7b4bfe",
+    "src/patchtrace/raw_alignment_view.py": "de1bd55be946816b32b3ece72369ebb71020525137d65853ae13d53691221b30",
+    "src/patchtrace/representations/alignment.py": "7c21b174f2366bdb9786b06dfb6e98f1aa5b5bdf43a89454af9f24e46d21dd7a",
+    "src/patchtrace/ui.py": "f07425ac6af142c5b8c69cc00af3b7f2588b66173ca78cb1ad1d154de41a66c9",
+    "src/patchtrace/ui_inspection.py": "5e5fb9443bc68359760e4adc05741c11c542577f4da221d796272ba6ddfd3d6c",
+    "src/patchtrace/ui_raw_alignment.py": "9a9a68f52f104d968eca33bc399ed9d7a03386591fd98c2d328c8f79e8a9e144",
+    "tests/test_pe_metadata_cache_qt.py": "1f79d0fd127b6c4962bef518885cd917426a843b8ef068648988980dc623ff62",
+    "tests/test_ui_raw_alignment.py": "c07626b09ef2e7589f1a80aed50c8765304548c983b5bdbaaabbda35b2d358e3",
+    "tests/test_ui_raw_alignment_boundary.py": "70474a8686326d0a70cd8311727b1bdc76115a6811d2d56f1e643684c77c5fde"
+  }
+}

@@ -1,0 +1,22 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______ test_cache_miss_keeps_both_runs_and_original_java_probe_results ________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-48/test_cache_miss_keeps_both_run0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fbdfeef4d10>
+fake_native = namespace(roots=[PosixPath('/tmp/pt-cache-0bwr9nsy/one'), PosixPath('/tmp/pt-cache-0bwr9nsy/two')], services=[namespac...a_output='java probe timed out', raw_mismatch=False, process=<function fake_native.<locals>.process at 0x7fbdfea28cc0>)
+
+    def test_cache_miss_keeps_both_runs_and_original_java_probe_results(tmp_path, monkeypatch, fake_native):
+        output = tmp_path / 'diagnostics'
+        with pytest.raises(AssertionError, match='second run was not a cache hit; java=unverified'):
+            invoke(monkeypatch, output)
+>       assert (output / 'first.json').is_file(), 'temporary first-run diagnostics were discarded'
+E       AssertionError: temporary first-run diagnostics were discarded
+E       assert False
+E        +  where False = is_file()
+E        +    where is_file = (PosixPath('/tmp/pytest-of-agent/pytest-48/test_cache_miss_keeps_both_run0/diagnostics') / 'first.json').is_file
+
+tests/test_live_cache_diagnostics.py:82: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_live_cache_diagnostics.py::test_cache_miss_keeps_both_runs_and_original_java_probe_results
+1 failed in 3.17s

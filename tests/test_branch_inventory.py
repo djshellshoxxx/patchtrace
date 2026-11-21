@@ -98,6 +98,52 @@ def test_tsv_roundtrip_replays_exact_tips_after_branch_movement(graph, tmp_path)
     assert dict(tool.branches(replay_git, "origin"))["topic"] == base
 
 
+def test_snapshot_replays_large_quoted_evidence_and_restores_csv_limit(graph, tmp_path):
+    repo, base, main, candidate, topic, *_ = graph
+    git = tool.Git(repo)
+    refs = tool.branches(git, "origin")
+    rows, _ = tool.inventory(git, main, candidate, refs, [], "owner/repository")
+    rows[0]["note"] = json.dumps({"evidence": 'quoted "value"\t\n' + "x" * (128 * 1024)})
+    snapshot = tmp_path / "large-evidence.tsv"
+    tool.publish(snapshot, tool.render(rows))
+    run(repo, "update-ref", "refs/remotes/origin/topic", base)
+    previous_limit = csv.field_size_limit()
+
+    assert tool.branches(tool.Git(repo), "origin", snapshot) == refs
+    assert dict(refs)["topic"] == topic
+    assert csv.field_size_limit() == previous_limit
+
+
+def test_oversized_snapshot_preserves_previous_output(graph, tmp_path, monkeypatch, capsys):
+    repo, _, main, candidate, topic, *_ = graph
+    snapshot = tmp_path / "oversized.tsv"
+    snapshot.write_text("branch\ttip_sha\tnote\n" + f"topic\t{topic}\t" + "x" * 200 + "\n")
+    pulls = tmp_path / "pulls.json"
+    pulls.write_text("[]", encoding="utf-8")
+    previous = tmp_path / "previous.tsv"
+    previous.write_text("previous successful evidence\n", encoding="utf-8")
+    previous_limit = csv.field_size_limit()
+    monkeypatch.setattr(tool, "MAX_METADATA_BYTES", 128)
+
+    with pytest.raises(SystemExit) as error:
+        tool.main(["--repo", str(repo), "--main", main, "--candidate", candidate,
+                   "--pulls-json", str(pulls), "--refs-tsv", str(snapshot), "--output", str(previous)])
+    assert error.value.code == 2
+    assert "branch snapshot exceeds" in capsys.readouterr().err
+    assert previous.read_text() == "previous successful evidence\n"
+    assert csv.field_size_limit() == previous_limit
+
+
+def test_snapshot_decode_failure_restores_csv_limit(graph, tmp_path):
+    repo, *_ = graph
+    snapshot = tmp_path / "invalid-utf8.tsv"
+    snapshot.write_bytes(b"branch\ttip_sha\tnote\n\xff")
+    previous_limit = csv.field_size_limit()
+    with pytest.raises(UnicodeDecodeError):
+        tool.branches(tool.Git(repo), "origin", snapshot)
+    assert csv.field_size_limit() == previous_limit
+
+
 def test_refuses_shallow_history(graph, tmp_path):
     repo, _, main, candidate, *_ = graph
     clone = tmp_path / "shallow"
@@ -155,3 +201,145 @@ def test_intermediate_is_not_integrated_merely_because_surviving_pr_contains_it(
     assert note["main_ancestor"] is False
     assert note["retained_unmerged_stack"]["tip"] == candidate
     assert rows[0]["delete_safe"] == "no"
+
+
+@pytest.mark.parametrize("shape", [
+    "duplicate-header", "extra-cell", "missing-cell", "missing-tip-header",
+    "blank-tip", "blank-branch",
+])
+def test_snapshot_refuses_malformed_columns_before_any_git_lookup(graph, tmp_path, shape):
+    _, _, _, _, topic, *_ = graph
+    layouts = {
+        "duplicate-header": f"branch\ttip_sha\tbranch\noriginal\t{topic}\tforged\n",
+        "extra-cell": f"branch\ttip_sha\tnote\noriginal\t{topic}\tretained\textra\n",
+        "missing-cell": f"branch\ttip_sha\tnote\noriginal\t{topic}\n",
+        "missing-tip-header": "branch\tnote\noriginal\tretained\n",
+        "blank-tip": "branch\ttip_sha\noriginal\t\n",
+        "blank-branch": f"branch\ttip_sha\n \t{topic}\n",
+    }
+    snapshot = tmp_path / "malformed.tsv"
+    snapshot.write_text(layouts[shape], encoding="utf-8")
+
+    class NoGitCalls:
+        def commit(self, ref):
+            pytest.fail(f"invalid snapshot reached Git with {ref!r}")
+
+    old_limit = csv.field_size_limit()
+    with pytest.raises(ValueError, match="invalid branch snapshot TSV"):
+        tool.branches(NoGitCalls(), "origin", snapshot)
+    assert csv.field_size_limit() == old_limit
+
+
+def test_snapshot_accepts_reordered_columns_and_extra_named_metadata(graph, tmp_path):
+    repo, _, _, _, topic, *_ = graph
+    snapshot = tmp_path / "compatible.tsv"
+    snapshot.write_text(f"note\ttip_sha\tbranch\textra\nretained\t{topic}\ttopic\tdata\n",
+                        encoding="utf-8")
+    old_limit = csv.field_size_limit()
+    assert tool.branches(tool.Git(repo), "origin", snapshot) == [("topic", topic)]
+    assert csv.field_size_limit() == old_limit
+
+
+def test_invalid_snapshot_headers_leave_previous_published_evidence_unchanged(graph, tmp_path, capsys):
+    repo, _, main, candidate, topic, *_ = graph
+    snapshot = tmp_path / "wrong-heading.tsv"
+    snapshot.write_text(f"branch\ttip_sha\tbranch\noriginal\t{topic}\tforged\n", encoding="utf-8")
+    pulls = tmp_path / "pulls.json"
+    pulls.write_text("[]", encoding="utf-8")
+    output = tmp_path / "inventory.tsv"
+    output.write_text("previous successful evidence\n", encoding="utf-8")
+
+    with pytest.raises(SystemExit) as error:
+        tool.main(["--repo", str(repo), "--main", main, "--candidate", candidate,
+                   "--pulls-json", str(pulls), "--refs-tsv", str(snapshot), "--output", str(output)])
+    assert error.value.code == 2
+    assert "invalid branch snapshot TSV" in capsys.readouterr().err
+    assert output.read_text(encoding="utf-8") == "previous successful evidence\n"
+
+
+
+@pytest.mark.parametrize("shape", [
+    "head-reference", "abbreviated-object", "revision-expression",
+    "uppercase-object", "late-invalid-after-valid",
+])
+def test_snapshot_rejects_noncanonical_tip_before_any_git_access(graph, tmp_path, shape):
+    _, _, _, _, topic, *_ = graph
+    invalid_tips = {
+        "head-reference": "HEAD",
+        "abbreviated-object": topic[:10],
+        "revision-expression": "HEAD~0",
+        "uppercase-object": topic.upper(),
+        "late-invalid-after-valid": "HEAD",
+    }
+    rows = ([f"valid\t{topic}"] if shape == "late-invalid-after-valid" else [])
+    rows.append(f"topic\t{invalid_tips[shape]}")
+    snapshot = tmp_path / "tip-expressions.tsv"
+    snapshot.write_text("branch\ttip_sha\n" + "\n".join(rows) + "\n", encoding="utf-8")
+
+    class NoGitCalls:
+        def commit(self, ref):
+            pytest.fail(f"invalid snapshot reached Git with {ref!r}")
+
+    old_limit = csv.field_size_limit()
+    with pytest.raises(ValueError, match="invalid branch snapshot TSV rows"):
+        tool.branches(NoGitCalls(), "origin", snapshot)
+    assert csv.field_size_limit() == old_limit
+
+
+def test_snapshot_refuses_tag_object_peeling_to_commit(graph, tmp_path):
+    repo, _, _, _, topic, *_ = graph
+    run(repo, "tag", "-a", "evidence-tag", "-m", "retained evidence", topic)
+    tag_object = run(repo, "rev-parse", "refs/tags/evidence-tag")
+    assert tag_object != topic and len(tag_object) == len(topic)
+    snapshot = tmp_path / "tag-object.tsv"
+    snapshot.write_text(f"branch\ttip_sha\nindexed\t{tag_object}\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="branch snapshot tip does not match commit object"):
+        tool.branches(tool.Git(repo), "origin", snapshot)
+
+
+def test_snapshot_full_commit_oid_remains_exact(graph, tmp_path):
+    repo, _, _, _, topic, *_ = graph
+    snapshot = tmp_path / "exact-oid.tsv"
+    snapshot.write_text(f"tip_sha\tbranch\tnote\n{topic}\tindexed\tretained\n", encoding="utf-8")
+    assert tool.branches(tool.Git(repo), "origin", snapshot) == [("indexed", topic)]
+
+
+@pytest.mark.parametrize("note", ['"unterminated', '"closed"unexpected'])
+def test_snapshot_rejects_damaged_quoted_fields_before_git(tmp_path, note):
+    tip = "a" * 40
+    snapshot = tmp_path / "damaged-quoting.tsv"
+    snapshot.write_text(
+        f"branch\ttip_sha\tnote\nvalid\t{tip}\tretained\nbroken\t{tip}\t{note}",
+        encoding="utf-8",
+    )
+
+    class NoGitCalls:
+        def commit(self, ref):
+            pytest.fail("malformed quoted evidence reached Git")
+
+    old_limit = csv.field_size_limit()
+    with pytest.raises(ValueError, match="invalid branch snapshot TSV"):
+        tool.branches(NoGitCalls(), "origin", snapshot)
+    assert csv.field_size_limit() == old_limit
+
+
+def test_damaged_quoted_snapshot_preserves_previous_report(graph, tmp_path, capsys):
+    repo, _, main, candidate, topic, *_ = graph
+    snapshot = tmp_path / "unfinished-note.tsv"
+    snapshot.write_text(
+        f'branch\ttip_sha\tnote\ntopic\t{topic}\t"unfinished private evidence',
+        encoding="utf-8",
+    )
+    pulls = tmp_path / "pulls.json"
+    pulls.write_text("[]", encoding="utf-8")
+    output = tmp_path / "inventory.tsv"
+    output.write_bytes(b"previous successful evidence\n")
+
+    with pytest.raises(SystemExit) as error:
+        tool.main(["--repo", str(repo), "--main", main, "--candidate", candidate,
+                   "--pulls-json", str(pulls), "--refs-tsv", str(snapshot), "--output", str(output)])
+    assert error.value.code == 2
+    error_text = capsys.readouterr().err
+    assert "invalid branch snapshot TSV" in error_text
+    assert "unfinished private evidence" not in error_text
+    assert output.read_bytes() == b"previous successful evidence\n"

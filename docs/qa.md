@@ -1,4 +1,85 @@
+## Current PR349 Tier R test repair
+
+[Current report](engineering/cycle837fe-native-c4-20261121.md) and [ledger](engineering/task-ledger.json): tested 829600f8 / tree 306c4d58, **1,444 passed / 1 CODEX-5 xfailed**, 1,445 distinct cases, 65 selectors. Whole-tree Ruff, dependencies, isolated binding and independent 67-case review pass. The missed Tier R mutable-tag assertion is repaired; all original workflow/digest/permissions/compiler requirements remain. The cancelled predecessor's partial 1 failed / 19,776 passed result and the original review coverage miss are retained.
+
+Actual predecessor a73 Intel checks pass on Linux (4) and Windows (3), with one Windows offline namespace skip. Final revised-head full/Qt/native/package/frozen qualification and main merge remain pending. Root owns PR349; main/release readiness remains false. Earlier current-state sections below are source-specific history.
+
+## Current PR349 Intel + C4 follow-up
+
+[Current report](engineering/cycle837fe-native-c4-20261121.md) and [ledger](engineering/task-ledger.json):tested `6bf79fef` / `dc659c7e`, 1,396 passes/1 CODEX-5xfail, zero failures/errors/ordinary skips, required lint/dependencies/source binding and independent whole-tree review. ExistingPR349 combines fixed Windows identity, five Build environment help mappings and bounded Pages lock/isolation with earlier storage/Search/pinning/cache/frozen work. Exact new-source hosted/native/package gates remain pending;main/release readiness is not claimed.
+
+Original Windows failures and Tier R 5/11 coverage gap remain evidence; the same Tier R gap occurred on original PR349. Four more historical scopes need no port;whole branches remain partly reviewed and 181/16 census unchanged. Root owns PR349 qualification;C4/Intel histories are retained. Earlier current-state paragraphs are historical for these scopes.
+
+## Cycle4 parent integration update — 2026-11-21 UTC
+
+The separate C4 follow-up includes PR349 `daee337c` and preserves both implementations
+and histories. Source `111803d5` / REST code checkpoint `7ddb1130` passed 580 cases,
+with one CODEX-5 expected failure and no ordinary skips; all 110 registry cases are
+included. Required Ruff/pip/source binding and independent merge/history reviews
+passed. CODEX-1 is closed by the parent; wider CODEX-5 and hosted/native/manual/release
+gates remain open. [Current report](engineering/cycle4-consolidation-20261121-95fe.md) and [exact qualification](engineering/evidence/cycle4-parent-20261121/qualification.json)
+supersede the earlier pending C4 combination state. PR349 ownership stays with 837FE;
+resolve final follow-up head/checks from its live PR. Main/release eligibility remains
+false. A qualified main commit requires `[no release] [no deploy]`. Earlier sections
+remain source-specific history.
+
+## Cycle4 bounded follow-up qualification
+
+Clean combined source 8c5e77e2 passed 391 affected tests, with 2 existing CODEX-1/5
+expected failures and 0 ordinary skips. Whole-tree Ruff, pip consistency, isolated
+source binding and whitespace passed. Four independent source reviews passed;
+their README prerequisite finding was fixed and rechecked. The separate clean
+Pages environment passed 247 with1 existing optional GUI skip, and actual hashed
+install/build and both intended pip refusals passed. The GUI case passed in the
+combined full-dependency environment. Counts overlap and are not additive.
+
+Original14-failure header baseline, hidden-host audit failure, Pages setup error,
+four source-contract failures and deliberate negative controls are preserved.
+Actual installation used verified offline wheels; hosted index/build and new-head
+full QA remain separate. [Report and evidence](engineering/cycle4-consolidation-20261121-95fe.md).
+PR #349's integration and remaining qualification belong to the parallel 837FE owner.
+
+## Cycle 2 current checkpoint
+
+Clean reviewed source 3cf7ad23 passes 188 affected cases with no skips/failures, whole-tree Ruff, dependencies and isolated import binding. The initial 187-pass/1-audit-failure run and Ruff finding are retained alongside corrected results. The fresh peer confirms the audit fails when an actual header mapping is removed. [Complete qualification](engineering/cycle2-consolidation-20261121-2bad.md).
+
+PR #346 completed all automated QA/Qt/native/package/smoke checks on its own source. PR #345's original NSIS 503 is retained and a single failed-job-only retry is active; PR #347 Windows QA remains active at the last read. These are predecessor receipts, not new-source full acceptance. Historical SIGKILL causes remain unestablished.
+
+## Historical source-specific checkpoints
+
+The dated entries below retain their original observations. Use the current task ledger and checkpoint above for present status.
+
+## Current qualification — 20 November 2026
+
+See [the consolidated report](engineering/session-20261120-2bad.md). Final-source batch 3 completed 429 passes and two native Windows skips across 16 files. Full/combined attempts and two bounded batches ended SIGKILL without JUnit and remain incomplete. Scoped reviews and earlier focused successes are separate. Ruff and dependencies pass; no main/release acceptance. Older entries below retain their historical observations.
+
+## Generation 39 — KB investigation Create junction preflight (2026-11-20)
+
+Four repository regression functions authored on isolated g39: mocked final-component junction, ordinary empty destination, preserved symlink refusal and native Windows junction to a real empty target. A hand-copied Python 3.13.5 source-equivalent control reproduced prior admission, corrected refusal and unchanged ordinary acceptance (three expectations passed). It is **not** a repository-source pytest run; no full pytest, Ruff, native Windows, separate review or exact-head hosted QA was performed. PR343 full QA remained active, so no duplicate job was launched. No false-passing nonempty-junction fixture is retained. See [g39](engineering-handoffs/generation-39-20261120.md). The earlier Windows Qt, SIGKILL and native Java failure receipts remain unchanged.
+
 # QA and audit record
+
+## Final reviewed checkpoint — generation33
+
+Source `bbdef5a6` passed **606 affected tests with one native Windows skip**. Whole-tree Ruff, dependency validation, complete-range whitespace and independent source-scope checks pass. Five product repair areas and the CI diagnostic-retention fix are reviewed. The original native `java=unverified` cache failure and earlier unexplained full-suite SIGKILL remain unresolved; final-head hosted/native/package and standing release gates remain required. [Final qualification](engineering/generation33-qualification-20261120.md).
+
+
+## Latest five-area checkpoint
+
+Source `71b535cc` passed **493 affected cases with one native Windows skip**, whole-tree Ruff and complete-range whitespace. Initial remote `5cc3f2a` has an unresolved native cache gate failure (`java=unverified`); diagnostic retention is under independent review. Full/current-native/package and existing release blockers remain open. [Details](engineering/generation33-qualification-20261120.md).
+
+
+## 2026-11-20 generation 33
+
+Exact clean source `ad891694` / tree `23ad5e52` passed **397 combined affected tests with no skips, failures or errors**, whole-tree Ruff and dependency validation. The added Strings shutdown guard has two actual Qt baseline failures, 96 author affected passes and independent 100 passes (96 replayed plus four extra controls). Earlier full frozen `a024f9ec` qualification ended SIGKILL after 563.257508 seconds, with no final summary/JUnit and unestablished cause. Its two-node diagnostic passed without changing assertions; this is not aggregate acceptance. The raw-log whitespace finding was corrected by byte-preserving gzip, with the original failure retained. [Qualification record](engineering/generation33-qualification-20261120.md) and [current handoff](engineering-handoffs/generation-33-20261120.md).
+
+
+## 2026-11-20 generations 30–31
+
+Reviewed code checkpoint `c0108749e8813dfa6165e953b1a2dc2ad736e982` recovers two narrow donor scopes and one new UI repair. Receipt baseline: 18 failures/11 passes; affected recovery: 140 passes/one optional psutil skip, followed by a separate pass of that resource control. Search: 58 affected passes. Strings: 102 disjoint affected passes. Recent input guards: 96 disjoint focused passes. Independent replays overlap these numbers and must not be summed. Combined local and final-head hosted qualification remain pending at this checkpoint. Native Windows/FLOSS, Qt disposition and the forced-export race remain separate.
+
+See [handoff](engineering-handoffs/generation-30-31-20261120.md), [census](engineering/consolidation-inventory-20261120-g30.md), [receipt recovery](engineering/receipt-source-recovery-20261120.md), [Search review](engineering/search-cancel-independent-review-20261120.md), and [Strings recovery](engineering/strings-stored-source-recovery-20261120.md).
+
 
 ## 2026-11-18 advisory anchor compatibility and final frozen L1 evidence
 
@@ -1470,7 +1551,7 @@ New essential candidate has no published commit/PR: automatic approval review re
 ### [AF-0:ported-154-157] Tracker rows carried from PRs #154 and #157 (2026-11-04)
 
 ### November 1 corpus safeguards and preregistration identity
-Selective comparison of preserved #78/#79/#82/#85 against coordinator source `241f445` confirms missing output persistence, two-sided recipe A/A/noise planner cases and final-run CLI guard. The narrow preregistration identity repair rejects unrecorded/mismatched/ambiguous QA rows before corpus reads, and explicitly keeps rehearsal reports unlocked. Initial regression 18 failed/1 passed; repaired bounded integration 255 passed/1 native-tool skip (68.85 s); full Ruff passes. This is not final-evaluation or numeric-confidence acceptance. Independent review and combined cross-OS checks remain pending. Full source/remaining-work map and evidence: [corpus-safeguards-20261101.md](qa/corpus-safeguards-20261101.md).
+Selective comparison of preserved #78/#79/#82/#85 against coordinator source `241f445` confirms missing output persistence, two-sided recipe A/A/noise planner cases and final-run CLI guard. The narrow preregistration identity repair rejects unrecorded/mismatched/ambiguous QA rows before corpus reads, and explicitly keeps rehearsal reports unlocked. Initial regression 18 failed/1 passed; repaired bounded integration 255 passed/1 native-tool skip (68.85 s); full Ruff passes. This is not final-evaluation or numeric-confidence acceptance. Independent review and combined cross-OS checks remain pending. Full source/remaining-work map and evidence: [corpus-safeguards-20261101.md](https://github.com/djshellshoxxx/patchtrace/blob/4aa99f7bd989765000c6ebd659c9565030a48849/docs/qa/corpus-safeguards-20261101.md).
 Preregistration review follow-up: fenced/commented/indented example rows could still be accepted at first review; 8 new failures reproduced. Excluded them without changing real record identity or locked data. Final bounded selection/tools/constants checks: 74 passed (0.88 s), full Ruff passed; independent final review pending. Historical red evidence retained in the linked corpus safeguard record.
 Final preregistration format follow-up: independent review found raw HTML and list-nested code contexts could still resemble lock records. The supported format now requires column-zero rows and rejects unsupported raw HTML/multiline code with a controlled error. Existing QA prose compatibility and final selection/tools/constants checks pass: 99 passed (1.02 s), full Ruff clean. Review source/results are retained in the corpus safeguard record; no real final look was consumed.
 Independent preregistration identity review complete: `cancel_fix` cleared source `42a3d5dee13ac4ff87436a66f787c6b3b5e093ad` with 102 focused checks passing (1.40 s), original false-lock probes replayed, source hashes verified and unchanged lineage/frozen/final-gate boundaries confirmed. This supersedes pending-review notes above; integration/full/cross-OS and remaining GT-05 acceptance remain separate.
@@ -1479,7 +1560,7 @@ reproduced; escaped-pipe false cells and optional trailing delimiter were also v
 run:21 failed/61 passed; repaired selection/tools/constants:123 passed. Before-input probes used only synthetic
 protocol/QA files and a mocked corpus boundary. No actual corpus, final look, approval authority or frozen
 protocol changed. Preserved closed #155 overlap was inspected; its intended cases are covered while its
-prefix-comment false-lock regression is refused. [Detailed source/disposition/evidence](qa/prereg-markdown-review-20261101.md).
+prefix-comment false-lock regression is refused. [Detailed source/disposition/evidence](https://github.com/djshellshoxxx/patchtrace/blob/f27d23a80ee49573ccca54cdf036427f57eebb2a/docs/qa/prereg-markdown-review-20261101.md).
 Root review found an additional escaped-opening backtick false lock on5e008a5, so its earlier approval
 is withdrawn pending follow-up. A closed multiline comment reproduced verification and mocked corpus-boundary
 access. Source-backed opening-escape handling now preserves literal backslashes inside established code;
@@ -1487,11 +1568,11 @@ new red6 failed/91 passed, repaired selection/tools/constants138 passed (all pri
 clean. No real corpus or final evaluation was read. Independent exact-follow-up review remains required.
 ### GT05 normalized output persistence (2026-11-01)
 Against checkpoint `06b56a6`, actual CLI reports referenced normalized output digests with no retained source document; original regressions failed 3/3. The narrow #78 reconciliation now uses fresh exclusive run directories and atomic no-overwrite publication, and fails a pair without metrics when evidence cannot be retained. Earlier outputs/reports survive later failures. The actual attention provider exposed an already-produced field/schema mismatch; its bounded ranking key and engine kind now validate without changing original output bytes or scoring. Old strict readers reject these additive `/1` fields/kind safely.
-Independent review exposed loss of the ranking field in the production output reader; the one-field reconstruction fix and actual-loader regression preserve it. Final focused checks: **164 passed, 2 native-tool skips** in 3.09 s; whole Ruff/diff clean. All inputs are constructed; production attention import/ranking/loader/replay is exercised, but no native accuracy or real corpus/final evaluation is claimed. Final independent review/integration and verified shard-transfer remain pending. Exact source/license adoption, preserved red/green logs, schema limits and remaining requirements: [output retention receipt](qa/corpus-output-persistence-20261101.md).
+Independent review exposed loss of the ranking field in the production output reader; the one-field reconstruction fix and actual-loader regression preserve it. Final focused checks: **164 passed, 2 native-tool skips** in 3.09 s; whole Ruff/diff clean. All inputs are constructed; production attention import/ranking/loader/replay is exercised, but no native accuracy or real corpus/final evaluation is claimed. Final independent review/integration and verified shard-transfer remain pending. Exact source/license adoption, preserved red/green logs, schema limits and remaining requirements: [output retention receipt](https://github.com/djshellshoxxx/patchtrace/blob/99660cc825b366a28e50b18eacad44dbb069ca69/docs/qa/corpus-output-persistence-20261101.md).
 Independent review now clears source `ad35469860d402c4dfa86f041be3ce6996323465` (tree `bb7bd51dc64b08cc6fd33d8d7c90f4bf72b47841`): 164 independent passes, 2 native-tool BLOCKED skips in 3.30 s, extra production-reader/failure controls and old-byte/decoder differential all pass. The sole reader finding is closed; exact source hashes match. Evidence-only follow-up preserves the original runs and raw logs. Coordinator integration/cross-OS and verified transfer remain open.
 Independent main657 port `522fe1b` plus receipt `5a95772` preserves all reviewed source/schema/test hashes and main's original QA/todo prefixes. Scoped checks plus corpus contract/schema drift pass **188 tests, 2 native-tool BLOCKED skips in 3.90 s**, with actual imports resolved to the new worktree, full Ruff and diff hygiene clean. Independent review transfers unchanged after explicit source/owned-diff equivalence checks. No preregistration branch dependency or remote publication is introduced.
 ### PR #157 credited replay boundary (2026-11-01)
-Independent review reproduced incompatible ordering keys reaching a ranking TypeError, and a valid failed-publication artifact being adopted by the actual loader. New managed runs now finalize explicit successful-report credit and the reader rechecks exact bytes/ownership; preserved failed files are uncredited. Producer scalar validation precedes encoding/scoring on both paths, with unchanged strict limits and in-memory unified compatibility. Legacy unmarked folders remain visibly unverified and can be refused; historical success is not inferred. Initial controls: 11 failed/4 passed; final bounded selection: **237 passed, 2 native-tool BLOCKED skips**, 5 expected legacy warnings in 4.70 s; whole Ruff, pip check and diff clean. No actual corpus/final evaluation was consumed. Independent final review, integration, cross-OS and broader acceptance remain open; see [credited replay receipt](qa/output-credited-replay-20261101.md).
+Independent review reproduced incompatible ordering keys reaching a ranking TypeError, and a valid failed-publication artifact being adopted by the actual loader. New managed runs now finalize explicit successful-report credit and the reader rechecks exact bytes/ownership; preserved failed files are uncredited. Producer scalar validation precedes encoding/scoring on both paths, with unchanged strict limits and in-memory unified compatibility. Legacy unmarked folders remain visibly unverified and can be refused; historical success is not inferred. Initial controls: 11 failed/4 passed; final bounded selection: **237 passed, 2 native-tool BLOCKED skips**, 5 expected legacy warnings in 4.70 s; whole Ruff, pip check and diff clean. No actual corpus/final evaluation was consumed. Independent final review, integration, cross-OS and broader acceptance remain open; see [credited replay receipt](https://github.com/djshellshoxxx/patchtrace/blob/aff72cddc902f31a2cf44dea9c48797edabc1c30/docs/qa/output-credited-replay-20261101.md).
 Independent credited-replay review approved source `5c26af904a28dd41aaacb3a60f9826037a85980d` / tree `f57a7dd2c210b773956bf218ad088295a03f93ff`: 119 separate passes, 1 native-tool BLOCKED skip, 11 expected legacy diagnostics in 26.55 s, plus direct strict-scalar/post-link valid-JSON controls and schema/lint checks. The selection includes existing bounded synthetic training-pipeline regressions; no actual corpus/final evaluation or native acceptance is claimed. This supersedes pending review only; integration/cross-OS/transfer and broader safeguards remain open.
 
 
@@ -1837,4 +1918,493 @@ Fresh REST inspection found eleven new #302 commits at `121ffb0b`; six repairs m
 
 ## [FOUNDATION-SAVED-SCOPE-20261119]
 
-Independent controls blocked intact #304: scoped native revision conflicts could resurrect 43 positive edges. A narrow provenance-preserving port from #316 restores global admission and finite saved-scope validation. Dedicated regressions changed from **73 failed, 7 passed** to **80 passed**; both independent date variants now pass. Initial broader commands ran zero tests because a later-only path was included; corrected broad, Qt, hosted and independent review remain pending. Raw failures and limits are preserved in [the repair receipt](qa/foundation-saved-scope-20261119.md). No release or native qualification is claimed.
+Independent controls blocked intact #304: scoped native revision conflicts could resurrect 43 positive edges. A narrow provenance-preserving port from #316 restores global admission and finite saved-scope validation. Dedicated regressions changed from **73 failed, 7 passed** to **80 passed**; both independent date variants now pass. Initial broader commands ran zero tests because a later-only path was included; corrected broad, Qt, hosted and independent review were pending at that receipt's checkpoint. Raw failures and limits are preserved in [the repair receipt](qa/foundation-saved-scope-20261119.md). The accepted foundation merge is the continuation's starting main `fdc2696c`; this historical entry is not evidence that later continuation changes passed. No release or native qualification is claimed.
+
+
+## [CONTINUATION-CONSOLIDATION-20261119]
+
+Starting main: `fdc2696c23bdbfe7668348f25e3b336ce33039f7`. The local branch
+`codex/patchtrace-completion-20261119-81e4` contains the reviewed N-way,
+installer-receipt, parser, PE-cache and facts-eligibility slices through `69fa6b8b`.
+Full combined run `full-batch1` ended 137/SIGKILL without a summary or JUnit
+on that source; it remains incomplete. Later diagnostic and focused results are
+recorded separately, and aggregate hosted acceptance remains pending. No main merge or release has been
+performed by this continuation.
+
+| Slice | Completed evidence | Local integration |
+| --- | --- | --- |
+| Branch census | 320 heads including main; 309 PR records; 139 retained for semantic review. | Complete disposition records at `46f37373`; no branch closure or deletion inferred. |
+| N-way path failure isolation | 11 controls fail on base; 85 affected tests pass in 21.76s. Healthy pairs survive a different pair's unreadable path. | `24064cf6`. |
+| Installer receipt recovery | 5 tests pass in 3.07s; exact authored installer size/digest checked without execution. | Recovery `20b54521`, root port `ef9167d2`; broader source workflow scope retained. |
+| Parser bounds and SQLite identity | Initial base replay: 29 failed/4 passed. Independent classifier review: 6 failed/22 passed before correction. Corrected selection: 107 passed. Final affected suite: 432 passed/1 Windows skip in 61.86s. | Chain ends `baf95fcd`, integrated locally by `7610aeaa`. |
+| SPEC-51 cache/worker integration | Final deduplicated affected suite: 840 passed/2 Windows skips in 60.27s. Independent cache peer: 16 passed in 2.15s, no remaining blocker in reviewed paths. | Source `0bc41f6b`, local integration `6bf57557`. |
+| Research facts-eligibility guard | 11 red controls, then 33 focused passes in 3.52s. The caller sweep found one authored fixture missing facts metadata (106 passed/1 failed); explicit metadata correction retained its hit assertion. Final scoped/caller selection: 140 passed in 4.59s. | Source `d87af037`, local merge `69fa6b8b`. |
+
+Cache review corrected invalid digest/proof claims, stale/failed equal-body
+renewal and concurrent row-growth admission. Offscreen production lifecycle
+controls verify worker parsing, owner-thread storage, no second Files-tab reader,
+and stale UI clearing. OS trust still runs independently, and partial UI data
+does not invent a resource-limit cause. Parser/cache Ruff passed; cache schema
+regeneration produced no changes. These overlapping slice results are not a
+combined pass count or native acceptance evidence.
+
+Exact skips are Windows `msdelta.dll`, the real catalog probe and native
+WinVerifyTrust. The coordinator's latest existing-main CI observation had Linux
+and most Qt legs green, Windows and one Qt leg still running; PR319 at `a56ab13a`
+was queued. Broad PR316/318 holds remain unchanged. These earlier-head states do
+not qualify the new aggregate.
+
+The census remains frozen at `2026-11-19T10:34:16.394Z`. Later draft PR320
+(`188b4962`, broad 928-file/333-commit integration, full suite incomplete) and
+documentation PR321 (`976dddfb`, atop PR319) are separately retained observations,
+not additions silently folded into those counts or the local source. The later
+all-state issues scan found 10 open non-PR issues and read their comments; it
+does not resolve those issues. Main remains `fdc2696c` in the coordinator's latest
+observation.
+
+Forced strings-export source-substitution/OSError cleanup races, native trust,
+release/manual acceptance, separate L1/L2/L3 evidence and unreviewed historical
+branches remain explicit. The restored environment's completed reruns replace
+interrupted attempts without inventing results for lost handles. Receipt names,
+exact scopes and next commands are in [the continuation test record](consolidation/TEST_RESULTS.md);
+[remaining work](consolidation/REMAINING_WORK.md) preserves the open gates.
+
+
+## 2026-11-19 continuation batches 2–3: exact values and typed boundaries
+
+Reviewed local runtime/test source `a4d6dd9becb37b6245332643683a2ef1d2bf3812` adds the BinExport2/rz-diff text repairs (414 affected passes), CSAF redirect error typing (33 passes), and CVE decimal/UTC admission with exact tenths (124 passes). Each slice preserves red controls and positive behavior; source and receipts are indexed under `docs/consolidation/`. Root review caught CVSS underflow, excess-precision rounding and caller-context dependence before accepting the numeric slice. No real case facts or accuracy claims changed.
+
+The full attempt on earlier `69fa6b8b` ended with exit 137/SIGKILL before a pytest summary or JUnit. Its kill cause is unestablished; disk pressure and low available memory were observed separately. This is incomplete, not passed. The earlier sequential diagnostic planned all 855 tracked test files in 54 groups of at most 16 with no file exclusions; it later stopped after nine groups at disk reserve. Phase 4 below records its actual result and the new complete-manifest run. Its immutable source/test/tool fingerprint and per-group commands/results are retained; partitioned coverage must not be described as an unsplit full pass.
+
+Whole-tree configured Ruff, pip check and schema generation passed on that frozen source; no schema drift. Its supplemental scan had 65 findings, classified in `docs/consolidation/STATIC_AUDIT.md`; later source scans are recorded separately, with no suppression or clean-scan claim. The focused archive contains 94 verified payloads (SHA-256 `babf10b732007de68adbf265416139bcaf3bd72d13f35916985080055cd5c9df`). It excludes later partition outcomes and Phase 6 receipts.
+
+The guarded remote checkpoint `bdc929ebd3c6aaa2563c758936beb315a10eeea0` exactly preserves the earlier local `af8772bf` tree. The final candidate still needs its own hosted Linux/Windows/Qt/package/native checks before any main merge. Existing main QA/Qt success belongs only to main `fdc2696c`. No release, tag, deployment, main merge or branch deletion is claimed.
+
+
+## Reviewed contextual digest rebaseline after CVE exactness repair
+
+The first nine sequential groups on frozen runtime/test source `a4d6dd9b` collected 2,611 cases: 2,602 passed, 8 skipped and one failed golden expectation. The runner then stopped before group10 because shared disk space was below its 128 MiB reserve; 45 groups are not covered by that attempt. The original failure and all nine group receipts are preserved.
+
+The CVE repair adds exactly one eligible plain-data constant, `ROUND_HALF_EVEN = "ROUND_HALF_EVEN"`. The existing constants-digest contract consequently changes only the contextual digest from `6db85ba584aaa95fe6cac6aee9681c2b6ec064cffe52c9c601fd461081f704cb` to `3d16cbd776c3589f98828a46ebaf420299b2f72d84f5d5bcf79b08de220c5963`. Removing only that constant from a copied current namespace reproduces the prior digest exactly; new class/function imports are excluded. Eight fresh processes across four hash seeds and two Decimal contexts produce the same new digest without changing caller state. Signals, WIL and ranking digests are unchanged.
+
+Reviewed correction: change only the contextual golden expectation. Production hashing and all equality, mutation, stale-row and cache-invalidation assertions remain intact. Existing non-golden guards passed8/8; the complete nine-case file now passes9/9 in1.85s in a separate candidate checkout. Contextual stage identities change and prior stored pipeline algorithm maps correctly become stale until recomputed. Runtime source and the ongoing/frozen partition checkout were not modified by this fixture correction.
+
+`docs/consolidation/evidence/algorithm-digest-review-20261119.zip` contains24 verified payloads, including the original nine-group outcomes and independent/corrected digest evidence. SHA-256: `aaf3f22a9f1b09e8423be01a1667be6afa60b436d6434fe741a0bc852d8ed80a` (84,003bytes). This does not qualify the remaining45 groups or an unsplit full suite.
+
+
+## [CONTINUATION-PHASE4-HISTORY-20261119]
+
+Original runtime `32abf9702538dc1b2027e8ae052949bbc2436c28`, tests/spec `1c2b770d2eef6266c56504b5d081e5d6d750151e`, lifecycle correction `4d7ae4af9aa6d60fee0f70025d774c3f5b468e0b`.
+
+Recovered source `254190a0b36153d28f76782f8d5dae26e9d9a020`, integrated through `520b524b`, preserves bounded attempt-storage diagnostics without replacing original engine errors or prior trusted sets. Generic publication exceptions now say **"Attempt storage unconfirmed"** because a row may already have committed. Definite not-saved wording requires a returned ownership refusal; a result-kept claim requires confirmed publication. Lifecycle resets clear transient details. Malformed-row retention remained open at this historical checkpoint; the accepted Phase 6 repair below addresses the reproduced cause while preserving generic post-write uncertainty.
+
+Baseline: 12 failed/8 passed in 19.07s. Recovered slice: 79 passed in 42.63s. Real SQLite post-write controls: 2 failed in 3.59s. Final affected UI/host selection: 81 passed in 37.33s; whole-tree Ruff and whitespace checks pass. Independent source review found no blocker in the recovered diagnostics, scheduler/producer boundary or persistence ownership/refusal contract. Authored offscreen controls do not qualify native comparators or atomic storage.
+
+[History evidence](consolidation/evidence/history-diagnostic-20261119.zip): 9 verified payloads, 16,801 bytes; SHA-256 `60248a2e1bc603b6dba92451df639d22b7c58cc0d8153262a387242ae4dc5f67`.
+
+The first `a4d6dd9b` partition stopped at disk reserve after 9/54 groups: 2,602 passed, 8 skipped and one contextual-digest pin mismatch. Golden correction `70b82275` follows review of the exact new ROUND constant; 9 digest/cache-identity tests pass in 1.85s. The original failure remains failed. [Algorithm-digest evidence](consolidation/evidence/algorithm-digest-review-20261119.zip) preserves both outcomes.
+
+The final frozen diagnostic reached all **856 original test files through 59 terminal pytest processes** at runtime/test source `520b524b` (documentation head `3cde10ae`) with unchanged Pydantic 2.13.5. Actual pytest summaries total **23,110 passed, 139 skipped, 6 xfailed, 4 failed and 8 teardown errors**: the diagnostic **FAILED**. Both storage-reserve stops and the original group-51 SIGKILL/-9 without a summary/JUnit remain preserved. Final subpartitions completed the remaining file coverage without rewriting those outcomes. This is not an unsplit pass or qualification of the newer 859-file source and Pydantic 2.14.2.
+
+Remote checkpoint `bdc929ebd3c6aaa2563c758936beb315a10eeea0` contains the earlier `af8772bf` tree. Draft PR #322 subsequently published the reviewed candidate as `32cc4b04cf1f5b9e69d1d0e8691db7083c7a45a7`, tree `e00ee281fa43744e892bbcf806e4b07a90c15e13`, exactly matching local `3cde10ae`. Its five hosted workflow runs were queued at the latest observation. Main remains `fdc2696c`; no main merge or release is claimed.
+
+## Reviewed downstream contextual stage identity
+
+Group 12 of the frozen `520b524b` diagnostic completed with 510 passed and two failures in `test_enrichment_hit_golden.py`. Both expected the contextual stage identity derived from the previous algorithm digest. Independent review restored only the prior algorithm map in an isolated process and reproduced the entire original fingerprint exactly. A separate standard-library domain-hash calculation reproduced both old and new stage identities. The other five fingerprint fields, other three stage identities, signal sets and ranking objects are unchanged; actual cold misses and warm hits agree.
+
+The correction changes only `GOLDEN['stages']['contextual']` from `8c34cd25…` to `6e8833bd…`. All existing equality and ranking assertions remain. The combined golden/cache guard selection passed **12 tests in 1.61 seconds**. An initial command named a nonexistent test file and ran zero tests (exit 4); that failed invocation is retained separately. No production code or active frozen-candidate file changed.
+
+[Stage identity review evidence](consolidation/evidence/contextual-stage-key-review-20261119.zip) contains nine verified payloads, including the original group 12 failures, independent proof and corrected test receipts. Archive: 15,870 bytes; SHA-256 `51af1e41cb11765d3191edbdf09c0472b4575a58d6635c4fa01b2e057a161e1e`. The frozen partition diagnostic retains its original result; this focused correction is separate evidence, not an aggregate pass.
+
+## [CONTINUATION-PHASE5-20261119]
+
+Acquisition source `5131bd94` was reviewed and integrated by `d7842532`: 255 affected tests and 55 integrated acquisition/lifecycle/identity tests pass. Conservative manual provenance remains explicit. Test-only follow-ups `f114eb96` and `bc485a66` fix injected OS faults surviving into fixture cleanup and a path-sensitive preview assertion; 85 tests pass under both cleanup policies with one existing optional skip, plus 30 symbol/backend checks. No production assertion or AF_UNIX acceptance was disabled.
+
+At the Phase 5 checkpoint, groups 1–34 stopped at reserve: JUnit 15,971 tests, four failures, four errors and 86 skips. The first continuation later stopped after 35–45; subsequent tail/subpartitions reached every original file while preserving all failures and the group-51 kill. Phase 6 below records the final FAILED diagnostic and separate repairs.
+
+Draft PR #322 is published; its initial queued workflows are a historical observation. Phase 6 below records the later publication, accepted retention/dependency changes, final diagnostic and remaining gates. [Current handoff](consolidation/HANDOFF.md).
+## [CONTINUATION-PHASE6-20261119]
+
+At the Phase 6 observation, accepted source/test was `5aebd98f362e7cc5f01a0c96878860b04835cea4`,
+tree `1b4fdd985ccea86e436172ee52ad3b5ab51b8877`: 859 tracked test files, after
+runtime/dependency integration `5208c758`. Evidence checkpoint `e430309a`
+preserves the new archives and exact advisory report. The then-published PR #322
+head `2511301f` has tree `f2366be08a4951880692b56ecbbefbe92a3611dd`, equal to
+local `7093ee68`; 78 changed files, ahead 3/behind 0 against main `fdc2696c`.
+That publication predates the new source. No main merge/release is recorded.
+
+### Retention and dependency verification
+
+Retention `74d5f4bb` / `153f6cea` replaces unsafe eviction inference with bounded,
+hash-checked strict JSON/model admission and matching text/project identities.
+Indeterminate records preserve originals. Explicit protected IDs are honored;
+null-safe sums count NULL-ID bytes against the existing cap. Read-only history
+is outside this private eviction helper. Genuine storage errors propagate and
+post-write uncertainty remains truthful; publication is not atomic.
+
+Meaningful baseline: 26 failed/6 passed. Root's NULL-ID finding and authored
+BLOB/protection/NULL-cap controls failed before corrections. Final: **175 passed
+in 18.92s across 10 files**, including 46 new controls, whole-tree Ruff and
+whitespace pass. Independent real-SQLite NULL/BLOB replay preserves all originals
+with zero eviction. Initial 32 setup failures were an authored fixture algorithm
+mistake, not a production reproduction. The two UI post-write controls now
+inject a real post-commit prune exception and preserve original assertions.
+[Batch 6](consolidation/RECOVERY_BATCH_6.md) records wider concurrency/hostile-DB limits.
+
+Pydantic `b28f6971` / `5208c758` changes the pin to 2.14.2/core 2.50.2. New
+controls changed from 8 failed/1 passed to 9 passed. Compatibility completed in
+28 bounded batches over 79 files: **2,903 passed, 1 existing strict CODEX-14 xfail**,
+no skips/failures/errors. The nine new controls are included, not added again.
+All 16 schema generators completed under both versions; 301 schema files and
+generated CSAF table stayed byte-identical. No golden or xfail marker changed.
+The earlier grouped attempt ended SIGKILL/-9 without summary/JUnit; cause remains
+unestablished. [Upgrade report](consolidation/PYDANTIC_SECURITY_UPGRADE_20261119.md).
+
+Root separately verified integrated `5208c758` on actual new versions: **254
+passed across four groups**, zero failures/errors/skips, covering retention,
+secondary attempts/backups, acquisition/lifecycle and Pydantic/cache/identity.
+Configured Ruff and pip check pass. Original shared/frozen environments retained
+2.13.5. Overlapping slices are not summed into full-suite coverage.
+
+Both actual 15-package Linux runtime/search/rules graphs completed PyPI and OSV
+audits, all four returning zero advisories. Direct API cross-checks also miss
+four known upstream old-pin Pydantic findings; the qualified pin clears those
+ranges. This is a coverage gap, not a clean-security result. Qt 6.12.0 remains
+in seven assessed native advisory ranges; no official 6.12.1 binding wheels were
+available at retrieval and 6.11.3 is not a complete fix. [Advisory audit](consolidation/DEPENDENCY_ADVISORY_AUDIT_20261119.md)
+preserves exact graphs, primary findings, retrieval failures and a 26-file
+manifest. A bounded source scan does not prove unreachability or a final package SBOM.
+
+Fresh supplemental source scan: 64 findings, no normalized additions/removals
+against `520b524b`. Separate tools expansion: 70 findings requiring review;
+existing source classifications do not cover all 134 combined findings.
+[Static record](consolidation/STATIC_AUDIT.md).
+
+### Final frozen diagnostic and separate fixture repair
+
+All 856 original files reached terminal results through 59 processes: 50 original
+groups, eight final subpartitions and an isolated dense case. Frozen source/tests
+remain `520b524b` (documentation head `3cde10ae`), old Pydantic 2.13.5, fingerprint
+`9ecd20b2dd0f83047551f8a9f85e28c34a34236f65d77b74e46483eecf33a2b2`.
+All 1,396 collected node IDs in the last four groups match the XML multiset exactly,
+with no omissions/duplicates. All seven residual-performance cases pass split 6+1.
+
+Actual pytest summaries: **23,110 passed, 139 skipped, 6 xfailed, 4 failed and
+8 teardown errors**. JUnit: 23,259 tests, 4 failures, 8 errors, 145 skips including
+xfails. Errors coexist with passing bodies; do not subtract them from pytest
+passes. The diagnostic **FAILED**. Both reserve stops and the original group-51
+kill without summary/JUnit remain preserved; the dense-case pass does not prove
+that kill's cause. Full file coverage is not an unsplit or current-head pass.
+
+Three new errors in subpartition 53-2 came from the verified-backup test's
+`os.scandir` mock surviving into pytest cleanup. Root reproduced 3 passes/3
+teardown errors on new dependencies, then scoped only mock lifetime at `5aebd98f`:
+**41 passed in 2.62s across three files**. Production source and assertions stay
+unchanged; original frozen errors remain errors. External AF_UNIX constructor
+EPERM before product imports remains an unchanged acceptance block.
+[Harness report](consolidation/TEST_HARNESS_FIXES_20261119.md).
+
+Verified archives contain 41 retention/integrated, 82 Pydantic, 27 advisory,
+132 complete-diagnostic and six backup-correction payloads plus their manifests.
+[Exact archive hashes and results](consolidation/TEST_RESULTS.md) distinguish these
+from the original 94-payload focused archive. The complete failed diagnostic is
+599,873 bytes, SHA-256 `29a5149bbc2671db26fe260dcc9e94515cd543ac0643f0e74f29f4f0b5720653`.
+
+At published `2511301f`, QA `44522261517`, rz `44522261469`, native PR
+`44522261551`, native push `44522248460` and BinDiff `44522261617` were queued.
+Scheduling cause is unestablished; earlier heads do not qualify later accepted
+source. Actual final-head Linux/Windows/Qt/package/native/live checks, Qt
+remediation, manual acceptance and separate L1/L2/L3 evidence remain open.
+REST-only readiness and the all-jobs-green/no-blocker expected-head merge gate
+remain. Strings-export recovery and build-tool HTTPS redirect triage were still
+separate pending work at this checkpoint; their accepted Phase 7 scope follows.
+
+## [CONTINUATION-PHASE7-20261119]
+
+Accepted local source is `8efb7a4501bdcea77f6aca68f92c5459af47a838`, tree
+`41bf19c6321f88134959df8122b26930ee4deaf7`, with **866 tracked test files**.
+Published Phase 6 draft PR322 is `eb94510bda73935b1b5b99d00acde879d6474d14`, tree
+`62665b03d9c2c7431ceaa1d181505d28105ccb93`, equal to local `0ed53876`: 93 changed
+files, ahead 4/behind 0. It predates the following local-only source changes.
+
+| Accepted scope | Verification and limits |
+| --- | --- |
+| Strings `397abd44` / `cf554155` | 74 focused passes and 115 integrated CLI/UI passes. Held-source no-force publication, anchor creation and forced-failure cleanup repaired; successful-force source/parent substitution remains open. Failures can retain partial/revealed stage bytes. [Batch 7](consolidation/RECOVERY_BATCH_7.md). |
+| Sampler/JUnit `45828168` / `541bf83c` | 111 passes/3 existing unshare skips. Three successful observations required, partial endpoints retained through failure, XML bodies bounded to 8 MiB plus sentinel before parse. Positive OS-block controls unchanged. [Batch 8](consolidation/RECOVERY_BATCH_8.md). |
+| Build-tool HTTPS `7d4aead2` | 289 passes/1 historical wheel skip; later exact wheel test passed. Per-dispatch HTTPS, manual bounded redirects, response closure, Host/credential handling and typed malformed-URL refusal. [Review](consolidation/BUILD_HTTPS_REVIEW_20261119.md). |
+| KEV `c84ca5a2` / `8efb7a45` | 386 passes and 77 added semantic cases; mixed paired local measurements support the small printable-ASCII optimization. Digest behavior and strict one-second budget unchanged; no Windows-fix claim. [Report](consolidation/KEV_TEXT_VALIDATION_PERFORMANCE_20261119.md). |
+
+At `8efb7a45`, configured whole-tree Ruff and pip check pass. All 16 schema
+generator commands exit 0, leaving 301 schemas plus the generated CSAF table
+byte-identical. The supplemental scan remains non-clean: **134 findings, 64 source
+plus 70 tools**. All 70 baseline tools findings are classified; a guarded shared
+HTTPS S310 is added and swallowed-sampler S110 removed. Independent red/green
+reviews cover those changed sites. These checks do not qualify the aggregate.
+
+The new frozen-source diagnostic collected **866 files/23,529 nodes in 210.705s**,
+exit 0, and is running through 111 groups. Group 001 recorded **181 passes/70 setup
+errors in 30.59s** and group 002 **65 passes/9 setup errors in 35.18s** because
+the orchestrator omitted pytest's temporary parent. The parent was created at
+13:42:18 UTC; original log/XML/source/runner identity and the correction receipt
+remain preserved. No production test/assertion changed. Affected-group replay
+is separate and pending. The earlier 856-file diagnostic remains FAILED; neither
+it nor overlapping focused checks supply a full Phase 7 result.
+
+Group 021 subsequently records **1 failed, 727 passed, 1 skipped and 4 xfailed**:
+the existing ASM 200,000-character tokenization control measured best-of-five
+0.156169465s against strict 0.150s. Cause and unchanged-source replay remain
+under review; no threshold/assertion change or host-load explanation is claimed.
+The primary run continues and retains this failed gate.
+
+The [timestamped CI review](consolidation/CI_QUEUE_REVIEW_20261119.md) covers
+13:33:41–13:37:31 UTC. Phase 6 PR322 has six queued runs/23 runner-zero substantive
+jobs and no executed steps; cause unproven. PR318's Windows Qt passed, Linux Qt
+shard 3/4 was cancelled without proven actor/cause, and Windows QA failed the
+unchanged KEV budget at 1.4662241s on older dependencies. PR319's fresh `8d130aef`
+head and native results are distinct from retained `a56ab13a` and this aggregate.
+Main remains `fdc2696c` at 13:37:30 UTC; no main merge or release is recorded.
+
+Verified strings, HTTPS, tools evidence/dispositions, KEV, final-source gates and
+CI archives are linked with exact payload counts, sizes and hashes in
+[TEST_RESULTS.md](consolidation/TEST_RESULTS.md). Earlier red receipts, failed
+diagnostics and frozen manifests are preserved. Successful forced replacement,
+seven native Qt findings, full index provenance, 139 retained semantic-review
+branches, native/manual acceptance and separate L1/L2/L3 obligations remain open.
+
+## Diagnostic continuation after reserve stop and environment recovery
+
+The original `8efb7a45` diagnostic stopped at its storage reserve after groups 001–025 at 13:50:15 UTC; it did not reach the remaining 86 groups. Its raw pytest summaries are **4,558 passed, 79 setup errors, 13 skipped, 4 xfailed and one failed ASM timing gate**. Both setup-only groups then completed separately on the unchanged source: **251 passed in 41.52 seconds** and **74 passed in 46.80 seconds**. Selecting those two replay receipts gives 4,637 passed, 13 skipped, 4 xfailed and one failed across the first 200 files; the original errors are retained. This is partial coverage, not a passing aggregate.
+
+A subsequent executor outage removed `/tmp`; all saved logs/XML/manifests and committed source survived. At 13:59:05 UTC the frozen `8efb7a45` worktree and lightweight interpreter were restored, with identical Python, dependency versions, source path/hash and source/test/tool fingerprint `b34db9a597ddc8c3074bea1d017ddf5702b7ed438146b55eec5e9e61a12efdc1`. Only this task's untracked Python bytecode caches were removed to recover 55,900,712 bytes. The separate continuation is running original groups 026–111 without changed assertions or exclusions. Its `continuation-manifest.json` binds the unchanged original and setup-replay manifests; no terminal continuation result is claimed here.
+
+The original collection remains 866 files/23,529 nodes. Coverage reconciliation treats parameter text containing `::` as opaque; that corrects diagnostic bookkeeping for 48 IDs without changing pytest selection. The first 200 files account for 4,655 distinct XML cases, with no extra IDs. Original storage stop, setup errors, ASM timing failure, environment restoration and continuation keep separate identities under `verification/combined-current-20261119/`.
+
+
+## 2026-11-19 — maximum-completion generations 1–8
+
+Reviewed combined runtime/test checkpoint: `bffcfa99d6a5044024256edbc0457ab20c92cbae`.
+Manifest DTD and v3 cache admission, WinPairs URL/HTTP handling, partial held-source
+publication recovery, profile drafts, saved queries, paired physical windows,
+accuracy cohort/confidence guards, CSV document metadata and ASM failure diagnostics
+are integrated. Reports preserve unique-source proof and original failed controls
+under `docs/engineering/`; independent controls accompany each recovery.
+
+The repository-required unsplit pytest run is active in a separate clean checkout
+at that checkpoint. Its actual terminal result will be recorded in
+`docs/engineering/aggregate-qualification-20261119.md`; no full pass is claimed here.
+Whole configured Ruff and pip check pass; 16 schema generators completed without
+drift. Later CSV reader-example and peer-evidence commits leave src/tests/tools
+identical. Historical focused selections overlap and must not be summed.
+
+PR322's earlier Linux rz-diff cancellation was retried successfully; actual
+Linux/Windows nonmocked fixture receipts and digest-verified artifact records
+are retained. This does not qualify the new source. The original ASM 156.169465ms
+failure remains recorded; production lexer and strict 150ms budget are unchanged.
+
+Linux forced-source replacement, native Qt disposition, native Windows/trust/
+clean-machine/manual gates, acquisition provenance and separate L1/L2/L3 empirical
+accuracy remain open. See `docs/engineering-handoffs/README.md` and the task ledger.
+
+## 2026-11-20 UTC — generations 9–14 qualification checkpoint
+
+This supersedes the earlier running-state statements for the maximum-completion
+candidate, while retaining their historical evidence. The required unsplit run at
+`bffcfa99d6a5044024256edbc0457ab20c92cbae` ended **SIGKILL after 1,729.332 seconds**.
+There is no terminal failure traceback, summary or JUnit file. Its log retains
+19,877 progress markers including two failures. Cause is unestablished; no OOM
+or host-load explanation is claimed. Qualification remains incomplete.
+
+The same-source unreported remainder is separately complete: **3,849 passed and
+32 existing native-toolchain skips** across 14 fresh processes and 3,881 distinct
+reconciled nodes. This includes 3,879 unreported nodes and two overlaps. It does
+not convert the original unsplit run into a pass. The 32 blocked cases and exact
+missing LLVM/tool-install capabilities are preserved without assertion, policy,
+dependency or skip changes. AF_UNIX construction independently returns EPERM
+before the project's guard, including an unguarded control.
+
+The separately reproduced GUI measurement defect is repaired: only the selected
+model instance's data calls count. All original limits and product code are
+unchanged. Its 186-case affected run and independent 41-case replay pass; those
+counts overlap. The original aggregate table failure remains unattributed.
+
+The acquisition follow-up now retains immutable original proposal/window and
+normalized delivery metadata, approved requests, and inspected receipts. Consent
+binds source claims; owner-checked sidecar/row persistence and journal recovery
+preserve them. Root independent review passed four new controls plus 27 author
+cases. Original two red controls, the first architecture failure and the peer
+test's incorrect exit-code expectation remain archived. The later 1-failed/
+205-passed whitelist outcome is separately documented from tool output; its raw
+receipt is unavailable. Complete raw index retention, live providers and native
+qualification are still separate.
+
+Combined follow-up source `97ca0adfad5ea4e6cae0648a55529b9165a40b21` passes
+**1,737 affected tests with one native Windows skip in 98.56 seconds**. Ruff,
+schema drift and whitespace checks pass. This is not a full current-source suite.
+
+Initial draft PR324's exact remote head is `3862cb5d`; its actual merge checkout
+`deab5a05` has the same complete tree. At the retained 00:53–00:54 UTC snapshot,
+both five-scenario native Ghidriff workflows passed, two Linux Qt shards passed,
+and full Linux/Windows QA plus remaining Qt legs were running. The digest-verified
+native clean fixture receipt records backend exit zero in 93.953 seconds. These
+receipts apply to that initial source, not the later acquisition follow-up.
+
+The new stacked follow-up keeps those original CI runs intact. See the current
+[handoff](engineering-handoffs/generation-9-through-14-20261120.md),
+[aggregate report](engineering/aggregate-qualification-20261119.md),
+[task ledger](engineering/task-ledger.json) and
+[release assessment](engineering/release-readiness-20261119.md). The hourly
+successor is actually enabled. Main, release, Windows/manual, Qt disposition,
+Linux forced-publication and separate empirical-accuracy gates remain open.
+
+### Later hosted Linux receipt for the initial candidate
+
+At the 01:03:45 UTC refresh, PR324's Linux QA job had completed successfully:
+**23,699 passed, 51 skipped and six xfailed in 2,269.52 seconds**, with 23,756
+JUnit cases and no failures/errors. Its actual checkout and source identities
+remain the initial candidate documented above. Both locally marker-mapped tests
+passed; all 32 exact locally skipped native-fixture cases also passed on that
+hosted source. Original local results and capability limitations are retained.
+The native pair-publication selection reports 108 passes/two native Windows
+skips. Linux Qt shard 4/4 adds 9,660 repeated passes. Windows QA/Qt and Linux Qt
+1/4 were still running; no completed failing job was observed. The refresh archive
+and node reconciliation are linked by the aggregate report. These gates do not
+qualify the later acquisition source in PR325.
+
+
+## 2026-11-20 generation-16 offline index size and rejected-row integrity
+
+Contract-first draft successor to PR326 at initial parent `bddc09b4`.
+A standard-library reproduction of the original index method accepted
+25 bytes when a stale `stat` reported four against a synthetic cap of 16;
+its cached rejected-row count persisted after deleting that record. The
+isolated corrected algorithm rejects the over-limit stream and resets
+missing-source gaps to zero. The actual production wiring method was edited;
+regressions were added to
+`tests/test_kbc_winbindex_read_budget_20261120.py`, but **no actual
+repository pytest, whole-tree Ruff or independent review has run in this
+restricted local environment**. No existing tests/limits were weakened.
+Source and donor identities, pending exact-head CI, unresolved original
+aggregate SIGKILL and source-race limitations are in
+[the generation-16 handoff](engineering-handoffs/generation-16-20261120.md).
+
+### 2026-11-20 generation22 — Winbindex BASE structural loss (draft, unqualified)
+
+Original BASE missing/nonobject metadata was accepted as an undated row. Contract/test/code changes on isolated `codex/patchtrace-base-body-gap-20261120-g22` add one unreadable-body gap instead. Eight **algorithm-mirror** controls passed in 0.05 s; nine authored repo-source pytest cases, full offscreen pytest, Ruff, schema/dependency, source-pinned hosted QA/Qt/native/package and external independent review are **not complete**. PR331's earlier four Linux and four Windows QA assertion failures are real and preserved; PR332 contains a later expectation correction whose source-specific outcome must be checked. Original local unsplit `bffcfa99` SIGKILL remains unexplained and not a pass. No target binary execution or accuracy claim.
+
+## Generation 23: manual Winbindex import source admission (2026-11-20)
+
+Distinct new isolated source: `codex/patchtrace-offline-import-regular-source-20261120-g23`, parent PR333 exact head `543b0a6f1dd2e2ce2b53a7790b7e32ed77dcbd8f`. A standalone POSIX subprocess executing the original `open(FIFO, 'rb')` sequence remained blocked for 0.3 seconds until deliberately terminated; the nonblocking-open/fstat primitive returned a nonregular descriptor without waiting. This demonstrates an importer liveness flaw and a scoped primitive, **not** checked-out PatchTrace execution. SPEC-31-D, three authored source regression tests, and a narrow source patch retain original acceptance thresholds. Local full pytest and Ruff **not run**: github.com DNS unavailable and Ruff absent. Exact-source hosted Linux/Windows QA, Qt, Ghidriff native, packages and independent review **pending**. Original `bffcfa99` interrupted suite and inherited PR330/331 four-hosted-failure evidence remain unchanged; no tests marked passing without receipts. No releases, main merges or target execution.
+
+
+### Generation 34 — current-parent Strings CSV guard (2026-11-20)
+
+Parent: PR342 `5f34fb57`; spec `c88588d`; tests `bc2cc75`; source
+`95072a3`. Ten local **source-equivalent** Python stdlib CSV controls passed;
+repository-source regression tests, full offscreen pytest and whole-tree Ruff
+were not run due GitHub and pip index DNS failure in this environment.
+Parent's old Windows QA/Qt jobs were cancelled on new publication, not
+successful; current parent head requires fresh CI and this later source has
+no hosted acceptance. Fresh independent review is pending. Prior source,
+logs and unresolved forced-export/native/accuracy gates remain intact.
+
+
+### 2026-11-20 generation 35 — Strings CSV fixture literal-escape review
+
+A fresh reviewer found generation34's ten-case test parameter table encoded intended `\\n`, `\\t` and `\\ufeff` control/BOM values with **doubled source backslashes**. The resulting Python values are literal backslash-letter text; five expectations contradict the production helper. A Python 3.13.5 stdlib algorithm replay failed five of ten original cases. New isolated g35 source uses actual Python escaped control characters, includes CR/vertical-tab and literal-backslash negative controls, and passed thirteen source-equivalent CSV writer/reader checks. Real `tests/test_strings_export.py`, full offscreen pytest, Ruff and desktop/Qt/native jobs were not run; they remain mandatory. Details: `docs/engineering/evidence/generation35/csv-fixture-controls.json`, handoff generation35. No previous failure changed status.
+
+
+### 2026-11-20 — generation 36 CSV cross-column tests
+
+On the isolated g36 successor, two authored `test_csv_formula_guard_covers_aggregated_source_columns` cases exercise source-derived cues, reasons, functions and lineage groups through CSV reader round-trip and unchanged JSON controls. Source-equivalent Python 3.13.5 local checks passed 2/2, but actual checked-out-source pytest/full offscreen pytest, whole-tree Ruff and external independent reviewer signoff are **not run**; Github DNS and Ruff availability are limiting in this execution environment. Parent PR342 Linux full QA passed 23,900/52 skips/six xfails with Ruff pass and 5 native Windows Ghidriff scenarios succeeded. Original raw-cache failure and local SIGKILL remain unresolved; predecessor successes are not a g36 acceptance result. [Detailed review](engineering/generation36-csv-crosscolumn-review-20261120.md).
+
+
+### PR342 native Windows Qt five-repeat result (2026-11-20)
+
+Latest completed [QA workflow 44781838172](https://github.com/djshellshoxxx/PatchTrace/actions/runs/44781838172) failed because the Windows native Qt five-repeat shard [job 136446431330](https://github.com/djshellshoxxx/PatchTrace/actions/runs/44781838172/job/136446431330) recorded two `test_real_offline_dialog_journey_creates_and_opens_only_new_project` timeouts (CVE and KB variants), **10,423 passes**, elapsed 3,123.06 seconds. `settled()` waited its original 10,000 ms for `_pending` to clear; no original worker-state evidence exists. Linux/Windows QA and four Linux Qt shards in the same run were successful, but overall workflow **failed**. This is distinct from the older unqualified full local SIGKILL and native raw-cache Java probe failure. Generation38 isolated test-only diagnostics preserve the timeout and add safely bounded operation/worker state. No source-specific native g38 rerun or accepted root cause yet. See [generation38](engineering-handoffs/generation-38-20261120.md).
+
+
+### 2026-11-20 generation 40 — source-plan malformed lead shape
+
+Isolated spec/test/code repair on g39. Reproduction of the original standalone
+lead-normalization algorithm: None/int caused AttributeError; bytes and an
+object with a custom `strip` could supply non-plain text; a str subclass could
+override `strip`. The revised exact-str guard produced five typed refusals,
+and accepted one ordinary padded-text control in bounded Python 3.13.5
+source-equivalent checks. The six authored repository regression cases and
+whole-tree Ruff/full offscreen suite were not run in this inaccessible
+checkout; no independent review was recorded. Native Windows Qt PR343 run
+44810716926 was active. Preserve its actual results, do not credit predecessor
+checks or close original blocker receipts.
+
+
+### Sibling PR345/PR346 reconciliation (2026-11-20)
+
+- Read current draft PR345 and PR346 heads before selecting recovery. Existing hosted QA/native runs on both were queued (PR345 44840721370/44840721268; PR346 44841261805/44841261831); no duplicate dispatch.
+- Contract-first and exact donor-blob selective recovery: candidate request validation before snapshot IO/service; branch-inventory bounded large TSV replay. Added PR346-owned tests and two distinct Qt diagnostic tests, plus two CSV form-feed controls, retaining PR345's Linux forced-export refusal.
+- Actual combined-source whole-tree Ruff, full offscreen pytest, Windows package/native/Qt and independent post-integration review are **pending**. Historical SIGKILL attempts lacked final summaries and remain failures/incomplete; no cause attribution.
+- Keep the original 5cc Java-unverified result, PR342 Windows Qt strict failures, ASM strict timing failure and all native/manual, provenance and L1/L2/L3 acceptance gates in separate rows/receipts.
+
+
+## 2026-11-20 — isolated branch snapshot exact-tip validation and PR345 Windows packaging failure
+
+Isolated branch `codex/patchtrace-inventory-tip-oid-20261120` requires canonical lowercase 40/64-hex commit IDs in retained TSV tips and refuses different resolved commit identities. Seven repository regressions authored; only offline synthetic Git controls ran (six early rejects, one direct SHA success, one tag peeling reject). No complete source checkout pytest/Ruff/independent review or successor CI has passed.
+
+PR345 Windows QA [run 44840721370](https://github.com/djshellshoxxx/PatchTrace/actions/runs/44840721370), job `136648122555`, **failed** during NSIS v3.13 Chocolatey install: `community.chocolatey.org/api/v2` returned HTTP 503. The same job logged 23,847 pytest passes, 181 skips, 5 xfails; that successful test stage does not change the job's failed conclusion. This establishes a dependency-feed failure, not a product-code cause, and should not prompt blanket retries or gate changes without evidence.
+
+
+## CODEX-14 Linux frozen CLI smoke — isolated successor, 2026-11-21
+
+The extracted, checksum-verified Linux onedir archive now has a workflow
+candidate that calls the **complete** `tools/frozen_smoke.py` harness on both
+Ubuntu 22.04 and 24.04, retaining prior offscreen and xcb self-tests. The host
+fixture tool comes from the exact checked-out Actions source, with the checkout
+done before artifact download so cleaning cannot erase the archive. The
+existing static CODEX-14 strict xfail was replaced by a positive source
+contract plus a Qt-mode preservation test. Thirteen author-side checks
+inspecting the connector-fetched source passed, but local repository pytest,
+whole-tree Ruff, frozen execution, hosted full/Qt/native/package and
+independent review are **not** yet verified. Prior local scratch paths are
+absent and shell DNS cannot resolve GitHub. Source, test and contract:
+`docs/engineering/codex14-linux-frozen-cli-smoke-20261121.md`.
+Do not clear CODEX-1/5/6, Windows/manual/trust or L1/L2/L3 gates.
+
+CODEX-14 author-only negative controls: all seven in-memory workflow mutations
+were refused by a source-bound static contract; see
+`docs/engineering/evidence/codex14-linux-smoke-static-review-20261121.json`.
+The existing `tools/frozen_smoke.py` runtime is unchanged (docstring clarified).
+No Linux frozen execution or independent peer pass has been recorded.
+
+## 2026-11-21 — isolated CODEX-6 archive-cache repair; source-specific qualification pending
+
+The Tier R shard workflow formerly cached extracted rizin/Ghidra directories
+and allowed a hit to bypass archive digest verification. On branch
+`codex/patchtrace-corpus-archive-integrity-20261121` the norm is to cache
+only original pinned archives and verify SHA-256 before a clean extraction
+on every hit and miss. The retained final author receipt records 14 negative
+JS mutations and 14 connector-fetched structural checks. The earlier ten-case
+label was a summary error; the original Git version remains retained. Four synthetic shell
+archive/digest controls passed (rizin/Ghidra valid/corrupt); no actual native
+archive, engine, target binary or full repository source was executed.
+The retained CODEX-6 strict xfail becomes a positive source regression only
+on this successor. Missing checks: source-bound pytest/Ruff/pip check,
+independent review, rizin-only and Ghidriff-enabled hosted Tier R (including
+cache-hit behavior), complete QA/Qt/native/package and merge guard.
+The original PR #345 Windows Chocolatey NSIS 503 remains historical;
+its single failed-job retry is now successful on that ancestor, not this
+source. Parent PR #348 Windows full pytest still in progress on inspection.
+Other CODEX-1/5, CODEX-14, manual/raw-provenance/accuracy gates remain open.
+See `docs/engineering/codex6-corpus-cache-archive-20261121.md`.
+
+## Cycle3 combined source qualification — 21 November 2026 UTC
+
+On clean source e5a531668ef523cd6faa26d5fec59aa552749134 (tree e622ff8f5624ce73bac63c0976af01c614ce05bb), the14-file normal-conftest offscreen selection completed458 passed/11 skipped/2 xfailed. All11 skips were missing declared site-build Pillow/segno dependencies. Installed pinned requirements and replayed exactly those11 identities:11 passed, zero skips/failures.469 distinct affected cases now pass; CODEX-1/5 remain expected failures. WholeRuff, pip check and exact source binding pass. Source-specific full hosted and both actual frozen Linux jobs are pending. [Current qualification](engineering/cycle3-consolidation-20261121-95fe.md).
+
+Preserved original cache test1 failure/29 passes/2 xfail and2Ruff I001, Linux unused-import F401, Pages missing-condition red control, reviewer initial control failure, PR345NSISHTTP503 and historical SIGKILLs. None was overwritten or inferred successful. CODEX-6/14 and Pages changes received independent source reviews; a P3 report-count inconsistency was corrected against the final14/14 author receipt. Application src tree is unchanged from hosted-qualified PR #348; this does not transfer hosted qualification to the changed workflows.
+
+## Parallel 837fe — storage interruptions and Search help (2026-11-21 UTC)
+
+Final reviewed code `b880c317` passes **450 affected tests**, Ruff, dependency, whitespace and source-binding checks. Fresh independent reviews closed Search S-H1 and service SVC-R1/R2; backup cleanup also passed independent controls. Original failures remain in the evidence archive. The earlier-source full local run `b51b1761` ended SIGKILL after 1,417.602 s at 83%, without a terminal summary/JUnit. Its one failed AF_UNIX case is reproduced by isolated stdlib Python and on final source; the execution environment denies socket creation. The kill cause remains unestablished. No limits, skips or assertions changed. Exact-final-source hosted Windows/Linux, Qt/native/package gates remain pending. See [reviewed report](engineering/cycle837fe-recovery-and-search-20261121.md).
+
+## Combined PR349 qualification — 837FE, 2026-11-21 UTC
+
+Clean combined source `2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c` passed **1,296 cases with one CODEX-5 expected failure**, zero failures/errors/ordinary skips, and 1,297 distinct identities. Whole-tree Ruff, dependencies and isolated source binding passed. All storage/Search, CODEX-1 and Intel source reviews are complete. Original PR349 Linux full QA failed only its missing Pages spec citation (1 failed/24,066 passed/53 skipped/4 xfailed); the unchanged registry selection passes 108 after registering all 3 new specs. Native Windows FLOSS exit1 remains unresolved; bounded actual probe diagnostics are now retained. Prior full local AF_UNIX failure and unexplained SIGKILL remain unsuccessful evidence. Final combined hosted full/Qt/native/package/frozen checks are required. [Report](engineering/cycle837fe-combined-pr349-20261121.md).

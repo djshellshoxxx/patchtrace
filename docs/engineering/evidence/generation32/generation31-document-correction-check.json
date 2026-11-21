@@ -1,0 +1,33 @@
+{
+  "schema": "patchtrace-document-correction-verification/1",
+  "checked_at_utc": "2026-11-20T16:06:13.533324+00:00",
+  "source_commit": "9fdb02abd3ec9353102ce4fe5df30f953d290d14",
+  "source_tree": "559c18105a2a79960811f4f6f2c011c0bf15cc7c",
+  "decision": "both-corrections-pass",
+  "strings_overlap": {
+    "repeated_cases": 87,
+    "additional_existing_gui_cases": 10,
+    "separate_history_controls": 2
+  },
+  "census_archive_sha256": "e32f5dc05e45d3247b49a77bc2bf5bfe664a6453747b446347434ba7a775085b",
+  "census_archive_bytes": 147135,
+  "raw_release_records": 59,
+  "raw_pr_records": 330,
+  "linked_artifacts": [
+    {
+      "file": "docs/engineering-handoffs/generation-30-31-20261120.md",
+      "target": "../engineering/evidence/generation30/local-history.bundle"
+    },
+    {
+      "file": "docs/engineering-handoffs/generation-30-31-20261120.md",
+      "target": "../engineering/evidence/generation30/census-replay.zip"
+    },
+    {
+      "file": "docs/engineering/consolidation-inventory-20261120-g30.md",
+      "target": "evidence/generation30/census-replay.zip"
+    }
+  ],
+  "checkout_clean": true,
+  "tests_executed": false,
+  "repository_changes": false
+}

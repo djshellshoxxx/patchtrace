@@ -1,0 +1,618 @@
+{
+  "schema": "patchtrace-final-source-integration-review/1",
+  "reviewed_at_utc": "2026-11-20T17:08:23.636387+00:00",
+  "reviewer": "/root/generation31_integration_review",
+  "repository": "/workspace/scratch/b1d1356aa953/patchtrace-publication",
+  "candidate_commit": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
+  "candidate_tree": "a8ef4316a88ab58619d966744e26b0067d66ff33",
+  "baseline_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+  "decision": "approve-bounded-source-integration; no source/scope blocker found",
+  "findings": [],
+  "blob_and_mode_checks": [
+    {
+      "scope": "receipt-preserved",
+      "path": "tools/research_qualification/receipt.py",
+      "accepted_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+      "accepted": {
+        "mode": "100644",
+        "blob": "6b826bd41bec664506b10217b867a1bc7cb8bb02"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "6b826bd41bec664506b10217b867a1bc7cb8bb02"
+      },
+      "equal": true
+    },
+    {
+      "scope": "receipt-preserved",
+      "path": "tests/test_research_qualification_git_identity.py",
+      "accepted_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+      "accepted": {
+        "mode": "100644",
+        "blob": "3766937fa8afa8442b065003c3a5a63874734eb3"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "3766937fa8afa8442b065003c3a5a63874734eb3"
+      },
+      "equal": true
+    },
+    {
+      "scope": "receipt-preserved",
+      "path": "docs/plans/accuracy-program-handoff-20261107.md",
+      "accepted_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+      "accepted": {
+        "mode": "100644",
+        "blob": "c5c1d43a19d5fbdb5fb9851a7c5d71814191c8aa"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "c5c1d43a19d5fbdb5fb9851a7c5d71814191c8aa"
+      },
+      "equal": true
+    },
+    {
+      "scope": "search-preserved",
+      "path": "src/patchtrace/search/qt_panel.py",
+      "accepted_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+      "accepted": {
+        "mode": "100644",
+        "blob": "b285c1a594437c642842c32eef5603dd772cd245"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "b285c1a594437c642842c32eef5603dd772cd245"
+      },
+      "equal": true
+    },
+    {
+      "scope": "search-preserved",
+      "path": "tests/test_ui_search_panel.py",
+      "accepted_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+      "accepted": {
+        "mode": "100644",
+        "blob": "ab3c92a285c4b7df3f0ed645d9640047d90d9f72"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "ab3c92a285c4b7df3f0ed645d9640047d90d9f72"
+      },
+      "equal": true
+    },
+    {
+      "scope": "search-preserved",
+      "path": "docs/specs/program-e/WB1-integration-plan.md",
+      "accepted_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+      "accepted": {
+        "mode": "100644",
+        "blob": "c8db5e1817e6250701feb250ace05cff6a94762d"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "c8db5e1817e6250701feb250ace05cff6a94762d"
+      },
+      "equal": true
+    },
+    {
+      "scope": "strings-admission-preserved",
+      "path": "src/patchtrace/intelligence/tools/admission.py",
+      "accepted_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+      "accepted": {
+        "mode": "100644",
+        "blob": "ae64016dc65d575d649aafae1264d15d6d434e3c"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "ae64016dc65d575d649aafae1264d15d6d434e3c"
+      },
+      "equal": true
+    },
+    {
+      "scope": "strings-admission-preserved",
+      "path": "src/patchtrace/strings/cli.py",
+      "accepted_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+      "accepted": {
+        "mode": "100644",
+        "blob": "6c1979dad11052a05ed225d75082d54f1dd1e527"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "6c1979dad11052a05ed225d75082d54f1dd1e527"
+      },
+      "equal": true
+    },
+    {
+      "scope": "strings-admission-preserved",
+      "path": "tests/test_intel_tools_admission.py",
+      "accepted_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+      "accepted": {
+        "mode": "100644",
+        "blob": "626e95da8297eea959d7c9b0344e1e32eecc3e4d"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "626e95da8297eea959d7c9b0344e1e32eecc3e4d"
+      },
+      "equal": true
+    },
+    {
+      "scope": "strings-admission-preserved",
+      "path": "tests/test_strings_stored_source_admission.py",
+      "accepted_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+      "accepted": {
+        "mode": "100644",
+        "blob": "a4b05d79b4f20834cb754ae74f56ae0267186a06"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "a4b05d79b4f20834cb754ae74f56ae0267186a06"
+      },
+      "equal": true
+    },
+    {
+      "scope": "strings-admission-preserved",
+      "path": "docs/specs/three-tool-evidence-adapters.md",
+      "accepted_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+      "accepted": {
+        "mode": "100644",
+        "blob": "7edb2ec2953829f16f1349671f129a77dbfbc276"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "7edb2ec2953829f16f1349671f129a77dbfbc276"
+      },
+      "equal": true
+    },
+    {
+      "scope": "strings-shutdown",
+      "path": "src/patchtrace/strings/qt_panel.py",
+      "accepted_commit": "9997aaa912d484c63c35582f8de547735f6ac0bb",
+      "accepted": {
+        "mode": "100644",
+        "blob": "bb993410e248a2bce359bd93f23ddc2c33fc73eb"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "bb993410e248a2bce359bd93f23ddc2c33fc73eb"
+      },
+      "equal": true
+    },
+    {
+      "scope": "strings-shutdown",
+      "path": "tests/test_ui_strings_panel.py",
+      "accepted_commit": "9997aaa912d484c63c35582f8de547735f6ac0bb",
+      "accepted": {
+        "mode": "100644",
+        "blob": "b11fbad1130051a0359eb27f046ebf5c2efbe5a1"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "b11fbad1130051a0359eb27f046ebf5c2efbe5a1"
+      },
+      "equal": true
+    },
+    {
+      "scope": "strings-shutdown",
+      "path": "docs/specs/program-e/WB3-integration-plan.md",
+      "accepted_commit": "9997aaa912d484c63c35582f8de547735f6ac0bb",
+      "accepted": {
+        "mode": "100644",
+        "blob": "78a8d12c0afbdac3b487ccb56779ebcca80345fe"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "78a8d12c0afbdac3b487ccb56779ebcca80345fe"
+      },
+      "equal": true
+    },
+    {
+      "scope": "acquisition-five-file",
+      "path": "src/patchtrace/kbcorrelation/acquire.py",
+      "accepted_commit": "ae67122c69f05715afa622b7e4050b73ca155967",
+      "accepted": {
+        "mode": "100644",
+        "blob": "222a2077ec8fe471535e54e82effa25123c66d3c"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "222a2077ec8fe471535e54e82effa25123c66d3c"
+      },
+      "equal": true
+    },
+    {
+      "scope": "acquisition-five-file",
+      "path": "docs/specs/kb-cve/31-F-workflow-ui-persistence.md",
+      "accepted_commit": "ae67122c69f05715afa622b7e4050b73ca155967",
+      "accepted": {
+        "mode": "100644",
+        "blob": "5e16e2ea5b0f72dd069bb4ce2130b1e3e4054976"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "5e16e2ea5b0f72dd069bb4ce2130b1e3e4054976"
+      },
+      "equal": true
+    },
+    {
+      "scope": "acquisition-five-file",
+      "path": "tests/test_kbc_acquire_destination_symlink_20261120.py",
+      "accepted_commit": "ae67122c69f05715afa622b7e4050b73ca155967",
+      "accepted": {
+        "mode": "100644",
+        "blob": "7414465f2ceb1e9d1d6f04a3f542255a38ba683d"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "7414465f2ceb1e9d1d6f04a3f542255a38ba683d"
+      },
+      "equal": true
+    },
+    {
+      "scope": "acquisition-five-file",
+      "path": "tests/test_kbc_acquire_destination_after_stage_20261120.py",
+      "accepted_commit": "ae67122c69f05715afa622b7e4050b73ca155967",
+      "accepted": {
+        "mode": "100644",
+        "blob": "7fb3a0ada43b67e0aecc6aed89ba5fd0f3626c1d"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "7fb3a0ada43b67e0aecc6aed89ba5fd0f3626c1d"
+      },
+      "equal": true
+    },
+    {
+      "scope": "acquisition-five-file",
+      "path": "tests/test_kbc_acquire_windows_junction_20261120.py",
+      "accepted_commit": "ae67122c69f05715afa622b7e4050b73ca155967",
+      "accepted": {
+        "mode": "100644",
+        "blob": "0cfba7d115b64ce612be6955be085b1f0e30c18a"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "0cfba7d115b64ce612be6955be085b1f0e30c18a"
+      },
+      "equal": true
+    },
+    {
+      "scope": "diagnostics",
+      "path": "tools/live_cache_check.py",
+      "accepted_commit": "8cff43a2fc78c2e150fbdbabc14a977c473811a4",
+      "accepted": {
+        "mode": "100644",
+        "blob": "ef3ebc5b5031ccd5e474ec39ca7a0e0dcad7009e"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "ef3ebc5b5031ccd5e474ec39ca7a0e0dcad7009e"
+      },
+      "equal": true
+    },
+    {
+      "scope": "diagnostics",
+      "path": "tests/test_live_cache_diagnostics.py",
+      "accepted_commit": "8cff43a2fc78c2e150fbdbabc14a977c473811a4",
+      "accepted": {
+        "mode": "100644",
+        "blob": "f976eeda2e3d6a667884ef9770698d4bed88cd11"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "f976eeda2e3d6a667884ef9770698d4bed88cd11"
+      },
+      "equal": true
+    },
+    {
+      "scope": "diagnostics",
+      "path": "docs/specs/enrichment.md",
+      "accepted_commit": "8cff43a2fc78c2e150fbdbabc14a977c473811a4",
+      "accepted": {
+        "mode": "100644",
+        "blob": "81ca4291be2a4f41d5a55ef238c8a8d48665542a"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "81ca4291be2a4f41d5a55ef238c8a8d48665542a"
+      },
+      "equal": true
+    },
+    {
+      "scope": "diagnostics",
+      "path": "docs/modules.md",
+      "accepted_commit": "8cff43a2fc78c2e150fbdbabc14a977c473811a4",
+      "accepted": {
+        "mode": "100644",
+        "blob": "f4fca4b81bc9a6e9a8e4a6493198b844f5475632"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "f4fca4b81bc9a6e9a8e4a6493198b844f5475632"
+      },
+      "equal": true
+    },
+    {
+      "scope": "diagnostics",
+      "path": ".github/workflows/live-backend.yml",
+      "accepted_commit": "8cff43a2fc78c2e150fbdbabc14a977c473811a4",
+      "accepted": {
+        "mode": "100644",
+        "blob": "f76e431a2a45ebf9d7252fffdc958ffd1653b4fb"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "f76e431a2a45ebf9d7252fffdc958ffd1653b4fb"
+      },
+      "equal": true
+    },
+    {
+      "scope": "guards-and-dependencies-preserved",
+      "path": "src/patchtrace/backend.py",
+      "accepted_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+      "accepted": {
+        "mode": "100644",
+        "blob": "001a08b43c78537bf48b2b76d858f92d54e30d54"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "001a08b43c78537bf48b2b76d858f92d54e30d54"
+      },
+      "equal": true
+    },
+    {
+      "scope": "guards-and-dependencies-preserved",
+      "path": "src/patchtrace/jobs.py",
+      "accepted_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+      "accepted": {
+        "mode": "100644",
+        "blob": "8f559f1b7846019a2eba96408c579a304648ab44"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "8f559f1b7846019a2eba96408c579a304648ab44"
+      },
+      "equal": true
+    },
+    {
+      "scope": "guards-and-dependencies-preserved",
+      "path": "src/patchtrace/enrichment/cache.py",
+      "accepted_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+      "accepted": {
+        "mode": "100644",
+        "blob": "fd8ae260a9a9e40b61db84d2d2940ea0576a68e4"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "fd8ae260a9a9e40b61db84d2d2940ea0576a68e4"
+      },
+      "equal": true
+    },
+    {
+      "scope": "guards-and-dependencies-preserved",
+      "path": "src/patchtrace/strings/export.py",
+      "accepted_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+      "accepted": {
+        "mode": "100644",
+        "blob": "f78dc3a529a654a5a34fc3c02c280b62241b173c"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "f78dc3a529a654a5a34fc3c02c280b62241b173c"
+      },
+      "equal": true
+    },
+    {
+      "scope": "guards-and-dependencies-preserved",
+      "path": "src/patchtrace/owned_publication.py",
+      "accepted_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+      "accepted": {
+        "mode": "100644",
+        "blob": "63d75f40c33e08c969fec425e6d89973b0947d83"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "63d75f40c33e08c969fec425e6d89973b0947d83"
+      },
+      "equal": true
+    },
+    {
+      "scope": "guards-and-dependencies-preserved",
+      "path": "src/patchtrace/kbcorrelation/wiring.py",
+      "accepted_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+      "accepted": {
+        "mode": "100644",
+        "blob": "1b92737ed623155ef7020861412937faee5eb86e"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "1b92737ed623155ef7020861412937faee5eb86e"
+      },
+      "equal": true
+    },
+    {
+      "scope": "guards-and-dependencies-preserved",
+      "path": "src/patchtrace/acquisition/winbindex.py",
+      "accepted_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+      "accepted": {
+        "mode": "100644",
+        "blob": "2ef16398529a147b2fb73145b0fae4e63f8d6dcc"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "2ef16398529a147b2fb73145b0fae4e63f8d6dcc"
+      },
+      "equal": true
+    },
+    {
+      "scope": "guards-and-dependencies-preserved",
+      "path": "src/patchtrace/intelligence/tools/store.py",
+      "accepted_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+      "accepted": {
+        "mode": "100644",
+        "blob": "7e38298266e02eb52ea86c66e0f086a7bb9fd7d1"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "7e38298266e02eb52ea86c66e0f086a7bb9fd7d1"
+      },
+      "equal": true
+    },
+    {
+      "scope": "guards-and-dependencies-preserved",
+      "path": "src/patchtrace/gui/qt/tasks.py",
+      "accepted_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+      "accepted": {
+        "mode": "100644",
+        "blob": "d4c4bab5e9ae0d29c85851a3bb4942c2052a02e8"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "d4c4bab5e9ae0d29c85851a3bb4942c2052a02e8"
+      },
+      "equal": true
+    },
+    {
+      "scope": "guards-and-dependencies-preserved",
+      "path": "pyproject.toml",
+      "accepted_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+      "accepted": {
+        "mode": "100644",
+        "blob": "497c952b6103c1022e99a32ebc1566511f8afa3e"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "497c952b6103c1022e99a32ebc1566511f8afa3e"
+      },
+      "equal": true
+    },
+    {
+      "scope": "guards-and-dependencies-preserved",
+      "path": ".github/workflows/qa-windows.yml",
+      "accepted_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+      "accepted": {
+        "mode": "100644",
+        "blob": "4f40db05893e436230d2f739efe2d3ca87e5e8aa"
+      },
+      "candidate": {
+        "mode": "100644",
+        "blob": "4f40db05893e436230d2f739efe2d3ca87e5e8aa"
+      },
+      "equal": true
+    }
+  ],
+  "all_35_blob_and_mode_checks_pass": true,
+  "functional_delta": [
+    ".github/workflows/live-backend.yml",
+    "src/patchtrace/kbcorrelation/acquire.py",
+    "src/patchtrace/strings/qt_panel.py",
+    "tests/test_kbc_acquire_destination_after_stage_20261120.py",
+    "tests/test_kbc_acquire_destination_symlink_20261120.py",
+    "tests/test_kbc_acquire_windows_junction_20261120.py",
+    "tests/test_live_cache_diagnostics.py",
+    "tests/test_ui_strings_panel.py",
+    "tools/live_cache_check.py"
+  ],
+  "functional_delta_matches_reviewed_scopes": true,
+  "changed_spec_paths": [
+    "docs/specs/enrichment.md",
+    "docs/specs/kb-cve/31-F-workflow-ui-persistence.md",
+    "docs/specs/program-e/WB3-integration-plan.md"
+  ],
+  "module_index_matches_diagnostics_worker": true,
+  "acquisition_extraction_exact_five_files": true,
+  "shutdown_author_and_initial_integration_tree_equal": {
+    "author_commit": "9997aaa912d484c63c35582f8de547735f6ac0bb",
+    "integration_commit": "ad8916944a697985be3e472cd57f2e15f0a263bc",
+    "tree": "23ad5e5230e539df4727f5b2235f107a3f895a98"
+  },
+  "workflow_verification": {
+    "path": ".github/workflows/live-backend.yml",
+    "new_argument": "--diagnostics-dir live-cache-diagnostics",
+    "new_artifact_glob": "live-cache-diagnostics/*.json",
+    "removing_exact_two_changes_reproduces_baseline_bytes": true,
+    "other_workflows_unchanged": true
+  },
+  "existing_scope_preservation": "Receipt/Search/Strings admission and reviewed tests/contracts remain unchanged except the separately accepted WB3 shutdown contract addition. No other production src path changed from a024.",
+  "peer_diagnostics_integration_check": {
+    "reviewer": "/root/ci_qualification",
+    "scope": "independent read-only diagnostics integration comparison",
+    "decision": "pass",
+    "candidate_commit": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
+    "candidate_tree": "a8ef4316a88ab58619d966744e26b0067d66ff33",
+    "verified_equal_paths": [
+      "tools/live_cache_check.py",
+      "tests/test_live_cache_diagnostics.py",
+      "docs/specs/enrichment.md",
+      ".github/workflows/live-backend.yml"
+    ],
+    "unchanged_backend_paths": [
+      "src/patchtrace/backend.py",
+      "src/patchtrace/jobs.py",
+      "src/patchtrace/enrichment/cache.py"
+    ],
+    "workflow_delta_only_new_option_and_artifact_glob": true,
+    "tests_run": 0,
+    "repository_edits": false
+  },
+  "open_gates": [
+    {
+      "gate": "actual native raw-cache acceptance failure",
+      "source_commit": "5cc3f2a540f2e49e8b86e20decf7d4f62ce89d0a",
+      "run_url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44770501981",
+      "job_url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44770501981/job/136406567877",
+      "observed_failure": "second run was not a cache hit; java=unverified",
+      "disposition": "cause unresolved; diagnostics retention does not fix or qualify native cache acceptance"
+    },
+    {
+      "gate": "local unsplit full-suite qualification",
+      "source_commit": "a024f9ece556daa6e4f095c52fe9a8cc4c31ce28",
+      "observed_failure": "SIGKILL/-9 after 563.257508 seconds; no terminal summary/JUnit",
+      "disposition": "incomplete; cause unestablished; two isolated diagnostic passes are not aggregate acceptance"
+    },
+    {
+      "gate": "native Windows junction behavior",
+      "disposition": "real junction control skipped on Linux; portable predicate controls do not provide native Windows acceptance"
+    },
+    {
+      "gate": "other existing release/platform gates",
+      "disposition": "Linux forced Strings export-source race and standing native/platform/manual/release gates remain separate"
+    }
+  ],
+  "coordinator_owned_qualification": "Final 30-file combined pytest/Ruff/dependency/whitespace run was active when review was assigned; this source review does not certify its outcome or replace exact-source final qualification.",
+  "documentation_scope": "Historical checkpoint count paragraphs were treated as historical; final result updates and final link/hash validation remain coordinator-owned.",
+  "tests_run": 0,
+  "repository_edits": false,
+  "remote_mutations": false,
+  "initial_status": "?? docs/engineering/evidence/generation33/cache-diagnostics-worker.bundle\n?? docs/engineering/evidence/generation33/cache-independent/\n?? docs/engineering/evidence/generation33/continuation-history.json\n?? docs/engineering/evidence/generation33/final-combined/\n?? docs/engineering/evidence/generation33/local-continuation-history.bundle",
+  "final_status": "?? docs/engineering/evidence/generation33/cache-diagnostics-worker.bundle\n?? docs/engineering/evidence/generation33/cache-independent/\n?? docs/engineering/evidence/generation33/continuation-history.json\n?? docs/engineering/evidence/generation33/final-combined/\n?? docs/engineering/evidence/generation33/local-continuation-history.bundle",
+  "status_note": "Only coordinator-owned untracked documentation evidence appeared during review; functional working-tree diff from frozen candidate remains empty.",
+  "final_functional_worktree_diff": "",
+  "observed_final_head": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
+  "review_input_artifacts": [
+    {
+      "path": "generation31-integration-review.json",
+      "bytes": 3511,
+      "sha256": "0bbb4a79667b97214aa22446348e6a2c78f1a8c088447c4d1129922375c9a39b"
+    },
+    {
+      "path": "generation31-source-comparisons.json",
+      "bytes": 7182,
+      "sha256": "3849fd4f3cfe310293095a8d3580f82480ba885085ae52d9bf7623923f7c0972"
+    },
+    {
+      "path": "acquire-g32-review.json",
+      "bytes": 4674,
+      "sha256": "ed91588d850467d1d7e1f273ef7a214b383a545a33e5698ac37a52396aa20971"
+    },
+    {
+      "path": "patchtrace-cache-review-evidence/review.json",
+      "bytes": 5456,
+      "sha256": "caf3634738411e3ed90102a85719324f913251c1cb71da32c1f3527975bc0d38"
+    },
+    {
+      "path": "strings-shutdown-independent-review.md",
+      "bytes": 7815,
+      "sha256": "760c8cada2d80abb575cc03aebdcbf7a8f42d5832ca1d47ac608bb13d6872ae5"
+    }
+  ]
+}

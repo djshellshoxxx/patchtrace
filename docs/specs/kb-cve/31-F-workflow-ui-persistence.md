@@ -63,6 +63,25 @@ Plan example shape:
 ~~~
 Replace placeholder hash with real calculated value in code fixtures. The sample illustrates schema only.
 
+### Held local advisory-file input admission (2026-11-20, generation 24)
+
+The existing `kb index import` CVRF/CSAF file path and the investigation
+service's offline advisory import share `cli_index.read_input_file`.
+Admit the actual opened descriptor as a regular file before reading any
+data: a directory, FIFO, device, or other nonregular local input is not an
+advisory document and must fail with `PT-KBC-INPUT`, without publishing
+any document. Request a nonblocking read-only open on hosts exposing
+`O_NONBLOCK` so a FIFO without a writer cannot hang the importer before
+its limit check; on hosts without that capability do not claim guaranteed
+nonblocking opens. Ordinary symlinks that resolve to regular files remain
+allowed for compatibility. Keep a single held descriptor for verification
+and the `cvrf_doc_bytes + 1` bounded read; close the descriptor on every
+normal and exceptional path. Preserve `PT-KBC-LIMIT`, the strict JSON and
+CSAF parsing rules, multi-file all-or-nothing imports, and source-byte
+retention. Neither this held-open admission nor the Winbindex import
+repair authenticates a file against concurrent regular-file substitution,
+and neither closes the distinct Linux forced-export publication race.
+
 ## F5. CLI grammar, JSON and exit mapping
 
 Add 'kb' parser beneath current argparse subcommand tree with actions search, import, components, pairs, plan, acquire, attach, explain, export. Avoid nested duplicate --json declarations and argument shadowing. Search never implicitly fetches. Preserve current correlate as CVE-context-only. Use current CLI numeric exit-code meanings by inspecting tests before new command mapping; do not reinterpret code 3/4.
@@ -97,6 +116,104 @@ Tests: quit while network pending, close dialog and reopen before worker respons
 ## F8. Native frozen build gate
 
 On Windows release ZIP: login-free metadata-only/offline replay, documented consented sources, search with ambiguity and partial data, import known old/new PE, create normal project, load and reopen, compare via configured supported engine or import fixture, show candidate view and export. Smoke includes dependency metadata, tooltip registry coverage, content-addressed snapshot copies, stale-state persistence, DPI and non-ASCII filesystem paths. Separate tests for Windows DLL/signature behavior and PA30 reconstruction; do not label them validated from Linux unit tests alone.
+
+## Acquisition completion identity (2026-11-19 recovery)
+
+Recover the acquisition identity contract from commit
+`c3868d8335a8f32f676905032dc1a6d0e9f22fd6` (2026-10-31), while retaining the
+later cancellation, revision ownership, saved search scope and source admission
+checks in SPEC-31-D. A consented index acquisition binds completion to the exact
+product scope and investigation revision used to build its plan, including an
+explicit `--product` that differs from the saved selection. Compare that revision
+under the existing workspace lock before committing a scope selection or attaching
+project context. Concurrent revision changes return `PT-KBC-STALE` without
+overwriting the newer investigation or creating a project. Initially unselected
+and previously other-architecture investigations persist the explicitly selected
+preview scope only after final file inspection has matched the approved hashes.
+
+Keep the previewed index pair distinct from the conservative inspected local
+pair. The existing acquisition response gains `scope_id`, `source_pair_id` and
+`verified_pair_id`. An append-only `acquisition-pair-binding` decision records
+the source and verified pair IDs as prior/next, with the acquisition plan SHA,
+scope and exact ordered older/newer SHA-256 values in its reason. The local pair
+remains grade B/tier E with user-asserted lineage and an unverified fix boundary;
+the binding does not authenticate index claims or prove a vulnerability fix.
+Freshly inspected staged hashes must match the captured acquisition plan before
+any selection, approval, journal or project mutation. Existing source admission
+continues to reuse its exact admitted index and captured advisory coverage.
+
+The initial bounded recovery used the existing decision record and attachment
+storage without a schema change. The separate acquisition snapshot below retains
+the complete index proposal, its release window and selected source-entry
+metadata. Ordinary local/manual imports and product-only starts retain their
+existing behavior.
+
+### Persisted acquisition snapshot (2026-11-20)
+
+An acquired comparison retains one strict, frozen `AcquisitionEvidence` record
+(`kbcorrelation/1`, `evidence_version=1`). It records the preview investigation
+and revision, the complete original `PairProposal` (including window completeness,
+reasons and pending-byte assessment), the two normalized Winbindex delivery rows
+including their canonical source-entry hashes and data-date labels, the approved
+request list and hosts, the complete inspected manual pair, and two download
+receipts. Source rows are index claims. Their `record_sha256` identifies the
+upstream entry; the normalized row is not the raw entry, the complete index, or
+an authenticated vendor statement. The original proposal stays separate from the
+verified manual pair. This does not raise grade, tier, lineage or fix certainty.
+
+The source snapshot and every request contribute to the version-2 acquisition
+plan digest. A changed window, entry hash, normalized metadata, host or request
+requires a new preview/consent, even when ordered binary hashes and source pair
+ID are unchanged. Preview JSON exposes the exact source snapshot. Freeze it
+before passing copies of the delivery rows to acquisition ports; caller or port
+mutation cannot rewrite the approved record. Mismatched source rows, receipts,
+ordered hashes or product scopes are refused before investigation approval or
+project creation. Capture a maximum of two delivery rows, 4,096 shared version
+keys per row, 514 planned requests (the existing 256 probes plus one GET per
+side) and 1 MiB of canonical evidence JSON; reject
+oversize evidence explicitly, never silently truncate it.
+
+Carry optional evidence through `AttachRequest` and the existing attachment
+journal. Validate its digest, investigation, preview revision, verified pair,
+scope, ordered hashes and the journal's content identity on resume. A legacy
+journal without the optional record retains its existing behavior. After project
+creation, write `kb/acquisitions/<evidence_id>.json` and the append-only
+`kb-acquisition:<evidence_id>` enrichment row during the existing sidecar/row
+phases. Existing content must be identical; conflicting content or malformed
+evidence leaves attachment incomplete and cannot be overwritten. The evidence
+ID covers the entire record apart from itself. Sidecar publication reuses
+`owned_publication.publish_bytes` with an anchored project directory, held source
+identity, exclusive creation and bounded exact-content reuse; it never replaces
+an existing sidecar or cleans up a mutable temporary pathname. The sibling helper
+is bound in `wiring.RealProjectPort.write_acquisition_sidecar`; the project port
+checks the actual project ID and ordered artifacts under its owner service before
+publication. The journal operation key includes the evidence ID and is rechecked
+before resuming or marking a captured acquisition interrupted. No project-revision or SQL-version
+bump is required, and imported evidence is outside retention-derived kinds.
+
+Acquisition completion reports the evidence ID and relative sidecar path.
+`kb attach --repair` restores the captured record from its journal without reading
+the mutable Winbindex workspace again. `ProjectStore.backup` copies the row and
+the existing `kb/` tree. Historical local imports and old acquisitions do not
+receive invented provenance. Advisory `ContextBundle` JSON export stays byte-for-
+byte unchanged. UI rendering, full raw-index retention and reconstruction of the
+entire resolver timeline remain outside this bounded persistence slice.
+
+### Acquisition newer-row membership (2026-11-20, generation 25)
+
+For a resolver-produced `PairProposal` whose `window_id` is
+`index:<version_key>:<KB or BASE>`, the **newer** normalized delivery entry used
+for a consented `kb acquire` preview must match the selected key and KB body
+(`BASE` means a null KB), not merely the binary SHA-256 and basename.
+A body copied through `other_versions` is eligible only if that exact key is
+listed there. If both the native version-key body and a propagated copy match,
+choose the native body, in accordance with the lineage own-body precedence.
+A missing or malformed target anchor is a `PT-KBC-INPUT` refusal before
+provider planning, consent, downloading or project creation; never substitute
+an arbitrary BASE or unrelated KB body. The approved source digest binds the
+chosen normalized entry as before. This is a provenance/membership correction,
+**not** authentication of Winbindex facts, complete raw-index preservation,
+or recovery of the older predecessor's exact original body (still separate).
 
 ## Offline desktop implementation seam (2026-11-05)
 
@@ -219,3 +336,161 @@ intact. Legacy journals remain readable and generic KB/CVE repair behavior is
 unchanged. Older readers ignore unknown journal members and do not enforce this
 new product-snapshot binding; repair of product-start attachments requires a
 build implementing these journal semantics.
+
+### Ambiguous predecessor provenance (2026-11-20, generation 26)
+
+A resolver-produced pair retains the newer body identity in `window_id`, but
+`PairProposal.older` does not encode the older version/KB source-body identity.
+Until exact predecessor membership and bounded raw resolver inputs are persisted,
+consented `kb acquire` must **refuse** rather than arbitrarily choose between
+distinct normalized older index bodies with the same SHA-256 and basename.
+Use `PT-KBC-INPUT` before acquisition planning, consent, network requests or
+project mutation. Byte-for-byte/equal mapping duplicates represent one source
+claim and remain admissible; a unique matching older row remains supported.
+The newer selector continues to require its resolver window target and native
+version-body precedence. This refusal is a conservative provenance safeguard,
+not reconstruction of original older membership, raw index preservation,
+proof of vendor authority, or verified L1/L2/L3 accuracy. Historical evidence
+must never be retroactively inferred from a SHA-256 alone.
+
+
+### Duplicate selected newer source bodies (2026-11-20, generation 27)
+
+After resolving the selected newer `index:<version_key>:<KB or BASE>`
+window, acquisition must not silently choose the first of **distinct** matching
+source claims. The native-body preference over `other_versions` copies remains
+unchanged: compare only eligible native records if any exist, otherwise the
+eligible copied records. Multiple equal normalized mappings for the selected
+priority tier remain admissible, but conflicting mappings in that tier must
+refuse with `PT-KBC-INPUT` before planning, consent, network access or project
+creation. A single native match is still preferred over a conflicting copied
+observation because the copied observation is not selected by the resolver.
+This does not authenticate source bodies, preserve original raw Winbindex
+entries or reconstruct predecessor membership. Do not infer an exact source
+from matching binary hashes alone.
+
+
+### Local acquisition project-path preflight (generation 30, 2026-11-20)
+
+The consented `kb acquire --project` destination must not be a final-component
+symbolic link, including a dangling link or a link to an otherwise empty
+regular directory. Refuse it as `PT-KBC-INPUT` before the acquisition port
+stages/downloads any bytes. Preserve support for an absent destination or an
+actual empty directory, and continue refusing an existing non-directory or
+nonempty directory. This is a preflight guard only: it does not anchor parent
+components, prevent a concurrent destination substitution after inspection,
+or close the separately recorded Linux forced-export source replacement race.
+
+
+### Recheck acquisition destination after staging (generation 31, 2026-11-20)
+
+The destination admission before `AcquirePort.stage` cannot be assumed to remain
+valid while a consented download is in progress. After staging both files and
+verifying their hashes, and immediately before invoking the project-import
+callback, reapply the same project-directory admission rule. A live or dangling
+final-component symbolic link introduced during staging must return
+`PT-KBC-INPUT`; the import callback must not run, and the staged files must be
+discarded by the existing `finally` cleanup. Existing absent or genuinely empty
+directories continue to work. The initial preflight remains required to avoid
+network activity against a destination already known to be invalid.
+
+This is a second observation, **not** an atomic creation/descriptor-bound
+publication guarantee: parent-directory swaps and substitutions after this
+recheck remain possible. It does not resolve the separate Linux forced-source
+replacement visibility interval.
+
+
+### Final-component Windows junction preflight (generation 32, 2026-11-20)
+
+The local acquisition project destination must also refuse a final-component
+Windows NTFS junction, even when the junction resolves to an empty directory.
+Python 3.12+ exposes this distinct alias through `Path.is_junction()`;
+`Path.is_symlink()` alone does not establish the required junction refusal.
+Apply the same `PT-KBC-INPUT` rule on **both** existing destination admission
+observations (before staging and after staging, before project import). Preserve
+support for absent and genuinely empty directories. No download or project
+import should occur when the first check observes a junction.
+
+This is explicitly a final-component alias check. It does not claim to defend
+against parent junctions, substitution after either inspection, same-user
+adversarial writers, or the separate Linux forced Strings export-source race.
+A native Windows junction integration regression remains necessary for Windows
+acceptance; a portable predicate-injection test only verifies that the guard
+consults the distinct junction API.
+
+
+### Generation 38: native Windows investigation UI timeout evidence (2026-11-20)
+
+The repeated offscreen Qt acceptance helper for the investigation dialog must
+preserve its strict **10,000 ms** wait and original timeout failure while making
+a stalled operation diagnosable. On timeout, report only bounded, non-sensitive
+state: pending operation (from the known request enum), the task runner's busy
+bit for this dialog's channel, preview presence, closed/cancellation/close-after
+flags, and the integer dialog generation. Keep the original Qt wait exception as
+cause. Do not include arbitrary label text, project paths, source strings,
+exception messages, full task objects, host information or binary contents.
+
+This is test-harness observability, **not** a product lifecycle change, an
+extension of the timing budget, a retry, or proof that a worker is deadlocked.
+Source-specific native Windows results determine whether the worker was still
+busy or whether completion delivery was missing. Preserve the actual PR342
+Windows Qt failure rather than converting it to a pass.
+
+
+### Generation 39: refuse Windows junctions at direct investigation project creation (2026-11-20)
+
+The desktop KB/CVE investigation **Create** route (`investigation_service._new_destination`)
+must refuse an existing final-component filesystem junction as well as a
+symbolic link **before** resolving the destination and starting the worker's
+project creation. Python 3.12's `Path.is_junction()` distinguishes Windows
+junctions from `Path.is_symlink()`. Treat either final-component alias as
+`PT-KBC-INPUT`; do not silently follow a junction to an apparently empty
+target. An ordinary absent/empty destination and an empty directory retaining
+only PatchTrace's lock inode remain permitted under existing policy.
+
+This is a narrow preflight fix for **direct investigation Create**, distinct
+from generation 33's already integrated acquisition-destination safeguards.
+No automatic path remapping, overwriting, network work, target execution,
+project teardown or persistence change is authorized. Keep the downstream
+`creation_directory_available` check and actual writer lock unchanged.
+A separate native Windows test must exercise a real junction, while a
+portable deterministic predicate test verifies the admission check on other
+hosts. Path mutation after this check, ancestor junctions, and the independent
+Linux forced Strings export-source-name interval remain unresolved; do not
+claim atomic publication, parent-anchored isolation or release acceptance.
+
+
+### Generation 40: advisory source-plan lead input must be text (2026-11-20)
+
+The offline KB/CVE investigation's opt-in advisory source-plan preview takes a
+captured `lead` field. Treat it as untrusted even though the normal Qt widget
+produces a string: require a plain Python `str` value **before** trimming it or
+passing it to `parse_lead`. Null, integer, byte-string, custom `str` subclasses
+with overridden `strip`, and objects exposing a `strip()` method must be refused with the existing `PT-KBC-INPUT` category,
+without attempting an advisory request or creating a workspace. Error text
+must not echo submitted input. Whitespace surrounding a valid textual KB/CVE
+lead remains accepted, and existing identifier syntax and month-scope policy
+are unchanged. This is defensive request-shape admission, not new source
+matching, provenance semantics, network scope or vulnerability analysis.
+
+
+### Generation 41: saved-index candidate component request type admission (2026-11-20)
+
+The desktop/offline `candidate_pairs` and `candidate_preview` requests carry a captured `component_name`
+from a normal Qt string input, but the backend request dataclass is also callable
+directly. Candidate request admission must require an **exact plain `str`** before
+calling `strip()` or resolving an index filename. Reject null, numeric, byte,
+custom strip-compatible objects and `str` subclasses overriding normalization
+as `PT-KBC-INPUT`, with fixed text that does not echo the input. Valid padded
+component names must continue to normalize and enter the same saved-index
+candidate workflow. No source lookup, project creation, network operation or
+source-output mutation should happen for an invalid component name. This rule
+does not broaden input formats, alter Windows build matching, or imply provenance
+or accuracy gains.
+
+The dispatcher must perform this candidate-only admission before verifying any
+captured `current_inputs` or constructing the workspace service, including when
+a direct caller combines candidate fields with a current-project snapshot.
+Cancellation and invalid start-mode checks retain their existing precedence.
+Normal candidate requests and valid component names retain their existing
+current-input verification and saved-index behavior.

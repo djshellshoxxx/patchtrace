@@ -1,0 +1,217 @@
+{
+  "schema": "patchtrace-stored-source-recovery/1",
+  "baseline": "9fdb518f2b322f784fe389b7856a299023f1d901",
+  "source_commit": "cf71c457665092b11448c6515c33360f68a590dd",
+  "source_tree": "03b6fd2299a17b466e9c3422b068dd5c456b455c",
+  "donor_commit": "2042e24dc7f3eac265e0eb183c738527852b22cf",
+  "exact_donor_blobs": {
+    "src/patchtrace/intelligence/tools/admission.py": "ae64016dc65d575d649aafae1264d15d6d434e3c",
+    "tests/test_intel_tools_admission.py": "626e95da8297eea959d7c9b0344e1e32eecc3e4d"
+  },
+  "source_files": {
+    "src/patchtrace/intelligence/tools/admission.py": {
+      "git_blob": "ae64016dc65d575d649aafae1264d15d6d434e3c",
+      "sha256": "7a06f5087927e263b2433e820ed1b1f5c3c80a6c517d445a342523685c77c373"
+    },
+    "src/patchtrace/strings/cli.py": {
+      "git_blob": "6c1979dad11052a05ed225d75082d54f1dd1e527",
+      "sha256": "3bebbfa170a41e09a26dfc5fdb793532c885a5f8497f90d6b1f312dbe0076fad"
+    },
+    "tests/test_intel_tools_admission.py": {
+      "git_blob": "626e95da8297eea959d7c9b0344e1e32eecc3e4d",
+      "sha256": "7b9de0cb4f716df0fc940cb64854a4f686f6fd85db67fe8cc18e3c95fa194e11"
+    },
+    "tests/test_strings_stored_source_admission.py": {
+      "git_blob": "a4b05d79b4f20834cb754ae74f56ae0267186a06",
+      "sha256": "ce8482d7cbf9a8d51063bc433fb51e44367f4b45c7f707b0041306c9a7aa5897"
+    },
+    "docs/modules.md": {
+      "git_blob": "36491b90836433187c892d01a74eee96301fd015",
+      "sha256": "7d80ae7de532f24da4dad011ee628dff5317d7164b01bf4a701a3282a2b69329"
+    },
+    "docs/specs/three-tool-evidence-adapters.md": {
+      "git_blob": "7edb2ec2953829f16f1349671f129a77dbfbc276",
+      "sha256": "014622ac327be2b4e1ecb602eb2bd5993ca5c600952d0e011ec2e5ccf2e97ed6"
+    },
+    "docs/specs/program-e/WB3-integration-plan.md": {
+      "git_blob": "07b9df218502aee9bf1519437811acd974b5ad2d",
+      "sha256": "1e57716c8f152a06175a026eb7462b25e1d78afef6a2595e8d02b1650b8cb55b"
+    }
+  },
+  "baseline_result": {
+    "tests": 8,
+    "failed": 8,
+    "errors": 0,
+    "skipped": 0,
+    "nodes": [
+      "tests.test_strings_stored_source_admission::test_orientation_swap_never_reuses_evidence_of_the_previous_artifact",
+      "tests.test_strings_stored_source_admission::test_explicit_floss_refuses_pre_swap_results",
+      "tests.test_strings_stored_source_admission::test_cached_results_keep_the_original_source_and_raw_provenance[auto]",
+      "tests.test_strings_stored_source_admission::test_cached_results_keep_the_original_source_and_raw_provenance[floss]",
+      "tests.test_strings_stored_source_admission::test_selected_metadata_refusal_preserves_auto_fallback_and_explicit_refusal[stale-run]",
+      "tests.test_strings_stored_source_admission::test_selected_metadata_refusal_preserves_auto_fallback_and_explicit_refusal[stale-evidence]",
+      "tests.test_strings_stored_source_admission::test_selected_metadata_refusal_preserves_auto_fallback_and_explicit_refusal[project_id-run]",
+      "tests.test_strings_stored_source_admission::test_selected_metadata_refusal_preserves_auto_fallback_and_explicit_refusal[project_id-evidence]"
+    ]
+  },
+  "focused_result": {
+    "tests": 41,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "nodes": [
+      "tests.test_strings_stored_source_admission::test_orientation_swap_never_reuses_evidence_of_the_previous_artifact",
+      "tests.test_strings_stored_source_admission::test_explicit_floss_refuses_pre_swap_results",
+      "tests.test_strings_stored_source_admission::test_cached_results_keep_the_original_source_and_raw_provenance[auto]",
+      "tests.test_strings_stored_source_admission::test_cached_results_keep_the_original_source_and_raw_provenance[floss]",
+      "tests.test_strings_stored_source_admission::test_selected_metadata_refusal_preserves_auto_fallback_and_explicit_refusal[stale-run]",
+      "tests.test_strings_stored_source_admission::test_selected_metadata_refusal_preserves_auto_fallback_and_explicit_refusal[stale-evidence]",
+      "tests.test_strings_stored_source_admission::test_selected_metadata_refusal_preserves_auto_fallback_and_explicit_refusal[project_id-run]",
+      "tests.test_strings_stored_source_admission::test_selected_metadata_refusal_preserves_auto_fallback_and_explicit_refusal[project_id-evidence]",
+      "tests.test_intel_tools_admission::test_real_producer_fresh_and_cache_keep_admitted_original_raw_provenance[fresh]",
+      "tests.test_intel_tools_admission::test_real_producer_fresh_and_cache_keep_admitted_original_raw_provenance[cache]",
+      "tests.test_intel_tools_admission::test_selected_evidence_and_cache_origin_metadata_refuse_without_mutation[stale-1-selected-run]",
+      "tests.test_intel_tools_admission::test_selected_evidence_and_cache_origin_metadata_refuse_without_mutation[stale-1-evidence]",
+      "tests.test_intel_tools_admission::test_selected_evidence_and_cache_origin_metadata_refuse_without_mutation[stale-1-origin-run]",
+      "tests.test_intel_tools_admission::test_selected_evidence_and_cache_origin_metadata_refuse_without_mutation[project_id-foreign-authored-project-selected-run]",
+      "tests.test_intel_tools_admission::test_selected_evidence_and_cache_origin_metadata_refuse_without_mutation[project_id-foreign-authored-project-evidence]",
+      "tests.test_intel_tools_admission::test_selected_evidence_and_cache_origin_metadata_refuse_without_mutation[project_id-foreign-authored-project-origin-run]",
+      "tests.test_intel_tools_admission::test_selected_evidence_and_cache_origin_metadata_refuse_without_mutation[run_id-foreign-guard-run-selected-run]",
+      "tests.test_intel_tools_admission::test_selected_evidence_and_cache_origin_metadata_refuse_without_mutation[run_id-foreign-guard-run-evidence]",
+      "tests.test_intel_tools_admission::test_selected_evidence_and_cache_origin_metadata_refuse_without_mutation[run_id-foreign-guard-run-origin-run]",
+      "tests.test_intel_tools_admission::test_selected_evidence_and_cache_origin_metadata_refuse_without_mutation[raw_sha256-ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff-selected-run]",
+      "tests.test_intel_tools_admission::test_selected_evidence_and_cache_origin_metadata_refuse_without_mutation[raw_sha256-ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff-evidence]",
+      "tests.test_intel_tools_admission::test_selected_evidence_and_cache_origin_metadata_refuse_without_mutation[raw_sha256-ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff-origin-run]",
+      "tests.test_intel_tools_admission::test_selected_evidence_and_cache_origin_metadata_refuse_without_mutation[input_digest-eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-selected-run]",
+      "tests.test_intel_tools_admission::test_selected_evidence_and_cache_origin_metadata_refuse_without_mutation[input_digest-eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-evidence]",
+      "tests.test_intel_tools_admission::test_selected_evidence_and_cache_origin_metadata_refuse_without_mutation[input_digest-eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-origin-run]",
+      "tests.test_intel_tools_admission::test_selected_evidence_and_cache_origin_metadata_refuse_without_mutation[status-failed-selected-run]",
+      "tests.test_intel_tools_admission::test_selected_evidence_and_cache_origin_metadata_refuse_without_mutation[status-failed-evidence]",
+      "tests.test_intel_tools_admission::test_selected_evidence_and_cache_origin_metadata_refuse_without_mutation[status-failed-origin-run]",
+      "tests.test_intel_tools_admission::test_selected_evidence_and_cache_origin_metadata_refuse_without_mutation[id-foreign-authored-row-selected-run]",
+      "tests.test_intel_tools_admission::test_selected_evidence_and_cache_origin_metadata_refuse_without_mutation[id-foreign-authored-row-evidence]",
+      "tests.test_intel_tools_admission::test_selected_evidence_and_cache_origin_metadata_refuse_without_mutation[id-foreign-authored-row-origin-run]",
+      "tests.test_intel_tools_admission::test_legacy_latest_behavior_remains_separate_from_opt_in_admission",
+      "tests.test_intel_tools_admission::test_blob_body_is_a_typed_read_refusal_even_when_content_digest_matches[selected-run]",
+      "tests.test_intel_tools_admission::test_blob_body_is_a_typed_read_refusal_even_when_content_digest_matches[evidence]",
+      "tests.test_intel_tools_admission::test_original_json_duplicate_keys_refuse_despite_equivalent_parsed_body[selected-run]",
+      "tests.test_intel_tools_admission::test_original_json_duplicate_keys_refuse_despite_equivalent_parsed_body[evidence]",
+      "tests.test_intel_tools_admission::test_original_json_duplicate_keys_refuse_despite_equivalent_parsed_body[origin-run]",
+      "tests.test_intel_tools_admission::test_missing_selected_evidence_or_origin_refuses_without_older_run_fallback[evidence]",
+      "tests.test_intel_tools_admission::test_missing_selected_evidence_or_origin_refuses_without_older_run_fallback[origin-run]",
+      "tests.test_intel_tools_admission::test_real_cache_selects_matching_side_among_retained_orientation_history",
+      "tests.test_intel_tools_admission::test_unrelated_side_model_does_not_invalidate_current_side_selection"
+    ]
+  },
+  "affected_result": {
+    "tests": 61,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "nodes": [
+      "tests.test_strings_cli::test_scan_builtin_smoke_path_is_one_json_object",
+      "tests.test_strings_cli::test_scan_requires_builtin",
+      "tests.test_strings_cli::test_delta_has_the_added_message_and_no_path",
+      "tests.test_strings_cli::test_list_filters_by_change_and_cue",
+      "tests.test_strings_cli::test_list_without_matches_is_exit_4",
+      "tests.test_strings_cli::test_list_text_output_is_plain_lines",
+      "tests.test_strings_cli::test_explain_one_string",
+      "tests.test_strings_cli::test_explain_unknown_id_is_exit_2",
+      "tests.test_strings_cli::test_source_floss_without_stored_evidence_is_exit_2",
+      "tests.test_strings_cli::test_anchor_file_feeds_cues_and_hits",
+      "tests.test_strings_cli::test_bad_anchor_file_is_exit_2[syntax]",
+      "tests.test_strings_cli::test_bad_anchor_file_is_exit_2[schema]",
+      "tests.test_strings_cli::test_export_writes_atomically_and_refuses_to_clobber[json]",
+      "tests.test_strings_cli::test_export_writes_atomically_and_refuses_to_clobber[csv]",
+      "tests.test_strings_cli::test_cancelled_scan_is_exit_5",
+      "tests.test_strings_cli::test_table_from_source_keeps_the_basis_and_flags_secrets",
+      "tests.test_strings_cli::test_a_project_without_both_artifacts_is_a_typed_input_error",
+      "tests.test_strings_sources::test_static_goldens_table_rows_equal_parser_output[older]",
+      "tests.test_strings_sources::test_static_goldens_table_rows_equal_parser_output[newer]",
+      "tests.test_strings_sources::test_raw_source_rows_equal_the_evidence_source[older]",
+      "tests.test_strings_sources::test_raw_source_rows_equal_the_evidence_source[newer]",
+      "tests.test_strings_sources::test_decoded_goldens_carry_function_site_and_stage_states",
+      "tests.test_strings_sources::test_empty_stdout_marks_static_none_found_and_emulation_not_run",
+      "tests.test_strings_sources::test_truncation_is_per_type_and_recorded",
+      "tests.test_strings_sources::test_unknown_keys_are_refused_as_output_errors",
+      "tests.test_strings_sources::test_sources_satisfy_the_port",
+      "tests.test_strings_basis::test_equal_bases_compare_on_their_types",
+      "tests.test_strings_basis::test_min_length_harmonizes_to_the_larger_value",
+      "tests.test_strings_basis::test_different_semantics_block_with_a_reason",
+      "tests.test_strings_basis::test_builtin_against_floss_compares_static_and_shows_both_sources",
+      "tests.test_strings_basis::test_emulation_on_one_side_only_is_not_compared",
+      "tests.test_strings_basis::test_emulation_needs_the_same_executable_and_consent[same]",
+      "tests.test_strings_basis::test_emulation_needs_the_same_executable_and_consent[consent]",
+      "tests.test_strings_basis::test_emulation_needs_the_same_executable_and_consent[executable]",
+      "tests.test_strings_basis::test_emulation_needs_the_same_executable_and_consent[unknown-exe]",
+      "tests.test_strings_basis::test_language_needs_the_same_detected_language",
+      "tests.test_strings_basis::test_incomplete_stage_is_indeterminate_or_not_compared[truncated]",
+      "tests.test_strings_basis::test_incomplete_stage_is_indeterminate_or_not_compared[failed]",
+      "tests.test_strings_basis::test_incomplete_stage_is_indeterminate_or_not_compared[not-run]",
+      "tests.test_strings_basis::test_no_shared_type_blocks",
+      "tests.test_strings_basis::test_swapped_orientation_is_stale",
+      "tests.test_intel_tools_runner::test_end_to_end_persists_runs_and_evidence_then_serves_the_cache",
+      "tests.test_intel_tools_runner::test_raw_stdout_is_stored_byte_exact_and_content_addressed",
+      "tests.test_intel_tools_runner::test_missing_and_unconfigured_executables_are_absent_not_empty",
+      "tests.test_intel_tools_runner::test_unpinned_build_is_unsupported_without_the_opt_in",
+      "tests.test_intel_tools_runner::test_timeout_is_a_timeout_run_and_the_tree_is_killed",
+      "tests.test_intel_tools_runner::test_cancel_stops_a_running_job_and_pending_jobs_never_spawn",
+      "tests.test_intel_tools_runner::test_oversize_output_is_a_limit_failure",
+      "tests.test_intel_tools_runner::test_stderr_noise_is_bounded_and_never_breaks_the_json",
+      "tests.test_intel_tools_runner::test_nonzero_exit_is_a_failed_run_with_a_sanitised_message",
+      "tests.test_intel_tools_runner::test_corrupt_output_is_failed_output_and_keeps_earlier_results",
+      "tests.test_intel_tools_runner::test_floss_empty_stdout_is_none_found_with_stored_empty_evidence",
+      "tests.test_intel_tools_runner::test_stale_cache_hit_is_a_miss_and_the_tool_runs",
+      "tests.test_intel_tools_runner::test_changed_executable_changes_the_cache_key",
+      "tests.test_intel_tools_runner::test_executable_swapped_after_the_probe_is_stale",
+      "tests.test_intel_tools_runner::test_child_environment_is_the_allow_list_and_the_target_is_data",
+      "tests.test_intel_tools_runner::test_long_scratch_root_is_rejected_before_anything_runs",
+      "tests.test_intel_tools_runner::test_windows_environment_layout_is_private_and_semicolon_separated",
+      "tests.test_intel_tools_runner::test_profiles_and_engine_subsets_are_validated",
+      "tests.test_intel_tools_runner::test_two_workers_persist_every_result_on_the_calling_thread",
+      "tests.test_intel_tools_runner::test_diec_without_a_database_is_unsupported_not_failed"
+    ]
+  },
+  "focused_affected_overlap": [],
+  "scoped_ruff": "passed",
+  "diff_check": "passed",
+  "limits": [
+    "Synthetic PE fixtures and authored fake FLOSS producer only; no analyzed target execution.",
+    "No native FLOSS, complete suite, Windows, GUI, Search, or release qualification claimed.",
+    "Current artifact and stored-row admission only; legacy sidecar I/O remains unchanged.",
+    "Original raw provenance is retained, not reverified by rereading raw bytes.",
+    "Linux forced-export source-name race remains open."
+  ],
+  "commands": {
+    "baseline": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src:tests python -m pytest -q tests/test_strings_stored_source_admission.py",
+    "focused": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src:tests python -m pytest -q tests/test_strings_stored_source_admission.py tests/test_intel_tools_admission.py",
+    "affected": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src:tests python -m pytest -q tests/test_strings_cli.py tests/test_strings_sources.py tests/test_strings_basis.py tests/test_intel_tools_runner.py",
+    "quality": "python -m ruff check src/patchtrace/intelligence/tools/admission.py src/patchtrace/strings/cli.py tests/test_intel_tools_admission.py tests/test_strings_stored_source_admission.py"
+  },
+  "evidence_files": {
+    "affected-green.log": {
+      "bytes": 99,
+      "sha256": "477a1efaa7754092f5d84f73752e486f3c8416576a73da943d6698c0849fb496"
+    },
+    "affected-green.xml": {
+      "bytes": 7654,
+      "sha256": "af5126d45cd30f0d5470303abcdc232c3a91a11faa56e9b3b7b6ae66b36bad2f"
+    },
+    "baseline-red.log.gz": {
+      "bytes": 2267,
+      "sha256": "6625d97150d0dc62e8d12b0034c5c8ed24306ec477599e6e38d238093e5289a8"
+    },
+    "baseline-red.xml.gz": {
+      "bytes": 2447,
+      "sha256": "8836142430650d5cf66aed9d0045be031a18271d53c33cd4f0521a22fcf60d9a"
+    },
+    "focused-green.log": {
+      "bytes": 99,
+      "sha256": "799ff25b94e45e2642752c848146005d82ee8377cd9682d9cac12c91f629aa4f"
+    },
+    "focused-green.xml": {
+      "bytes": 7640,
+      "sha256": "9813b780513b1f32b41695072262de42b1bfcc37ea338b3a56fe6753f5beb3e1"
+    }
+  }
+}

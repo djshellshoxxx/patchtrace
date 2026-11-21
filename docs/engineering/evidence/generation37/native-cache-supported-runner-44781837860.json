@@ -1,0 +1,72 @@
+{
+  "schema": "patchtrace-native-cache-supported-runner-receipt/1",
+  "observed_date": "2026-11-20",
+  "source": {
+    "pr": 342,
+    "head_sha": "5f34fb57267637b986814ddc81dba11550992fff",
+    "workflow_run_id": 44781837860,
+    "job_id": 136446262580,
+    "artifact_id": 14660100681,
+    "artifact_name": "native-static-acceptance-raw-cache-hit",
+    "artifact_url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44781837860/artifacts/14660100681",
+    "archive_sha256": "8bbf458633ed708fda4eb44f92148bde34f41e6c62f0f51af73689d9cbb4edf1"
+  },
+  "artifact_contents": [
+    {
+      "path": "live-cache-diagnostics/first.json",
+      "sha256": "4fa89f7694c8a01a8e91086bc184ef233cc68b4b6cadef68d47c8388ec23397d",
+      "phase": "first",
+      "java_probe_returncode": 0,
+      "java_runtime_version": "25.0.5",
+      "raw_sha256": "4e00001f4afe5fdf2dfacff3e8fc690066f270ac3130db4cb5f63a8042b14762",
+      "match_count": 1,
+      "events_retained": 64,
+      "events_omitted": 61
+    },
+    {
+      "path": "live-cache-diagnostics/second.json",
+      "sha256": "ab152647a341ab4b9363570f0ced45740f71df6af9e7ca193f17b336e5715d5c",
+      "phase": "second",
+      "java_probe_returncode": 0,
+      "java_runtime_version": "25.0.5",
+      "raw_sha256": "4e00001f4afe5fdf2dfacff3e8fc690066f270ac3130db4cb5f63a8042b14762",
+      "match_count": 1,
+      "cache_origin_key": "3c2e377da11ba1709a87187beaffc28172531f02e0a920d5f2b7241be8ee9753",
+      "events": [
+        "preflight",
+        "cache",
+        "completed"
+      ],
+      "events_omitted": 0
+    },
+    {
+      "path": "live-cache-diagnostics/result.json",
+      "sha256": "641dac5aba235a8a2125c49f86f254ca1029999f07af0e3aa5a98692322fc4d6",
+      "phase": "acceptance",
+      "status": "passed"
+    }
+  ],
+  "cross_checks": {
+    "two_run_raw_hash_equal": true,
+    "first_and_second_java_probe_rc_zero": true,
+    "second_run_has_cache_origin": true,
+    "cache_event_reports_reuse": true,
+    "job_log_reports_cache_hit": true
+  },
+  "original_failure": {
+    "head_sha": "5cc3f2a540f2e49e8b86e20decf7d4f62ce89d0a",
+    "run_id": 44770501981,
+    "job_id": 136406567877,
+    "message": "AssertionError: second run was not a cache hit; java=unverified",
+    "raw_cache_artifact": "not retained on failed original run",
+    "java_home_compared": "Both job logs set Temurin JDK 25.0.5 in JAVA_HOME; this is not the same as the failed run's verified Java probe",
+    "cause": "undetermined"
+  },
+  "validation": {
+    "method": "Read downloaded ZIP as JSON only; no Java invocation or analyzed target execution",
+    "runtime": "Python 3.13.5 stdlib zipfile/json/hashlib",
+    "results": "ZIP SHA-256 and three entry SHA-256 verified, invariants observed",
+    "limitations": "This success is limited to exact PR342 supported Windows runner source. Prior failing run was not reproduced or explained."
+  },
+  "release_qualified": false
+}

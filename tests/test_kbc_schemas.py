@@ -8,8 +8,6 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from patchtrace.kbcorrelation import contracts, errors
-
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'docs' / 'schemas' / 'kbcorrelation'
 
@@ -36,7 +34,7 @@ def test_examples_validate_as_labelled():
     examples = json.loads((OUT / 'examples.json').read_text(encoding='utf-8'))
     assert set(examples) == set(generator().CONTRACTS)
     for name, entry in examples.items():
-        model = getattr(contracts, name, None) or getattr(errors, name)
+        model = generator().model_for(name)
         model.model_validate_json(json.dumps(entry['valid']))
         assert entry['invalid'], name
         for bad in entry['invalid']:

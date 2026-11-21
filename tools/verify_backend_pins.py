@@ -20,13 +20,17 @@ from __future__ import annotations
 import argparse
 import gzip
 import hashlib
+import http.client
 import io
 import json
 import re
 import shutil
+import string
 import subprocess
 import sys
 import tarfile
+import urllib.error
+import urllib.parse
 import urllib.request
 from collections.abc import Callable, Sequence
 from pathlib import Path
@@ -196,13 +200,77 @@ def compare_tarballs(rebuilt: Path, downloaded: Path) -> dict:
 
 
 # ----- python.org: sigstore and gpg ----------------------------------------------------------------------
+class _NoRedirect(urllib.request.HTTPRedirectHandler):
+    def http_error_302(self, request, response, status, message, headers):
+        # Surface the original response before urllib parses or follows Location.
+        raise urllib.error.HTTPError(request.full_url, status, message, headers, response)
+
+    http_error_301 = http_error_303 = http_error_307 = http_error_308 = http_error_302
+
+
+def _require_https(url: str) -> None:
+    try:
+        parts = urllib.parse.urlsplit(url)
+        if parts.scheme != 'https' or not parts.hostname:
+            raise ValueError('HTTPS URL with a host required')
+        _ = parts.port  # reject malformed/out-of-range ports before dispatch
+        authority = urllib.parse.unquote(parts.netloc)
+        if any(character.isspace() or ord(character) < 32 or ord(character) == 127 for character in authority):
+            raise ValueError('control or whitespace in URL authority')
+    except ValueError:
+        raise urllib.error.URLError('non-HTTPS or malformed download URL refused') from None
+
+
+def open_https(request: urllib.request.Request, *, timeout: float = 120):
+    """Open one bounded HTTPS redirect chain; caller owns the final response."""
+    opener = urllib.request.build_opener(_NoRedirect())
+    current = request
+    for redirects in range(11):
+        _require_https(current.full_url)
+        try:
+            return opener.open(current, timeout=timeout)
+        except http.client.InvalidURL:
+            raise urllib.error.URLError('malformed download URL refused') from None
+        except urllib.error.HTTPError as response:
+            try:
+                if response.code not in (301, 302, 303, 307, 308):
+                    raise
+                if redirects == 10:
+                    raise urllib.error.URLError('download redirect limit exceeded') from None
+                location = response.headers.get('Location') or response.headers.get('URI')
+                if not location:
+                    raise urllib.error.URLError('download redirect has no location') from None
+                try:
+                    # HTTP headers are decoded as Latin-1 by urllib; preserve its URL quoting.
+                    location = urllib.parse.quote(location, encoding='iso-8859-1', safe=string.punctuation)
+                    target = urllib.parse.urljoin(current.full_url, location)
+                    _require_https(target)
+                    source_parts, target_parts = urllib.parse.urlsplit(current.full_url), urllib.parse.urlsplit(target)
+                    source_origin = (source_parts.hostname, source_parts.port if source_parts.port is not None else 443)
+                    target_origin = (target_parts.hostname, target_parts.port if target_parts.port is not None else 443)
+                    omitted = {'host', 'content-length', 'content-type', 'proxy-authorization'}
+                    if source_origin != target_origin:
+                        omitted.update(('authorization', 'cookie'))
+                    # Transport-added Host is unredirected state, not an intentional caller header.
+                    headers = {key: value for key, value in current.headers.items() if key.lower() not in omitted}
+                    current = urllib.request.Request(target, headers=headers)
+                except (ValueError, UnicodeError):
+                    raise urllib.error.URLError('malformed download redirect refused') from None
+            finally:
+                response.close()  # never read an unbounded redirect/error body
+    raise urllib.error.URLError('download redirect limit exceeded')
+
+
 def _fetch(url: str, dest: Path | None = None, limit: int = 64 << 20) -> bytes:
     if not url.startswith('https://'):
         raise VerifyError(f'refusing non-HTTPS URL {url}')
-    request = urllib.request.Request(url, headers={'User-Agent': 'patchtrace-pin-verify/1', 'Accept-Encoding': 'identity'})
-    with urllib.request.urlopen(request, timeout=120) as response:  # noqa: S310 (https checked above)
-        data = response.read(limit + 1)
-        encoding = (response.headers.get('Content-Encoding') or '').lower()
+    try:
+        request = urllib.request.Request(url, headers={'User-Agent': 'patchtrace-pin-verify/1', 'Accept-Encoding': 'identity'})
+        with open_https(request, timeout=120) as response:
+            data = response.read(limit + 1)
+            encoding = (response.headers.get('Content-Encoding') or '').lower()
+    except (urllib.error.URLError, TimeoutError, OSError, ValueError) as error:
+        raise VerifyError(f'cannot download {url}: {error}') from None
     if len(data) > limit:
         raise VerifyError(f'{url} is larger than {limit} bytes')
     if encoding == 'gzip' or (dest is None and data[:2] == b'\x1f\x8b'):  # a server ignoring identity: decode, bounded

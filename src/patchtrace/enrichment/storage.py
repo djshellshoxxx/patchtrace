@@ -24,7 +24,7 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from .. import verified_backup
-from ..persistence import ProjectStore, safe_path
+from ..persistence import ProjectStore, safe_path, strict_json
 from .contracts import EnrichmentError
 
 # Highest extension version this client understands. New stores are stamped BASE_EXTENSION_VERSION and
@@ -44,7 +44,7 @@ KINDS = frozenset({'signals', 'ranking', 'wil', 'cve-snapshot', 'contextual', 'p
                    'patch-intent',
                    # Program E (KB integration plan A-5, KEV plan A4): append-only KB investigation revisions
                    # and the Guard-stale KB / KEV context pointers. Again none is in DERIVED_KINDS.
-                   'kb-investigation', 'kb-context', 'kev-context',
+                   'kb-investigation', 'kb-context', 'kb-acquisition', 'kev-context',
                    # Program E (integration owner, AM1): saved searches and the rule-authoring rows. Same rule:
                    # none is in DERIVED_KINDS, so retention never deletes them.
                    'search-saved', 'rule-candidate', 'rule-decision', 'rule-version', 'rule-test',
@@ -59,7 +59,9 @@ KINDS = frozenset({'signals', 'ranking', 'wil', 'cve-snapshot', 'contextual', 'p
                    'anchor-pin',
                    # SPEC-DA-01 Mode A: an imported Diaphora result (diaphora/1). Imported evidence, never derived,
                    # so retention never deletes it; no extension_version bump, as `anchor-batch`.
-                   'diaphora-matches'})
+                   'diaphora-matches',
+                   # SPEC-51: bounded artifact metadata cache, separate from pipeline retention.
+                   'pe-metadata'})
 
 # Retention (SPEC-07h H1). Only recomputable derived kinds are ever deleted; imported evidence
 # (`secondary-matches`), `cve-snapshot` and unknown kinds are never evicted.
@@ -241,11 +243,11 @@ class EnrichmentStore:
         if size > MAX_ROW:
             raise EnrichmentError('PT-ENRICH-LIMIT', 'enrichment result exceeds 32 MiB row limit')
         used = self._db.execute('SELECT COALESCE(SUM(LENGTH(CAST(body AS BLOB))),0) FROM enrichment_entries '
-                                'WHERE id != ?', (entry_id,)).fetchone()[0]
+                                'WHERE id IS NOT ?', (entry_id,)).fetchone()[0]
         if used + size > MAX_TOTAL:
             self.make_room(used + size - MAX_TOTAL, current, {entry_id, *protect})
             used = self._db.execute('SELECT COALESCE(SUM(LENGTH(CAST(body AS BLOB))),0) FROM enrichment_entries '
-                                    'WHERE id != ?', (entry_id,)).fetchone()[0]
+                                    'WHERE id IS NOT ?', (entry_id,)).fetchone()[0]
             if used + size > MAX_TOTAL:
                 raise EnrichmentError('PT-ENRICH-LIMIT', 'project enrichment data would exceed 128 MiB',
                                       recoverable=True)
@@ -286,6 +288,41 @@ class EnrichmentStore:
             stale = bool(row[8]) or (current is not None and guard != current)
             out.append(Entry(row[0], row[1], guard, row[3], row[7], stale, row[9], json.loads(row[10]), row[10], row[11]))
         return out
+
+    def entry(self, kind: str, entry_id: str, *, max_bytes: int = MAX_ROW) -> Entry | None:
+        """Read one exact row with size, integrity and strict-JSON checks.
+
+        Unlike entries(), this never materializes unrelated rows in Python. The
+        predicate bounds returned bodies, not SQLite's internal read/cast costs.
+        An existing id owned by another kind is an error, not an absent row safe
+        to overwrite.
+        """
+        if type(max_bytes) is not int or not 0 < max_bytes <= MAX_ROW:
+            raise ValueError('invalid enrichment row read limit')
+        if 'enrichment_entries' not in self._tables():
+            return None
+        size = self._db.execute('SELECT LENGTH(CAST(body AS BLOB)) FROM enrichment_entries WHERE id=?',
+                                (entry_id,)).fetchone()
+        if size is None:
+            return None
+        if type(size[0]) is not int or not 0 <= size[0] <= max_bytes:
+            raise EnrichmentError('PT-ENRICH-LIMIT', 'stored enrichment row exceeds its byte limit')
+        row = self._db.execute(
+            'SELECT id,kind,project_id,project_revision,run_id,raw_sha256,input_digest,status,stale,created,body,'
+            'body_sha256 FROM enrichment_entries WHERE id=? AND LENGTH(CAST(body AS BLOB)) <= ?',
+            (entry_id, max_bytes)).fetchone()
+        if row is None:
+            raise EnrichmentError('PT-ENRICH-INPUT', 'stored enrichment row changed during bounded read')
+        if (row[1] != kind or type(row[10]) is not str or type(row[11]) is not str
+                or len(row[10].encode('utf-8')) > max_bytes
+                or hashlib.sha256(row[10].encode()).hexdigest() != row[11]):
+            raise EnrichmentError('PT-ENRICH-INPUT', 'stored enrichment row identity or integrity is invalid')
+        try:
+            body = strict_json(row[10])
+        except ValueError as exc:
+            raise EnrichmentError('PT-ENRICH-INPUT', 'stored enrichment row is not strict JSON') from exc
+        guard = Guard(row[2], row[4], row[5], row[6])
+        return Entry(row[0], row[1], guard, row[3], row[7], bool(row[8]), row[9], body, row[10], row[11])
 
     def current(self, kind: str, guard: Guard) -> Entry | None:
         return next((e for e in self.entries(kind, guard) if not e.stale), None)
@@ -370,29 +407,50 @@ class EnrichmentStore:
 
     def _run_rows(self) -> list[tuple[str, str, int, tuple, bool]]:
         """(id, created, size, group, referenced) for every engine-run row, newest first. A run is
-        referenced when a stored secondary set names it (`run_id`) or it names a stored set."""
+        referenced when a stored secondary set names it (`run_id`) or it names a stored set.
+
+        This scan authorizes deletion only. Unreadable evidence makes reference ownership
+        indeterminate, so offer no runs rather than treating a malformed row as unreferenced.
+        """
+        from ..secondary.contracts import SecondaryMatchSet
+        from ..secondary.runs import EngineRun
+
         rows = self._db.execute(
-            'SELECT id, created, LENGTH(CAST(body AS BLOB)), body FROM enrichment_entries WHERE kind=? '
+            'SELECT id, created, LENGTH(CAST(body AS BLOB)) FROM enrichment_entries WHERE kind=? '
             'ORDER BY created DESC, id DESC', (RUN_KIND,)).fetchall()
+        if not rows or any(type(row[0]) is not str for row in rows):
+            return []
         sets = {r[0] for r in self._db.execute('SELECT id FROM enrichment_entries WHERE kind=?',
                                                ('secondary-matches',))}
+        if any(type(row_id) is not str for row_id in sets):
+            return []
+        project_id = self._project_id()
+        if project_id is None:
+            return []
         named = set()
-        for (body,) in self._db.execute('SELECT body FROM enrichment_entries WHERE kind=?', ('secondary-matches',)):
-            try:
-                run_id = json.loads(body).get('run_id')
-            except ValueError:
-                continue
-            if isinstance(run_id, str):
-                named.add(run_id)
         out = []
-        for row_id, created, size, body in rows:
-            try:
-                doc = json.loads(body)
-                group = (doc.get('engine'), doc.get('older_sha256'), doc.get('newer_sha256'))
-                referenced = row_id in named or doc.get('match_set_id') in sets
-            except (ValueError, AttributeError):
-                group, referenced = (None, None, None), False
-            out.append((row_id, created, size, group, referenced))
+        try:
+            for row_id in sorted(sets):
+                entry = self.entry('secondary-matches', row_id, max_bytes=MAX_ROW)
+                if entry is None or entry.guard.project_id != project_id or entry.body_json is None:
+                    return []
+                match_set = SecondaryMatchSet.model_validate_json(entry.body_json)
+                if match_set.entry_id != row_id:
+                    return []
+                if match_set.run_id is not None:
+                    named.add(match_set.run_id)
+            for row_id, created, size in rows:
+                entry = self.entry(RUN_KIND, row_id, max_bytes=MAX_ROW)
+                if entry is None or entry.guard.project_id != project_id or entry.body_json is None:
+                    return []
+                run = EngineRun.model_validate_json(entry.body_json)
+                if run.run_id != row_id:
+                    return []
+                group = (run.engine, run.older_sha256, run.newer_sha256)
+                referenced = row_id in named or run.match_set_id in sets
+                out.append((row_id, created, size, group, referenced))
+        except (EnrichmentError, ValueError):
+            return []
         return out
 
     def _evictable_runs(self, keep: int) -> list[tuple[str, int]]:
@@ -475,6 +533,8 @@ class EnrichmentStore:
             for row_id, size in self._evictable_runs(1):  # run history is cheap to lose; sets are never offered
                 if freed >= need_bytes:
                     break
+                if row_id in protected:
+                    continue
                 runs.add(row_id)
                 freed += size
             remaining = list(pipes)

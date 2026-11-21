@@ -2,7 +2,12 @@
 
 | Module | Responsibility | Verification seam |
 |---|---|---|
+| `tools/live_cache_check.py` | Native cache acceptance with an explicit, create-only diagnostic directory; bounded first/second-run and existing Java-probe observations survive temporary-project cleanup without changing acceptance or execution | `test_live_cache_diagnostics.py`; injected projects/processes only, native cache acceptance remains separate |
+| `intelligence/tools/admission.py` | Opt-in owner-thread admission of current stored tool rows, evidence and cache origins; used by the Strings CLI without changing legacy ToolStore readers or running tools | `test_intel_tools_admission.py`, `test_strings_stored_source_admission.py`; synthetic projects and authored producer only |
 | `tools/branch_inventory.py` | Read-only full-history branch ancestry, patch evidence and exact-tip inventory replay; no ref mutation or deletion authorization | Real authored Git graphs and atomic report preservation in `tests/test_branch_inventory.py` |
+| `tools/research_qualification/receipt.py:git_head` | Bounded SHA-1 source observation for ordinary and linked checkouts, including gitfiles and common/private refs; no Git subprocess or clean-source attestation | `test_research_qualification_git_identity.py`, existing receipt/CLI callers, and independent real Git-layout controls |
+| `owned_publication.py` (recovered, 2026-11-19) | Reusable held-source, parent-bound exclusive publication from PW-01. Linux Strings export refuses existing or concurrently arriving destinations, including with `--force`; compatible Linux overwrite remains unavailable. Windows held-handle replacement remains supported. Descriptor cleanup preserves an active failure or cancellation. | `test_owned_publication.py`, `test_owned_publication_integrity.py`, `test_owned_publication_replace.py`, strings source/parent ownership and capability-refusal controls; native Windows qualification remains separate |
+| `tools/verify_backend_pins.py:open_https`, `tools/build_backend_bundle.py:download` | Shared pre-dispatch HTTPS redirect checks, bounded hops, response closure and target-specific headers; payload/signature/pin rules unchanged | `test_backend_https_redirects.py` plus existing verifier/builder/pin tests; authored transports, no live vendor qualification |
 
 ### November 2026 continuation interfaces
 
@@ -27,6 +32,7 @@ Verification seams: `tests/test_r7_slicing.py`, `tests/test_r7_patterns.py`.
 | `doctor_cli.py`, `cli_commands/doctor.py` | Local health report without network or subprocess execution | `test_doctor_cli.py` |
 | `enrichment/profile_cli.py`, `cli_commands/profile.py` | Shared profile repository operations and validation | `test_profile_cli.py` |
 | `tools/research_qualification/l1_run.py` | Frozen-manifest offline advisory-join receipts, excluding unverified cases | `test_research_qualification_l1_run.py`; synthetic mechanics, not real accuracy |
+| `tools/research_qualification/{scoring,parity,scorerun}.py` | Explicit single-cohort generic ranking/parity; L3 development/holdout and stratum reports; conditional confidence bounds withheld for repeated or missing scored project identities | `test_research_qualification_cohort_boundaries.py` plus scoring, parity, facts-gate and scorerun suites; authored mechanics only |
 | `report2/kb_context.py` | Inert advisory records from the project's captured KB context | KB report regression tests |
 | `kbcorrelation/cli_leads.py`, `wiring.py`, `panel_qt.py` | Owner-thread snapshots for worker-side lead calculation without reopening the held project | Default-loader lifecycle regression tests |
 
@@ -90,7 +96,7 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 | artifact bytes | artifact_bytes.py | SPEC-26 shared seam: `VerifiedArtifactReader.open_artifact/open_path`, bounded `read(offset,length,clip)` on a SHA-256-verified handle; change detection; `ArtifactBytesError.code` | ingestion/contracts | Pure IO, no Qt; tmp-file tests |
 | pe overview (alpha) | pe_overview/*.py | SPEC-26 D: bounded stdlib PE header/section/directory/import/export/entropy/overlay/certificate-table parsing, field-level old/new comparison; `inspect(reader) -> PeOverview`; Authenticode trust isolated in Windows-only `authenticode.py` | artifact bytes | Pure; synthetic/hostile PE fixtures; native Windows trust tests skip elsewhere |
 | byte representations (alpha) | representations/*.py | SPEC-26 B: paged Hex/Binary/Base64 rendering of exact verified bytes; whole-file/file-range/function-RVA scopes via injected section map | artifact bytes | Pure; boundary fixtures |
-| raw offset alignment (RD-F03) | representations/alignment.py, raw_alignment_view.py | SPEC-26 extension (A-09): opt-in `align_bytes`/`align_pages` (`raw-offset-align/1`) describes two bounded verified windows as exact equal/replace/insert/delete/unresolved spans with independent physical offsets; resynchronizes only on unique, consistent anchors, otherwise `ambiguous`/`unaligned`/`limited`/`cancelled`; work, span and shift caps. `raw_alignment_view` builds the Qt-free paired rows (display-only gaps, exact original-window copy). Desktop controls not wired yet. Ported 2026-11-18 from `repair/rzdiff-native-red-control-20261103` | representations.{paging,scope}, artifact bytes | `tests/test_representation_alignment.py`, `tests/test_raw_alignment_view.py` |
+| raw offset alignment (RD-F03) | representations/alignment.py, raw_alignment_view.py, ui_raw_alignment.py | SPEC-26 extension (A-09): opt-in `align_bytes`/`align_pages` (`raw-offset-align/1`) describes two bounded verified windows as exact equal/replace/insert/delete/unresolved spans with independent physical offsets; resynchronizes only on unique, consistent anchors, otherwise `ambiguous`/`unaligned`/`limited`/`cancelled`; work, span and shift caps. `raw_alignment_view` builds Qt-free paired rows (display-only gaps, exact original-window copy). The desktop controller supplies independent physical offsets, bounded worker requests, context invalidation and original-byte copying in Hex/Binary; fixed-offset/Base64 remains unchanged. Narrow recovery from PR #309, 2026-11-19 | representations.{paging,scope}, artifact bytes, existing TaskRunner | `tests/test_representation_alignment.py`, `tests/test_raw_alignment_view.py`, `tests/test_ui_raw_alignment.py` |
 | tooltip registry (alpha) | tooltips.py | SPEC-26 A: semantic-ID tooltip registry, safe templates, `apply_tooltips`; New/Open exempt | Qt (apply only) | Registry tests + widget enumeration test |
 | artifact inspection (alpha) | artifact_inspection.py | SPEC-26 D orchestration: `inspect_project_artifacts(project_id, artifacts, root, cancel) -> ProjectInspection` (per-side verified reader + `PeOverview` + `compare_overviews`); per-side failure codes never hide the other side; owner closes readers | artifact bytes/pe overview | Pure; tampered/missing/cancel tests |
 | raw view (alpha) | raw_view.py | SPEC-26 B composition: whole-file and from-function-entry scopes (entry RVA via section map, extent never claimed), `build_side`, `differing_lines` | pe overview/representations | Pure; mapping and diff tests |
@@ -486,12 +492,14 @@ K3 notes: `workflow.py` now also allows `pair_proposed` from the searched states
 - `callgraph/view_model.py`: Qt-free Changes/Neighbours/Tree rows, E0-E12 status copy, detail and clipboard text, local `graph.*` tooltip table (`GRAPH_TIPS`). Widgets (`ui_calls.py`, `ui_calls_tips.py`) wait for the panel registry (F5).
 
 ### [WB3-S6:anchors-export-cli]
-`strings/anchors.py` (AnchorSet to cue terms and `StringAnchorHit` join; strength `anchor`, never moves a review tier, secrets never match), `strings/search_rows.py` (`SearchRow` for changed and linked strings, secrets by kind and hash, coverage line), `strings/export.py` (`strings-export/1` JSON and CSV, redacted by default, atomic, no clobber without force, CSV formula guard), `strings/cli.py` (Qt-free `strings list|delta|explain|scan|export` dispatcher plus `table_from_source`; `register(sub, common, handlers)`). The `cli.py` hook is an integrator ask.
+`strings/anchors.py` (AnchorSet to cue terms and `StringAnchorHit` join; strength `anchor`, never moves a review tier, secrets never match), `strings/search_rows.py` (`SearchRow` for changed and linked strings, secrets by kind and hash, coverage line), `strings/export.py` (`strings-export/1` JSON; `strings-export-csv/2` metadata preamble followed by the existing CSV table, including empty exports; redacted by default, CSV formula guard, held-source publication with the Linux forced-replacement limitation documented above), `strings/cli.py` (Qt-free `strings list|delta|explain|scan|export` dispatcher plus `table_from_source`; `register(sub, common, handlers)`). The `cli.py` hook is an integrator ask. CSV metadata and compatibility controls: `tests/test_strings_export_metadata.py`.
 
 ### [K6:kbcorrelation-cvrf-fetch]
 | `kbcorrelation/sources/cvrf_fetch.py`, `kbcorrelation/cli_online.py` | Consented monthly CVRF sync (`kb index sync`). No socket code of its own: drives the hardened `acquisition.transport.Transport` (read1 chunks, watcher abort on cancel or deadline, bounded retries and `Retry-After`) through a wrapped opener that adds `Accept`. `fetch_months` checks offline refusal, that the plan equals `net_plan.build_plan(months)`, host and `plan_sha` consent, then yields one `FetchResult` per month (fetched, not-published, failed); same-host https redirects only (max 3); 32 MiB cap; cancel raises `PT-KBC-CANCEL`. `to_imported` parses offline, rejects another month's document and marks `https-fetch` / `tls-allowlisted-host`. CLI: default window 12 months, `--window-months N` (at most 24), documents stored as they arrive, coverage and per-month rows always printed, exit 0/2/3/5. | cvrf, importer, net_plan, acquisition.transport | tests/test_kbc_cvrf_fetch.py |
 
 ### [WB1:S5S6:search-cli-view]
+Saved workflow recovery (2026-11-19): `search/saved_actions.py` owns shared canonical query preparation and the existing owner-thread saved store; `search/qt_saved.py` supplies project-bound Save/List/Run/Delete controls and bounded per-user recent text. `search/cli.py` exposes the same operations without importing Qt or constructing an index for storage-only actions. Read DTOs retain validated matching mode; persisted `search-saved/1` records are unchanged. Verification: `tests/test_search_saved_workflow.py`, `tests/test_ui_search_saved.py`; native/manual acceptance remains separate.
+
 | CLI | src/patchtrace/search/cli.py | Qt-free `search` dispatcher: `main(argv, opener=, extra_specs=)`, `enrichment-cli/1` envelope, exit table 0/2/3/4/5 in `exit_for`, `--probe`, `--status`, `--anchors-from` (exit 2 `PT-SEARCH-CAPABILITY` until S10); NOT hooked into `patchtrace/cli.py` (hook text in the module docstring) | search.{service,paths,capability,query} | tests/test_search_cli.py |
 | view model | src/patchtrace/search/{view_model,tooltip_data}.py | Pure panel state Q0-Q12, `ResultRowView` rows, capped `ResultsBuffer` (generation guard, 5,000 rows), detail sections, copy text, suggestion rows; tooltip entries as plain data for the integrator to merge into `tooltips`. No Qt widgets (ui_search belongs to instance D) | search.{contracts,limits,normalize} | tests/test_search_view_model.py |
 ### [G4:callgraph-cli]
@@ -510,6 +518,13 @@ K4a notes: `kbcorrelation/cli.py` gained `engine=` and `kev=` ports on `main`/`C
 ### [K5w:pairs-plan-glue]
 `kb pairs` and `kb plan` resolve candidates with `resolver.resolve` over Winbindex records saved in the offline workspace as `winbindex/<name>@YYYY-MM-DD.json[.gz]` (`wiring.WorkspaceFileIndex`: `rows_for` = `parse_rows(...).rows` -> `as_mapping()`; `rows` = `lineage.index_rows`, skipped entries become `skipped_rows`). Read-only; `kb plan` previews one pair and plans no request (network plan and consent stay with E1).
 
+### [K7:acquisition-evidence] Consented acquisition persistence (2026-11-20)
+
+| Module | Responsibility | Depends on | Tests |
+|---|---|---|---|
+| `kbcorrelation/acquisition_evidence.py` | Strict, bounded `AcquisitionEvidence` snapshot: full index proposal/window, two normalized delivery rows and entry hashes, v2 consent digest, conservative verified manual pair and download receipts; content identity and attachment ownership validation. No network or file access. | kbcorrelation contracts | `test_kbc_acquisition_evidence.py`, generated schema controls |
+| `kbcorrelation/{acquire,service,store,recovery,ports,wiring}.py` | Freeze approved source metadata before staging; carry optional evidence through existing two-phase attachment, immutable `kb/acquisitions/<id>.json` and `kb-acquisition:<id>` row; repair checks the journal's operation/content identity, backup uses existing `kb/` inclusion. `RealProjectPort.write_acquisition_sidecar` binds the owned publisher and validates project/artifact ownership. Legacy imports and journals remain valid. | acquisition ports, project enrichment port, owned_publication (wiring only) | `test_kbc_acquisition_evidence.py`, acquire CLI, pair binding, recovery |
+
 2026-11-18 certainty update: selected-machine timelines use valid UTC chronology;
 equal instants require stated builds from the same numeric family. Unordered
 observations at either endpoint remain in the confounding window. Resolutions
@@ -522,7 +537,7 @@ explicit pair when either ambiguity or truncation remains. Regression coverage:
 | capa hints | src/patchtrace/intelligence/tools/capa_hints.py, tools/capa_rules_inventory.py | `capability_context(HypothesisSet, PairChange rows, lineage=)` returns `MechanismContext(support='context')` per hypothesis and matched pair: exact API-hint join (`api_key`), else namespace tag via `FAMILY_TAGS` (only `path` and `search-path` today). Only clean gained/lost rows join (not moved, not-compared, noise, library). No score, no contradiction. `capa_rules_inventory.py --rules-dir DIR` builds a complete inventory (names, namespaces, scopes, lib, file sha256; no rule text) without PyYAML; `--from-results` builds a `derived-unverified` subset from capa results. |
 
 ### [K7:acquire-workflow]
-`acquisition/workflow.py` (Qt-free): `candidate_from_row`, `plan_requests` (pure consent preview), `stage` (resolve, download, verify, always removes staging on failure or cancel), `create_project` (cancel check, then `quarantine.promote`, staging always removed), `acquire_project`, `Acquirer` (mapping-level port implementation). `kbcorrelation/acquire.py`: `build_plan` (`plan_sha` over pair, hosts, requests), `verify_consent` (exact hosts and plan_sha, never offline), `acquire_pair` (stage, verify SHAs, `import_pair`, discard staging; errors as `KbcStoreError`, acquisition codes nested in `details`). `AcquisitionDialog` is unchanged. Download provenance is returned, not written into the project (an annotation would advance the revision the attach link records).
+`acquisition/workflow.py` (Qt-free): `candidate_from_row`, `plan_requests` (pure consent preview), `stage` (resolve, download, verify, always removes staging on failure or cancel), `create_project` (cancel check, then `quarantine.promote`, staging always removed), `acquire_project`, `Acquirer` (mapping-level port implementation). `kbcorrelation/acquire.py`: `build_plan` (`plan_sha` v2 over pair, full source snapshot, hosts and requests), `verify_consent` (exact hosts and plan_sha, never offline), `acquire_pair` (stage, verify SHAs, capture receipts, `import_pair`, discard staging; errors as `KbcStoreError`, acquisition codes nested in `details`). `AcquisitionDialog` is unchanged. The 2026-11-20 acquisition snapshot extension above persists provenance through attachment sidecars and enrichment rows without advancing the project revision.
 ### [S8:search-tool-advisory-sources]
 | part | files | what it does | tests |
 |---|---|---|---|
@@ -1337,11 +1352,11 @@ Wiring: `exchange.ALL_SOURCES`, `--sources diaphora`, `pipeline.capture_plan` (o
 |---|---|---|---|---|
 | der reader | pe_overview/der.py | Bounded DER reader (definite lengths only; depth, node and byte caps of 7.3); typed `signature_der_*` warnings | stdlib | `tests/test_pe_der.py` |
 | embedded signature | pe_overview/signature.py | `verify_embedded(reader, overview, cancel)`: `WIN_CERTIFICATE` entries, PKCS#7 SignedData, SpcIndirectDataContent digest, signer and certificate identity, timestamp claims, nested signatures, the recomputed PE Authenticode digest (1 MiB reads, cancel polling, skipped above 256 MiB) | der | `tests/test_pe_signature.py` (DER-writing builder, tamper and dual-signature fixtures) |
-| labels, compare, cache | pe_overview/labels.py, compare.py, metadata.py, cache.py | closed label set (never "valid", "verified publisher", "safe"); old/new `FieldComparison` rows; cache key `sha256(artifact | OVERVIEW_VERSION | limits | trust mode | trust fingerprint)` behind a `SidecarPort` (store binding not wired yet) | models | `tests/test_pe_meta_compare.py` |
+| labels, compare, cache | pe_overview/labels.py, compare.py, metadata.py, cache.py, cache_codec.py, cache_store.py | closed label set (never "valid", "verified publisher", "safe"); old/new `FieldComparison` rows; strict bounded offline metadata cache keyed by artifact, version, limits and platform; owner-thread enrichment lookup/publication and immutable inspection-worker snapshots | models, enrichment.storage | `tests/test_pe_meta_compare.py`, `tests/test_pe_metadata_cache.py`, `tests/test_pe_metadata_cache_qt.py` |
 | inspect CLI | pe_overview/cli.py, cli_commands/inspect.py | `patchtrace inspect <project> --side older|newer|both [--trust offline|cache|online --consent-online] --json`; `--trust online` without consent exits 2 `PT-PE-CONSENT-REQUIRED` | pe_overview | `tests/test_pe_inspect_cli.py` |
 | catalog (Windows) | pe_overview/catalog_win.py | catalog signature and consented revocation modes through the existing WinVerifyTrust probe; fakes only here, real acceptance BLOCKED until Windows CI | ctypes (Windows) | `tests/test_pe_catalog_win.py` |
 | RSA check | pe_overview/rsa_verify.py | RSA PKCS#1 v1.5 signature math with `pow()`; the label stays "signature math ok, chain not evaluated" | stdlib | `tests/test_pe_rsa.py` (known-answer vectors) |
-| signing tab | pe_overview/signing_view.py, ui_inspection.py | "Version and signing" tab of File overview: comparison table, manifest text, signature tree with node tips; plain text everywhere | Qt adapter | `tests/test_ui_inspection_signing.py` |
+| signing tab | pe_overview/signing_view.py, ui_inspection.py | "Version and signing" tab of File overview: comparison table, manifest text, signature tree with node tips; plain text everywhere; consumes existing inspection-worker metadata without a second reader thread | Qt adapter | `tests/test_ui_inspection_signing.py` |
 
 ### [RPT2:export-dialog] Report v2 controls of the Export dialog (2026-11-04, PR #180)
 
@@ -1387,3 +1402,53 @@ unchanged. Tests: `test_kb_product_start_20261106.py`,
 | timeout setup UI | src/patchtrace/ui_timeout.py | Preserved-text 10..86400-second validation, explicit 1h/2h/4h presets and inline errors for Setup; no backend execution or settings writes | PySide6, tooltip registry | tests/test_ui_timeout.py; SPEC-01a docs/specs/ghidriff-timeout-progress.md |
 
 | saved advisory scope | src/patchtrace/kbcorrelation/saved_scope.py | Pure validation of one KB/CVE search coverage identity, coherent finite selection and detectable current coverage drift; shared service/context boundary. Full-index admission remains in `index.py`; cached coverage bookkeeping does not determine claims. No storage, schema, Qt or network ownership. | contracts, sources.scope, index | tests/test_kbc_saved_scope_validation.py, test_kbc_saved_scope_flow.py, test_kbc_saved_scope_revision_identity.py |
+
+## Reviewed desktop and export consolidation — 20 November 2026
+
+| Existing module | Updated responsibility | Verification |
+| --- | --- | --- |
+| `reports.py` | Preserve outcomes when staging cleanup fails; never unlink a consumed stage | Report cleanup, backup and destination controls |
+| `gui/qt/tasks.py` | Recheck ownership after final progress; discard or park outcomes correctly | TaskRunner and maintained GUI consumers |
+| `strings/export.py`, `owned_publication.py` | Linux exclusive creation/refusal and exception-aware close; Windows replacement retained | Capability and shared publisher controls |
+| `gui/table_spec.py`, `gui/qt/table.py`, `ui_evidence.py` | Registered header help and host state announcements; all eight Strings columns mapped, other panels pending | Table, tooltip and Evidence host/state tests |
+
+Evidence: [current report](engineering/session-20261120-2bad.md).
+
+
+## PR345/PR346 uniquely reconciled modules — 2026-11-20
+
+| Existing module | Narrow ownership | Distinct verification |
+| --- | --- | --- |
+| `kbcorrelation/investigation_service.py` | Candidate operation type/start-mode admission before current-input verification or service creation | PR346 exact reviewed donor blob and focused candidate tests; new combined source pending |
+| `tools/branch_inventory.py` | Bounded, lossless read-only TSV evidence replay and global CSV limit restoration | PR346 exact donor/tool regression blobs; new combined source pending |
+| `tests/test_ui_kb_investigation.py`, `tests/test_strings_export.py` | Safe diagnostic fallback and form-feed CSV/JSON regression-only coverage | Tests only; preserve strict Qt budget and Linux overwrite refusal |
+
+See [combined-source handoff](engineering-handoffs/sibling-reconciliation-20261120.md). No new binary analysis capability or empirical accuracy claim.
+
+## Cycle 2 reviewed tooling and header help
+
+| Existing module | Current scope | Verification |
+| --- | --- | --- |
+| `tools/branch_inventory.py` | Bounded strict TSV/JSON, exact commit IDs and damaged-quote refusal before Git/publication |40 maintained inventory cases, 11 independent controls, retained 353-row replay and combined 188 selection |
+| `strings/panel.py`, `strings/qt_panel.py`, `strings/tooltip_entries.py` | Register and wire eight existing column-help IDs with precise help text |17 failing-before/passing-after header controls, real-host audit and fresh mutation review |
+
+[Reviewed combined checkpoint](engineering/cycle2-consolidation-20261121-2bad.md); no new stored schema or analysis capability.
+
+
+## Reviewed interruption recovery and Search header completion — 2026-11-21
+
+| Existing module | Narrow responsibility | Verification |
+| --- | --- | --- |
+| `service.py` | Share nonrecovering outcome reconciliation for save/backup failures; refuse snapshot edits and backup after failed readback until reopen | Actual SQLite interruption, next-edit, healthy recovery, latch and UI-draft controls |
+| `persistence.py` | Preserve the primary backup outcome on filesystem cleanup failure; never inspect a successfully consumed staging name | Cancellation/CLI, occupied destination, publication and retained-stage controls |
+| `search/qt_panel.py`, `search/tooltip_data.py` | Map six existing columns to accurate registered header explanations | Actual host/model roles, cells/navigation preservation and one-mapping negative audit |
+
+No schema, provider, new storage module or analysis capability is introduced. [Source-specific report](engineering/cycle837fe-recovery-and-search-20261121.md).
+
+## Current combined continuation index — 837FE
+
+The [combined PR349 report](engineering/cycle837fe-combined-pr349-20261121.md) and [handoff](engineering-handoffs/cycle837fe-combined-pr349-20261121.md) index the reviewed service/backup recovery, Search header help, direct Action pinning, capa/FLOSS version-name compatibility, and test-only live-probe observer. The existing [spec registry](specs/REGISTRY.md) now registers Pages control, direct Action pinning and live probe diagnostics. No new application framework or native engine is introduced.
+
+### PR349 Intel and C4 integrated follow-up
+
+[Source, validation and handoff](engineering/cycle837fe-native-c4-20261121.md) retain the Windows identity repair, C4 help/Pages work, actual predecessor native evidence and separate release gates.

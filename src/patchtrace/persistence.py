@@ -606,10 +606,15 @@ class ProjectStore:
                             raise ValueError('PT-STORAGE: backup contains a symlink')
                     shutil.copytree(source, stage / name)
             _publish_no_replace(stage, destination)
-            return destination
-        finally:
-            if stage.exists():
-                shutil.rmtree(stage, onexc=_clear_readonly_and_retry)
+        except BaseException as failure:
+            try:
+                if stage.exists():
+                    shutil.rmtree(stage, onexc=_clear_readonly_and_retry)
+            except OSError:
+                failure.add_note('PT-STORAGE: temporary backup cleanup failed; '
+                                 'an incomplete staging directory may remain beside the destination')
+            raise
+        return destination
 
     def close(self):
         if self.connection is not None:

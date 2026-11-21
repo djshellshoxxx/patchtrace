@@ -1,0 +1,494 @@
+{
+  "schema": "patchtrace-reference-census/1",
+  "repository": "https://github.com/djshellshoxxx/PatchTrace",
+  "capture_window": {
+    "started_at_utc": "2026-11-21T04:55:49.621Z",
+    "completed_at_utc": "2026-11-21T04:57:48.373Z",
+    "atomic": false
+  },
+  "collection_method": "GitHub REST GET through GitHub connector",
+  "limits": [
+    "Paginated observation, not an atomic repository transaction.",
+    "No semantic supersession or live-worker ownership classification.",
+    "No tests, builds, native qualification, workflow dispatch, or ref mutations."
+  ],
+  "snapshots": {
+    "g30_at_pr348": {
+      "source_commit": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+      "source_path": "docs/engineering/consolidation-inventory-20261120-g30.json",
+      "source_blob": "749d14dc681449e7745c3c2fe89f6aeb8ce85d4a",
+      "retained_copy": "snapshots/g30-at-pr348.json",
+      "sha256": "ef85ca7ae034d8294240dddf3037ef3888bb9cf0d2e7c82e31cf1da35b1bae26",
+      "captured_at_utc_as_recorded": "2026-11-20 15:40:23 UTC",
+      "generated_at_utc_as_recorded": "2026-11-20T15:41:33.909437+00:00"
+    },
+    "recovered_cycle95fe": {
+      "source_commit": "487e08113c86636ef9a87aaae8a1b88b224d9f04",
+      "archive_path": "docs/engineering/evidence/cycle95fe/cycle-95fe-evidence.zip",
+      "archive_blob": "83f7301d7a9db0ece24a4fedc170d7903270ddda",
+      "archive_sha256": "06e115ed85de8fd85315d2bef465d7eff60833179f520cbd9fa3801f95669525",
+      "members": {
+        "raw/remote-branches.json": {
+          "path": "snapshots/cycle95fe-remote-branches.json",
+          "sha256": "57e78650f82567798d3ec403e5fcdebcc596d8eb8458287ca0f8c1155f0d4923",
+          "bytes": 48867
+        },
+        "raw/pulls.json": {
+          "path": "snapshots/cycle95fe-pulls.json",
+          "sha256": "31744d573c69015ead6a24a5305e036e0930427c2c77dc38944709f43990b94f",
+          "bytes": 218141
+        },
+        "raw/branch-inventory.json": {
+          "path": "snapshots/cycle95fe-branch-inventory.json",
+          "sha256": "25f3baee6061c988eb9e3dfcc200d95df3d01cecb2e1649b1f089fe12b253c6f",
+          "bytes": 876
+        }
+      },
+      "captured_at_utc_as_recorded": null,
+      "capture_time_limit": "Raw branch/PR input arrays contain no capture timestamp; replay times below are not API collection times.",
+      "associated_inventory_replay_started_at_utc": "2026-11-20T23:29:41.057671+00:00",
+      "associated_inventory_replay_finished_at_utc": "2026-11-20T23:30:35.925056+00:00",
+      "associated_inventory_source_commit": "67f7e08ea9bee61653f8ab5ad66048d3e7141810"
+    }
+  },
+  "comparisons": {
+    "g30_at_pr348": {
+      "branches": {
+        "snapshot_count": 341,
+        "current_count": 364,
+        "new": [
+          {
+            "name": "codex/autonomous-consolidation-20261120-2bad",
+            "sha": "39c38a02f126963fc03827fa49741255590227ad"
+          },
+          {
+            "name": "codex/patchtrace-acquire-destination-symlink-20261120-g30",
+            "sha": "20d3bb173c9f6d65a144fe26ebed8f22e3c79a00"
+          },
+          {
+            "name": "codex/patchtrace-acquire-poststage-destination-20261120-g31",
+            "sha": "e22ab7dfbb440d635b5829bde1fec4ee2c149c8d"
+          },
+          {
+            "name": "codex/patchtrace-acquire-windows-junction-20261120-g32",
+            "sha": "ae67122c69f05715afa622b7e4050b73ca155967"
+          },
+          {
+            "name": "codex/patchtrace-advisory-lead-type-20261120-g40",
+            "sha": "371b067068da3c4898ebb7b6eae5d0dd13ebea00"
+          },
+          {
+            "name": "codex/patchtrace-candidate-component-type-20261120-g41",
+            "sha": "67f7e08ea9bee61653f8ab5ad66048d3e7141810"
+          },
+          {
+            "name": "codex/patchtrace-codex6-cache-hit-fixture-tests-20261121",
+            "sha": "d2507b1415fd0917fcda6b9f26565d0467d7b9ba"
+          },
+          {
+            "name": "codex/patchtrace-corpus-archive-integrity-20261121",
+            "sha": "658cc814aa74d1eaebf0d7e6dd4553d06aaef0eb"
+          },
+          {
+            "name": "codex/patchtrace-csv-crosscolumn-review-20261120-g36",
+            "sha": "f48d25eb22e019bda9f3f258ae8208e85ad45f19"
+          },
+          {
+            "name": "codex/patchtrace-csv-fixture-escape-20261120-g35",
+            "sha": "09af21b0419fe06cce6fdd031355e274e6deb5d0"
+          },
+          {
+            "name": "codex/patchtrace-csv-formula-prefix-20261120-g33",
+            "sha": "f196443ce59c740fe022875ffc00e71349c15dc8"
+          },
+          {
+            "name": "codex/patchtrace-csv-formula-prefix-20261120-g34",
+            "sha": "599e1ee1bc7bec095b4e6fa28d5cfc25c4d6f7df"
+          },
+          {
+            "name": "codex/patchtrace-integration-20261121-2bad",
+            "sha": "6b6fcd3597a604212032ffc453477aeb6edc69ff"
+          },
+          {
+            "name": "codex/patchtrace-inventory-tip-oid-20261120",
+            "sha": "a63a20b2a272d53a09422222050080823fc3c664"
+          },
+          {
+            "name": "codex/patchtrace-inventory-tsv-shape-20261120",
+            "sha": "eaae7e504f8b43051f0c0d6d57c314d37c66d7ff"
+          },
+          {
+            "name": "codex/patchtrace-investigation-destination-junction-20261120-g39",
+            "sha": "fc2c038ad1c21ddfcdfb5cd943307c3195d631ec"
+          },
+          {
+            "name": "codex/patchtrace-linux-frozen-cli-smoke-20261121",
+            "sha": "e4854b66ae37024d734e22ae978dedca90a7f3f7"
+          },
+          {
+            "name": "codex/patchtrace-native-cache-receipt-20261120-g37",
+            "sha": "fc641a97846c03ebdbf70b5c8248e5685e4853b2"
+          },
+          {
+            "name": "codex/patchtrace-pr-snapshot-json-strict-20261120",
+            "sha": "e2385c22c0397a547b15b2fbca9f0c07dc4ac199"
+          },
+          {
+            "name": "codex/patchtrace-pr345-346-unique-recovery-20261120",
+            "sha": "b461ac64eb9beb74449ce2b18b6795a2af34a02a"
+          },
+          {
+            "name": "codex/patchtrace-verified-integration-20261120-g30",
+            "sha": "5f34fb57267637b986814ddc81dba11550992fff"
+          },
+          {
+            "name": "codex/patchtrace-windows-qt-timeout-evidence-20261120-g38",
+            "sha": "1c60d91ab1d2038ba481d21d58611137f21b8454"
+          },
+          {
+            "name": "consolidation/patchtrace-20261120-95fe",
+            "sha": "c07774ecf5a3f7337834f95a9a4c51c8ec5fad44"
+          }
+        ],
+        "missing": [],
+        "moved": [],
+        "unchanged": 341
+      },
+      "pull_requests": {
+        "snapshot_counts": {
+          "all_state": 330,
+          "open": 74,
+          "merged": 172,
+          "closed_unmerged": 84,
+          "open_draft": 58,
+          "open_ready": 16
+        },
+        "current_counts": {
+          "all_state": 338,
+          "open": 82,
+          "merged": 172,
+          "closed_unmerged": 84,
+          "open_draft": 66,
+          "open_ready": 16
+        },
+        "new": [
+          {
+            "number": 341,
+            "title": "fix(kbc): refuse linked acquisition project destinations [no release]",
+            "state": "open",
+            "classification": "open",
+            "draft": true,
+            "head_ref": "codex/patchtrace-acquire-destination-symlink-20261120-g30",
+            "head_sha": "20d3bb173c9f6d65a144fe26ebed8f22e3c79a00",
+            "head_repository": "djshellshoxxx/patchtrace",
+            "base_ref": "codex/patchtrace-qa-ruff-imports-20261120-g29",
+            "base_sha": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+            "created_at": "2026-11-20T15:52:53Z",
+            "updated_at": "2026-11-20T15:52:53Z",
+            "closed_at": null,
+            "merged_at": null,
+            "merge_commit_sha": "84f9a94dde2b952097e8dab66e5b8862e13d05f2",
+            "url": "https://github.com/djshellshoxxx/patchtrace/pull/341",
+            "captured_at_utc": "2026-11-21T04:56:06.782Z",
+            "source_page": "raw/pulls-page-4.json"
+          },
+          {
+            "number": 342,
+            "title": "Repair provenance, UI lifecycle and destination guards; retain native CI diagnostics",
+            "state": "open",
+            "classification": "open",
+            "draft": true,
+            "head_ref": "codex/patchtrace-verified-integration-20261120-g30",
+            "head_sha": "5f34fb57267637b986814ddc81dba11550992fff",
+            "head_repository": "djshellshoxxx/patchtrace",
+            "base_ref": "codex/patchtrace-qa-ruff-imports-20261120-g29",
+            "base_sha": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+            "created_at": "2026-11-20T16:10:34Z",
+            "updated_at": "2026-11-20T17:18:45Z",
+            "closed_at": null,
+            "merged_at": null,
+            "merge_commit_sha": "9b2b1b0393010680b6acf125edc69208ca3b0f45",
+            "url": "https://github.com/djshellshoxxx/patchtrace/pull/342",
+            "captured_at_utc": "2026-11-21T04:56:06.782Z",
+            "source_page": "raw/pulls-page-4.json"
+          },
+          {
+            "number": 343,
+            "title": "test(kbc): retain safe Windows investigation Qt timeout context [no release]",
+            "state": "open",
+            "classification": "open",
+            "draft": true,
+            "head_ref": "codex/patchtrace-windows-qt-timeout-evidence-20261120-g38",
+            "head_sha": "1c60d91ab1d2038ba481d21d58611137f21b8454",
+            "head_repository": "djshellshoxxx/patchtrace",
+            "base_ref": "codex/patchtrace-native-cache-receipt-20261120-g37",
+            "base_sha": "fc641a97846c03ebdbf70b5c8248e5685e4853b2",
+            "created_at": "2026-11-20T20:20:37Z",
+            "updated_at": "2026-11-20T20:22:12Z",
+            "closed_at": null,
+            "merged_at": null,
+            "merge_commit_sha": "0419518c466f3aa0f700fad4198e1670c22636f7",
+            "url": "https://github.com/djshellshoxxx/patchtrace/pull/343",
+            "captured_at_utc": "2026-11-21T04:56:06.782Z",
+            "source_page": "raw/pulls-page-4.json"
+          },
+          {
+            "number": 344,
+            "title": "fix(kbc): validate candidate component names before offline index lookup [no release]",
+            "state": "open",
+            "classification": "open",
+            "draft": true,
+            "head_ref": "codex/patchtrace-candidate-component-type-20261120-g41",
+            "head_sha": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+            "head_repository": "djshellshoxxx/patchtrace",
+            "base_ref": "codex/patchtrace-advisory-lead-type-20261120-g40",
+            "base_sha": "371b067068da3c4898ebb7b6eae5d0dd13ebea00",
+            "created_at": "2026-11-20T23:18:44Z",
+            "updated_at": "2026-11-20T23:18:44Z",
+            "closed_at": null,
+            "merged_at": null,
+            "merge_commit_sha": "bb66f1de2a7de3dd4623ae472890411cdabdb1f7",
+            "url": "https://github.com/djshellshoxxx/patchtrace/pull/344",
+            "captured_at_utc": "2026-11-21T04:56:06.782Z",
+            "source_page": "raw/pulls-page-4.json"
+          },
+          {
+            "number": 345,
+            "title": "Consolidate reviewed report, lifecycle, publication and accessibility repairs [no release]",
+            "state": "open",
+            "classification": "open",
+            "draft": true,
+            "head_ref": "codex/autonomous-consolidation-20261120-2bad",
+            "head_sha": "39c38a02f126963fc03827fa49741255590227ad",
+            "head_repository": "djshellshoxxx/patchtrace",
+            "base_ref": "codex/patchtrace-candidate-component-type-20261120-g41",
+            "base_sha": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+            "created_at": "2026-11-20T23:59:22Z",
+            "updated_at": "2026-11-21T00:04:21Z",
+            "closed_at": null,
+            "merged_at": null,
+            "merge_commit_sha": "0ad6c2ea6bfaa734c2fc8eb9fb99630ac4727950",
+            "url": "https://github.com/djshellshoxxx/patchtrace/pull/345",
+            "captured_at_utc": "2026-11-21T04:56:06.782Z",
+            "source_page": "raw/pulls-page-4.json"
+          },
+          {
+            "number": 346,
+            "title": "Consolidate reviewed GUI recovery and request/inventory repairs [no release]",
+            "state": "open",
+            "classification": "open",
+            "draft": true,
+            "head_ref": "consolidation/patchtrace-20261120-95fe",
+            "head_sha": "c07774ecf5a3f7337834f95a9a4c51c8ec5fad44",
+            "head_repository": "djshellshoxxx/patchtrace",
+            "base_ref": "codex/patchtrace-candidate-component-type-20261120-g41",
+            "base_sha": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+            "created_at": "2026-11-21T00:00:41Z",
+            "updated_at": "2026-11-21T00:06:28Z",
+            "closed_at": null,
+            "merged_at": null,
+            "merge_commit_sha": "143d98c1e004d2fdb3464a676364aec3d9bfbd7a",
+            "url": "https://github.com/djshellshoxxx/patchtrace/pull/346",
+            "captured_at_utc": "2026-11-21T04:56:06.782Z",
+            "source_page": "raw/pulls-page-4.json"
+          },
+          {
+            "number": 347,
+            "title": "Consolidate unique PR346 candidate admission and inventory replay onto PR345 [no release]",
+            "state": "open",
+            "classification": "open",
+            "draft": true,
+            "head_ref": "codex/patchtrace-pr345-346-unique-recovery-20261120",
+            "head_sha": "b461ac64eb9beb74449ce2b18b6795a2af34a02a",
+            "head_repository": "djshellshoxxx/patchtrace",
+            "base_ref": "codex/autonomous-consolidation-20261120-2bad",
+            "base_sha": "39c38a02f126963fc03827fa49741255590227ad",
+            "created_at": "2026-11-21T00:23:18Z",
+            "updated_at": "2026-11-21T00:23:18Z",
+            "closed_at": null,
+            "merged_at": null,
+            "merge_commit_sha": "fd0d8d05a92fba18fcf75842d0582472ce1af3ff",
+            "url": "https://github.com/djshellshoxxx/patchtrace/pull/347",
+            "captured_at_utc": "2026-11-21T04:56:06.782Z",
+            "source_page": "raw/pulls-page-4.json"
+          },
+          {
+            "number": 348,
+            "title": "Qualify inventory recovery and complete Strings header help [no release]",
+            "state": "open",
+            "classification": "open",
+            "draft": true,
+            "head_ref": "codex/patchtrace-integration-20261121-2bad",
+            "head_sha": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+            "head_repository": "djshellshoxxx/patchtrace",
+            "base_ref": "codex/patchtrace-pr345-346-unique-recovery-20261120",
+            "base_sha": "b461ac64eb9beb74449ce2b18b6795a2af34a02a",
+            "created_at": "2026-11-21T02:55:57Z",
+            "updated_at": "2026-11-21T03:01:26Z",
+            "closed_at": null,
+            "merged_at": null,
+            "merge_commit_sha": "8b29d4d48274a250cc63f3795d322430b237313d",
+            "url": "https://github.com/djshellshoxxx/patchtrace/pull/348",
+            "captured_at_utc": "2026-11-21T04:56:06.782Z",
+            "source_page": "raw/pulls-page-4.json"
+          }
+        ],
+        "missing": [],
+        "changed": []
+      }
+    },
+    "recovered_cycle95fe": {
+      "branches": {
+        "snapshot_count": 354,
+        "current_count": 364,
+        "new": [
+          {
+            "name": "codex/autonomous-consolidation-20261120-2bad",
+            "sha": "39c38a02f126963fc03827fa49741255590227ad"
+          },
+          {
+            "name": "codex/patchtrace-codex6-cache-hit-fixture-tests-20261121",
+            "sha": "d2507b1415fd0917fcda6b9f26565d0467d7b9ba"
+          },
+          {
+            "name": "codex/patchtrace-corpus-archive-integrity-20261121",
+            "sha": "658cc814aa74d1eaebf0d7e6dd4553d06aaef0eb"
+          },
+          {
+            "name": "codex/patchtrace-integration-20261121-2bad",
+            "sha": "6b6fcd3597a604212032ffc453477aeb6edc69ff"
+          },
+          {
+            "name": "codex/patchtrace-inventory-tip-oid-20261120",
+            "sha": "a63a20b2a272d53a09422222050080823fc3c664"
+          },
+          {
+            "name": "codex/patchtrace-inventory-tsv-shape-20261120",
+            "sha": "eaae7e504f8b43051f0c0d6d57c314d37c66d7ff"
+          },
+          {
+            "name": "codex/patchtrace-linux-frozen-cli-smoke-20261121",
+            "sha": "e4854b66ae37024d734e22ae978dedca90a7f3f7"
+          },
+          {
+            "name": "codex/patchtrace-pr-snapshot-json-strict-20261120",
+            "sha": "e2385c22c0397a547b15b2fbca9f0c07dc4ac199"
+          },
+          {
+            "name": "codex/patchtrace-pr345-346-unique-recovery-20261120",
+            "sha": "b461ac64eb9beb74449ce2b18b6795a2af34a02a"
+          },
+          {
+            "name": "consolidation/patchtrace-20261120-95fe",
+            "sha": "c07774ecf5a3f7337834f95a9a4c51c8ec5fad44"
+          }
+        ],
+        "missing": [],
+        "moved": [],
+        "unchanged": 354
+      },
+      "pull_requests": {
+        "snapshot_counts": {
+          "all_state": 334,
+          "open": 78,
+          "merged": 172,
+          "closed_unmerged": 84,
+          "open_draft": 62,
+          "open_ready": 16
+        },
+        "current_counts": {
+          "all_state": 338,
+          "open": 82,
+          "merged": 172,
+          "closed_unmerged": 84,
+          "open_draft": 66,
+          "open_ready": 16
+        },
+        "new": [
+          {
+            "number": 345,
+            "title": "Consolidate reviewed report, lifecycle, publication and accessibility repairs [no release]",
+            "state": "open",
+            "classification": "open",
+            "draft": true,
+            "head_ref": "codex/autonomous-consolidation-20261120-2bad",
+            "head_sha": "39c38a02f126963fc03827fa49741255590227ad",
+            "head_repository": "djshellshoxxx/patchtrace",
+            "base_ref": "codex/patchtrace-candidate-component-type-20261120-g41",
+            "base_sha": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+            "created_at": "2026-11-20T23:59:22Z",
+            "updated_at": "2026-11-21T00:04:21Z",
+            "closed_at": null,
+            "merged_at": null,
+            "merge_commit_sha": "0ad6c2ea6bfaa734c2fc8eb9fb99630ac4727950",
+            "url": "https://github.com/djshellshoxxx/patchtrace/pull/345",
+            "captured_at_utc": "2026-11-21T04:56:06.782Z",
+            "source_page": "raw/pulls-page-4.json"
+          },
+          {
+            "number": 346,
+            "title": "Consolidate reviewed GUI recovery and request/inventory repairs [no release]",
+            "state": "open",
+            "classification": "open",
+            "draft": true,
+            "head_ref": "consolidation/patchtrace-20261120-95fe",
+            "head_sha": "c07774ecf5a3f7337834f95a9a4c51c8ec5fad44",
+            "head_repository": "djshellshoxxx/patchtrace",
+            "base_ref": "codex/patchtrace-candidate-component-type-20261120-g41",
+            "base_sha": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+            "created_at": "2026-11-21T00:00:41Z",
+            "updated_at": "2026-11-21T00:06:28Z",
+            "closed_at": null,
+            "merged_at": null,
+            "merge_commit_sha": "143d98c1e004d2fdb3464a676364aec3d9bfbd7a",
+            "url": "https://github.com/djshellshoxxx/patchtrace/pull/346",
+            "captured_at_utc": "2026-11-21T04:56:06.782Z",
+            "source_page": "raw/pulls-page-4.json"
+          },
+          {
+            "number": 347,
+            "title": "Consolidate unique PR346 candidate admission and inventory replay onto PR345 [no release]",
+            "state": "open",
+            "classification": "open",
+            "draft": true,
+            "head_ref": "codex/patchtrace-pr345-346-unique-recovery-20261120",
+            "head_sha": "b461ac64eb9beb74449ce2b18b6795a2af34a02a",
+            "head_repository": "djshellshoxxx/patchtrace",
+            "base_ref": "codex/autonomous-consolidation-20261120-2bad",
+            "base_sha": "39c38a02f126963fc03827fa49741255590227ad",
+            "created_at": "2026-11-21T00:23:18Z",
+            "updated_at": "2026-11-21T00:23:18Z",
+            "closed_at": null,
+            "merged_at": null,
+            "merge_commit_sha": "fd0d8d05a92fba18fcf75842d0582472ce1af3ff",
+            "url": "https://github.com/djshellshoxxx/patchtrace/pull/347",
+            "captured_at_utc": "2026-11-21T04:56:06.782Z",
+            "source_page": "raw/pulls-page-4.json"
+          },
+          {
+            "number": 348,
+            "title": "Qualify inventory recovery and complete Strings header help [no release]",
+            "state": "open",
+            "classification": "open",
+            "draft": true,
+            "head_ref": "codex/patchtrace-integration-20261121-2bad",
+            "head_sha": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+            "head_repository": "djshellshoxxx/patchtrace",
+            "base_ref": "codex/patchtrace-pr345-346-unique-recovery-20261120",
+            "base_sha": "b461ac64eb9beb74449ce2b18b6795a2af34a02a",
+            "created_at": "2026-11-21T02:55:57Z",
+            "updated_at": "2026-11-21T03:01:26Z",
+            "closed_at": null,
+            "merged_at": null,
+            "merge_commit_sha": "8b29d4d48274a250cc63f3795d322430b237313d",
+            "url": "https://github.com/djshellshoxxx/patchtrace/pull/348",
+            "captured_at_utc": "2026-11-21T04:56:06.782Z",
+            "source_page": "raw/pulls-page-4.json"
+          }
+        ],
+        "missing": [],
+        "changed": []
+      }
+    }
+  }
+}

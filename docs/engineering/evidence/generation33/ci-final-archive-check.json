@@ -1,0 +1,17 @@
+{
+  "path": "ci-final-1641.zip",
+  "sha256": "e9a15b7c98f55a53120fe206f03977adcc109265be227564048022aad827bb8d",
+  "raw_files": [
+    "patchtrace-ci-final-20261120-1641.json",
+    "patchtrace-ci-final-20261120-1641.md",
+    "patchtrace-ci-final-20261120-1641-manifest.json",
+    "patchtrace-pr342-native-cache-failure-20261120-1630.log"
+  ],
+  "raw_bytes_exact": true,
+  "source": "5cc3f2a540f2e49e8b86e20decf7d4f62ce89d0a",
+  "observation_utc": "2026-11-20T16:41:21Z",
+  "native_push_cache_gate": "failed; java=unverified",
+  "same_source_pr_cache_gate": "passed; does not erase failure",
+  "cause": "unestablished",
+  "qualifies_later_source": false
+}

@@ -1,0 +1,93 @@
+{
+  "schema": "patchtrace-cycle4-parent-qualification/1",
+  "created_at_utc": "2026-11-21T07:00:42.904420+00:00",
+  "repository": "djshellshoxxx/PatchTrace",
+  "branch": "integration/patchtrace-20261121-95fe-c4",
+  "published_parent": "daee337c48c63dda8aeac149c407e900c79dcc86",
+  "local_merge": "e7391634a46bbb1f9f1fdc3563abadb837d1b45b",
+  "remote_merge": "fe99eaf35e74073821dc365fe54955345fe5439f",
+  "tested_local_source": "111803d54cfebc1b779f4832a069904b3ee91a7c",
+  "tree_identical_remote_code_checkpoint": "7ddb1130ca501b9cfda9949aa49e684f9f4b8f26",
+  "tested_tree": "d3264bf26f83d039fa212c26b47c094f86691c3f",
+  "qualification": {
+    "passed": 580,
+    "expected_failures": 1,
+    "expected_failure_ids": [
+      "CODEX-5"
+    ],
+    "ordinary_skips": 0,
+    "failures": 0,
+    "errors": 0,
+    "unique_identities": 581,
+    "selectors": 21,
+    "included_registry_identities": 110,
+    "receipt": "qualification-and-review-evidence.zip::root/combined-after.json"
+  },
+  "registry_repair": {
+    "before_source": "e7391634a46bbb1f9f1fdc3563abadb837d1b45b",
+    "before_passed": 108,
+    "before_failed": 2,
+    "after_passed": 110,
+    "unchanged_test": "tests/test_spec_registry.py",
+    "missing_paths": [
+      "docs/specs/buildenv-header-help.md",
+      "docs/specs/pages-build-isolation-and-hashes.md"
+    ],
+    "clean_before_receipt": "qualification-and-review-evidence.zip::root/registry-before-clean.json",
+    "initial_dirty_merge_receipt_retained": "qualification-and-review-evidence.zip::root/registry-before.json"
+  },
+  "required_checks": {
+    "ruff_src_tests_tools": "passed",
+    "pip_check": "passed",
+    "isolated_source_binding": "passed"
+  },
+  "independent_review": {
+    "merge_delta": "passed-zero-findings",
+    "history_records": "passed-zero-blocking-findings",
+    "actual_header_audit": "1 pass; overlaps the 580-pass selection",
+    "missing_buildenv_basis_control": "1 intended failure naming exactly build_env.col.basis",
+    "missing_search_why_control": "1 intended failure naming exactly search.col.why"
+  },
+  "preserved": {
+    "parent_task_objects": 90,
+    "original_c4_task_objects": 3,
+    "total_tasks": 93,
+    "unchanged_parent_production_files": 670,
+    "intended_c4_production_files": 2,
+    "pages_action_pins": 5,
+    "pages_command_substitutions": 2,
+    "existing_evidence_files": 372,
+    "original_evidence_bytes": "unchanged"
+  },
+  "retained_nonacceptance_results": [
+    "The initial registry run occurred after conflict resolution but before committing the merge. Its dirty receipt is retained; the clean merge reproduced the same two failures before the citation repair.",
+    "Accidental ruff check . reported 1,063 diagnostics in 138 docs/help files, all byte-identical to the published parent. The required unchanged ruff check src tests tools command passes; see ruff-scope-disposition.json.",
+    "Two sealed raw bundle-verification lines contain literal trailing spaces. Both original blobs were retained; every other merged path passes whitespace validation."
+  ],
+  "counting": "The 110 registry cases, prior 391 passes, author/reviewer tests and independent positive audit overlap. Only 580 unique passing identities are claimed for the new combined run.",
+  "original_source_history": {
+    "path": "original-source-history.bundle",
+    "bytes": 395604,
+    "sha256": "44e07699b3f08424b2a9b02125b303aa1eb7b8176e048a93e00d4b3deba7db80",
+    "commits": 3,
+    "prerequisites": [
+      "36584f8153983d64605dd7f4141e88c9fabfa6ef",
+      "daee337c48c63dda8aeac149c407e900c79dcc86"
+    ]
+  },
+  "archive": {
+    "path": "qualification-and-review-evidence.zip",
+    "bytes": 186218,
+    "sha256": "59c369d21424e4549cd000e62155f02b8771c62482a8ea11c229adcdff363318",
+    "payload_count": 54
+  },
+  "remaining_gates": [
+    "Fresh exact-follow-up-head hosted full QA and Qt/native/package qualification",
+    "Hosted Pages index-resolution/build acceptance; its manual dispatch retains deployment behavior and was not invoked",
+    "PR349 integration/qualification and Windows Intel advisory disposition remain with 837FE",
+    "Broader CODEX-5 package lanes and separately recorded per-command audit gap",
+    "Manual Windows/trust/accessibility, raw provenance, historical semantic and separate L1/L2/L3 acceptance"
+  ],
+  "main_merge_eligible": false,
+  "release_ready": false
+}

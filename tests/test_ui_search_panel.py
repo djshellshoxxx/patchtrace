@@ -10,6 +10,7 @@ from types import SimpleNamespace
 
 import pytest
 from leads_support import FakeNav, FakeProject, FakeShell
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication
 from qt_support import a11y_audit, join_gui_threads  # noqa: F401
 
@@ -175,6 +176,41 @@ def test_cancel_reports_cancelled_and_keeps_rows(rig):
     rig.search()
     rig.controller.cancel()
     assert rig.state == ('cancelled', 'Cancelled. Earlier results are unchanged.') and len(rig.rows()) == 1
+
+
+def test_cancel_stops_pending_debounce_and_enter_can_search_again(qtbot):
+    started, release = threading.Event(), threading.Event()
+    calls = []
+
+    def searcher(_service, request, _cancel):
+        calls.append(request.plan.text)
+        if len(calls) == 1:
+            started.set()
+            if not release.wait(5):
+                raise RuntimeError('test search was not released')
+        return result(hits=[hit()], total=1)
+
+    rig = Rig(qtbot, searcher=searcher)
+    try:
+        rig.panel.query.setText('original')
+        rig.controller.submit()
+        qtbot.waitUntil(started.is_set)
+        rig.panel.query.setText('replacement')
+        assert rig.controller.debounce.isActive()
+        assert rig.panel.buttons['cancel'].isEnabled()
+        qtbot.mouseClick(rig.panel.buttons['cancel'], Qt.MouseButton.LeftButton)
+        release.set()
+        qtbot.wait(350)
+        assert calls == ['original'], 'a cancelled debounce started a new query'
+        assert rig.state[0] == 'cancelled'
+        assert rig.panel.query.text() == 'replacement'
+        qtbot.keyClick(rig.panel.query, Qt.Key.Key_Return)
+        rig.settle()
+        assert calls == ['original', 'replacement']
+        assert rig.state[0] == 'ready'
+    finally:
+        release.set()
+        rig.shell.tasks.shutdown()
 
 
 def test_empty_query_clears_results(rig):

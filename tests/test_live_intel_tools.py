@@ -17,6 +17,7 @@ import threading
 from pathlib import Path
 
 import pytest
+from intel_probe_diagnostics import capture_version_probes
 from intel_tools_support import golden
 from test_intel_tools_pe import PAIRS
 
@@ -96,13 +97,14 @@ def test_pinned_tool_probes_and_reproduces_the_goldens(engine, tmp_path, record_
     service = ProjectService.create(files['older'], files['newer'], 'live', tmp_path / 'case')
     try:
         setup = setup_for(engine, exe)
-        manifest = runner.probe_engine(engine, setup.config(engine), threading.Event(), runner.run_process)
+        with capture_version_probes() as diagnostics:
+            manifest = runner.probe_engine(engine, setup.config(engine), threading.Event(), runner.run_process)
         if not manifest.supported or manifest.pin_status != 'pinned':
             reason = f'{engine} is not usable or not the pinned build: {manifest.reason or manifest.pin_status}'
             if engine == 'diec' and not REQUIRE:
-                record_live_status(f'intel-tools-{engine}', 'blocked', reason)
+                record_live_status(f'intel-tools-{engine}', 'blocked', reason, probe_diagnostics=diagnostics)
                 pytest.skip(reason)
-            record_live_status(f'intel-tools-{engine}', 'failed', reason)
+            record_live_status(f'intel-tools-{engine}', 'failed', reason, probe_diagnostics=diagnostics)
             pytest.fail(reason)
         ts = store.ToolStore(EnrichmentStore(service.store), service.root, service.project.id,
                              service.project.revision)
@@ -114,16 +116,17 @@ def test_pinned_tool_probes_and_reproduces_the_goldens(engine, tmp_path, record_
         statuses = [r.run.status for r in results]
         if statuses != ['ok', 'ok']:
             record_live_status(f'intel-tools-{engine}', 'failed', f'run statuses {statuses}: '
-                               f'{[r.run.error for r in results]}')
+                               f'{[r.run.error for r in results]}', probe_diagnostics=diagnostics)
             pytest.fail(f'{engine}: {statuses}')
         for result in results:
             expected = comparable(golden_content(engine, result.run.side, tmp_path))
             if comparable(result.evidence) != expected:
-                record_live_status(f'intel-tools-{engine}', 'failed', 'live evidence differs from the golden')
+                record_live_status(f'intel-tools-{engine}', 'failed', 'live evidence differs from the golden',
+                                   probe_diagnostics=diagnostics)
                 pytest.fail(f'{engine} {result.run.side}: live evidence differs from the committed golden')
         record_live_status(f'intel-tools-{engine}', 'passed',
                            f'pinned {manifest.version} reproduced the goldens on the synthetic pair',
-                           version=manifest.version, input='synthetic')
+                           version=manifest.version, input='synthetic', probe_diagnostics=diagnostics)
     finally:
         service.store.close()
 

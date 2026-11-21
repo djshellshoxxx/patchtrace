@@ -90,6 +90,51 @@ A built panel that emits an anchor kind no built panel handles is a warning, not
 
 6.5 `[planned]` Accessible description = the What line (at most 160 characters) with the full text in what's-this; `StatusAnnouncer` is the only sender of screen-reader announcements (polite; assertive only for blocking errors); `a11y_audit(root)` enforces names of at most 80 characters, roles and Tab order. Specified in SPEC-45; not built.
 
+### Selective workspace GUI recovery, 2026-11-19
+
+6.6 `ColumnSpec.tip_id` is an optional static tooltip-registry id, defaulting to
+the empty string. `VirtualTableModel.headerData` serves its escaped registered
+tooltip for `ToolTipRole`; an empty or unknown id falls back to the column title
+and unit. Display and accessible header text retain the title and unit. This
+recovers the header-help portion of `4a9e32bb490e4b3c000808554988103b4e50aa61`.
+It does not change cell tooltips, table sorting, or shortcut ownership.
+
+6.7 `EvidenceController` passes its existing shell port into `EvidencePanel`,
+which supplies that announcer to the matches `StateView`. Standalone panels
+retain an optional announcer defaulting to `None`. The existing `StateView`
+policy announces changed nonempty state text once, with errors assertive and
+other states polite; blank and repeated state text do not emit. This recovers
+`647502ceff0602d2b03f1864136da431a1436511` without a second announcement sender.
+Offscreen checks verify the host call path. Actual Windows screen-reader output
+remains the separate native acceptance gate in SPEC-45.
+
+6.8 The Strings panel registers and assigns the existing eight
+`strings.col.{change,string,type,older,newer,function,cues,source}` ids to its
+corresponding `ColumnSpec` headers. The header help is available on the prepared
+empty table and after results arrive. Display and accessible header labels remain
+`Change`, `String`, `Type`, `Older`, `Newer`, `Function`, `Cues`, and `Source`;
+registry help is escaped rich text only in `ToolTipRole`. The registry coverage
+audit reads actual horizontal model-header tooltips as well as widget/action
+tooltips, without exempting registered column ids. Other panels retain their
+existing optional-id fallback until their own column mappings are implemented.
+
+6.9 The Search panel registers and assigns
+`search.col.{side,kind,match,where,change,why}` to its six existing headers. Help
+is available on the prepared empty table and after results arrive; display and
+accessible header labels remain `Side`, `Kind`, `Match`, `Where`, `Change`, and
+`Why`. The text describes the current view model: a side may come from a paired
+counterpart, the first evidence item supplies kind and match text, a counterpart
+may supply a missing display RVA, and change context and ranking reasons retain
+their uncertainty. Tooltip lookup changes no cells, row identity, query, sorting,
+navigation, or clipboard content. The actual-header coverage audit activates
+Search through the normal panel host and adds no registry exemptions. Native
+screen-reader acceptance remains separate.
+
+The older workspace slice also proposed Alt+Up/Down/Backspace table sorting and
+a 400-entry empty-query palette. Those behaviors are not part of this recovery:
+Alt+Up/Down remain reserved for Previous/Next difference (section 3.7 and GUI plan
+8.3), and the existing palette-result bound stays 50 (GUI plan section 6).
+
 ## 7. CLI-extension registry
 
 7.1 A verb is one file `cli_commands/<verb>.py` exporting `COMMAND = CliCommand(name, summary, build, run)`. The file name is the verb with `_` as `-`; `name` MUST equal it and match `^[a-z][a-z0-9-]{1,23}$`; `summary` is 1-80 printable ASCII characters; `run(args, cancel) -> int`. The package is stdlib only, with no Qt.

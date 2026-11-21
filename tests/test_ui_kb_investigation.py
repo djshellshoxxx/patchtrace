@@ -4,9 +4,11 @@ from __future__ import annotations
 import threading
 from functools import partial
 from pathlib import Path
+from types import SimpleNamespace
 
 import kbc_helpers as h
 import pytest
+import pytestqt.exceptions
 from kbc_k3_support import BASELINE, FixedClock, write_pair
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLineEdit, QPushButton
@@ -19,7 +21,25 @@ from patchtrace.service import ProjectService
 
 
 def settled(qtbot, dialog):
-    qtbot.waitUntil(lambda: dialog._pending is None, timeout=10000)
+    try:
+        qtbot.waitUntil(lambda: dialog._pending is None, timeout=10000)
+    except pytestqt.exceptions.TimeoutError as exc:
+        # The native Windows Qt gate has timed out here on real project creation.
+        # Never emit GUI status, file paths or source/advisory strings to CI.
+        operation = getattr(dialog._pending, 'operation', None)
+        operations = {'import', 'search', 'browse_products', 'current_inputs', 'plan_sources',
+                      'sync_sources', 'plan_metadata', 'refresh_metadata', 'candidate_pairs',
+                      'candidate_preview', 'preview', 'create'}
+        operation = operation if isinstance(operation, str) and operation in operations else 'unknown'
+        try:
+            worker_busy = dialog.tasks.busy(dialog._channel)
+        except Exception:
+            worker_busy = 'unknown'  # Diagnostics must not mask the original timeout.
+        raise AssertionError(
+            f'Investigation dialog did not settle: operation={operation}, worker_busy={worker_busy}, '
+            f'preview={dialog._preview is not None}, closed={dialog._closed}, generation={dialog._generation}, '
+            f'cancel_create={dialog._cancel_create}, close_after_create={dialog._close_after_create}'
+        ) from exc
 
 
 @pytest.mark.parametrize('lead', ['CVE-2099-20001', 'KB5099001'])
@@ -265,3 +285,117 @@ def test_real_host_adopts_created_project_on_gui_thread(qtbot, tmp_path):
     with pytest.raises(ValueError, match='closed'):
         previous.store._check_open()
     window.close()
+
+
+def test_settled_timeout_preserves_original_failure_and_bounded_worker_state():
+    class TimeoutBot:
+        def waitUntil(self, _predicate, *, timeout):
+            assert timeout == 10000
+            raise pytestqt.exceptions.TimeoutError('synthetic timeout')
+
+    class Tasks:
+        def busy(self, channel=None):
+            assert channel == 'investigation-test'
+            return True
+
+    dialog = SimpleNamespace(
+        _pending=SimpleNamespace(operation='create'), tasks=Tasks(), _channel='investigation-test',
+        _closed=False, _preview=None, _generation=7, _cancel_create=False, _close_after_create=False,
+        status=SimpleNamespace(text=lambda: 'PRIVATE PATH AND SOURCE SHOULD NOT LEAK'),
+    )
+    with pytest.raises(AssertionError) as raised:
+        settled(TimeoutBot(), dialog)
+    message = str(raised.value)
+    assert isinstance(raised.value.__cause__, pytestqt.exceptions.TimeoutError)
+    assert 'operation=create' in message
+    assert 'worker_busy=True' in message
+    assert 'generation=7' in message
+    assert 'closed=False' in message
+    assert 'PRIVATE PATH' not in message
+    assert 'investigation-test' not in message
+
+
+def test_settled_timeout_distinguishes_idle_worker_from_pending_gui_delivery():
+    class TimeoutBot:
+        def waitUntil(self, _predicate, *, timeout):
+            assert timeout == 10000
+            raise pytestqt.exceptions.TimeoutError('synthetic timeout')
+
+    dialog = SimpleNamespace(
+        _pending=SimpleNamespace(operation='create'),
+        tasks=SimpleNamespace(busy=lambda channel: False), _channel='test',
+        _closed=False, _preview=object(), _generation=9,
+        _cancel_create=True, _close_after_create=True,
+    )
+    with pytest.raises(AssertionError, match='worker_busy=False') as raised:
+        settled(TimeoutBot(), dialog)
+    message = str(raised.value)
+    assert 'preview=True' in message
+    assert 'cancel_create=True' in message
+    assert 'close_after_create=True' in message
+
+
+def test_settled_success_keeps_existing_timeout_budget():
+    class ReadyBot:
+        def waitUntil(self, predicate, *, timeout):
+            assert timeout == 10000
+            assert predicate()
+
+    settled(ReadyBot(), SimpleNamespace(_pending=None))
+
+
+def test_settled_timeout_handles_unhashable_pending_operation():
+    class TimeoutBot:
+        def waitUntil(self, _predicate, *, timeout):
+            assert timeout == 10000
+            raise pytestqt.exceptions.TimeoutError('synthetic timeout')
+
+    dialog = SimpleNamespace(
+        _pending=SimpleNamespace(operation=['PRIVATE SOURCE']),
+        tasks=SimpleNamespace(busy=lambda channel: True), _channel='test',
+        _closed=False, _preview=None, _generation=3, _cancel_create=False,
+        _close_after_create=False,
+    )
+    with pytest.raises(AssertionError, match='operation=unknown') as raised:
+        settled(TimeoutBot(), dialog)
+    assert isinstance(raised.value.__cause__, pytestqt.exceptions.TimeoutError)
+    assert 'PRIVATE SOURCE' not in str(raised.value)
+
+
+@pytest.mark.parametrize(
+    ('operation', 'busy_raises', 'expected_operation', 'expected_busy'),
+    [('create', True, 'create', 'unknown'),
+     ('PRIVATE OPERATION SOURCE', False, 'unknown', 'False')],
+    ids=['busy-read-fails', 'unknown-operation'],
+)
+def test_settled_timeout_handles_unavailable_busy_state_and_unknown_operation(
+        operation, busy_raises, expected_operation, expected_busy):
+    original_timeout = pytestqt.exceptions.TimeoutError('synthetic timeout')
+
+    class TimeoutBot:
+        def waitUntil(self, predicate, *, timeout):
+            assert timeout == 10000
+            assert not predicate()
+            raise original_timeout
+
+    class Tasks:
+        def busy(self, channel=None):
+            assert channel == 'private-dialog-channel'
+            if busy_raises:
+                raise RuntimeError('PRIVATE BUSY FAILURE')
+            return False
+
+    dialog = SimpleNamespace(
+        _pending=SimpleNamespace(operation=operation), tasks=Tasks(), _channel='private-dialog-channel',
+        _closed=False, _preview=None, _generation=11, _cancel_create=False, _close_after_create=False,
+        status=SimpleNamespace(text=lambda: 'PRIVATE STATUS SOURCE'),
+    )
+    with pytest.raises(AssertionError) as raised:
+        settled(TimeoutBot(), dialog)
+    message = str(raised.value)
+    assert raised.value.__cause__ is original_timeout
+    assert f'operation={expected_operation}' in message
+    assert f'worker_busy={expected_busy}' in message
+    assert 'generation=11' in message
+    assert 'PRIVATE' not in message
+    assert 'private-dialog-channel' not in message

@@ -83,8 +83,8 @@ def _required(value, label):
 
 def _new_destination(request: InvestigationRequest) -> Path:
     path = Path(_required(request.destination, 'a new project directory')).expanduser()
-    if path.is_symlink():
-        raise KbcStoreError('PT-KBC-INPUT', 'Choose a new project directory, not a symbolic link.')
+    if path.is_symlink() or path.is_junction():
+        raise KbcStoreError('PT-KBC-INPUT', 'Choose a new project directory, not a symbolic link or junction.')
     resolved = path.resolve()
     if request.current_project is not None and resolved.is_relative_to(request.current_project.resolve()):
         raise KbcStoreError('PT-KBC-INPUT', 'Choose a new directory outside the currently open project.')
@@ -141,6 +141,8 @@ def _source_plan(request: InvestigationRequest, service):
 
     if request.manual_pair_start:
         raise KbcStoreError('PT-KBC-INPUT', 'Advisory sync requires an explicit KB/CVE starting point.')
+    if type(request.lead) is not str:
+        raise KbcStoreError('PT-KBC-INPUT', 'The KB/CVE starting point must be text.')
     parse_lead(_required(request.lead.strip(), 'a KB or CVE identifier'))
     raw = request.source_months
     if not isinstance(raw, str):
@@ -272,8 +274,6 @@ def _candidate_snapshot(request, cancel, service):
     from .contracts import domain_id
     from .service import KbService, parse_lead
 
-    if request.manual_pair_start:
-        raise KbcStoreError('PT-KBC-INPUT', 'Saved-index pairing requires an explicit advisory product.')
     investigation = _required(request.investigation_id, 'an advisory search result')
     scope_id = _required(request.scope_id, 'an explicit product')
     name = normalise_name(_required(request.component_name.strip(), 'a component basename'))
@@ -412,6 +412,11 @@ def _execute(request: InvestigationRequest, cancel, service_factory, source_fetc
     if request.manual_pair_start and (request.investigation_id is not None or request.scope_id is not None
                                       or request.expected_revision is not None):
         raise KbcStoreError('PT-KBC-INPUT', 'A binary-only start cannot reuse an advisory investigation or product.')
+    if request.operation in {'candidate_pairs', 'candidate_preview'}:
+        if request.manual_pair_start:
+            raise KbcStoreError('PT-KBC-INPUT', 'Saved-index pairing requires an explicit advisory product.')
+        if type(request.component_name) is not str:
+            raise KbcStoreError('PT-KBC-INPUT', 'The component basename must be text.')
     origin = None
     if request.current_inputs is not None:
         paths, origin = _verified_current(request.current_inputs, cancel)

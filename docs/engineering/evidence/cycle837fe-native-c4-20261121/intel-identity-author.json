@@ -1,0 +1,49 @@
+{
+  "head": "d628749401f61d3653b5e066ff38245b938c5dcd",
+  "base_head": "daee337c48c63dda8aeac149c407e900c79dcc86",
+  "tree": "5d4f2d3beff122b352d0d62a15ea0800c578c0b9",
+  "branch": "codex/patchtrace-intel-windows-identity-20261121-837fe",
+  "worktree": "/workspace/scratch/837fe19aae3a/repair-intel-windows-identity",
+  "working_tree_clean": true,
+  "changed_files": [
+    "docs/specs/three-tool-evidence-adapters.md",
+    "src/patchtrace/intelligence/tools/process.py",
+    "tests/test_intel_tools_environment.py",
+    "tests/test_intel_tools_runner.py"
+  ],
+  "source_matches_verified_files": true,
+  "shared_engine_env_unchanged": true,
+  "results": {
+    "baseline_getuser": {
+      "expected_returncode": 1,
+      "actual_returncode": 1,
+      "outcome": "1 failed through actual getpass.getuser to simulated unavailable pwd; production process.py equals published daee source"
+    },
+    "focused_tests": {
+      "passed": 130,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 8.28
+    },
+    "whole_ruff": "passed",
+    "pip_check": "passed",
+    "source_binding": "passed"
+  },
+  "bounds": {
+    "full_suite_run": false,
+    "native_tool_acceptance": false,
+    "upstream_executables_executed": false,
+    "analyzed_targets_executed": false,
+    "remote_mutations": false,
+    "workflows_changed_or_dispatched": false,
+    "global_ledgers_changed": false
+  },
+  "diagnosis_reference": {
+    "workflow_run": 44876415860,
+    "head": "daee337c48c63dda8aeac149c407e900c79dcc86",
+    "evidence_directory": "/workspace/scratch/837fe19aae3a/evidence/combined-intel-live",
+    "archive_sha256": "c5e4718313eb99fdca0da7739978097d30be65468173f533831132de9e3e0430",
+    "windows": "2 failed, 1 passed, 1 skipped; FLOSS getpass/pwd directly evidenced, capa shared cause remains inference"
+  },
+  "verification_note": "The focused log includes a LIVE ACCEPTANCE BLOCKED banner from the deliberately unsupported controlled probe test; all 130 maintained tests passed. This is not a native acceptance run."
+}

@@ -1,0 +1,427 @@
+{
+  "schema": 1,
+  "review_id": "cycle2-historical-ui-review-20261121-2bad",
+  "source": {
+    "observed_at_utc": "2026-11-21T02:45:21.444902+00:00",
+    "candidate": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
+    "candidate_tree": "60ed420c11116f1b92bdbedae34e3e82269458e5",
+    "observed_remote_tracking_main": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+    "observed_remote_tracking_main_tree": "af464108043aaa42b527a473985350a4daadc0d2",
+    "worktree": "/tmp/patchtrace-2bad-historical-ui-review",
+    "branch": "codex/patchtrace-cycle2-historical-ui-review-2bad",
+    "status_before_reports": "",
+    "source_compare_method": "Exact Git blobs; AST declaration comparison without positions as a navigation aid; semantic review of donor changes and current callers/tests. AST equality alone is not a behavior claim."
+  },
+  "runtime_code_changes": false,
+  "test_code_changes": false,
+  "remote_mutations": false,
+  "branches_deleted": [],
+  "census": {
+    "file": "docs/engineering/branch-recovery-20261120-2bad.json",
+    "observed_at_utc": "2026-11-20T23:27:34.782439+00:00",
+    "branches": 354,
+    "unmatched": 181,
+    "patch_equivalent_semantics_unreviewed": 16,
+    "unmatched_adjustment": 0,
+    "patch_equivalent_adjustment": 0,
+    "reason": "Bounded semantic dispositions do not establish whole-branch equivalence or deletion eligibility."
+  },
+  "selection": {
+    "selected_heads": 4,
+    "unmatched_heads": 3,
+    "patch_equivalent_heads": 1,
+    "prior_reviews_checked": [
+      "95fe semantic dispositions",
+      "coordinator branch census and existing desktop/CLI-help dispositions",
+      "existing saved-search recovery scope"
+    ],
+    "excluded": [
+      "prior tooltip/file-overview/acquisition/core-storage/AI-report/offline-bundle/project-rollback scopes",
+      "analysis/ranking/correlation/exploitation and target execution",
+      "search matching semantics"
+    ]
+  },
+  "scopes": [
+    {
+      "branch": "codex/analyst-accessibility-20261109",
+      "donor_commits": [
+        "d153e573c233fd05c49cda8aabf9ec6043ad28bc",
+        "2129879202a95ee3bdecfcebee7d2847956cf4cd"
+      ],
+      "census_classification": "unmatched-patches-review-required",
+      "scope": [
+        "Files announcements and retry/focus behavior",
+        "Export keyboard activation, tab order, mnemonics, native editing and Escape"
+      ],
+      "disposition": "runtime-present-with-later-files-worker-supersession",
+      "findings": [
+        "Export source, both relevant donor Export test files and accessibility-baseline spec have identical Git blobs.",
+        "All 55 donor ui_inspection declarations remain; 46 are AST-identical. Changed inspection/signing paths now consume metadata from the inspection worker. Behavior was reviewed directly and existing focused tests run.",
+        "Current Files tests retain donor cases and add retry after deletion of a failed worker object.",
+        "The donor final plan and two incomplete full-suite logs are absent from current source; exact original bytes are now preserved in this receipt archive."
+      ],
+      "unique_residue": {
+        "kind": "historical-evidence",
+        "donor_commit": "b90a2cd49fa4ba71050a378abc753fe8c90733fd",
+        "files": [
+          "docs/plans/analyst-accessibility-20261109.md",
+          "docs/qa/analyst-accessibility-20261109/full-parallel-incomplete.log",
+          "docs/qa/analyst-accessibility-20261109/full-serial-timeout.log"
+        ],
+        "action": "preserved-as-original-archive-members",
+        "dependencies": [],
+        "qualification": "Historical incomplete runs, not current results."
+      },
+      "remaining_scope": [
+        "Other help/task/QA document differences",
+        "Native Windows accessibility and display acceptance"
+      ],
+      "test_run": "accessibility",
+      "head": "b90a2cd49fa4ba71050a378abc753fe8c90733fd",
+      "merge_base": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+      "main_ancestor": false,
+      "candidate_ancestor": false,
+      "reviewed_file_comparison_member": "source-comparison.json",
+      "whole_branch_review_complete": false,
+      "branch_delete_authorized": false,
+      "qualified_for_whole_branch_merge": false
+    },
+    {
+      "branch": "audit/runtime",
+      "donor_commits": [
+        "b29267e8f72bfc7578c9e5014fdaeb54180c494d",
+        "9f32a6ecbd056249373b82bc1e814bd938da8c70"
+      ],
+      "census_classification": "unmatched-patches-review-required",
+      "scope": [
+        "Bounded scratch cleanup and typed output/wait errors",
+        "Credential redaction",
+        "Crowded-root runtime discovery and dependency probe warnings"
+      ],
+      "disposition": "present-with-later-tooling-supersession",
+      "findings": [
+        "The donor regression file has an identical Git blob.",
+        "Cleanup/output helpers and discovery name-filter-before-limit helper are AST-identical; current callers retain status/error behavior.",
+        "Current process cleanup preserves the primary post-kill wait error while later supervision/progress code remains.",
+        "Newer diagnostic patterns and runtime-discovery tiers retain donor behavior and should not be replaced with older implementations."
+      ],
+      "unique_runtime_residue": null,
+      "remaining_scope": [
+        "Native backend and Windows containment acceptance are outside the authored-fake tests."
+      ],
+      "test_run": "runtime",
+      "head": "9f32a6ecbd056249373b82bc1e814bd938da8c70",
+      "merge_base": "320a87700feb196835b1e45ac90a00bc0963db1d",
+      "main_ancestor": false,
+      "candidate_ancestor": false,
+      "reviewed_file_comparison_member": "source-comparison.json",
+      "whole_branch_review_complete": false,
+      "branch_delete_authorized": false,
+      "qualified_for_whole_branch_merge": false
+    },
+    {
+      "branch": "codex/audit-2",
+      "donor_commits": [
+        "ee21cfc86bd44b050c9861fe31b983c853a3ec9b",
+        "c6479cd5524986e0fb6be591d796407b6cac7986",
+        "08b12f1b279d917736cfc17d4b8e447c8f552616"
+      ],
+      "census_classification": "unmatched-patches-review-required",
+      "scope": [
+        "Hermetic workflow/package test additions",
+        "Audit specifications for those assertions"
+      ],
+      "disposition": "tests-and-specs-retained-four-acceptance-gates-open",
+      "findings": [
+        "Both audit documents have identical Git blobs.",
+        "All donor test/helper declarations remain; several previous strict xfails are now ordinary assertions.",
+        "CODEX-1, CODEX-5, CODEX-6 and CODEX-14 remain strict expected failures and the current workflow/build source still contains the corresponding gaps.",
+        "The branch supplies tests and audit specifications, not donor implementation fixes for the four remaining gates.",
+        "Current bundle-policy tests describe repository checks; they do not establish legal compatibility or owner approval."
+      ],
+      "unique_runtime_residue": null,
+      "open_gates": [
+        "CODEX-1",
+        "CODEX-5",
+        "CODEX-6",
+        "CODEX-14"
+      ],
+      "test_run": "packaging",
+      "head": "08b12f1b279d917736cfc17d4b8e447c8f552616",
+      "merge_base": "c2070cf8b4e7b0ade76cb000a5805009754eec55",
+      "main_ancestor": false,
+      "candidate_ancestor": false,
+      "reviewed_file_comparison_member": "source-comparison.json",
+      "whole_branch_review_complete": false,
+      "branch_delete_authorized": false,
+      "qualified_for_whole_branch_merge": false
+    },
+    {
+      "branch": "claude/bugfix-search-pilot-20261111",
+      "donor_commits": [
+        "d1f7d9aa64b28c8a8ca0a1065bb88e1e2f15b7f0"
+      ],
+      "census_classification": "patch-equivalent-semantics-unreviewed",
+      "scope": [
+        "B1 provenance line-break preservation",
+        "B2 report technical-line capacity"
+      ],
+      "disposition": "present-exact-source-blobs",
+      "findings": [
+        "Both build-environment presentation modules and the donor regression file have identical Git blobs.",
+        "Per-line sanitization retains provenance line breaks and bounds final content.",
+        "Technical-section capacity accommodates the view model maximum of 160 lines."
+      ],
+      "unique_runtime_residue": null,
+      "remaining_scope": [
+        "Other search/pilot changes in this historical head were not semantically reviewed.",
+        "Seven unselected tests in the regression file are not qualified by this run."
+      ],
+      "test_run": "buildenv-presentation",
+      "head": "d1f7d9aa64b28c8a8ca0a1065bb88e1e2f15b7f0",
+      "merge_base": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+      "main_ancestor": false,
+      "candidate_ancestor": false,
+      "reviewed_file_comparison_member": "source-comparison.json",
+      "whole_branch_review_complete": false,
+      "branch_delete_authorized": false,
+      "qualified_for_whole_branch_merge": false
+    }
+  ],
+  "validation": {
+    "environment": {
+      "QT_QPA_PLATFORM": "offscreen",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONPATH": "/tmp/patchtrace-2bad-historical-ui-review/src:/tmp/patchtrace-2bad-historical-ui-review/tests",
+      "pytest_cache_provider": false,
+      "source_binding": "Explicit PYTHONPATH; module import path verified against isolated worktree."
+    },
+    "runs": [
+      {
+        "name": "accessibility",
+        "command": [
+          "/tmp/patchtrace-2bad-cycle2-venv/bin/python",
+          "-m",
+          "pytest",
+          "-q",
+          "-ra",
+          "-p",
+          "no:cacheprovider",
+          "tests/test_files_announcements.py",
+          "tests/test_ui_export_accessibility.py",
+          "--junitxml=/tmp/patchtrace-2bad-historical-evidence/accessibility.xml"
+        ],
+        "source": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
+        "module_path": "/tmp/patchtrace-2bad-historical-ui-review/src/patchtrace/__init__.py",
+        "exit_code": 0,
+        "elapsed_seconds": 7.008,
+        "junit_exists": true,
+        "tests": 47,
+        "failures": 0,
+        "errors": 0,
+        "xfail": 0,
+        "skipped": 0,
+        "passed": 47,
+        "deselected": 0,
+        "evidence_members": [
+          "accessibility.log",
+          "accessibility.xml"
+        ],
+        "source_unchanged": true
+      },
+      {
+        "name": "runtime",
+        "command": [
+          "/tmp/patchtrace-2bad-cycle2-venv/bin/python",
+          "-m",
+          "pytest",
+          "-q",
+          "-ra",
+          "-p",
+          "no:cacheprovider",
+          "tests/test_audit_runtime.py",
+          "--junitxml=/tmp/patchtrace-2bad-historical-evidence/runtime.xml"
+        ],
+        "source": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
+        "module_path": "/tmp/patchtrace-2bad-historical-ui-review/src/patchtrace/__init__.py",
+        "exit_code": 0,
+        "elapsed_seconds": 1.242,
+        "junit_exists": true,
+        "tests": 17,
+        "failures": 0,
+        "errors": 0,
+        "xfail": 0,
+        "skipped": 0,
+        "passed": 17,
+        "deselected": 0,
+        "evidence_members": [
+          "runtime.log",
+          "runtime.xml"
+        ],
+        "source_unchanged": true
+      },
+      {
+        "name": "packaging",
+        "command": [
+          "/tmp/patchtrace-2bad-cycle2-venv/bin/python",
+          "-m",
+          "pytest",
+          "-q",
+          "-ra",
+          "-p",
+          "no:cacheprovider",
+          "tests/test_codex_pkg_packaging.py",
+          "tests/test_codex_pkg_workflows.py",
+          "--junitxml=/tmp/patchtrace-2bad-historical-evidence/packaging.xml"
+        ],
+        "source": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
+        "module_path": "/tmp/patchtrace-2bad-historical-ui-review/src/patchtrace/__init__.py",
+        "exit_code": 0,
+        "elapsed_seconds": 1.003,
+        "junit_exists": true,
+        "tests": 24,
+        "failures": 0,
+        "errors": 0,
+        "xfail": 4,
+        "skipped": 0,
+        "passed": 20,
+        "deselected": 0,
+        "evidence_members": [
+          "packaging.log",
+          "packaging.xml"
+        ],
+        "source_unchanged": true
+      },
+      {
+        "name": "buildenv-presentation",
+        "command": [
+          "/tmp/patchtrace-2bad-cycle2-venv/bin/python",
+          "-m",
+          "pytest",
+          "-q",
+          "-ra",
+          "-p",
+          "no:cacheprovider",
+          "tests/test_search_pilot_buildenv_bugfixes_20261111.py",
+          "-k",
+          "provenance_block or technical_section",
+          "--junitxml=/tmp/patchtrace-2bad-historical-evidence/buildenv-presentation.xml"
+        ],
+        "source": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
+        "module_path": "/tmp/patchtrace-2bad-historical-ui-review/src/patchtrace/__init__.py",
+        "exit_code": 0,
+        "elapsed_seconds": 1.698,
+        "junit_exists": true,
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "xfail": 0,
+        "skipped": 0,
+        "passed": 2,
+        "deselected": 7,
+        "evidence_members": [
+          "buildenv-presentation.log",
+          "buildenv-presentation.xml"
+        ],
+        "source_unchanged": true
+      }
+    ],
+    "totals": {
+      "passed": 86,
+      "xfailed": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "deselected": 7,
+      "warnings": 2
+    },
+    "not_claimed": [
+      "Full aggregate suite",
+      "Native accessibility/Windows packaging",
+      "Real backend qualification",
+      "Release acceptance",
+      "Entire historical branch equivalence"
+    ],
+    "counts_are_local_to_this_slice": true
+  },
+  "next_tasks": [
+    {
+      "id": "CODEX-1",
+      "kind": "implementation-needed-not-missing-donor",
+      "files": [
+        ".github/workflows/*.yml",
+        "tests/test_codex_pkg_workflows.py"
+      ],
+      "donor_commit": "08b12f1b279d917736cfc17d4b8e447c8f552616",
+      "next_action": "Resolve each used Action version to its verified upstream full commit SHA, pin with version comments, remove only the matching strict xfail after it passes, then qualify affected workflows.",
+      "dependencies": [
+        "Trusted upstream ref resolution for each Action",
+        "Current workflow versions and permission boundaries"
+      ],
+      "acceptance_test": "test_remote_actions_are_immutable"
+    },
+    {
+      "id": "CODEX-5",
+      "kind": "implementation-needed-not-missing-donor",
+      "files": [
+        ".github/workflows/*.yml",
+        "pyproject.toml",
+        "tests/test_codex_pkg_workflows.py"
+      ],
+      "donor_commit": "08b12f1b279d917736cfc17d4b8e447c8f552616",
+      "next_action": "Resolve supported-platform build/runtime wheel closures with artifact hashes; install through hash-checked locks before installing the local project with no dependency resolution; qualify the actual build paths.",
+      "dependencies": [
+        "Platform-specific wheel availability and hashes",
+        "Separate explicit host-package boundary"
+      ],
+      "acceptance_test": "test_pip_downloads_require_hashes"
+    },
+    {
+      "id": "CODEX-6",
+      "kind": "implementation-needed-not-missing-donor",
+      "files": [
+        ".github/workflows/corpus-tier-r.yml",
+        "tests/test_codex_pkg_workflows.py"
+      ],
+      "donor_commit": "08b12f1b279d917736cfc17d4b8e447c8f552616",
+      "next_action": "Verify pinned integrity after cache restore as well as download; prefer caching original archives and checking them before extraction. Validate hit/miss flows with controlled fixtures.",
+      "dependencies": [
+        "Pinned runtime archive digests",
+        "Cache key and artifact strategy"
+      ],
+      "acceptance_test": "test_corpus_cache_does_not_skip_verification"
+    },
+    {
+      "id": "CODEX-14",
+      "kind": "implementation-needed-not-missing-donor",
+      "files": [
+        ".github/workflows/qa-windows.yml",
+        "tools/build_linux.py",
+        "tools/frozen_smoke.py",
+        "tests/test_codex_pkg_packaging.py"
+      ],
+      "donor_commit": "08b12f1b279d917736cfc17d4b8e447c8f552616",
+      "next_action": "Run full registered CLI smoke against the unpacked Linux artifact while retaining existing offscreen/XCB checks; qualify supported Linux jobs and remove only the corresponding strict xfail.",
+      "dependencies": [
+        "Built Linux package",
+        "Supported Linux CI runners",
+        "Existing command registry and frozen smoke harness"
+      ],
+      "acceptance_test": "test_linux_package_runs_full_cli_smoke"
+    }
+  ],
+  "evidence": {
+    "archive": "docs/engineering/evidence/cycle2-historical-ui-20261121-2bad/evidence.zip",
+    "sha256": "37ca4cecd85265177d539a53ff983e90bbb50011461892c0f51a4ccdafc94a6a",
+    "bytes": 17110,
+    "members": 16,
+    "member_manifest": "manifest.json",
+    "verified": "ZIP integrity and each member SHA-256 verified after writing.",
+    "historical_evidence_source_map": "historical-evidence-source-map.json",
+    "historical_evidence_is_not_current_run": true
+  },
+  "authoritative_ledger": {
+    "edited": false,
+    "report_role": "Supporting bounded evidence; coordinator retains ownership."
+  }
+}

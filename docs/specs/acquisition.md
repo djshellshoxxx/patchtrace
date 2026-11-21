@@ -48,6 +48,12 @@ checks still apply. Do not load a provider, register it with TAPI or execute it.
 6. Delta reconstruction (optional, Windows only): `ApplyDeltaB` from the system `msdelta.dll` for PA30; PA31 only with a user-selected `UpdateCompression.dll` path. Requires the exact base file; chain reverse (`r`) then forward (`f`); output must hash to the expected SHA-256. `DeltaFree` always called. On non-Windows the capability reports `unsupported` explicitly. No pure-Python applier is used (none is complete and licensed).
 7. Promotion: verified `pe` files are passed to `ProjectService.create(older, newer, name, root)`; provenance is recorded in the project (`Artifact` name plus an acquisition annotation). Staging is deleted only for the current operation.
 
+The 256 MiB decoded-document limit also applies to uncompressed JSON supplied to
+`parse`, `parse_rows`, or the shared `strict_json` boundary. Check the byte length
+before UTF-8 decoding or JSON allocation. Exactly the limit remains eligible;
+one byte over returns `PT-ACQ-LIMIT`, even for otherwise valid JSON. Compression
+format and file-extension choices never waive this resource limit.
+
 Network: HTTPS only; allowlist `winbindex.m417z.com`, `msdl.microsoft.com`, `*.blob.core.windows.net` (redirect target only); environment proxies ignored; no credentials; User-Agent `PatchTrace`; bounded retries (429/5xx, ≤ 3, Retry-After ≤ 60 s); cancellable. Nothing about the user's projects is sent.
 
 Winbindex metadata has one 120-second network-operation budget, including all

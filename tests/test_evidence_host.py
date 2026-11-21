@@ -93,3 +93,43 @@ def test_a_project_change_does_not_probe_engines_until_asked(main_window, qtbot)
     controller.start_probe()  # the explicit action
     qtbot.waitUntil(lambda: controller.probe_token is None, timeout=5000)
     assert calls == [1]
+
+
+def test_evidence_state_changes_announce_once_through_the_host_shell(main_window, monkeypatch):
+    from patchtrace.ui_evidence import empty_model
+
+    panel = main_window.panels.controller('evidence').panel
+    messages = []
+    monkeypatch.setattr(main_window.panels.announcer, 'announce',
+                        lambda text, assertive=False: messages.append((text, assertive)))
+
+    panel.set_failed('Authored evidence state failure')
+    assert messages == [(panel.state_view.model.text, True)]
+    assert 'Authored evidence state failure' in messages[0][0]
+    panel.set_failed('Authored evidence state failure')
+    assert len(messages) == 1
+
+    panel.set_view_model(empty_model('no-project'))
+    assert messages[-1] == (panel.state_view.model.text, False)
+    assert len(messages) == 2
+
+
+def test_evidence_state_redraws_do_not_repeat_host_announcements(main_window, monkeypatch):
+    from patchtrace.gui.state import StateModel
+
+    panel = main_window.panels.controller('evidence').panel
+    messages = []
+    monkeypatch.setattr(main_window.panels.announcer, 'announce',
+                        lambda text, assertive=False: messages.append((text, assertive)))
+    panel.set_failed('First authored failure')
+    first = [(panel.state_view.model.text, True)]
+    assert messages == first
+    panel.set_loading(False)
+    panel.set_view_model(panel.vm)
+    panel.set_failed('First authored failure')
+    assert messages == first
+
+    panel.state_view.set_state(StateModel('ready', ''))
+    assert messages == first
+    panel.set_failed('Second authored failure')
+    assert messages == [*first, (panel.state_view.model.text, True)]

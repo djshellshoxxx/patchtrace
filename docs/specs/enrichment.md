@@ -148,11 +148,55 @@ Status: implemented 2026-10-12 and extended 2026-10-22 (`enrichment/profiles.py`
 
 Behavior: Setup gains a Profiles tab (create/duplicate/edit/delete non-default; validation errors shown inline; incompatible combinations — e.g. all detectors disabled — rejected). Rank changes uses the selected profile; when it is not `default` the navigator header shows the profile name and the ranking rows are published under their own stage IDs, so `load_default` remains correct; the desktop loads the selected profile's rows by `config_digest`. CLI gains `--profile NAME|FILE` (mutually exclusive with `--weights`/`--disable`). Exports record the profile digest and name. Acceptance: round-trip, strict rejection (bools, extra keys, unknown IDs), digest invariance under presentation edits, GUI/CLI/report agreement for a non-default profile, no secret persisted.
 
+Dirty profile navigation amendment (2026-11-19 UTC, audit #116): selecting another
+profile or creating/duplicating one must resolve the current editable draft with
+Save, Discard or Cancel. Save validates and commits before continuing; validation
+or storage failure retains the draft, previous selection and inline error. Cancel
+retains the draft and selection without writing. Discard is the explicit choice
+to continue without committing the draft. A save that renames the current profile
+must still navigate to the originally requested destination. Internal successful
+save/reload does not re-enter the navigation prompt. Unchanged/read-only profiles
+navigate without a prompt. Existing Setup acceptance and delete confirmations
+retain their separate semantics. No profile/schema or provider-consent change.
+If the requested destination disappears or becomes invalid before it is loaded,
+retain the previous selection and editor contents, including a still-uncommitted
+draft, and show the read failure inline. Never display one profile as selected
+while editing another.
+
 ## 13. Raw output cache integration
 
 Status: implemented 2026-10-12 in `backend.run_comparison`; enabled only when the selected profile sets `cache_dir`. Java is now probed (`java -version` on the child's JDK); any unparseable version makes the run ineligible. Fingerprint `adapter_version` is `patchtrace-ghidriff-adapter/1` and must change whenever PatchTrace changes Ghidriff argv/options. Hits are labelled in the match tooltip.
 
 After a completed native run, if `RuntimeFingerprint.eligible()` (all versions known, symbol policy `disabled`, no symbol inputs), `backend` admits the raw JSON (≤ 100 MiB) with `put_raw`. Before launching Ghidriff, `run_comparison` computes the fingerprint and, unless `no_cache`/`refresh`, calls `get_raw`; on a hit it writes a new project-owned run directory with the copied bytes, records provenance `cache_origin = {key, created}` in `AnalysisRun.settings`, and continues through the existing normalization/service publication (identical validation to a fresh run). A hit never skips normalization or artifact identity checks; the case remains usable after the global cache is deleted. Fingerprint inputs come only from probed versions (`diagnose`), never from defaults; `unknown` makes the run ineligible. Acceptance: hit produces byte-identical raw JSON and identical matches; swapped orientation misses; any version change misses; corrupted entry falls back to a real run; GUI displays "from cache" in run details.
+
+### Native cache diagnostic retention (2026-11-20)
+
+The acceptance harness `tools/live_cache_check.py` accepts an optional
+`--diagnostics-dir DIRECTORY`. It requires a new directory before starting
+analysis and never overwrites an existing directory or report. With no option,
+it retains its original temporary-project cleanup and acceptance behavior.
+
+With the option, `first.json` and `second.json` retain each attempted run's
+status, allowlisted runtime/cache settings, raw digest and match count when
+available, at most 64 event records, and at most four existing Java-probe
+observations. A record is written even when that run fails. `result.json`
+records the unchanged final acceptance outcome and exception class/message.
+Each document uses `native-cache-diagnostics/1` and is capped at 512 KiB.
+Event messages are limited to 512 characters; Java output and error messages
+are redacted and limited to 4,096 characters. Environment mappings, credentials,
+target bytes, raw analysis bodies, and complete projects are not exported.
+
+The harness observes the existing `java -version` process calls only. It
+forwards the original arguments, return objects, and exceptions, and restores
+its temporary observer in `finally`. It adds no probes or retries and changes
+no timeout, Java verification rule, cache admission rule, or acceptance
+assertion. Diagnostic write errors are reported explicitly and never suppress
+the original analysis or acceptance exception. The existing workflow uploader
+retains these files through its unchanged `always()` step.
+
+Fake-based tests establish diagnostic retention and observer transparency.
+They do not establish the cause of a native unverified-Java result or replace
+source-specific native acceptance on a supported runner.
 
 ## 14. Acceptance
 

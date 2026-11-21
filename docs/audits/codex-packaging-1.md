@@ -99,3 +99,17 @@ These checks are hermetic source/AST inspections. No install, network call, targ
 - `python -m ruff check src tests tools`: passed.
 - AGENTS.md full-suite command `QT_QPA_PLATFORM=offscreen python -m pytest -q`: attempted, exit 2, **41 collection errors**, caused by unavailable PySide6 and Hypothesis. No full-suite pass claimed; no production dependency changes were made for this bounded static audit.
 - CODEX-13 also reproduced outside pytest with runpy-loading the stdlib-only build_linux helpers and a temporary `{}` manifest/empty payload. Both payload_problems (empty problem list) and attach_backend accepted it and produced provenance. GITHUB_SHA was supplied as synthetic zeros to avoid git execution. No build or binary was run.
+
+
+## CODEX-14 isolated implementation follow-up (2026-11-21)
+
+A child branch of PR #348, `codex/patchtrace-linux-frozen-cli-smoke-20261121`,
+adds the existing full frozen CLI harness to the checksum-verified extracted
+Linux archive in both supported CI smoke environments. The test formerly
+strict-xfailed for CODEX-14 now asserts the real `linux-smoke` job invokes
+that harness after extraction, and a second test preserves both GUI modes.
+Thirteen author-side source invariants pass; no frozen Linux runtime,
+repository pytest, hosted acceptance or independent peer result is claimed.
+This audit's original failure remains valid historically. CODEX-14 becomes
+a pending source-specific acceptance task, not a passing release gate, until
+both supported Linux smoke jobs actually succeed. [Evidence](../engineering/codex14-linux-frozen-cli-smoke-20261121.md).

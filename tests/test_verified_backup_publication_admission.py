@@ -364,7 +364,8 @@ def test_directory_read_failure_never_admits_a_failed_sqlite_publication(
             raise OSError('directory read interrupted before pending stage')
         yield interrupted()
 
-    monkeypatch.setattr(os, 'scandir', failed_scan)
-    assert V.find_verified_backup(service.root, 'history-prune', project_id=service.project.id,
-                                  require_tables=('history',)) is None
+    with monkeypatch.context() as read_failure:
+        read_failure.setattr(os, 'scandir', failed_scan)
+        assert V.find_verified_backup(service.root, 'history-prune', project_id=service.project.id,
+                                      require_tables=('history',)) is None
     assert stage.read_bytes() == final.read_bytes() == failed_bytes

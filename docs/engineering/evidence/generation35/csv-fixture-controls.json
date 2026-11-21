@@ -1,0 +1,41 @@
+{
+  "schema": "patchtrace-csv-fixture-review/1",
+  "observed_at_utc": "2026-11-20T18:17:25Z",
+  "baseline_head": "599e1ee1bc7bec095b4e6fa28d5cfc25c4d6f7df",
+  "baseline_test_blob": "a64d67ccdcedefad4ccbcbb2ec23f4aa7c1162ca",
+  "baseline_production_blob": "3b53c8a42460f55ab1c3d9bf77e966946d168527",
+  "parent_pr_head": "5f34fb57267637b986814ddc81dba11550992fff",
+  "environment": {
+    "python": "3.13.5",
+    "source": "stdlib Python, source-equivalent helper and manually transcribed exact test parameter literals",
+    "repo_checkout": false,
+    "whole_tree_ruff": false,
+    "hosted_ci": false
+  },
+  "baseline_replay": {
+    "cases": 10,
+    "passed": 5,
+    "failed": 5,
+    "failed_ids": [
+      "line-formula",
+      "bom-formula",
+      "space-tab-formula",
+      "line-control",
+      "tab-control"
+    ],
+    "cause": "Python source double backslashes produce literal backslash-letter strings, contrary to expectation"
+  },
+  "successor_replay": {
+    "cases": 13,
+    "passed": 13,
+    "failed": 0,
+    "method": "python stdlib csv.writer/csv.reader and source-equivalent helper; not a checked-out-source or desktop run",
+    "new_cases": [
+      "carriage-control",
+      "vertical-tab-formula",
+      "literal-backslash-prose"
+    ]
+  },
+  "disposition": "test-source encoding repaired on isolated successor; source-pinned pytest/Ruff/Qt/native/packaging and post-fix independent signoff pending",
+  "local_control_script_sha256": "03e9c524f8479cced3301fd11d425db106c3cce5c2f6b103512658602c39689e"
+}

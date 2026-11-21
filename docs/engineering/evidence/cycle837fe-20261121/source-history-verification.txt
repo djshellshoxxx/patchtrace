@@ -1,0 +1,6 @@
+The bundle contains this ref:
+b880c317add4de3ac22c87cd842abb0e7ccc615d HEAD
+The bundle requires this ref:
+6b6fcd3597a604212032ffc453477aeb6edc69ff 
+The bundle uses this hash algorithm: sha1
+docs/engineering/evidence/cycle837fe-20261121/source-history.bundle is okay

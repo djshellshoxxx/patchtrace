@@ -1,0 +1,24 @@
+{
+  "donor": "ae67122c69f05715afa622b7e4050b73ca155967",
+  "comparison_source": "ad8916944a697985be3e472cd57f2e15f0a263bc",
+  "paths": [
+    "src/patchtrace/kbcorrelation/acquire.py",
+    "docs/specs/kb-cve/31-F-workflow-ui-persistence.md",
+    "tests/test_kbc_acquire_destination_symlink_20261120.py",
+    "tests/test_kbc_acquire_destination_after_stage_20261120.py",
+    "tests/test_kbc_acquire_windows_junction_20261120.py"
+  ],
+  "all_five_files_donor_exact": true,
+  "donor_history_bundle": "parallel-acquisition-history.bundle",
+  "bundle_sha256": "681ae1af5d7a4c442967342e442415158a799f2bc806447c77c091117728b7cd",
+  "independent_donor_passed": 96,
+  "independent_donor_skipped": 1,
+  "native_windows_qualified": false,
+  "combined_qualification": "pending",
+  "minimal_patch_storage": {
+    "path": "acquire-g32-minimal.patch.gz",
+    "compression": "gzip",
+    "uncompressed_sha256": "c6a33a85c719a1168ed65711c04b5ed5e346b4ad39bffbc054ec3bb6cd183e2a",
+    "decompression_exact": true
+  }
+}

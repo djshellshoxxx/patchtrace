@@ -1,0 +1,38 @@
+F....                                                                    [100%]
+=================================== FAILURES ===================================
+______ test_effective_plan_keeps_every_nonfilter_clause_and_matching_mode ______
+
+    def test_effective_plan_keeps_every_nonfilter_clause_and_matching_mode():
+        assert 'pt-savedsearch' in str(Path(saved_actions.__file__).resolve())
+        queries = (
+            'word', 'foo side:older scope:changed', '"side:newer" foo',
+            '"two  words" side:older', 'foo -bar', 'kind:function', 'std::vector foo',
+            'ReadItem 0x140001000', 'prefix* scope:changed', 'is:changed kind:function',
+        )
+        for text in queries:
+            for mode in ('auto', 'words', 'exact', 'prefix', 'substring', 'similar'):
+>               original = parse_query(text, mode=mode)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+../PatchTrace/docs/engineering/evidence/test_saved_search_peer_controls.py:25: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/patchtrace/search/query.py:147: in parse_query
+    elif (parsed := _filter(token)) is not None:
+                    ^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+token = 'is:changed'
+
+    def _filter(token: str) -> tuple[str, str] | None:
+        key, sep, value = token.partition(':')
+        if not sep or key.lower() not in _FILTERS:
+            return None  # an unknown `key:` stays text, so `std::vector` works
+        value = value.lower()
+        if value not in _FILTERS[key.lower()]:
+>           raise query_error(f'{key.lower()}: expects one of {", ".join(_FILTERS[key.lower()])}')
+E           patchtrace.search.errors.SearchError: PT-SEARCH-QUERY: is: expects one of modified, added, removed, unchanged
+
+src/patchtrace/search/query.py:117: SearchError
+=========================== short test summary info ============================
+FAILED ::test_effective_plan_keeps_every_nonfilter_clause_and_matching_mode
+1 failed, 4 passed in 0.69s

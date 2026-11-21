@@ -39,6 +39,7 @@ import traceback
 from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Literal
 
 SCHEMA = 'patchtrace-bundle-acceptance/1'
 FORBIDDEN_ENV = frozenset({'JAVA_HOME', 'JDK_HOME', 'JRE_HOME', 'GHIDRA_INSTALL_DIR', 'PYTHONHOME', 'PYTHONPATH',
@@ -51,6 +52,8 @@ HOST_TIMEOUT = 120.0
 DETAIL_LIMIT = 400
 EXEC_PROBE = ('-I', '-c', 'print(1)')
 SAMPLE_INTERVAL = 0.5
+SAMPLE_TIMEOUT = 2.0
+MIN_SUCCESSFUL_SAMPLES = 3
 UNICODE_DIRNAME = 'Patch Trace \u00e9\u4e2d'
 
 
@@ -270,40 +273,56 @@ def parse_proc_net_tcp(text: str) -> list[str]:
     return found
 
 
-def linux_sampler(pid: int, host_ns: str | None = None) -> Callable[[], list[str]]:
+@dataclass(frozen=True)
+class ConnectionSample:
+    endpoints: tuple[str, ...] = ()
+    status: Literal['ok', 'unavailable', 'error'] = 'ok'
+
+
+def linux_sampler(pid: int, host_ns: str | None = None) -> Callable[[], ConnectionSample]:
     """Connections of pid's network namespace. Samples taken before the child has left the host namespace
     (fork/unshare race) describe the host, not the child, and are skipped."""
-    def sample() -> list[str]:
+    def sample() -> ConnectionSample:
         try:
             if host_ns is not None and os.readlink(f'/proc/{pid}/ns/net') == host_ns:
-                return []
+                return ConnectionSample(status='unavailable')
+        except FileNotFoundError:
+            return ConnectionSample(status='unavailable')
         except OSError:
-            return []
+            return ConnectionSample(status='error')
         out: list[str] = []
+        status: Literal['ok', 'unavailable', 'error'] = 'ok'
         for name in ('tcp', 'tcp6'):
             try:
                 out += parse_proc_net_tcp(Path(f'/proc/{pid}/net/{name}').read_text())
+            except FileNotFoundError:
+                if status == 'ok':
+                    status = 'unavailable'
             except OSError:
-                pass
-        return out
+                status = 'error'
+        return ConnectionSample(tuple(out), status)
     return sample
 
 
 def windows_sample_command(pids: Sequence[int]) -> list[str]:
     ids = ','.join(str(int(p)) for p in pids)
     return ['powershell', '-NoProfile', '-NonInteractive', '-Command',
-            f'Get-NetTCPConnection -State Established -ErrorAction SilentlyContinue | '
-            f'Where-Object {{ @({ids}) -contains $_.OwningProcess -and $_.RemoteAddress -notin "127.0.0.1","::1" }} | '
+            f'Get-NetTCPConnection -ErrorAction Stop | '
+            f'Where-Object {{ $_.State -eq "Established" -and @({ids}) -contains $_.OwningProcess '
+            f'-and $_.RemoteAddress -notin "127.0.0.1","::1" }} | '
             f'ForEach-Object {{ "$($_.RemoteAddress):$($_.RemotePort)" }}']
 
 
 class ConnectionMonitor:
     """Polls `sample` every `interval` seconds on a thread and keeps every distinct external connection seen."""
 
-    def __init__(self, sample: Callable[[], list[str]], interval: float = SAMPLE_INTERVAL):
+    def __init__(self, sample: Callable[[], list[str] | ConnectionSample], interval: float = SAMPLE_INTERVAL):
         self.sample, self.interval = sample, interval
         self.seen: set[str] = set()
         self.polls = 0
+        self.successful_polls = 0
+        self.sample_errors = 0
+        self.unavailable_polls = 0
         self._stop = threading.Event()
         self._thread = threading.Thread(target=self._loop, daemon=True)
 
@@ -314,10 +333,20 @@ class ConnectionMonitor:
 
     def poll(self) -> None:
         try:
-            self.seen.update(self.sample())
-        except Exception:  # sampling is evidence only; it never breaks the run
-            pass
-        self.polls += 1
+            sample = self.sample()
+            if not isinstance(sample, ConnectionSample):
+                sample = ConnectionSample(tuple(sample))
+            self.seen.update(sample.endpoints)
+            if sample.status == 'unavailable':
+                self.unavailable_polls += 1
+            elif sample.status == 'error':
+                self.sample_errors += 1
+            else:
+                self.successful_polls += 1
+        except Exception:  # retain failed observation health without interrupting the comparison
+            self.sample_errors += 1
+        finally:
+            self.polls += 1
 
     def __enter__(self) -> ConnectionMonitor:
         self._thread.start()
@@ -391,9 +420,16 @@ def _run_monitored(argv: Sequence[str], env: dict[str, str], timeout: float, os_
     """Run argv while sampling the child's established external connections (cheap extra evidence)."""
     proc = subprocess.Popen(list(argv), env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
-    def windows_sample() -> list[str]:
-        out = subprocess.run(windows_sample_command([proc.pid]), capture_output=True, text=True, check=False)
-        return out.stdout.split()
+    def windows_sample() -> ConnectionSample:
+        try:
+            out = subprocess.run(windows_sample_command([proc.pid]), capture_output=True, text=True,
+                                 timeout=SAMPLE_TIMEOUT, check=False)
+        except subprocess.TimeoutExpired as exc:
+            text = exc.stdout or ''
+            if isinstance(text, bytes):
+                text = text.decode('utf-8', errors='replace')
+            return ConnectionSample(tuple(text.split()), 'error')
+        return ConnectionSample(tuple(out.stdout.split()), 'ok' if out.returncode == 0 else 'error')
     sample = linux_sampler(proc.pid, os.readlink('/proc/self/ns/net')) if os_name == 'linux' else windows_sample
     with ConnectionMonitor(sample) as monitor:
         try:
@@ -626,8 +662,12 @@ def _acceptance_steps(ev: Evidence, root: Path, older: Path, newer: Path, expect
         ev.add('ghidriff-compare', gproc.returncode == 0 and bool(results),
                f'exit {gproc.returncode}; results={results}; {_tail(gproc)}', returncode=gproc.returncode,
                argv=gcmd, duration_s=_since(start))
-        ev.add('no-external-connections', not monitor.seen,
-               f'{monitor.polls} polls; seen={sorted(monitor.seen)}', polls=monitor.polls)
+        seen = sorted(monitor.seen)
+        ev.add('no-external-connections', monitor.successful_polls >= MIN_SUCCESSFUL_SAMPLES and not seen,
+               f'{monitor.successful_polls}/{monitor.polls} successful polls; '
+               f'errors={monitor.sample_errors}; unavailable={monitor.unavailable_polls}; seen={seen}',
+               polls=monitor.polls, successful_polls=monitor.successful_polls,
+               sample_errors=monitor.sample_errors, unavailable_polls=monitor.unavailable_polls, seen=seen)
     finally:
         _cleanup(ev, os_name, backend, account, locked, undo, host_run)
     after_digest = tree_digest(backend)

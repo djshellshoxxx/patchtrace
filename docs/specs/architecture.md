@@ -68,7 +68,20 @@ Reanalysis, orientation swap, manual match change or settings change increments 
 ## Reports
 `export_project(project, format, destination, include_code=False, include_notes=True) -> ExportManifest`: stable ID ordering, JSON v1, Markdown escaped text and HTML escaped values with no network assets/scripts. Default excludes code and raw provider text. Include hashes/run versions, current/stale status, unknowns and limitations. Redact absolute source paths by default. Write to sibling temporary then replace. Failure leaves prior report intact. An existing destination whose bytes differ is first kept beside it as `<stem>.previous-<sha256[:8]><suffix>` (created exclusively, never overwritten, skipped when identical; an existing backup must be a regular non-symlink file with exactly the expected bytes before reuse, otherwise export is refused; a failed backup aborts the export before the replace and removes its own incomplete file when possible); an existing file larger than the report cap is refused, not read or replaced (2026-10-28). Manifest records SHA-256, selected finding IDs, flags and schema version. Reports derive only from persisted project snapshots.
 
+### Report staging cleanup (2026-11-19)
+
+Report publication consumes its temporary staging name after a successful
+replacement. Do not attempt to remove that consumed name or turn a completed
+export into a failure because of a later cleanup operation. If publication or
+previous-report preservation fails, attempt to remove the staging file. A
+secondary cleanup failure must preserve the original typed export failure or
+interruption, with a fixed diagnostic note that the temporary report remains
+for manual cleanup. Never report a failed cleanup as successful removal. The
+previous destination and any verified previous-report copy retain the existing
+failure-preservation guarantees. This changes no report bytes or wire schema.
+
 ## Error taxonomy
+
 PT-INPUT invalid/unreadable/changed/oversize/incompatible input; PT-SCHEMA unknown or malformed contract; PT-BACKEND missing/version/execution/timeout; use the pure `diagnostics.describe_backend_exit(code, sanitized_log_tail)` classifier for a *known* runtime failure (Ghidra dot-prefixed workspace, incompatible Java bytecode/JDK, missing Ghidriff module, Java heap exhaustion, full disk, permissions), and preserve original exit code and full bounded analysis log; unknown failures keep the generic error. Fixed category strings must not echo untrusted or secret-containing log text. PT-CANCEL cancellation; PT-PROVIDER transport/status/malformed/ungrounded; PT-STORAGE lock/corruption/disk-full; PT-EXPORT write failure. UI retains previous committed data, gives actionable message and recovery control. No silent empty success.
 
 ## Project-owned report destination protection (2026-11-01)

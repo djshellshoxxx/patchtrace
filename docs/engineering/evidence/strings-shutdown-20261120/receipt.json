@@ -1,0 +1,38 @@
+{
+  "base_commit": "5cc3f2a540f2e49e8b86e20decf7d4f62ce89d0a",
+  "baseline_source_sha256": "576ae0bf2c9d04b25ba2755ebd5c62d80fc300f0645cea8fa7dba5b12247692f",
+  "repaired_source_sha256": "134f17a90e0310606b29a29440d727775f2153a6debca4ff0beb30b0f77f55db",
+  "regression_test_file_sha256": "1da0d373593ac91b4827ae339d594c25ea36158a6c04d9e94ac2dba15a0453ed",
+  "baseline": {
+    "command": [
+      "/workspace/scratch/b1d1356aa953/patchtrace-venv/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_ui_strings_panel.py::test_shutdown_refuses_queued_filter_work"
+    ],
+    "returncode": 1,
+    "log": "baseline.log.gz",
+    "compression": "gzip",
+    "uncompressed_sha256": "138912449de8dd57c7178a43292e63608259fec4868de589ae40f30bbf2b3a8c",
+    "compressed_sha256": "54b6697149226acaede71fd405910f4bb4e15fab0ef580e292802c89b7f96e9f"
+  },
+  "focused_green": {
+    "command": [
+      "/workspace/scratch/b1d1356aa953/patchtrace-venv/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_ui_strings_panel.py::test_shutdown_refuses_queued_filter_work",
+      "tests/test_ui_strings_panel.py::test_change_filter_and_text_filter_narrow_the_list"
+    ],
+    "returncode": 0,
+    "log": "focused-green.log"
+  },
+  "environment": {
+    "python": "3.12.14",
+    "qt_platform": "offscreen",
+    "pythonpath": "/workspace/scratch/b1d1356aa953/patchtrace-strings-ui/src"
+  },
+  "scope": "Synthetic offscreen Qt controller lifecycle; no target execution, live external tools, or release qualification."
+}

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import subprocess
 import sys
@@ -14,6 +15,7 @@ from tools.research_qualification.__main__ import main  # noqa: E402
 
 
 def c(i, fn="f", **exp):
+    # Authored parity mechanics: verification here describes only this controlled fixture.
     return {
         "id": i,
         "layer": "L2",
@@ -21,10 +23,10 @@ def c(i, fn="f", **exp):
         "project": "p" + i,
         "source_url": "https://x.org/a",
         "licence": "MIT",
-        "older": {"ref": "a"},
-        "newer": {"ref": "b"},
+        "older": {"ref": "a", "sha256": hashlib.sha256(b'authored older').hexdigest()},
+        "newer": {"ref": "b", "sha256": hashlib.sha256(b'authored newer').hexdigest()},
         "expected": exp or {"function": fn},
-        "facts": "unverified",
+        "facts": "verified",
         "holdout": False,
     }
 

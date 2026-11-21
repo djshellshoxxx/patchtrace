@@ -253,7 +253,8 @@ def test_duplicate_names_keep_distinct_locators():
 
 REQUIRED = ('search.dock search.action search.query search.side search.kinds search.scope search.mode search.sort '
             'search.save search.saved search.rebuild search.coverage search.table search.detail search.goto '
-            'search.other_side search.copy').split()
+            'search.other_side search.copy search.col.side search.col.kind search.col.match search.col.where '
+            'search.col.change search.col.why').split()
 
 
 def test_tooltip_ids_are_complete():

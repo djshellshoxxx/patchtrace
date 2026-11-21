@@ -33,6 +33,7 @@ def mark_interrupted(workspace: WorkspaceStore) -> tuple[str, ...]:
     for op, state, body in workspace.journal_ops():
         if state == 'done' or body.get('interrupted'):
             continue
+        ProjectAttachment._acquisition(body, op_id=op)  # no interruption write for foreign/invalid evidence
         inv = body['revision']['investigation_id']
         workspace.append_attempt(inv, Attempt(op='attach', plan_sha=body.get('plan_sha'),
                                               stage=f'interrupted:{state}', result='cancelled',

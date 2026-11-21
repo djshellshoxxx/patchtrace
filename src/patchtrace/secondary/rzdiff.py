@@ -215,9 +215,13 @@ def interpret(returncode: int, output: str | bytes, stderr_tail: str, version: s
     exact = isinstance(output, bytes)
     if returncode != 0:
         shown = stderr_tail or (output.decode('utf-8', errors='replace') if exact else output)
-        tail = shown.encode('utf-8')[-STDERR_TAIL:].decode('utf-8', errors='replace')
+        tail = shown.encode('utf-8', errors='replace')[-STDERR_TAIL:].decode('utf-8', errors='replace')
         raise SecondaryError('PT-SECONDARY-RUN', f'rz-diff exited with {returncode}: {tail}')
-    if len(output if exact else output.encode('utf-8')) > stdout_limit:
+    try:
+        size = len(output if exact else output.encode('utf-8'))
+    except UnicodeEncodeError:
+        raise _fail('rz-diff output is not valid UTF-8') from None
+    if size > stdout_limit:
         raise SecondaryError('PT-SECONDARY-LIMIT', 'rz-diff output exceeds 64 MiB')
     if not exact and '\ufffd' in output:  # lossy text: this may stand for a byte that was replaced
         raise SecondaryError('PT-SECONDARY-INPUT', 'rz-diff output is not valid UTF-8')

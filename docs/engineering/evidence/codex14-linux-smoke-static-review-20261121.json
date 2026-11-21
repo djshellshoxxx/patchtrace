@@ -1,0 +1,49 @@
+{
+  "schema": "patchtrace-codex14-source-review/1",
+  "date": "2026-11-21",
+  "type": "author-side static source/mutation controls; NOT full repository pytest, peer review, or frozen Linux execution",
+  "branch": "codex/patchtrace-linux-frozen-cli-smoke-20261121",
+  "source_blobs": {
+    ".github/workflows/qa-windows.yml": "b3a33dc2981aa85d4862c77be034c11306c224e4",
+    "tests/test_codex_pkg_packaging.py": "b3876f278f789c727151faa5501d8618406fdc11",
+    "tools/frozen_smoke.py": "84e462135b793134720dba2125182e848f0a94fa"
+  },
+  "original_static_contract": {
+    "pass": true,
+    "missing": [],
+    "ordered": true
+  },
+  "negative_controls": [
+    {
+      "mutation": "remove-frozen-invocation",
+      "detected": true
+    },
+    {
+      "mutation": "substitute-source-runtime",
+      "detected": true
+    },
+    {
+      "mutation": "remove-source-checkout",
+      "detected": true
+    },
+    {
+      "mutation": "move-artifact-before-checkout",
+      "detected": true
+    },
+    {
+      "mutation": "remove-archive-digest",
+      "detected": true
+    },
+    {
+      "mutation": "remove-xcb",
+      "detected": true
+    },
+    {
+      "mutation": "remove-frozen-offscreen-env",
+      "detected": true
+    }
+  ],
+  "positive_test_assertions_present": true,
+  "smoke_engine_unchanged_except_docstring": true,
+  "hosted_frozen_acceptance": "pending"
+}

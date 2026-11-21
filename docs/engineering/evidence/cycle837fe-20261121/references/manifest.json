@@ -1,0 +1,29 @@
+{
+  "schema": "patchtrace.reference-inventory-files/1",
+  "files": {
+    "README.md": {
+      "bytes": 4458,
+      "sha256": "02690c35cdf8db0d9924e2eb721d8c16ac0a1fda8f11cd2f839bb24027fee6d0"
+    },
+    "summary.json": {
+      "bytes": 2275,
+      "sha256": "64b5eb05a21f87a53aa21d2cd23daa988ddd158c171fa94cf7f5f2280578673c"
+    },
+    "validation.json": {
+      "bytes": 550,
+      "sha256": "990778152be37296608b41a2efc32efed3a0ff1763b5d996a24e7d1c1d4fc135"
+    },
+    "build_inventory.py": {
+      "bytes": 10494,
+      "sha256": "63620c92289e4ce5a6df9cea242fdd68ac660f8b1da9d1ba7f83b8d1a2717e4b"
+    },
+    "compact_inventory.py": {
+      "bytes": 6829,
+      "sha256": "9a4f8f51dd8db5f1c2beed8bd8264d8cd47ce8081f01affbb00053153af648c5"
+    },
+    "technical-inventory.compact.json.gz": {
+      "bytes": 253016,
+      "sha256": "f92aff6d25907458dee2d39953b17a296c6da9d7a94365119c56c940d6ee3a07"
+    }
+  }
+}

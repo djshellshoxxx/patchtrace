@@ -1,0 +1,52 @@
+{
+  "schema": "patchtrace-generation-source-receipt/1",
+  "generation": 19,
+  "date_utc": "2026-11-20",
+  "repository": "https://github.com/djshellshoxxx/PatchTrace",
+  "baseline": {
+    "pr": 329,
+    "head": "e4b7c74ca4846c222a95dff6dad270a3d440a898",
+    "tree": "84b3a9f61ebe29cc833e866434e7955fac54e855",
+    "main": "fdc2696c23bdbfe7668348f25e3b336ce33039f7"
+  },
+  "candidate": {
+    "branch": "codex/patchtrace-winbindex-body-gap-20261120-g19",
+    "pre_documentation_head": "e2e32e0d8006d430950a00b7c12bfad408114c34",
+    "pre_documentation_tree": "7208f19b1223238b7ecb2ede15d73134c0eed763"
+  },
+  "regression": {
+    "original": "source parser skipped_bodies count absent from WorkspaceFileIndex rows gap",
+    "stdlib_algorithm_mirror": {
+      "original": "one intentional failure expected 1 actual 0",
+      "corrected": "one selected pass, one deselection",
+      "is_repository_test": false
+    },
+    "repository_tests_added": 4,
+    "revised_existing_expectations": 2,
+    "full_repository_pytest": "not-run-locally",
+    "whole_tree_ruff": "not-run-locally",
+    "independent_signoff": "pending"
+  },
+  "predecessor_CI": {
+    "pr": 328,
+    "source": "0d55516788a8de8244b5599a83b4413757d6c1be",
+    "windows_qa": {
+      "job_id": 136058869951,
+      "pytest": {
+        "passed": 23636,
+        "skipped": 162,
+        "xfailed": 5
+      },
+      "ruff": "I001 tests/test_kbc_winbindex_held_admission_20261120.py:2",
+      "result": "failure"
+    },
+    "native_seeded_no_adjacent_pdb": {
+      "job_id": 136058869772,
+      "step": "Download Ghidra 12.0.4",
+      "result": "failure",
+      "evidence": "Invoke-WebRequest existing connection forcibly closed by remote host; native steps skipped"
+    }
+  },
+  "release_ready": false,
+  "main_merge_eligible": false
+}

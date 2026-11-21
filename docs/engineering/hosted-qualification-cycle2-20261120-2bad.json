@@ -1,0 +1,4082 @@
+{
+  "archive": {
+    "bytes": 121171,
+    "path": "evidence/hosted-qualification-cycle2-20261120-2bad.zip",
+    "sha256": "8cbf7198584c688bbc84abefb007b91697a66640f7ccc76dd1a044d112ddcb98"
+  },
+  "capture_window_utc": [
+    "2026-11-21T02:30:00Z",
+    "2026-11-21T02:33:07Z"
+  ],
+  "disposition": {
+    "345": "Attempt 1 failed: NSIS Chocolatey feed HTTP503 after full pytest, Ruff, build/frozen/portable passed; installer and downstream Linux package/smoke skipped. Root may perform an evidence-backed failed-job retry after this snapshot; its outcome is not included.",
+    "346": "All observed applicable automated jobs green; preserve sibling and use already-recovered unique code in PR347 rather than broad-ledger merge. This receipt is not independent source review or main/release approval.",
+    "347": "Windows QA and Qt still running; downstream package/smoke not yet established; root owns post-integration source review.",
+    "inventory": "No workflows observed for a63; later coordinator source91618abe is outside these receipts.",
+    "release": "Release jobs intentionally skipped on PRs; manual Windows trust/accessibility, full provenance and L1/L2/L3 remain distinct unqualified gates."
+  },
+  "full_pytest": [
+    {
+      "job_id": 136648122190,
+      "os": "Linux",
+      "passed": 23974,
+      "pr": 345,
+      "seconds": 2211.5,
+      "skipped": 53,
+      "xfailed": 6
+    },
+    {
+      "job_id": 136648122555,
+      "os": "Windows",
+      "passed": 23847,
+      "pr": 345,
+      "seconds": 3719.74,
+      "skipped": 181,
+      "xfailed": 5
+    },
+    {
+      "job_id": 136649934519,
+      "os": "Linux",
+      "passed": 23958,
+      "pr": 346,
+      "seconds": 2297.45,
+      "skipped": 53,
+      "xfailed": 6
+    },
+    {
+      "job_id": 136649934371,
+      "os": "Windows",
+      "passed": 23845,
+      "pr": 346,
+      "seconds": 3489.39,
+      "skipped": 167,
+      "xfailed": 5
+    },
+    {
+      "job_id": 136657396037,
+      "os": "Linux",
+      "passed": 23996,
+      "pr": 347,
+      "seconds": 2249.8,
+      "skipped": 53,
+      "xfailed": 6
+    }
+  ],
+  "inventory": {
+    "all_workflow_runs": 0,
+    "head": "a63a20b2a272d53a09422222050080823fc3c664"
+  },
+  "limitations": [
+    "Sequential snapshot: PR346 final job result is later than its check-runs snapshot.",
+    "No sums across different sources or overlapping selections.",
+    "Hosted success does not explain historical local SIGKILL sender/cause or erase native/Qt failures.",
+    "All-runs endpoint was unfiltered by event; counts3,2,2,0 fit100; check counts21,16,13 fit100; review submissions/threads empty.",
+    "No source edits, remote mutation, workflow dispatch/retry, analyzed-target execution, or global status-file edits by this reviewer."
+  ],
+  "main": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+  "prs": {
+    "345": {
+      "base": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+      "draft": true,
+      "head": "39c38a02f126963fc03827fa49741255590227ad",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "id": 136648121547,
+          "logs_url": null,
+          "name": "native (patchtrace-seeded-store)",
+          "run_id": 44840721268,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-java@v4",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run ilammy/msvc-dev-cmd@v1",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run cl /nologo /LD /Od /GS- /Zi tests\\fixtures\\old.c /Fdtests\\fixtures\\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\\fixtures\\old.dll /PDB:tests\\fixtures\\old.pdb",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run Invoke-WebRequest 'https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip' -OutFile ghidra.zip",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)",
+              "number": 9,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols",
+              "number": 10,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Remove PDBs at the path embedded in the fixture DLLs",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Native raw-output cache hit is byte-identical",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "PatchTrace offline analysis succeeds despite persisted symbol store",
+              "number": 13,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 14,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-java@v4",
+              "number": 26,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 27,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 28,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 29,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136648121917,
+          "logs_url": null,
+          "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+          "run_id": 44840721268,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-java@v4",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run ilammy/msvc-dev-cmd@v1",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run cl /nologo /LD /Od /GS- /Zi tests\\fixtures\\old.c /Fdtests\\fixtures\\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\\fixtures\\old.dll /PDB:tests\\fixtures\\old.pdb",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run Invoke-WebRequest 'https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip' -OutFile ghidra.zip",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)",
+              "number": 9,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols",
+              "number": 10,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Remove PDBs at the path embedded in the fixture DLLs",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Native raw-output cache hit is byte-identical",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "PatchTrace offline analysis succeeds despite persisted symbol store",
+              "number": 13,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 14,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-java@v4",
+              "number": 26,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 27,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 28,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 29,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136648121935,
+          "logs_url": null,
+          "name": "native (repro-plain-ghidriff)",
+          "run_id": 44840721268,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-java@v4",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run ilammy/msvc-dev-cmd@v1",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run cl /nologo /LD /Od /GS- /Zi tests\\fixtures\\old.c /Fdtests\\fixtures\\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\\fixtures\\old.dll /PDB:tests\\fixtures\\old.pdb",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run Invoke-WebRequest 'https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip' -OutFile ghidra.zip",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)",
+              "number": 9,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols",
+              "number": 10,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Remove PDBs at the path embedded in the fixture DLLs",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Native raw-output cache hit is byte-identical",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "PatchTrace offline analysis succeeds despite persisted symbol store",
+              "number": 13,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 14,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-java@v4",
+              "number": 26,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 27,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 28,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 29,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136648121961,
+          "logs_url": null,
+          "name": "native (raw-cache-hit)",
+          "run_id": 44840721268,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-java@v4",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run ilammy/msvc-dev-cmd@v1",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run cl /nologo /LD /Od /GS- /Zi tests\\fixtures\\old.c /Fdtests\\fixtures\\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\\fixtures\\old.dll /PDB:tests\\fixtures\\old.pdb",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run Invoke-WebRequest 'https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip' -OutFile ghidra.zip",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)",
+              "number": 9,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols",
+              "number": 10,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Remove PDBs at the path embedded in the fixture DLLs",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Native raw-output cache hit is byte-identical",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "PatchTrace offline analysis succeeds despite persisted symbol store",
+              "number": 13,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 14,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-java@v4",
+              "number": 26,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 27,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 28,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 29,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136648122050,
+          "logs_url": null,
+          "name": "native (patchtrace-clean)",
+          "run_id": 44840721268,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-java@v4",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run ilammy/msvc-dev-cmd@v1",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run cl /nologo /LD /Od /GS- /Zi tests\\fixtures\\old.c /Fdtests\\fixtures\\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\\fixtures\\old.dll /PDB:tests\\fixtures\\old.pdb",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run Invoke-WebRequest 'https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip' -OutFile ghidra.zip",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)",
+              "number": 9,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols",
+              "number": 10,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Remove PDBs at the path embedded in the fixture DLLs",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Native raw-output cache hit is byte-identical",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "PatchTrace offline analysis succeeds despite persisted symbol store",
+              "number": 13,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 14,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-java@v4",
+              "number": 26,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 27,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 28,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 29,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136648122190,
+          "logs_url": null,
+          "name": "qa (ubuntu-latest)",
+          "run_id": 44840721370,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip check",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "protobuf equals the pin and runs the upb backend (SPEC-10b)",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Native pair-publication boundary controls",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pytest -q --junitxml=qa-results.xml",
+              "number": 9,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m ruff check src tests tools",
+              "number": 10,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "BinExport worker memory cap measurement (SPEC-10b U7, non-gating)",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Run python tools/build_windows.py",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Frozen EXE headless smoke (A1-A4) and self-test",
+              "number": 13,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Extract and run portable Windows ZIP outside checkout",
+              "number": 14,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Install pinned NSIS compiler",
+              "number": 15,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Build per-user Windows installer",
+              "number": 16,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Install, launch, and uninstall the setup package",
+              "number": 17,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Record this matrix leg's own result for the release notes",
+              "number": 18,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 19,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 20,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 39,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 40,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 41,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136648122393,
+          "logs_url": null,
+          "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+          "run_id": 44840721370,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python tools/qt_gate.py --repeat 20 --shard 3/4",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 13,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136648122430,
+          "logs_url": null,
+          "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+          "run_id": 44840721370,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python tools/qt_gate.py --repeat 20 --shard 2/4",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 13,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136648122475,
+          "logs_url": null,
+          "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+          "run_id": 44840721370,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python tools/qt_gate.py --repeat 20 --shard 1/4",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 13,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "failure",
+          "id": 136648122555,
+          "logs_url": null,
+          "name": "qa (windows-latest)",
+          "run_id": 44840721370,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip check",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "protobuf equals the pin and runs the upb backend (SPEC-10b)",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Native pair-publication boundary controls",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pytest -q --junitxml=qa-results.xml",
+              "number": 9,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m ruff check src tests tools",
+              "number": 10,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "BinExport worker memory cap measurement (SPEC-10b U7, non-gating)",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python tools/build_windows.py",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Frozen EXE headless smoke (A1-A4) and self-test",
+              "number": 13,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Extract and run portable Windows ZIP outside checkout",
+              "number": 14,
+              "status": "completed"
+            },
+            {
+              "conclusion": "failure",
+              "name": "Install pinned NSIS compiler",
+              "number": 15,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Build per-user Windows installer",
+              "number": 16,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Install, launch, and uninstall the setup package",
+              "number": 17,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Record this matrix leg's own result for the release notes",
+              "number": 18,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 19,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 20,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 39,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 40,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 41,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136648122612,
+          "logs_url": null,
+          "name": "qt-gate (windows-latest, 5, 1/1)",
+          "run_id": 44840721370,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python tools/qt_gate.py --repeat 5 --shard 1/1",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 13,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136648122760,
+          "logs_url": null,
+          "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+          "run_id": 44840721370,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python tools/qt_gate.py --repeat 20 --shard 4/4",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 13,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "skipped",
+          "id": 136648123878,
+          "logs_url": null,
+          "name": "release-gate",
+          "run_id": 44840721370,
+          "status": "completed",
+          "steps": null
+        },
+        {
+          "conclusion": "skipped",
+          "id": 136687452547,
+          "logs_url": null,
+          "name": "linux-smoke",
+          "run_id": 44840721370,
+          "status": "completed",
+          "steps": null
+        },
+        {
+          "conclusion": "skipped",
+          "id": 136687452584,
+          "logs_url": null,
+          "name": "linux-package",
+          "run_id": 44840721370,
+          "status": "completed",
+          "steps": null
+        },
+        {
+          "conclusion": "skipped",
+          "id": 136687453524,
+          "logs_url": null,
+          "name": "release",
+          "run_id": 44840721370,
+          "status": "completed",
+          "steps": null
+        }
+      ],
+      "merged": false,
+      "review_submissions": [],
+      "review_threads": [],
+      "runs": [
+        {
+          "conclusion": "success",
+          "event": "pull_request",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44840721268",
+          "id": 44840721268,
+          "name": "Native Windows Ghidriff acceptance",
+          "run_attempt": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "event": "pull_request",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44840721370",
+          "id": 44840721370,
+          "name": "QA and Windows standalone",
+          "run_attempt": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "event": "push",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44840716067",
+          "id": 44840716067,
+          "name": "Native Windows Ghidriff acceptance",
+          "run_attempt": 1,
+          "status": "completed"
+        }
+      ],
+      "status_contexts": [
+        {
+          "context": "security/snyk (djshellshoxxx)",
+          "state": "success",
+          "target_url": "https://app.snyk.io/org/djshellshoxxx/pr-checks/0c820319-00f8-410e-82f6-dc2ca4d09497"
+        }
+      ],
+      "tested_merge": "0ad6c2ea6bfaa734c2fc8eb9fb99630ac4727950",
+      "tree": "c458f2bcdbafccb1704966d07c1809a323f7f540",
+      "tree_equality_verified": true
+    },
+    "346": {
+      "base": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+      "draft": true,
+      "head": "c07774ecf5a3f7337834f95a9a4c51c8ec5fad44",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "id": 136649933273,
+          "logs_url": null,
+          "name": "native (repro-plain-ghidriff)",
+          "run_id": 44841261831,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-java@v4",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run ilammy/msvc-dev-cmd@v1",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run cl /nologo /LD /Od /GS- /Zi tests\\fixtures\\old.c /Fdtests\\fixtures\\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\\fixtures\\old.dll /PDB:tests\\fixtures\\old.pdb",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run Invoke-WebRequest 'https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip' -OutFile ghidra.zip",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)",
+              "number": 9,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols",
+              "number": 10,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Remove PDBs at the path embedded in the fixture DLLs",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Native raw-output cache hit is byte-identical",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "PatchTrace offline analysis succeeds despite persisted symbol store",
+              "number": 13,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 14,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-java@v4",
+              "number": 26,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 27,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 28,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 29,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136649933684,
+          "logs_url": null,
+          "name": "native (patchtrace-seeded-store)",
+          "run_id": 44841261831,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-java@v4",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run ilammy/msvc-dev-cmd@v1",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run cl /nologo /LD /Od /GS- /Zi tests\\fixtures\\old.c /Fdtests\\fixtures\\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\\fixtures\\old.dll /PDB:tests\\fixtures\\old.pdb",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run Invoke-WebRequest 'https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip' -OutFile ghidra.zip",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)",
+              "number": 9,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols",
+              "number": 10,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Remove PDBs at the path embedded in the fixture DLLs",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Native raw-output cache hit is byte-identical",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "PatchTrace offline analysis succeeds despite persisted symbol store",
+              "number": 13,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 14,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-java@v4",
+              "number": 26,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 27,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 28,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 29,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136649933768,
+          "logs_url": null,
+          "name": "native (raw-cache-hit)",
+          "run_id": 44841261831,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-java@v4",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run ilammy/msvc-dev-cmd@v1",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run cl /nologo /LD /Od /GS- /Zi tests\\fixtures\\old.c /Fdtests\\fixtures\\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\\fixtures\\old.dll /PDB:tests\\fixtures\\old.pdb",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run Invoke-WebRequest 'https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip' -OutFile ghidra.zip",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)",
+              "number": 9,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols",
+              "number": 10,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Remove PDBs at the path embedded in the fixture DLLs",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Native raw-output cache hit is byte-identical",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "PatchTrace offline analysis succeeds despite persisted symbol store",
+              "number": 13,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 14,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-java@v4",
+              "number": 26,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 27,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 28,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 29,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136649933829,
+          "logs_url": null,
+          "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+          "run_id": 44841261831,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-java@v4",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run ilammy/msvc-dev-cmd@v1",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run cl /nologo /LD /Od /GS- /Zi tests\\fixtures\\old.c /Fdtests\\fixtures\\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\\fixtures\\old.dll /PDB:tests\\fixtures\\old.pdb",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run Invoke-WebRequest 'https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip' -OutFile ghidra.zip",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)",
+              "number": 9,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols",
+              "number": 10,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Remove PDBs at the path embedded in the fixture DLLs",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Native raw-output cache hit is byte-identical",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "PatchTrace offline analysis succeeds despite persisted symbol store",
+              "number": 13,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 14,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-java@v4",
+              "number": 26,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 27,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 28,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 29,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136649933871,
+          "logs_url": null,
+          "name": "native (patchtrace-clean)",
+          "run_id": 44841261831,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-java@v4",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run ilammy/msvc-dev-cmd@v1",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run cl /nologo /LD /Od /GS- /Zi tests\\fixtures\\old.c /Fdtests\\fixtures\\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\\fixtures\\old.dll /PDB:tests\\fixtures\\old.pdb",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run Invoke-WebRequest 'https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip' -OutFile ghidra.zip",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)",
+              "number": 9,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols",
+              "number": 10,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Remove PDBs at the path embedded in the fixture DLLs",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Native raw-output cache hit is byte-identical",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "PatchTrace offline analysis succeeds despite persisted symbol store",
+              "number": 13,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 14,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-java@v4",
+              "number": 26,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 27,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 28,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 29,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136649934371,
+          "logs_url": null,
+          "name": "qa (windows-latest)",
+          "run_id": 44841261805,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip check",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "protobuf equals the pin and runs the upb backend (SPEC-10b)",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Native pair-publication boundary controls",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pytest -q --junitxml=qa-results.xml",
+              "number": 9,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m ruff check src tests tools",
+              "number": 10,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "BinExport worker memory cap measurement (SPEC-10b U7, non-gating)",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python tools/build_windows.py",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Frozen EXE headless smoke (A1-A4) and self-test",
+              "number": 13,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Extract and run portable Windows ZIP outside checkout",
+              "number": 14,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Install pinned NSIS compiler",
+              "number": 15,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Build per-user Windows installer",
+              "number": 16,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Install, launch, and uninstall the setup package",
+              "number": 17,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Record this matrix leg's own result for the release notes",
+              "number": 18,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 19,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 20,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 39,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 40,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 41,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136649934519,
+          "logs_url": null,
+          "name": "qa (ubuntu-latest)",
+          "run_id": 44841261805,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip check",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "protobuf equals the pin and runs the upb backend (SPEC-10b)",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Native pair-publication boundary controls",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pytest -q --junitxml=qa-results.xml",
+              "number": 9,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m ruff check src tests tools",
+              "number": 10,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "BinExport worker memory cap measurement (SPEC-10b U7, non-gating)",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Run python tools/build_windows.py",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Frozen EXE headless smoke (A1-A4) and self-test",
+              "number": 13,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Extract and run portable Windows ZIP outside checkout",
+              "number": 14,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Install pinned NSIS compiler",
+              "number": 15,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Build per-user Windows installer",
+              "number": 16,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Install, launch, and uninstall the setup package",
+              "number": 17,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Record this matrix leg's own result for the release notes",
+              "number": 18,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 19,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 20,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 39,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 40,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 41,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136649934568,
+          "logs_url": null,
+          "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+          "run_id": 44841261805,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python tools/qt_gate.py --repeat 20 --shard 2/4",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 13,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136649934586,
+          "logs_url": null,
+          "name": "qt-gate (windows-latest, 5, 1/1)",
+          "run_id": 44841261805,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python tools/qt_gate.py --repeat 5 --shard 1/1",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 13,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136649934666,
+          "logs_url": null,
+          "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+          "run_id": 44841261805,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python tools/qt_gate.py --repeat 20 --shard 3/4",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 13,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136649934708,
+          "logs_url": null,
+          "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+          "run_id": 44841261805,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python tools/qt_gate.py --repeat 20 --shard 1/4",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 13,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136649934918,
+          "logs_url": null,
+          "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+          "run_id": 44841261805,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python tools/qt_gate.py --repeat 20 --shard 4/4",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 13,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "skipped",
+          "id": 136649935351,
+          "logs_url": null,
+          "name": "release-gate",
+          "run_id": 44841261805,
+          "status": "completed",
+          "steps": null
+        },
+        {
+          "conclusion": "success",
+          "id": 136685886748,
+          "logs_url": null,
+          "name": "linux-package",
+          "run_id": 44841261805,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1 libxcb-cursor0 libxkbcommon-x11-0 xvfb",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python tools/check_protobuf_runtime.py",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python tools/build_linux.py",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 15,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 16,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 17,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136695331993,
+          "logs_url": null,
+          "name": "linux-smoke (ubuntu-24.04)",
+          "run_id": 44841261805,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/download-artifact@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1 libfontconfig1 libdbus-1-3 libxkbcommon0 libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-shape0 libxcb-xinerama0 libxcb-xkb1 libxcb-xfixes0 xvfb",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run sha256sum -c PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run tar xzf PatchTrace-0.1.0-linux-x86_64.tar.gz && test -x PatchTrace/PatchTrace",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Report unresolved shared libraries of bundled Qt platform plugins",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run QT_QPA_PLATFORM=offscreen PatchTrace/PatchTrace --self-test",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run QT_QPA_PLATFORM=xcb xvfb-run -a PatchTrace/PatchTrace --self-test",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 9,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136695332004,
+          "logs_url": null,
+          "name": "linux-smoke (ubuntu-22.04)",
+          "run_id": 44841261805,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/download-artifact@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1 libfontconfig1 libdbus-1-3 libxkbcommon0 libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-shape0 libxcb-xinerama0 libxcb-xkb1 libxcb-xfixes0 xvfb",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run sha256sum -c PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run tar xzf PatchTrace-0.1.0-linux-x86_64.tar.gz && test -x PatchTrace/PatchTrace",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Report unresolved shared libraries of bundled Qt platform plugins",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run QT_QPA_PLATFORM=offscreen PatchTrace/PatchTrace --self-test",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run QT_QPA_PLATFORM=xcb xvfb-run -a PatchTrace/PatchTrace --self-test",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 9,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "skipped",
+          "id": 136699661497,
+          "logs_url": null,
+          "name": "release",
+          "run_id": 44841261805,
+          "status": "completed",
+          "steps": null
+        }
+      ],
+      "merged": false,
+      "review_submissions": [],
+      "review_threads": [],
+      "runs": [
+        {
+          "conclusion": "success",
+          "event": "pull_request",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44841261831",
+          "id": 44841261831,
+          "name": "Native Windows Ghidriff acceptance",
+          "run_attempt": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "event": "pull_request",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44841261805",
+          "id": 44841261805,
+          "name": "QA and Windows standalone",
+          "run_attempt": 1,
+          "status": "completed"
+        }
+      ],
+      "status_contexts": [
+        {
+          "context": "security/snyk (djshellshoxxx)",
+          "state": "success",
+          "target_url": "https://app.snyk.io/org/djshellshoxxx/pr-checks/ac8f5809-4b4f-418b-99ab-e306d586304d"
+        }
+      ],
+      "tested_merge": "143d98c1e004d2fdb3464a676364aec3d9bfbd7a",
+      "tree": "8b3b62b05bb6e7bd9eb5de8cbda797aceca52ca0",
+      "tree_equality_verified": true
+    },
+    "347": {
+      "base": "39c38a02f126963fc03827fa49741255590227ad",
+      "draft": true,
+      "head": "b461ac64eb9beb74449ce2b18b6795a2af34a02a",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "id": 136657395335,
+          "logs_url": null,
+          "name": "native (patchtrace-seeded-store)",
+          "run_id": 44843482467,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-java@v4",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run ilammy/msvc-dev-cmd@v1",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run cl /nologo /LD /Od /GS- /Zi tests\\fixtures\\old.c /Fdtests\\fixtures\\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\\fixtures\\old.dll /PDB:tests\\fixtures\\old.pdb",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run Invoke-WebRequest 'https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip' -OutFile ghidra.zip",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)",
+              "number": 9,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols",
+              "number": 10,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Remove PDBs at the path embedded in the fixture DLLs",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Native raw-output cache hit is byte-identical",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "PatchTrace offline analysis succeeds despite persisted symbol store",
+              "number": 13,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 14,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-java@v4",
+              "number": 26,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 27,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 28,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 29,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136657395444,
+          "logs_url": null,
+          "name": "native (raw-cache-hit)",
+          "run_id": 44843482467,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-java@v4",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run ilammy/msvc-dev-cmd@v1",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run cl /nologo /LD /Od /GS- /Zi tests\\fixtures\\old.c /Fdtests\\fixtures\\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\\fixtures\\old.dll /PDB:tests\\fixtures\\old.pdb",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run Invoke-WebRequest 'https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip' -OutFile ghidra.zip",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)",
+              "number": 9,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols",
+              "number": 10,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Remove PDBs at the path embedded in the fixture DLLs",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Native raw-output cache hit is byte-identical",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "PatchTrace offline analysis succeeds despite persisted symbol store",
+              "number": 13,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 14,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-java@v4",
+              "number": 26,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 27,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 28,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 29,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136657395673,
+          "logs_url": null,
+          "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+          "run_id": 44843482467,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-java@v4",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run ilammy/msvc-dev-cmd@v1",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run cl /nologo /LD /Od /GS- /Zi tests\\fixtures\\old.c /Fdtests\\fixtures\\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\\fixtures\\old.dll /PDB:tests\\fixtures\\old.pdb",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run Invoke-WebRequest 'https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip' -OutFile ghidra.zip",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)",
+              "number": 9,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols",
+              "number": 10,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Remove PDBs at the path embedded in the fixture DLLs",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Native raw-output cache hit is byte-identical",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "PatchTrace offline analysis succeeds despite persisted symbol store",
+              "number": 13,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 14,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-java@v4",
+              "number": 26,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 27,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 28,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 29,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136657395684,
+          "logs_url": null,
+          "name": "native (repro-plain-ghidriff)",
+          "run_id": 44843482467,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-java@v4",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run ilammy/msvc-dev-cmd@v1",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run cl /nologo /LD /Od /GS- /Zi tests\\fixtures\\old.c /Fdtests\\fixtures\\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\\fixtures\\old.dll /PDB:tests\\fixtures\\old.pdb",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run Invoke-WebRequest 'https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip' -OutFile ghidra.zip",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)",
+              "number": 9,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols",
+              "number": 10,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Remove PDBs at the path embedded in the fixture DLLs",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Native raw-output cache hit is byte-identical",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "PatchTrace offline analysis succeeds despite persisted symbol store",
+              "number": 13,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 14,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-java@v4",
+              "number": 26,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 27,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 28,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 29,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136657395691,
+          "logs_url": null,
+          "name": "native (patchtrace-clean)",
+          "run_id": 44843482467,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-java@v4",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run ilammy/msvc-dev-cmd@v1",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run cl /nologo /LD /Od /GS- /Zi tests\\fixtures\\old.c /Fdtests\\fixtures\\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\\fixtures\\old.dll /PDB:tests\\fixtures\\old.pdb",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run Invoke-WebRequest 'https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip' -OutFile ghidra.zip",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)",
+              "number": 9,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols",
+              "number": 10,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Remove PDBs at the path embedded in the fixture DLLs",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Native raw-output cache hit is byte-identical",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "PatchTrace offline analysis succeeds despite persisted symbol store",
+              "number": 13,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 14,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-java@v4",
+              "number": 26,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 27,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 28,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 29,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136657396037,
+          "logs_url": null,
+          "name": "qa (ubuntu-latest)",
+          "run_id": 44843482603,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip check",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "protobuf equals the pin and runs the upb backend (SPEC-10b)",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Native pair-publication boundary controls",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pytest -q --junitxml=qa-results.xml",
+              "number": 9,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m ruff check src tests tools",
+              "number": 10,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "BinExport worker memory cap measurement (SPEC-10b U7, non-gating)",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Run python tools/build_windows.py",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Frozen EXE headless smoke (A1-A4) and self-test",
+              "number": 13,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Extract and run portable Windows ZIP outside checkout",
+              "number": 14,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Install pinned NSIS compiler",
+              "number": 15,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Build per-user Windows installer",
+              "number": 16,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Install, launch, and uninstall the setup package",
+              "number": 17,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Record this matrix leg's own result for the release notes",
+              "number": 18,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 19,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 20,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 39,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 40,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 41,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136657396306,
+          "logs_url": null,
+          "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+          "run_id": 44843482603,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python tools/qt_gate.py --repeat 20 --shard 3/4",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 13,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136657396352,
+          "logs_url": null,
+          "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+          "run_id": 44843482603,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python tools/qt_gate.py --repeat 20 --shard 2/4",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 13,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136657396370,
+          "logs_url": null,
+          "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+          "run_id": 44843482603,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python tools/qt_gate.py --repeat 20 --shard 1/4",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 13,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": null,
+          "id": 136657396502,
+          "logs_url": null,
+          "name": "qa (windows-latest)",
+          "run_id": 44843482603,
+          "status": "in_progress",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip check",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "protobuf equals the pin and runs the upb backend (SPEC-10b)",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Native pair-publication boundary controls",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": null,
+              "name": "Run python -m pytest -q --junitxml=qa-results.xml",
+              "number": 9,
+              "status": "in_progress"
+            },
+            {
+              "conclusion": null,
+              "name": "Run python -m ruff check src tests tools",
+              "number": 10,
+              "status": "pending"
+            },
+            {
+              "conclusion": null,
+              "name": "BinExport worker memory cap measurement (SPEC-10b U7, non-gating)",
+              "number": 11,
+              "status": "pending"
+            },
+            {
+              "conclusion": null,
+              "name": "Run python tools/build_windows.py",
+              "number": 12,
+              "status": "pending"
+            },
+            {
+              "conclusion": null,
+              "name": "Frozen EXE headless smoke (A1-A4) and self-test",
+              "number": 13,
+              "status": "pending"
+            },
+            {
+              "conclusion": null,
+              "name": "Extract and run portable Windows ZIP outside checkout",
+              "number": 14,
+              "status": "pending"
+            },
+            {
+              "conclusion": null,
+              "name": "Install pinned NSIS compiler",
+              "number": 15,
+              "status": "pending"
+            },
+            {
+              "conclusion": null,
+              "name": "Build per-user Windows installer",
+              "number": 16,
+              "status": "pending"
+            },
+            {
+              "conclusion": null,
+              "name": "Install, launch, and uninstall the setup package",
+              "number": 17,
+              "status": "pending"
+            },
+            {
+              "conclusion": null,
+              "name": "Record this matrix leg's own result for the release notes",
+              "number": 18,
+              "status": "pending"
+            },
+            {
+              "conclusion": null,
+              "name": "Run actions/upload-artifact@v4",
+              "number": 19,
+              "status": "pending"
+            },
+            {
+              "conclusion": null,
+              "name": "Run actions/upload-artifact@v4",
+              "number": 20,
+              "status": "pending"
+            },
+            {
+              "conclusion": null,
+              "name": "Post Run actions/setup-python@v5",
+              "number": 39,
+              "status": "pending"
+            },
+            {
+              "conclusion": null,
+              "name": "Post Run actions/checkout@v4",
+              "number": 40,
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "id": 136657396510,
+          "logs_url": null,
+          "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+          "run_id": 44843482603,
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python tools/qt_gate.py --repeat 20 --shard 4/4",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 13,
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "conclusion": null,
+          "id": 136657396560,
+          "logs_url": null,
+          "name": "qt-gate (windows-latest, 5, 1/1)",
+          "run_id": 44843482603,
+          "status": "in_progress",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": null,
+              "name": "Run python tools/qt_gate.py --repeat 5 --shard 1/1",
+              "number": 6,
+              "status": "in_progress"
+            },
+            {
+              "conclusion": null,
+              "name": "Post Run actions/setup-python@v5",
+              "number": 11,
+              "status": "pending"
+            },
+            {
+              "conclusion": null,
+              "name": "Post Run actions/checkout@v4",
+              "number": 12,
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "conclusion": "skipped",
+          "id": 136657398406,
+          "logs_url": null,
+          "name": "release-gate",
+          "run_id": 44843482603,
+          "status": "completed",
+          "steps": null
+        }
+      ],
+      "merged": false,
+      "review_submissions": [],
+      "review_threads": [],
+      "runs": [
+        {
+          "conclusion": "success",
+          "event": "pull_request",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44843482467",
+          "id": 44843482467,
+          "name": "Native Windows Ghidriff acceptance",
+          "run_attempt": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": null,
+          "event": "pull_request",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44843482603",
+          "id": 44843482603,
+          "name": "QA and Windows standalone",
+          "run_attempt": 1,
+          "status": "in_progress"
+        }
+      ],
+      "status_contexts": [
+        {
+          "context": "security/snyk (djshellshoxxx)",
+          "state": "success",
+          "target_url": "https://app.snyk.io/org/djshellshoxxx/pr-checks/e1aa4f0f-4d19-4959-8c89-7e99a49e2f64"
+        }
+      ],
+      "tested_merge": "fd0d8d05a92fba18fcf75842d0582472ce1af3ff",
+      "tree": "34fd8e6926177ccccb7f9512100a7b40f8b2d636",
+      "tree_equality_verified": true
+    }
+  },
+  "schema": "patchtrace-hosted-qualification/1"
+}

@@ -1,0 +1,6 @@
+/workspace/scratch/837fe19aae3a/evidence/native-followup-package/intel-original-source.bundle is okay
+The bundle contains this ref:
+d628749401f61d3653b5e066ff38245b938c5dcd HEAD
+The bundle requires this ref:
+daee337c48c63dda8aeac149c407e900c79dcc86 
+The bundle uses this hash algorithm: sha1

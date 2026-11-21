@@ -1,0 +1,24 @@
+{
+  "scope": "offline branch TSV snapshot column-shape validation",
+  "source_branch": "codex/patchtrace-inventory-tsv-shape-20261120",
+  "baseline_parent": "b461ac64eb9beb74449ce2b18b6795a2af34a02a",
+  "kind": "Python 3 standard-library source-equivalent algorithm replay; NOT checked-out repository pytest",
+  "test_environment": "temporary-directory TSV inputs, csv.DictReader; Git never invoked",
+  "baseline_cases": [
+    "duplicate-header",
+    "extra-cell",
+    "missing-cell",
+    "missing-tip-header",
+    "blank-tip",
+    "blank-branch"
+  ],
+  "baseline_behavior": "six malformed shapes admitted by original csv.DictReader algorithm; the missing-tip shape would subsequently produce KeyError",
+  "amended_behavior": "all six refused with ValueError before any Git commit lookup",
+  "compatibility_control": "reordered columns plus an additional named metadata column admitted",
+  "csv_field_limit": "restored for all seven controls",
+  "pytest": "not-run: no Git checkout in available runtime; source scripts cannot be fetched over local DNS",
+  "ruff": "not-run: no repository checkout for whole-tree lint",
+  "independent_review": "pending external independent reviewer; author separately inspected contract, test and code",
+  "historical_interrupted_runs": "unchanged; no prior SIGKILL explained",
+  "caveat": "does not prove snapshot completeness, branch semantic uniqueness, provenance of external inputs or release qualification"
+}

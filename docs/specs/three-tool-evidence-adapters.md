@@ -66,10 +66,26 @@ Persistence: kind `tool-run` (body `ToolRun`, id `run_id`) and kind `tool-eviden
 - diec [run]: `<exe> -j -D <scratch>/db -E <scratch>/empty -C <scratch>/empty [-d -u] <scratch>/in/artifact.bin`; `-d -u` only with the heuristic option. The copied database is the pinned one; extra and custom databases are empty so user-writable signature folders cannot change results.
 - Never passed: capa `-d -v -vv -t --restrict-to-*` and the non-PE formats/backends; FLOSS `-l --functions -L -d -v --install/uninstall-right-click-menu`; diec `-r -a -g -l -M -x -c -t -p -S -w -s --test --addtest`. `--version`, `--help` and `-H` only in the probe.
 
+#### T3.1 Windows executable names in version probes (2026-11-21)
+
+The capa and FLOSS version probes accept a version line beginning with the exact
+program name `capa` or `floss`, with an optional literal `.exe` suffix. This covers
+argparse program-name banners from the configured Windows release executables.
+A different prefix, extension or lookalike separator is not a tool identity.
+Each adapter retains its existing version-number grammar, supported major,
+zero-exit requirement, executable SHA-256 pin and explicit untested-build opt-in.
+The required help options and backend checks still apply after identification.
+
+Controlled version/help responses establish this parsing contract only. They do
+not establish native Windows compatibility or explain a failed version process.
+In particular, accepting a `.exe` banner cannot make a nonzero FLOSS exit valid.
+
 ### T4. Execution
 Scratch per engine and side: `mkdtemp(prefix='patchtrace-<engine>-')` under the configured scratch root with `cwd/ home/ tmp/ programdata/ in/` (+ `rules/ sigs/` for capa, `db/ empty/` for diec). The artifact is streamed from the project's verified reader into `in/artifact.bin`, re-hashed (mismatch: `PT-TOOL-ARTIFACT`) and made read-only; tools never see the project path or the user's file name. The input path must stay <= 200 characters (Windows MAX_PATH margin; else `PT-TOOL-INPUT`). The scratch is removed afterwards.
 
-Environment: the shared from-scratch allow-list of `secondary/engine_env.py` (the private-workdir layout built for BinDiff: POSIX `PATH=<exe dir>:/usr/bin:/bin`, `HOME`, `TMPDIR`, `LANG`/`LC_ALL=C.UTF-8`, `XDG_CONFIG_HOME`; Windows `SystemRoot`/`windir`/`SystemDrive` copied, `PATH=<exe dir>;System32`, `TEMP`/`TMP`/`USERPROFILE`/`APPDATA`/`LOCALAPPDATA`/`PROGRAMDATA` inside the scratch; capa needs `LOCALAPPDATA` for its rule cache on Windows [src `capa/rules/cache.py`]). Additions only from explicit configuration: diec `LD_LIBRARY_PATH` (POSIX), capa Ghidra backend `GHIDRA_INSTALL_DIR` and `JAVA_HOME`. Nothing else is inherited (no proxies, credentials, `PYTHON*`, `CAPA_SAVE_WORKSPACE`, `FLOSS_SAVE_WORKSPACE`). PatchTrace makes no network request; the tools have no telemetry.
+Environment: the shared from-scratch allow-list of `secondary/engine_env.py` (the private-workdir layout built for BinDiff: POSIX `PATH=<exe dir>:/usr/bin:/bin`, `HOME`, `TMPDIR`, `LANG`/`LC_ALL=C.UTF-8`, `XDG_CONFIG_HOME`; Windows `SystemRoot`/`windir`/`SystemDrive` copied, `PATH=<exe dir>;System32`, `TEMP`/`TMP`/`USERPROFILE`/`APPDATA`/`LOCALAPPDATA`/`PROGRAMDATA` inside the scratch; capa needs `LOCALAPPDATA` for its rule cache on Windows [src `capa/rules/cache.py`]). Intel `process.tool_env` additionally sets the fixed synthetic `USERNAME=patchtrace` on Windows so Python `getpass.getuser()` in the tools does not fall back to the unavailable `pwd` module. It never inherits `LOGNAME`, `USER`, `LNAME` or `USERNAME`; the fixed identity is not configurable through the extra-environment allow-list. This addition is Intel-only: POSIX and shared BinDiff/Rizin environment policies remain unchanged.
+
+Other additions come only from explicit configuration: diec `LD_LIBRARY_PATH` (POSIX), capa Ghidra backend `GHIDRA_INSTALL_DIR` and `JAVA_HOME`. Nothing else is inherited (no proxies, credentials, `PYTHON*`, `CAPA_SAVE_WORKSPACE`, `FLOSS_SAVE_WORKSPACE`). PatchTrace makes no network request; the tools have no telemetry. Controlled environment/getpass tests establish this compatibility mechanism, not native tool acceptance; actual Windows probe and analysis outcomes must still be checked separately.
 
 Process: `jobs.run_process(separate_streams=True)`; stdout limit capa and FLOSS 64 MiB, diec 1 MiB, stderr 256 KiB; captured stdout above the limit is `failed`/`PT-TOOL-LIMIT`. Timeouts (10..86400 s): capa 1800, FLOSS 600 (3600 with deobfuscation), diec 120.
 
@@ -134,3 +150,44 @@ Additive to T1-T10; where a line below differs from T1-T10, this block wins.
 - **T13.5 T7 runner and cache (CAP-4).** The cache is raw-first: `DerivedCache` in `enrichment/cache.py`, stage `capa-raw`, key = existing `cache_key(artifact_sha256, manifest, options)`, payload = zlib-compressed raw stdout. A hit is re-parsed by the current parser, so parser changes never invalidate raw output; an option token `argv: capa/2` marks a change of argv or parse semantics. Admission failure is a soft miss, never an analysis failure. Cross-project reuse requires an explicit profile `cache_dir`. A rules or capa change is a cache miss and a new run, never a rewrite of stored evidence. Default rules are the built-in pack of the pinned exe (identity `embedded:<executable_sha256>`, labelled "built-in rules of capa 9.4.0 (Apache-2.0)"); the embedded pack is not byte-compared with the upstream tag [unverified].
 - **T13.6 T1 pin and T10 open items.** Pin rows 3-4 (capa and capa-rules pins) carry executable members, `trust: trust-on-first-use`, and a comparison with GitHub's per-asset digest when reachable. Open after CAP-0: `intel-tools pairs` (CAP-5); capa rule inventory (CAP-7, names and scopes only, no rule text); live Linux required leg and Windows advisory leg (CAP-8, `live-capa.yml`); extent attribution through the unified IR (CAP-9, deferred); BinExport2 backend (CAP-10, deferred); consented in-app download (CAP-11, owner decision). No CAP item changes the T10 items above.
 - **Scope of T13.** Only the amendments above are specified here. No item in T13 is implemented by CAP-0; a slice that implements one updates its own status line and tests.
+
+### T14. Opt-in stored-tool admission (recovered 2026-11-20)
+
+The Strings CLI uses
+`intelligence/tools/admission.py::latest_admitted(store, *, engine, side,
+artifact_sha256)` to admit stored results against the current project and
+artifact. The immutable result is `AdmittedToolEvidence(run, evidence,
+evidence_run)`, or `None` when no produced run exists. Invalid selected metadata
+or identity raises a bounded `ToolError`; it must not silently select an older
+produced run. Existing `ToolStore` methods and other consumers remain unchanged.
+Search and Strings dock integration are separate scopes.
+
+Read through the existing owner-thread `EnrichmentStore` API and retain Entry
+metadata and original `body_json` for strict JSON admission. Select the newest
+produced matching engine/side run in existing store order. Ordinary unsuccessful
+attempts do not replace that selection. The selected row must match its body
+run ID and status, be current, and carry guard `(current project ID,
+'intel-tools', current artifact SHA-256, cache key)`. Its body must name the
+requested engine, side and artifact. Unreadable or unclassifiable potential
+selections refuse; unrelated groups and older unselected history are not selected.
+
+The evidence row must have its content-derived identity, status `ok`, the same
+guard and no stale flag. Its contract, engine, side, artifact, cache key,
+configuration, evidence count and produced status must agree with the selected
+run. A sidecar pointer's identity fields must agree with the loaded evidence.
+The existing sidecar loader and its I/O behavior are unchanged.
+
+A direct run owns its evidence. A cache hit may have no new raw sidecar or stdout
+digest: fully admit the originating run named by `evidence.run_id` and return it
+as `evidence_run`. Select matching engine, side and cache key before admission,
+because retained orientation history can share an artifact/cache key across
+sides. Missing, stale, foreign or inconsistent origins refuse explicitly.
+The originating raw sidecar and digest are recorded provenance, not proof that
+raw bytes were reread. The helper performs no writes or tool execution.
+
+Strings maps refusal to an unavailable stored source. Auto may use the verified
+built-in scan; explicit FLOSS selection refuses. Artifact-byte verification stays
+with the existing consumer. Tests must cover orientation changes, actual authored
+runner fresh-to-cache reuse, selected/evidence/origin metadata refusal and
+preservation of original provenance. Synthetic fake-tool tests do not qualify
+native FLOSS or establish an empirical accuracy result.

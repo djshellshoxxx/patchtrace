@@ -3,8 +3,9 @@
 Each run gets a private scratch directory holding a verified, read-only copy of the artifact under a fixed name,
 copies of any rule/signature database it needs (hashed while copied, so the digest describes exactly what the tool
 reads) and private HOME/TMP/APPDATA folders. The child environment is the shared from-scratch allow-list of
-`secondary/engine_env.py`; the only additions come from explicit configuration (diec library path, capa's Ghidra
-backend). Targets are never executed: the tools analyse them statically (FLOSS emulation only after consent).
+`secondary/engine_env.py`, plus a fixed synthetic Windows identity and explicit configuration (diec library path,
+capa's Ghidra backend). Targets are never executed: the tools analyse them statically (FLOSS emulation only after
+consent).
 """
 from __future__ import annotations
 
@@ -253,10 +254,12 @@ def remove_tree(path: Path) -> None:
 def tool_env(executable: Path, scratch: Path, *, extra: Mapping[str, str] | None = None,
              environ: Mapping[str, str] | None = None, windows: bool | None = None) -> dict[str, str]:
     """The from-scratch allow-list of `secondary/engine_env.py` (private HOME/TMP/APPDATA under `scratch`) plus
-    explicitly configured additions only (T4)."""
+    a fixed synthetic Windows identity and explicitly configured additions (T4)."""
     env = engine_env(os.environ if environ is None else environ, 'bindiff', windows=windows, workdir=scratch,
                      executable=executable)
     windows = os.name == 'nt' if windows is None else windows
+    if windows:
+        env['USERNAME'] = 'patchtrace'  # getpass.getuser must not fall back to the unavailable Windows pwd module
     for key, value in (extra or {}).items():
         if key not in EXTRA_ENV or not value or any(c in value for c in '\0\r\n'):
             raise ToolError('PT-TOOL-INPUT', f'environment addition {key[:40]!r} is not allowed')

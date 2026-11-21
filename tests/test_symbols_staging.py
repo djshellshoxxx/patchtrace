@@ -196,10 +196,11 @@ def test_cancel_during_large_nonmatching_folder_scan_stops_and_closes_iterator(t
         finally:
             closed = True
 
-    monkeypatch.setattr(staging.os, 'scandir', scan)
-    with pytest.raises(modes.SymbolError) as exc:
-        staging.stage_symbols([staging.want_from_codeview('older', cv('missing.pdb'))], [d], tmp_path / 'store',
-                              cancel=lambda: seen >= 12)
+    with monkeypatch.context() as patch:
+        patch.setattr(staging.os, 'scandir', scan)
+        with pytest.raises(modes.SymbolError) as exc:
+            staging.stage_symbols([staging.want_from_codeview('older', cv('missing.pdb'))], [d], tmp_path / 'store',
+                                  cancel=lambda: seen >= 12)
     assert exc.value.code == 'PT-CANCEL'
     assert seen == 12 and closed
     assert not (tmp_path / 'store').exists()
