@@ -31,3 +31,11 @@ The strict parser now uses an `object_pairs_hook` that rejects duplicate keys at
 5. Continue remaining unowned tasks: selected registered table-header help IDs, full raw Winbindex/index membership, Windows native trust/catalog/manual accessibility, Linux forced-overwrite limitations, native Qt disposition, 181 unknown/16 patch-equivalent historical semantic heads, L1/L2/L3 separately verified labels.
 
 No target binary execution, force-push, rebase, branch deletion, release, deployment or outbound message.
+
+
+## Final source and live reference refresh (this cycle)
+- Remote branch head at pre-append verification: `91618abec4c4f13a27fd5821a25d1500f17601e4`, complete Git tree `27e500d05e69dd80d5627d07e7c0593f7353bc16` (Git Data API). This appendix is a documentation-only subsequent commit; refresh the final tree and comparison after this append.
+- Comparison against exact isolated parent `a63a20b2a272d53a09422222050080823fc3c664`: 15 ahead, 0 behind before this appendix, with only the parser/tool, new tests, contract, handoff and evidence/status files changed.
+- Live repository census: 360 branch heads, 59 tag refs. Main remains `fdc2696c23bdbfe7668348f25e3b336ce33039f7`. This is an existence snapshot, **not** exhaustive semantic reconciliation of all heads.
+- PR347 remains draft at `b461ac64eb9beb74449ce2b18b6795a2af34a02a`, based on draft PR345's `39c38a02f126963fc03827fa49741255590227ad`. PR347 original QA workflow `44843482603`: Linux QA and all four Linux Qt shards succeeded; Windows QA and Windows Qt still in progress, release-gate skipped. Native workflow `44843482467` succeeded on its original source. No workflow was dispatched for this new branch while the parent CI remained active.
+- Author-side adversarial review of the final strict-reader path: duplicate nested keys reject before identity extraction, nonfinite constants reject with fixed text, normal Unicode nested records survive, malformed/deep JSON uses a fixed error, and the CLI verifies PR metadata before branch/Git replay. The 32 MiB read budget and late atomic output publication remain unchanged. This is **not** a separate independent reviewer.
