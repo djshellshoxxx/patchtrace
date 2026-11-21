@@ -421,19 +421,28 @@ def _bind_fake(real):
 
 
 WORKFLOW = ROOT / '.github/workflows/corpus-tier-r.yml'
+REVIEWED_ACTIONS = {
+    'actions/checkout@11d5960a326750d5838078e36cf38b85af677262',
+    'actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065',
+    'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02',
+    'actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830',
+    'actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3',
+    'actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093',
+    'ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756',
+}
 
 
 def test_workflow_structure_and_pins():
     text = WORKFLOW.read_text()
     assert '9102249a9f0b6319c5334a2e5cf8d9cc3f2035e1d3def027c41f6a90f647e8cf' in text
     assert 'c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120' in text
+    used = set()
     for line in text.splitlines():
-        if 'uses:' in line:
+        if line.lstrip().startswith(('- uses:', 'uses:')):
             action = line.split('uses:', 1)[1].split('#', 1)[0].strip()
-            if action.startswith('ilammy/msvc-dev-cmd@'):
-                assert action == 'ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756'
-            else:
-                assert '@v' in action, line
+            assert action in REVIEWED_ACTIONS, line
+            used.add(action)
+    assert used == REVIEWED_ACTIONS
     yaml = pytest.importorskip('yaml')
     doc = yaml.safe_load(text)
     assert set(doc['jobs']) == {'plan', 'shard', 'merge', 'windows-advisory', 'msvc-advisory'}
