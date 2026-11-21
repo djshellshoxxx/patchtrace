@@ -1,0 +1,25 @@
+{
+  "source_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+  "source_tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
+  "parents": [
+    "d628749401f61d3653b5e066ff38245b938c5dcd",
+    "39a95c549d48eb523e9efdfda394bb9f184e2b16"
+  ],
+  "distinct_affected_passed": 1396,
+  "case_count": 1397,
+  "selection_node_selectors": 64,
+  "failed": 0,
+  "errors": 0,
+  "ordinary_skipped": 0,
+  "xfailed": 1,
+  "expected_failures": [
+    "CODEX-5"
+  ],
+  "whole_tree_ruff": "passed",
+  "dependencies": "passed",
+  "isolated_source_import": "passed; clean source-bound checkout",
+  "independent_review": "Exact complete-tree union;141 maintained checks and independent identity controls passed;no source blocker.",
+  "final_source_hosted": "pending exact final PR349 publication head",
+  "full_suite": "No successful local full aggregate claimed. Preserve earlier AF_UNIX EPERM and independently unexplained SIGKILL.",
+  "evidence": "docs/engineering/evidence/cycle837fe-native-c4-20261121/combined-focused.json"
+}

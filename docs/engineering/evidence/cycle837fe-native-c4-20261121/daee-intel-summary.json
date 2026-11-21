@@ -1,0 +1,95 @@
+{
+  "head_sha": "daee337c48c63dda8aeac149c407e900c79dcc86",
+  "tree_sha": "6c2a8d018ccc00bf65ef074579604b40627f7658",
+  "workflow_run_id": 44876415860,
+  "workflow_url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44876415860",
+  "workflow_conclusion": "success",
+  "advisory_success_is_not_acceptance": true,
+  "platforms": {
+    "linux": {
+      "job_id": 136761988496,
+      "counts": {
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "blocked": 0
+      },
+      "seconds": 17.81,
+      "checks": {
+        "capa": {
+          "status": "passed",
+          "reason": "pinned 9.4.0 reproduced the goldens on the synthetic pair",
+          "version": "9.4.0",
+          "input": "synthetic",
+          "mocked": false
+        },
+        "floss": {
+          "status": "passed",
+          "reason": "pinned 3.1.1 reproduced the goldens on the synthetic pair",
+          "version": "3.1.1",
+          "input": "synthetic",
+          "mocked": false
+        },
+        "diec": {
+          "status": "passed",
+          "reason": "pinned 3.21 reproduced the goldens on the synthetic pair",
+          "version": "3.21",
+          "input": "synthetic",
+          "mocked": false
+        },
+        "floss-offline": {
+          "status": "passed",
+          "reason": "FLOSS static strings ran in an empty network namespace",
+          "mocked": false
+        }
+      }
+    },
+    "windows": {
+      "job_id": 136761988615,
+      "counts": {
+        "passed": 1,
+        "failed": 2,
+        "skipped": 1,
+        "blocked": 1
+      },
+      "seconds": 28.49,
+      "checks": {
+        "capa": {
+          "status": "failed",
+          "reason": "run statuses ['failed', 'failed']: [\"capa failed (exit 1): Unexpected exception raised: <class 'ModuleNotFoundError'>. Please run capa in debug mode (-d--debug) to see the stack trace.\", \"capa failed (exit 1): Unexpected exception raised: <class 'ModuleNotFoundError'>. Please run capa in debug mode (-d--debug) to see the stack trace.\"]",
+          "mocked": false
+        },
+        "floss": {
+          "status": "failed",
+          "reason": "floss is not usable or not the pinned build: FLOSS did not report a version (exit 1)",
+          "mocked": false
+        },
+        "diec": {
+          "status": "passed",
+          "reason": "pinned 3.21 reproduced the goldens on the synthetic pair",
+          "version": "3.21",
+          "input": "synthetic",
+          "mocked": false
+        },
+        "floss-offline": {
+          "status": "blocked",
+          "reason": "unshare -rn is unavailable on this platform",
+          "mocked": false
+        }
+      }
+    }
+  },
+  "diagnosis": {
+    "floss": "Actual native Windows probe stderr shows vivisect.defconfig -> getpass.getuser -> ModuleNotFoundError: No module named pwd. Actual child environment omits LOGNAME, USER, LNAME, USERNAME; a controlled stdlib check reproduces the error when pwd is unavailable and resolves it with fixed synthetic USERNAME=patchtrace.",
+    "capa": "Windows version and help probes now return 0; exact version stdout is capa.exe 9.4.0\\r\\n. Later analysis returns 1 with generic ModuleNotFoundError. A shared getpass cause is inference, not direct stack evidence.",
+    "baseline": "Intel process environment and shared engine_env blobs are identical to previous head 11f51c105bf63946f59373ae605b937c4fee607a. The missing-identity construction was pre-existing; the new observer exposes its failure. Capa version-name admission is confirmed repaired.",
+    "minimum_proposal": "Set fixed synthetic USERNAME=patchtrace only in Intel process.tool_env on Windows; preserve caller identity exclusion, global BinDiff/Rizin policy, pinning, probe exit checks, supported-major checks, process limits, and path isolation. Update the Intel environment spec and focused controls. Obtain actual new-head native Windows acceptance before declaring resolution."
+  },
+  "scope": {
+    "source_edits": false,
+    "workflow_retry_or_dispatch": false,
+    "remote_mutations": false,
+    "local_upstream_or_analyzed_target_execution": false,
+    "controlled_check": "Only Python stdlib getpass with actual tool_env and simulated unavailable pwd; not native Windows acceptance."
+  }
+}

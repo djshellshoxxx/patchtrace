@@ -1,25 +1,21 @@
 {
   "schema": "patchtrace-engineering-task-ledger/1",
-  "updated_at": "2026-11-21T07:00:42.904420+00:00",
+  "updated_at": "2026-11-21T07:12:59.325233+00:00",
   "repository": "https://github.com/djshellshoxxx/PatchTrace",
   "integration_branch": "integration/patchtrace-20261121-95fe-c3",
-  "checkpoint_local_commit": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
+  "checkpoint_local_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
   "starting_candidate": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
   "main_at_discovery": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
   "remote_publication": {
-    "status": "reviewed-combined-code-qualified-publication-prepared",
+    "status": "reviewed combined follow-up awaiting guarded PR349 publication and hosted qualification",
     "branch": "integration/patchtrace-20261121-95fe-c3",
     "base_branch": "main",
     "base_commit": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
-    "original_qualified_baseline": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
-    "publication_transport": "connected GitHub REST Git Data API; preserve trees and mapped parents; no force update",
-    "head_rule": "Resolve live PR349 head/tree and its body; the final documentation publication identity and later exact-head CI receipts are recorded there without invalidating the running source.",
-    "history_bundle": "docs/engineering/evidence/cycle837fe-combined-20261121/original-source-history.bundle",
-    "verified_code_remote_commit": "61b26107d77fb632571ede932e0796d4b643f50c",
-    "verified_code_tree": "2666e72d5efd51600b170cef033103c9947bae3b",
-    "commit_mapping": "docs/engineering/evidence/cycle837fe-combined-20261121/code-publication-mapping.json",
+    "previous_source_head": "daee337c48c63dda8aeac149c407e900c79dcc86",
     "pr_number": 349,
-    "previous_source_head": "11f51c105bf63946f59373ae605b937c4fee607a"
+    "head_rule": "Resolve live PR349 body/head, mapped source/tree and current CI; do not mutate a running head merely to record status.",
+    "original_source_evidence": "docs/engineering/evidence/cycle837fe-native-c4-20261121/combined-original-source.bundle",
+    "publication_transport": "GitHub REST Git Data; exact trees and ordered mapped parents; guarded non-force ref update"
   },
   "release_ready": false,
   "main_merge_eligible": false,
@@ -1002,7 +998,7 @@
       "result_or_next_action": "All20 absent PR346 engineering/evidence files recovered with exact original blobs. Six current indexes updated separately; no whole-branch semantic supersession or deletion claim."
     },
     {
-      "target_integration_branch": "codex/patchtrace-recovery-search-20261121-837fe",
+      "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
       "base_commit": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
       "code_checkpoint": "b880c317add4de3ac22c87cd842abb0e7ccc615d",
       "merge_status": "NOT_MERGED",
@@ -1030,17 +1026,29 @@
       "tests": "Final combined 450 passed; source-specific author/reviewer selections preserved.",
       "audit_findings": "S-H1 wording correction independently closed; one-mapping negative control fails audit.",
       "blockers": [
-        "exact-final-head hosted qualification",
-        "integration ownership handoff"
+        "exact-current-source hosted qualification"
       ],
-      "next_action": "Inspect candidate hosted checks and integrate after owner handoff.",
+      "next_action": "Included in current combined source;inspect current PR349 checks before main promotion.",
       "dependencies": [
-        "PR348 baseline",
-        "95FE-C3 integration ownership"
+        "PR349 combined qualification;original95FE-C3 ownership handoff completed"
+      ],
+      "integration_history": [
+        {
+          "target_integration_branch": "codex/patchtrace-recovery-search-20261121-837fe",
+          "blockers": [
+            "exact-final-head hosted qualification",
+            "integration ownership handoff"
+          ],
+          "next_action": "Inspect candidate hosted checks and integrate after owner handoff.",
+          "dependencies": [
+            "PR348 baseline",
+            "95FE-C3 integration ownership"
+          ]
+        }
       ]
     },
     {
-      "target_integration_branch": "codex/patchtrace-recovery-search-20261121-837fe",
+      "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
       "base_commit": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
       "code_checkpoint": "b880c317add4de3ac22c87cd842abb0e7ccc615d",
       "merge_status": "NOT_MERGED",
@@ -1064,17 +1072,29 @@
       "tests": "Final combined 450 passed; final service author 262, independent 155; combined independent 34 are separate overlapping selections.",
       "audit_findings": "POSTCOMMIT-SERVICE-SNAPSHOT, SVC-R1 and SVC-R2 repaired and independently closed.",
       "blockers": [
-        "exact-final-head hosted qualification",
-        "integration ownership handoff"
+        "exact-current-source hosted qualification"
       ],
-      "next_action": "Keep original failures, qualify current published source and reconcile integration.",
+      "next_action": "Included in current combined source;inspect current PR349 checks before main promotion.",
       "dependencies": [
-        "PR348 baseline",
-        "95FE-C3 integration ownership"
+        "PR349 combined qualification;original95FE-C3 ownership handoff completed"
+      ],
+      "integration_history": [
+        {
+          "target_integration_branch": "codex/patchtrace-recovery-search-20261121-837fe",
+          "blockers": [
+            "exact-final-head hosted qualification",
+            "integration ownership handoff"
+          ],
+          "next_action": "Keep original failures, qualify current published source and reconcile integration.",
+          "dependencies": [
+            "PR348 baseline",
+            "95FE-C3 integration ownership"
+          ]
+        }
       ]
     },
     {
-      "target_integration_branch": "codex/patchtrace-recovery-search-20261121-837fe",
+      "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
       "base_commit": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
       "code_checkpoint": "b880c317add4de3ac22c87cd842abb0e7ccc615d",
       "merge_status": "NOT_MERGED",
@@ -1098,13 +1118,25 @@
       "tests": "Final combined 450 passed; author/reviewer 169 and independent 5 are separate overlapping source-specific selections.",
       "audit_findings": "BACKUP-CLEANUP-CANCELLATION independently closed; consumed-name ownership control retained.",
       "blockers": [
-        "exact-final-head hosted qualification",
-        "integration ownership handoff"
+        "exact-current-source hosted qualification"
       ],
-      "next_action": "Inspect candidate hosted checks and merge only when qualified.",
+      "next_action": "Included in current combined source;inspect current PR349 checks before main promotion.",
       "dependencies": [
-        "PR348 baseline",
-        "95FE-C3 integration ownership"
+        "PR349 combined qualification;original95FE-C3 ownership handoff completed"
+      ],
+      "integration_history": [
+        {
+          "target_integration_branch": "codex/patchtrace-recovery-search-20261121-837fe",
+          "blockers": [
+            "exact-final-head hosted qualification",
+            "integration ownership handoff"
+          ],
+          "next_action": "Inspect candidate hosted checks and merge only when qualified.",
+          "dependencies": [
+            "PR348 baseline",
+            "95FE-C3 integration ownership"
+          ]
+        }
       ]
     },
     {
@@ -1269,7 +1301,8 @@
       "test_results": "Author 169 passed; independent 185 passed including 16 fresh controls; exact baseline fresh controls 8 failed/8 passed.",
       "audit_findings": "No source blocker; AST unchanged outside two literal noncapturing suffix patterns. Native FLOSS exit1 remains unresolved.",
       "evidence": "docs/engineering/evidence/cycle837fe-combined-20261121/intel-independent-review.zip",
-      "next_action": "Inspect exact combined-head hosted outcomes; preserve source/native/release distinctions."
+      "next_action": "Inspect exact combined-head hosted outcomes; preserve source/native/release distinctions.",
+      "latest_native_observation": "daee Windows capa.exe version/help exit0;FLOSS missing-pwd diagnosed and repaired in subsequent source;fresh actual acceptance pending."
     },
     {
       "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
@@ -1344,7 +1377,36 @@
       "test_results": "1296 passed/1 CODEX-5 xfailed; zero failed/errors/ordinary skips; 1,297 distinct identities; Ruff/pip/source binding pass.",
       "audit_findings": "All scoped independent source findings closed; exact new-head hosted/platform acceptance pending.",
       "evidence": "docs/engineering/cycle837fe-combined-pr349-20261121.md",
-      "next_action": "Inspect exact combined-head hosted outcomes; preserve source/native/release distinctions."
+      "next_action": "Inspect exact combined-head hosted outcomes; preserve source/native/release distinctions.",
+      "current_followup": {
+        "source": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+        "qualification": {
+          "source_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+          "source_tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
+          "parents": [
+            "d628749401f61d3653b5e066ff38245b938c5dcd",
+            "39a95c549d48eb523e9efdfda394bb9f184e2b16"
+          ],
+          "distinct_affected_passed": 1396,
+          "case_count": 1397,
+          "selection_node_selectors": 64,
+          "failed": 0,
+          "errors": 0,
+          "ordinary_skipped": 0,
+          "xfailed": 1,
+          "expected_failures": [
+            "CODEX-5"
+          ],
+          "whole_tree_ruff": "passed",
+          "dependencies": "passed",
+          "isolated_source_import": "passed; clean source-bound checkout",
+          "independent_review": "Exact complete-tree union;141 maintained checks and independent identity controls passed;no source blocker.",
+          "final_source_hosted": "pending exact final PR349 publication head",
+          "full_suite": "No successful local full aggregate claimed. Preserve earlier AF_UNIX EPERM and independently unexplained SIGKILL.",
+          "evidence": "docs/engineering/evidence/cycle837fe-native-c4-20261121/combined-focused.json"
+        },
+        "report": "docs/engineering/cycle837fe-native-c4-20261121.md"
+      }
     },
     {
       "id": "837fe-historical-retention-six-scopes",
@@ -1387,9 +1449,113 @@
       "source_commit": "11f51c105bf63946f59373ae605b937c4fee607a",
       "evidence": "docs/engineering/evidence/cycle4-95fe/codex5-research.md",
       "result_or_next_action": "Current run-block heuristic accepts hash/offline flags anywhere, including unrelated commands/comments. Synthetic text controls retained. Implement per-command and referenced-lock checks without weakening global strict xfail; no current workflow compromise inferred."
+    },
+    {
+      "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
+      "merge_status": "not merged to main",
+      "id": "837fe-intel-synthetic-windows-identity",
+      "status": "TESTING",
+      "description": "Repair actual Windows getpass/pwd failure without inheriting caller identity",
+      "source_branch": "codex/patchtrace-intel-windows-identity-20261121-837fe",
+      "source_commit": "d628749401f61d3653b5e066ff38245b938c5dcd",
+      "assigned_worker": "completed intel_live_triage author and intel_windows_identity_review;root integration",
+      "files_owned": [
+        "src/patchtrace/intelligence/tools/process.py",
+        "docs/specs/three-tool-evidence-adapters.md",
+        "tests/test_intel_tools_environment.py",
+        "tests/test_intel_tools_runner.py"
+      ],
+      "implementation_status": "COMPLETE",
+      "test_results": "130 author and130 overlapping peer passes;1314+1 Intel-only and1396+1 combined selections separate.",
+      "audit_findings": "No blocker;real getpass red/pass/removal,privacy/extras/adapter controls.",
+      "dependencies": [
+        "new-source Windows Intel",
+        "PR349 full qualification"
+      ],
+      "blockers": [
+        "fresh actual Windows acceptance pending"
+      ],
+      "evidence_links": [
+        "docs/engineering/cycle837fe-native-c4-20261121.md",
+        "docs/engineering/evidence/cycle837fe-native-c4-20261121/intel-identity-independent.json",
+        "docs/engineering/evidence/cycle837fe-native-c4-20261121/daee-intel-summary.json"
+      ],
+      "next_action": "Inspect fresh actual Windows probe/analysis;preserve original failures."
+    },
+    {
+      "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
+      "merge_status": "not merged to main",
+      "id": "837fe-native-c4-combined-qualification",
+      "status": "TESTING",
+      "description": "Combine C4 and Intel repair without duplicate source or lost records",
+      "source_branch": "integration/patchtrace-20261121-837fe-native-followup",
+      "source_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+      "assigned_worker": "root837FE;completed independent integration reviewer",
+      "files_owned": [
+        "integration and authoritative engineering records"
+      ],
+      "implementation_status": "COMPLETE",
+      "test_results": "1396passed/1CODEX-5xfail;1397distinct;64selectors;Ruff/pip/source binding passed.",
+      "audit_findings": "Exact whole-tree union and parents;141 overlapping independent maintained passes;no blocker.",
+      "dependencies": [
+        "current-source full/Qt/native/package/frozen gates"
+      ],
+      "blockers": [
+        "exact final publication qualification pending"
+      ],
+      "evidence_links": [
+        "docs/engineering/cycle837fe-native-c4-20261121.md",
+        "docs/engineering/evidence/cycle837fe-native-c4-20261121/qualification.json"
+      ],
+      "next_action": "Publish reviewed Intel+C4 exact source to PR349; inspect full/Qt/native/package/frozen gates and actual Windows Intel; guarded REST main merge only when qualified, with both opt-out flags."
+    },
+    {
+      "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
+      "merge_status": "not merged to main",
+      "id": "837fe-historical-correlation-four-scopes",
+      "status": "COMPLETE",
+      "description": "Account for four historical correlation scopes without duplicate ports",
+      "source_branch": "four exact donors in dispositions",
+      "source_commit": "d628749401f61d3653b5e066ff38245b938c5dcd",
+      "assigned_worker": "completed historical_correlation_recovery",
+      "files_owned": [],
+      "implementation_status": "not needed;scoped implementations retained",
+      "test_results": "134 distinct maintained passes;9production/5test file comparisons;no live/provider/accuracy acceptance.",
+      "audit_findings": "PR190 DUPLICATE;PR122/159/enrichment-CVE SUPERSEDED in reviewed scopes.Whole branchesPARTIALLY_REVIEWED;181/16census unchanged.",
+      "dependencies": [],
+      "blockers": [],
+      "evidence_links": [
+        "docs/engineering/evidence/cycle837fe-native-c4-20261121/historical-correlation-dispositions.json"
+      ],
+      "next_action": "Continue excluded scopes;preserve donor refs and provenance/accuracy gates."
+    },
+    {
+      "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
+      "merge_status": "not merged to main",
+      "id": "837fe-codex5-bounded-assessment",
+      "status": "BLOCKED",
+      "description": "Recover wheelhouse infrastructure and inventory missing workflow hash closures",
+      "source_branch": "integration/patchtrace-20261121-837fe-combined",
+      "source_commit": "0a270822935fb372fc181f3e2573fe60d9a16a53",
+      "assigned_worker": "completed codex5_recovery_assessment;next scoped lock owner unassigned",
+      "files_owned": [],
+      "implementation_status": "assessment complete;broader closures incomplete",
+      "test_results": "Known strict-xfail exposed with --runxfail:1failed;no installs/native acceptance.",
+      "audit_findings": "Verified backend wheelhouse reusable;42explicit install steps before C4 Pages;host/transitive closures and per-command check incomplete.",
+      "dependencies": [
+        "target-specific approved Windows/Linux closures",
+        "existing backend builder reuse"
+      ],
+      "blockers": [
+        "missing host/build/app/dev/signing/engine locks and native install/build evidence"
+      ],
+      "evidence_links": [
+        "docs/engineering/evidence/cycle837fe-native-c4-20261121/codex5-bounded-assessment.md"
+      ],
+      "next_action": "Complete remaining scoped closures;Pages does not close all CODEX-5;preserve strict failure."
     }
   ],
-  "aggregate_source_commit": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
+  "aggregate_source_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
   "workers": [
     {
       "name": "repository_inventory",
@@ -1602,10 +1768,32 @@
     },
     {
       "name": "837fe-combined-publication",
-      "status": "TESTING-root-owned"
+      "status": "COMPLETE",
+      "scope": "daee publication preserved;native/C4 successor below"
+    },
+    {
+      "name": "837fe-windows-identity-author-and-review",
+      "status": "COMPLETE"
+    },
+    {
+      "name": "837fe-native-c4-integration-review",
+      "status": "COMPLETE"
+    },
+    {
+      "name": "837fe-historical-correlation-review",
+      "status": "COMPLETE"
+    },
+    {
+      "name": "837fe-codex5-assessment",
+      "status": "COMPLETE"
+    },
+    {
+      "name": "837fe-native-c4-publication-and-hosted-qualification",
+      "status": "TESTING",
+      "owner": "root837FE"
     }
   ],
-  "local_integration_branch": "integration/patchtrace-20261121-837fe-combined",
+  "local_integration_branch": "integration/patchtrace-20261121-837fe-native-followup",
   "hosted_initial_candidate": {
     "head": "3862cb5de3256efec8f6392a3b6fb4d9e600c377",
     "captured_at": "2026-11-20T01:03:45Z",
@@ -1723,13 +1911,17 @@
       "later_evidence_only_commits": "Resolve current PR head; runtime/test/tool identities remain the recorded 97ca0adf checkpoint."
     }
   },
-  "aggregate_source_tree": "2666e72d5efd51600b170cef033103c9947bae3b",
+  "aggregate_source_tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
   "current_qualification": {
-    "source_commit": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
-    "source_tree": "2666e72d5efd51600b170cef033103c9947bae3b",
-    "distinct_affected_passed": 1296,
-    "case_count": 1297,
-    "selection_node_selectors": 57,
+    "source_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+    "source_tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
+    "parents": [
+      "d628749401f61d3653b5e066ff38245b938c5dcd",
+      "39a95c549d48eb523e9efdfda394bb9f184e2b16"
+    ],
+    "distinct_affected_passed": 1396,
+    "case_count": 1397,
+    "selection_node_selectors": 64,
     "failed": 0,
     "errors": 0,
     "ordinary_skipped": 0,
@@ -1739,11 +1931,11 @@
     ],
     "whole_tree_ruff": "passed",
     "dependencies": "passed",
-    "isolated_source_import": "Verified exact combined checkout with python -I on the same clean final source.",
-    "independent_review": "Storage/Search, CODEX-1 and both Intel scopes have no remaining source blocker; root separately reviewed the unchanged-test registry repair.",
-    "final_source_hosted": "pending exact combined publication head",
-    "full_suite": "Earlier local b51 source unsuccessful: AF_UNIX EPERM and later unexplained SIGKILL; no final-source local full aggregate claimed.",
-    "evidence": "docs/engineering/evidence/cycle837fe-combined-20261121/combined-focused.json"
+    "isolated_source_import": "passed; clean source-bound checkout",
+    "independent_review": "Exact complete-tree union;141 maintained checks and independent identity controls passed;no source blocker.",
+    "final_source_hosted": "pending exact final PR349 publication head",
+    "full_suite": "No successful local full aggregate claimed. Preserve earlier AF_UNIX EPERM and independently unexplained SIGKILL.",
+    "evidence": "docs/engineering/evidence/cycle837fe-native-c4-20261121/combined-focused.json"
   },
   "current_handoff": "docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md",
   "previous_session_qualification": {
@@ -1818,9 +2010,9 @@
     "status": "TESTING",
     "owner": "root837FE",
     "handoff": "docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md",
-    "code_commit": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
+    "code_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
     "target_pr": 349,
-    "next_action": "Publish the reviewed combined candidate to existing PR349 with an expected-head fast-forward guard, inspect exact-head hosted full/Qt/native/package/frozen results and Intel diagnostics, resolve applicable blockers, and use guarded REST main merge with both [no release] [no deploy]. Preserve the separate remaining release gates and existing continuation cadence."
+    "next_action": "Publish reviewed Intel+C4 exact source to PR349; inspect full/Qt/native/package/frozen gates and actual Windows Intel; guarded REST main merge only when qualified, with both opt-out flags."
   },
   "sibling_95fe_qualification": {
     "source_commit": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
@@ -2113,7 +2305,8 @@
     "main_merge_eligible": false,
     "release_ready": false,
     "local_aggregate": "earlier source unsuccessful: AF_UNIX EPERM plus unexplained SIGKILL",
-    "next_action": "Inspect own exact-head checks and reconcile with owner; guard any qualified REST merge by current head."
+    "next_action": "Inspect own exact-head checks and reconcile with owner; guard any qualified REST merge by current head.",
+    "scope_note": "Historical storage/Search stage consumed in daee/current source; its original ownership/pending text is historical."
   },
   "hosted_baseline_refresh_837fe": {
     "source_commit": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
@@ -2142,11 +2335,15 @@
     "target_branch": "integration/patchtrace-20261121-95fe-c3",
     "source_merge": "Disjoint runtime/workflow changes; historical records retained from both parents.",
     "qualification": {
-      "source_commit": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
-      "source_tree": "2666e72d5efd51600b170cef033103c9947bae3b",
-      "distinct_affected_passed": 1296,
-      "case_count": 1297,
-      "selection_node_selectors": 57,
+      "source_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+      "source_tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
+      "parents": [
+        "d628749401f61d3653b5e066ff38245b938c5dcd",
+        "39a95c549d48eb523e9efdfda394bb9f184e2b16"
+      ],
+      "distinct_affected_passed": 1396,
+      "case_count": 1397,
+      "selection_node_selectors": 64,
       "failed": 0,
       "errors": 0,
       "ordinary_skipped": 0,
@@ -2156,15 +2353,15 @@
       ],
       "whole_tree_ruff": "passed",
       "dependencies": "passed",
-      "isolated_source_import": "Verified exact combined checkout with python -I on the same clean final source.",
-      "independent_review": "Storage/Search, CODEX-1 and both Intel scopes have no remaining source blocker; root separately reviewed the unchanged-test registry repair.",
-      "final_source_hosted": "pending exact combined publication head",
-      "full_suite": "Earlier local b51 source unsuccessful: AF_UNIX EPERM and later unexplained SIGKILL; no final-source local full aggregate claimed.",
-      "evidence": "docs/engineering/evidence/cycle837fe-combined-20261121/combined-focused.json"
+      "isolated_source_import": "passed; clean source-bound checkout",
+      "independent_review": "Exact complete-tree union;141 maintained checks and independent identity controls passed;no source blocker.",
+      "final_source_hosted": "pending exact final PR349 publication head",
+      "full_suite": "No successful local full aggregate claimed. Preserve earlier AF_UNIX EPERM and independently unexplained SIGKILL.",
+      "evidence": "docs/engineering/evidence/cycle837fe-native-c4-20261121/combined-focused.json"
     },
-    "next_action": "Publish guarded fast-forward update to existing PR349, inspect exact new-head hosted and native diagnostics, resolve applicable blockers, then guarded REST main merge with no release/no deploy.",
-    "code_commit": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
-    "code_tree": "2666e72d5efd51600b170cef033103c9947bae3b",
+    "next_action": "Publish reviewed Intel+C4 exact source to PR349; inspect full/Qt/native/package/frozen gates and actual Windows Intel; guarded REST main merge only when qualified, with both opt-out flags.",
+    "code_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+    "code_tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
     "remote_code_commit": "61b26107d77fb632571ede932e0796d4b643f50c"
   },
   "continuation_history": [
@@ -2176,6 +2373,100 @@
         "next_action": "Refresh live branch/PR/CI and ownership; retain all failures. Inspect both Ubuntu frozen CLI jobs and TierR archive/cache paths on the new source. Merge only after applicable checks and blockers are resolved with fresh expected-head REST guard and BOTH [no release] [no deploy] in the actual merge commit. Continue other unowned bounded work without duplicate full workflows."
       },
       "local_integration_branch": "codex/patchtrace-continuation-20261121-95fe-c3"
+    },
+    {
+      "scope": "daee combined publication before Windows repair and C4 combination",
+      "preserved_at": "2026-11-21T07:12:59.325233+00:00",
+      "record": {
+        "checkpoint_local_commit": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
+        "aggregate_source_commit": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
+        "aggregate_source_tree": "2666e72d5efd51600b170cef033103c9947bae3b",
+        "current_qualification": {
+          "source_commit": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
+          "source_tree": "2666e72d5efd51600b170cef033103c9947bae3b",
+          "distinct_affected_passed": 1296,
+          "case_count": 1297,
+          "selection_node_selectors": 57,
+          "failed": 0,
+          "errors": 0,
+          "ordinary_skipped": 0,
+          "xfailed": 1,
+          "expected_failures": [
+            "CODEX-5"
+          ],
+          "whole_tree_ruff": "passed",
+          "dependencies": "passed",
+          "isolated_source_import": "Verified exact combined checkout with python -I on the same clean final source.",
+          "independent_review": "Storage/Search, CODEX-1 and both Intel scopes have no remaining source blocker; root separately reviewed the unchanged-test registry repair.",
+          "final_source_hosted": "pending exact combined publication head",
+          "full_suite": "Earlier local b51 source unsuccessful: AF_UNIX EPERM and later unexplained SIGKILL; no final-source local full aggregate claimed.",
+          "evidence": "docs/engineering/evidence/cycle837fe-combined-20261121/combined-focused.json"
+        },
+        "remote_publication": {
+          "status": "reviewed-combined-code-qualified-publication-prepared",
+          "branch": "integration/patchtrace-20261121-95fe-c3",
+          "base_branch": "main",
+          "base_commit": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+          "original_qualified_baseline": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+          "publication_transport": "connected GitHub REST Git Data API; preserve trees and mapped parents; no force update",
+          "head_rule": "Resolve live PR349 head/tree and its body; the final documentation publication identity and later exact-head CI receipts are recorded there without invalidating the running source.",
+          "history_bundle": "docs/engineering/evidence/cycle837fe-combined-20261121/original-source-history.bundle",
+          "verified_code_remote_commit": "61b26107d77fb632571ede932e0796d4b643f50c",
+          "verified_code_tree": "2666e72d5efd51600b170cef033103c9947bae3b",
+          "commit_mapping": "docs/engineering/evidence/cycle837fe-combined-20261121/code-publication-mapping.json",
+          "pr_number": 349,
+          "previous_source_head": "11f51c105bf63946f59373ae605b937c4fee607a"
+        },
+        "current_handoff": "docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md",
+        "local_integration_branch": "integration/patchtrace-20261121-837fe-combined",
+        "continuation": {
+          "status": "TESTING",
+          "owner": "root837FE",
+          "handoff": "docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md",
+          "code_commit": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
+          "target_pr": 349,
+          "next_action": "Publish the reviewed combined candidate to existing PR349 with an expected-head fast-forward guard, inspect exact-head hosted full/Qt/native/package/frozen results and Intel diagnostics, resolve applicable blockers, and use guarded REST main merge with both [no release] [no deploy]. Preserve the separate remaining release gates and existing continuation cadence."
+        },
+        "combined_followup_837fe": {
+          "status": "TESTING",
+          "owner": "root837fe",
+          "base_pr": 349,
+          "base_commit": "11f51c105bf63946f59373ae605b937c4fee607a",
+          "reviewed_application_commit": "b880c317add4de3ac22c87cd842abb0e7ccc615d",
+          "publication_evidence_commit": "36ead053fdfd7a69cbd06bf2c60431bbc15bf471",
+          "target_branch": "integration/patchtrace-20261121-95fe-c3",
+          "source_merge": "Disjoint runtime/workflow changes; historical records retained from both parents.",
+          "qualification": {
+            "source_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+            "source_tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
+            "parents": [
+              "d628749401f61d3653b5e066ff38245b938c5dcd",
+              "39a95c549d48eb523e9efdfda394bb9f184e2b16"
+            ],
+            "distinct_affected_passed": 1396,
+            "case_count": 1397,
+            "selection_node_selectors": 64,
+            "failed": 0,
+            "errors": 0,
+            "ordinary_skipped": 0,
+            "xfailed": 1,
+            "expected_failures": [
+              "CODEX-5"
+            ],
+            "whole_tree_ruff": "passed",
+            "dependencies": "passed",
+            "isolated_source_import": "passed; clean source-bound checkout",
+            "independent_review": "Exact complete-tree union;141 maintained checks and independent identity controls passed;no source blocker.",
+            "final_source_hosted": "pending exact final PR349 publication head",
+            "full_suite": "No successful local full aggregate claimed. Preserve earlier AF_UNIX EPERM and independently unexplained SIGKILL.",
+            "evidence": "docs/engineering/evidence/cycle837fe-native-c4-20261121/combined-focused.json"
+          },
+          "next_action": "Publish reviewed Intel+C4 exact source to PR349; inspect full/Qt/native/package/frozen gates and actual Windows Intel; guarded REST main merge only when qualified, with both opt-out flags.",
+          "code_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+          "code_tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
+          "remote_code_commit": "61b26107d77fb632571ede932e0796d4b643f50c"
+        }
+      }
     }
   ],
   "parallel_followup_cycle4": {
@@ -2235,6 +2526,52 @@
       "ownership": "837FE retains PR349/Search/storage/Action-pin integration; refresh live coordination before action.",
       "live_head_rule": "Resolve this separate follow-up PR body and fresh remote branch for final publication head and checks."
     },
-    "parent_integration": "Published PR349 source merged only into the separate C4 branch; no PR349 or main mutation."
+    "parent_integration": "Published PR349 source merged only into the separate C4 branch; no PR349 or main mutation.",
+    "consumed_into": {
+      "source": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+      "target": "PR349",
+      "status": "TESTING",
+      "report": "docs/engineering/cycle837fe-native-c4-20261121.md"
+    }
+  },
+  "native_c4_followup_837fe": {
+    "status": "TESTING",
+    "owner": "root837FE",
+    "code_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+    "code_tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
+    "parents": [
+      "d628749401f61d3653b5e066ff38245b938c5dcd",
+      "39a95c549d48eb523e9efdfda394bb9f184e2b16"
+    ],
+    "report": "docs/engineering/cycle837fe-native-c4-20261121.md",
+    "qualification": {
+      "source_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+      "source_tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
+      "parents": [
+        "d628749401f61d3653b5e066ff38245b938c5dcd",
+        "39a95c549d48eb523e9efdfda394bb9f184e2b16"
+      ],
+      "distinct_affected_passed": 1396,
+      "case_count": 1397,
+      "selection_node_selectors": 64,
+      "failed": 0,
+      "errors": 0,
+      "ordinary_skipped": 0,
+      "xfailed": 1,
+      "expected_failures": [
+        "CODEX-5"
+      ],
+      "whole_tree_ruff": "passed",
+      "dependencies": "passed",
+      "isolated_source_import": "passed; clean source-bound checkout",
+      "independent_review": "Exact complete-tree union;141 maintained checks and independent identity controls passed;no source blocker.",
+      "final_source_hosted": "pending exact final PR349 publication head",
+      "full_suite": "No successful local full aggregate claimed. Preserve earlier AF_UNIX EPERM and independently unexplained SIGKILL.",
+      "evidence": "docs/engineering/evidence/cycle837fe-native-c4-20261121/combined-focused.json"
+    },
+    "evidence": "docs/engineering/evidence/cycle837fe-native-c4-20261121/manifest.json",
+    "native_predecessor": "daee337c48c63dda8aeac149c407e900c79dcc86",
+    "consumed_c4_source": "39a95c549d48eb523e9efdfda394bb9f184e2b16",
+    "release_ready": false
   }
 }

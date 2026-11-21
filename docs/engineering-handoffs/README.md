@@ -1,3 +1,7 @@
+## Current PR349 native/C4 handoff
+
+Use [the existing combined handoff](cycle837fe-combined-pr349-20261121.md) and [current report](../engineering/cycle837fe-native-c4-20261121.md). Tested `6bf79fef` has 1,396 passes/1 CODEX-5xfail and independent review. Exact final-head hosted/native/package gates remain pending. Intel and C4 are combined in one main-integration target; earlier current-source paragraphs are historical.
+
 ## Cycle4 parent integration update — 2026-11-21 UTC
 
 The separate C4 follow-up includes PR349 `daee337c` and preserves both implementations

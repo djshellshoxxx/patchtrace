@@ -1,0 +1,1456 @@
+{
+  "schema": "patchtrace.bounded-historical-correlation-review/1",
+  "reviewer": "historical_correlation_recovery independent worker",
+  "reviewed_target_commit": "d628749401f61d3653b5e066ff38245b938c5dcd",
+  "reviewed_target_tree": "5d4f2d3beff122b352d0d62a15ea0800c578c0b9",
+  "recorded_at_utc": "2026-11-21T07:07:58.113122+00:00",
+  "records": [
+    {
+      "id": "pr190-filename-selection",
+      "branch": "codex/kb-explicit-filename-selection-20261104",
+      "head": "761b6b885f00143597c74f0457b1165a144fbdd4",
+      "pr": 190,
+      "donor_tree": "926ca28db45e8e8ff2d8def73a834524bcf9284f",
+      "captured_pr": {
+        "base_ref": "main",
+        "base_sha": "5d504ff5c046bfb758623182b472976003632bba",
+        "draft": true,
+        "head_matches_snapshot": true,
+        "head_sha": "761b6b885f00143597c74f0457b1165a144fbdd4",
+        "merged_at": null,
+        "number": 190,
+        "state": "closed",
+        "title": "fix(kb): keep analyst filename selections when advisory titles collide",
+        "url": "https://github.com/djshellshoxxx/patchtrace/pull/190"
+      },
+      "merge_bases_with_target": [
+        "5d504ff5c046bfb758623182b472976003632bba"
+      ],
+      "unique_nonmerge_commits_vs_target": [
+        "761b6b885f00143597c74f0457b1165a144fbdd4"
+      ],
+      "production_comparisons": [
+        {
+          "path": "src/patchtrace/kbcorrelation/components.py",
+          "donor_blob": "0d78ce85498f596b01b33dfe5b2186437c7cf283",
+          "target_blob": "3b4151a3081fa2d0247d285c663496a3e7d141a3",
+          "donor_bytes_sha256": "566b807c4ab429130c961019cdcf6d61084e60475d5164020f79d342142258b6",
+          "target_bytes_sha256": "f534d2dce756a23d4eb55c471f224803ec982aa580b43a546cb64018433a2409",
+          "byte_identical": false,
+          "declarations": [
+            {
+              "name": "_tier_priority",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "694ccfc6761a172b440f91fe42d0c99b288e96de54888869e6daded33cdc7b0a",
+              "target_ast_sha256": "694ccfc6761a172b440f91fe42d0c99b288e96de54888869e6daded33cdc7b0a"
+            },
+            {
+              "name": "normalise_name",
+              "present": true,
+              "ast_identical": false,
+              "donor_ast_sha256": "4eb078f0ca6a2680f1e4a832a833416b4fb0ef38ab884aaf45ab6d075eef3ad4",
+              "target_ast_sha256": "fc16c7ccc5e2748f8f507058a7a0ee0dcf5bf6a04b72414f9d15c6c338912b44"
+            },
+            {
+              "name": "_hint",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "3d492f467e916b3d4803664ee3b2b88ec549ab7a42cb03169b8f2a42376f10ff",
+              "target_ast_sha256": "3d492f467e916b3d4803664ee3b2b88ec549ab7a42cb03169b8f2a42376f10ff"
+            },
+            {
+              "name": "_title_names",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "19f1a7c54349f1cc64ac59db14da919b31e4ad88afc500ba8ec14c64790f1bb8",
+              "target_ast_sha256": "19f1a7c54349f1cc64ac59db14da919b31e4ad88afc500ba8ec14c64790f1bb8"
+            },
+            {
+              "name": "hints_for",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "91b8d81e3e69fd6e580e1f3febd82b84577d8cb0fcec732fc7c7358943ec8b22",
+              "target_ast_sha256": "91b8d81e3e69fd6e580e1f3febd82b84577d8cb0fcec732fc7c7358943ec8b22"
+            },
+            {
+              "name": "selectable",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "51aa6b8faee3ce1431bf2ab342ea56aa1d2922928425c142bfbf739a57fc324b",
+              "target_ast_sha256": "51aa6b8faee3ce1431bf2ab342ea56aa1d2922928425c142bfbf739a57fc324b"
+            }
+          ],
+          "target_added_declarations": []
+        }
+      ],
+      "test_source_comparisons": [
+        {
+          "path": "tests/test_kbc_components.py",
+          "donor_blob": "14082c5a8b54ed77b8f1c8c12bb8b045047d1ed0",
+          "target_blob": "14082c5a8b54ed77b8f1c8c12bb8b045047d1ed0",
+          "donor_bytes_sha256": "578f2a0680a83183231f8bd6c1221c249f54eef0b0fc8a9cb42ef380e145b88d",
+          "target_bytes_sha256": "578f2a0680a83183231f8bd6c1221c249f54eef0b0fc8a9cb42ef380e145b88d",
+          "byte_identical": true,
+          "declarations": [
+            {
+              "name": "card",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "5e9040f2e2ad908219f1db9943d339604dee91374c97fa36d027c14361429c22",
+              "target_ast_sha256": "5e9040f2e2ad908219f1db9943d339604dee91374c97fa36d027c14361429c22"
+            },
+            {
+              "name": "test_names_are_lowercased_basenames",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "1c7bbefd8af262d033ffaeaeaf0b2cfc9c489555b2539dcc0bbceba7a804592d",
+              "target_ast_sha256": "1c7bbefd8af262d033ffaeaeaf0b2cfc9c489555b2539dcc0bbceba7a804592d"
+            },
+            {
+              "name": "test_bad_names_are_refused",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "57fcee35c3ea7ca46db2fe43d0f6c51dbc9a645e47a7e27cbf27ecfe6e31586e",
+              "target_ast_sha256": "57fcee35c3ea7ca46db2fe43d0f6c51dbc9a645e47a7e27cbf27ecfe6e31586e"
+            },
+            {
+              "name": "test_analyst_name_is_tier_e_and_not_evidence",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "f93b83051a03802078e711d728df12391b04f942a3c76fd1fc13a61e3e960d5c",
+              "target_ast_sha256": "f93b83051a03802078e711d728df12391b04f942a3c76fd1fc13a61e3e960d5c"
+            },
+            {
+              "name": "test_title_name_is_tier_d_with_a_pointer_and_never_selects_a_file",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "cec0c6394dc27657596a989e02de2429437b1be1cd273e778814ecf7b7a3d185",
+              "target_ast_sha256": "cec0c6394dc27657596a989e02de2429437b1be1cd273e778814ecf7b7a3d185"
+            },
+            {
+              "name": "test_same_name_from_title_and_analyst_keeps_explicit_analyst_selection",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "93a162e923a896bfda3f4c69b7513d490c664e38d2360285de77e7260897674d",
+              "target_ast_sha256": "93a162e923a896bfda3f4c69b7513d490c664e38d2360285de77e7260897674d"
+            },
+            {
+              "name": "test_selectable_hints_precede_context_then_sort_by_name_and_flag_the_limit",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "ec941b5b695ffc5e404df3e8d057d903db8518401e08fec9eac676ea965fe480",
+              "target_ast_sha256": "ec941b5b695ffc5e404df3e8d057d903db8518401e08fec9eac676ea965fe480"
+            },
+            {
+              "name": "test_hint_ids_are_stable_and_scope_bound",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "7659bd430b194d13902f0d448781bcfda18e0dc221584d946ea0ab4f910afb99",
+              "target_ast_sha256": "7659bd430b194d13902f0d448781bcfda18e0dc221584d946ea0ab4f910afb99"
+            },
+            {
+              "name": "test_contextual_titles_cannot_crowd_out_an_explicit_filename_at_the_cap",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "91a5dd62794eb434b09fc7f174355a1a2f7b0ceef7729131e693769dd7b41b7f",
+              "target_ast_sha256": "91a5dd62794eb434b09fc7f174355a1a2f7b0ceef7729131e693769dd7b41b7f"
+            }
+          ],
+          "target_added_declarations": []
+        },
+        {
+          "path": "tests/test_kbc_pairs_index.py",
+          "donor_blob": "34dc3367d7744f6b7af468b2db110a85f2b82b24",
+          "target_blob": "2b275f8e43354816d799ac7802d84d0f3f72b6cc",
+          "donor_bytes_sha256": "959202c6a82d773151e789a34611b0e7c6138bec44fb86af48fee8740c921951",
+          "target_bytes_sha256": "d9c1bbd813ccd0d0cf6be0563040547cb4456e587053c9eb9297d65ab7b670b3",
+          "byte_identical": false,
+          "declarations": [
+            {
+              "name": "test_explicit_title_filename_survives_component_selection_and_reopening",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "d540ca8f763c90d6c81e3464f0d6ab98d43b491ab3c686c501090c96f097feb9",
+              "target_ast_sha256": "d540ca8f763c90d6c81e3464f0d6ab98d43b491ab3c686c501090c96f097feb9"
+            }
+          ],
+          "target_added_declarations": [
+            "test_kba08_stored_investigation_on_a_rekeyed_product_must_repeat_the_search",
+            "test_mixed_native_wow64_rows_keep_native_pair_and_raw_record",
+            "test_only_other_machine_rows_report_arch_and_cannot_be_planned",
+            "test_variants_are_visible_and_require_explicit_cli_plan_and_acquisition_choice"
+          ]
+        }
+      ],
+      "original_scope_base": "5d504ff5c046bfb758623182b472976003632bba",
+      "original_changed_paths": [
+        "M\tdocs/qa.md",
+        "M\tdocs/specs/kb-cve/31-G-components-discovery.md",
+        "M\tdocs/specs/program-e/KB-integration-plan.md",
+        "M\tsrc/patchtrace/kbcorrelation/components.py",
+        "M\ttasks/todo.md",
+        "M\ttests/test_kbc_components.py",
+        "M\ttests/test_kbc_pairs_index.py"
+      ],
+      "classification": "DUPLICATE",
+      "scope": "Explicit analyst filename/title collision and selectable-first hint cap",
+      "implementation_commits": [
+        "761b6b885f00143597c74f0457b1165a144fbdd4"
+      ],
+      "excluded": [
+        "other component tiers",
+        "package discovery",
+        "live Winbindex",
+        "binary/CVE attribution",
+        "remaining donor documentation"
+      ],
+      "whole_branch_status": "PARTIALLY_REVIEWED",
+      "source_recovery_required_in_named_scope": false,
+      "delete_authorized": false,
+      "captured_mechanical_classification": "patch-equivalent-semantics-unreviewed",
+      "live_ref_verified": true,
+      "live_ref_url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/ref/heads/codex/kb-explicit-filename-selection-20261104",
+      "review_notes": "See README.md and exact source-comparison snapshots; changed regression semantics are explicitly explained."
+    },
+    {
+      "id": "pr122-product-architecture",
+      "branch": "codex/pr110-kb-arch-scope-20261029",
+      "head": "40e02daf93c8e13a94b74f5b80d86c1680fea7ad",
+      "pr": 122,
+      "donor_tree": "2dfba2ca231956b0bc5585df34111e22733644d5",
+      "captured_pr": {
+        "base_ref": "codex/pr110-ci-repairs-20261029",
+        "base_sha": "c1e21efcee9da2d65787ea75a5fa630c5547f3a4",
+        "draft": true,
+        "head_matches_snapshot": true,
+        "head_sha": "40e02daf93c8e13a94b74f5b80d86c1680fea7ad",
+        "merged_at": null,
+        "number": 122,
+        "state": "closed",
+        "title": "fix(kb): block incompatible product architectures in Winbindex pair resolution",
+        "url": "https://github.com/djshellshoxxx/patchtrace/pull/122"
+      },
+      "merge_bases_with_target": [
+        "5ed624e91468c410f2cf738ed4e36c2be3e0201d"
+      ],
+      "unique_nonmerge_commits_vs_target": [
+        "40e02daf93c8e13a94b74f5b80d86c1680fea7ad",
+        "400cfe4a258d58d0a98f1afe8a198632b761f456",
+        "c1e21efcee9da2d65787ea75a5fa630c5547f3a4",
+        "4a57aed02fcd2834923b40940618de695a9b0c7b",
+        "3d4c4234a680eaa3aa89537c8d6a7d5cb4346d19",
+        "68e3d8e1ac1002601877a773b765a9149c4b7127",
+        "4946b259c9748303902b0e8e48f645d13e0db53c",
+        "e2e554cb01511ba1aadd3157f3b3d7cf2e3a893a"
+      ],
+      "production_comparisons": [
+        {
+          "path": "src/patchtrace/kbcorrelation/resolver.py",
+          "donor_blob": "7c5ecace65a3dc339682d31197b752771b80fe6c",
+          "target_blob": "17bdcfceb21b4ac7e6ed7ae9cdf6f26b0163e5cd",
+          "donor_bytes_sha256": "0b58214da6ab016eaab5759b8657d31e1edc0ccd363218c8aaf92781eb192a2e",
+          "target_bytes_sha256": "76f2b09c2133ca7371840afcfcabd404ccd2fa683fa23060f36b6612aa6a7e71",
+          "byte_identical": false,
+          "declarations": [
+            {
+              "name": "resolve",
+              "present": true,
+              "ast_identical": false,
+              "donor_ast_sha256": "00cf17f7e0729077a08478757726a0cc3a0be7230d364fe073225c3f826b2c59",
+              "target_ast_sha256": "8c44976c3396bf14fedb741ad42b2f68481689a18ff393f0e93ecd51978d3820"
+            }
+          ],
+          "target_added_declarations": [
+            "index_keys"
+          ]
+        }
+      ],
+      "test_source_comparisons": [
+        {
+          "path": "tests/test_kbc_resolver.py",
+          "donor_blob": "00020d658ddcd4a31c02b060eeec46bc0a8a527d",
+          "target_blob": "e3169d49e757c96eeb8e7ee77dc75f9cb767c923",
+          "donor_bytes_sha256": "49b2d5cd39c7e4008193db5d09ce7b5e3dd3e0fd034743a7e83a749393900545",
+          "target_bytes_sha256": "09ee34a2c19f57a6f3bb788d4d10aaab0858b2cfcdf7f47660e5dd07c1320009",
+          "byte_identical": false,
+          "declarations": [
+            {
+              "name": "resolve",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "27136c7b5e33b75a61d34df4b004a7e1449fdd853013602e905bc622ac349153",
+              "target_ast_sha256": "27136c7b5e33b75a61d34df4b004a7e1449fdd853013602e905bc622ac349153"
+            },
+            {
+              "name": "test_new_build_is_a_grade_a_index_adjacent_pair_with_bytes_pending",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "eda1f5a95a5e0ebb54946b68a8b30c55f2b13be5c8e0c8a0392054e4e4d13037",
+              "target_ast_sha256": "eda1f5a95a5e0ebb54946b68a8b30c55f2b13be5c8e0c8a0392054e4e4d13037"
+            },
+            {
+              "name": "test_md5_only_newest_build_is_a_pair_with_candidate_availability",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "311b6b2b923fc17263a2781e1c5a548bc61164a936bca53b683a2091febc94e1",
+              "target_ast_sha256": "311b6b2b923fc17263a2781e1c5a548bc61164a936bca53b683a2091febc94e1"
+            },
+            {
+              "name": "test_unchanged_in_kb_is_not_a_pair_for_that_kb",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "f0897373dabd87cfb0f20009fc9ed24604d26b874b501dba6e618e282a0c4b93",
+              "target_ast_sha256": "f0897373dabd87cfb0f20009fc9ed24604d26b874b501dba6e618e282a0c4b93"
+            },
+            {
+              "name": "test_kb_absent_from_the_index_says_so",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "9311e391c6c8ee6c34bf80aa957056468998e08475d377dfd0f5445a639365cf",
+              "target_ast_sha256": "9311e391c6c8ee6c34bf80aa957056468998e08475d377dfd0f5445a639365cf"
+            },
+            {
+              "name": "test_first_indexed_build_has_no_older",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "b73c65583a47c40ed8499b8b84c870c38a0178e67c0b5c05bfb494049ff5e77b",
+              "target_ast_sha256": "b73c65583a47c40ed8499b8b84c870c38a0178e67c0b5c05bfb494049ff5e77b"
+            },
+            {
+              "name": "test_base_image_is_a_valid_older_side",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "c2412d670f4f607555102e26dca1d5c89efd3ac39d599822c44540ff6f993ff8",
+              "target_ast_sha256": "c2412d670f4f607555102e26dca1d5c89efd3ac39d599822c44540ff6f993ff8"
+            },
+            {
+              "name": "test_pair_never_auto_across_scope",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "ad04ccd49de6ce41294eb2ff8b504205061255f7521e5332647b952c27be683d",
+              "target_ast_sha256": "ad04ccd49de6ce41294eb2ff8b504205061255f7521e5332647b952c27be683d"
+            },
+            {
+              "name": "test_server_scope_is_a_hard_block_not_an_empty_answer",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "80c6f2f4d0c376cb1a550c11ff1e06ce1ff5983eb6ded088b20201678e1493cf",
+              "target_ast_sha256": "80c6f2f4d0c376cb1a550c11ff1e06ce1ff5983eb6ded088b20201678e1493cf"
+            },
+            {
+              "name": "test_scope_without_index_key_is_not_guessed",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "7f1df7f14b549338ec451f0ba1a52017a86db1c276bb0196ce54ae3f48480357",
+              "target_ast_sha256": "7f1df7f14b549338ec451f0ba1a52017a86db1c276bb0196ce54ae3f48480357"
+            },
+            {
+              "name": "test_same_class_only_keeps_a_preview_build_out_of_the_older_side",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "f660bbd7229cdc40792a10eaf3b4b7f572855138eb8e908f9939bc7c6d59af0a",
+              "target_ast_sha256": "f660bbd7229cdc40792a10eaf3b4b7f572855138eb8e908f9939bc7c6d59af0a"
+            },
+            {
+              "name": "test_all_pairs_obey_the_grade_rules",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "cfcd33b0dd48ff1d453ac6faff8d5834c8617602d3dccaece36e29a2b4fc6277",
+              "target_ast_sha256": "cfcd33b0dd48ff1d453ac6faff8d5834c8617602d3dccaece36e29a2b4fc6277"
+            },
+            {
+              "name": "test_unsupported_product_scope_architecture_blocks_amd64_index_pairs",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "9d48084bc5840fa7860a60fcbefe20621b86a596c07fbbf786e8d7c404c81f5a",
+              "target_ast_sha256": "9d48084bc5840fa7860a60fcbefe20621b86a596c07fbbf786e8d7c404c81f5a"
+            },
+            {
+              "name": "test_arm64_product_name_does_not_resolve_to_amd64_index_pair",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "9c364a356e71dca1ce9625106362b88235ec59dd77fec8c4ef78b99bfb71c20c",
+              "target_ast_sha256": "9c364a356e71dca1ce9625106362b88235ec59dd77fec8c4ef78b99bfb71c20c"
+            },
+            {
+              "name": "test_arm64_side_is_a_hard_block",
+              "present": true,
+              "ast_identical": false,
+              "donor_ast_sha256": "c5facc61951bdff33bd680b1fc0069726d524012c897ae10ae06c1592ec0ffd4",
+              "target_ast_sha256": "059030ea0f35694aa18be23ef09f2b7ed4330e97a4ded6fe2a7ac14a031e8dba"
+            },
+            {
+              "name": "test_reverse_order_is_never_grade_a",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "b2fb2c0960fab5d15bc66688dcc6f849dc2a0a878e2811608f022a90492ed881",
+              "target_ast_sha256": "b2fb2c0960fab5d15bc66688dcc6f849dc2a0a878e2811608f022a90492ed881"
+            },
+            {
+              "name": "test_identical_content_is_grade_x",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "8113e5fff775c17cb756f03cb421079f8ab9139c8dc2ba8468639c7f7e14aac2",
+              "target_ast_sha256": "8113e5fff775c17cb756f03cb421079f8ab9139c8dc2ba8468639c7f7e14aac2"
+            },
+            {
+              "name": "test_delta_only_side_is_a_hard_block",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "fe4d19336dba567e1f7b065ab6d913eb948fddd25279e52abd0a4f707a2898fd",
+              "target_ast_sha256": "fe4d19336dba567e1f7b065ab6d913eb948fddd25279e52abd0a4f707a2898fd"
+            },
+            {
+              "name": "test_fix_boundary_uses_only_stated_builds",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "18499c69f0da84f6a0992e6a15ece689448208cf7fe3deb4af76c7856b0fef92",
+              "target_ast_sha256": "18499c69f0da84f6a0992e6a15ece689448208cf7fe3deb4af76c7856b0fef92"
+            },
+            {
+              "name": "test_shared_kb_build_prefix_is_not_taken_from_the_sibling",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "032afbb6b7b65732d6d45438e3f8a5fdc06a13e8bab4b89c9705085a7c31c2a4",
+              "target_ast_sha256": "032afbb6b7b65732d6d45438e3f8a5fdc06a13e8bab4b89c9705085a7c31c2a4"
+            },
+            {
+              "name": "test_fix_boundary_needs_the_immediate_predecessor",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "9621d897d889f5602940fb31564c21779ec8d2472ef0ef633f8e6729ff7c5ec6",
+              "target_ast_sha256": "9621d897d889f5602940fb31564c21779ec8d2472ef0ef633f8e6729ff7c5ec6"
+            },
+            {
+              "name": "test_ranking_is_lexicographic_and_stable",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "eb9c8df28712c28195b39eaf9b2dbf2ed1c1c89b2494a0eabd76c0f865ba84fe",
+              "target_ast_sha256": "eb9c8df28712c28195b39eaf9b2dbf2ed1c1c89b2494a0eabd76c0f865ba84fe"
+            },
+            {
+              "name": "test_pair_list_is_truncated_and_flagged",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "e777c3d4a7e7ac4590d75f0a2bb533d3e891dadfdc7825679c1a56aa3754bfb5",
+              "target_ast_sha256": "e777c3d4a7e7ac4590d75f0a2bb533d3e891dadfdc7825679c1a56aa3754bfb5"
+            },
+            {
+              "name": "test_resolution_is_deterministic",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "ce471eec5814d639fab738bce65ba1eaaeb08200b783940774a6722920a8971a",
+              "target_ast_sha256": "ce471eec5814d639fab738bce65ba1eaaeb08200b783940774a6722920a8971a"
+            },
+            {
+              "name": "test_malformed_kb_is_rejected",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "e2389a2ae2ef648f61ea64c5c2b81b914fdbb62356a1724d8fe7f35f6cff7763",
+              "target_ast_sha256": "e2389a2ae2ef648f61ea64c5c2b81b914fdbb62356a1724d8fe7f35f6cff7763"
+            }
+          ],
+          "target_added_declarations": [
+            "synthetic_rows",
+            "test_kba06_no_resolver_pair_carries_identical_content",
+            "test_kba06_pair_ids_of_the_committed_fixtures_are_unchanged",
+            "test_kba06_reverted_build_pairs_with_the_earlier_distinct_build_not_its_own_bytes",
+            "test_kba06_reverted_build_without_a_distinct_earlier_build_has_no_older",
+            "test_kba08_release_less_windows_10_scope_resolves_rows_under_the_bare_1507_key"
+          ]
+        }
+      ],
+      "original_scope_base": "c1e21efcee9da2d65787ea75a5fa630c5547f3a4",
+      "original_changed_paths": [
+        "M\tsrc/patchtrace/kbcorrelation/resolver.py",
+        "M\ttests/test_kbc_resolver.py"
+      ],
+      "classification": "SUPERSEDED",
+      "scope": "Non-AMD64 selected-product refusal before file-index pairing",
+      "implementation_commits": [
+        "400cfe4a258d58d0a98f1afe8a198632b761f456",
+        "40e02daf93c8e13a94b74f5b80d86c1680fea7ad"
+      ],
+      "excluded": [
+        "inherited GUI/profile/symbol/parse/help changes",
+        "complete chronology review",
+        "native compatibility",
+        "raw Winbindex input membership"
+      ],
+      "whole_branch_status": "PARTIALLY_REVIEWED",
+      "source_recovery_required_in_named_scope": false,
+      "delete_authorized": false,
+      "captured_mechanical_classification": "unmatched-patches-review-required",
+      "live_ref_verified": true,
+      "live_ref_url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/ref/heads/codex/pr110-kb-arch-scope-20261029",
+      "review_notes": "See README.md and exact source-comparison snapshots; changed regression semantics are explicitly explained."
+    },
+    {
+      "id": "pr159-card-field-provenance",
+      "branch": "codex/msrc-reconcile-integration-20261102",
+      "head": "56374f867594dd923383c91ea71970cb7d24d173",
+      "pr": 159,
+      "donor_tree": "816864d631ec19ac8c0e8a273b18fda42ac01599",
+      "captured_pr": {
+        "base_ref": "codex/autonomous-reconcile-20261101",
+        "base_sha": "0130bf81e2fe3154f30af7b68a0e6ab197946040",
+        "draft": true,
+        "head_matches_snapshot": true,
+        "head_sha": "56374f867594dd923383c91ea71970cb7d24d173",
+        "merged_at": null,
+        "number": 159,
+        "state": "closed",
+        "title": "Integrate MSRC card provenance with saved-scope investigation",
+        "url": "https://github.com/djshellshoxxx/patchtrace/pull/159"
+      },
+      "merge_bases_with_target": [
+        "0cf22c9520da6d2841d27c0aa8136f36657aecc6"
+      ],
+      "unique_nonmerge_commits_vs_target": [
+        "0130bf81e2fe3154f30af7b68a0e6ab197946040",
+        "566e266f53b07696c4289c9b46969d43f27f4de9",
+        "c13d3257c88140c23fb585a8a59a4dce81e81928",
+        "d038ddea43182b8709afd447140dc74fded487c5",
+        "039c696c93a443d152d4ddc1383179408ff86b75",
+        "c3868d8335a8f32f676905032dc1a6d0e9f22fd6",
+        "8f4c4a2e0021d424d403317c6780b6db026ad76b",
+        "50ced35a54f18b4de8437b78a42dd2ec689338d9",
+        "25125eb8b282322bafe8e682f5c09dfbffb07fbf",
+        "745e93426a16e0a91a961b6e0bbcb71be69f2a7e",
+        "015f79cc762f0ebff4cbb700480a44a88e014d9f",
+        "59ff5ad1379c0a787d92f62d732686c1dd0e65b4",
+        "c592b680eb1013f02c8472e544bbdb417e11fdde",
+        "2c87611ebe65ea227f9f3efdf9c6246ab09b177f",
+        "7f14f792ed516c494aea17d7ca337bae18a31cf6",
+        "0ca9ff1c99d2aea5198f9dda1a93c9bde8ca0226",
+        "e2476c19017f82785570497aa2804b4f4f2e374f",
+        "17210eb704802912a2951d8efd9f5e3d27a2193b",
+        "a7f13e13ffb512f8e9621753a0ae162d78942f3b",
+        "a4d1e6a38c34d1952584aa65d7f5f908c45547b3",
+        "632079f0251982068d2cac294514b2d32e06a74c",
+        "fb91cff6d91c77a2c539c896b670d81180dcc637",
+        "b87193d1dd30635fce33986f80ceade136507a1a",
+        "c04ad725551fe8daa139b37aa2cdf46d6d161b65",
+        "2fcd627e52a6d784d5c2e5b4ea8105e90b8589b3",
+        "f18687fd035b67961c1072af84f8c2b3442979e0",
+        "5736376891d273fb16fa211ed0fa2de5125c1601",
+        "f82489bc9ff8ad89987670fde484a5f579aefa6b",
+        "aa6d614f0677e908727224aa4e46453108bb1b57",
+        "ecfb60193b806dd984c044ae8f347b063e3d5155",
+        "d21d66758f75c6a3912b76042a792c0b9bb2eea2",
+        "fffd5badb1ed84c8e930d667eae7d2d1dcf5a64f",
+        "e9f6be5d8c0cdc36d1a65f81403901648a6fe1fc",
+        "c307aaad162cff1f4464b62469792ead8d877385",
+        "e81adbe882ae6eb2c26a5854b24aa6acff2b27a2",
+        "b26ca2c9bf85e9b7bc385b02c7bfdad1d7d724de"
+      ],
+      "production_comparisons": [
+        {
+          "path": "src/patchtrace/kbcorrelation/card_provenance.py",
+          "donor_blob": "9ba731d05e50f2ecb1fe3ee6860a7c6c71427073",
+          "target_blob": "9ba731d05e50f2ecb1fe3ee6860a7c6c71427073",
+          "donor_bytes_sha256": "c9998835032e877c36bf7aa0a352b5c268f9948ab5ffe9e1ebbc8501acdad6df",
+          "target_bytes_sha256": "c9998835032e877c36bf7aa0a352b5c268f9948ab5ffe9e1ebbc8501acdad6df",
+          "byte_identical": true,
+          "declarations": [
+            {
+              "name": "CardFactRef",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "abfd87c2f2ef862a5b7d7b7414d6f9a8527d8568a4ced4b463d2744cd421a7e0",
+              "target_ast_sha256": "abfd87c2f2ef862a5b7d7b7414d6f9a8527d8568a4ced4b463d2744cd421a7e0"
+            },
+            {
+              "name": "fact_key",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "13c1fb3ff6f0f2c2d532a2d9ac7e0c5489a5cfaecf343554dcb491bf50a36932",
+              "target_ast_sha256": "13c1fb3ff6f0f2c2d532a2d9ac7e0c5489a5cfaecf343554dcb491bf50a36932"
+            },
+            {
+              "name": "locate_cards",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "08c90f8e7bcd3b9abd5515b0d7918e71f307ddf881cbdab8277321db00ad0fde",
+              "target_ast_sha256": "08c90f8e7bcd3b9abd5515b0d7918e71f307ddf881cbdab8277321db00ad0fde"
+            },
+            {
+              "name": "CardDocument",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "fce40f8ba9f2f5cab0df15980a3c49af2dc9013485057ebbee5deb3df2ceb772",
+              "target_ast_sha256": "fce40f8ba9f2f5cab0df15980a3c49af2dc9013485057ebbee5deb3df2ceb772"
+            },
+            {
+              "name": "bind_consensus",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "673b9ad92ff45aa71fc523004042692db53080d48013cd06290767e22da51edb",
+              "target_ast_sha256": "673b9ad92ff45aa71fc523004042692db53080d48013cd06290767e22da51edb"
+            }
+          ],
+          "target_added_declarations": []
+        },
+        {
+          "path": "src/patchtrace/kbcorrelation/context.py",
+          "donor_blob": "2858492c2e489fda57faa5ce16aba14fa1da8a68",
+          "target_blob": "cee3b741af97bc50c000f1ae6314e77b72042525",
+          "donor_bytes_sha256": "a579d5ede58067c0cc7d5b0da48abb06716f579d1b7f65ae861e14f6b3065669",
+          "target_bytes_sha256": "54636276ab677919f1d0e7fa6ce997c21ff39d219343a9f48ef211a81415d338",
+          "byte_identical": false,
+          "declarations": [
+            {
+              "name": "ContextBundle",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "9ec95c1ca915cc2075e2acba099ba85c0d54bf683b64f700f1492e89962b0426",
+              "target_ast_sha256": "9ec95c1ca915cc2075e2acba099ba85c0d54bf683b64f700f1492e89962b0426"
+            },
+            {
+              "name": "ContextBundle._same_cves",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "17a812bf0120210280fa3442973b084ca2f2226bd1e810e36538838faee0e716",
+              "target_ast_sha256": "17a812bf0120210280fa3442973b084ca2f2226bd1e810e36538838faee0e716"
+            },
+            {
+              "name": "build_bundle",
+              "present": true,
+              "ast_identical": false,
+              "donor_ast_sha256": "c0b089628ceb2cd8e6962b86ff1342840408d5226858e225f1c7ba1851fc85b9",
+              "target_ast_sha256": "f99e5cdeb2f33a9bbf64becfd193adac431410e070b25b9f3b2d4a5cfa2c5473"
+            }
+          ],
+          "target_added_declarations": []
+        },
+        {
+          "path": "src/patchtrace/kbcorrelation/sources/importer.py",
+          "donor_blob": "02339f0b53d4868cfc810e9c0bded0526aa7ec07",
+          "target_blob": "d90593d6bbf077ada6665ed8cac2d61fd4ddf3a7",
+          "donor_bytes_sha256": "e8b08c04a122f4ec5158e74ab15552dec32b78c636d3f3537d6230fe7b96ac59",
+          "target_bytes_sha256": "b8761d16b48197abcf936963cbf5a0dae9f0f6966fefb5fee08c1ff7a4b755fe",
+          "byte_identical": false,
+          "declarations": [
+            {
+              "name": "ImportedDocument",
+              "present": true,
+              "ast_identical": false,
+              "donor_ast_sha256": "3cd6fc630a057c7cfdf170a2fe6cccf3f2428faf45c29d3889e4946625da7144",
+              "target_ast_sha256": "e88b78356a02ce6b21fcfdd26d73ef1103d0c74f81bd223e2dc8f6a2c2d97d57"
+            },
+            {
+              "name": "_import_plain",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "483aa04083f94a51f3042236926eecddf720b136fd09628782bad0ffc3719c67",
+              "target_ast_sha256": "483aa04083f94a51f3042236926eecddf720b136fd09628782bad0ffc3719c67"
+            }
+          ],
+          "target_added_declarations": []
+        },
+        {
+          "path": "src/patchtrace/kbcorrelation/wiring.py",
+          "donor_blob": "e7511fe49711e9033c41125c82abd92b4f687e19",
+          "target_blob": "1b92737ed623155ef7020861412937faee5eb86e",
+          "donor_bytes_sha256": "ac517defd830f757df911d90336c4f452f34052681bb4975436fc5995edda3ed",
+          "target_bytes_sha256": "88417158f8705c7bc207166be0cc307af1bd0d8ce328d3a787fa7fa8d8e23fe7",
+          "byte_identical": false,
+          "declarations": [
+            {
+              "name": "IntelligenceRules.interpret",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "f71911000a04217bd3f5fd23453b7ada39a7cda61684952b5435525d8cf58fcd",
+              "target_ast_sha256": "f71911000a04217bd3f5fd23453b7ada39a7cda61684952b5435525d8cf58fcd"
+            },
+            {
+              "name": "_merge_profiles",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "05c727a5ab5d9b4d115d1ae5d28ac17efe3008491ee7efe0655f161a4739dd90",
+              "target_ast_sha256": "05c727a5ab5d9b4d115d1ae5d28ac17efe3008491ee7efe0655f161a4739dd90"
+            }
+          ],
+          "target_added_declarations": [
+            "RealProjectPort._owned_acquisition",
+            "RealProjectPort.write_acquisition_sidecar",
+            "SnapshotProjectPort",
+            "SnapshotProjectPort.__init__",
+            "SnapshotProjectPort.create_project",
+            "SnapshotProjectPort.get_row",
+            "SnapshotProjectPort.list_rows",
+            "SnapshotProjectPort.open_project",
+            "SnapshotProjectPort.put_row",
+            "SnapshotProjectPort.write_acquisition_sidecar",
+            "WorkspaceFileIndex._check_directory",
+            "WorkspaceFileIndex._read_rows",
+            "encode_rows"
+          ]
+        },
+        {
+          "path": "src/patchtrace/intelligence/lexicon.py",
+          "donor_blob": "789df99c030cbef9aed10ef8fac764f92ed28ece",
+          "target_blob": "789df99c030cbef9aed10ef8fac764f92ed28ece",
+          "donor_bytes_sha256": "ff232886ba2f16c0460862fda17c55524b3cc80591c5acd0b93ed4c4505c0e3a",
+          "target_bytes_sha256": "ff232886ba2f16c0460862fda17c55524b3cc80591c5acd0b93ed4c4505c0e3a",
+          "byte_identical": true,
+          "declarations": [
+            {
+              "name": "classify",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "4c2930c2862b09882c2666c8ab98b2e3697e46a186ec6599440ebee91d2be30f",
+              "target_ast_sha256": "4c2930c2862b09882c2666c8ab98b2e3697e46a186ec6599440ebee91d2be30f"
+            }
+          ],
+          "target_added_declarations": []
+        },
+        {
+          "path": "src/patchtrace/intelligence/contracts.py",
+          "donor_blob": "0ae80a6e70d92dd365ca3e11a2797266683b5fe8",
+          "target_blob": "0ae80a6e70d92dd365ca3e11a2797266683b5fe8",
+          "donor_bytes_sha256": "75c50c0d651688400fe996e815016fbbb9ae89f2dba300147bab42ce42e99a4f",
+          "target_bytes_sha256": "75c50c0d651688400fe996e815016fbbb9ae89f2dba300147bab42ce42e99a4f",
+          "byte_identical": true,
+          "declarations": [
+            {
+              "name": "CweClassification",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "afda501bae0021464b4409e08236c90f3b7a53cf4f1e95665fdb0ae918b9f4de",
+              "target_ast_sha256": "afda501bae0021464b4409e08236c90f3b7a53cf4f1e95665fdb0ae918b9f4de"
+            },
+            {
+              "name": "CweClassification._honest",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "45ab5e29adb7e3e14387b82e2960035495babd1f86c21be863d9de5b803fcfb2",
+              "target_ast_sha256": "45ab5e29adb7e3e14387b82e2960035495babd1f86c21be863d9de5b803fcfb2"
+            },
+            {
+              "name": "CweProfile",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "e4545e6a3a6b255458a8ccbf8fbdacaba49f6491a967e6360ecc0bec58cb78ec",
+              "target_ast_sha256": "e4545e6a3a6b255458a8ccbf8fbdacaba49f6491a967e6360ecc0bec58cb78ec"
+            }
+          ],
+          "target_added_declarations": []
+        }
+      ],
+      "test_source_comparisons": [
+        {
+          "path": "tests/test_kbc_card_field_provenance.py",
+          "donor_blob": "6a6d5da44a920360f0254da08b9cece65f058640",
+          "target_blob": "fb45ff1ed1141177e9591ead2fbdcc4dc2c966c7",
+          "donor_bytes_sha256": "38231507d0b47c67835a57079aa73cdbe2f031c6ff323e1b1d5f5e5e98816487",
+          "target_bytes_sha256": "e0666868b84a2c3a8872208476aa7ae55194cb14b7435485cd8773259a6f0676",
+          "byte_identical": false,
+          "declarations": [
+            {
+              "name": "imported",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "a8c90024ef637f914d7f0a938f51c86279653f391b6a282b5dfdbe7efd5901a4",
+              "target_ast_sha256": "a8c90024ef637f914d7f0a938f51c86279653f391b6a282b5dfdbe7efd5901a4"
+            },
+            {
+              "name": "index_of",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "c60e7868c1885ff9425289d4d2fa72065fe61204a82d0eb0aeccab1a3266a59f",
+              "target_ast_sha256": "c60e7868c1885ff9425289d4d2fa72065fe61204a82d0eb0aeccab1a3266a59f"
+            },
+            {
+              "name": "bundle",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "51af0a71ddbdb879c9384a729275b24abb3a344d0d69a5988dbc1b6f66628cb5",
+              "target_ast_sha256": "51af0a71ddbdb879c9384a729275b24abb3a344d0d69a5988dbc1b6f66628cb5"
+            },
+            {
+              "name": "mixed_sources",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "f1c948ad2523398d196aad03bfc095779951a4be7d2e5fa33020dbc10d99a989",
+              "target_ast_sha256": "f1c948ad2523398d196aad03bfc095779951a4be7d2e5fa33020dbc10d99a989"
+            },
+            {
+              "name": "native",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "3d5de0d0a8a7f0875f52e2eb81854a6f3576402433246f34706cf459cb06cc11",
+              "target_ast_sha256": "3d5de0d0a8a7f0875f52e2eb81854a6f3576402433246f34706cf459cb06cc11"
+            },
+            {
+              "name": "resolve",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "3a33126cf633e1c44b1bbcd2ced4c94ff09f46178a7007a4416bd062aef6fdea",
+              "target_ast_sha256": "3a33126cf633e1c44b1bbcd2ced4c94ff09f46178a7007a4416bd062aef6fdea"
+            },
+            {
+              "name": "assert_resolves",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "fa97c32b6d994708a9246201510d3596f7fe6993cfa85622257cad4f31516c36",
+              "target_ast_sha256": "fa97c32b6d994708a9246201510d3596f7fe6993cfa85622257cad4f31516c36"
+            },
+            {
+              "name": "test_card_only_fact_never_borrows_other_source_edge_pointer",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "3caff4bd5364511f158445bbccdd7aa2ad86bfe62e73a4c17c09558eeff264df",
+              "target_ast_sha256": "3caff4bd5364511f158445bbccdd7aa2ad86bfe62e73a4c17c09558eeff264df"
+            },
+            {
+              "name": "test_native_agreeing_contributors_keep_all_exact_fields_without_strength_promotion",
+              "present": true,
+              "ast_identical": false,
+              "donor_ast_sha256": "5c2b8ec524732ffac5b68bd484cbe4c335f6c4eb03e454c91936bca79d6781a5",
+              "target_ast_sha256": "43e672387b17eb32ebd68288b4aff571d5649721906a60efef31611577cbd864"
+            },
+            {
+              "name": "test_conflicting_and_missing_fields_are_withheld_without_borrowed_refs",
+              "present": true,
+              "ast_identical": false,
+              "donor_ast_sha256": "d0807edfb31c50b29874be18aec76f0da67908ddb7383cccd14167ed6829dab5",
+              "target_ast_sha256": "6aa96e1a68711a5deba39c781ab1e6cd8aef9708b97dc813f17d461e394dc50b"
+            },
+            {
+              "name": "test_missing_internal_locator_is_withheld_instead_of_using_edge",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "70366a0ace6f2bbef1c5fcec03a105c1bdb31ef2636a61b0aa7be1b6d60f2943",
+              "target_ast_sha256": "70366a0ace6f2bbef1c5fcec03a105c1bdb31ef2636a61b0aa7be1b6d60f2943"
+            },
+            {
+              "name": "test_duplicate_cve_rows_remain_ambiguous_and_xml_does_not_invent_json_locations",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "6af26faaf9d65d6e71068fddd0a117963c841bee162cfba4fce55430db281efd",
+              "target_ast_sha256": "6af26faaf9d65d6e71068fddd0a117963c841bee162cfba4fce55430db281efd"
+            },
+            {
+              "name": "test_selected_lookup_excludes_out_of_scope_field_contributors",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "30ce8f79a4617630da1dde4e47640a9e450fe3fc2436beea1e7015e91863a370",
+              "target_ast_sha256": "30ce8f79a4617630da1dde4e47640a9e450fe3fc2436beea1e7015e91863a370"
+            },
+            {
+              "name": "test_csaf_default_basis_and_exact_raw_cwe_id_are_preserved",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "03d646f80f274ccb0037458eacc9384702c36fb5e2288f5eaa5c762ddef02db4",
+              "target_ast_sha256": "03d646f80f274ccb0037458eacc9384702c36fb5e2288f5eaa5c762ddef02db4"
+            },
+            {
+              "name": "test_persisted_provenance_rejects_cross_record_mismatches",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "123d162d702d9334c4754ffb2452e89620fceba58b148667b3951229a43e4cd0",
+              "target_ast_sha256": "123d162d702d9334c4754ffb2452e89620fceba58b148667b3951229a43e4cd0"
+            },
+            {
+              "name": "test_key_policy_three_invalidates_old_result_but_old_wire_stays_readable",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "c5978a4a53cc5359db28651775801730c6f7db16dd6e23ba8910b84a23c7b652",
+              "target_ast_sha256": "c5978a4a53cc5359db28651775801730c6f7db16dd6e23ba8910b84a23c7b652"
+            },
+            {
+              "name": "test_actual_attach_reload_and_export_retain_raw_values_and_field_references",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "556031f5ad116a1bd0f4b439050f83b3973111efb1637d830b91ff8208a4571f",
+              "target_ast_sha256": "556031f5ad116a1bd0f4b439050f83b3973111efb1637d830b91ff8208a4571f"
+            }
+          ],
+          "target_added_declarations": []
+        }
+      ],
+      "original_scope_base": "0130bf81e2fe3154f30af7b68a0e6ab197946040",
+      "original_changed_paths": [
+        "M\tdocs/modules.md",
+        "A\tdocs/qa/card-field-attribution-20261102.json",
+        "A\tdocs/qa/card-field-attribution-20261102.md",
+        "A\tdocs/qa/card-field-attribution-20261102.tar.gz",
+        "A\tdocs/qa/card-field-attribution-review-20261102.json",
+        "A\tdocs/qa/card-field-attribution-review-20261102.md",
+        "M\tdocs/qa/msrc-provenance-recovery-20261102.md",
+        "A\tdocs/qa/msrc-recovered-main.log.gz",
+        "A\tdocs/qa/msrc-recovered-main.xml.gz",
+        "M\tdocs/schemas/intelligence/CweProfile.json",
+        "M\tdocs/schemas/intelligence/HypothesisSet.json",
+        "M\tdocs/schemas/intelligence/IntelligenceReport.json",
+        "A\tdocs/schemas/kbcorrelation/ContextBundle.json",
+        "M\tdocs/schemas/kbcorrelation/ContextReport.json",
+        "M\tdocs/schemas/pilot/Lead.json",
+        "M\tdocs/schemas/pilot/PilotAssessment.json",
+        "M\tdocs/specs/kb-cve/31-E-evidence-intent.md",
+        "M\tsrc/patchtrace/intelligence/contracts.py",
+        "M\tsrc/patchtrace/intelligence/lexicon.py",
+        "A\tsrc/patchtrace/kbcorrelation/card_provenance.py",
+        "M\tsrc/patchtrace/kbcorrelation/context.py",
+        "M\tsrc/patchtrace/kbcorrelation/sources/importer.py",
+        "M\tsrc/patchtrace/kbcorrelation/wiring.py",
+        "M\tsrc/patchtrace/pilot/contracts.py",
+        "M\tsrc/patchtrace/pilot/ranking.py",
+        "M\tsrc/patchtrace/pilot/sources/advisory.py",
+        "M\tsrc/patchtrace/pilot/why.py",
+        "A\ttests/test_kbc_card_field_provenance.py",
+        "M\ttests/test_kbc_schemas.py",
+        "M\ttools/generate_kbc_schemas.py"
+      ],
+      "classification": "SUPERSEDED",
+      "scope": "Exact advisory field/source attribution and per-source interpretation",
+      "implementation_commits": [
+        "0cf22c9520da6d2841d27c0aa8136f36657aecc6"
+      ],
+      "explanatory_later_commit": "d03a7d4897ca0f09172aeb17f0ee57f8caab13eb",
+      "excluded": [
+        "other saved-scope implementations",
+        "full parsing/transport",
+        "live coverage",
+        "Winbindex index membership",
+        "L1/L2/L3 accuracy"
+      ],
+      "whole_branch_status": "PARTIALLY_REVIEWED",
+      "source_recovery_required_in_named_scope": false,
+      "delete_authorized": false,
+      "captured_mechanical_classification": "unmatched-patches-review-required",
+      "live_ref_verified": true,
+      "live_ref_url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/ref/heads/codex/msrc-reconcile-integration-20261102",
+      "review_notes": "See README.md and exact source-comparison snapshots; changed regression semantics are explicitly explained."
+    },
+    {
+      "id": "enrichment-cve-normalization",
+      "branch": "feat/enrichment-cve",
+      "head": "49bf245583d040a8b29d80daee8666d8c7f7b8d4",
+      "pr": null,
+      "donor_tree": "eeb59f533b96bb37b0ce8184c03f9f1a39278dcb",
+      "captured_pr": null,
+      "merge_bases_with_target": [
+        "615b9354fe8b5a8954d71f212ecf76f5a8d08c0e"
+      ],
+      "unique_nonmerge_commits_vs_target": [
+        "49bf245583d040a8b29d80daee8666d8c7f7b8d4",
+        "bafd62a52c2cc397698fd993ea21cf56c3ef4936"
+      ],
+      "production_comparisons": [
+        {
+          "path": "src/patchtrace/enrichment/cve.py",
+          "donor_blob": "2c3be6d10ad001e916db6bac12db6a921672d324",
+          "target_blob": "a3dc4a194efcc07aaec58b057301bc7190b73c77",
+          "donor_bytes_sha256": "153e04a3bb9803686f48a1bcdeb1d1db38fba67d4720b95161b84acd61b19872",
+          "target_bytes_sha256": "5f369f6a2abe0612693d17402ef8c0911a176f5b93695bbd30bc6885b4ab9357",
+          "byte_identical": false,
+          "declarations": [
+            {
+              "name": "_err",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "e8fcc31d3d0b596b91fbef1eaec59edc4a8466df6242a563b2febf6e48255e55",
+              "target_ast_sha256": "e8fcc31d3d0b596b91fbef1eaec59edc4a8466df6242a563b2febf6e48255e55"
+            },
+            {
+              "name": "_reject_constant",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "186b58f0e8491fb32fcb29d934cf65992e7a026435707c868e2fc4068c1dbca3",
+              "target_ast_sha256": "186b58f0e8491fb32fcb29d934cf65992e7a026435707c868e2fc4068c1dbca3"
+            },
+            {
+              "name": "_pairs",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "5d37f81caaab3d82d8b57b30fd9b60038ce3b68abb91a9da96db5e8efe666473",
+              "target_ast_sha256": "5d37f81caaab3d82d8b57b30fd9b60038ce3b68abb91a9da96db5e8efe666473"
+            },
+            {
+              "name": "_strict_json",
+              "present": true,
+              "ast_identical": false,
+              "donor_ast_sha256": "b0853d97ebbf322ab1c367ee1123272b7aa9df4e764af4bbd2f472f6c609e3ae",
+              "target_ast_sha256": "6bd03c1b56c12049a82a5bfde871e115dca096c83a5914001637413b9f1fa327"
+            },
+            {
+              "name": "_tenths",
+              "present": true,
+              "ast_identical": false,
+              "donor_ast_sha256": "6f0c623d3a4dd1ccb38dc676a724517d741270e15253ee4b99a3e8c52bbd7744",
+              "target_ast_sha256": "40f83a1a1dd062a3f5bd028bebb95ce70ecff947d02a66b76f036e5fa9526395"
+            },
+            {
+              "name": "_str",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "e9ad9eb72ab7b8fdba7919b6453a536bb1f83deef990a5450c5a0d389adc6ed5",
+              "target_ast_sha256": "e9ad9eb72ab7b8fdba7919b6453a536bb1f83deef990a5450c5a0d389adc6ed5"
+            },
+            {
+              "name": "_list",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "f45a3cd42d534b436a4e3b8305a5a6bee51a7670295bb15d78dafac176abdc8f",
+              "target_ast_sha256": "f45a3cd42d534b436a4e3b8305a5a6bee51a7670295bb15d78dafac176abdc8f"
+            },
+            {
+              "name": "_dict",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "b4a99403dd4ecd9e7fc5389dcf3267e1c4c4d6114a2a909d5a1bf8c951591e71",
+              "target_ast_sha256": "b4a99403dd4ecd9e7fc5389dcf3267e1c4c4d6114a2a909d5a1bf8c951591e71"
+            },
+            {
+              "name": "_cwe_ids",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "d193df02b6c0fb4abff8c84b9a4c5947d517ffc576f1e480b5f5056b824811a1",
+              "target_ast_sha256": "d193df02b6c0fb4abff8c84b9a4c5947d517ffc576f1e480b5f5056b824811a1"
+            },
+            {
+              "name": "_parse_nvd",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "f9c4589013c5471916ac98c482029ab5d0390a43c2d08bfb846e7d07108ba371",
+              "target_ast_sha256": "f9c4589013c5471916ac98c482029ab5d0390a43c2d08bfb846e7d07108ba371"
+            },
+            {
+              "name": "_parse_msrc",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "7eba0c1dfdd5355e4b8105c14aac472c6f157882074e92a5c3bfd1acb9435580",
+              "target_ast_sha256": "7eba0c1dfdd5355e4b8105c14aac472c6f157882074e92a5c3bfd1acb9435580"
+            },
+            {
+              "name": "_base_vector",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "4e4023538c41b86152e008029c16b45af0e2f6ab129f27742a04281896c5d37b",
+              "target_ast_sha256": "4e4023538c41b86152e008029c16b45af0e2f6ab129f27742a04281896c5d37b"
+            },
+            {
+              "name": "_conflicts",
+              "present": true,
+              "ast_identical": false,
+              "donor_ast_sha256": "c84d7941aa32f00826642e16cf79906bd0cbd7876a0750cff9aa3bb3327707c3",
+              "target_ast_sha256": "f39304b9975895fe9179d92f167b462db3d730cc7732130cdbd994dc29ec53b5"
+            },
+            {
+              "name": "_timestamp",
+              "present": true,
+              "ast_identical": false,
+              "donor_ast_sha256": "452d220a97f93c1256dfa34e5b4f15671953a6bb7c0c138155318c75330cd138",
+              "target_ast_sha256": "8ed09b18c4f1b7c491f27d76d588d1d56a0a873086869213fe33ae83704a1a89"
+            },
+            {
+              "name": "normalize",
+              "present": true,
+              "ast_identical": false,
+              "donor_ast_sha256": "e38eae8dfe7bdb45fc0c8b91aaff3dcfe6d9bd347b32278de2e20b76b6c0c15c",
+              "target_ast_sha256": "d5680a969a70b9f70790c1b8f72c6f597b1918f6292c185d200e68a1d99c30d4"
+            },
+            {
+              "name": "is_stale",
+              "present": true,
+              "ast_identical": false,
+              "donor_ast_sha256": "4c56fb7966f579f8b03366413954db09591f445732db60835eff1c4bf3464d6c",
+              "target_ast_sha256": "b5bc77ec67d222aec721fe9b99aa6786a98c633d4cddb2739b58d31b862719e5"
+            },
+            {
+              "name": "_canon",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "4a1fcc61c4b0f505fa04430f5176500d0518f30aeb9482cdce98dd278b243c1d",
+              "target_ast_sha256": "4a1fcc61c4b0f505fa04430f5176500d0518f30aeb9482cdce98dd278b243c1d"
+            },
+            {
+              "name": "_meaningful",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "6c88d00f24ba32a37a701ca8dc4ec2719af4f9aebc85a253808bccb0583e2dc8",
+              "target_ast_sha256": "6c88d00f24ba32a37a701ca8dc4ec2719af4f9aebc85a253808bccb0583e2dc8"
+            },
+            {
+              "name": "context_terms",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "7562c89b18a689d3bf41d719bb12287829394b71982b0d4008d7557e2d2e2779",
+              "target_ast_sha256": "7562c89b18a689d3bf41d719bb12287829394b71982b0d4008d7557e2d2e2779"
+            },
+            {
+              "name": "name_terms",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "4f6d6c03306a0cdbe9088958738e697b78f482860edd5fbf73d5fdb8abd6dd35",
+              "target_ast_sha256": "4f6d6c03306a0cdbe9088958738e697b78f482860edd5fbf73d5fdb8abd6dd35"
+            },
+            {
+              "name": "_module_words",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "cc773893d548e0d6987d9fdeb19ac67ed2661950b30dd0d8b20ee166c9cc31c9",
+              "target_ast_sha256": "cc773893d548e0d6987d9fdeb19ac67ed2661950b30dd0d8b20ee166c9cc31c9"
+            },
+            {
+              "name": "_artifact_stem",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "5074993150c774024605f5fbc639e81263d1bd835e432511b962492ff3f339ca",
+              "target_ast_sha256": "5074993150c774024605f5fbc639e81263d1bd835e432511b962492ff3f339ca"
+            },
+            {
+              "name": "contextual_rank",
+              "present": true,
+              "ast_identical": false,
+              "donor_ast_sha256": "c9658c6b6599062dabce534d508b094a48aa292c6183b5da06bba58de5031811",
+              "target_ast_sha256": "c1b5588a6ea416068d1dbd4c942f7499f01d922e16ef0ea4e128a3da2386d39b"
+            }
+          ],
+          "target_added_declarations": [
+            "_has_unpaired_surrogate",
+            "_merge_snapshots",
+            "_parse_strict",
+            "_provider",
+            "_reject_float",
+            "_snapshot",
+            "_snapshot_id",
+            "parse_snapshots",
+            "select_latest"
+          ]
+        }
+      ],
+      "test_source_comparisons": [
+        {
+          "path": "tests/test_enrichment_cve.py",
+          "donor_blob": "f6f523068b984d057020254e2ee2e4707c8d10d0",
+          "target_blob": "31910256697246a16a1afefe7eec011aea258012",
+          "donor_bytes_sha256": "931c5649f7776c2a31a1d8c52abb720d4e368426014ef1c86d35083855deb5ee",
+          "target_bytes_sha256": "91f3b628abb5f0e05f52a066fe15a3a8831923e2372759d38c05796b373d40ae",
+          "byte_identical": false,
+          "declarations": [
+            {
+              "name": "edited",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "f81c20e15132524ca74991f505a2f45846502726d91aa497eb5c78917cc52ce3",
+              "target_ast_sha256": "f81c20e15132524ca74991f505a2f45846502726d91aa497eb5c78917cc52ce3"
+            },
+            {
+              "name": "snap",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "b4148b723755354cc21bc935933be9853207a9c031defa7f7e47e53984a1f96a",
+              "target_ast_sha256": "b4148b723755354cc21bc935933be9853207a9c031defa7f7e47e53984a1f96a"
+            },
+            {
+              "name": "test_real_fixtures_normalize_with_attribution_and_exact_tenths",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "8f1a35dc1782472d7a7873eb7380e0ee87fa1a02103186166283b970c74963d2",
+              "target_ast_sha256": "8f1a35dc1782472d7a7873eb7380e0ee87fa1a02103186166283b970c74963d2"
+            },
+            {
+              "name": "test_nvd_noinfo_is_not_a_cwe",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "407065d51c23e926f5442e3be1dca72fa26e05bf4ca41d6afcc9e1f14e601b16",
+              "target_ast_sha256": "407065d51c23e926f5442e3be1dca72fa26e05bf4ca41d6afcc9e1f14e601b16"
+            },
+            {
+              "name": "test_snapshot_id_pins_digests_not_retrieval_time",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "99d9d3a32a792a805036577575c701a08347ad1c731d0487fbfb4b9cf9e652d9",
+              "target_ast_sha256": "99d9d3a32a792a805036577575c701a08347ad1c731d0487fbfb4b9cf9e652d9"
+            },
+            {
+              "name": "test_wrong_id_200_is_provider_error",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "a1149b7c4f954eb0c6000b7c4da0e084bcba6b43e319733bce0206f6832f9270",
+              "target_ast_sha256": "a1149b7c4f954eb0c6000b7c4da0e084bcba6b43e319733bce0206f6832f9270"
+            },
+            {
+              "name": "test_nvd_empty_result_for_unknown_cve_is_provider_error",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "ea65a5768e9c1418743f94be890f8c4c5118aba6f8cddc4abee2006365f4708a",
+              "target_ast_sha256": "ea65a5768e9c1418743f94be890f8c4c5118aba6f8cddc4abee2006365f4708a"
+            },
+            {
+              "name": "test_malformed_json_rejected",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "0db3f1bac0287293ee094a1df0d1f5a7aac7d3b1787ac0b8b6a87bf56564afa1",
+              "target_ast_sha256": "0db3f1bac0287293ee094a1df0d1f5a7aac7d3b1787ac0b8b6a87bf56564afa1"
+            },
+            {
+              "name": "test_oversized_response_rejected",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "1577150935346a6e29134fa6961f9a6477e7df9f9c56f1ecef4a0724e3ffbbe2",
+              "target_ast_sha256": "1577150935346a6e29134fa6961f9a6477e7df9f9c56f1ecef4a0724e3ffbbe2"
+            },
+            {
+              "name": "test_non_tenth_scores_rejected",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "f540e03679e4537c06f428e818c597517c8148871fcac7285ff368ea761f1563",
+              "target_ast_sha256": "f540e03679e4537c06f428e818c597517c8148871fcac7285ff368ea761f1563"
+            },
+            {
+              "name": "test_invalid_cve_id_and_inputs",
+              "present": true,
+              "ast_identical": false,
+              "donor_ast_sha256": "f64916aac4d4eedd938c8ba14fd3023f455b10e75d3c8ff534ecec9ea0bd5ef1",
+              "target_ast_sha256": "278bf1a12864c7d2e9e03298b61af50ec4b83543d788c687a1582d33e74abc4b"
+            },
+            {
+              "name": "test_input_validation",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "54367c320de58bf19f667caaed6e72b3a3a4b8550cae878e37d3d18bdb1271d1",
+              "target_ast_sha256": "54367c320de58bf19f667caaed6e72b3a3a4b8550cae878e37d3d18bdb1271d1"
+            },
+            {
+              "name": "test_missing_cwe_is_empty_not_invented",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "96ecb8fb004da3753272a24504e9f87c326b100a1c3ab1c5f5c1f9c617393092",
+              "target_ast_sha256": "96ecb8fb004da3753272a24504e9f87c326b100a1c3ab1c5f5c1f9c617393092"
+            },
+            {
+              "name": "test_conflicting_cwe_and_cvss_recorded_not_merged",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "91a87c5e4528393e7e17b68aa0c13064a36f54560ae0521a48479f99bde19e69",
+              "target_ast_sha256": "91a87c5e4528393e7e17b68aa0c13064a36f54560ae0521a48479f99bde19e69"
+            },
+            {
+              "name": "test_conflicting_severity_never_merged",
+              "present": false,
+              "ast_identical": false,
+              "donor_ast_sha256": "3920c4479b6f81b7e54d8a312b0aa1d28128233658070eeabebf263b8368875b",
+              "target_ast_sha256": null
+            },
+            {
+              "name": "test_freshness",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "3f3d863f4f4d7310557667e4276b2238ea3f8bafaeaa7ac3ce0d4177d9d4c644",
+              "target_ast_sha256": "3f3d863f4f4d7310557667e4276b2238ea3f8bafaeaa7ac3ce0d4177d9d4c644"
+            },
+            {
+              "name": "test_cve_module_is_pure",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "9424d247b92fc7b8da00de0c59ac43a580dd15ed418c228e83e47d3657c080b6",
+              "target_ast_sha256": "9424d247b92fc7b8da00de0c59ac43a580dd15ed418c228e83e47d3657c080b6"
+            },
+            {
+              "name": "pid",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "1744e25903e6be3d6b8f69a1fe3bb444d96e8b275e33bb182eabba42cb69047a",
+              "target_ast_sha256": "1744e25903e6be3d6b8f69a1fe3bb444d96e8b275e33bb182eabba42cb69047a"
+            },
+            {
+              "name": "sig",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "ee890d583d7e11244c137134238f01a47ce74814c70d9c0088987376ba3591aa",
+              "target_ast_sha256": "ee890d583d7e11244c137134238f01a47ce74814c70d9c0088987376ba3591aa"
+            },
+            {
+              "name": "sset",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "d2ca06d1f6f250e16e8760366afe10d1684a9bce69f81847e49a380a297660f9",
+              "target_ast_sha256": "d2ca06d1f6f250e16e8760366afe10d1684a9bce69f81847e49a380a297660f9"
+            },
+            {
+              "name": "scenario",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "b56c788619227eec1c05668eefede3d4f9633f8b53de1c2f4be31451c61ab32e",
+              "target_ast_sha256": "b56c788619227eec1c05668eefede3d4f9633f8b53de1c2f4be31451c61ab32e"
+            },
+            {
+              "name": "names",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "1a554cc5209e3dba9a5b204645501e8a4ebb443b2e38427653c63eee96e983d4",
+              "target_ast_sha256": "1a554cc5209e3dba9a5b204645501e8a4ebb443b2e38427653c63eee96e983d4"
+            },
+            {
+              "name": "test_real_cve_reorders_without_changing_base",
+              "present": true,
+              "ast_identical": false,
+              "donor_ast_sha256": "774bae30df217f94aada40d56881f31512843e1c357c88c678fa9c34af03aee0",
+              "target_ast_sha256": "98566398973aed4ff98c838259cb0ef9a2683772d8900af5d2cae6490061f2bd"
+            },
+            {
+              "name": "test_generic_noise_contributes_zero",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "b3e66236e2eaa2f4bd19d817ce1958402ba743fdcea3d068ba67587e8c333848",
+              "target_ast_sha256": "b3e66236e2eaa2f4bd19d817ce1958402ba743fdcea3d068ba67587e8c333848"
+            },
+            {
+              "name": "test_product_match_alone_is_not_binary_support",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "dd09b62ef986a29e348b2736f158f549aa9f4dd6cde6b2dc983d4b36a296bfc7",
+              "target_ast_sha256": "dd09b62ef986a29e348b2736f158f549aa9f4dd6cde6b2dc983d4b36a296bfc7"
+            },
+            {
+              "name": "test_no_snapshots_is_unavailable_and_identity_order",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "b706c3fc98add2655804ad1b67b277a0f343abe1fc8d63f5d4820c02b1a60fde",
+              "target_ast_sha256": "b706c3fc98add2655804ad1b67b277a0f343abe1fc8d63f5d4820c02b1a60fde"
+            },
+            {
+              "name": "test_conflicting_cwe_blocks_contribution",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "efa80138ff27ddcaf48da66ed906361b66ba36a25a3f57d5e87a951c3df1faeb",
+              "target_ast_sha256": "efa80138ff27ddcaf48da66ed906361b66ba36a25a3f57d5e87a951c3df1faeb"
+            },
+            {
+              "name": "test_caps_identifier_cwe_and_total",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "2b2a8e3ce0096336675003ac04b5427c06ff09030d1f72a1845e9d251c766dd7",
+              "target_ast_sha256": "2b2a8e3ce0096336675003ac04b5427c06ff09030d1f72a1845e9d251c766dd7"
+            },
+            {
+              "name": "test_feature_requires_qualifying_transition",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "087f2fb19cca63664244059759ed8e6f87438a30b54603858c6f31bd39fbd1dc",
+              "target_ast_sha256": "087f2fb19cca63664244059759ed8e6f87438a30b54603858c6f31bd39fbd1dc"
+            },
+            {
+              "name": "test_weak_signal_does_not_align_cwe",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "5ecfaa823bc18fe9af37e1b4b278f24ec748269758c872b6cb3475a64a4b3eb8",
+              "target_ast_sha256": "5ecfaa823bc18fe9af37e1b4b278f24ec748269758c872b6cb3475a64a4b3eb8"
+            },
+            {
+              "name": "test_term_cap_marks_partial",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "d58ebf35dba821d9f2cfd4d03dc6a045f65045a1f3fc4bd202e51d65990ebdbf",
+              "target_ast_sha256": "d58ebf35dba821d9f2cfd4d03dc6a045f65045a1f3fc4bd202e51d65990ebdbf"
+            },
+            {
+              "name": "test_reranking_is_stable_and_input_order_independent",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "4e2c9e8f90c755f179330931d9e5de2b638cf54d69f6f616565119bc5f25f738",
+              "target_ast_sha256": "4e2c9e8f90c755f179330931d9e5de2b638cf54d69f6f616565119bc5f25f738"
+            },
+            {
+              "name": "test_stale_snapshots_reported",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "2b962fd31eae6b8cc688a1f06dd42ef57fd4270520027d6abc252e86ca2699f0",
+              "target_ast_sha256": "2b962fd31eae6b8cc688a1f06dd42ef57fd4270520027d6abc252e86ca2699f0"
+            },
+            {
+              "name": "test_snapshot_round_trips_strictly",
+              "present": true,
+              "ast_identical": true,
+              "donor_ast_sha256": "ac0ec0dad9dc1fbecf1a10e3bf22a10848c06efa0138153281da16d10419aad0",
+              "target_ast_sha256": "ac0ec0dad9dc1fbecf1a10e3bf22a10848c06efa0138153281da16d10419aad0"
+            }
+          ],
+          "target_added_declarations": [
+            "_add_nvd_metric",
+            "_tcp_cve",
+            "test_context_score_never_below_base_and_equal_without_signals",
+            "test_cvss_conflict_across_providers_and_shared_pair",
+            "test_cvss_versions_are_never_compared_with_each_other",
+            "test_cwe_conflict_blocks_only_disputed_values",
+            "test_lowest_signal_id_is_cited_and_unavailable_confidence_is_not_evidence",
+            "test_name_match_with_weak_signal_cites_the_signal",
+            "test_name_match_without_signals_adds_nothing",
+            "test_nvd_primary_secondary_difference_is_not_a_conflict",
+            "test_qualifying_transition_alone_is_binary_evidence",
+            "test_select_latest_ignores_snapshots_that_contribute_nothing",
+            "test_select_latest_merge_is_order_independent_and_does_not_mutate",
+            "test_select_latest_merges_providers_with_oldest_retrieved_at",
+            "test_select_latest_recomputes_conflicts_for_the_merged_fields",
+            "test_select_latest_snapshot_per_cve",
+            "test_select_latest_tie_break_uses_snapshot_id",
+            "test_stale_snapshot_makes_status_partial",
+            "test_two_names_two_signals_cap_and_product_needs_other_contribution",
+            "test_unavailable_one_sided_pairing_never_qualifies"
+          ]
+        }
+      ],
+      "original_scope_base": "bafd62a52c2cc397698fd993ea21cf56c3ef4936",
+      "original_changed_paths": [
+        "A\tsrc/patchtrace/enrichment/cve.py",
+        "A\tsrc/patchtrace/enrichment/intelligence.py",
+        "A\ttests/fixtures/cve/README.md",
+        "A\ttests/fixtures/cve/msrc_CVE-2024-38063.json",
+        "A\ttests/fixtures/cve/nvd_CVE-2024-38063.json",
+        "A\ttests/test_enrichment_cve.py",
+        "A\ttests/test_enrichment_intelligence.py"
+      ],
+      "classification": "SUPERSEDED",
+      "scope": "Original pure provider normalization and contextual ranking",
+      "implementation_commits": [
+        "49bf245583d040a8b29d80daee8666d8c7f7b8d4"
+      ],
+      "excluded": [
+        "enrichment/intelligence.py transport",
+        "inherited contracts/identity/ranking",
+        "live MSRC/NVD",
+        "empirical accuracy",
+        "calibration",
+        "other donor documents"
+      ],
+      "whole_branch_status": "PARTIALLY_REVIEWED",
+      "source_recovery_required_in_named_scope": false,
+      "delete_authorized": false,
+      "captured_mechanical_classification": "unmatched-patches-review-required",
+      "live_ref_verified": true,
+      "live_ref_url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/ref/heads/feat/enrichment-cve",
+      "review_notes": "See README.md and exact source-comparison snapshots; changed regression semantics are explicitly explained."
+    }
+  ],
+  "counts": {
+    "scoped_duplicate": 1,
+    "scoped_superseded": 3,
+    "whole_branches_partially_reviewed": 4,
+    "production_file_comparisons": 9,
+    "test_file_comparisons": 5,
+    "focused_passed": 134,
+    "focused_failed": 0,
+    "focused_skipped": 0,
+    "focused_xfailed": 0
+  },
+  "census_change": false,
+  "historical_census": {
+    "unmatched": 181,
+    "patch_equivalent": 16
+  },
+  "test_receipt": "focused.json",
+  "product_or_test_edits": false,
+  "remote_mutations": false,
+  "limitations": [
+    "No whole-branch classification",
+    "No empirical CVE accuracy",
+    "No live provider or native acceptance",
+    "No full suite or release qualification",
+    "No analyzed target binaries executed"
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "reviewed_head": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+  "reviewed_tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
+  "ordered_parents": [
+    "d628749401f61d3653b5e066ff38245b938c5dcd",
+    "39a95c549d48eb523e9efdfda394bb9f184e2b16"
+  ],
+  "verdict": "No blocking findings in the bounded C4 plus Intel identity integration review.",
+  "standards_findings": [],
+  "spec_findings": [],
+  "recorded_utc": "2026-11-21T07:08:34.964847+00:00",
+  "file_composition": {
+    "entire_tree_exact_union": true,
+    "candidate_file_count": 4598,
+    "c4_changed_paths": 56,
+    "intel_changed_paths": 4,
+    "overlap": 0,
+    "original_evidence_files_preserved": 385,
+    "missing_paths": [],
+    "extra_paths": [],
+    "different_paths": []
+  },
+  "runtime": {
+    "maintained_tests": {
+      "passed": 141,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 3.26,
+      "scope": "Six selectors: dedicated identity tests, one Windows environment layout test, actual-host registry header audit, Pages workflow tests, Pages lock tests, specification registry tests."
+    },
+    "controlled_identity": {
+      "real_getpass_result": "patchtrace",
+      "pwd_import_attempts": 0,
+      "identity_removed_control": "ModuleNotFoundError: pwd",
+      "identity_case_variants": 432,
+      "rejected_extra_cases": 894,
+      "actual_adapter_fake_runner_calls": 24,
+      "platforms": [
+        "POSIX",
+        "simulated Windows branches"
+      ]
+    },
+    "isolated_source_binding": true,
+    "intel_delta_whitespace_check": true
+  },
+  "pages": {
+    "workflow_unchanged": true,
+    "no_pull_request_trigger": true,
+    "manual_dispatch_retains_deploy_behavior": true,
+    "workflow_dispatch_performed": false,
+    "hosted_index_or_build_acceptance_established": false
+  },
+  "boundaries": {
+    "candidate_source_modified": false,
+    "c4_worktree_or_refs_mutated": false,
+    "remote_mutations": false,
+    "full_suite_run": false,
+    "native_or_upstream_tool_execution": false,
+    "analyzed_target_execution": false,
+    "existing_feature_internals_rereviewed": false
+  },
+  "qualification_limits": [
+    "The 141 passing test identities overlap prior/root selections; do not add counts.",
+    "Prior C4 580 passes plus one CODEX-5 expected failure and prior Intel 130 passes describe different source checkpoints.",
+    "This local merged head requires its own root combined qualification and applicable exact-published-head hosted/native checks.",
+    "C4 remote final publication mapping was not needed to establish this local tree and is not asserted here.",
+    "No new native Windows, hosted Pages, broader CODEX-5, or release acceptance is claimed."
+  ]
+}

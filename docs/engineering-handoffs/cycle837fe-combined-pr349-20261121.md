@@ -1,5 +1,15 @@
 # Combined PR #349 handoff — 837FE
 
+## Current Intel + C4 follow-up
+
+Tested source `6bf79feffe68a9fdc1293a69900320e12be662bc`, tree `dc659c7ef80e317b6c13c120e09f47c5d313f3ca`, combines reviewed Intel `d628749401f61d3653b5e066ff38245b938c5dcd` with completed C4 `39a95c549d48eb523e9efdfda394bb9f184e2b16`. [Current report](../engineering/cycle837fe-native-c4-20261121.md) and [qualification](../engineering/evidence/cycle837fe-native-c4-20261121/qualification.json) supersede earlier current-source/next-action claims for these scopes; prior evidence remains historical.
+
+Clean 64-selector run: **1,396 passed/1 CODEX-5xfail**,1,397 distinct identities, zero failures/errors/ordinary skips; Ruff/pip/source binding pass. Independent complete-tree review passed 141 maintained cases and identity controls;no blocker. Counts overlap. Actual predecessor Windows FLOSS missing-pwd evidence is preserved;fixed synthetic USERNAME needs fresh actual Windows probe/analysis acceptance. Capa's common cause remains inference.
+
+PR349 remains the main-integration target. Root 837FE owns publication/qualification until final handoff or live lease. Component authors/reviewers are complete. Refresh main, PR349, C4 publication mapping, synthetic merge and exact runs. Preserve original failures, blocked native checks and Tier R 5/11 existing gap. Never transfer predecessor passes or dispatch duplicate workflows.
+
+C4 Pages/help is included with all Strings/Search/Build environment coverage and Action pins. Manual Pages dispatch can deploy and was not invoked. Keep hosted Pages, broader CODEX-5, Ghidra archive cache, native/manual/trust/accessibility, provenance/history and L1/L2/L3 gates open. Require exact-source full/Qt/native/package/both-Ubuntu frozen checks before guarded REST main merge;actual merge commit needs `[no release] [no deploy]`.
+
 ## Exact source and target
 
 - Main before promotion: `fdc2696c23bdbfe7668348f25e3b336ce33039f7`.

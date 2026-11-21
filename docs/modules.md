@@ -1448,3 +1448,7 @@ No schema, provider, new storage module or analysis capability is introduced. [S
 ## Current combined continuation index — 837FE
 
 The [combined PR349 report](engineering/cycle837fe-combined-pr349-20261121.md) and [handoff](engineering-handoffs/cycle837fe-combined-pr349-20261121.md) index the reviewed service/backup recovery, Search header help, direct Action pinning, capa/FLOSS version-name compatibility, and test-only live-probe observer. The existing [spec registry](specs/REGISTRY.md) now registers Pages control, direct Action pinning and live probe diagnostics. No new application framework or native engine is introduced.
+
+### PR349 Intel and C4 integrated follow-up
+
+[Source, validation and handoff](engineering/cycle837fe-native-c4-20261121.md) retain the Windows identity repair,C4 help/Pages work,actual predecessor native evidence and separate release gates.

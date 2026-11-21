@@ -1,0 +1,23 @@
+{
+  "label": "source-binding",
+  "command": [
+    "/workspace/scratch/837fe19aae3a/native-followup-venv/bin/python",
+    "-I",
+    "-c",
+    "from pathlib import Path; import patchtrace; p=Path(patchtrace.__file__).resolve(); print(p); assert p == Path('/workspace/scratch/837fe19aae3a/PatchTrace-native-followup/src/patchtrace/__init__.py')"
+  ],
+  "cwd": "/workspace/scratch/837fe19aae3a/PatchTrace-native-followup",
+  "head": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+  "tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
+  "dirty_before": "",
+  "started_at": "2026-11-21T07:06:54.885784+00:00",
+  "qt_platform": "offscreen",
+  "pythonpath": null,
+  "pid": 17,
+  "returncode": 0,
+  "seconds": 0.023,
+  "finished_at": "2026-11-21T07:06:54.908781+00:00",
+  "head_after": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+  "dirty_after": "",
+  "child_ru_maxrss_kib_observed": 10112
+}

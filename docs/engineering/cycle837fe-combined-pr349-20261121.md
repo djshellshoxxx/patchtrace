@@ -1,5 +1,9 @@
 # PR #349 combined recovery and qualification — 837FE
 
+## Subsequent Windows repair and C4 combination
+
+The [current follow-up](cycle837fe-native-c4-20261121.md) preserves all this evidence, adds reviewed Windows Intel identity and completed C4 work, and qualifies `6bf79fef` with 1,396 passes/1 CODEX-5xfail. Earlier current-state paragraphs describe the daee stage. Fresh actual hosted/native acceptance remains required.
+
 ## Outcome and exact source
 
 This continuation consumes the completed 95FE-C3 handoff and combines its reviewed Linux frozen CLI, archive-cache and Pages changes with reviewed storage recovery, Search help, immutable direct Action references and Intel probe repairs. It updates the existing main-integration PR #349; it does not introduce a competing integration target.
