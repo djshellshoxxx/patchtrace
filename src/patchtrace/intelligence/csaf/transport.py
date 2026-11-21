@@ -213,8 +213,8 @@ class OfflineCache:
             path = self.root / 'bodies' / sha
             if limit is not None and path.stat().st_size > limit:
                 raise IntelError('PT-INTEL-LIMIT', f'the cached body exceeds its {limit}-byte cap')
-            # Read at most one byte past the limit, including when the file grew
-            # after the initial stat. No unbounded read before SHA-256 verification.
+            # When the resource kind supplies a limit, read at most one byte beyond it,
+            # even if the file grew after stat. The no-limit API remains unchanged.
             with path.open('rb') as source:
                 body = source.read(limit + 1 if limit is not None else -1)
             if limit is not None and len(body) > limit:
