@@ -1677,3 +1677,19 @@ for exact commits and limitations. No main merge/release.
 
 Owner/branch: `codex/patchtrace-linux-frozen-cli-smoke-20261121`; handoff
 `docs/engineering-handoffs/codex14-linux-frozen-cli-smoke-20261121.md`.
+
+### 2026-11-21 CODEX-6 Tier R cached-archive integrity follow-up
+
+- [x] On isolated PR348-based successor, document Tier R cache integrity
+  contract; change cached extracted rizin/Ghidra trees to original archives;
+  verify SHA-256 on every hit/miss before clean extraction. Positive static
+  tests and fourteen mutation cases authored. Author JS/synthetic shell controls
+  passed; these do not qualify hosted native execution.
+- [ ] Source-bind and run new/maintained repository pytest, whole-tree Ruff,
+  dependency checks and appropriate complete QA with preserved failures.
+- [ ] Obtain separate independent reviewer of archive path/hash/ordering,
+  cache-hit corruption refusal and Ghidriff-gated path; exercise a source-
+  specific rizin and Ghidriff Tier R shard on supported hosted runners.
+- [ ] Review PR348 Windows QA terminal result before stacked PR/full jobs;
+  do not infer CODEX-6 branch qualification from original PR347 or PR345.
+  Keep CODEX-1/5 and separate CODEX-14, manual/trust/raw and L1/L2/L3 gates.

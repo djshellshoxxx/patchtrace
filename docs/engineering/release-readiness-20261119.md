@@ -9,6 +9,21 @@ plus independent peer remain required. The previous PR347 hosted jobs completed
 successfully but only qualify PR347. No main promotion/release is authorized.
 [Scope](codex14-linux-frozen-cli-smoke-20261121.md).
 
+
+## New isolated Tier R archive-cache integrity candidate (2026-11-21)
+
+CODEX-6's cached extracted tools could bypass pinned archive digests on a
+cache hit. A contract-first PR348-based successor changes the Tier R shard
+workflow to cache original archives and always checksum them before clean
+extraction. Author-only static/negative mutation controls and synthetic
+cache-corruption shell checks pass. No exact-source repository pytest/Ruff,
+real Tier R cache-hit or Ghidriff-hosted execution, or independent review
+is complete. CODEX-1/5, the separate CODEX-14 candidate, provenance,
+manual Windows, historical semantics and L1/L2/L3 release gates remain
+blocking. The original PR345 NSIS HTTP503 is retained as history even though
+its one failed-job-only retry has now succeeded. PR348 Windows QA still in
+progress at inspection. No main merge or release eligibility inferred.
+
 ## Cycle 2 current checkpoint
 
 The exact combined source 3cf7ad23 passes 188 affected tests, Ruff/dependencies/source binding and independent review. Current runtime repairs and eight Strings header mappings are integrated. Its hosted/full/native/package qualification remains pending, so this successor is not merge-eligible yet. Release readiness remains false, with manual/trust/accessibility, provenance and layer-specific evidence still open.

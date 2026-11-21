@@ -2332,3 +2332,23 @@ were refused by a source-bound static contract; see
 `docs/engineering/evidence/codex14-linux-smoke-static-review-20261121.json`.
 The existing `tools/frozen_smoke.py` runtime is unchanged (docstring clarified).
 No Linux frozen execution or independent peer pass has been recorded.
+
+## 2026-11-21 — isolated CODEX-6 archive-cache repair; source-specific qualification pending
+
+The Tier R shard workflow formerly cached extracted rizin/Ghidra directories
+and allowed a hit to bypass archive digest verification. On branch
+`codex/patchtrace-corpus-archive-integrity-20261121` the norm is to cache
+only original pinned archives and verify SHA-256 before a clean extraction
+on every hit and miss. Ten negative JS source mutations were detected;
+14 connector-fetched structural checks passed. Four synthetic shell
+archive/digest controls passed (rizin/Ghidra valid/corrupt); no actual native
+archive, engine, target binary or full repository source was executed.
+The retained CODEX-6 strict xfail becomes a positive source regression only
+on this successor. Missing checks: source-bound pytest/Ruff/pip check,
+independent review, rizin-only and Ghidriff-enabled hosted Tier R (including
+cache-hit behavior), complete QA/Qt/native/package and merge guard.
+The original PR #345 Windows Chocolatey NSIS 503 remains historical;
+its single failed-job retry is now successful on that ancestor, not this
+source. Parent PR #348 Windows full pytest still in progress on inspection.
+Other CODEX-1/5, CODEX-14, manual/raw-provenance/accuracy gates remain open.
+See `docs/engineering/codex6-corpus-cache-archive-20261121.md`.

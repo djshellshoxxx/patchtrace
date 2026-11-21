@@ -38,7 +38,7 @@
     {
       "feature": "Winbindex and binary pairing",
       "status": "partial",
-      "implemented": "Immutable source proposals/windows, normalized delivery rows, consent/verified receipts and recovered bounded input guards are implemented in the candidate. The g24–g29 review supplies 96 disjoint source-bound passes on g29; see the exact review scope.",
+      "implemented": "Immutable source proposals/windows, normalized delivery rows, consent/verified receipts and recovered bounded input guards are implemented in the candidate. The g24\u2013g29 review supplies 96 disjoint source-bound passes on g29; see the exact review scope.",
       "remaining": "Full raw entry/index retention, exact resolver input membership/reconstruction, live/native acceptance and current-source full qualification remain incomplete. Earlier generation-specific claims are preserved as historical notes, not present review status. Exact combined-source candidate admission behavior and complete raw index/entry membership need acceptance.",
       "evidence": [
         "docs/engineering/winpairs-url-boundary.md",
@@ -161,5 +161,6 @@
     "source_controls": "13 author-side static source invariants passed; not repository pytest or frozen executable acceptance",
     "remaining": "Live source-specific full CLI smoke both distros, full QA/Qt/native/package, independent review, and all unchanged release gates.",
     "evidence": "docs/engineering/codex14-linux-frozen-cli-smoke-20261121.md"
-  }
+  },
+  "ci_tier_r_cache_integrity_note": "Isolated PR348-based CODEX-6 successor now caches original rizin/Ghidra archives, verifies SHA-256 on every cache hit/miss before clean extraction. Author-side exact fetched-source static controls and synthetic tamper shell checks pass. Checkout pytest/Ruff, hosted rizin/Ghidriff cache-hit acceptance, independent review, merge/release remain open. CODEX-1/5 and the separate CODEX-14 branch remain unqualified."
 }
