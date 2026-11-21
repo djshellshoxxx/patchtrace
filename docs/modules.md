@@ -1433,3 +1433,14 @@ See [combined-source handoff](engineering-handoffs/sibling-reconciliation-202611
 | `strings/panel.py`, `strings/qt_panel.py`, `strings/tooltip_entries.py` | Register and wire eight existing column-help IDs with precise help text |17 failing-before/passing-after header controls, real-host audit and fresh mutation review |
 
 [Reviewed combined checkpoint](engineering/cycle2-consolidation-20261121-2bad.md); no new stored schema or analysis capability.
+
+
+## Reviewed interruption recovery and Search header completion — 2026-11-21
+
+| Existing module | Narrow responsibility | Verification |
+| --- | --- | --- |
+| `service.py` | Share nonrecovering outcome reconciliation for save/backup failures; refuse snapshot edits and backup after failed readback until reopen | Actual SQLite interruption, next-edit, healthy recovery, latch and UI-draft controls |
+| `persistence.py` | Preserve the primary backup outcome on filesystem cleanup failure; never inspect a successfully consumed staging name | Cancellation/CLI, occupied destination, publication and retained-stage controls |
+| `search/qt_panel.py`, `search/tooltip_data.py` | Map six existing columns to accurate registered header explanations | Actual host/model roles, cells/navigation preservation and one-mapping negative audit |
+
+No schema, provider, new storage module or analysis capability is introduced. [Source-specific report](engineering/cycle837fe-recovery-and-search-20261121.md).

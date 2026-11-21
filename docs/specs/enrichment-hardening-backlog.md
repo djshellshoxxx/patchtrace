@@ -76,6 +76,32 @@ Current: every `ProjectStore.save` inserts a full snapshot payload (`persistence
 Target default: keep the newest `HISTORY_KEEP = 100` rows **and** at most `HISTORY_MAX_BYTES = 512 MiB` of payload, never deleting the row whose `sha256` equals `current_snapshot.sha256`. Skip the INSERT when the new payload hash equals the newest history hash (idempotent re-save, e.g. the load-time "interrupted run" save). Prune runs in the same transaction after the INSERT (`DELETE FROM history WHERE sequence NOT IN (newest N) ...`), oldest first. First prune on an existing project creates the standard verified backup (`backups/project-pre-history-prune-*`). Revision numbers in snapshots are unchanged (they live in the payload, not the row).
 Tests: 150 saves -> 100 rows, current row present, `history()` ascending by sequence; byte budget with large synthetic payloads; duplicate-hash save adds no row; pruning failure rolls back the save as a whole ("prior snapshot retained", `:333`); backup restore still reproduces `history()` for the retained rows (existing `test_core.py:78-84` pattern). Risk: loss of old audit trail (hence the decision flag); alternative with no loss is zlib-compressing rows older than 20 (schema change, rejected for this slice).
 
+### H2 service snapshot after an interrupted save (2026-11-21; normative)
+
+The first deferred history backup runs after the snapshot transaction commits, as
+specified in the phase D amendment below. A raised save exception therefore does
+not prove rollback. Before `ProjectService._commit` propagates any save failure or
+interruption, it reloads the committed snapshot with `recover_interrupted=False`.
+This read must neither recover running jobs nor perform another save. A failed
+transaction retains the prior snapshot; an already committed edit becomes the
+service snapshot so the next edit cannot omit it. The original exception remains
+the reported outcome; no successful-save or rollback claim is inferred.
+
+If that reload also fails or is interrupted, keep the original exception and add
+a fixed diagnostic requiring the project to be reopened. The same service must
+refuse further snapshot commits, even if storage becomes readable later. Preserve
+all project/history/raw evidence and the existing lock until normal close; a new
+service opened from the persisted snapshot restores the normal editing path.
+This refusal applies before `ProjectService.backup` reads or stages anything:
+its normal `load()` may recover an interrupted run and write a snapshot/history
+row. A healthy or reopened service retains that existing backup recovery behavior.
+If a healthy backup's recovery load raises, it uses the same read-only outcome
+reconciliation before propagating the original failure. A recovered run already
+committed as failed must not revert to running through a subsequent service edit.
+Tests use authored project files, the real deferred-prune boundary, a transaction
+rollback control, and a second edit after each outcome. No schema or history
+retention policy changes.
+
 ## H3. WIL status `partial` only for real partials , tier L/M
 
 Current: `signals.detect` marks a one-sided pairing (added/removed function) with every detector `unavailable` and `SignalSet.status='unavailable'` (`signals.py:450-459, 907-919`). `pipeline.run` records the signals stage `complete` only if **all** sets are `complete` (`pipeline.py:210`), so any run containing one added or removed function reports stage `partial` and overall `partial` (`_overall`, `:154-165`). `_merge` then appends a `WIL` outcome carrying the **global** `wil_status` to every pairing (`:168-171, 240-244`), so a one-sided pairing has outcomes `{unavailable x7, complete}` and `ranking._evidence_status` returns `partial` instead of `unavailable` (`ranking.py:57-61`).

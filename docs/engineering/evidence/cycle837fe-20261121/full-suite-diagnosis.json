@@ -1,0 +1,51 @@
+{
+  "schema": "patchtrace.full-suite-diagnosis/1",
+  "recorded_at_utc": "2026-11-21T05:42:32.570893+00:00",
+  "baseline": "b51b17615e2c72e167bfec15727336eaf7cfb57f",
+  "final_candidate": "b880c317add4de3ac22c87cd842abb0e7ccc615d",
+  "original_run": {
+    "returncode": -9,
+    "wrapper_exit": 137,
+    "seconds": 1417.602,
+    "terminal_pytest_summary": false,
+    "junit_exists": false,
+    "last_progress_percent": 83
+  },
+  "identified_test_failure": {
+    "zero_based_index": 11211,
+    "ordinal": 11212,
+    "outcome": "F",
+    "nodeid": "tests/test_network_consent_guard.py::test_a_local_unix_socket_is_not_network"
+  },
+  "diagnosis": "Execution environment refuses AF_UNIX socket construction with EPERM before NetworkGuard is entered; same denial in isolated Python -I -S without PatchTrace/site imports.",
+  "targeted_results": {
+    "baseline_unix_case": {
+      "failed": 1
+    },
+    "baseline_next_collected_case": {
+      "passed": 1
+    },
+    "final_same_two_cases": {
+      "failed": 1,
+      "passed": 1
+    }
+  },
+  "kill_cause": "unestablished; no signal-sender, OOM, timeout or Qt-causation evidence",
+  "source_status": {
+    "baseline": {
+      "head": "b51b17615e2c72e167bfec15727336eaf7cfb57f",
+      "dirty": ""
+    },
+    "final": {
+      "head": "b880c317add4de3ac22c87cd842abb0e7ccc615d",
+      "dirty": ""
+    }
+  },
+  "limits": [
+    "Progress-marker counts are inferred, not a completed full-suite result.",
+    "The next collected case passes alone on both sources; this does not qualify the complete suite or establish where the kill originated.",
+    "No assertions, timeouts, memory limits, skip policy, fixtures or source files were changed.",
+    "Exact final-source supported-runner qualification remains required."
+  ],
+  "signal_evidence": "signal/README.md"
+}

@@ -1,0 +1,458 @@
+{
+  "started_at_utc": "2026-11-21T05:54:08.422708+00:00",
+  "audit_commit": "760c5e0b1320a6b08fc23d800c037c124488b4bc",
+  "audit_tree": "79693e8cf73658ddd291fea4c1fd4bcc7ebe4680",
+  "code_parent": "b880c317add4de3ac22c87cd842abb0e7ccc615d",
+  "no_product_tests_run": true,
+  "source_refs_and_remote_modified": false,
+  "worktree_head_at_audit_execution": "760c5e0b1320a6b08fc23d800c037c124488b4bc",
+  "worktree_status_at_audit_execution": " M docs/engineering/evidence/cycle837fe-20261121/action-pin-map.json\n M docs/engineering/evidence/cycle837fe-20261121/action-pin-research.md\n M docs/engineering/evidence/cycle837fe-20261121/full-suite-diagnosis.md\n M docs/engineering/evidence/cycle837fe-20261121/manifest.json\n?? docs/engineering/evidence/cycle837fe-20261121/action-pin-upstream-evidence.zip\n",
+  "changed_paths": [
+    "docs/engineering-handoffs/README.md",
+    "docs/engineering-handoffs/cycle837fe-20261121.md",
+    "docs/engineering/cycle837fe-recovery-and-search-20261121.md",
+    "docs/engineering/evidence/cycle837fe-20261121/action-pin-census.json",
+    "docs/engineering/evidence/cycle837fe-20261121/action-pin-map.json",
+    "docs/engineering/evidence/cycle837fe-20261121/action-pin-research.md",
+    "docs/engineering/evidence/cycle837fe-20261121/baseline-hosted-results.json",
+    "docs/engineering/evidence/cycle837fe-20261121/captured-references.json.gz",
+    "docs/engineering/evidence/cycle837fe-20261121/full-suite-diagnosis.json",
+    "docs/engineering/evidence/cycle837fe-20261121/full-suite-diagnosis.md",
+    "docs/engineering/evidence/cycle837fe-20261121/historical-semantic-dispositions.json",
+    "docs/engineering/evidence/cycle837fe-20261121/manifest.json",
+    "docs/engineering/evidence/cycle837fe-20261121/references/README.md",
+    "docs/engineering/evidence/cycle837fe-20261121/references/build_inventory.py",
+    "docs/engineering/evidence/cycle837fe-20261121/references/compact_inventory.py",
+    "docs/engineering/evidence/cycle837fe-20261121/references/manifest.json",
+    "docs/engineering/evidence/cycle837fe-20261121/references/summary.json",
+    "docs/engineering/evidence/cycle837fe-20261121/references/technical-inventory.compact.json.gz",
+    "docs/engineering/evidence/cycle837fe-20261121/references/validation.json",
+    "docs/engineering/evidence/cycle837fe-20261121/review-and-test-evidence.zip",
+    "docs/engineering/evidence/cycle837fe-20261121/source-history-verification.txt",
+    "docs/engineering/evidence/cycle837fe-20261121/source-history.bundle",
+    "docs/engineering/task-ledger.json",
+    "docs/modules.md",
+    "docs/qa.md",
+    "tasks/todo.md"
+  ],
+  "subtree_identity": {
+    "src": "918cfe41dc4f121399234e6ec86659ca03c3ed54",
+    "tests": "ed979b51ce2745eebd9468b8950f3d9bb1816b51",
+    "tools": "125b618d34303bc652f55db0d034200261c12c3b",
+    ".github": "ac7f38b565a364be8a5ba5bc6c93e773960baefd",
+    "docs/specs": "b130eb807027960e1f5b9d1df3e45e9b9d2cc492"
+  },
+  "all_other_non_document_paths_identical": true,
+  "publication_manifest": {
+    "verified_files": 18,
+    "verified_bytes": 983047,
+    "manifest_sha256": "93d38c29e775f4fb13c276c0df7e64d254afbfc351f2b2baa3f03e921f8c6ad3",
+    "all_published_evidence_files_accounted_for": true
+  },
+  "reference_manifest_files": 6,
+  "archive": {
+    "sha256": "243ee1816c4ad62f8bf43b9331f2dbf868d3d28dbafe7ce3d53c2512c56d3b27",
+    "member_count": 215,
+    "uncompressed_bytes": 2913988,
+    "crc_all_passed": true,
+    "duplicate_or_traversal_paths": false,
+    "every_member_matches_retained_original": true,
+    "internal_hash_references_verified": 99,
+    "prefix_counts": {
+      "backup-author": 16,
+      "backup-independent": 21,
+      "initial-backup-audit": 11,
+      "integrated": 14,
+      "prior-source-full-suite": 3,
+      "search-author": 18,
+      "search-independent": 20,
+      "service-author": 58,
+      "service-independent": 29,
+      "suite-diagnosis": 25
+    },
+    "junit_counts": {
+      "search-author/final-focused.xml": {
+        "tests": 140,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "search-author/focused.xml": {
+        "tests": 140,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0
+      },
+      "search-author/red.xml": {
+        "tests": 4,
+        "failures": 4,
+        "errors": 0,
+        "skipped": 0
+      },
+      "search-author/review-fix-focused.xml": {
+        "tests": 68,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "search-independent/independent.xml": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "search-independent/maintained.xml": {
+        "tests": 140,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "search-independent/missing-why-mutation.xml": {
+        "tests": 1,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0
+      },
+      "initial-backup-audit/controls-final.xml": {
+        "tests": 5,
+        "failures": 4,
+        "errors": 0,
+        "skipped": 0
+      },
+      "initial-backup-audit/controls.xml": {
+        "tests": 4,
+        "failures": 3,
+        "errors": 0,
+        "skipped": 0
+      },
+      "initial-backup-audit/maintained-reports.xml": {
+        "tests": 28,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "backup-author/baseline.xml": {
+        "tests": 9,
+        "failures": 8,
+        "errors": 0,
+        "skipped": 0
+      },
+      "backup-author/final-focused.xml": {
+        "tests": 169,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "backup-author/focused.xml": {
+        "tests": 169,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "backup-independent/baseline-independent.xml": {
+        "tests": 5,
+        "failures": 4,
+        "errors": 0,
+        "skipped": 0
+      },
+      "backup-independent/combined-independent.xml": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "backup-independent/independent.xml": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "backup-independent/maintained.xml": {
+        "tests": 169,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "service-author/backup-final-maintained.xml": {
+        "tests": 262,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "service-author/backup-final-reviewer-controls.xml": {
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "service-author/backup-recovery-baseline.xml": {
+        "tests": 15,
+        "failures": 4,
+        "errors": 0,
+        "skipped": 0
+      },
+      "service-author/backup-recovery-repaired.xml": {
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "service-author/baseline-controls.xml": {
+        "tests": 9,
+        "failures": 6,
+        "errors": 0,
+        "skipped": 0
+      },
+      "service-author/maintained-storage.xml": {
+        "tests": 167,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "service-author/repaired-controls.xml": {
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "service-author/svc-r1-baseline.xml": {
+        "tests": 11,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0
+      },
+      "service-author/svc-r1-maintained.xml": {
+        "tests": 258,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "service-author/svc-r1-repaired.xml": {
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "service-author/ui-save-boundary.xml": {
+        "tests": 89,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "service-independent/backup-recovery-controls.xml": {
+        "tests": 2,
+        "failures": 2,
+        "errors": 0,
+        "skipped": 0
+      },
+      "service-independent/combined-independent-controls.xml": {
+        "tests": 34,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "service-independent/final-author-independent-controls.xml": {
+        "tests": 155,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "service-independent/independent-controls.xml": {
+        "tests": 8,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0
+      },
+      "service-independent/maintained-service-review.xml": {
+        "tests": 139,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "integrated/combined-focused.xml": {
+        "tests": 444,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "integrated/final-focused.xml": {
+        "tests": 450,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "suite-diagnosis/stopped-next-case-baseline.xml": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "suite-diagnosis/targeted-final.xml": {
+        "tests": 2,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0
+      },
+      "suite-diagnosis/unix-socket-baseline.xml": {
+        "tests": 1,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0
+      }
+    }
+  },
+  "final_code_test_receipt": {
+    "label": "final-focused",
+    "command": [
+      "/workspace/scratch/837fe19aae3a/publication-venv/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_service_postcommit_recovery.py",
+      "tests/test_core.py",
+      "tests/test_service_storage_audit.py",
+      "tests/test_history_bound.py",
+      "tests/test_prune_backup.py",
+      "tests/test_core_review_regressions_20261029.py",
+      "tests/test_audit_core.py",
+      "tests/test_audit116_create_rollback.py",
+      "tests/test_corrections_cli.py",
+      "tests/test_ui.py::test_failed_note_save_keeps_analyst_text",
+      "tests/test_ui.py::test_failed_bookmark_does_not_claim_success",
+      "tests/test_ui.py::test_failed_project_save_does_not_claim_success",
+      "tests/test_ui.py::test_failed_finding_review_preserves_draft",
+      "tests/test_ui.py::test_match_review_note_and_provenance_clipboard",
+      "tests/test_project_cli.py",
+      "tests/test_backup_cleanup.py",
+      "tests/test_backup_sidecars.py",
+      "tests/test_persistence_security_20261105.py",
+      "tests/test_report_export_cleanup.py",
+      "tests/test_report_export_backup.py",
+      "tests/test_export_destination_guard.py",
+      "tests/test_search_header_help.py",
+      "tests/test_ui_search_panel.py",
+      "tests/test_search_view_model.py",
+      "tests/test_tooltips.py",
+      "tests/test_gui_table.py",
+      "--junitxml=/workspace/scratch/837fe19aae3a/evidence/integrated/final-focused.xml"
+    ],
+    "cwd": "/workspace/scratch/837fe19aae3a/PatchTrace-publication",
+    "head": "b880c317add4de3ac22c87cd842abb0e7ccc615d",
+    "tree": "74a4ee3714ea492e84c2a2a3aaf41fa54849e404",
+    "dirty_before": "",
+    "started_at": "2026-11-21T05:34:04.788061+00:00",
+    "qt_platform": "offscreen",
+    "pythonpath": null,
+    "pid": 18,
+    "returncode": 0,
+    "seconds": 38.847,
+    "finished_at": "2026-11-21T05:34:43.634828+00:00",
+    "head_after": "b880c317add4de3ac22c87cd842abb0e7ccc615d",
+    "dirty_after": ""
+  },
+  "review_closures": {
+    "search": {
+      "reviewed_at": "2026-11-21T05:19:16.846445+00:00",
+      "head": "0069d0d28a8a8695d72f6ca960beaa7756b082ce",
+      "tree": "6ebd9e8173cbb62218f308e0b33e89d1a43f71f3",
+      "previous_reviewed_head": "b51b17615e2c72e167bfec15727336eaf7cfb57f",
+      "source_import": "/workspace/scratch/837fe19aae3a/PatchTrace-search-review/src/patchtrace/__init__.py",
+      "changed_files": [
+        "src/patchtrace/search/tooltip_data.py"
+      ],
+      "changed_text_entries": [
+        "search.col.match:why",
+        "search.col.why:effect"
+      ],
+      "checks": {
+        "exact_two_text_edits": true,
+        "original_semantic_input_replayed_unchanged": true,
+        "new_promises_match_available_detail_sections": true,
+        "source_checkout_clean": true
+      },
+      "finding": "S-H1 closed",
+      "reviewer_harness_correction": "Initial Python-value replay of JSON lists refused by strict tuples; use the existing JSON validation path. Initial failure retained separately.",
+      "qualification_scope": "Text-only independent source re-review. Original 140 maintained and 3 independent passes remain attached to b51b1761; no new broad test run is claimed."
+    },
+    "service": {
+      "disposition": "NO_BLOCKING_FINDING_IN_REVIEWED_SCOPE",
+      "closed_findings": [
+        "SVC-R1",
+        "SVC-R2"
+      ],
+      "author_source": {
+        "commit": "1ce478b3f5dee036f54cb9e39353ef82cf1610c0",
+        "tree": "52b9926d6db21b4f76140c6385f67380acd0b988"
+      },
+      "combined_source": {
+        "commit": "b880c317add4de3ac22c87cd842abb0e7ccc615d",
+        "tree": "74a4ee3714ea492e84c2a2a3aaf41fa54849e404"
+      },
+      "source_blobs_independently_verified": true,
+      "final_review_sha256": "44729ed45939e54bd42a5de5b32e94bc641877ba3b934751c5ae2a37f52b4403"
+    }
+  },
+  "earlier_full_run": {
+    "label": "full-suite",
+    "command": [
+      "/workspace/scratch/837fe19aae3a/integration-venv/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "--junitxml=/workspace/scratch/837fe19aae3a/evidence/full-suite/full-suite.xml"
+    ],
+    "cwd": "/workspace/scratch/837fe19aae3a/PatchTrace-integration",
+    "head": "b51b17615e2c72e167bfec15727336eaf7cfb57f",
+    "tree": "1f123b7893c977796d89656959285e565adf1db2",
+    "dirty_before": "",
+    "started_at": "2026-11-21T05:12:24.951573+00:00",
+    "qt_platform": "offscreen",
+    "pythonpath": null,
+    "pid": 19,
+    "returncode": -9,
+    "seconds": 1417.602,
+    "finished_at": "2026-11-21T05:36:02.553354+00:00",
+    "head_after": "b51b17615e2c72e167bfec15727336eaf7cfb57f",
+    "dirty_after": ""
+  },
+  "bundle": {
+    "sha256": "52e97b051b68dd1de43b8c73a9c082fc471b55d70b98e98e70ce614106f77d17",
+    "bytes": 18099,
+    "verification": "The bundle contains this ref:\nb880c317add4de3ac22c87cd842abb0e7ccc615d HEAD\nThe bundle requires this ref:\n6b6fcd3597a604212032ffc453477aeb6edc69ff \nThe bundle uses this hash algorithm: sha1\n/workspace/scratch/837fe19aae3a/evidence/publication-audit/snapshot-760c5e0/docs/engineering/evidence/cycle837fe-20261121/source-history.bundle is okay\n",
+    "prerequisite": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+    "head": "b880c317add4de3ac22c87cd842abb0e7ccc615d",
+    "owned_commits": 18,
+    "all_three_final_author_commits_in_ancestry": true
+  },
+  "compact_inventory": {
+    "gzip_sha256": "f92aff6d25907458dee2d39953b17a296c6da9d7a94365119c56c940d6ee3a07",
+    "gzip_bytes": 253016,
+    "canonical_expanded_sha256": "5d49e89d30e52b54bf65d42242f025cc448e58776fe361115368fdadc0835561",
+    "original_json_sha256": "22e7b03c51eb45ee275911fb79d90ac50c0f0a2a6157f791f42479fddec4e43c",
+    "original_json_bytes": 54342477,
+    "independent_decoder_equal_to_original_json": true,
+    "captured_heads_equal_to_all_inventory_heads": true,
+    "all_364_commit_objects_trees_and_parents_independently_verified": true,
+    "all_original_input_hashes_and_method_hash_verified": true,
+    "captured_references_json_values_match_original_inputs": true,
+    "unique_paths": 6483,
+    "unique_commits": 1634,
+    "unique_path_sets": 579,
+    "branches": 364,
+    "pull_requests": 338,
+    "tags": 59,
+    "semantic_status_counts": {
+      "PENDING": 361,
+      "PARTIALLY_REVIEWED": 3
+    }
+  },
+  "publication_whitespace": {
+    "returncode": 2,
+    "output": "docs/engineering/evidence/cycle837fe-20261121/source-history-verification.txt:4: trailing whitespace.\n+6b6fcd3597a604212032ffc453477aeb6edc69ff \n",
+    "interpretation": "The one trailing space is raw git bundle verify output; code-parent whitespace pass is a separate retained source-specific claim."
+  },
+  "finished_at_utc": "2026-11-21T05:54:11.016556+00:00",
+  "ending_head": "760c5e0b1320a6b08fc23d800c037c124488b4bc",
+  "ending_worktree_status": " M docs/engineering/evidence/cycle837fe-20261121/action-pin-map.json\n M docs/engineering/evidence/cycle837fe-20261121/action-pin-research.md\n M docs/engineering/evidence/cycle837fe-20261121/full-suite-diagnosis.md\n M docs/engineering/evidence/cycle837fe-20261121/manifest.json\n?? docs/engineering/evidence/cycle837fe-20261121/action-pin-upstream-evidence.zip\n",
+  "read_exact_committed_evidence_snapshot": true
+}

@@ -118,6 +118,18 @@ audit reads actual horizontal model-header tooltips as well as widget/action
 tooltips, without exempting registered column ids. Other panels retain their
 existing optional-id fallback until their own column mappings are implemented.
 
+6.9 The Search panel registers and assigns
+`search.col.{side,kind,match,where,change,why}` to its six existing headers. Help
+is available on the prepared empty table and after results arrive; display and
+accessible header labels remain `Side`, `Kind`, `Match`, `Where`, `Change`, and
+`Why`. The text describes the current view model: a side may come from a paired
+counterpart, the first evidence item supplies kind and match text, a counterpart
+may supply a missing display RVA, and change context and ranking reasons retain
+their uncertainty. Tooltip lookup changes no cells, row identity, query, sorting,
+navigation, or clipboard content. The actual-header coverage audit activates
+Search through the normal panel host and adds no registry exemptions. Native
+screen-reader acceptance remains separate.
+
 The older workspace slice also proposed Alt+Up/Down/Backspace table sorting and
 a 400-entry empty-query palette. Those behaviors are not part of this recovery:
 Alt+Up/Down remain reserved for Previous/Next difference (section 3.7 and GUI plan
