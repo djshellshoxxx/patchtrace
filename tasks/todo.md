@@ -1665,3 +1665,20 @@ for exact commits and limitations. No main merge/release.
 - [ ] On a supported checked-out source, verify seven exact Git SHA replay regressions and the full `tests/test_branch_inventory.py` suite; run whole-tree Ruff and source-bound focused/full checks with termination evidence. See `docs/engineering-handoffs/inventory-tip-oid-20261120.md`.
 - [ ] Obtain independent review of exact SHA-1/SHA-256 admission, annotated-tag mismatch, all-rows prevalidation and TSV prior-output preservation; do not equate synthetic Git control success with repository pytest.
 - [ ] Retain PR345 Windows QA failure (Chocolatey NSIS v3.13 feed HTTP 503) as a packaging availability gate; inspect terminal PR347 QA/Qt/package and qualify successor exact source without duplicate jobs. No main/release merge while other blockers remain.
+
+
+### 2026-11-21 CODEX-6 Tier R cached-archive integrity follow-up
+
+- [x] On isolated PR348-based successor, document Tier R cache integrity
+  contract; change cached extracted rizin/Ghidra trees to original archives;
+  verify SHA-256 on every hit/miss before clean extraction. Positive static
+  tests and ten mutation cases authored. Author JS/synthetic shell controls
+  passed; these do not qualify hosted native execution.
+- [ ] Source-bind and run new/maintained repository pytest, whole-tree Ruff,
+  dependency checks and appropriate complete QA with preserved failures.
+- [ ] Obtain separate independent reviewer of archive path/hash/ordering,
+  cache-hit corruption refusal and Ghidriff-gated path; exercise a source-
+  specific rizin and Ghidriff Tier R shard on supported hosted runners.
+- [ ] Review PR348 Windows QA terminal result before stacked PR/full jobs;
+  do not infer CODEX-6 branch qualification from original PR347 or PR345.
+  Keep CODEX-1/5 and separate CODEX-14, manual/trust/raw and L1/L2/L3 gates.
