@@ -1,3 +1,18 @@
+
+## Pending isolated strict saved PR JSON continuation (2026-11-20)
+
+The offline branch inventory tool previously used permissive `json.loads` on the
+retained all-pages PR JSON, allowing duplicate nested keys and non-finite
+numbers. An isolated successor of the immutable-tip branch updates the parser
+contract and eleven authored cases, rejects ambiguous JSON with fixed errors,
+and reads PR metadata before Git ref replay. Nine copied-algorithm local
+controls passed; **these are not checked-out repository pytest or Ruff**.
+PR347 hosted Windows QA/Qt remained active at source inspection, so no
+competing full workflow was started. Independent reviewer and exact-source
+native/Qt/package acceptance remain pending. PR345 Chocolatey NSIS 503,
+old SIGKILLs, Qt failures, Linux forced-overwrite and all manual/accuracy gates
+remain blocking. No main merge/release eligible.
+
 ## Latest pending successor — immutable snapshot Git tips (2026-11-20)
 
 A narrow isolated branch `codex/patchtrace-inventory-tip-oid-20261120` extends the preceding TSV column-shape guard with full canonical commit OID admission and exact post-resolution comparison. Seven repository regression cases are authored; temporary Git source-equivalent controls proved the original `HEAD`/abbreviated/`HEAD~0` admission and the new early refusal, plus a peeled tag-object refusal. This is not checked-out repository pytest, whole-tree Ruff, independent reviewer approval or exact-source CI. PR347's five native checks passed on PR347's head only; its QA/Qt jobs were still active. PR345 Windows QA is **failed** because its NSIS Chocolatey feed returned HTTP 503 after its pytest stage passed 23,847 cases with 181 skips and five xfails. This external failure is not silently forgiven, and package acceptance cannot be transferred from other source heads. Full source/Windows/manual/provenance/accuracy gates remain open; main promotion and release remain **blocked**. [Handoff](../engineering-handoffs/inventory-tip-oid-20261120.md).
