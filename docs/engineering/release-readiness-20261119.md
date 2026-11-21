@@ -1,3 +1,7 @@
+## Current pending successor — inventory TSV column provenance (2026-11-20)
+
+From draft PR347's unchanged published head, a narrow new branch `codex/patchtrace-inventory-tsv-shape-20261120` updates the offline branch snapshot replay contract, refuses malformed duplicated/missing/surplus TSV columns before Git, adds seven direct regression cases and one CLI prior-evidence-preservation test. Six malformed stdlib `DictReader` inputs previously admitted at parsing and were refused by the mirrored corrected algorithm; one reordered-column compatibility control passed. This is **not checked-out repository pytest**, whole-tree Ruff, independent review, exact-source hosted QA/Qt/native/package, historical branch semantic acceptance, or release qualification. PR347's QA/native workflows remained active and were not duplicated. Main merge and release remain **blocked**. See [successor handoff](../engineering-handoffs/inventory-tsv-shape-20261120.md).
+
 ## Current assessment — 20 November 2026, session 2bad
 
 **Not eligible for main promotion or release.** Four bounded areas are reviewed. Linux replacement risk is mitigated by refusing overwrite. Final-source hosted/full/native/package gates and existing manual/provenance/Qt/accuracy gates remain open; local SIGKILL cause is unestablished. [Current report](session-20261120-2bad.md) supersedes only its named scopes; historical evidence below is retained.
