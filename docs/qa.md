@@ -2309,3 +2309,20 @@ checks or close original blocker receipts.
 Isolated branch `codex/patchtrace-inventory-tip-oid-20261120` requires canonical lowercase 40/64-hex commit IDs in retained TSV tips and refuses different resolved commit identities. Seven repository regressions authored; only offline synthetic Git controls ran (six early rejects, one direct SHA success, one tag peeling reject). No complete source checkout pytest/Ruff/independent review or successor CI has passed.
 
 PR345 Windows QA [run 44840721370](https://github.com/djshellshoxxx/PatchTrace/actions/runs/44840721370), job `136648122555`, **failed** during NSIS v3.13 Chocolatey install: `community.chocolatey.org/api/v2` returned HTTP 503. The same job logged 23,847 pytest passes, 181 skips, 5 xfails; that successful test stage does not change the job's failed conclusion. This establishes a dependency-feed failure, not a product-code cause, and should not prompt blanket retries or gate changes without evidence.
+
+
+## CODEX-14 Linux frozen CLI smoke — isolated successor, 2026-11-21
+
+The extracted, checksum-verified Linux onedir archive now has a workflow
+candidate that calls the **complete** `tools/frozen_smoke.py` harness on both
+Ubuntu 22.04 and 24.04, retaining prior offscreen and xcb self-tests. The host
+fixture tool comes from the exact checked-out Actions source, with the checkout
+done before artifact download so cleaning cannot erase the archive. The
+existing static CODEX-14 strict xfail was replaced by a positive source
+contract plus a Qt-mode preservation test. Thirteen author-side checks
+inspecting the connector-fetched source passed, but local repository pytest,
+whole-tree Ruff, frozen execution, hosted full/Qt/native/package and
+independent review are **not** yet verified. Prior local scratch paths are
+absent and shell DNS cannot resolve GitHub. Source, test and contract:
+`docs/engineering/codex14-linux-frozen-cli-smoke-20261121.md`.
+Do not clear CODEX-1/5/6, Windows/manual/trust or L1/L2/L3 gates.
