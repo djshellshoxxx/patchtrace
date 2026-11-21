@@ -92,14 +92,28 @@ def read_bounded(response, cap: int, *, deadline: float, clock: Callable[[], flo
     single read open until a full chunk arrives; the deadline is re-checked after each small read.
     Raises `Cancelled`, `DeadlineExceeded` or `CapExceeded`; socket errors propagate to the caller.
     """
+    class _ReadStop:
+        def is_set(self) -> bool:
+            return (cancel is not None and cancel.is_set()) or clock() >= deadline
+
     read = getattr(response, 'read1', response.read)
+    stop = _ReadStop()
     data = bytearray()
     while True:
         if cancel is not None and cancel.is_set():
             raise Cancelled()
         if clock() >= deadline:
             raise DeadlineExceeded()
-        piece = interruptible(partial(read, min(chunk, cap + 1 - len(data))), cancel)
+        try:
+            piece = interruptible(partial(read, min(chunk, cap + 1 - len(data))), stop)
+        except Cancelled:
+            if cancel is not None and cancel.is_set():
+                raise
+            raise DeadlineExceeded() from None
+        if cancel is not None and cancel.is_set():
+            raise Cancelled()
+        if clock() >= deadline:
+            raise DeadlineExceeded()
         if not piece:
             return bytes(data)
         data.extend(piece)
