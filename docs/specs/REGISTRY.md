@@ -181,3 +181,13 @@ This later draft registration does not refresh the historical tables or approve 
 | File | Proposed canonical alias | Status | Basis |
 |---|---|---|---|
 | `docs/specs/DOCKABLE-WORKSPACE-SPEC.md` | SPEC-DW-01 (proposed; cite by path) | draft | Compact adaptation of #183 at `ed70e6ddac449a42f843f1c60aa878416ab31727`; source baseline rechecked at candidate #235 `ccfe175d44a70947203c75bbd033a9a9e2633f0f`. Existing feature docks are present; independently dockable core sections, presets and durable workspace migration remain proposed. No runtime or release acceptance. |
+
+## 7. CI specification registration, 2026-11-21
+
+These entries describe implemented candidate scope, not qualification on main. They do not refresh the historical status tables or allocate a numeric SPEC identifier. The nonnumeric aliases are proposed; cite each specification by path until confirmed.
+
+| File | Proposed canonical alias | Owner | Candidate scope and acceptance boundary |
+|---|---|---|---|
+| `docs/specs/pages-deployment-control.md` | SPEC-CI-PAGES-01 (proposed; cite by path) | `.github/workflows/pages.yml` | Push-head `[no deploy]` veto for the deploy job, preserving build/artifact flow and manual dispatch. Source checks cover the workflow contract; no hosted deployment acceptance is claimed. |
+| `docs/specs/ci-action-pinning.md` | SPEC-CI-ACTIONS-01 (proposed; cite by path) | `.github/workflows/` and workflow contract tests | Direct remote Action references use reviewed full commit pins with release comments. Transitive references, CODEX-5 package hashes and exact-source hosted qualification remain separate gates. |
+| `docs/specs/live-intel-probe-diagnostics.md` | SPEC-CI-INTEL-PROBES-01 (proposed; cite by path) | Live Intel acceptance harness and `build/live-status/` artifacts | Retain bounded, redacted diagnostics from existing version probes without additional processes or altered acceptance predicates. Controlled fixture checks do not establish native capa/FLOSS compatibility. |
