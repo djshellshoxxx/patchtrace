@@ -41,8 +41,8 @@ jobs:
       PATCHTRACE_LIVE_SYNTHETIC_PAIR: '1'
       QT_QPA_PLATFORM: offscreen
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.12'
       - name: Qt runtime libraries (the pytest-qt plugin imports Qt even for this non-GUI test)
@@ -53,7 +53,7 @@ jobs:
         id: pin
         shell: bash
         run: echo "key=$(python -c "import json;a=json.load(open('tools/bindiff_pin.json'))['assets']['${{ matrix.pin_os }}'];print(a['sha256'] or 'unpinned')")" >> "$GITHUB_OUTPUT"
-      - uses: actions/cache@v4
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         if: steps.pin.outputs.key != 'unpinned'
         with:
           path: build/bindiff-cache
@@ -69,7 +69,7 @@ jobs:
         if: always()
         shell: bash
         run: python tools/check_live_status.py --summary "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
           name: live-bindiff-${{ matrix.pin_os }}

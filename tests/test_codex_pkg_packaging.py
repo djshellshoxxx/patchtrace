@@ -96,10 +96,17 @@ def _linux_smoke_job():
 def test_linux_package_runs_full_cli_smoke():
     """CODEX-14: qualify the unpacked release artifact, not a source CLI or the build folder."""
     smoke = _linux_smoke_job()
+    checkout = 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262'
+    download = 'actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093'
+    interpreter = 'actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065'
+
+    def action_position(action):
+        # Match the actual uses field, never a readable version/comment elsewhere.
+        match = re.search(r'^\s*(?:- )?uses: ' + re.escape(action) + r'(?: +#[^\n]*)?$', smoke, re.M)
+        assert match is not None, f'linux-smoke missing {action}'
+        return match.start()
+
     required = [
-        'actions/download-artifact@v4',
-        'actions/checkout@v4',
-        'actions/setup-python@v5',
         "pip install --only-binary=:all: -e '.[dev,search,rules]'",
         'sha256sum -c PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256',
         'tar xzf PatchTrace-0.1.0-linux-x86_64.tar.gz',
@@ -108,9 +115,9 @@ def test_linux_package_runs_full_cli_smoke():
     ]
     for term in required:
         assert term in smoke, f'linux-smoke missing {term}'
-    assert smoke.index('actions/checkout@v4') < smoke.index('actions/download-artifact@v4')
+    assert action_position(checkout) < action_position(download)
     assert 'persist-credentials: false' in smoke
-    assert smoke.index('actions/setup-python@v5') < smoke.index('python tools/frozen_smoke.py')
+    assert action_position(interpreter) < smoke.index('python tools/frozen_smoke.py')
     assert smoke.index('sha256sum -c ') < smoke.index('tar xzf ') < smoke.index('python tools/frozen_smoke.py')
     assert 'QT_QPA_PLATFORM: offscreen' in smoke
     assert 'LANG: C.UTF-8' in smoke
