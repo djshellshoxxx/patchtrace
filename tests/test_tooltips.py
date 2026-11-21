@@ -255,10 +255,12 @@ def test_every_registry_id_is_applied_somewhere(window, qtbot, tmp_path, setting
     qtbot.addWidget(holder)
     roots.append(holder)
     roots += [state] + [c.widget() for c in window.panels.build_all_for_test().values() if c.widget() is not None]
-    # A hidden controller has not received its project hook. Show Strings through
-    # the real host so its empty table has the same headers a user can inspect.
+    # A hidden controller has not received its project hook. Show panels through
+    # the real host so their empty tables have the same headers a user can inspect.
     assert window.panels.show_panel('strings') is not None
     assert window.panels.controller('strings').panel.table.horizontalHeader().count() == 8
+    assert window.panels.show_panel('search') is not None
+    assert window.panels.controller('search').panel.table.horizontalHeader().count() == 6
     first, second = QDockWidget('A', window), QDockWidget('B', window)
     first.setObjectName('zz_a.dock'), second.setObjectName('zz_b.dock')
     window.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, first)
