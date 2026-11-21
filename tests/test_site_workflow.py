@@ -28,6 +28,22 @@ def test_deployment_hold_is_push_only_and_uses_the_actual_head_message():
     assert re.search(r'^    needs: build$', deploy, re.M)
 
 
+def test_pages_configuration_shares_the_push_hold_without_gating_build_or_upload():
+    build, deploy = TEXT.split('\n  build:\n', 1)[1].split('\n  deploy:\n', 1)
+    steps = re.split(r'^      - ', build.split('    steps:\n', 1)[1], flags=re.M)[1:]
+    configure = [step for step in steps if step.startswith('uses: actions/configure-pages@')]
+    assert len(configure) == 1
+    condition = re.search(r'^        if: (.+)$', configure[0], re.M)
+    deploy_condition = re.search(r'^    if: (.+)$', deploy, re.M)
+    assert condition is not None, 'Pages configuration must honor the deployment hold'
+    assert deploy_condition is not None
+    assert condition.group(1) == deploy_condition.group(1)
+    assert not re.search(r'^    if:', build, re.M)
+    for step in steps:
+        if step != configure[0]:
+            assert not re.search(r'^        if:', step, re.M), step
+
+
 def test_permissions_are_minimal_for_pages_deployment():
     # Workflow level is read-only; only the deploy job may write Pages / mint the OIDC token (CODEX-3).
     block = TEXT.split('permissions:\n', 1)[1].split('\nconcurrency:', 1)[0]
@@ -56,7 +72,6 @@ def test_official_pages_actions_use_reviewed_immutable_commits():
 
 def test_builds_with_the_site_tool_and_deploys_the_dist_artifact_to_github_pages():
     build = TEXT.split('\n  build:\n', 1)[1].split('\n  deploy:\n', 1)[0]
-    assert '[no deploy]' not in TEXT.split('\n  deploy:\n', 1)[0]
     assert not re.search(r'^    if:', build, re.M)
     assert 'run: python -m pytest --noconftest --disable-plugin-autoload -q tests/test_site_*.py' in build
     assert 'run: python tools/site/build_site.py\n' in build

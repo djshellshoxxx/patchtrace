@@ -1,0 +1,53 @@
+{
+  "helper": "/workspace/scratch/837fe19aae3a/assemble_codex5_records.py",
+  "sha256": "b73c4d771bdd17ca35e63ff7663b3cf92b907ef8714ff4c37e63051d701d1c26",
+  "bytes": 47862,
+  "syntax": "AST parse and in-memory compile passed; helper never imported/executed",
+  "ruff": "Explicit final static check passed with repository config; only scratch helper edited; helper not executed",
+  "helper_executed": false,
+  "integration_worktree_written": false,
+  "git_verbs_in_helper": [
+    "branch",
+    "cat-file",
+    "diff",
+    "ls-files",
+    "rev-list",
+    "rev-parse",
+    "show",
+    "status"
+  ],
+  "target_status": "?? docs/engineering/evidence/cycle837fe-codex5-20261121/\n",
+  "target_head": "5b5328ee83ee4990b3311f7ac90e2f5e5f76f800",
+  "target_tree": "1e12edd510399fd92da6867cd071394ceb7fc95b",
+  "required_context_keys": [
+    "merged",
+    "source_head",
+    "source_tree",
+    "main_before",
+    "merge_commit",
+    "actual_parents",
+    "actual_tree",
+    "opt_outs_verified",
+    "all_applicable_automated_jobs_passed",
+    "qualification_archive_sha256",
+    "summary_markdown"
+  ],
+  "optional_context_keys": [
+    "historical_summary_markdown",
+    "historical_dispositions",
+    "additional_completed_tasks",
+    "additional_evidence"
+  ],
+  "qualification_status_expected": "qualified_with_documented_open_gates",
+  "context_present_at_static_check": false,
+  "dry_run_command": [
+    "python",
+    "/workspace/scratch/837fe19aae3a/assemble_codex5_records.py"
+  ],
+  "apply_command": [
+    "python",
+    "/workspace/scratch/837fe19aae3a/assemble_codex5_records.py",
+    "--apply"
+  ],
+  "notes": "No fabricated context, qualification receipt or merge evidence. Actual local merge object is mandatory. Root alone runs the helper after review."
+}

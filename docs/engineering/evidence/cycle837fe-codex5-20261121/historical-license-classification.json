@@ -1,0 +1,82 @@
+{
+  "schema": "patchtrace-historical-branch-review/1",
+  "branch": "claude/bundle-license-gate",
+  "donor": "d3617acf9af7834582b4962a8c149969a7d55a22",
+  "donor_tree": "af31f6eb189620941de8db8718f203d8b8dce77c",
+  "baseline": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+  "baseline_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+  "execution": "5b5328ee83ee4990b3311f7ac90e2f5e5f76f800",
+  "execution_tree": "1e12edd510399fd92da6867cd071394ceb7fc95b",
+  "merge_bases": [
+    "21a005e242177f07a984937a7cd924e826c17b9f"
+  ],
+  "unique_commits": [
+    "246eed794dbda3d3ebc6f2a8f29736ec09b94fb6",
+    "c9a01b6f4e6e51b35b0685dcac96c4cdc1400101",
+    "0016de7264a1c9cd651a469eb49f01ad1ba22773",
+    "d3617acf9af7834582b4962a8c149969a7d55a22"
+  ],
+  "unique_nonmerge_commits": [
+    "246eed794dbda3d3ebc6f2a8f29736ec09b94fb6",
+    "c9a01b6f4e6e51b35b0685dcac96c4cdc1400101",
+    "d3617acf9af7834582b4962a8c149969a7d55a22"
+  ],
+  "classification": "semantically-integrated-no-unique-missing-delta-found",
+  "complete_branch_changed_path_count": 11,
+  "accounted_paths": [
+    ".github/workflows/backend-bundle.yml",
+    "docs/notices.md",
+    "tests/test_backend_pin.py",
+    "tests/test_build_backend_bundle.py",
+    "tests/test_build_full_variants.py",
+    "tests/test_codex_pkg_packaging.py",
+    "tools/backend_pin.json",
+    "tools/build_backend_bundle.py",
+    "tools/build_linux.py",
+    "tools/build_windows.py",
+    "tools/check_backend_pin.py"
+  ],
+  "all_relevant_execution_bytes_equal_baseline": true,
+  "changed_python_symbols": 74,
+  "identical_changed_symbols": 69,
+  "reviewed_extended_symbols": 5,
+  "absent_changed_symbols": [],
+  "maintained_result": {
+    "passed": 251,
+    "skipped": 1,
+    "failed": 0,
+    "errors": 0,
+    "skip": "Existing local source-to-wheel check; wheel dependency absent; no installation attempted"
+  },
+  "donor_result": {
+    "passed": 51,
+    "skipped": 0,
+    "failed": 0,
+    "errors": 0,
+    "changed_test_functions": 32,
+    "scope": "Unmodified original donor tests plus exact maintained tool bytes and original donor pin fixture; current pin separately tested in maintained run"
+  },
+  "counts_overlap": true,
+  "original_census": "181/16 unchanged",
+  "source_changes": false,
+  "workflow_changes": false,
+  "test_changes": false,
+  "ledger_changes": false,
+  "ref_changes": false,
+  "pr_changes": false,
+  "native_acceptance_claim": false,
+  "delete_authorized": false,
+  "evidence": [
+    "REVIEW.md",
+    "source-census.json",
+    "semantic-proofs.json",
+    "symbol-comparison.json",
+    "prior-reports.json",
+    "fresh-branch-ref.json",
+    "fresh-pr65.json",
+    "maintained-receipt.json",
+    "donor-receipt.json",
+    "source-binding.json",
+    "history-preservation.json"
+  ]
+}

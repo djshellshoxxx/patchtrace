@@ -188,7 +188,7 @@ These entries describe implemented candidate scope, not qualification on main. T
 
 | File | Proposed canonical alias | Owner | Candidate scope and acceptance boundary |
 |---|---|---|---|
-| `docs/specs/pages-deployment-control.md` | SPEC-CI-PAGES-01 (proposed; cite by path) | `.github/workflows/pages.yml` | Push-head `[no deploy]` veto for the deploy job, preserving build/artifact flow and manual dispatch. Source checks cover the workflow contract; no hosted deployment acceptance is claimed. |
+| `docs/specs/pages-deployment-control.md` | SPEC-CI-PAGES-01 (proposed; cite by path) | `.github/workflows/pages.yml` | Push-head `[no deploy]` veto for Pages configuration and the deploy job, preserving unconditional tests/build/artifact flow and manual dispatch. Source checks cover the workflow contract; no hosted deployment acceptance is claimed. |
 | `docs/specs/ci-action-pinning.md` | SPEC-CI-ACTIONS-01 (proposed; cite by path) | `.github/workflows/` and workflow contract tests | Direct remote Action references use reviewed full commit pins with release comments. Transitive references, CODEX-5 package hashes and exact-source hosted qualification remain separate gates. |
 | `docs/specs/live-intel-probe-diagnostics.md` | SPEC-CI-INTEL-PROBES-01 (proposed; cite by path) | Live Intel acceptance harness and `build/live-status/` artifacts | Retain bounded, redacted diagnostics from existing version probes without additional processes or altered acceptance predicates. Controlled fixture checks do not establish native capa/FLOSS compatibility. |
 
@@ -200,3 +200,4 @@ These entries describe the separate follow-up candidate and do not establish acc
 |---|---|---|---|
 | `docs/specs/buildenv-header-help.md` | SPEC-BUILDENV-HEADER-HELP-01 (proposed; cite by path) | `buildenv/panel_model.py` and `buildenv/tooltip_entries.py` | Registered help for the five existing Build environment table headings. Labels, cells, comparison and tool execution are unchanged; native accessibility acceptance remains separate. |
 | `docs/specs/pages-build-isolation-and-hashes.md` | SPEC-CI-PAGES-ISOLATION-01 (proposed; cite by path) | `.github/workflows/pages.yml` and `tools/site/requirements-ci.lock` | Complete hashed wheel closure and isolated site tests for CPython 3.12/Linux x86-64. Other package-install lanes, hosted acceptance and deployment remain separate gates. |
+| `docs/specs/ci-pip-command-audit.md` | SPEC-CI-PIP-AUDIT-01 (proposed; cite by path) | `tools/ci_pip_install_audit.py` and its source-only tests | Parse actual workflow steps and audit explicit pip command boundaries; parser uncertainty is a hard failure. Broad CODEX-5 hash closure and hosted/native qualification remain separate. |

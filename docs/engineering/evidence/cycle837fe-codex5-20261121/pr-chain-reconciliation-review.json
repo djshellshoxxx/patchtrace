@@ -1,0 +1,729 @@
+{
+  "reviewed_utc": "2026-11-21T09:06:23.263150+00:00",
+  "scope": "Bounded metadata-reconciliation review using existing source audits, immutable Git identities and original recovery records; no new product tests or semantic donor audit.",
+  "snapshot_observed_utc": "2026-11-21T08:59:00Z",
+  "snapshot_sha256": "9b4aaba7a0dd999e956bcd2263334734335bd03acd5977418e7980655cb60160",
+  "source_commit": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+  "source_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+  "equivalent_worktree_head": "06ea27de0936f1f8eb1aeca264833c21845a7f36",
+  "equivalent_worktree_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+  "worktree_status_porcelain": "",
+  "pull_requests": [
+    {
+      "number": 345,
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "merged_at": null,
+      "head": {
+        "ref": "codex/autonomous-consolidation-20261120-2bad",
+        "sha": "39c38a02f126963fc03827fa49741255590227ad",
+        "tree": "c458f2bcdbafccb1704966d07c1809a323f7f540"
+      },
+      "base": {
+        "ref": "codex/patchtrace-candidate-component-type-20261120-g41",
+        "sha": "67f7e08ea9bee61653f8ab5ad66048d3e7141810"
+      },
+      "original_body_sha256": "8a6a1f8d2bb34fcbdff5b4ee22d83bc3a35ab3dc3ba08b48879245260c71447d",
+      "original_body_utf8_bytes": 7553,
+      "ancestor_of_reviewed_primary": true,
+      "recommended_action": "After actual qualified PR349 main merge and a fresh unchanged-head check, close as consolidated without merging, retargeting, rewriting the body, or deleting the branch.",
+      "reconciliation_basis": "exact head is an ancestor of the reviewed PR349 head",
+      "pr_side_only_commit_count": 0
+    },
+    {
+      "number": 346,
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "merged_at": null,
+      "head": {
+        "ref": "consolidation/patchtrace-20261120-95fe",
+        "sha": "c07774ecf5a3f7337834f95a9a4c51c8ec5fad44",
+        "tree": "8b3b62b05bb6e7bd9eb5de8cbda797aceca52ca0"
+      },
+      "base": {
+        "ref": "codex/patchtrace-candidate-component-type-20261120-g41",
+        "sha": "67f7e08ea9bee61653f8ab5ad66048d3e7141810"
+      },
+      "original_body_sha256": "db5536dc73489012fc41da8cb3aca9a14f1d5fac3e21aeb36b7abba36e5a0707",
+      "original_body_utf8_bytes": 6858,
+      "ancestor_of_reviewed_primary": false,
+      "recommended_action": "After actual qualified PR349 main merge and a fresh unchanged-head check, close as consolidated without merging, retargeting, rewriting the body, or deleting the branch.",
+      "reconciliation_basis": "selective recovery plus original-document preservation; not full branch ancestry",
+      "pr_side_only_commit_count": 13
+    },
+    {
+      "number": 347,
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "merged_at": null,
+      "head": {
+        "ref": "codex/patchtrace-pr345-346-unique-recovery-20261120",
+        "sha": "b461ac64eb9beb74449ce2b18b6795a2af34a02a",
+        "tree": "34fd8e6926177ccccb7f9512100a7b40f8b2d636"
+      },
+      "base": {
+        "ref": "codex/autonomous-consolidation-20261120-2bad",
+        "sha": "39c38a02f126963fc03827fa49741255590227ad"
+      },
+      "original_body_sha256": "1ad6e6234d5b7c6325f917db56a0f475c9b6059bc909c0d467ec05bd2ead4e89",
+      "original_body_utf8_bytes": 2546,
+      "ancestor_of_reviewed_primary": true,
+      "recommended_action": "After actual qualified PR349 main merge and a fresh unchanged-head check, close as consolidated without merging, retargeting, rewriting the body, or deleting the branch.",
+      "reconciliation_basis": "exact head is an ancestor of the reviewed PR349 head",
+      "pr_side_only_commit_count": 0
+    },
+    {
+      "number": 348,
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "merged_at": null,
+      "head": {
+        "ref": "codex/patchtrace-integration-20261121-2bad",
+        "sha": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+        "tree": "9cb2ba74b088dfce7d87d37403108bcd3aa05326"
+      },
+      "base": {
+        "ref": "codex/patchtrace-pr345-346-unique-recovery-20261120",
+        "sha": "b461ac64eb9beb74449ce2b18b6795a2af34a02a"
+      },
+      "original_body_sha256": "21bd87be85d88e05bb03249f10565a1c34d9b42b7802a534517331e064e59c0c",
+      "original_body_utf8_bytes": 8500,
+      "ancestor_of_reviewed_primary": true,
+      "recommended_action": "After actual qualified PR349 main merge and a fresh unchanged-head check, close as consolidated without merging, retargeting, rewriting the body, or deleting the branch.",
+      "reconciliation_basis": "exact head is an ancestor of the reviewed PR349 head",
+      "pr_side_only_commit_count": 0
+    }
+  ],
+  "pr346_only_commits": [
+    {
+      "commit": "c07774ecf5a3f7337834f95a9a4c51c8ec5fad44",
+      "parents": [
+        "87328763478db060909b75cd6849295056f9b405"
+      ],
+      "subject": "docs(engineering): record draft publication and shared sibling recovery [no release]"
+    },
+    {
+      "commit": "87328763478db060909b75cd6849295056f9b405",
+      "parents": [
+        "5711cd9a59ea23dc92933c33d67c5728df862aa0"
+      ],
+      "subject": "docs(qa): retain standalone environment receipts and publication review [no release]"
+    },
+    {
+      "commit": "5711cd9a59ea23dc92933c33d67c5728df862aa0",
+      "parents": [
+        "78a3b6b78294796084172d1452c7dfecb186c5e6"
+      ],
+      "subject": "docs(engineering): make cycle 95fe the current handoff entry point [no release]"
+    },
+    {
+      "commit": "78a3b6b78294796084172d1452c7dfecb186c5e6",
+      "parents": [
+        "406acf96f5b1a299aca940f98eeb69d0b9583729"
+      ],
+      "subject": "docs(engineering): preserve cycle 95fe evidence and consolidation handoff [no release]"
+    },
+    {
+      "commit": "406acf96f5b1a299aca940f98eeb69d0b9583729",
+      "parents": [
+        "d1b0216d63792e443fc55444cbb5d45f9ae030ab",
+        "f30f4a88bfd2731198ade24aea65cf95ead0ee85"
+      ],
+      "subject": "Merge CSV and Qt diagnostic acceptance coverage [no release]"
+    },
+    {
+      "commit": "f30f4a88bfd2731198ade24aea65cf95ead0ee85",
+      "parents": [
+        "67f7e08ea9bee61653f8ab5ad66048d3e7141810"
+      ],
+      "subject": "test: cover form-feed exports and bounded timeout fallbacks [no release]"
+    },
+    {
+      "commit": "d1b0216d63792e443fc55444cbb5d45f9ae030ab",
+      "parents": [
+        "3d3c4b21f4ddb0054af595a541934670b502977c",
+        "0f4fc0f7d712bae9a87569d1d51dbbd34d6260e4"
+      ],
+      "subject": "Merge reviewed selective GUI donor recovery [no release]"
+    },
+    {
+      "commit": "0f4fc0f7d712bae9a87569d1d51dbbd34d6260e4",
+      "parents": [
+        "67f7e08ea9bee61653f8ab5ad66048d3e7141810"
+      ],
+      "subject": "fix(gui): recover header help and evidence state announcements [no release]"
+    },
+    {
+      "commit": "3d3c4b21f4ddb0054af595a541934670b502977c",
+      "parents": [
+        "66256fcee3f9e39512e1d6346f195bcf1facc9c9",
+        "1bb822cdabc4da6a5834c4399d1d17ff468215bd"
+      ],
+      "subject": "Merge independently reviewed candidate admission repair [no release]"
+    },
+    {
+      "commit": "1bb822cdabc4da6a5834c4399d1d17ff468215bd",
+      "parents": [
+        "cf14b3447bd1d46c52832626c9a507317bfe0e08"
+      ],
+      "subject": "fix(kbc): admit candidate components before current-input reads [no release]"
+    },
+    {
+      "commit": "cf14b3447bd1d46c52832626c9a507317bfe0e08",
+      "parents": [
+        "67f7e08ea9bee61653f8ab5ad66048d3e7141810"
+      ],
+      "subject": "docs(kbc): require candidate admission before current-input reads [no release]"
+    },
+    {
+      "commit": "66256fcee3f9e39512e1d6346f195bcf1facc9c9",
+      "parents": [
+        "0bc0dd8f446dc9a92e1587ff85b638f5edfb633b"
+      ],
+      "subject": "fix: replay bounded branch inventories with large evidence fields [no release]"
+    },
+    {
+      "commit": "0bc0dd8f446dc9a92e1587ff85b638f5edfb633b",
+      "parents": [
+        "67f7e08ea9bee61653f8ab5ad66048d3e7141810"
+      ],
+      "subject": "docs: specify bounded branch inventory snapshot replay [no release]"
+    }
+  ],
+  "pr346_commit_wording": "13 PR346-side-only commits absent from PR349 ancestry, including documentation and merge commits; not 13 source-code commits.",
+  "recorded_recovery_blobs": [
+    {
+      "path": "src/patchtrace/kbcorrelation/investigation_service.py",
+      "git_blobs": {
+        "345": "ee0a98df711105592e8b024041303a85125f6d6d",
+        "346": "00aa0ebcd3d3a507046b3825715e490d866f1eef",
+        "347": "00aa0ebcd3d3a507046b3825715e490d866f1eef",
+        "348": "00aa0ebcd3d3a507046b3825715e490d866f1eef",
+        "349": "00aa0ebcd3d3a507046b3825715e490d866f1eef"
+      },
+      "accounting": "exact recovered donor blob retained through PR349"
+    },
+    {
+      "path": "tests/test_kb_candidate_component_type_20261120.py",
+      "git_blobs": {
+        "345": "f1bfe548e49b4cc32e87589994e0669291c6c69e",
+        "346": "fa9e623e44bbfb681815409ef7150eeacf78abd0",
+        "347": "fa9e623e44bbfb681815409ef7150eeacf78abd0",
+        "348": "fa9e623e44bbfb681815409ef7150eeacf78abd0",
+        "349": "fa9e623e44bbfb681815409ef7150eeacf78abd0"
+      },
+      "accounting": "exact recovered donor blob retained through PR349"
+    },
+    {
+      "path": "tools/branch_inventory.py",
+      "git_blobs": {
+        "345": "23d07aad97805466e2396b41ffff17f4d284e270",
+        "346": "ffdfe8f03e61151d66a839ad855d1fdd1272d123",
+        "347": "ffdfe8f03e61151d66a839ad855d1fdd1272d123",
+        "348": "d1950b12bf83fbc826ae5f913f2bca1226e8e6c3",
+        "349": "d1950b12bf83fbc826ae5f913f2bca1226e8e6c3"
+      },
+      "accounting": "exact PR346 recovery at PR347, then reviewed inventory validation successors in PR348 preserved through PR349"
+    },
+    {
+      "path": "tests/test_branch_inventory.py",
+      "git_blobs": {
+        "345": "5c70681678aae918b19632e9e6a72578d3b70fd1",
+        "346": "0168d39a78343f6fc9b58707c40dcabfef1979d7",
+        "347": "0168d39a78343f6fc9b58707c40dcabfef1979d7",
+        "348": "eea8953911840755fcfb57992643722df868b781",
+        "349": "eea8953911840755fcfb57992643722df868b781"
+      },
+      "accounting": "exact PR346 recovery at PR347, then reviewed inventory validation successors in PR348 preserved through PR349"
+    },
+    {
+      "path": "tests/test_ui_kb_investigation.py",
+      "git_blobs": {
+        "345": "978f95fa589181b3d86c49d9c9a1a237569d129c",
+        "346": "f3e2a41c6e3782570323c09c34c26d56c88fff0e",
+        "347": "f3e2a41c6e3782570323c09c34c26d56c88fff0e",
+        "348": "f3e2a41c6e3782570323c09c34c26d56c88fff0e",
+        "349": "f3e2a41c6e3782570323c09c34c26d56c88fff0e"
+      },
+      "accounting": "exact recovered donor blob retained through PR349"
+    },
+    {
+      "path": "src/patchtrace/gui/qt/table.py",
+      "git_blobs": {
+        "345": "e90b3acd981fa7045b370a080b7e27694f4e01d9",
+        "346": "e90b3acd981fa7045b370a080b7e27694f4e01d9",
+        "347": "e90b3acd981fa7045b370a080b7e27694f4e01d9",
+        "348": "e90b3acd981fa7045b370a080b7e27694f4e01d9",
+        "349": "e90b3acd981fa7045b370a080b7e27694f4e01d9"
+      },
+      "accounting": "shared implementation retained once"
+    },
+    {
+      "path": "src/patchtrace/gui/table_spec.py",
+      "git_blobs": {
+        "345": "4bab0fb8013bbb32a3e5c0b58ac5bc02d8fade89",
+        "346": "4bab0fb8013bbb32a3e5c0b58ac5bc02d8fade89",
+        "347": "4bab0fb8013bbb32a3e5c0b58ac5bc02d8fade89",
+        "348": "4bab0fb8013bbb32a3e5c0b58ac5bc02d8fade89",
+        "349": "4bab0fb8013bbb32a3e5c0b58ac5bc02d8fade89"
+      },
+      "accounting": "shared implementation retained once"
+    }
+  ],
+  "document_recovery_commit": "19601a604e8ce06e7c52a79394a502a5f3839d71",
+  "document_recovery": [
+    {
+      "path": "docs/engineering-handoffs/cycle-95fe-20261120.md",
+      "recorded_blob": "c158e2f3d495ee71f0b37b9cd6b3b87c14a064de",
+      "donor_blob": "c158e2f3d495ee71f0b37b9cd6b3b87c14a064de",
+      "recovery_blob": "c158e2f3d495ee71f0b37b9cd6b3b87c14a064de",
+      "current_blob": "c158e2f3d495ee71f0b37b9cd6b3b87c14a064de",
+      "recorded_sha256": "5a5490a329248d9ca17baf60cc0253b6745bc6f6197fac6a636e3f32276e6f51",
+      "donor_sha256": "5a5490a329248d9ca17baf60cc0253b6745bc6f6197fac6a636e3f32276e6f51",
+      "recovery_sha256": "5a5490a329248d9ca17baf60cc0253b6745bc6f6197fac6a636e3f32276e6f51",
+      "current_sha256": "5a5490a329248d9ca17baf60cc0253b6745bc6f6197fac6a636e3f32276e6f51",
+      "recorded_bytes": 4510,
+      "donor_bytes": 4510,
+      "absent_at_pr348": true,
+      "donor_and_recovery_equal_manifest": true,
+      "current_exact": true,
+      "all_original_lines_retained_in_order": true,
+      "current_diff_numstat": ""
+    },
+    {
+      "path": "docs/engineering/AUDIT_FINDINGS.md",
+      "recorded_blob": "392fad12b942f30309db378d4b049f3ebef9a417",
+      "donor_blob": "392fad12b942f30309db378d4b049f3ebef9a417",
+      "recovery_blob": "392fad12b942f30309db378d4b049f3ebef9a417",
+      "current_blob": "d92f059f9ed37e15f310c3e4fb23d5a020fe0362",
+      "recorded_sha256": "335fbe5ac4246e11fb152ed4cdd4915d2816f5151adbc7aaa7e5ecc698c30b66",
+      "donor_sha256": "335fbe5ac4246e11fb152ed4cdd4915d2816f5151adbc7aaa7e5ecc698c30b66",
+      "recovery_sha256": "335fbe5ac4246e11fb152ed4cdd4915d2816f5151adbc7aaa7e5ecc698c30b66",
+      "current_sha256": "4fe87d7075d1a38f477c93c56f7a3798d5f5dd0866bc1e94a5ffc4db2d5ad3c0",
+      "recorded_bytes": 5980,
+      "donor_bytes": 5980,
+      "absent_at_pr348": true,
+      "donor_and_recovery_equal_manifest": true,
+      "current_exact": false,
+      "all_original_lines_retained_in_order": true,
+      "current_diff_numstat": "51\t0\tdocs/engineering/AUDIT_FINDINGS.md"
+    },
+    {
+      "path": "docs/engineering/BRANCH_INVENTORY.md",
+      "recorded_blob": "c470d5587ad16c9fab610796374c0f24e7a2d81b",
+      "donor_blob": "c470d5587ad16c9fab610796374c0f24e7a2d81b",
+      "recovery_blob": "c470d5587ad16c9fab610796374c0f24e7a2d81b",
+      "current_blob": "5345d615959f04dc62155cc4817e1093c8b4f0e6",
+      "recorded_sha256": "a1ef6438c10e10247e18744b2b76a2d76ee3d1ea559f9a5d0ee08b50a17c4e4e",
+      "donor_sha256": "a1ef6438c10e10247e18744b2b76a2d76ee3d1ea559f9a5d0ee08b50a17c4e4e",
+      "recovery_sha256": "a1ef6438c10e10247e18744b2b76a2d76ee3d1ea559f9a5d0ee08b50a17c4e4e",
+      "current_sha256": "b6c84c267cde8f93e129b0d194386b2aa33d9e9007d21e0ef97f2a10c82f216d",
+      "recorded_bytes": 3125,
+      "donor_bytes": 3125,
+      "absent_at_pr348": true,
+      "donor_and_recovery_equal_manifest": true,
+      "current_exact": false,
+      "all_original_lines_retained_in_order": true,
+      "current_diff_numstat": "47\t0\tdocs/engineering/BRANCH_INVENTORY.md"
+    },
+    {
+      "path": "docs/engineering/CONSOLIDATION_LEDGER.md",
+      "recorded_blob": "f15a8d919bbee3b6847a4a6459b9062f2f5fd88e",
+      "donor_blob": "f15a8d919bbee3b6847a4a6459b9062f2f5fd88e",
+      "recovery_blob": "f15a8d919bbee3b6847a4a6459b9062f2f5fd88e",
+      "current_blob": "7e318bb08bd33772c84a8ea10035835413f64dc9",
+      "recorded_sha256": "3184b6516cd104ec3e22428a17e13bdc0e943f4f8a0cf541264ed27cabfed6d5",
+      "donor_sha256": "3184b6516cd104ec3e22428a17e13bdc0e943f4f8a0cf541264ed27cabfed6d5",
+      "recovery_sha256": "3184b6516cd104ec3e22428a17e13bdc0e943f4f8a0cf541264ed27cabfed6d5",
+      "current_sha256": "d240544daccb656fc2a2e67a09117f4a5430a66079f461f6364694e411c33f8a",
+      "recorded_bytes": 4984,
+      "donor_bytes": 4984,
+      "absent_at_pr348": true,
+      "donor_and_recovery_equal_manifest": true,
+      "current_exact": false,
+      "all_original_lines_retained_in_order": true,
+      "current_diff_numstat": "45\t0\tdocs/engineering/CONSOLIDATION_LEDGER.md"
+    },
+    {
+      "path": "docs/engineering/FEATURE_MATRIX.md",
+      "recorded_blob": "253877bec360f597bdc9f1eb7057e07097254cf5",
+      "donor_blob": "253877bec360f597bdc9f1eb7057e07097254cf5",
+      "recovery_blob": "253877bec360f597bdc9f1eb7057e07097254cf5",
+      "current_blob": "0a9ec9bf50bd8966bec37bae747009fe2b449f1e",
+      "recorded_sha256": "992d75d7f900b5c58cacc8330008f73e5458de7bf5919065fe6124f895570d15",
+      "donor_sha256": "992d75d7f900b5c58cacc8330008f73e5458de7bf5919065fe6124f895570d15",
+      "recovery_sha256": "992d75d7f900b5c58cacc8330008f73e5458de7bf5919065fe6124f895570d15",
+      "current_sha256": "d67c0f9876182acd6aaf9ee3438c18fe9bfeef236b4663f940b5452ed66f9d1e",
+      "recorded_bytes": 2609,
+      "donor_bytes": 2609,
+      "absent_at_pr348": true,
+      "donor_and_recovery_equal_manifest": true,
+      "current_exact": false,
+      "all_original_lines_retained_in_order": true,
+      "current_diff_numstat": "54\t0\tdocs/engineering/FEATURE_MATRIX.md"
+    },
+    {
+      "path": "docs/engineering/INTEGRATION_QUEUE.md",
+      "recorded_blob": "201fa218b6b16ccaede076ee9a6ddd0094f73e39",
+      "donor_blob": "201fa218b6b16ccaede076ee9a6ddd0094f73e39",
+      "recovery_blob": "201fa218b6b16ccaede076ee9a6ddd0094f73e39",
+      "current_blob": "a613aaac4f92c5dc0d5e645648a059ce9ee14375",
+      "recorded_sha256": "1f49bf68405f5ce041f31cf04398274073a47fe71fd7da68562d0c217241ad76",
+      "donor_sha256": "1f49bf68405f5ce041f31cf04398274073a47fe71fd7da68562d0c217241ad76",
+      "recovery_sha256": "1f49bf68405f5ce041f31cf04398274073a47fe71fd7da68562d0c217241ad76",
+      "current_sha256": "b4b8880a541b8cae0d6f1e8ceb7ff17b3c73fd6341ed128778e5228602edecbf",
+      "recorded_bytes": 3500,
+      "donor_bytes": 3500,
+      "absent_at_pr348": true,
+      "donor_and_recovery_equal_manifest": true,
+      "current_exact": false,
+      "all_original_lines_retained_in_order": true,
+      "current_diff_numstat": "53\t0\tdocs/engineering/INTEGRATION_QUEUE.md"
+    },
+    {
+      "path": "docs/engineering/WORKER_HANDOFF.md",
+      "recorded_blob": "bee2613dc066647c864dcda81dc9f158bbb9fb9c",
+      "donor_blob": "bee2613dc066647c864dcda81dc9f158bbb9fb9c",
+      "recovery_blob": "bee2613dc066647c864dcda81dc9f158bbb9fb9c",
+      "current_blob": "8e2d082eb73668b8b1ddb8a642c32b06750b2764",
+      "recorded_sha256": "5f34895bce01b09bd3f82248885f7a62c6a157b9ae14b1237d64f262b0dee181",
+      "donor_sha256": "5f34895bce01b09bd3f82248885f7a62c6a157b9ae14b1237d64f262b0dee181",
+      "recovery_sha256": "5f34895bce01b09bd3f82248885f7a62c6a157b9ae14b1237d64f262b0dee181",
+      "current_sha256": "5e472be4bcfb7c2de527dfe8b61abf0b2a6ccd40568c4ec2885fd0f89ec4cbdf",
+      "recorded_bytes": 2764,
+      "donor_bytes": 2764,
+      "absent_at_pr348": true,
+      "donor_and_recovery_equal_manifest": true,
+      "current_exact": false,
+      "all_original_lines_retained_in_order": true,
+      "current_diff_numstat": "46\t0\tdocs/engineering/WORKER_HANDOFF.md"
+    },
+    {
+      "path": "docs/engineering/cycle-95fe-qualification.md",
+      "recorded_blob": "597ba15b8feaafe20be405965bb18c755b28d4e9",
+      "donor_blob": "597ba15b8feaafe20be405965bb18c755b28d4e9",
+      "recovery_blob": "597ba15b8feaafe20be405965bb18c755b28d4e9",
+      "current_blob": "597ba15b8feaafe20be405965bb18c755b28d4e9",
+      "recorded_sha256": "c6b7547966843c1b3c0082b1ad8c74bc558b7a0598245573e03c5639dc17e45f",
+      "donor_sha256": "c6b7547966843c1b3c0082b1ad8c74bc558b7a0598245573e03c5639dc17e45f",
+      "recovery_sha256": "c6b7547966843c1b3c0082b1ad8c74bc558b7a0598245573e03c5639dc17e45f",
+      "current_sha256": "c6b7547966843c1b3c0082b1ad8c74bc558b7a0598245573e03c5639dc17e45f",
+      "recorded_bytes": 5481,
+      "donor_bytes": 5481,
+      "absent_at_pr348": true,
+      "donor_and_recovery_equal_manifest": true,
+      "current_exact": true,
+      "all_original_lines_retained_in_order": true,
+      "current_diff_numstat": ""
+    },
+    {
+      "path": "docs/engineering/cycle-95fe-semantic-review.json",
+      "recorded_blob": "9ac8f5c187beb75b0098b7dcc610cdf053088c90",
+      "donor_blob": "9ac8f5c187beb75b0098b7dcc610cdf053088c90",
+      "recovery_blob": "9ac8f5c187beb75b0098b7dcc610cdf053088c90",
+      "current_blob": "9ac8f5c187beb75b0098b7dcc610cdf053088c90",
+      "recorded_sha256": "bce82ab4738271432aeee3e22ad8d2bda556a0d35f0448774571467a95636de6",
+      "donor_sha256": "bce82ab4738271432aeee3e22ad8d2bda556a0d35f0448774571467a95636de6",
+      "recovery_sha256": "bce82ab4738271432aeee3e22ad8d2bda556a0d35f0448774571467a95636de6",
+      "current_sha256": "bce82ab4738271432aeee3e22ad8d2bda556a0d35f0448774571467a95636de6",
+      "recorded_bytes": 7842,
+      "donor_bytes": 7842,
+      "absent_at_pr348": true,
+      "donor_and_recovery_equal_manifest": true,
+      "current_exact": true,
+      "all_original_lines_retained_in_order": true,
+      "current_diff_numstat": ""
+    },
+    {
+      "path": "docs/engineering/cycle-95fe-semantic-review.md",
+      "recorded_blob": "48d7ac7e9e71e88e2422e1c3dbae6fa8a5717161",
+      "donor_blob": "48d7ac7e9e71e88e2422e1c3dbae6fa8a5717161",
+      "recovery_blob": "48d7ac7e9e71e88e2422e1c3dbae6fa8a5717161",
+      "current_blob": "48d7ac7e9e71e88e2422e1c3dbae6fa8a5717161",
+      "recorded_sha256": "7e842a8e95069d8947011354b65767e0783663614a2c7dd14e48b133dfd6505f",
+      "donor_sha256": "7e842a8e95069d8947011354b65767e0783663614a2c7dd14e48b133dfd6505f",
+      "recovery_sha256": "7e842a8e95069d8947011354b65767e0783663614a2c7dd14e48b133dfd6505f",
+      "current_sha256": "7e842a8e95069d8947011354b65767e0783663614a2c7dd14e48b133dfd6505f",
+      "recorded_bytes": 4755,
+      "donor_bytes": 4755,
+      "absent_at_pr348": true,
+      "donor_and_recovery_equal_manifest": true,
+      "current_exact": true,
+      "all_original_lines_retained_in_order": true,
+      "current_diff_numstat": ""
+    },
+    {
+      "path": "docs/engineering/evidence/cycle95fe/README.md",
+      "recorded_blob": "3320c11628cb8fc7feb0e2cfa0e66882638027b1",
+      "donor_blob": "3320c11628cb8fc7feb0e2cfa0e66882638027b1",
+      "recovery_blob": "3320c11628cb8fc7feb0e2cfa0e66882638027b1",
+      "current_blob": "3320c11628cb8fc7feb0e2cfa0e66882638027b1",
+      "recorded_sha256": "b911a0138ac0bd243d42f9d1066746a5b4e29ad9894f6868c58480da167729fc",
+      "donor_sha256": "b911a0138ac0bd243d42f9d1066746a5b4e29ad9894f6868c58480da167729fc",
+      "recovery_sha256": "b911a0138ac0bd243d42f9d1066746a5b4e29ad9894f6868c58480da167729fc",
+      "current_sha256": "b911a0138ac0bd243d42f9d1066746a5b4e29ad9894f6868c58480da167729fc",
+      "recorded_bytes": 3367,
+      "donor_bytes": 3367,
+      "absent_at_pr348": true,
+      "donor_and_recovery_equal_manifest": true,
+      "current_exact": true,
+      "all_original_lines_retained_in_order": true,
+      "current_diff_numstat": ""
+    },
+    {
+      "path": "docs/engineering/evidence/cycle95fe/code-commit-mapping.json",
+      "recorded_blob": "8865992034f96c67f9135ccb267c9a0d4af44682",
+      "donor_blob": "8865992034f96c67f9135ccb267c9a0d4af44682",
+      "recovery_blob": "8865992034f96c67f9135ccb267c9a0d4af44682",
+      "current_blob": "8865992034f96c67f9135ccb267c9a0d4af44682",
+      "recorded_sha256": "b8e2ead8c809d273fce8174c63d3aa0e819763fa442da592742c5e69d85ccbd4",
+      "donor_sha256": "b8e2ead8c809d273fce8174c63d3aa0e819763fa442da592742c5e69d85ccbd4",
+      "recovery_sha256": "b8e2ead8c809d273fce8174c63d3aa0e819763fa442da592742c5e69d85ccbd4",
+      "current_sha256": "b8e2ead8c809d273fce8174c63d3aa0e819763fa442da592742c5e69d85ccbd4",
+      "recorded_bytes": 4242,
+      "donor_bytes": 4242,
+      "absent_at_pr348": true,
+      "donor_and_recovery_equal_manifest": true,
+      "current_exact": true,
+      "all_original_lines_retained_in_order": true,
+      "current_diff_numstat": ""
+    },
+    {
+      "path": "docs/engineering/evidence/cycle95fe/cycle-95fe-evidence.zip",
+      "recorded_blob": "83f7301d7a9db0ece24a4fedc170d7903270ddda",
+      "donor_blob": "83f7301d7a9db0ece24a4fedc170d7903270ddda",
+      "recovery_blob": "83f7301d7a9db0ece24a4fedc170d7903270ddda",
+      "current_blob": "83f7301d7a9db0ece24a4fedc170d7903270ddda",
+      "recorded_sha256": "06e115ed85de8fd85315d2bef465d7eff60833179f520cbd9fa3801f95669525",
+      "donor_sha256": "06e115ed85de8fd85315d2bef465d7eff60833179f520cbd9fa3801f95669525",
+      "recovery_sha256": "06e115ed85de8fd85315d2bef465d7eff60833179f520cbd9fa3801f95669525",
+      "current_sha256": "06e115ed85de8fd85315d2bef465d7eff60833179f520cbd9fa3801f95669525",
+      "recorded_bytes": 670271,
+      "donor_bytes": 670271,
+      "absent_at_pr348": true,
+      "donor_and_recovery_equal_manifest": true,
+      "current_exact": true,
+      "all_original_lines_retained_in_order": true,
+      "current_diff_numstat": ""
+    },
+    {
+      "path": "docs/engineering/evidence/cycle95fe/environment-checks.json",
+      "recorded_blob": "9491367fbc51214d032b6071a3324da66f384549",
+      "donor_blob": "9491367fbc51214d032b6071a3324da66f384549",
+      "recovery_blob": "9491367fbc51214d032b6071a3324da66f384549",
+      "current_blob": "9491367fbc51214d032b6071a3324da66f384549",
+      "recorded_sha256": "bb5b576566c648daf0e4265de2655074ebd7be576f5bf13780082432f82c2041",
+      "donor_sha256": "bb5b576566c648daf0e4265de2655074ebd7be576f5bf13780082432f82c2041",
+      "recovery_sha256": "bb5b576566c648daf0e4265de2655074ebd7be576f5bf13780082432f82c2041",
+      "current_sha256": "bb5b576566c648daf0e4265de2655074ebd7be576f5bf13780082432f82c2041",
+      "recorded_bytes": 7286,
+      "donor_bytes": 7286,
+      "absent_at_pr348": true,
+      "donor_and_recovery_equal_manifest": true,
+      "current_exact": true,
+      "all_original_lines_retained_in_order": true,
+      "current_diff_numstat": ""
+    },
+    {
+      "path": "docs/engineering/evidence/cycle95fe/initial-publication.json",
+      "recorded_blob": "f4356e9e5ac9131f010bb3719677a43ea0951ca6",
+      "donor_blob": "f4356e9e5ac9131f010bb3719677a43ea0951ca6",
+      "recovery_blob": "f4356e9e5ac9131f010bb3719677a43ea0951ca6",
+      "current_blob": "f4356e9e5ac9131f010bb3719677a43ea0951ca6",
+      "recorded_sha256": "1c8f972ede2b93875ca126b4755ce4ebdfd44ee792187be89dd7c260eaccfbf7",
+      "donor_sha256": "1c8f972ede2b93875ca126b4755ce4ebdfd44ee792187be89dd7c260eaccfbf7",
+      "recovery_sha256": "1c8f972ede2b93875ca126b4755ce4ebdfd44ee792187be89dd7c260eaccfbf7",
+      "current_sha256": "1c8f972ede2b93875ca126b4755ce4ebdfd44ee792187be89dd7c260eaccfbf7",
+      "recorded_bytes": 7055,
+      "donor_bytes": 7055,
+      "absent_at_pr348": true,
+      "donor_and_recovery_equal_manifest": true,
+      "current_exact": true,
+      "all_original_lines_retained_in_order": true,
+      "current_diff_numstat": ""
+    },
+    {
+      "path": "docs/engineering/evidence/cycle95fe/local-code-history.bundle",
+      "recorded_blob": "580e58bc4f15da8e1467e2b1b698e47980b0dcbc",
+      "donor_blob": "580e58bc4f15da8e1467e2b1b698e47980b0dcbc",
+      "recovery_blob": "580e58bc4f15da8e1467e2b1b698e47980b0dcbc",
+      "current_blob": "580e58bc4f15da8e1467e2b1b698e47980b0dcbc",
+      "recorded_sha256": "81d15e5383e3aa7ddd7a8826122f4499789f2c97375525eebaf4316bcdf93517",
+      "donor_sha256": "81d15e5383e3aa7ddd7a8826122f4499789f2c97375525eebaf4316bcdf93517",
+      "recovery_sha256": "81d15e5383e3aa7ddd7a8826122f4499789f2c97375525eebaf4316bcdf93517",
+      "current_sha256": "81d15e5383e3aa7ddd7a8826122f4499789f2c97375525eebaf4316bcdf93517",
+      "recorded_bytes": 16743,
+      "donor_bytes": 16743,
+      "absent_at_pr348": true,
+      "donor_and_recovery_equal_manifest": true,
+      "current_exact": true,
+      "all_original_lines_retained_in_order": true,
+      "current_diff_numstat": ""
+    },
+    {
+      "path": "docs/engineering/evidence/cycle95fe/member-manifest.json",
+      "recorded_blob": "8c06b842b60449f6cb94d440807cf6c6bc16f163",
+      "donor_blob": "8c06b842b60449f6cb94d440807cf6c6bc16f163",
+      "recovery_blob": "8c06b842b60449f6cb94d440807cf6c6bc16f163",
+      "current_blob": "8c06b842b60449f6cb94d440807cf6c6bc16f163",
+      "recorded_sha256": "105d701f56bc35a517e4df072c5edfe2ec195d7a6db71bee6f8502e0710563aa",
+      "donor_sha256": "105d701f56bc35a517e4df072c5edfe2ec195d7a6db71bee6f8502e0710563aa",
+      "recovery_sha256": "105d701f56bc35a517e4df072c5edfe2ec195d7a6db71bee6f8502e0710563aa",
+      "current_sha256": "105d701f56bc35a517e4df072c5edfe2ec195d7a6db71bee6f8502e0710563aa",
+      "recorded_bytes": 26265,
+      "donor_bytes": 26265,
+      "absent_at_pr348": true,
+      "donor_and_recovery_equal_manifest": true,
+      "current_exact": true,
+      "all_original_lines_retained_in_order": true,
+      "current_diff_numstat": ""
+    },
+    {
+      "path": "docs/engineering/evidence/cycle95fe/pack-validation.json",
+      "recorded_blob": "6b8e2c2edb63e447a2f2a1d1a42b43cccddef34d",
+      "donor_blob": "6b8e2c2edb63e447a2f2a1d1a42b43cccddef34d",
+      "recovery_blob": "6b8e2c2edb63e447a2f2a1d1a42b43cccddef34d",
+      "current_blob": "6b8e2c2edb63e447a2f2a1d1a42b43cccddef34d",
+      "recorded_sha256": "d71ce1ae6f2adaa9a48e60aaef1eb719b4786fee44ca155c37b6748c5c27093c",
+      "donor_sha256": "d71ce1ae6f2adaa9a48e60aaef1eb719b4786fee44ca155c37b6748c5c27093c",
+      "recovery_sha256": "d71ce1ae6f2adaa9a48e60aaef1eb719b4786fee44ca155c37b6748c5c27093c",
+      "current_sha256": "d71ce1ae6f2adaa9a48e60aaef1eb719b4786fee44ca155c37b6748c5c27093c",
+      "recorded_bytes": 1460,
+      "donor_bytes": 1460,
+      "absent_at_pr348": true,
+      "donor_and_recovery_equal_manifest": true,
+      "current_exact": true,
+      "all_original_lines_retained_in_order": true,
+      "current_diff_numstat": ""
+    },
+    {
+      "path": "docs/engineering/evidence/cycle95fe/parent-ci-prepublication.json",
+      "recorded_blob": "cc4655d777d29943070444b6757093bf72072c99",
+      "donor_blob": "cc4655d777d29943070444b6757093bf72072c99",
+      "recovery_blob": "cc4655d777d29943070444b6757093bf72072c99",
+      "current_blob": "cc4655d777d29943070444b6757093bf72072c99",
+      "recorded_sha256": "66cfdb0b40f6b69ebc346d522da314937f64f3f1445943b84df8ebc0ec8a5c54",
+      "donor_sha256": "66cfdb0b40f6b69ebc346d522da314937f64f3f1445943b84df8ebc0ec8a5c54",
+      "recovery_sha256": "66cfdb0b40f6b69ebc346d522da314937f64f3f1445943b84df8ebc0ec8a5c54",
+      "current_sha256": "66cfdb0b40f6b69ebc346d522da314937f64f3f1445943b84df8ebc0ec8a5c54",
+      "recorded_bytes": 71356,
+      "donor_bytes": 71356,
+      "absent_at_pr348": true,
+      "donor_and_recovery_equal_manifest": true,
+      "current_exact": true,
+      "all_original_lines_retained_in_order": true,
+      "current_diff_numstat": ""
+    },
+    {
+      "path": "docs/engineering/evidence/cycle95fe/publication-audit.md",
+      "recorded_blob": "c32b0e7b5c9a0490b3346f74bf5fdd85e3d747af",
+      "donor_blob": "c32b0e7b5c9a0490b3346f74bf5fdd85e3d747af",
+      "recovery_blob": "c32b0e7b5c9a0490b3346f74bf5fdd85e3d747af",
+      "current_blob": "c32b0e7b5c9a0490b3346f74bf5fdd85e3d747af",
+      "recorded_sha256": "befe9b523873fed5b76f1af99bb932615616454179509ee43ee49df4dcf1d54f",
+      "donor_sha256": "befe9b523873fed5b76f1af99bb932615616454179509ee43ee49df4dcf1d54f",
+      "recovery_sha256": "befe9b523873fed5b76f1af99bb932615616454179509ee43ee49df4dcf1d54f",
+      "current_sha256": "befe9b523873fed5b76f1af99bb932615616454179509ee43ee49df4dcf1d54f",
+      "recorded_bytes": 2905,
+      "donor_bytes": 2905,
+      "absent_at_pr348": true,
+      "donor_and_recovery_equal_manifest": true,
+      "current_exact": true,
+      "all_original_lines_retained_in_order": true,
+      "current_diff_numstat": ""
+    }
+  ],
+  "document_counts": {
+    "manifest_paths": 20,
+    "exact_donor_and_recovery_blobs": 20,
+    "current_exact": 14,
+    "current_additions_only_original_lines_retained": 6
+  },
+  "source_records": [
+    {
+      "source_commit": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "path": "docs/engineering-handoffs/sibling-reconciliation-20261120.md",
+      "git_blob": "aa07abea435cb195b1b8585fb34af3edc626e2f3",
+      "sha256": "200904fb6c2bd55d4646484a0be47f587793b692399f2a7d141d481185369aac",
+      "bytes": 7171,
+      "retained_copy": "independent-sources/sibling-reconciliation-20261120.md"
+    },
+    {
+      "source_commit": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "path": "docs/engineering-handoffs/cycle-95fe-20261120.md",
+      "git_blob": "c158e2f3d495ee71f0b37b9cd6b3b87c14a064de",
+      "sha256": "5a5490a329248d9ca17baf60cc0253b6745bc6f6197fac6a636e3f32276e6f51",
+      "bytes": 4510,
+      "retained_copy": "independent-sources/cycle-95fe-20261120.md"
+    },
+    {
+      "source_commit": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "path": "docs/engineering/cycle2-consolidation-20261121-2bad.md",
+      "git_blob": "b9a53dfd82365979b1647b40fda7951a1f2ae225",
+      "sha256": "71e50b20cd02a3dd4358f82493c4dcc90f6cfdee73153a8f8046e6edcd87f67a",
+      "bytes": 8133,
+      "retained_copy": "independent-sources/cycle2-consolidation-20261121-2bad.md"
+    },
+    {
+      "source_commit": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "path": "docs/engineering/cycle3-consolidation-20261121-95fe.md",
+      "git_blob": "6214bc472b1d1300419a7bb5903c22a0e9fc3891",
+      "sha256": "308855d99f5bd6dfb3a08a8274a8334595b648d86e8e7fed1d5fd52e87fabe05",
+      "bytes": 6047,
+      "retained_copy": "independent-sources/cycle3-consolidation-20261121-95fe.md"
+    },
+    {
+      "source_commit": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "path": "docs/engineering/evidence/cycle3-95fe/document-recovery.json",
+      "git_blob": "6cf8c9892228ce506b8c373e63fcf8ea7b3900a4",
+      "sha256": "b7dab114177cd46fdcde3b02905b0b41ac09d8550ce2cf18612d4edff1b08075",
+      "bytes": 5302,
+      "retained_copy": "independent-sources/document-recovery.json"
+    },
+    {
+      "source_commit": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "path": "docs/engineering/evidence/cycle3-95fe/final-record-review.md",
+      "git_blob": "6af7086b56c5d315036eeb47e08a367ca32d485c",
+      "sha256": "78df6d4ed42f7257c9363454039edaa4ea47294ae549d68883d692579ef73efa",
+      "bytes": 7897,
+      "retained_copy": "independent-sources/final-record-review.md"
+    }
+  ],
+  "known_non_wholesale_differences": [
+    "PR345 report, TaskRunner lifecycle, Linux force-replacement refusal, and additional Evidence/help tests were retained.",
+    "Two form-feed CSV/JSON cases were selectively recovered; the old donor Linux --force-overwrite expectation was intentionally not substituted for the current refusal contract.",
+    "Shared registered-help/Evidence behavior was retained once; prior independent handoff accounts for ui_evidence formatting differences.",
+    "Later inventory TSV/OID/JSON/quote/UTF-8 validation improvements remain authoritative; donor inventory files are not copied back over them.",
+    "Current indexes and shared ledger/status documents contain additive/current reconciliation rather than an indiscriminate donor overwrite."
+  ],
+  "specific_unaccounted_compatible_contributions_found": [],
+  "verdict": "No metadata-reconciliation blocker identified. Recommend closing PR345, PR346, PR347 and PR348 as consolidated only after an actual qualified PR349 main merge and fresh exact-head/main verification. PR346 closure must explicitly describe selective recovery, not merged ancestry or wholesale branch supersession.",
+  "future_action_gate": [
+    "Verify PR349 actual merged=true, non-null merged_at, actual merge commit and current main containing the qualified reviewed source.",
+    "Refresh each historical PR head/base/state; stop only the affected disposition if its head changed or an unaccounted contribution appears.",
+    "For #345/#347/#348, verify the refreshed exact heads are ancestors of actual main. For #346, retain the selective-recovery accounting without demanding false ancestry.",
+    "Add the prepared source-specific reconciliation record and close any still-open draft; leave original body, base, branch and commit history unchanged."
+  ],
+  "limits": [
+    "This review does not assert that PR349 has already merged or qualifies any future changed head.",
+    "PR JSON merge_commit_sha on open/unmerged drafts is not evidence that those PRs merged.",
+    "Old source-specific successful checks and later successful retries do not erase original failures or qualify newer source.",
+    "No release, deployment, native/manual/provenance/L1-L2-L3 acceptance, whole semantic-backlog completion, or CODEX-5 closure follows from metadata reconciliation.",
+    "The historical 181 unmatched / 16 patch-equivalent census remains unchanged."
+  ],
+  "operations": {
+    "product_tests_run": 0,
+    "source_edits": 0,
+    "ref_mutations": 0,
+    "remote_mutations": 0,
+    "ledger_mutations": 0,
+    "original_pr_body_edits": 0,
+    "evidence_only_writes": true
+  },
+  "snapshot_unchanged_after_review": true,
+  "worktree_status_porcelain_after": ""
+}

@@ -1,0 +1,79 @@
+{
+  "original_census": {
+    "unmatched": 181,
+    "patch_equivalent": 16
+  },
+  "original_census_rewritten": false,
+  "dispositions": [
+    {
+      "branch": "chatgpt/java-probe-ci-fix-20261016",
+      "head": "0254841e3e635ed717e35abcf83021f001d7df29",
+      "classification": "DUPLICATE",
+      "whole_branch_accounted": true,
+      "unique_paths": [
+        "tests/test_backend_java_version.py"
+      ],
+      "reason": "Sole import-order correction is retained; original unchanged donor test passes.",
+      "original_ref_retained": true,
+      "original_census_rewritten": false
+    },
+    {
+      "branch": "chatgpt/java-probe-boundaries-20261016",
+      "head": "09bb4519d7d8e9ff8f40abcba7e11cb297d8b61e",
+      "classification": "SUPERSEDED",
+      "whole_branch_accounted": true,
+      "unique_paths": [
+        "tests/test_backend_java_version.py"
+      ],
+      "reason": "All donor cancellation/retry/error/missing-Java behavior tests are retained; current explicit fixture state improves lint compatibility; complete donor tests pass unchanged.",
+      "original_ref_retained": true,
+      "original_census_rewritten": false
+    },
+    {
+      "branch": "claude/bundle-license-gate",
+      "head": "d3617acf9af7834582b4962a8c149969a7d55a22",
+      "classification": "SUPERSEDED",
+      "whole_branch_accounted": true,
+      "merge_base": "21a005e242177f07a984937a7cd924e826c17b9f",
+      "unique_paths": [
+        ".github/workflows/backend-bundle.yml",
+        "docs/notices.md",
+        "tests/test_backend_pin.py",
+        "tests/test_build_backend_bundle.py",
+        "tests/test_build_full_variants.py",
+        "tests/test_codex_pkg_packaging.py",
+        "tools/backend_pin.json",
+        "tools/build_backend_bundle.py",
+        "tools/build_linux.py",
+        "tools/build_windows.py",
+        "tools/check_backend_pin.py"
+      ],
+      "reason": "All eleven branch paths are semantically integrated;69/74 top-level symbols identical, five bounded later extensions reviewed; no unique missing compatible delta found. Donor and maintained execution results remain separate and overlapping. Original branch retained.",
+      "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-license-classification.json",
+      "original_ref_retained": true,
+      "original_census_rewritten": false
+    },
+    {
+      "branch": "codex/patchtrace-buildenv-header-help-20261121-a1",
+      "head": "09f07582d8d9017fe2be080605120b5c4cfd0b91",
+      "classification": "SUPERSEDED",
+      "commits": 9,
+      "changed_paths": 8,
+      "reason": "All five header help mappings, registration and table behavior already provided by current reviewed C4 implementation; two module AST comparisons and unchanged donor7-case Qt replay pass. Tooltip wording differs within the same evidence semantics. Current actual controller/host/copy/audit tests are stronger. Historical donor QA/ledger/handoff records retained, not copied over current state.",
+      "new_test_result": "7 passed in0.43s against current source; not added to1444selection",
+      "original_ref_retained": true,
+      "original_census_rewritten": false
+    },
+    {
+      "branch": "evidence/patchtrace-pr349-initial-ci-20261121-95fe",
+      "head": "566c43cd1647697cc770ea0cb92a0fb130015ec9",
+      "classification": "ARCHIVE",
+      "commits": 1,
+      "changed_paths": 11,
+      "reason": "Unique original11f publication/initial-advisory-failure evidence only; no source implementation. Original raw metadata, log and compressed representation remain retained with verified original manifests and gzip equality.",
+      "qualification": "Historical initial snapshot, not current-source acceptance",
+      "original_ref_retained": true,
+      "original_census_rewritten": false
+    }
+  ]
+}

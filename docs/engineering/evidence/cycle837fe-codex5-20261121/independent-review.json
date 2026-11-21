@@ -1,0 +1,108 @@
+{
+  "schema": "patchtrace-independent-codex5-final-review/1",
+  "utc": "2026-11-21T08:54:06.019223+00:00",
+  "verdict": "no-remaining-blocker-identified-in-reviewed-bounded-audit-scope",
+  "head": "5b5328ee83ee4990b3311f7ac90e2f5e5f76f800",
+  "tree": "1e12edd510399fd92da6867cd071394ceb7fc95b",
+  "parent": "4cbe479023067b05b688cd1c1b02994b0228e305",
+  "integration_ancestor": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+  "source_blobs": [
+    {
+      "path": "tools/ci_pip_install_audit.py",
+      "snapshot": "ci_pip_install_audit.py",
+      "blob": "ec868e949d5f15db3450d4c25827702a82c39d26",
+      "sha256": "9f92bcf8140031484ddb536ef59b38339850e6a2578055f9eeeb73b661ed2812"
+    },
+    {
+      "path": "tests/test_codex5_command_audit_20261121.py",
+      "snapshot": "test_codex5_command_audit_20261121.py",
+      "blob": "1e5d374a48c17cd7dcc8b6027d1f58b53d514cac",
+      "sha256": "cf1cedff8256c244afc5aa2faef771fcfdb228d107d6cd8b75bf16c78de32a8a"
+    },
+    {
+      "path": "docs/specs/ci-pip-command-audit.md",
+      "snapshot": "ci-pip-command-audit.md",
+      "blob": "c7da901039834d08803ccc9a768ba1ba3ee97ff8",
+      "sha256": "7f0baea33660ff34cbe23db10fdb21ed29924f8b7cf6ed0695430910089405f9"
+    }
+  ],
+  "maintained": {
+    "passed": 226,
+    "tests": 228,
+    "distinct_testcases": 228,
+    "failures": 0,
+    "errors": 0,
+    "skipped": [
+      {
+        "name": "test_all_explicit_workflow_pip_installs_are_protected",
+        "details": {
+          "type": "pytest.xfail",
+          "message": "CODEX-5: repository-wide hashed wheel closure still open"
+        }
+      },
+      {
+        "name": "test_pip_downloads_require_hashes",
+        "details": {
+          "type": "pytest.xfail",
+          "message": "CODEX-5"
+        }
+      }
+    ],
+    "clean_before": true,
+    "clean_after": true,
+    "elapsed_seconds": 1.419
+  },
+  "independent_extended_lexical_controls": {
+    "distinct": 20,
+    "passed": 20,
+    "failed": 0
+  },
+  "original_independent_yaml_controls": [
+    {
+      "case": "literal_block_with_header_comment",
+      "expected": 1,
+      "actual": 1,
+      "pass": true
+    },
+    {
+      "case": "folded_block_preserves_blank_line_command_boundary",
+      "expected": 1,
+      "actual": 1,
+      "pass": true
+    },
+    {
+      "case": "env_key_named_run_is_not_a_step_command",
+      "expected": 0,
+      "actual": 0,
+      "pass": true
+    }
+  ],
+  "typed_mark_controls": {
+    "cases": 4,
+    "deliberate_hard_failures": 3,
+    "dedicated_expected_failure": 1,
+    "all_expected_outcomes_observed": true
+  },
+  "current_census": {
+    "workflows": 21,
+    "runs": 200,
+    "installs": 42,
+    "unprotected": 41
+  },
+  "protected_paths_unchanged": 25,
+  "all_runtime_src_unchanged": true,
+  "original_donor_history_preserved": true,
+  "all_existing_v2_test_definitions_ast_identical": true,
+  "source_binding": "independently asserted import paths and editable direct_url under -I",
+  "ruff_scope": "both changed Python paths; passed",
+  "pip_check": "passed",
+  "prior_full_attempt": "original V1 modified-working-tree attempt only; child -9 after 498.536s, cause undetermined, no aggregate summary; not final qualification",
+  "broader_coordinator_selection": "separate overlapping evidence; never added to these independent counts",
+  "open_gates": [
+    "broad CODEX-5 complete hashed artifact/dependency closure",
+    "transitive Action/npm and runtime reproducibility closure",
+    "supported final-source hosted/full/native/manual/provenance/L1/L2/L3 qualification as applicable"
+  ],
+  "review_mutations": "independent evidence files only; no source, environment-binding, workflow or ref edits; no shell/package command strings or target execution",
+  "report": "FINAL_REVIEW.md"
+}

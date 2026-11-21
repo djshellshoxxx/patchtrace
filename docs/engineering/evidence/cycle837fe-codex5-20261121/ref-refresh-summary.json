@@ -1,0 +1,158 @@
+{
+  "capture_started_at": "2026-11-21T07:40:26.390Z",
+  "capture_finished_at": "2026-11-21T07:40:29.818Z",
+  "postflight_finished_at": "2026-11-21T07:44:05.112Z",
+  "capture_is_atomic": false,
+  "main": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+  "candidate": "a73cea498d93e353eb49ef08aff785bd0c0a768c",
+  "counts": {
+    "branches": 369,
+    "pull_requests": 340,
+    "open_prs": 83,
+    "closed_prs": 257,
+    "merged_prs": 173,
+    "tags": 59
+  },
+  "delta": {
+    "added_branches": 5,
+    "moved_original_branches": 0,
+    "missing_original_branches": 0,
+    "added_prs": [
+      349,
+      350
+    ],
+    "changed_original_prs": 0,
+    "missing_original_prs": 0,
+    "tag_changes": 0
+  },
+  "target_prs": [
+    {
+      "number": 345,
+      "head": {
+        "ref": "codex/autonomous-consolidation-20261120-2bad",
+        "sha": "39c38a02f126963fc03827fa49741255590227ad"
+      },
+      "base": {
+        "ref": "codex/patchtrace-candidate-component-type-20261120-g41",
+        "sha": "67f7e08ea9bee61653f8ab5ad66048d3e7141810"
+      },
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "merged_at": null,
+      "merge_commit_sha": "0ad6c2ea6bfaa734c2fc8eb9fb99630ac4727950",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/345"
+    },
+    {
+      "number": 346,
+      "head": {
+        "ref": "consolidation/patchtrace-20261120-95fe",
+        "sha": "c07774ecf5a3f7337834f95a9a4c51c8ec5fad44"
+      },
+      "base": {
+        "ref": "codex/patchtrace-candidate-component-type-20261120-g41",
+        "sha": "67f7e08ea9bee61653f8ab5ad66048d3e7141810"
+      },
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "merged_at": null,
+      "merge_commit_sha": "143d98c1e004d2fdb3464a676364aec3d9bfbd7a",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/346"
+    },
+    {
+      "number": 347,
+      "head": {
+        "ref": "codex/patchtrace-pr345-346-unique-recovery-20261120",
+        "sha": "b461ac64eb9beb74449ce2b18b6795a2af34a02a"
+      },
+      "base": {
+        "ref": "codex/autonomous-consolidation-20261120-2bad",
+        "sha": "39c38a02f126963fc03827fa49741255590227ad"
+      },
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "merged_at": null,
+      "merge_commit_sha": "fd0d8d05a92fba18fcf75842d0582472ce1af3ff",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/347"
+    },
+    {
+      "number": 348,
+      "head": {
+        "ref": "codex/patchtrace-integration-20261121-2bad",
+        "sha": "6b6fcd3597a604212032ffc453477aeb6edc69ff"
+      },
+      "base": {
+        "ref": "codex/patchtrace-pr345-346-unique-recovery-20261120",
+        "sha": "b461ac64eb9beb74449ce2b18b6795a2af34a02a"
+      },
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "merged_at": null,
+      "merge_commit_sha": "8b29d4d48274a250cc63f3795d322430b237313d",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/348"
+    },
+    {
+      "number": 349,
+      "head": {
+        "ref": "integration/patchtrace-20261121-95fe-c3",
+        "sha": "a73cea498d93e353eb49ef08aff785bd0c0a768c"
+      },
+      "base": {
+        "ref": "main",
+        "sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7"
+      },
+      "state": "open",
+      "draft": false,
+      "merged": false,
+      "merged_at": null,
+      "merge_commit_sha": "d6d08f6d97fb918507128e84dca94aee93923808",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/349"
+    },
+    {
+      "number": 350,
+      "head": {
+        "ref": "integration/patchtrace-20261121-95fe-c4",
+        "sha": "f928a0cef29eac2b603d390c40fb86448111b91b"
+      },
+      "base": {
+        "ref": "integration/patchtrace-20261121-95fe-c3",
+        "sha": "daee337c48c63dda8aeac149c407e900c79dcc86"
+      },
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "merged_at": "2026-11-21T07:27:03Z",
+      "merge_commit_sha": "37a29386c0a88907f7ec6349286674d741513c19",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/350"
+    }
+  ],
+  "candidate_contains_pr_heads": [
+    345,
+    347,
+    348,
+    350
+  ],
+  "candidate_does_not_contain_pr_head": [
+    346
+  ],
+  "pr350_merge_commit": "37a29386c0a88907f7ec6349286674d741513c19",
+  "pr350_merge_in_candidate": true,
+  "pr350_merge_in_main": false,
+  "ownership": {
+    "active_owner": "root837FE",
+    "until": "explicit final handoff or 2026-11-21T09:30:00Z",
+    "c4_released": true,
+    "prompt_updated_at": "2026-11-21T07:29:30.490377+00:00"
+  },
+  "limits": [
+    "Counts and identities were captured across paginated requests, not atomically.",
+    "Open-PR merge_commit_sha fields are synthetic/test merge identities, not evidence those PRs merged.",
+    "Existing364-head technical inventory and semantic backlog are preserved; five new refs are recorded without semantic reclassification.",
+    "Ancestry does not establish semantic equivalence for PR346 or the ancillary refs.",
+    "Three added archival/helper tips were not local; exact commit/tree/parent identities were read from GitHub Git Data API without fetching/updating local refs.",
+    "No code, refs, tests, workflow runs or remote state were changed; this refresh does not qualify CI or main promotion."
+  ]
+}

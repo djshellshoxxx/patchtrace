@@ -1,0 +1,97 @@
+{
+  "source": "0cdd5bf37130206c2ddec399450be6338ae8e4fd",
+  "source_tree": "6d532dd606a1fdf987245a03271970758a03fe57",
+  "records_dirty_explicit": true,
+  "no_runtime_tests_tools_workflow_diffs": true,
+  "receipts": [
+    {
+      "label": "registry",
+      "head": "0cdd5bf37130206c2ddec399450be6338ae8e4fd",
+      "tree": "6d532dd606a1fdf987245a03271970758a03fe57",
+      "dirty_before": "M docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md\n M docs/engineering/task-ledger.json\n M docs/qa.md\n M tasks/todo.md\n?? docs/engineering/cycle837fe-codex5-20261121.md\n?? docs/engineering/evidence/cycle837fe-codex5-20261121/",
+      "record_ledger_sha256": "e9fce0f57a34e077d17de7ed51937c3dcdaf285df167feec20c25d776091e335",
+      "command": [
+        "/workspace/scratch/837fe19aae3a/codex5-followup-venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_spec_registry.py",
+        "--junitxml=/workspace/scratch/837fe19aae3a/evidence/codex5-pages-final-integration/registry.xml"
+      ],
+      "cwd": "/workspace/scratch/837fe19aae3a/PatchTrace-codex5-followup",
+      "started_at": "2026-11-21T09:44:36.865539+00:00",
+      "returncode": 0,
+      "seconds": 0.985,
+      "dirty_after": "M docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md\n M docs/engineering/task-ledger.json\n M docs/qa.md\n M tasks/todo.md\n?? docs/engineering/cycle837fe-codex5-20261121.md\n?? docs/engineering/evidence/cycle837fe-codex5-20261121/",
+      "finished_at": "2026-11-21T09:44:37.861378+00:00",
+      "junit": {
+        "cases": 111,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "label": "ruff",
+      "head": "0cdd5bf37130206c2ddec399450be6338ae8e4fd",
+      "tree": "6d532dd606a1fdf987245a03271970758a03fe57",
+      "dirty_before": "M docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md\n M docs/engineering/task-ledger.json\n M docs/qa.md\n M tasks/todo.md\n?? docs/engineering/cycle837fe-codex5-20261121.md\n?? docs/engineering/evidence/cycle837fe-codex5-20261121/",
+      "record_ledger_sha256": "e9fce0f57a34e077d17de7ed51937c3dcdaf285df167feec20c25d776091e335",
+      "command": [
+        "/workspace/scratch/837fe19aae3a/codex5-followup-venv/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "src",
+        "tests",
+        "tools"
+      ],
+      "cwd": "/workspace/scratch/837fe19aae3a/PatchTrace-codex5-followup",
+      "started_at": "2026-11-21T09:44:37.874912+00:00",
+      "returncode": 0,
+      "seconds": 0.065,
+      "dirty_after": "M docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md\n M docs/engineering/task-ledger.json\n M docs/qa.md\n M tasks/todo.md\n?? docs/engineering/cycle837fe-codex5-20261121.md\n?? docs/engineering/evidence/cycle837fe-codex5-20261121/",
+      "finished_at": "2026-11-21T09:44:37.949116+00:00"
+    },
+    {
+      "label": "dependencies",
+      "head": "0cdd5bf37130206c2ddec399450be6338ae8e4fd",
+      "tree": "6d532dd606a1fdf987245a03271970758a03fe57",
+      "dirty_before": "M docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md\n M docs/engineering/task-ledger.json\n M docs/qa.md\n M tasks/todo.md\n?? docs/engineering/cycle837fe-codex5-20261121.md\n?? docs/engineering/evidence/cycle837fe-codex5-20261121/",
+      "record_ledger_sha256": "e9fce0f57a34e077d17de7ed51937c3dcdaf285df167feec20c25d776091e335",
+      "command": [
+        "/workspace/scratch/837fe19aae3a/codex5-followup-venv/bin/python",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "cwd": "/workspace/scratch/837fe19aae3a/PatchTrace-codex5-followup",
+      "started_at": "2026-11-21T09:44:37.970252+00:00",
+      "returncode": 0,
+      "seconds": 0.26,
+      "dirty_after": "M docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md\n M docs/engineering/task-ledger.json\n M docs/qa.md\n M tasks/todo.md\n?? docs/engineering/cycle837fe-codex5-20261121.md\n?? docs/engineering/evidence/cycle837fe-codex5-20261121/",
+      "finished_at": "2026-11-21T09:44:38.240633+00:00"
+    },
+    {
+      "label": "binding",
+      "head": "0cdd5bf37130206c2ddec399450be6338ae8e4fd",
+      "tree": "6d532dd606a1fdf987245a03271970758a03fe57",
+      "dirty_before": "M docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md\n M docs/engineering/task-ledger.json\n M docs/qa.md\n M tasks/todo.md\n?? docs/engineering/cycle837fe-codex5-20261121.md\n?? docs/engineering/evidence/cycle837fe-codex5-20261121/",
+      "record_ledger_sha256": "e9fce0f57a34e077d17de7ed51937c3dcdaf285df167feec20c25d776091e335",
+      "command": [
+        "/workspace/scratch/837fe19aae3a/codex5-followup-venv/bin/python",
+        "-I",
+        "-c",
+        "from pathlib import Path;import json,patchtrace;from importlib.metadata import distribution;from urllib.parse import unquote,urlparse;r=Path(\"/workspace/scratch/837fe19aae3a/PatchTrace-codex5-followup\");p=Path(patchtrace.__file__).resolve();d=json.loads(distribution(\"patchtrace\").read_text(\"direct_url.json\"));assert p==r/\"src/patchtrace/__init__.py\";assert d[\"dir_info\"][\"editable\"] is True;assert Path(unquote(urlparse(d[\"url\"]).path)).resolve()==r;print(json.dumps({\"import\":str(p),\"direct_url\":d}))"
+      ],
+      "cwd": "/workspace/scratch/837fe19aae3a/PatchTrace-codex5-followup",
+      "started_at": "2026-11-21T09:44:38.254317+00:00",
+      "returncode": 0,
+      "seconds": 0.073,
+      "dirty_after": "M docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md\n M docs/engineering/task-ledger.json\n M docs/qa.md\n M tasks/todo.md\n?? docs/engineering/cycle837fe-codex5-20261121.md\n?? docs/engineering/evidence/cycle837fe-codex5-20261121/",
+      "finished_at": "2026-11-21T09:44:38.337733+00:00"
+    }
+  ],
+  "counts_overlap_prior_selections": true,
+  "no_full_suite_attempt": true
+}

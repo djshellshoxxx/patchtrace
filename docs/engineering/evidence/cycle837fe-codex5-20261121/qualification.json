@@ -1,0 +1,42 @@
+{
+  "source_commit": "5b5328ee83ee4990b3311f7ac90e2f5e5f76f800",
+  "source_tree": "1e12edd510399fd92da6867cd071394ceb7fc95b",
+  "remote_code_commit": "92dfc4d4d2ef9d604bc9db1a639d4f19add535a8",
+  "distinct_affected_passed": 1548,
+  "case_count": 1550,
+  "selection_node_selectors": 66,
+  "failed": 0,
+  "errors": 0,
+  "ordinary_skipped": 0,
+  "xfailed": 2,
+  "expected_failure_ids": [
+    "tests.test_codex_pkg_workflows::test_pip_downloads_require_hashes",
+    "tests.test_codex5_command_audit_20261121::test_all_explicit_workflow_pip_installs_are_protected"
+  ],
+  "command_seconds": 84.021,
+  "whole_tree_ruff": "passed",
+  "dependencies": "passed",
+  "isolated_source_import": "passed; clean source-bound checkout before and after",
+  "independent_review": {
+    "passed": 226,
+    "strict_xfailed": 2,
+    "lexical_controls": 20,
+    "yaml_controls": 3,
+    "typed_expected_outcomes": true,
+    "counts_overlap_root_selection": true
+  },
+  "final_source_hosted": "PENDING for future final follow-up PR/records source",
+  "main_merge_status": "PENDING for new CODEX-5 source",
+  "prior_full_attempt": {
+    "source": "93b053a88e4373d9f5c69cd68f96e1a49305d579",
+    "started_from_modified_worktree": true,
+    "exit_code": -9,
+    "wrapper_exit_code": 247,
+    "seconds": 498.536,
+    "cause": "unknown",
+    "aggregate_summary": null,
+    "second_local_full_attempt": false,
+    "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/author-history.zip"
+  },
+  "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/combined-focused.json"
+}

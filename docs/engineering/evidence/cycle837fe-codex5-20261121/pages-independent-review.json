@@ -1,0 +1,264 @@
+{
+  "verdict": "No blocker found for the narrow Pages configuration hold repair.",
+  "head": "0cdd5bf37130206c2ddec399450be6338ae8e4fd",
+  "tree": "6d532dd606a1fdf987245a03271970758a03fe57",
+  "parent": "5b5328ee83ee4990b3311f7ac90e2f5e5f76f800",
+  "changed_paths": [
+    ".github/workflows/pages.yml",
+    "docs/specs/REGISTRY.md",
+    "docs/specs/pages-deployment-control.md",
+    "tests/test_site_workflow.py"
+  ],
+  "workflow_change": "Exactly one if line on configure-pages, identical to the unchanged deploy predicate.",
+  "workflow_raw_and_parsed_proof": true,
+  "other_build_steps_unconditional": true,
+  "six_original_test_functions_ast_unchanged": true,
+  "remaining_original_test_only_removes_superseded_global_marker_ban": true,
+  "new_test_enforces_exactly_one_configure_step_and_other_steps_unconditional": true,
+  "controls": [
+    {
+      "name": "candidate",
+      "expected_valid": true,
+      "checks_executed": 8,
+      "failures": [],
+      "expected_outcome_observed": true
+    },
+    {
+      "name": "original_missing_configure_guard",
+      "expected_valid": false,
+      "checks_executed": 8,
+      "failures": [
+        {
+          "test": "test_pages_configuration_shares_the_push_hold_without_gating_build_or_upload",
+          "type": "AssertionError",
+          "message": "Pages configuration must honor the deployment hold"
+        }
+      ],
+      "expected_outcome_observed": true
+    },
+    {
+      "name": "wrong_configure_guard",
+      "expected_valid": false,
+      "checks_executed": 8,
+      "failures": [
+        {
+          "test": "test_pages_configuration_shares_the_push_hold_without_gating_build_or_upload",
+          "type": "AssertionError",
+          "message": ""
+        }
+      ],
+      "expected_outcome_observed": true
+    },
+    {
+      "name": "wrong_shared_guard",
+      "expected_valid": false,
+      "checks_executed": 8,
+      "failures": [
+        {
+          "test": "test_deployment_hold_is_push_only_and_uses_the_actual_head_message",
+          "type": "AssertionError",
+          "message": ""
+        }
+      ],
+      "expected_outcome_observed": true
+    },
+    {
+      "name": "build_job_guard",
+      "expected_valid": false,
+      "checks_executed": 8,
+      "failures": [
+        {
+          "test": "test_pages_configuration_shares_the_push_hold_without_gating_build_or_upload",
+          "type": "AssertionError",
+          "message": ""
+        },
+        {
+          "test": "test_builds_with_the_site_tool_and_deploys_the_dist_artifact_to_github_pages",
+          "type": "AssertionError",
+          "message": ""
+        }
+      ],
+      "expected_outcome_observed": true
+    },
+    {
+      "name": "install_incorrectly_conditional",
+      "expected_valid": false,
+      "checks_executed": 8,
+      "failures": [
+        {
+          "test": "test_pages_configuration_shares_the_push_hold_without_gating_build_or_upload",
+          "type": "AssertionError",
+          "message": "name: Install the site build tools (never the app dependencies)\n        if: false\n        run: \"python -m pip install --require-hashes --only-binary=:all: -r tools/site/requirements-ci.lock\"\n"
+        }
+      ],
+      "expected_outcome_observed": true
+    },
+    {
+      "name": "site_tests_incorrectly_conditional",
+      "expected_valid": false,
+      "checks_executed": 8,
+      "failures": [
+        {
+          "test": "test_pages_configuration_shares_the_push_hold_without_gating_build_or_upload",
+          "type": "AssertionError",
+          "message": "name: Site tests (links, alt text, privacy allow-list, address validator, logo, QR)\n        if: false\n        run: python -m pytest --noconftest --disable-plugin-autoload -q tests/test_site_*.py\n"
+        }
+      ],
+      "expected_outcome_observed": true
+    },
+    {
+      "name": "site_build_incorrectly_conditional",
+      "expected_valid": false,
+      "checks_executed": 8,
+      "failures": [
+        {
+          "test": "test_pages_configuration_shares_the_push_hold_without_gating_build_or_upload",
+          "type": "AssertionError",
+          "message": "name: Build the site into site/dist\n        if: false\n        run: python tools/site/build_site.py\n"
+        }
+      ],
+      "expected_outcome_observed": true
+    },
+    {
+      "name": "artifact_upload_incorrectly_conditional",
+      "expected_valid": false,
+      "checks_executed": 8,
+      "failures": [
+        {
+          "test": "test_pages_configuration_shares_the_push_hold_without_gating_build_or_upload",
+          "type": "AssertionError",
+          "message": "uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1\n        if: false\n        with:\n          path: site/dist"
+        },
+        {
+          "test": "test_builds_with_the_site_tool_and_deploys_the_dist_artifact_to_github_pages",
+          "type": "AssertionError",
+          "message": ""
+        }
+      ],
+      "expected_outcome_observed": true
+    },
+    {
+      "name": "duplicate_configure_step",
+      "expected_valid": false,
+      "checks_executed": 8,
+      "failures": [
+        {
+          "test": "test_pages_configuration_shares_the_push_hold_without_gating_build_or_upload",
+          "type": "AssertionError",
+          "message": ""
+        }
+      ],
+      "expected_outcome_observed": true
+    },
+    {
+      "name": "wrong_artifact_path",
+      "expected_valid": false,
+      "checks_executed": 8,
+      "failures": [
+        {
+          "test": "test_builds_with_the_site_tool_and_deploys_the_dist_artifact_to_github_pages",
+          "type": "AssertionError",
+          "message": ""
+        }
+      ],
+      "expected_outcome_observed": true
+    },
+    {
+      "name": "mutable_configure_ref",
+      "expected_valid": false,
+      "checks_executed": 8,
+      "failures": [
+        {
+          "test": "test_official_pages_actions_use_reviewed_immutable_commits",
+          "type": "AssertionError",
+          "message": "actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b"
+        }
+      ],
+      "expected_outcome_observed": true
+    }
+  ],
+  "maintained": {
+    "command": [
+      "/workspace/scratch/837fe19aae3a/pages-config-hold-venv/bin/python",
+      "-B",
+      "-I",
+      "-m",
+      "pytest",
+      "--noconftest",
+      "--disable-plugin-autoload",
+      "-p",
+      "no:cacheprovider",
+      "-q",
+      "tests/test_site_workflow.py",
+      "tests/test_spec_registry.py",
+      "--junitxml=/workspace/scratch/837fe19aae3a/evidence/codex5-final-records-independent/pages/maintained.xml"
+    ],
+    "cwd": "/workspace/scratch/837fe19aae3a/repair-pages-config-hold",
+    "returncode": 0,
+    "passed": 119,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "command_seconds": null,
+    "pytest_summary": "119 passed in 0.23s",
+    "clean_before_after": true,
+    "project_test_run_count": 1,
+    "sealing_resumed_without_test_rerun": true
+  },
+  "author_archive": {
+    "sha256": "a0f0f0dd5a9cb68698a7e6b410b9c39059755fc00c78168cd8c89df0f1997025",
+    "bytes": 96916,
+    "members": 44,
+    "verified_manifest_payloads": 43
+  },
+  "file_identities": [
+    {
+      "path": ".github/workflows/pages.yml",
+      "blob": "1cb1690ff545d2b13fc9a54152f840e8dbb6ad04",
+      "sha256": "d224e0ec7cc5de6d12e3ac61903c63eedcae01abee8deb9cbe4062988da6f1b6"
+    },
+    {
+      "path": "docs/specs/REGISTRY.md",
+      "blob": "be28f62ab75abdb02518de05ede20d444fafe7d1",
+      "sha256": "d636b0ef4903079ff1e0c504088c09acc2083dbeaebfbb7d768e77c680f739d9"
+    },
+    {
+      "path": "docs/specs/pages-deployment-control.md",
+      "blob": "24009e5c79bec2a1d294cce8332760423d1861a6",
+      "sha256": "5858b520d22800068fb8ea9c40b2cd0512f8082f820463ce3af38f5525189390"
+    },
+    {
+      "path": "tests/test_site_workflow.py",
+      "blob": "1342c5bc4682208791a2c24f72bfd4f2ea89720f",
+      "sha256": "9ec721236be6a9e2d41522e91cf995aac9ae95183597a1a6a0cf41cc75260872"
+    }
+  ],
+  "boundaries": [
+    "This independent run is 119 maintained workflow/registry cases; overlaps author selections and is not added to them.",
+    "In-memory negative controls exercise maintained source assertions without editing workflow or test source.",
+    "The actual post-main configure GET404 remains separate from successful premerge primary qualification; its cause is not narrowed beyond the retained evidence.",
+    "Manual dispatch and unmarked pushes retain existing configure/deploy behavior and its configuration/permission prerequisites.",
+    "No Pages enablement, hosted dispatch, release or deployment occurred. A future automatic held main push must establish hosted skip/upload behavior.",
+    "The existing transitive upload-artifact tag is unchanged; no nested-action closure is claimed."
+  ],
+  "source_or_ref_edits": false,
+  "initial_sealing_attempt": {
+    "stage": "Independent source/controls/119-case run completed; sealing then failed on reviewer archive-format assumption",
+    "source": "0cdd5bf37130206c2ddec399450be6338ae8e4fd",
+    "script_sha256": "42522e57adc28a56015ca2d0710a401b560f1bc191013f189621241cd8f96e8b",
+    "exception": "Expected MANIFEST.sha256, but author correctly supplies evidence-manifest.json with the advertised digest",
+    "product_finding": false,
+    "project_tests_completed": {
+      "passed": 119,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "pytest_seconds": 0.23
+    },
+    "retained_result_hashes": {
+      "maintained.stdout.txt": "0e4881442b6c375fe2479b9d11bbf9d61553c2b374d0d3b3030852db762a52fc",
+      "maintained.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "maintained.xml": "f0cf291e66210005f083eb943e7aa5c1eb391cf89d9f2a1a74ca35a0ff036c55"
+    }
+  }
+}

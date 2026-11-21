@@ -1,0 +1,173 @@
+{
+  "schema": "patchtrace-independent-ancillary-dispositions/1",
+  "utc": "2026-11-21T08:06:16.518661+00:00",
+  "verdict": "agree-with-both-dispositions",
+  "candidate": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+  "tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+  "local_equivalent": "06ea27de0936f1f8eb1aeca264833c21845a7f36",
+  "buildenv": {
+    "head": "09f07582d8d9017fe2be080605120b5c4cfd0b91",
+    "classification": "SUPERSEDED",
+    "all_8_donor_blobs_verified": true,
+    "whole_panel_model_ast_equal_without_normalization": true,
+    "only_tooltip_module_differences": [
+      "build_env.col.fact",
+      "build_env.col.older",
+      "build_env.col.newer",
+      "build_env.col.status",
+      "build_env.col.basis"
+    ],
+    "only_string_literal_arguments_differ": true,
+    "current_contract_covering_donor_appendix": "docs/specs/buildenv-header-help.md",
+    "retained_donor_replay_xml": {
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "replay_independently_reexecuted": false,
+    "qualification": "behavior superseded; exact donor wording, separate test/spec/handoff/QA/ledger history retained in original source snapshots and branch"
+  },
+  "initial_ci": {
+    "head": "566c43cd1647697cc770ea0cb92a0fb130015ec9",
+    "classification": "ARCHIVE",
+    "all_11_donor_blobs_verified": true,
+    "original_manifest_payloads_verified": [
+      "initial-pr349-rest.json",
+      "initial-pr349-rest.json.gz",
+      "initial-pr349-summary.json",
+      "initial-pr349-applicability.json",
+      "initial-pr349-report.md",
+      "windows-intel-job-136743396511.log",
+      "windows-intel-job-136743396511-receipt.json"
+    ],
+    "gzip_raw_equality": true,
+    "historical_native_result": "2 failed, 1 passed, 1 skipped in 18.96s",
+    "qualification": "historical 11f publication and advisory-failure evidence, not current-source acceptance"
+  },
+  "source_checks": [
+    {
+      "branch": "09f07582d8d9017fe2be080605120b5c4cfd0b91",
+      "path": "docs/engineering-handoffs/buildenv-header-help-20261121-a1.md",
+      "verified_blob": "22372bdcbc9701b8851eb306e8f841452e1a14af",
+      "current_blob": null
+    },
+    {
+      "branch": "09f07582d8d9017fe2be080605120b5c4cfd0b91",
+      "path": "docs/engineering/evidence/buildenv-header-help-20261121-a1.json",
+      "verified_blob": "456afb247b2d25f40ab81d7247ed888c00101374",
+      "current_blob": null
+    },
+    {
+      "branch": "09f07582d8d9017fe2be080605120b5c4cfd0b91",
+      "path": "docs/engineering/task-ledger.json",
+      "verified_blob": "8aed5e7dd565172a903fc735ddf0120f75fe8421",
+      "current_blob": "aa6393baeba8036e5ab9bd8be983e2d4c8ac07bc"
+    },
+    {
+      "branch": "09f07582d8d9017fe2be080605120b5c4cfd0b91",
+      "path": "docs/qa.md",
+      "verified_blob": "0cdb8469483fd9e37acefcf9a8825535b516a163",
+      "current_blob": "814991f281c81e846488c2224b83c5f0da0aeca0"
+    },
+    {
+      "branch": "09f07582d8d9017fe2be080605120b5c4cfd0b91",
+      "path": "docs/specs/program-e/DIE-integration-plan.md",
+      "verified_blob": "b3e15fff7d8ae117745a5c164b51f416dabfda12",
+      "current_blob": "645a47b4818450da35b0289e996163e48f2993b4"
+    },
+    {
+      "branch": "09f07582d8d9017fe2be080605120b5c4cfd0b91",
+      "path": "src/patchtrace/buildenv/panel_model.py",
+      "verified_blob": "c0d9af1e0d3618cfea829d9a19eadbe8a011fa27",
+      "current_blob": "b1385854dfed0bf3fa2d31ee0277eacd3a0aefbf"
+    },
+    {
+      "branch": "09f07582d8d9017fe2be080605120b5c4cfd0b91",
+      "path": "src/patchtrace/buildenv/tooltip_entries.py",
+      "verified_blob": "ff5c8819a4d92d13ad38a9a13021552c0594dc82",
+      "current_blob": "f3b71c3e60c62c5adfad8f8cc237022acf77a843"
+    },
+    {
+      "branch": "09f07582d8d9017fe2be080605120b5c4cfd0b91",
+      "path": "tests/test_buildenv_header_help_20261121.py",
+      "verified_blob": "04e5e05d0d99cb84c12457ce857cc4c03c9da602",
+      "current_blob": null
+    },
+    {
+      "branch": "566c43cd1647697cc770ea0cb92a0fb130015ec9",
+      "path": "docs/engineering/evidence/cycle3-95fe/postpublication/README.md",
+      "verified_blob": "8fd22887642bdb5a2e2735240b8946b730921b9b",
+      "current_blob": null
+    },
+    {
+      "branch": "566c43cd1647697cc770ea0cb92a0fb130015ec9",
+      "path": "docs/engineering/evidence/cycle3-95fe/postpublication/initial-pr349-applicability.json",
+      "verified_blob": "b92f8c454165324951618a9fb15d88fb3dc90378",
+      "current_blob": null
+    },
+    {
+      "branch": "566c43cd1647697cc770ea0cb92a0fb130015ec9",
+      "path": "docs/engineering/evidence/cycle3-95fe/postpublication/initial-pr349-manifest.json",
+      "verified_blob": "27d5d998c543120a0cc4955e24488ac826d76695",
+      "current_blob": null
+    },
+    {
+      "branch": "566c43cd1647697cc770ea0cb92a0fb130015ec9",
+      "path": "docs/engineering/evidence/cycle3-95fe/postpublication/initial-pr349-report.md",
+      "verified_blob": "4e3dce01de30bd875fa1498d91c059b66a5ee2e9",
+      "current_blob": null
+    },
+    {
+      "branch": "566c43cd1647697cc770ea0cb92a0fb130015ec9",
+      "path": "docs/engineering/evidence/cycle3-95fe/postpublication/initial-pr349-rest.json",
+      "verified_blob": "5ce83642c42951bf842bb642a558ad6535e69ea7",
+      "current_blob": null
+    },
+    {
+      "branch": "566c43cd1647697cc770ea0cb92a0fb130015ec9",
+      "path": "docs/engineering/evidence/cycle3-95fe/postpublication/initial-pr349-rest.json.gz",
+      "verified_blob": "774c9313944305fc9aa580a9ba195062c853777c",
+      "current_blob": null
+    },
+    {
+      "branch": "566c43cd1647697cc770ea0cb92a0fb130015ec9",
+      "path": "docs/engineering/evidence/cycle3-95fe/postpublication/initial-pr349-summary.json",
+      "verified_blob": "76b5972ce8736bb3c8d557e88f18662132942703",
+      "current_blob": null
+    },
+    {
+      "branch": "566c43cd1647697cc770ea0cb92a0fb130015ec9",
+      "path": "docs/engineering/evidence/cycle3-95fe/postpublication/source-publication.json",
+      "verified_blob": "9ad956d0439213de897cab6a83b4a83b80423345",
+      "current_blob": null
+    },
+    {
+      "branch": "566c43cd1647697cc770ea0cb92a0fb130015ec9",
+      "path": "docs/engineering/evidence/cycle3-95fe/postpublication/windows-intel-job-136743396511-manifest.json",
+      "verified_blob": "5f72e1330be98e7d439dd6f2b1cf76bfdba9ab15",
+      "current_blob": null
+    },
+    {
+      "branch": "566c43cd1647697cc770ea0cb92a0fb130015ec9",
+      "path": "docs/engineering/evidence/cycle3-95fe/postpublication/windows-intel-job-136743396511-receipt.json",
+      "verified_blob": "49b5915c55dd607196c1b1b595cc0a45a480e381",
+      "current_blob": null
+    },
+    {
+      "branch": "566c43cd1647697cc770ea0cb92a0fb130015ec9",
+      "path": "docs/engineering/evidence/cycle3-95fe/postpublication/windows-intel-job-136743396511.log",
+      "verified_blob": "468425f5d4ddf22e01594c1823f3b205e76021f4",
+      "current_blob": null
+    }
+  ],
+  "root_manifest_entries_verified": 25,
+  "root_archive": {
+    "bytes": 289510,
+    "members": 26,
+    "sha256": "81bc99aa2ece7800031b75649da9c0527edbf977c6ef16bf3192f0fdf82cf3d0"
+  },
+  "candidate_clean_before_after": true,
+  "original_181_16_backlog": "not reclassified or changed by this bounded review",
+  "mutations": "independent evidence receipt only; no source, test, workflow, ref or root archive edits; no tests rerun"
+}

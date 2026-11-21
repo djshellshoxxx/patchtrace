@@ -1,0 +1,85 @@
+{
+  "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+  "tree_sha": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+  "expected_checkout_sha": "66f153a8372ad93c72e2f5b10365dcf210681684",
+  "source_method": "git show exact tree object; no moving working-tree reads",
+  "previous_a73_tree": "1c59af32db14e351c05e0be32c1dde59dc489d43",
+  "runtime_test_tool_workflow_changed_paths": [
+    "tests/test_tier_r_shard.py"
+  ],
+  "files": [
+    {
+      "path": ".github/workflows/live-intel-tools.yml",
+      "blob": "b8575241a27a04eef18bec3da95feca2386f0891",
+      "sha256": "8c3821a96a9ab329393f1a36dc31905ae4f4b2b69964807048b941953a9cfff1",
+      "bytes": 5184,
+      "a73_blob": "b8575241a27a04eef18bec3da95feca2386f0891",
+      "unchanged_from_a73": true
+    },
+    {
+      "path": "tests/test_live_intel_tools.py",
+      "blob": "255158992fdfb7cacf9b8ecbf8930d8898432843",
+      "sha256": "e44f090d17bb9227722372cc3d0277e3037f7c9649aaf1ebf38b861d7dddaa15",
+      "bytes": 8549,
+      "a73_blob": "255158992fdfb7cacf9b8ecbf8930d8898432843",
+      "unchanged_from_a73": true
+    },
+    {
+      "path": "tests/intel_probe_diagnostics.py",
+      "blob": "6fcae16905c6c641b1411e02a1aea1c536d27c7e",
+      "sha256": "6d12f605babfc5d2d8ed3387d245343fdb8b3721077a84323f772aacab478d19",
+      "bytes": 2488,
+      "a73_blob": "6fcae16905c6c641b1411e02a1aea1c536d27c7e",
+      "unchanged_from_a73": true
+    },
+    {
+      "path": "src/patchtrace/intelligence/tools/process.py",
+      "blob": "32eae4e7e89339b37a83ca2bd8671d03c3e29df0",
+      "sha256": "31f4db34b85dd425dd8cea87486b6f97bc905f7bcef9352738aa1e7ae8c71d26",
+      "bytes": 19446,
+      "a73_blob": "32eae4e7e89339b37a83ca2bd8671d03c3e29df0",
+      "unchanged_from_a73": true
+    },
+    {
+      "path": "src/patchtrace/secondary/engine_env.py",
+      "blob": "68e2fa9b083f9d8d3eb17e14cc04ca91fcf802ca",
+      "sha256": "8a5da2466be521771d2239e2b95d967e495088da28359016e1bca8c6dd1b4eb1",
+      "bytes": 2892,
+      "a73_blob": "68e2fa9b083f9d8d3eb17e14cc04ca91fcf802ca",
+      "unchanged_from_a73": true
+    },
+    {
+      "path": "src/patchtrace/intelligence/tools/capa.py",
+      "blob": "4db581fc3f7873bc564601655b6829403585a023",
+      "sha256": "8ad3414891d0a03d0cdd688ed7aabe6461731928d5dfc06b72c5b6a308436a02",
+      "bytes": 29829,
+      "a73_blob": "4db581fc3f7873bc564601655b6829403585a023",
+      "unchanged_from_a73": true
+    },
+    {
+      "path": "src/patchtrace/intelligence/tools/floss.py",
+      "blob": "de3d9b135aad67aec249409e4de8d031ca7f6a41",
+      "sha256": "9b943351b36e453d82049043b62382caeb177544c1aa0cf8fb746a4143d835a9",
+      "bytes": 24363,
+      "a73_blob": "de3d9b135aad67aec249409e4de8d031ca7f6a41",
+      "unchanged_from_a73": true
+    },
+    {
+      "path": "src/patchtrace/intelligence/tools/diec.py",
+      "blob": "b5de1e5d549aff8099cdbb6c4f70817d590a824b",
+      "sha256": "d93deffd7b758e6a14b4e61146adffc8a1ca7572718b22b3dbb38ea79bacd4e4",
+      "bytes": 16964,
+      "a73_blob": "b5de1e5d549aff8099cdbb6c4f70817d590a824b",
+      "unchanged_from_a73": true
+    },
+    {
+      "path": "tools/intel_tools_pin.json",
+      "blob": "87509bd029ff425b0e660662ba0febaa0c4fda5a",
+      "sha256": "a67ee23d9f9efae8e33611051a5ee152db308df8ca6f8c6e142ad070386d2e32",
+      "bytes": 4817,
+      "a73_blob": "87509bd029ff425b0e660662ba0febaa0c4fda5a",
+      "unchanged_from_a73": true
+    }
+  ],
+  "qualification_boundary": "Source equality does not transfer previous native results; new run 44881741040 must independently pass."
+}

@@ -1,0 +1,110 @@
+{
+  "observed_utc": "2026-11-21T08:51:10.183867+00:00",
+  "local_head": "06ea27de0936f1f8eb1aeca264833c21845a7f36",
+  "remote_equivalent_head": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+  "tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+  "dirty_before": "",
+  "scope": "entire contributions of two historical test-only branches; no native execution or runtime/source edits",
+  "inventory": [
+    {
+      "head": "0254841e3e635ed717e35abcf83021f001d7df29",
+      "merge_base": "8ee61c623fa37c5a219f912cf7870bfeddcb1f70",
+      "changed_paths": [
+        "tests/test_backend_java_version.py"
+      ],
+      "commits": [
+        "0254841e3e635ed717e35abcf83021f001d7df29"
+      ],
+      "test_blob": "a83bdbd3c54d40169ce35ae36221d35233fdd8fc",
+      "test_sha256": "11a515e1982d77ced14b9bc67d96b40048af406f9356808913cf6a66cd4b4a1f",
+      "preserved_as": "test_java_probe_ci_fix_donor.py"
+    },
+    {
+      "head": "09bb4519d7d8e9ff8f40abcba7e11cb297d8b61e",
+      "merge_base": "8ee61c623fa37c5a219f912cf7870bfeddcb1f70",
+      "changed_paths": [
+        "tests/test_backend_java_version.py"
+      ],
+      "commits": [
+        "0254841e3e635ed717e35abcf83021f001d7df29",
+        "09bb4519d7d8e9ff8f40abcba7e11cb297d8b61e"
+      ],
+      "test_blob": "385d571bfc0306034f0bd79e1cddb8db43ee1fa9",
+      "test_sha256": "187f995197f77da6b702247ea4eecc1b5a793ec35977076931b65f100342dd4d",
+      "preserved_as": "test_java_probe_bounds_donor.py"
+    }
+  ],
+  "declaration_ast_equality": {
+    "_configured_probe": true,
+    "_result": true,
+    "test_java_version_retries_timeout_once_with_longer_bound": true,
+    "test_java_version_stops_after_second_timeout": true,
+    "test_java_version_does_not_retry_non_timeout_failures": false,
+    "test_java_version_does_not_retry_timeout_after_cancellation": true,
+    "test_java_version_does_not_retry_oserror": true,
+    "test_java_version_never_spawns_when_java_is_missing": true
+  },
+  "different_declaration": "Current explicit per-iteration list state replaces donor captured loop variable; assertions, four outcome classes and one-attempt bound retained.",
+  "command": [
+    "/workspace/scratch/837fe19aae3a/tier-r-pin-venv/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "tests/test_backend_java_version.py",
+    "/workspace/scratch/837fe19aae3a/evidence/historical-java-probe-review/test_java_probe_ci_fix_donor.py",
+    "/workspace/scratch/837fe19aae3a/evidence/historical-java-probe-review/test_java_probe_bounds_donor.py",
+    "--junitxml=/workspace/scratch/837fe19aae3a/evidence/historical-java-probe-review/tests.xml"
+  ],
+  "exit_code": 0,
+  "seconds": 0.912,
+  "dirty_after": "",
+  "counts": {
+    "cases": 13,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "fresh_heads": {
+    "chatgpt/java-probe-ci-fix-20261016": "0254841e3e635ed717e35abcf83021f001d7df29",
+    "chatgpt/java-probe-boundaries-20261016": "09bb4519d7d8e9ff8f40abcba7e11cb297d8b61e"
+  },
+  "fixture_state_normalization": {
+    "equal_after_only_fixture_state_normalization": true,
+    "assignments_removed": 2,
+    "returns_rewritten": 1,
+    "reason": "explicit list state replaces a loop-variable closure; all outcomes/assertions/call bounds remain identical"
+  },
+  "dispositions": [
+    {
+      "branch": "chatgpt/java-probe-ci-fix-20261016",
+      "head": "0254841e3e635ed717e35abcf83021f001d7df29",
+      "classification": "DUPLICATE",
+      "whole_branch_accounted": true,
+      "unique_paths": [
+        "tests/test_backend_java_version.py"
+      ],
+      "reason": "Sole import-order correction is retained; original unchanged donor test passes."
+    },
+    {
+      "branch": "chatgpt/java-probe-boundaries-20261016",
+      "head": "09bb4519d7d8e9ff8f40abcba7e11cb297d8b61e",
+      "classification": "SUPERSEDED",
+      "whole_branch_accounted": true,
+      "unique_paths": [
+        "tests/test_backend_java_version.py"
+      ],
+      "reason": "All donor cancellation/retry/error/missing-Java behavior tests are retained; current explicit fixture state improves lint compatibility; complete donor tests pass unchanged."
+    }
+  ],
+  "census": {
+    "original_unmatched": 181,
+    "original_patch_equivalent": 16,
+    "new_fully_accounted_branch_names": [
+      "chatgpt/java-probe-ci-fix-20261016",
+      "chatgpt/java-probe-boundaries-20261016"
+    ],
+    "historical_census_rewritten": false,
+    "no_global_semantic_exhaustion_claim": true
+  },
+  "native_acceptance": "Not assessed: these tests replace run_process; historical unknown-Java native failure cause remains unestablished."
+}

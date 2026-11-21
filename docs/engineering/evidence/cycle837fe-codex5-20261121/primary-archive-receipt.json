@@ -1,0 +1,16 @@
+{
+  "schema": "patchtrace/evidence-archive/1",
+  "archive_file": "final-ae69-evidence.zip",
+  "archive_sha256": "8eb127426bcf216b840bc10d5243fccdb8964d4ba17bf53b6282920406b57859",
+  "archive_bytes": 3237595,
+  "manifest_file": "evidence-manifest.json",
+  "manifest_sha256": "84e2b4a6c32a4086c3f9e9e209688180fa068d2be360eb665f4c1d5c5c205016",
+  "payload_file_count": 158,
+  "archive_member_count": 159,
+  "archive_crc_verified": true,
+  "all_manifest_members_verified": true,
+  "head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+  "head_tree_sha": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+  "sealed_at_utc": "2026-11-21T09:22:41.393395+00:00",
+  "scope": "Completed PR349 source-specific qualification. Actual main merge and publication hold are separate receipts."
+}

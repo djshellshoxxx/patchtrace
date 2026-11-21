@@ -1,24 +1,24 @@
 {
   "schema": "patchtrace-engineering-task-ledger/1",
-  "updated_at": "2026-11-21T07:43:03.236769+00:00",
+  "updated_at": "2026-11-21T09:43:24.525663+00:00",
   "repository": "https://github.com/djshellshoxxx/PatchTrace",
-  "integration_branch": "integration/patchtrace-20261121-95fe-c3",
-  "checkpoint_local_commit": "829600f8d667b74329a79dd0b0d7964c2e092fd0",
+  "integration_branch": "integration/patchtrace-codex5-followup-20261121-837fe",
+  "checkpoint_local_commit": "0cdd5bf37130206c2ddec399450be6338ae8e4fd",
   "starting_candidate": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
   "main_at_discovery": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
   "remote_publication": {
-    "status": "reviewed Tier R repair awaiting guarded PR349 publication and final hosted qualification",
-    "branch": "integration/patchtrace-20261121-95fe-c3",
+    "status": "Static combined code verified; final record commit, branch movement and PR pending",
+    "branch": "codex/patchtrace-codex5-per-command-audit-20261121",
+    "pr_number": null,
     "base_branch": "main",
-    "base_commit": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
-    "previous_source_head": "a73cea498d93e353eb49ef08aff785bd0c0a768c",
-    "pr_number": 349,
-    "head_rule": "Resolve live PR349 body/head, mapped source/tree and current CI; do not mutate a running head merely to record status.",
-    "original_source_evidence": "docs/engineering/evidence/cycle837fe-tier-r-20261121/root-evidence.zip",
-    "publication_transport": "GitHub REST Git Data; exact trees and ordered mapped parents; guarded non-force ref update",
-    "verified_code_remote_commit": "175909a0b5ea0f1d2ef77012c672935698793dea",
-    "verified_code_tree": "306c4d58fe6c0902c4c1b0fbbc3cddd64aed1c4b",
-    "commit_mapping": "docs/engineering/evidence/cycle837fe-tier-r-20261121/code-publication-mapping.json"
+    "base_commit": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+    "verified_code_remote_commit": "06b5ed67c78aac30972e657b4a7ae5a17de739b8",
+    "verified_code_tree": "6d532dd606a1fdf987245a03271970758a03fe57",
+    "commit_mapping": "docs/engineering/evidence/cycle837fe-codex5-20261121/code-publication-mapping.json",
+    "ref_movement_by_mapping": false,
+    "final_records_head": null,
+    "head_rule": "Resolve fresh final follow-up PR/ref/CI after publication; mapped identity does not establish publication or qualification.",
+    "combined_pages_mapping": "docs/engineering/evidence/cycle837fe-codex5-20261121/pages-code-publication-mapping.json"
   },
   "release_ready": false,
   "main_merge_eligible": false,
@@ -66,7 +66,9 @@
     "Cycle3 95fe: restored missing six uppercase engineering indexes and fourteen linked original documents/evidence files from PR346; all20 blobs verified. Integrated independent-review-qualified CODEX14/CODEX6 sources and Pages deploy opt-out on an isolated candidate; original failed oracle/Ruff/red-control receipts preserved. 469 distinct affected tests pass after resolving11 site-tool dependency skips; CODEX1/5 remain expected failures. This is not full new-source/hosted acceptance and does not close manual/native/cache-hit/raw-provenance/accuracy gates.",
     "Parallel837fe adds reviewed Search and interruption-safe storage; final code b880c317 passes450 affected cases. Existing global integration ownership and open release gates are retained. Read parallel_continuation_837fe without transferring ancestor test results.",
     "837FE consumed the explicit completed 95FE-C3 handoff and combined the reviewed storage/Search source with PR349. Earlier pending ownership paragraphs are historical; root837FE owns this follow-up until final handoff.",
-    "Current 837FE combined source supersedes earlier pending Action-pin implementation/95FEownership paragraphs for named scopes. Direct CODEX-1 is implemented/reviewed; CODEX-5 and transitive/native/manual/provenance/accuracy gates remain open. Existing PR349 is the single main-integration target."
+    "Current 837FE combined source supersedes earlier pending Action-pin implementation/95FEownership paragraphs for named scopes. Direct CODEX-1 is implemented/reviewed; CODEX-5 and transitive/native/manual/provenance/accuracy gates remain open. Existing PR349 is the single main-integration target.",
+    "2026-11-21 isolated CODEX-5 scanner: per-command run-scalar audit published on an independent C4-descendant branch, preserving both strict CODEX-5 xfails (old plus new) and all parent files. Local authored-fixture source mirror 17 passed/one strict xfailed; compileall and two additional controls pass. Full repository-source pytest/Ruff, independent review and actual workflow package hash closure are NOT established. No main or PR349/350 ref movement.",
+    "CODEX-5 per-command isolated follow-up: local mirror's newly authored scanner and tests match published Git blob identities exactly. Seventeen clean fixture tests pass and one strict CODEX-5 expected failure is retained; three source mutations each fail precisely one regression. This is not whole-repo qualification or independent review; source-bound actual workflow scan remains pending."
   ],
   "tasks": [
     {
@@ -75,7 +77,7 @@
       "owner": "cycle3 independent census reviewer",
       "source_commit": "e5a531668ef523cd6faa26d5fec59aa552749134",
       "evidence": "docs/engineering/evidence/cycle3-95fe/inventory-summary.json",
-      "result_or_next_action": "364 branches and338 all-state PRs (82open/172merged/84closed-unmerged), fully paginated 04:55:49\u201304:57:48UTC.10new names vs frozen354-branch cycle95fe; no moved/missing names.23new vs explicit341-branch g30-at-PR348 file. Reference census only; historical semantic backlog remains.",
+      "result_or_next_action": "364 branches and338 all-state PRs (82open/172merged/84closed-unmerged), fully paginated 04:55:49–04:57:48UTC.10new names vs frozen354-branch cycle95fe; no moved/missing names.23new vs explicit341-branch g30-at-PR348 file. Reference census only; historical semantic backlog remains.",
       "snapshot_note": "Frozen 341-branch / 330-PR observation predates PR342 publication; all 671 recorded branch/PR SHAs resolve. Classification is not full semantic verification.",
       "latest_evidence": "docs/engineering/evidence/cycle2-coordinator-20261121-2bad.json"
     },
@@ -926,7 +928,7 @@
     {
       "id": "codex14-linux-frozen-cli-smoke-20261121",
       "owner": "completed independent spec/standards reviews; coordinator qualification",
-      "status": "implemented-independently-reviewed-local-passed-hosted-frozen-pending",
+      "status": "MERGED",
       "branch": "codex/patchtrace-linux-frozen-cli-smoke-20261121",
       "base_commit": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
       "scope": "Add full actual frozen CLI harness to unpacked checksum-verified Linux onedir release artifact on ubuntu-22.04 and ubuntu-24.04 without removing existing Qt offscreen/xcb checks.",
@@ -937,18 +939,46 @@
       "contract": "docs/linux.md (frozen Linux CLI acceptance)",
       "evidence": "docs/engineering/codex14-linux-frozen-cli-smoke-20261121.md",
       "review_status": "Two independent axes found no blocking defect; root unused-import repair separately reviewed.",
-      "result_or_next_action": "91 focused tests passed on retained source before import-only cleanup; final combined source has469 distinct affected passes, wholeRuff passed. Require exact-candidate Ubuntu22.04/24.04 full frozen CLI jobs plus applicable QA/native/package. No frozen executable execution inferred from text controls.",
+      "result_or_next_action": "Package job 136797782885 and frozen jobs 136798676259 (Ubuntu22.04) / 136798676256 (Ubuntu24.04) succeeded; each 64 PASS / 0 FAIL with archive checksum and offscreen/XCB self-tests. Earlier text controls are not counted as native execution. Preserve wider release and final-follow-up gates.",
       "smoke_docstring_commit": "2af9a5c37eaf25198fada253fcc586e8fe0183ba",
       "test_hardening_commit": "6ea0ff2538159bdc714d840ab1368fdecc2b6d77",
       "negative_controls": "7/7 author-side in-memory workflow mutations detected, evidence docs/engineering/evidence/codex14-linux-smoke-static-review-20261121.json; not independent review",
       "source_commit": "5fa47ac7b03451f404c2f0acd871e8700067c13f",
       "combined_source": "e5a531668ef523cd6faa26d5fec59aa552749134",
-      "latest_evidence": "docs/engineering/evidence/cycle3-95fe/qualification.json"
+      "latest_evidence": "docs/engineering/evidence/cycle3-95fe/qualification.json",
+      "implementation_status": "COMPLETE",
+      "merge_status": "Merged through qualified primary PR349 at 9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "primary_acceptance_837fe": {
+        "primary_source": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+        "qualified_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "tested_checkout": "66f153a8372ad93c72e2f5b10365dcf210681684",
+        "actual_main_merge": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+        "scope": "Primary source only; new C5/Pages source requires its own qualification.",
+        "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-final-qualification.json"
+      },
+      "acceptance_status": "Actual Ubuntu 22.04 and 24.04 full frozen CLI accepted on primary source",
+      "blockers": [],
+      "current_primary_test_results": {
+        "qa_run": 44881740990,
+        "package_job": 136797782885,
+        "ubuntu2204": {
+          "job": 136798676259,
+          "passed": 64,
+          "failed": 0
+        },
+        "ubuntu2404": {
+          "job": 136798676256,
+          "passed": 64,
+          "failed": 0
+        },
+        "artifact": 14701041842,
+        "large_product_zip_locally_downloaded": false
+      }
     },
     {
       "id": "codex6-corpus-cache-archive-20261121",
       "owner": "completed independent spec/standards reviews; coordinator qualification",
-      "status": "implemented-repaired-independently-reviewed-local-passed-hosted-cache-pending",
+      "status": "MERGED",
       "branch": "codex/patchtrace-corpus-archive-integrity-20261121",
       "base_branch": "codex/patchtrace-integration-20261121-2bad",
       "base_commit": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
@@ -962,35 +992,77 @@
       ],
       "source_repair_commit": "c32449278d0712fa9e653f4b7c51eb5f679a693c",
       "verification": "Historical author receipt: 14 fetched-source invariants and 14 author JS mutations; previous 12-invariant current-summary label corrected by cycle3 review. Actual source-bound results and independent reviews are recorded in cycle3 qualification; native cache acceptance is separate.",
-      "result_or_next_action": "Original d250 test oracle failed1/29passed/2xfail; repaired full rizin heading and original-valid precondition. Corrected selection30pass/2existingxfail and wholeRuff pass. Actual Bash fixture cache-hit cases pass on both archive formats. Combined469 passes overlap. Hosted TierR/cache-hit and separate Ghidriff path remain unverified; do not treat PR348 or fixture data as that acceptance.",
+      "result_or_next_action": "Source and fixture repairs are merged. Actual Tier R run 44881741002 verified both rizin archive-cache hits; Ghidra archive provisioning was skipped. Tier R remains 5/11 completed engine pairs, six tiny-input no-functions results, zero blocked and one separate identical-input corpus skip. Preserve the earlier failing oracle and repaired fixture evidence; keep Ghidra archive cache and wider native gates open.",
       "source_commit": "53e02a478235498563a092d7943c7feaf40adda6",
       "combined_source": "e5a531668ef523cd6faa26d5fec59aa552749134",
       "review_status": "No blocking workflow/runtime finding. P3 current-summary counts reconciled against final14/14 author receipt.",
-      "latest_evidence": "docs/engineering/evidence/cycle3-95fe/qualification.json"
+      "latest_evidence": "docs/engineering/evidence/cycle3-95fe/qualification.json",
+      "implementation_status": "COMPLETE",
+      "merge_status": "Merged through qualified primary PR349 at 9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "primary_acceptance_837fe": {
+        "primary_source": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+        "qualified_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "tested_checkout": "66f153a8372ad93c72e2f5b10365dcf210681684",
+        "actual_main_merge": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+        "scope": "Primary source only; new C5/Pages source requires its own qualification.",
+        "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-final-qualification.json"
+      },
+      "acceptance_status": "Partial native acceptance: both rizin archive cache hits verify; Ghidra archive cache remains unverified",
+      "blockers": [
+        "Ghidra archive provisioning/hit was skipped; separate Ghidriff raw-cache success does not close this gate."
+      ]
     },
     {
       "id": "codex6-cache-hit-fixture-20261121",
-      "status": "implemented-repaired-independently-reviewed-local-passed-hosted-cache-pending",
+      "status": "MERGED",
       "owner": "completed independent spec/standards reviews; coordinator qualification",
       "base_commit": "658cc814aa74d1eaebf0d7e6dd4553d06aaef0eb",
       "branch": "codex/patchtrace-codex6-cache-hit-fixture-tests-20261121",
       "evidence": "docs/engineering-handoffs/codex6-cache-hit-fixture-20261121.md",
       "tests": "tests/test_corpus_archive_cache_hit_shell_20261121.py",
-      "result_or_next_action": "Original d250 test oracle failed1/29passed/2xfail; repaired full rizin heading and original-valid precondition. Corrected selection30pass/2existingxfail and wholeRuff pass. Actual Bash fixture cache-hit cases pass on both archive formats. Combined469 passes overlap. Hosted TierR/cache-hit and separate Ghidriff path remain unverified; do not treat PR348 or fixture data as that acceptance.",
+      "result_or_next_action": "Source and fixture repairs are merged. Actual Tier R run 44881741002 verified both rizin archive-cache hits; Ghidra archive provisioning was skipped. Tier R remains 5/11 completed engine pairs, six tiny-input no-functions results, zero blocked and one separate identical-input corpus skip. Preserve the earlier failing oracle and repaired fixture evidence; keep Ghidra archive cache and wider native gates open.",
       "source_commit": "53e02a478235498563a092d7943c7feaf40adda6",
       "combined_source": "e5a531668ef523cd6faa26d5fec59aa552749134",
       "review_status": "No blocking workflow/runtime finding. P3 current-summary counts reconciled against final14/14 author receipt.",
-      "latest_evidence": "docs/engineering/evidence/cycle3-95fe/qualification.json"
+      "latest_evidence": "docs/engineering/evidence/cycle3-95fe/qualification.json",
+      "implementation_status": "COMPLETE",
+      "merge_status": "Merged through qualified primary PR349 at 9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "primary_acceptance_837fe": {
+        "primary_source": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+        "qualified_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "tested_checkout": "66f153a8372ad93c72e2f5b10365dcf210681684",
+        "actual_main_merge": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+        "scope": "Primary source only; new C5/Pages source requires its own qualification.",
+        "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-final-qualification.json"
+      },
+      "acceptance_status": "Partial native acceptance: both rizin archive cache hits verify; Ghidra archive cache remains unverified",
+      "blockers": [
+        "Ghidra archive provisioning/hit was skipped; separate Ghidriff raw-cache success does not close this gate."
+      ]
     },
     {
       "id": "cycle3-pages-deployment-control",
-      "status": "implemented-independently-reviewed-local-passed-hosted-pending",
+      "status": "MERGED",
       "owner": "completed author and two independent review axes",
       "source_commit": "e54e4d0afbcdc3916539c62810877faa65842d5e",
       "combined_source": "e5a531668ef523cd6faa26d5fec59aa552749134",
       "contract": "docs/specs/pages-deployment-control.md",
       "evidence": "docs/engineering/evidence/cycle3-95fe/pages-veto-candidate.json",
-      "result_or_next_action": "Actual push-head [no deploy] veto is limited to Pages deploy; manual dispatch, build/artifacts and permissions unchanged. Source red1fail/6pass; repaired52staticchecks; combined tests pass. No deployment invoked. Actual main merge must contain both [no release] [no deploy]."
+      "result_or_next_action": "Original deploy-only implementation is merged. Main 9023761 Pages run 44889511406 skipped deploy job 136802309849. Site tests passed 247/1 skipped and static build succeeded, but unconditional configure-pages GET returned404. Retain original deployment-only evidence; a separate task tracks the new guard while preserving upload/manual dispatch.",
+      "implementation_status": "COMPLETE",
+      "merge_status": "Merged through qualified primary PR349 at 9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "primary_acceptance_837fe": {
+        "primary_source": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+        "qualified_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "tested_checkout": "66f153a8372ad93c72e2f5b10365dcf210681684",
+        "actual_main_merge": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+        "scope": "Primary source only; new C5/Pages source requires its own qualification.",
+        "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-final-qualification.json"
+      },
+      "acceptance_status": "Actual deploy hold observed; separate configuration lookup defect discovered",
+      "blockers": [
+        "Post-main configure-pages returned HTTP404; a narrow configuration guard is separately owned and awaits qualification."
+      ]
     },
     {
       "id": "cycle3-engineering-index-recovery",
@@ -1004,14 +1076,14 @@
       "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
       "base_commit": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
       "code_checkpoint": "b880c317add4de3ac22c87cd842abb0e7ccc615d",
-      "merge_status": "NOT_MERGED",
+      "merge_status": "MERGED",
       "evidence_links": [
         "docs/engineering/cycle837fe-recovery-and-search-20261121.md",
         "docs/engineering-handoffs/cycle837fe-20261121.md",
         "docs/engineering/evidence/cycle837fe-20261121/manifest.json"
       ],
       "id": "search-header-help-20261121-837fe",
-      "status": "TESTING",
+      "status": "MERGED",
       "implementation_status": "COMPLETE",
       "description": "Complete six Search header explanations and actual-host coverage.",
       "owner": "ownership_audit; independent packaging_recovery",
@@ -1028,13 +1100,9 @@
       ],
       "tests": "Final combined 450 passed; source-specific author/reviewer selections preserved.",
       "audit_findings": "S-H1 wording correction independently closed; one-mapping negative control fails audit.",
-      "blockers": [
-        "exact-current-source hosted qualification"
-      ],
-      "next_action": "Included in current combined source;inspect current PR349 checks before main promotion.",
-      "dependencies": [
-        "PR349 combined qualification;original95FE-C3 ownership handoff completed"
-      ],
+      "blockers": [],
+      "next_action": "Primary implementation merged through verified ae69 promotion; product/native/manual and accuracy limits remain. New CODEX-5 follow-up is separate.",
+      "dependencies": [],
       "integration_history": [
         {
           "target_integration_branch": "codex/patchtrace-recovery-search-20261121-837fe",
@@ -1048,20 +1116,37 @@
             "95FE-C3 integration ownership"
           ]
         }
-      ]
+      ],
+      "primary_promotion": {
+        "merged": true,
+        "source_head": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+        "source_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "main_before": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+        "merge_commit": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+        "actual_parents": [
+          "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+          "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e"
+        ],
+        "actual_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "opt_outs_verified": true,
+        "all_applicable_automated_jobs_passed": true,
+        "qualification_archive_sha256": "8eb127426bcf216b840bc10d5243fccdb8964d4ba17bf53b6282920406b57859",
+        "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-promotion-context.json",
+        "scope": "Primary ae69 only; documented open gates remain; not new CODEX-5 source qualification."
+      }
     },
     {
       "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
       "base_commit": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
       "code_checkpoint": "b880c317add4de3ac22c87cd842abb0e7ccc615d",
-      "merge_status": "NOT_MERGED",
+      "merge_status": "MERGED",
       "evidence_links": [
         "docs/engineering/cycle837fe-recovery-and-search-20261121.md",
         "docs/engineering-handoffs/cycle837fe-20261121.md",
         "docs/engineering/evidence/cycle837fe-20261121/manifest.json"
       ],
       "id": "service-postcommit-snapshot-20261121-837fe",
-      "status": "TESTING",
+      "status": "MERGED",
       "implementation_status": "COMPLETE",
       "description": "Reconcile committed state after save/backup interruption; refuse further snapshot writes if readback fails.",
       "owner": "service_commit_repair; independent service_review",
@@ -1074,13 +1159,9 @@
       ],
       "tests": "Final combined 450 passed; final service author 262, independent 155; combined independent 34 are separate overlapping selections.",
       "audit_findings": "POSTCOMMIT-SERVICE-SNAPSHOT, SVC-R1 and SVC-R2 repaired and independently closed.",
-      "blockers": [
-        "exact-current-source hosted qualification"
-      ],
-      "next_action": "Included in current combined source;inspect current PR349 checks before main promotion.",
-      "dependencies": [
-        "PR349 combined qualification;original95FE-C3 ownership handoff completed"
-      ],
+      "blockers": [],
+      "next_action": "Primary implementation merged through verified ae69 promotion; product/native/manual and accuracy limits remain. New CODEX-5 follow-up is separate.",
+      "dependencies": [],
       "integration_history": [
         {
           "target_integration_branch": "codex/patchtrace-recovery-search-20261121-837fe",
@@ -1094,20 +1175,37 @@
             "95FE-C3 integration ownership"
           ]
         }
-      ]
+      ],
+      "primary_promotion": {
+        "merged": true,
+        "source_head": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+        "source_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "main_before": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+        "merge_commit": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+        "actual_parents": [
+          "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+          "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e"
+        ],
+        "actual_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "opt_outs_verified": true,
+        "all_applicable_automated_jobs_passed": true,
+        "qualification_archive_sha256": "8eb127426bcf216b840bc10d5243fccdb8964d4ba17bf53b6282920406b57859",
+        "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-promotion-context.json",
+        "scope": "Primary ae69 only; documented open gates remain; not new CODEX-5 source qualification."
+      }
     },
     {
       "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
       "base_commit": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
       "code_checkpoint": "b880c317add4de3ac22c87cd842abb0e7ccc615d",
-      "merge_status": "NOT_MERGED",
+      "merge_status": "MERGED",
       "evidence_links": [
         "docs/engineering/cycle837fe-recovery-and-search-20261121.md",
         "docs/engineering-handoffs/cycle837fe-20261121.md",
         "docs/engineering/evidence/cycle837fe-20261121/manifest.json"
       ],
       "id": "backup-cleanup-cancellation-20261121-837fe",
-      "status": "TESTING",
+      "status": "MERGED",
       "implementation_status": "COMPLETE",
       "description": "Preserve primary outcome after filesystem cleanup failure and never clean a consumed staging name.",
       "owner": "backup_cleanup_repair; independent backup_review",
@@ -1120,13 +1218,9 @@
       ],
       "tests": "Final combined 450 passed; author/reviewer 169 and independent 5 are separate overlapping source-specific selections.",
       "audit_findings": "BACKUP-CLEANUP-CANCELLATION independently closed; consumed-name ownership control retained.",
-      "blockers": [
-        "exact-current-source hosted qualification"
-      ],
-      "next_action": "Included in current combined source;inspect current PR349 checks before main promotion.",
-      "dependencies": [
-        "PR349 combined qualification;original95FE-C3 ownership handoff completed"
-      ],
+      "blockers": [],
+      "next_action": "Primary implementation merged through verified ae69 promotion; product/native/manual and accuracy limits remain. New CODEX-5 follow-up is separate.",
+      "dependencies": [],
       "integration_history": [
         {
           "target_integration_branch": "codex/patchtrace-recovery-search-20261121-837fe",
@@ -1140,7 +1234,24 @@
             "95FE-C3 integration ownership"
           ]
         }
-      ]
+      ],
+      "primary_promotion": {
+        "merged": true,
+        "source_head": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+        "source_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "main_before": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+        "merge_commit": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+        "actual_parents": [
+          "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+          "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e"
+        ],
+        "actual_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "opt_outs_verified": true,
+        "all_applicable_automated_jobs_passed": true,
+        "qualification_archive_sha256": "8eb127426bcf216b840bc10d5243fccdb8964d4ba17bf53b6282920406b57859",
+        "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-promotion-context.json",
+        "scope": "Primary ae69 only; documented open gates remain; not new CODEX-5 source qualification."
+      }
     },
     {
       "target_integration_branch": "codex/patchtrace-recovery-search-20261121-837fe",
@@ -1257,14 +1368,10 @@
       "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
       "assigned_worker": "completed scoped author and independent reviewer; root837FE integration",
       "implementation_status": "COMPLETE",
-      "merge_status": "not merged to main",
-      "dependencies": [
-        "PR349 combined exact-head hosted qualification"
-      ],
-      "blockers": [
-        "new-source hosted checks pending"
-      ],
-      "status": "TESTING",
+      "merge_status": "MERGED",
+      "dependencies": [],
+      "blockers": [],
+      "status": "MERGED",
       "id": "837fe-codex1-direct-actions",
       "description": "Complete immutable direct Action references",
       "source_branch": "codex/patchtrace-codex1-direct-action-pins-20261121-837fe",
@@ -1277,20 +1384,33 @@
       "test_results": "178 direct uses pinned; 272 maintained passed / 1 CODEX-5 xfailed; 13 separate independent controls passed.",
       "audit_findings": "No source blocker; parsed/text workflow preservation and all 11 official mappings verified. Later hosted QA found a missed Tier R mutable-tag assertion; repaired/reviewed in829600f8; original review coverage miss retained.",
       "evidence": "docs/engineering/codex1-direct-action-pins-20261121.md",
-      "next_action": "Qualify corrected combined head; preserve original coverage miss and cancelled failure."
+      "next_action": "Primary implementation merged through verified ae69 promotion; product/native/manual and accuracy limits remain. New CODEX-5 follow-up is separate.",
+      "primary_promotion": {
+        "merged": true,
+        "source_head": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+        "source_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "main_before": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+        "merge_commit": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+        "actual_parents": [
+          "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+          "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e"
+        ],
+        "actual_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "opt_outs_verified": true,
+        "all_applicable_automated_jobs_passed": true,
+        "qualification_archive_sha256": "8eb127426bcf216b840bc10d5243fccdb8964d4ba17bf53b6282920406b57859",
+        "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-promotion-context.json",
+        "scope": "Primary ae69 only; documented open gates remain; not new CODEX-5 source qualification."
+      }
     },
     {
       "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
       "assigned_worker": "completed scoped author and independent reviewer; root837FE integration",
       "implementation_status": "COMPLETE",
-      "merge_status": "not merged to main",
-      "dependencies": [
-        "PR349 combined exact-head hosted qualification"
-      ],
-      "blockers": [
-        "new-source hosted checks pending"
-      ],
-      "status": "TESTING",
+      "merge_status": "MERGED",
+      "dependencies": [],
+      "blockers": [],
+      "status": "MERGED",
       "id": "837fe-intel-windows-version-names",
       "description": "Accept exact Windows .exe version program names",
       "source_branch": "codex/patchtrace-intel-version-20261121-837fe",
@@ -1304,21 +1424,34 @@
       "test_results": "Author 169 passed; independent 185 passed including 16 fresh controls; exact baseline fresh controls 8 failed/8 passed.",
       "audit_findings": "No source blocker; AST unchanged outside two literal noncapturing suffix patterns. Native FLOSS exit1 remains unresolved.",
       "evidence": "docs/engineering/evidence/cycle837fe-combined-20261121/intel-independent-review.zip",
-      "next_action": "Inspect exact combined-head hosted outcomes; preserve source/native/release distinctions.",
-      "latest_native_observation": "daee Windows capa.exe version/help exit0;FLOSS missing-pwd diagnosed and repaired in subsequent source;fresh actual acceptance pending."
+      "next_action": "Primary implementation merged through verified ae69 promotion; product/native/manual and accuracy limits remain. New CODEX-5 follow-up is separate.",
+      "latest_native_observation": "daee Windows capa.exe version/help exit0;FLOSS missing-pwd diagnosed and repaired in subsequent source;fresh actual acceptance pending.",
+      "primary_promotion": {
+        "merged": true,
+        "source_head": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+        "source_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "main_before": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+        "merge_commit": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+        "actual_parents": [
+          "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+          "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e"
+        ],
+        "actual_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "opt_outs_verified": true,
+        "all_applicable_automated_jobs_passed": true,
+        "qualification_archive_sha256": "8eb127426bcf216b840bc10d5243fccdb8964d4ba17bf53b6282920406b57859",
+        "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-promotion-context.json",
+        "scope": "Primary ae69 only; documented open gates remain; not new CODEX-5 source qualification."
+      }
     },
     {
       "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
       "assigned_worker": "completed scoped author and independent reviewer; root837FE integration",
       "implementation_status": "COMPLETE",
-      "merge_status": "not merged to main",
-      "dependencies": [
-        "PR349 combined exact-head hosted qualification"
-      ],
-      "blockers": [
-        "new-source hosted checks pending"
-      ],
-      "status": "TESTING",
+      "merge_status": "MERGED",
+      "dependencies": [],
+      "blockers": [],
+      "status": "MERGED",
       "id": "837fe-intel-probe-diagnostics",
       "description": "Retain bounded evidence from existing actual live probes",
       "source_branch": "codex/patchtrace-intel-probe-evidence-20261121-837fe",
@@ -1332,20 +1465,33 @@
       "test_results": "Author 105 passed; independent 110 passed including 5 fresh controls; no native success inferred.",
       "audit_findings": "No source blocker; forwarding/result identity/restoration/exception preservation verified; acceptance AST unchanged apart from observation.",
       "evidence": "docs/engineering/evidence/cycle837fe-combined-20261121/intel-independent-review.zip",
-      "next_action": "Inspect exact combined-head hosted outcomes; preserve source/native/release distinctions."
+      "next_action": "Primary implementation merged through verified ae69 promotion; product/native/manual and accuracy limits remain. New CODEX-5 follow-up is separate.",
+      "primary_promotion": {
+        "merged": true,
+        "source_head": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+        "source_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "main_before": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+        "merge_commit": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+        "actual_parents": [
+          "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+          "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e"
+        ],
+        "actual_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "opt_outs_verified": true,
+        "all_applicable_automated_jobs_passed": true,
+        "qualification_archive_sha256": "8eb127426bcf216b840bc10d5243fccdb8964d4ba17bf53b6282920406b57859",
+        "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-promotion-context.json",
+        "scope": "Primary ae69 only; documented open gates remain; not new CODEX-5 source qualification."
+      }
     },
     {
       "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
       "assigned_worker": "completed scoped author and independent reviewer; root837FE integration",
       "implementation_status": "COMPLETE",
-      "merge_status": "not merged to main",
-      "dependencies": [
-        "PR349 combined exact-head hosted qualification"
-      ],
-      "blockers": [
-        "new-source hosted checks pending"
-      ],
-      "status": "TESTING",
+      "merge_status": "MERGED",
+      "dependencies": [],
+      "blockers": [],
+      "status": "MERGED",
       "id": "837fe-pr349-spec-registry",
       "description": "Repair sole original PR349 Linux QA failure and register all 3 new specs",
       "source_branch": "codex/patchtrace-spec-registry-20261121-837fe",
@@ -1356,20 +1502,33 @@
       "test_results": "Current baseline 3 failed/105 passed; unchanged maintained test108 passed; final combined1296 passed/1 xfailed.",
       "audit_findings": "Root reviewed 10-line index-only repair. Original hosted Linux 1 failed/24066 passed/53 skipped/4 xfailed retained.",
       "evidence": "docs/engineering/evidence/cycle837fe-combined-20261121/pr349-registry-failure-evidence.zip",
-      "next_action": "Inspect exact combined-head hosted outcomes; preserve source/native/release distinctions."
+      "next_action": "Primary implementation merged through verified ae69 promotion; product/native/manual and accuracy limits remain. New CODEX-5 follow-up is separate.",
+      "primary_promotion": {
+        "merged": true,
+        "source_head": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+        "source_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "main_before": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+        "merge_commit": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+        "actual_parents": [
+          "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+          "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e"
+        ],
+        "actual_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "opt_outs_verified": true,
+        "all_applicable_automated_jobs_passed": true,
+        "qualification_archive_sha256": "8eb127426bcf216b840bc10d5243fccdb8964d4ba17bf53b6282920406b57859",
+        "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-promotion-context.json",
+        "scope": "Primary ae69 only; documented open gates remain; not new CODEX-5 source qualification."
+      }
     },
     {
       "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
       "assigned_worker": "completed scoped author and independent reviewer; root837FE integration",
       "implementation_status": "COMPLETE",
-      "merge_status": "not merged to main",
-      "dependencies": [
-        "PR349 combined exact-head hosted qualification"
-      ],
-      "blockers": [
-        "new-source hosted checks pending"
-      ],
-      "status": "TESTING",
+      "merge_status": "MERGED",
+      "dependencies": [],
+      "blockers": [],
+      "status": "MERGED",
       "id": "837fe-combined-pr349-qualification",
       "description": "Qualify combined storage/Search/workflow/Intel repairs on existing main-integration PR",
       "source_branch": "integration/patchtrace-20261121-837fe-combined",
@@ -1380,7 +1539,7 @@
       "test_results": "1296 passed/1 CODEX-5 xfailed; zero failed/errors/ordinary skips; 1,297 distinct identities; Ruff/pip/source binding pass.",
       "audit_findings": "All scoped independent source findings closed; exact new-head hosted/platform acceptance pending.",
       "evidence": "docs/engineering/cycle837fe-combined-pr349-20261121.md",
-      "next_action": "Inspect exact combined-head hosted outcomes; preserve source/native/release distinctions.",
+      "next_action": "Primary implementation merged through verified ae69 promotion; product/native/manual and accuracy limits remain. New CODEX-5 follow-up is separate.",
       "current_followup": {
         "source": "6bf79feffe68a9fdc1293a69900320e12be662bc",
         "qualification": {
@@ -1409,6 +1568,23 @@
           "evidence": "docs/engineering/evidence/cycle837fe-native-c4-20261121/combined-focused.json"
         },
         "report": "docs/engineering/cycle837fe-native-c4-20261121.md"
+      },
+      "primary_promotion": {
+        "merged": true,
+        "source_head": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+        "source_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "main_before": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+        "merge_commit": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+        "actual_parents": [
+          "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+          "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e"
+        ],
+        "actual_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "opt_outs_verified": true,
+        "all_applicable_automated_jobs_passed": true,
+        "qualification_archive_sha256": "8eb127426bcf216b840bc10d5243fccdb8964d4ba17bf53b6282920406b57859",
+        "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-promotion-context.json",
+        "scope": "Primary ae69 only; documented open gates remain; not new CODEX-5 source qualification."
       }
     },
     {
@@ -1439,25 +1615,45 @@
     },
     {
       "id": "pages-site-isolation-and-hashes-20261121-95fe",
-      "status": "implemented-independently-reviewed-local-qualified",
+      "status": "MERGED",
       "owner": "95FE-C4 completed author and two independent reviewers",
       "source_commit": "8c5e77e2c1ad3f6cfa62c2e474f7bcc2f4af1dd5",
       "evidence": "docs/engineering/evidence/cycle4-95fe/qualification.json",
-      "result_or_next_action": "Confirmed missing-pydantic site-only fixture error repaired by explicit pytest isolation. Seven verified Linux/Python 3.12 wheels are pinned and hashed. Fresh offline install/build and both refusal controls verified; 247 site passes and one existing optional GUI skip. The final full-dependency selection includes a passing GUI screenshot test. Hosted index/build and broader CODEX-5 remain open."
+      "result_or_next_action": "Main 9023761 Pages run 44889511406 passed hashed/binary-only installation, isolated site tests (247 passed/1 optional-GUI skip), and static build. Separate configure-pages404 is tracked by the guard fix. Broader CODEX5 and actual deployment remain open; no dispatch or enablement occurred.",
+      "implementation_status": "COMPLETE",
+      "merge_status": "Merged through qualified primary PR349 at 9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "primary_acceptance_837fe": {
+        "primary_source": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+        "qualified_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "tested_checkout": "66f153a8372ad93c72e2f5b10365dcf210681684",
+        "actual_main_merge": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+        "scope": "Primary source only; new C5/Pages source requires its own qualification.",
+        "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-final-qualification.json"
+      },
+      "acceptance_status": "Actual hosted locked install, isolated site tests and site build passed",
+      "blockers": [
+        "Separate Pages configuration404 prevented first held-run artifact upload."
+      ]
     },
     {
       "id": "codex5-per-command-audit-gap-20261121-95fe",
-      "status": "open-follow-up",
+      "status": "BLOCKED",
       "owner": "next coordinated audit worker; preserve 837FE Action-pin file ownership",
       "source_commit": "11f51c105bf63946f59373ae605b937c4fee607a",
       "evidence": "docs/engineering/evidence/cycle4-95fe/codex5-research.md",
-      "result_or_next_action": "Current run-block heuristic accepts hash/offline flags anywhere, including unrelated commands/comments. Synthetic text controls retained. Implement per-command and referenced-lock checks without weakening global strict xfail; no current workflow compromise inferred."
+      "result_or_next_action": "Recovered YAML/per-command audit exists at 5b5328ee with independent review and typed strict expected failure; see codex5-per-command-audit-20261121. Keep referenced-lock validation and full host/build/app/dev/signing/engine closures open; recognizing command flags does not complete CODEX5.",
+      "implementation_status": "Bounded parser complete in reviewed C5 source; referenced-lock verification remains open",
+      "merge_status": "Original gap record merged in primary; recovered parser follow-up not yet merged",
+      "blockers": [
+        "Referenced-lock content/hash closure remains outside this bounded parser.",
+        "Final follow-up hosted qualification and guarded main merge pending."
+      ]
     },
     {
       "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
-      "merge_status": "not merged to main",
+      "merge_status": "MERGED",
       "id": "837fe-intel-synthetic-windows-identity",
-      "status": "TESTING",
+      "status": "MERGED",
       "description": "Repair actual Windows getpass/pwd failure without inheriting caller identity",
       "source_branch": "codex/patchtrace-intel-windows-identity-20261121-837fe",
       "source_commit": "d628749401f61d3653b5e066ff38245b938c5dcd",
@@ -1471,25 +1667,38 @@
       "implementation_status": "COMPLETE",
       "test_results": "130 author and130 overlapping peer passes;1314+1 Intel-only and1396+1 combined selections separate. Actual a73 native run44880309380: Linux4passed; Windows3passed/1offline-namespace skip; all three engine goldens pass.",
       "audit_findings": "No blocker;real getpass red/pass/removal,privacy/extras/adapter controls.",
-      "dependencies": [
-        "PR349 exact final-head qualification"
-      ],
-      "blockers": [
-        "final revised-head full/native/package qualification pending"
-      ],
+      "dependencies": [],
+      "blockers": [],
       "evidence_links": [
         "docs/engineering/cycle837fe-native-c4-20261121.md",
         "docs/engineering/evidence/cycle837fe-native-c4-20261121/intel-identity-independent.json",
         "docs/engineering/evidence/cycle837fe-native-c4-20261121/daee-intel-summary.json",
         "docs/engineering/evidence/cycle837fe-tier-r-20261121/a73-intel-summary.json"
       ],
-      "next_action": "Preserve actual a73 native pass and qualify final revised head."
+      "next_action": "Primary implementation merged through verified ae69 promotion; product/native/manual and accuracy limits remain. New CODEX-5 follow-up is separate.",
+      "primary_promotion": {
+        "merged": true,
+        "source_head": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+        "source_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "main_before": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+        "merge_commit": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+        "actual_parents": [
+          "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+          "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e"
+        ],
+        "actual_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "opt_outs_verified": true,
+        "all_applicable_automated_jobs_passed": true,
+        "qualification_archive_sha256": "8eb127426bcf216b840bc10d5243fccdb8964d4ba17bf53b6282920406b57859",
+        "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-promotion-context.json",
+        "scope": "Primary ae69 only; documented open gates remain; not new CODEX-5 source qualification."
+      }
     },
     {
       "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
-      "merge_status": "not merged to main",
+      "merge_status": "MERGED",
       "id": "837fe-native-c4-combined-qualification",
-      "status": "TESTING",
+      "status": "MERGED",
       "description": "Combine C4 and Intel repair without duplicate source or lost records",
       "source_branch": "integration/patchtrace-20261121-837fe-native-followup",
       "source_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
@@ -1500,17 +1709,30 @@
       "implementation_status": "COMPLETE",
       "test_results": "1396passed/1CODEX-5xfail;1397distinct;64selectors;Ruff/pip/source binding passed.",
       "audit_findings": "Exact whole-tree union and parents;141 overlapping independent maintained passes;no blocker.",
-      "dependencies": [
-        "current-source full/Qt/native/package/frozen gates"
-      ],
-      "blockers": [
-        "exact final publication qualification pending"
-      ],
+      "dependencies": [],
+      "blockers": [],
       "evidence_links": [
         "docs/engineering/cycle837fe-native-c4-20261121.md",
         "docs/engineering/evidence/cycle837fe-native-c4-20261121/qualification.json"
       ],
-      "next_action": "Publish reviewed Intel+C4 exact source to PR349; inspect full/Qt/native/package/frozen gates and actual Windows Intel; guarded REST main merge only when qualified, with both opt-out flags."
+      "next_action": "Primary implementation merged through verified ae69 promotion; product/native/manual and accuracy limits remain. New CODEX-5 follow-up is separate.",
+      "primary_promotion": {
+        "merged": true,
+        "source_head": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+        "source_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "main_before": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+        "merge_commit": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+        "actual_parents": [
+          "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+          "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e"
+        ],
+        "actual_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "opt_outs_verified": true,
+        "all_applicable_automated_jobs_passed": true,
+        "qualification_archive_sha256": "8eb127426bcf216b840bc10d5243fccdb8964d4ba17bf53b6282920406b57859",
+        "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-promotion-context.json",
+        "scope": "Primary ae69 only; documented open gates remain; not new CODEX-5 source qualification."
+      }
     },
     {
       "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
@@ -1534,7 +1756,7 @@
     },
     {
       "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
-      "merge_status": "not merged to main",
+      "merge_status": "Assessment record merged through primary 9023761; broader implementation remains BLOCKED",
       "id": "837fe-codex5-bounded-assessment",
       "status": "BLOCKED",
       "description": "Recover wheelhouse infrastructure and inventory missing workflow hash closures",
@@ -1555,11 +1777,19 @@
       "evidence_links": [
         "docs/engineering/evidence/cycle837fe-native-c4-20261121/codex5-bounded-assessment.md"
       ],
-      "next_action": "Complete remaining scoped closures;Pages does not close all CODEX-5;preserve strict failure."
+      "next_action": "Complete remaining scoped closures;Pages does not close all CODEX-5;preserve strict failure.",
+      "primary_record_promotion": {
+        "primary_source": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+        "qualified_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "tested_checkout": "66f153a8372ad93c72e2f5b10365dcf210681684",
+        "actual_main_merge": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+        "scope": "Primary source only; new C5/Pages source requires its own qualification.",
+        "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-final-qualification.json"
+      }
     },
     {
       "id": "837fe-tier-r-immutable-pin-contract",
-      "status": "TESTING",
+      "status": "MERGED",
       "description": "Repair missed Tier R mutable Action-tag test after immutable pinning",
       "source_branch": "codex/patchtrace-tier-r-pin-contract-20261121-837fe",
       "source_commit": "829600f8d667b74329a79dd0b0d7964c2e092fd0",
@@ -1571,22 +1801,335 @@
       "implementation_status": "COMPLETE",
       "test_results": "Baseline1failure;combined1444passed/1CODEX-5xfail;independent67passed including19controls;Ruff/pip/binding pass.",
       "audit_findings": "CODEX1-TIER-R-STALE-TAG resolved;exact7reviewed commits enforced;all prior workflow/digests/permissions/triggers/compiler assertions preserved.",
-      "dependencies": [
-        "PR349 exact final-head hosted qualification"
-      ],
-      "blockers": [
-        "final full/Qt/native/package/frozen results pending"
-      ],
-      "merge_status": "not merged to main",
+      "dependencies": [],
+      "blockers": [],
+      "merge_status": "MERGED",
       "evidence_links": [
         "docs/engineering/evidence/cycle837fe-tier-r-20261121/qualification.json",
         "docs/engineering/evidence/cycle837fe-tier-r-20261121/independent-review.json",
         "docs/engineering/evidence/cycle837fe-tier-r-20261121/prior-cancelled-failure.json"
       ],
-      "next_action": "Publish reviewed Tier R test repair to existing PR349; inspect exact-source full/Qt/native/package/frozen gates; expected-head guarded REST main merge only when qualified, with [no release] [no deploy]."
+      "next_action": "Primary implementation merged through verified ae69 promotion; product/native/manual and accuracy limits remain. New CODEX-5 follow-up is separate.",
+      "primary_promotion": {
+        "merged": true,
+        "source_head": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+        "source_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "main_before": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+        "merge_commit": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+        "actual_parents": [
+          "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+          "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e"
+        ],
+        "actual_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+        "opt_outs_verified": true,
+        "all_applicable_automated_jobs_passed": true,
+        "qualification_archive_sha256": "8eb127426bcf216b840bc10d5243fccdb8964d4ba17bf53b6282920406b57859",
+        "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-promotion-context.json",
+        "scope": "Primary ae69 only; documented open gates remain; not new CODEX-5 source qualification."
+      }
+    },
+    {
+      "id": "codex5-per-command-audit-20261121",
+      "status": "TESTING",
+      "owner": "Author/reviewer released; root837FE owns follow-up publication and qualification",
+      "branch": "integration/patchtrace-codex5-followup-20261121-837fe",
+      "base_commit": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "evidence": "docs/engineering/evidence/codex5-per-command-audit-20261121.json",
+      "source_paths": [
+        "docs/audits/codex-workflows-1.md",
+        "docs/engineering-handoffs/codex5-command-audit-20261121.md",
+        "docs/engineering/evidence/codex5-per-command-audit-20261121.json",
+        "docs/modules.md",
+        "docs/specs/REGISTRY.md",
+        "docs/specs/ci-pip-command-audit.md",
+        "tests/test_codex5_command_audit_20261121.py",
+        "tools/ci_pip_install_audit.py"
+      ],
+      "result_or_next_action": "Bounded repair complete and independently reviewed; publish reviewed records, qualify actual final source, and retain both strict CODEX-5 xfails and broader closure gates.",
+      "implementation_status": "COMPLETE",
+      "source_commit": "5b5328ee83ee4990b3311f7ac90e2f5e5f76f800",
+      "source_tree": "1e12edd510399fd92da6867cd071394ceb7fc95b",
+      "remote_code_commit": "92dfc4d4d2ef9d604bc9db1a639d4f19add535a8",
+      "target_integration_branch": "integration/patchtrace-codex5-followup-20261121-837fe",
+      "merge_status": "Hosted qualification and main merge pending for new CODEX-5 source",
+      "test_results": {
+        "source_commit": "5b5328ee83ee4990b3311f7ac90e2f5e5f76f800",
+        "source_tree": "1e12edd510399fd92da6867cd071394ceb7fc95b",
+        "remote_code_commit": "92dfc4d4d2ef9d604bc9db1a639d4f19add535a8",
+        "distinct_affected_passed": 1548,
+        "case_count": 1550,
+        "selection_node_selectors": 66,
+        "failed": 0,
+        "errors": 0,
+        "ordinary_skipped": 0,
+        "xfailed": 2,
+        "expected_failure_ids": [
+          "tests.test_codex_pkg_workflows::test_pip_downloads_require_hashes",
+          "tests.test_codex5_command_audit_20261121::test_all_explicit_workflow_pip_installs_are_protected"
+        ],
+        "command_seconds": 84.021,
+        "whole_tree_ruff": "passed",
+        "dependencies": "passed",
+        "isolated_source_import": "passed; clean source-bound checkout before and after",
+        "independent_review": {
+          "passed": 226,
+          "strict_xfailed": 2,
+          "lexical_controls": 20,
+          "yaml_controls": 3,
+          "typed_expected_outcomes": true,
+          "counts_overlap_root_selection": true
+        },
+        "final_source_hosted": "PENDING for future final follow-up PR/records source",
+        "main_merge_status": "PENDING for new CODEX-5 source",
+        "prior_full_attempt": {
+          "source": "93b053a88e4373d9f5c69cd68f96e1a49305d579",
+          "started_from_modified_worktree": true,
+          "exit_code": -9,
+          "wrapper_exit_code": 247,
+          "seconds": 498.536,
+          "cause": "unknown",
+          "aggregate_summary": null,
+          "second_local_full_attempt": false,
+          "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/author-history.zip"
+        },
+        "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/combined-focused.json"
+      },
+      "original_donor_checkpoint": {
+        "id": "codex5-per-command-audit-20261121",
+        "status": "implemented-exact-new-file-controls-verified-awaiting-peer-hosted",
+        "owner": "isolated CODEX-5 author; reviewer unassigned; Root837FE owns PR349 integration separately",
+        "branch": "codex/patchtrace-codex5-per-command-audit-20261121",
+        "base_commit": "f928a0cef29eac2b603d390c40fb86448111b91b",
+        "evidence": "docs/engineering/evidence/codex5-per-command-audit-20261121.json",
+        "source_paths": [
+          "tools/ci_pip_install_audit.py",
+          "tests/test_codex5_command_audit_20261121.py",
+          "docs/audits/codex-workflows-1.md"
+        ],
+        "result_or_next_action": "Exact published scanner/test Git blobs equal local executed mirror; 17 tests passed, 1 strict CODEX-5 xfailed; 3 intentional mutations each cause 1 correct failure. Full GitHub workflow checkout tests/Ruff/independent peer/CI still open. Coordinate with Root837FE; do not merge while unqualified."
+      },
+      "dependencies": [
+        "Future exact-source hosted/full qualification and reviewed guarded main merge"
+      ],
+      "blockers": [
+        "New CODEX-5 source is not yet hosted-qualified or merged"
+      ]
+    },
+    {
+      "id": "837fe-historical-java-probe-branch-accounting",
+      "status": "COMPLETE",
+      "description": "Account for both complete historical Java probe test-only branches",
+      "source_branch": "chatgpt/java-probe-ci-fix-20261016",
+      "source_branches": [
+        "chatgpt/java-probe-ci-fix-20261016",
+        "chatgpt/java-probe-boundaries-20261016"
+      ],
+      "source_commit": "0254841e3e635ed717e35abcf83021f001d7df29",
+      "source_commits": [
+        "0254841e3e635ed717e35abcf83021f001d7df29",
+        "09bb4519d7d8e9ff8f40abcba7e11cb297d8b61e"
+      ],
+      "target_integration_branch": "integration/patchtrace-codex5-followup-20261121-837fe",
+      "assigned_worker": "root837FE and independent codex1_independent_review",
+      "files_owned": [
+        "tests/test_backend_java_version.py"
+      ],
+      "implementation_status": "COMPLETE",
+      "test_results": "13 executed cases passed, zero failures/errors/skips: seven original donor and six current; overlapping behaviors, not native acceptance.",
+      "audit_findings": "Independent whole-branch review accepted DUPLICATE import-order donor and SUPERSEDED boundary donor; seven of eight function ASTs identical; remaining change is bounded fixture-state normalization.",
+      "dependencies": [],
+      "blockers": [],
+      "merge_status": "Contributions already retained in qualified primary main9023761; no donor ref moved.",
+      "evidence_links": [
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-java-probe.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-java-probe.zip",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-java-independent-review.json"
+      ],
+      "next_action": "Retain exact source/provenance and original refs; publish reviewed records with the separately qualified follow-up. No broader native or historical completion inference."
+    },
+    {
+      "id": "837fe-historical-license-branch-accounting",
+      "status": "COMPLETE",
+      "description": "Account for the complete historical bundle/license gate contribution",
+      "source_branch": "claude/bundle-license-gate",
+      "source_branches": [
+        "claude/bundle-license-gate"
+      ],
+      "source_commit": "d3617acf9af7834582b4962a8c149969a7d55a22",
+      "source_commits": [
+        "d3617acf9af7834582b4962a8c149969a7d55a22"
+      ],
+      "target_integration_branch": "integration/patchtrace-codex5-followup-20261121-837fe",
+      "assigned_worker": "root837FE and independent codex1_independent_review",
+      "files_owned": [
+        ".github/workflows/backend-bundle.yml",
+        "docs/notices.md",
+        "tests/test_backend_pin.py",
+        "tests/test_build_backend_bundle.py",
+        "tests/test_build_full_variants.py",
+        "tests/test_codex_pkg_packaging.py",
+        "tools/backend_pin.json",
+        "tools/build_backend_bundle.py",
+        "tools/build_linux.py",
+        "tools/build_windows.py",
+        "tools/check_backend_pin.py"
+      ],
+      "implementation_status": "COMPLETE",
+      "test_results": "251 maintained passes/one ordinary missing-wheel skip;51 unchanged donor parameterized passes, overlapping counts kept separate. All11 executed paths byte-equal to qualified primary source.",
+      "audit_findings": "Independent review accepts SUPERSEDED; all11 changed paths and all74 top-level symbols accounted, both complete full-variant attachment branches retained. Earlier reviewer enumeration failure/correction preserved.",
+      "dependencies": [],
+      "blockers": [],
+      "merge_status": "Implementation already integrated; PR65 merge00db4c9c0ce53d1c4c556f3530e8c54163e91e95 is ancestor of primary main. Original branch retained.",
+      "evidence_links": [
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-license-classification.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-license-review.zip",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-license-independent-review.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-license-independent.zip"
+      ],
+      "next_action": "Retain exact source/provenance and original refs; publish reviewed records with the separately qualified follow-up. No broader native or historical completion inference."
+    },
+    {
+      "id": "837fe-new-ancillary-branch-accounting",
+      "status": "COMPLETE",
+      "description": "Account for the newly discovered build-environment and historical initial-CI evidence branches",
+      "source_branch": "codex/patchtrace-buildenv-header-help-20261121-a1",
+      "source_branches": [
+        "codex/patchtrace-buildenv-header-help-20261121-a1",
+        "evidence/patchtrace-pr349-initial-ci-20261121-95fe"
+      ],
+      "source_commit": "09f07582d8d9017fe2be080605120b5c4cfd0b91",
+      "source_commits": [
+        "09f07582d8d9017fe2be080605120b5c4cfd0b91",
+        "566c43cd1647697cc770ea0cb92a0fb130015ec9"
+      ],
+      "target_integration_branch": "integration/patchtrace-codex5-followup-20261121-837fe",
+      "assigned_worker": "root837FE and independent codex1_independent_review",
+      "files_owned": [
+        "src/patchtrace/buildenv/tooltip_entries.py",
+        "src/patchtrace/buildenv/panel_model.py",
+        "docs/engineering/evidence/cycle3-95fe/postpublication/"
+      ],
+      "implementation_status": "COMPLETE",
+      "test_results": "Seven unchanged build-environment donor tests passed against current source; semantic comparisons of all five mappings and current stronger host/controller tests. Eleven original evidence files and gzip/raw equality verified.",
+      "audit_findings": "Independent review accepts complete SUPERSEDED build-environment branch and ARCHIVE original-CI evidence branch. Original failure2failed/1passed/1skipped remains evidence for its own source.",
+      "dependencies": [],
+      "blockers": [],
+      "merge_status": "Current implementation retained through primary main; evidence archived without wholesale donor ledger substitution.",
+      "evidence_links": [
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/ancillary-branches.zip",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/ancillary-independent-review.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/ancillary-branch-summary.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/ref-refresh.zip",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/ref-refresh-summary.json"
+      ],
+      "next_action": "Retain exact source/provenance and original refs; publish reviewed records with the separately qualified follow-up. No broader native or historical completion inference."
+    },
+    {
+      "id": "837fe-pr345-348-reconciliation",
+      "status": "COMPLETE",
+      "description": "Reconcile obsolete stacked consolidation drafts after actual qualified PR349 main promotion",
+      "source_branch": "PR345",
+      "source_branches": [
+        "PR345",
+        "PR346",
+        "PR347",
+        "PR348"
+      ],
+      "source_commit": "39c38a02f126963fc03827fa49741255590227ad",
+      "source_commits": [
+        "39c38a02f126963fc03827fa49741255590227ad",
+        "c07774ecf5a3f7337834f95a9a4c51c8ec5fad44",
+        "b461ac64eb9beb74449ce2b18b6795a2af34a02a",
+        "6b6fcd3597a604212032ffc453477aeb6edc69ff"
+      ],
+      "target_integration_branch": "integration/patchtrace-codex5-followup-20261121-837fe",
+      "assigned_worker": "root837FE and independent codex1_independent_review",
+      "files_owned": [],
+      "implementation_status": "COMPLETE",
+      "test_results": "Fresh unchanged-head checks before each closure; returned snapshots verify closed/not individually merged and all original descriptions preserved. Primary actual parents/tree verified.",
+      "audit_findings": "Independent review accepted ancestry accounting for345/347/348 and selective recovery for346; thirteen branch-side-only commits include documentation/merges, not a claim of thirteen missing implementation commits.",
+      "dependencies": [],
+      "blockers": [],
+      "merge_status": "All four closed as consolidated at2026-11-21T09:26UTC after actual main merge9023761; no separate old feature-base merge and no branch deletion.",
+      "evidence_links": [
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/pr-chain-reconciliation-review.zip",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/pr-chain-reconciliation-review.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-pr-closures.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-merge-proof.json"
+      ],
+      "next_action": "Retain exact source/provenance and original refs; publish reviewed records with the separately qualified follow-up. No broader native or historical completion inference."
+    },
+    {
+      "id": "837fe-pages-configuration-hold",
+      "status": "TESTING",
+      "description": "Honor held Pages pushes before configuration while preserving validation and artifacts",
+      "source_branch": "codex/patchtrace-pages-config-hold-20261121-837fe",
+      "source_commit": "0cdd5bf37130206c2ddec399450be6338ae8e4fd",
+      "source_tree": "6d532dd606a1fdf987245a03271970758a03fe57",
+      "remote_code_commit": "06b5ed67c78aac30972e657b4a7ae5a17de739b8",
+      "target_integration_branch": "codex/patchtrace-codex5-per-command-audit-20261121",
+      "assigned_worker": "codex5_recovery_assessment author; codex1_independent_review; root837FE integration",
+      "files_owned": [
+        ".github/workflows/pages.yml",
+        "docs/specs/pages-deployment-control.md",
+        "docs/specs/REGISTRY.md",
+        "tests/test_site_workflow.py"
+      ],
+      "implementation_status": "COMPLETE",
+      "test_results": {
+        "source_commit": "0cdd5bf37130206c2ddec399450be6338ae8e4fd",
+        "source_tree": "6d532dd606a1fdf987245a03271970758a03fe57",
+        "original_workflow_regression": {
+          "passed": 7,
+          "failed": 1,
+          "expected_reproduction": true
+        },
+        "site": {
+          "passed": 249,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "workflow_scanner_registry": {
+          "passed": 226,
+          "strict_xfailed": 2,
+          "failed": 0,
+          "errors": 0
+        },
+        "exact_frozen_workflow_registry": {
+          "passed": 119,
+          "overlaps_other_selections": true
+        },
+        "independent_review": {
+          "passed": 119,
+          "controls": 12,
+          "verdict": "no blocker",
+          "counts_overlap": true
+        },
+        "bounded_ruff": "passed",
+        "pip_check": "passed",
+        "source_binding": "passed",
+        "native_or_hosted_acceptance": false,
+        "counts_must_not_be_added_to_5b_focused_suite": true
+      },
+      "audit_findings": "Independent source review accepted: exactly one configure-step condition; deploy subtree and all other workflow bytes unchanged;12 expected controls.",
+      "dependencies": [
+        "Final exact-source hosted qualification and guarded REST merge"
+      ],
+      "blockers": [
+        "Hosted skip/upload proof awaits the next automatic held main push; no manual dispatch or PR trigger added."
+      ],
+      "merge_status": "Not yet merged to main",
+      "evidence_links": [
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/pages-config-hold-repair.zip",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/pages-config-hold-candidate.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/pages-independent-review.json",
+        "docs/engineering/evidence/cycle837fe-codex5-20261121/pages-config-404-independent-assessment.json"
+      ],
+      "next_action": "Complete final record review and applicable hosted checks, merge with both publication markers, then observe automatic held main Pages upload."
     }
   ],
-  "aggregate_source_commit": "829600f8d667b74329a79dd0b0d7964c2e092fd0",
+  "aggregate_source_commit": "0cdd5bf37130206c2ddec399450be6338ae8e4fd",
   "workers": [
     {
       "name": "repository_inventory",
@@ -1834,7 +2377,7 @@
       "owner": "root837FE"
     }
   ],
-  "local_integration_branch": "codex/patchtrace-tier-r-pin-contract-20261121-837fe",
+  "local_integration_branch": "integration/patchtrace-codex5-followup-20261121-837fe",
   "hosted_initial_candidate": {
     "head": "3862cb5de3256efec8f6392a3b6fb4d9e600c377",
     "captured_at": "2026-11-20T01:03:45Z",
@@ -1952,33 +2495,73 @@
       "later_evidence_only_commits": "Resolve current PR head; runtime/test/tool identities remain the recorded 97ca0adf checkpoint."
     }
   },
-  "aggregate_source_tree": "306c4d58fe6c0902c4c1b0fbbc3cddd64aed1c4b",
+  "aggregate_source_tree": "6d532dd606a1fdf987245a03271970758a03fe57",
   "current_qualification": {
-    "source_commit": "829600f8d667b74329a79dd0b0d7964c2e092fd0",
-    "source_tree": "306c4d58fe6c0902c4c1b0fbbc3cddd64aed1c4b",
-    "parents": [
-      "a73cea498d93e353eb49ef08aff785bd0c0a768c"
-    ],
-    "remote_code_commit": "175909a0b5ea0f1d2ef77012c672935698793dea",
-    "distinct_affected_passed": 1444,
-    "case_count": 1445,
-    "selection_node_selectors": 65,
-    "failed": 0,
-    "errors": 0,
-    "ordinary_skipped": 0,
-    "xfailed": 1,
-    "expected_failures": [
-      "CODEX-5"
-    ],
-    "command_seconds": 91.481,
-    "whole_tree_ruff": "passed",
-    "dependencies": "passed",
-    "isolated_source_import": "passed; clean source-bound checkout before and after",
-    "independent_review": "No blocker; 48 maintained Tier R cases plus19 independent controls; counts overlap root selection",
-    "test_tree_audit": "984 immutable Python test blobs parsed;55 workflow-related files inspected; no second concrete stale tag assertion found",
-    "final_source_hosted": "pending exact final PR349 publication head",
-    "full_suite": "Earlier incomplete local and cancelled hosted attempts retained; no completed full suite for this revision yet",
-    "evidence": "docs/engineering/evidence/cycle837fe-tier-r-20261121/combined-focused.json"
+    "source_commit": "0cdd5bf37130206c2ddec399450be6338ae8e4fd",
+    "source_tree": "6d532dd606a1fdf987245a03271970758a03fe57",
+    "remote_code_commit": "06b5ed67c78aac30972e657b4a7ae5a17de739b8",
+    "status": "Bounded implementation and independent records review complete; exact final-source hosted qualification pending",
+    "codex5_checkpoint": "5b5328ee83ee4990b3311f7ac90e2f5e5f76f800",
+    "codex5_evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/qualification.json",
+    "pages": {
+      "source_commit": "0cdd5bf37130206c2ddec399450be6338ae8e4fd",
+      "source_tree": "6d532dd606a1fdf987245a03271970758a03fe57",
+      "original_workflow_regression": {
+        "passed": 7,
+        "failed": 1,
+        "expected_reproduction": true
+      },
+      "site": {
+        "passed": 249,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "workflow_scanner_registry": {
+        "passed": 226,
+        "strict_xfailed": 2,
+        "failed": 0,
+        "errors": 0
+      },
+      "exact_frozen_workflow_registry": {
+        "passed": 119,
+        "overlaps_other_selections": true
+      },
+      "independent_review": {
+        "passed": 119,
+        "controls": 12,
+        "verdict": "no blocker",
+        "counts_overlap": true
+      },
+      "bounded_ruff": "passed",
+      "pip_check": "passed",
+      "source_binding": "passed",
+      "native_or_hosted_acceptance": false,
+      "counts_must_not_be_added_to_5b_focused_suite": true
+    },
+    "whole_tree_ruff": "Passed on exact0cdd source with explicitly recorded documentation-only working changes",
+    "final_hosted": "PENDING",
+    "main_merge_status": "PENDING",
+    "counts_scope": "Earlier5b and Pages/registry/scanner selections overlap; do not aggregate them.",
+    "post_record_checks": {
+      "registry_passed": 111,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "pip_check": "passed",
+      "isolated_source_and_editable_binding": "passed",
+      "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/combined-pages-record-validation.json",
+      "full_suite_rerun": false
+    },
+    "independent_records_review": {
+      "reviewed_tree": "e7ecad2c0b1128a83876bf137634cf9f64d29f1f",
+      "mechanical_checks_passed": 141,
+      "product_pytest_count": 0,
+      "blockers": [],
+      "review_sha256": "363957fc9c2a95637ff1fbcefcbbb3c31d60f07761251f1af05fae97520b6155",
+      "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/final-records-independent-review.json",
+      "append_only_delta": "The reviewed record tree is extended only by its review receipts/manifest and truthful review status; no source or task history changes."
+    }
   },
   "current_handoff": "docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md",
   "previous_session_qualification": {
@@ -2050,12 +2633,13 @@
     "integration_commit": "71b535cc5c1ca0ccc6762831a5d8a137644d14fc"
   },
   "continuation": {
-    "status": "TESTING",
     "owner": "root837FE",
-    "handoff": "docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md",
-    "code_commit": "829600f8d667b74329a79dd0b0d7964c2e092fd0",
-    "target_pr": 349,
-    "next_action": "Publish reviewed Tier R test repair to existing PR349; inspect exact-source full/Qt/native/package/frozen gates; expected-head guarded REST main merge only when qualified, with [no release] [no deploy]."
+    "status": "TESTING",
+    "code_commit": "0cdd5bf37130206c2ddec399450be6338ae8e4fd",
+    "report": "docs/engineering/cycle837fe-codex5-20261121.md",
+    "release_ready": false,
+    "main_merge_eligible": false,
+    "next_action": "Publish the independently reviewed combined record commit, qualify the exact final PR source, merge by guarded REST and observe automatic held Pages/upload/release behavior."
   },
   "sibling_95fe_qualification": {
     "source_commit": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
@@ -2325,7 +2909,7 @@
       "xfailed": 5
     },
     "qa_qt_native_package_smokes": "all-current-non-release-checks-success",
-    "source_scope": "PR348 only; tree identity independently verified. PR345\u2013347 also green on their own retained heads.",
+    "source_scope": "PR348 only; tree identity independently verified. PR345–347 also green on their own retained heads.",
     "evidence": "docs/engineering/evidence/cycle3-95fe/hosted-qualification.json"
   },
   "parallel_continuation_837fe": {
@@ -2662,6 +3246,669 @@
           "next_action": "Inspect fresh actual Windows probe/analysis;preserve original failures."
         }
       ]
+    },
+    {
+      "context": "Primary ae69 promoted; prior source-specific records before CODEX-5 follow-up",
+      "recorded_at": "2026-11-21T09:33:42.765864+00:00",
+      "prior_ledger_evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/prior-ledger-ae69.json",
+      "previous_current_fields": {
+        "updated_at": "2026-11-21T07:43:03.236769+00:00",
+        "integration_branch": "integration/patchtrace-20261121-95fe-c3",
+        "local_integration_branch": "codex/patchtrace-tier-r-pin-contract-20261121-837fe",
+        "checkpoint_local_commit": "829600f8d667b74329a79dd0b0d7964c2e092fd0",
+        "aggregate_source_commit": "829600f8d667b74329a79dd0b0d7964c2e092fd0",
+        "aggregate_source_tree": "306c4d58fe6c0902c4c1b0fbbc3cddd64aed1c4b",
+        "remote_publication": {
+          "status": "reviewed Tier R repair awaiting guarded PR349 publication and final hosted qualification",
+          "branch": "integration/patchtrace-20261121-95fe-c3",
+          "base_branch": "main",
+          "base_commit": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+          "previous_source_head": "a73cea498d93e353eb49ef08aff785bd0c0a768c",
+          "pr_number": 349,
+          "head_rule": "Resolve live PR349 body/head, mapped source/tree and current CI; do not mutate a running head merely to record status.",
+          "original_source_evidence": "docs/engineering/evidence/cycle837fe-tier-r-20261121/root-evidence.zip",
+          "publication_transport": "GitHub REST Git Data; exact trees and ordered mapped parents; guarded non-force ref update",
+          "verified_code_remote_commit": "175909a0b5ea0f1d2ef77012c672935698793dea",
+          "verified_code_tree": "306c4d58fe6c0902c4c1b0fbbc3cddd64aed1c4b",
+          "commit_mapping": "docs/engineering/evidence/cycle837fe-tier-r-20261121/code-publication-mapping.json"
+        },
+        "current_qualification": {
+          "source_commit": "829600f8d667b74329a79dd0b0d7964c2e092fd0",
+          "source_tree": "306c4d58fe6c0902c4c1b0fbbc3cddd64aed1c4b",
+          "parents": [
+            "a73cea498d93e353eb49ef08aff785bd0c0a768c"
+          ],
+          "remote_code_commit": "175909a0b5ea0f1d2ef77012c672935698793dea",
+          "distinct_affected_passed": 1444,
+          "case_count": 1445,
+          "selection_node_selectors": 65,
+          "failed": 0,
+          "errors": 0,
+          "ordinary_skipped": 0,
+          "xfailed": 1,
+          "expected_failures": [
+            "CODEX-5"
+          ],
+          "command_seconds": 91.481,
+          "whole_tree_ruff": "passed",
+          "dependencies": "passed",
+          "isolated_source_import": "passed; clean source-bound checkout before and after",
+          "independent_review": "No blocker; 48 maintained Tier R cases plus19 independent controls; counts overlap root selection",
+          "test_tree_audit": "984 immutable Python test blobs parsed;55 workflow-related files inspected; no second concrete stale tag assertion found",
+          "final_source_hosted": "pending exact final PR349 publication head",
+          "full_suite": "Earlier incomplete local and cancelled hosted attempts retained; no completed full suite for this revision yet",
+          "evidence": "docs/engineering/evidence/cycle837fe-tier-r-20261121/combined-focused.json"
+        },
+        "current_handoff": "docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md",
+        "continuation": {
+          "status": "TESTING",
+          "owner": "root837FE",
+          "handoff": "docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md",
+          "code_commit": "829600f8d667b74329a79dd0b0d7964c2e092fd0",
+          "target_pr": 349,
+          "next_action": "Publish reviewed Tier R test repair to existing PR349; inspect exact-source full/Qt/native/package/frozen gates; expected-head guarded REST main merge only when qualified, with [no release] [no deploy]."
+        },
+        "main_merge_eligible": false,
+        "release_ready": false
+      },
+      "updated_tasks_before_promotion": [
+        {
+          "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
+          "base_commit": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+          "code_checkpoint": "b880c317add4de3ac22c87cd842abb0e7ccc615d",
+          "merge_status": "NOT_MERGED",
+          "evidence_links": [
+            "docs/engineering/cycle837fe-recovery-and-search-20261121.md",
+            "docs/engineering-handoffs/cycle837fe-20261121.md",
+            "docs/engineering/evidence/cycle837fe-20261121/manifest.json"
+          ],
+          "id": "search-header-help-20261121-837fe",
+          "status": "TESTING",
+          "implementation_status": "COMPLETE",
+          "description": "Complete six Search header explanations and actual-host coverage.",
+          "owner": "ownership_audit; independent packaging_recovery",
+          "source_branch": "codex/patchtrace-search-header-help-20261121-837f",
+          "source_commit": "0069d0d28a8a8695d72f6ca960beaa7756b082ce",
+          "files_owned": [
+            "src/patchtrace/search/qt_panel.py",
+            "src/patchtrace/search/tooltip_data.py",
+            "tests/test_search_header_help.py",
+            "tests/test_search_view_model.py",
+            "tests/test_tooltips.py",
+            "docs/specs/gui-framework.md",
+            "docs/specs/program-e/WB1-integration-plan.md"
+          ],
+          "tests": "Final combined 450 passed; source-specific author/reviewer selections preserved.",
+          "audit_findings": "S-H1 wording correction independently closed; one-mapping negative control fails audit.",
+          "blockers": [
+            "exact-current-source hosted qualification"
+          ],
+          "next_action": "Included in current combined source;inspect current PR349 checks before main promotion.",
+          "dependencies": [
+            "PR349 combined qualification;original95FE-C3 ownership handoff completed"
+          ],
+          "integration_history": [
+            {
+              "target_integration_branch": "codex/patchtrace-recovery-search-20261121-837fe",
+              "blockers": [
+                "exact-final-head hosted qualification",
+                "integration ownership handoff"
+              ],
+              "next_action": "Inspect candidate hosted checks and integrate after owner handoff.",
+              "dependencies": [
+                "PR348 baseline",
+                "95FE-C3 integration ownership"
+              ]
+            }
+          ]
+        },
+        {
+          "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
+          "base_commit": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+          "code_checkpoint": "b880c317add4de3ac22c87cd842abb0e7ccc615d",
+          "merge_status": "NOT_MERGED",
+          "evidence_links": [
+            "docs/engineering/cycle837fe-recovery-and-search-20261121.md",
+            "docs/engineering-handoffs/cycle837fe-20261121.md",
+            "docs/engineering/evidence/cycle837fe-20261121/manifest.json"
+          ],
+          "id": "service-postcommit-snapshot-20261121-837fe",
+          "status": "TESTING",
+          "implementation_status": "COMPLETE",
+          "description": "Reconcile committed state after save/backup interruption; refuse further snapshot writes if readback fails.",
+          "owner": "service_commit_repair; independent service_review",
+          "source_branch": "codex/patchtrace-postcommit-service-20261121-837fe",
+          "source_commit": "1ce478b3f5dee036f54cb9e39353ef82cf1610c0",
+          "files_owned": [
+            "src/patchtrace/service.py",
+            "tests/test_service_postcommit_recovery.py",
+            "docs/specs/enrichment-hardening-backlog.md"
+          ],
+          "tests": "Final combined 450 passed; final service author 262, independent 155; combined independent 34 are separate overlapping selections.",
+          "audit_findings": "POSTCOMMIT-SERVICE-SNAPSHOT, SVC-R1 and SVC-R2 repaired and independently closed.",
+          "blockers": [
+            "exact-current-source hosted qualification"
+          ],
+          "next_action": "Included in current combined source;inspect current PR349 checks before main promotion.",
+          "dependencies": [
+            "PR349 combined qualification;original95FE-C3 ownership handoff completed"
+          ],
+          "integration_history": [
+            {
+              "target_integration_branch": "codex/patchtrace-recovery-search-20261121-837fe",
+              "blockers": [
+                "exact-final-head hosted qualification",
+                "integration ownership handoff"
+              ],
+              "next_action": "Keep original failures, qualify current published source and reconcile integration.",
+              "dependencies": [
+                "PR348 baseline",
+                "95FE-C3 integration ownership"
+              ]
+            }
+          ]
+        },
+        {
+          "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
+          "base_commit": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+          "code_checkpoint": "b880c317add4de3ac22c87cd842abb0e7ccc615d",
+          "merge_status": "NOT_MERGED",
+          "evidence_links": [
+            "docs/engineering/cycle837fe-recovery-and-search-20261121.md",
+            "docs/engineering-handoffs/cycle837fe-20261121.md",
+            "docs/engineering/evidence/cycle837fe-20261121/manifest.json"
+          ],
+          "id": "backup-cleanup-cancellation-20261121-837fe",
+          "status": "TESTING",
+          "implementation_status": "COMPLETE",
+          "description": "Preserve primary outcome after filesystem cleanup failure and never clean a consumed staging name.",
+          "owner": "backup_cleanup_repair; independent backup_review",
+          "source_branch": "codex/patchtrace-backup-cleanup-20261121-837fe",
+          "source_commit": "4d3a60f8686bb80832e33d4fc01040daf7deaa09",
+          "files_owned": [
+            "src/patchtrace/persistence.py",
+            "tests/test_backup_cleanup.py",
+            "docs/specs/cli-project-compare.md"
+          ],
+          "tests": "Final combined 450 passed; author/reviewer 169 and independent 5 are separate overlapping source-specific selections.",
+          "audit_findings": "BACKUP-CLEANUP-CANCELLATION independently closed; consumed-name ownership control retained.",
+          "blockers": [
+            "exact-current-source hosted qualification"
+          ],
+          "next_action": "Included in current combined source;inspect current PR349 checks before main promotion.",
+          "dependencies": [
+            "PR349 combined qualification;original95FE-C3 ownership handoff completed"
+          ],
+          "integration_history": [
+            {
+              "target_integration_branch": "codex/patchtrace-recovery-search-20261121-837fe",
+              "blockers": [
+                "exact-final-head hosted qualification",
+                "integration ownership handoff"
+              ],
+              "next_action": "Inspect candidate hosted checks and merge only when qualified.",
+              "dependencies": [
+                "PR348 baseline",
+                "95FE-C3 integration ownership"
+              ]
+            }
+          ]
+        },
+        {
+          "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
+          "assigned_worker": "completed scoped author and independent reviewer; root837FE integration",
+          "implementation_status": "COMPLETE",
+          "merge_status": "not merged to main",
+          "dependencies": [
+            "PR349 combined exact-head hosted qualification"
+          ],
+          "blockers": [
+            "new-source hosted checks pending"
+          ],
+          "status": "TESTING",
+          "id": "837fe-codex1-direct-actions",
+          "description": "Complete immutable direct Action references",
+          "source_branch": "codex/patchtrace-codex1-direct-action-pins-20261121-837fe",
+          "source_commit": "ad0997044ddd2c957ad0de1ede8db4c7dab00317",
+          "files_owned": [
+            ".github/workflows/",
+            "tests workflow contracts",
+            "docs/specs/ci-action-pinning.md"
+          ],
+          "test_results": "178 direct uses pinned; 272 maintained passed / 1 CODEX-5 xfailed; 13 separate independent controls passed.",
+          "audit_findings": "No source blocker; parsed/text workflow preservation and all 11 official mappings verified. Later hosted QA found a missed Tier R mutable-tag assertion; repaired/reviewed in829600f8; original review coverage miss retained.",
+          "evidence": "docs/engineering/codex1-direct-action-pins-20261121.md",
+          "next_action": "Qualify corrected combined head; preserve original coverage miss and cancelled failure."
+        },
+        {
+          "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
+          "assigned_worker": "completed scoped author and independent reviewer; root837FE integration",
+          "implementation_status": "COMPLETE",
+          "merge_status": "not merged to main",
+          "dependencies": [
+            "PR349 combined exact-head hosted qualification"
+          ],
+          "blockers": [
+            "new-source hosted checks pending"
+          ],
+          "status": "TESTING",
+          "id": "837fe-intel-windows-version-names",
+          "description": "Accept exact Windows .exe version program names",
+          "source_branch": "codex/patchtrace-intel-version-20261121-837fe",
+          "source_commit": "eeb7bc07eff8b1028adc40fbad8d04deecfdd539",
+          "files_owned": [
+            "src/patchtrace/intelligence/tools/capa.py",
+            "src/patchtrace/intelligence/tools/floss.py",
+            "tests/test_intel_tool_version_names.py",
+            "docs/specs/three-tool-evidence-adapters.md"
+          ],
+          "test_results": "Author 169 passed; independent 185 passed including 16 fresh controls; exact baseline fresh controls 8 failed/8 passed.",
+          "audit_findings": "No source blocker; AST unchanged outside two literal noncapturing suffix patterns. Native FLOSS exit1 remains unresolved.",
+          "evidence": "docs/engineering/evidence/cycle837fe-combined-20261121/intel-independent-review.zip",
+          "next_action": "Inspect exact combined-head hosted outcomes; preserve source/native/release distinctions.",
+          "latest_native_observation": "daee Windows capa.exe version/help exit0;FLOSS missing-pwd diagnosed and repaired in subsequent source;fresh actual acceptance pending."
+        },
+        {
+          "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
+          "assigned_worker": "completed scoped author and independent reviewer; root837FE integration",
+          "implementation_status": "COMPLETE",
+          "merge_status": "not merged to main",
+          "dependencies": [
+            "PR349 combined exact-head hosted qualification"
+          ],
+          "blockers": [
+            "new-source hosted checks pending"
+          ],
+          "status": "TESTING",
+          "id": "837fe-intel-probe-diagnostics",
+          "description": "Retain bounded evidence from existing actual live probes",
+          "source_branch": "codex/patchtrace-intel-probe-evidence-20261121-837fe",
+          "source_commit": "03db821b65b19ebe57044d2e1eee2da0c3605a08",
+          "files_owned": [
+            "tests/test_live_intel_tools.py",
+            "tests/intel_probe_diagnostics.py",
+            "tests/test_intel_probe_diagnostics.py",
+            "docs/specs/live-intel-probe-diagnostics.md"
+          ],
+          "test_results": "Author 105 passed; independent 110 passed including 5 fresh controls; no native success inferred.",
+          "audit_findings": "No source blocker; forwarding/result identity/restoration/exception preservation verified; acceptance AST unchanged apart from observation.",
+          "evidence": "docs/engineering/evidence/cycle837fe-combined-20261121/intel-independent-review.zip",
+          "next_action": "Inspect exact combined-head hosted outcomes; preserve source/native/release distinctions."
+        },
+        {
+          "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
+          "assigned_worker": "completed scoped author and independent reviewer; root837FE integration",
+          "implementation_status": "COMPLETE",
+          "merge_status": "not merged to main",
+          "dependencies": [
+            "PR349 combined exact-head hosted qualification"
+          ],
+          "blockers": [
+            "new-source hosted checks pending"
+          ],
+          "status": "TESTING",
+          "id": "837fe-pr349-spec-registry",
+          "description": "Repair sole original PR349 Linux QA failure and register all 3 new specs",
+          "source_branch": "codex/patchtrace-spec-registry-20261121-837fe",
+          "source_commit": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
+          "files_owned": [
+            "docs/specs/REGISTRY.md"
+          ],
+          "test_results": "Current baseline 3 failed/105 passed; unchanged maintained test108 passed; final combined1296 passed/1 xfailed.",
+          "audit_findings": "Root reviewed 10-line index-only repair. Original hosted Linux 1 failed/24066 passed/53 skipped/4 xfailed retained.",
+          "evidence": "docs/engineering/evidence/cycle837fe-combined-20261121/pr349-registry-failure-evidence.zip",
+          "next_action": "Inspect exact combined-head hosted outcomes; preserve source/native/release distinctions."
+        },
+        {
+          "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
+          "assigned_worker": "completed scoped author and independent reviewer; root837FE integration",
+          "implementation_status": "COMPLETE",
+          "merge_status": "not merged to main",
+          "dependencies": [
+            "PR349 combined exact-head hosted qualification"
+          ],
+          "blockers": [
+            "new-source hosted checks pending"
+          ],
+          "status": "TESTING",
+          "id": "837fe-combined-pr349-qualification",
+          "description": "Qualify combined storage/Search/workflow/Intel repairs on existing main-integration PR",
+          "source_branch": "integration/patchtrace-20261121-837fe-combined",
+          "source_commit": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
+          "files_owned": [
+            "integration and authoritative engineering records"
+          ],
+          "test_results": "1296 passed/1 CODEX-5 xfailed; zero failed/errors/ordinary skips; 1,297 distinct identities; Ruff/pip/source binding pass.",
+          "audit_findings": "All scoped independent source findings closed; exact new-head hosted/platform acceptance pending.",
+          "evidence": "docs/engineering/cycle837fe-combined-pr349-20261121.md",
+          "next_action": "Inspect exact combined-head hosted outcomes; preserve source/native/release distinctions.",
+          "current_followup": {
+            "source": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+            "qualification": {
+              "source_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+              "source_tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
+              "parents": [
+                "d628749401f61d3653b5e066ff38245b938c5dcd",
+                "39a95c549d48eb523e9efdfda394bb9f184e2b16"
+              ],
+              "distinct_affected_passed": 1396,
+              "case_count": 1397,
+              "selection_node_selectors": 64,
+              "failed": 0,
+              "errors": 0,
+              "ordinary_skipped": 0,
+              "xfailed": 1,
+              "expected_failures": [
+                "CODEX-5"
+              ],
+              "whole_tree_ruff": "passed",
+              "dependencies": "passed",
+              "isolated_source_import": "passed; clean source-bound checkout",
+              "independent_review": "Exact complete-tree union;141 maintained checks and independent identity controls passed;no source blocker.",
+              "final_source_hosted": "pending exact final PR349 publication head",
+              "full_suite": "No successful local full aggregate claimed. Preserve earlier AF_UNIX EPERM and independently unexplained SIGKILL.",
+              "evidence": "docs/engineering/evidence/cycle837fe-native-c4-20261121/combined-focused.json"
+            },
+            "report": "docs/engineering/cycle837fe-native-c4-20261121.md"
+          }
+        },
+        {
+          "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
+          "merge_status": "not merged to main",
+          "id": "837fe-intel-synthetic-windows-identity",
+          "status": "TESTING",
+          "description": "Repair actual Windows getpass/pwd failure without inheriting caller identity",
+          "source_branch": "codex/patchtrace-intel-windows-identity-20261121-837fe",
+          "source_commit": "d628749401f61d3653b5e066ff38245b938c5dcd",
+          "assigned_worker": "completed intel_live_triage author and intel_windows_identity_review;root integration",
+          "files_owned": [
+            "src/patchtrace/intelligence/tools/process.py",
+            "docs/specs/three-tool-evidence-adapters.md",
+            "tests/test_intel_tools_environment.py",
+            "tests/test_intel_tools_runner.py"
+          ],
+          "implementation_status": "COMPLETE",
+          "test_results": "130 author and130 overlapping peer passes;1314+1 Intel-only and1396+1 combined selections separate. Actual a73 native run44880309380: Linux4passed; Windows3passed/1offline-namespace skip; all three engine goldens pass.",
+          "audit_findings": "No blocker;real getpass red/pass/removal,privacy/extras/adapter controls.",
+          "dependencies": [
+            "PR349 exact final-head qualification"
+          ],
+          "blockers": [
+            "final revised-head full/native/package qualification pending"
+          ],
+          "evidence_links": [
+            "docs/engineering/cycle837fe-native-c4-20261121.md",
+            "docs/engineering/evidence/cycle837fe-native-c4-20261121/intel-identity-independent.json",
+            "docs/engineering/evidence/cycle837fe-native-c4-20261121/daee-intel-summary.json",
+            "docs/engineering/evidence/cycle837fe-tier-r-20261121/a73-intel-summary.json"
+          ],
+          "next_action": "Preserve actual a73 native pass and qualify final revised head."
+        },
+        {
+          "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
+          "merge_status": "not merged to main",
+          "id": "837fe-native-c4-combined-qualification",
+          "status": "TESTING",
+          "description": "Combine C4 and Intel repair without duplicate source or lost records",
+          "source_branch": "integration/patchtrace-20261121-837fe-native-followup",
+          "source_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
+          "assigned_worker": "root837FE;completed independent integration reviewer",
+          "files_owned": [
+            "integration and authoritative engineering records"
+          ],
+          "implementation_status": "COMPLETE",
+          "test_results": "1396passed/1CODEX-5xfail;1397distinct;64selectors;Ruff/pip/source binding passed.",
+          "audit_findings": "Exact whole-tree union and parents;141 overlapping independent maintained passes;no blocker.",
+          "dependencies": [
+            "current-source full/Qt/native/package/frozen gates"
+          ],
+          "blockers": [
+            "exact final publication qualification pending"
+          ],
+          "evidence_links": [
+            "docs/engineering/cycle837fe-native-c4-20261121.md",
+            "docs/engineering/evidence/cycle837fe-native-c4-20261121/qualification.json"
+          ],
+          "next_action": "Publish reviewed Intel+C4 exact source to PR349; inspect full/Qt/native/package/frozen gates and actual Windows Intel; guarded REST main merge only when qualified, with both opt-out flags."
+        },
+        {
+          "id": "837fe-tier-r-immutable-pin-contract",
+          "status": "TESTING",
+          "description": "Repair missed Tier R mutable Action-tag test after immutable pinning",
+          "source_branch": "codex/patchtrace-tier-r-pin-contract-20261121-837fe",
+          "source_commit": "829600f8d667b74329a79dd0b0d7964c2e092fd0",
+          "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
+          "assigned_worker": "root837FE author; completed codex1_independent_review; root qualification",
+          "files_owned": [
+            "tests/test_tier_r_shard.py"
+          ],
+          "implementation_status": "COMPLETE",
+          "test_results": "Baseline1failure;combined1444passed/1CODEX-5xfail;independent67passed including19controls;Ruff/pip/binding pass.",
+          "audit_findings": "CODEX1-TIER-R-STALE-TAG resolved;exact7reviewed commits enforced;all prior workflow/digests/permissions/triggers/compiler assertions preserved.",
+          "dependencies": [
+            "PR349 exact final-head hosted qualification"
+          ],
+          "blockers": [
+            "final full/Qt/native/package/frozen results pending"
+          ],
+          "merge_status": "not merged to main",
+          "evidence_links": [
+            "docs/engineering/evidence/cycle837fe-tier-r-20261121/qualification.json",
+            "docs/engineering/evidence/cycle837fe-tier-r-20261121/independent-review.json",
+            "docs/engineering/evidence/cycle837fe-tier-r-20261121/prior-cancelled-failure.json"
+          ],
+          "next_action": "Publish reviewed Tier R test repair to existing PR349; inspect exact-source full/Qt/native/package/frozen gates; expected-head guarded REST main merge only when qualified, with [no release] [no deploy]."
+        }
+      ],
+      "original_donor_task": {
+        "id": "codex5-per-command-audit-20261121",
+        "status": "implemented-exact-new-file-controls-verified-awaiting-peer-hosted",
+        "owner": "isolated CODEX-5 author; reviewer unassigned; Root837FE owns PR349 integration separately",
+        "branch": "codex/patchtrace-codex5-per-command-audit-20261121",
+        "base_commit": "f928a0cef29eac2b603d390c40fb86448111b91b",
+        "evidence": "docs/engineering/evidence/codex5-per-command-audit-20261121.json",
+        "source_paths": [
+          "tools/ci_pip_install_audit.py",
+          "tests/test_codex5_command_audit_20261121.py",
+          "docs/audits/codex-workflows-1.md"
+        ],
+        "result_or_next_action": "Exact published scanner/test Git blobs equal local executed mirror; 17 tests passed, 1 strict CODEX-5 xfailed; 3 intentional mutations each cause 1 correct failure. Full GitHub workflow checkout tests/Ruff/independent peer/CI still open. Coordinate with Root837FE; do not merge while unqualified."
+      },
+      "original_donor_notes": [
+        "2026-11-21 isolated CODEX-5 scanner: per-command run-scalar audit published on an independent C4-descendant branch, preserving both strict CODEX-5 xfails (old plus new) and all parent files. Local authored-fixture source mirror 17 passed/one strict xfailed; compileall and two additional controls pass. Full repository-source pytest/Ruff, independent review and actual workflow package hash closure are NOT established. No main or PR349/350 ref movement.",
+        "CODEX-5 per-command isolated follow-up: local mirror's newly authored scanner and tests match published Git blob identities exactly. Seventeen clean fixture tests pass and one strict CODEX-5 expected failure is retained; three source mutations each fail precisely one regression. This is not whole-repo qualification or independent review; source-bound actual workflow scan remains pending."
+      ]
+    },
+    {
+      "context": "837fe-primary-legacy-acceptance-reconciliation",
+      "recorded_at": "2026-11-21T09:37:05.314572+00:00",
+      "before": [
+        {
+          "id": "codex14-linux-frozen-cli-smoke-20261121",
+          "owner": "completed independent spec/standards reviews; coordinator qualification",
+          "status": "implemented-independently-reviewed-local-passed-hosted-frozen-pending",
+          "branch": "codex/patchtrace-linux-frozen-cli-smoke-20261121",
+          "base_commit": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+          "scope": "Add full actual frozen CLI harness to unpacked checksum-verified Linux onedir release artifact on ubuntu-22.04 and ubuntu-24.04 without removing existing Qt offscreen/xcb checks.",
+          "contract_commit": "68cfff469618f0123df81740c4ab2a0bf3e24e00",
+          "test_commit": "d34f6100c01d06c4ff2681d3b6ca6d6fca07ed8d",
+          "workflow_commit": "93a6698b1a8f38e26199638ee9d72d2adc985dd3",
+          "tests": "tests/test_codex_pkg_packaging.py (previous CODEX-14 strict xfail promoted to source contract assertion; 1 preserved/enhanced case and 1 new Qt-modes preservation case)",
+          "contract": "docs/linux.md (frozen Linux CLI acceptance)",
+          "evidence": "docs/engineering/codex14-linux-frozen-cli-smoke-20261121.md",
+          "review_status": "Two independent axes found no blocking defect; root unused-import repair separately reviewed.",
+          "result_or_next_action": "91 focused tests passed on retained source before import-only cleanup; final combined source has469 distinct affected passes, wholeRuff passed. Require exact-candidate Ubuntu22.04/24.04 full frozen CLI jobs plus applicable QA/native/package. No frozen executable execution inferred from text controls.",
+          "smoke_docstring_commit": "2af9a5c37eaf25198fada253fcc586e8fe0183ba",
+          "test_hardening_commit": "6ea0ff2538159bdc714d840ab1368fdecc2b6d77",
+          "negative_controls": "7/7 author-side in-memory workflow mutations detected, evidence docs/engineering/evidence/codex14-linux-smoke-static-review-20261121.json; not independent review",
+          "source_commit": "5fa47ac7b03451f404c2f0acd871e8700067c13f",
+          "combined_source": "e5a531668ef523cd6faa26d5fec59aa552749134",
+          "latest_evidence": "docs/engineering/evidence/cycle3-95fe/qualification.json"
+        },
+        {
+          "id": "codex6-corpus-cache-archive-20261121",
+          "owner": "completed independent spec/standards reviews; coordinator qualification",
+          "status": "implemented-repaired-independently-reviewed-local-passed-hosted-cache-pending",
+          "branch": "codex/patchtrace-corpus-archive-integrity-20261121",
+          "base_branch": "codex/patchtrace-integration-20261121-2bad",
+          "base_commit": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+          "source_area": ".github/workflows/corpus-tier-r.yml, strict source tests, Tier R normative specification",
+          "contract": "docs/specs/known-answer-corpus.md",
+          "review": "docs/engineering/codex6-corpus-cache-archive-20261121.md",
+          "evidence": "docs/engineering/evidence/codex6-archive-cache-controls-20261121.json",
+          "tests": [
+            "tests/test_corpus_cache_archive_integrity_20261121.py",
+            "tests/test_codex_pkg_workflows.py"
+          ],
+          "source_repair_commit": "c32449278d0712fa9e653f4b7c51eb5f679a693c",
+          "verification": "Historical author receipt: 14 fetched-source invariants and 14 author JS mutations; previous 12-invariant current-summary label corrected by cycle3 review. Actual source-bound results and independent reviews are recorded in cycle3 qualification; native cache acceptance is separate.",
+          "result_or_next_action": "Original d250 test oracle failed1/29passed/2xfail; repaired full rizin heading and original-valid precondition. Corrected selection30pass/2existingxfail and wholeRuff pass. Actual Bash fixture cache-hit cases pass on both archive formats. Combined469 passes overlap. Hosted TierR/cache-hit and separate Ghidriff path remain unverified; do not treat PR348 or fixture data as that acceptance.",
+          "source_commit": "53e02a478235498563a092d7943c7feaf40adda6",
+          "combined_source": "e5a531668ef523cd6faa26d5fec59aa552749134",
+          "review_status": "No blocking workflow/runtime finding. P3 current-summary counts reconciled against final14/14 author receipt.",
+          "latest_evidence": "docs/engineering/evidence/cycle3-95fe/qualification.json"
+        },
+        {
+          "id": "codex6-cache-hit-fixture-20261121",
+          "status": "implemented-repaired-independently-reviewed-local-passed-hosted-cache-pending",
+          "owner": "completed independent spec/standards reviews; coordinator qualification",
+          "base_commit": "658cc814aa74d1eaebf0d7e6dd4553d06aaef0eb",
+          "branch": "codex/patchtrace-codex6-cache-hit-fixture-tests-20261121",
+          "evidence": "docs/engineering-handoffs/codex6-cache-hit-fixture-20261121.md",
+          "tests": "tests/test_corpus_archive_cache_hit_shell_20261121.py",
+          "result_or_next_action": "Original d250 test oracle failed1/29passed/2xfail; repaired full rizin heading and original-valid precondition. Corrected selection30pass/2existingxfail and wholeRuff pass. Actual Bash fixture cache-hit cases pass on both archive formats. Combined469 passes overlap. Hosted TierR/cache-hit and separate Ghidriff path remain unverified; do not treat PR348 or fixture data as that acceptance.",
+          "source_commit": "53e02a478235498563a092d7943c7feaf40adda6",
+          "combined_source": "e5a531668ef523cd6faa26d5fec59aa552749134",
+          "review_status": "No blocking workflow/runtime finding. P3 current-summary counts reconciled against final14/14 author receipt.",
+          "latest_evidence": "docs/engineering/evidence/cycle3-95fe/qualification.json"
+        },
+        {
+          "id": "cycle3-pages-deployment-control",
+          "status": "implemented-independently-reviewed-local-passed-hosted-pending",
+          "owner": "completed author and two independent review axes",
+          "source_commit": "e54e4d0afbcdc3916539c62810877faa65842d5e",
+          "combined_source": "e5a531668ef523cd6faa26d5fec59aa552749134",
+          "contract": "docs/specs/pages-deployment-control.md",
+          "evidence": "docs/engineering/evidence/cycle3-95fe/pages-veto-candidate.json",
+          "result_or_next_action": "Actual push-head [no deploy] veto is limited to Pages deploy; manual dispatch, build/artifacts and permissions unchanged. Source red1fail/6pass; repaired52staticchecks; combined tests pass. No deployment invoked. Actual main merge must contain both [no release] [no deploy]."
+        },
+        {
+          "id": "pages-site-isolation-and-hashes-20261121-95fe",
+          "status": "implemented-independently-reviewed-local-qualified",
+          "owner": "95FE-C4 completed author and two independent reviewers",
+          "source_commit": "8c5e77e2c1ad3f6cfa62c2e474f7bcc2f4af1dd5",
+          "evidence": "docs/engineering/evidence/cycle4-95fe/qualification.json",
+          "result_or_next_action": "Confirmed missing-pydantic site-only fixture error repaired by explicit pytest isolation. Seven verified Linux/Python 3.12 wheels are pinned and hashed. Fresh offline install/build and both refusal controls verified; 247 site passes and one existing optional GUI skip. The final full-dependency selection includes a passing GUI screenshot test. Hosted index/build and broader CODEX-5 remain open."
+        },
+        {
+          "id": "codex5-per-command-audit-gap-20261121-95fe",
+          "status": "open-follow-up",
+          "owner": "next coordinated audit worker; preserve 837FE Action-pin file ownership",
+          "source_commit": "11f51c105bf63946f59373ae605b937c4fee607a",
+          "evidence": "docs/engineering/evidence/cycle4-95fe/codex5-research.md",
+          "result_or_next_action": "Current run-block heuristic accepts hash/offline flags anywhere, including unrelated commands/comments. Synthetic text controls retained. Implement per-command and referenced-lock checks without weakening global strict xfail; no current workflow compromise inferred."
+        },
+        {
+          "target_integration_branch": "integration/patchtrace-20261121-95fe-c3",
+          "merge_status": "not merged to main",
+          "id": "837fe-codex5-bounded-assessment",
+          "status": "BLOCKED",
+          "description": "Recover wheelhouse infrastructure and inventory missing workflow hash closures",
+          "source_branch": "integration/patchtrace-20261121-837fe-combined",
+          "source_commit": "0a270822935fb372fc181f3e2573fe60d9a16a53",
+          "assigned_worker": "completed codex5_recovery_assessment;next scoped lock owner unassigned",
+          "files_owned": [],
+          "implementation_status": "assessment complete;broader closures incomplete",
+          "test_results": "Known strict-xfail exposed with --runxfail:1failed;no installs/native acceptance.",
+          "audit_findings": "Verified backend wheelhouse reusable;42explicit install steps before C4 Pages;host/transitive closures and per-command check incomplete.",
+          "dependencies": [
+            "target-specific approved Windows/Linux closures",
+            "existing backend builder reuse"
+          ],
+          "blockers": [
+            "missing host/build/app/dev/signing/engine locks and native install/build evidence"
+          ],
+          "evidence_links": [
+            "docs/engineering/evidence/cycle837fe-native-c4-20261121/codex5-bounded-assessment.md"
+          ],
+          "next_action": "Complete remaining scoped closures;Pages does not close all CODEX-5;preserve strict failure."
+        }
+      ],
+      "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-acceptance-reconciliation.json"
+    },
+    {
+      "context": "837fe-pages-followup-source-checkpoint",
+      "recorded_at": "2026-11-21T09:43:24.525663+00:00",
+      "previous_current_fields": {
+        "checkpoint_local_commit": "5b5328ee83ee4990b3311f7ac90e2f5e5f76f800",
+        "aggregate_source_commit": "5b5328ee83ee4990b3311f7ac90e2f5e5f76f800",
+        "aggregate_source_tree": "1e12edd510399fd92da6867cd071394ceb7fc95b",
+        "current_qualification": {
+          "source_commit": "5b5328ee83ee4990b3311f7ac90e2f5e5f76f800",
+          "source_tree": "1e12edd510399fd92da6867cd071394ceb7fc95b",
+          "remote_code_commit": "92dfc4d4d2ef9d604bc9db1a639d4f19add535a8",
+          "distinct_affected_passed": 1548,
+          "case_count": 1550,
+          "selection_node_selectors": 66,
+          "failed": 0,
+          "errors": 0,
+          "ordinary_skipped": 0,
+          "xfailed": 2,
+          "expected_failure_ids": [
+            "tests.test_codex_pkg_workflows::test_pip_downloads_require_hashes",
+            "tests.test_codex5_command_audit_20261121::test_all_explicit_workflow_pip_installs_are_protected"
+          ],
+          "command_seconds": 84.021,
+          "whole_tree_ruff": "passed",
+          "dependencies": "passed",
+          "isolated_source_import": "passed; clean source-bound checkout before and after",
+          "independent_review": {
+            "passed": 226,
+            "strict_xfailed": 2,
+            "lexical_controls": 20,
+            "yaml_controls": 3,
+            "typed_expected_outcomes": true,
+            "counts_overlap_root_selection": true
+          },
+          "final_source_hosted": "PENDING for future final follow-up PR/records source",
+          "main_merge_status": "PENDING for new CODEX-5 source",
+          "prior_full_attempt": {
+            "source": "93b053a88e4373d9f5c69cd68f96e1a49305d579",
+            "started_from_modified_worktree": true,
+            "exit_code": -9,
+            "wrapper_exit_code": 247,
+            "seconds": 498.536,
+            "cause": "unknown",
+            "aggregate_summary": null,
+            "second_local_full_attempt": false,
+            "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/author-history.zip"
+          },
+          "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/combined-focused.json"
+        },
+        "remote_publication": {
+          "status": "Static unreferenced code objects verified; follow-up PR/ref publication not performed by this helper",
+          "branch": null,
+          "pr_number": null,
+          "base_branch": "main",
+          "base_commit": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+          "verified_code_remote_commit": "92dfc4d4d2ef9d604bc9db1a639d4f19add535a8",
+          "verified_code_tree": "1e12edd510399fd92da6867cd071394ceb7fc95b",
+          "commit_mapping": "docs/engineering/evidence/cycle837fe-codex5-20261121/code-publication-mapping.json",
+          "ref_movement_by_mapping": false,
+          "final_records_head": null,
+          "head_rule": "Resolve fresh final follow-up PR/ref/CI after publication; mapped identity does not establish publication or qualification."
+        },
+        "continuation": {
+          "owner": "root837FE",
+          "status": "TESTING",
+          "code_commit": "5b5328ee83ee4990b3311f7ac90e2f5e5f76f800",
+          "report": "docs/engineering/cycle837fe-codex5-20261121.md",
+          "release_ready": false,
+          "main_merge_eligible": false,
+          "next_action": "Review/publish follow-up records, then inspect actual final PR/CI and guarded merge eligibility; keep [no release] [no deploy]."
+        }
+      },
+      "scope": "Preserve5b evidence; combined source adds one reviewed Pages configuration guard."
     }
   ],
   "parallel_followup_cycle4": {
@@ -2827,5 +4074,171 @@
     },
     "main_merge_eligible": false,
     "release_ready": false
+  },
+  "primary_main_promotion_837fe": {
+    "merged": true,
+    "source_head": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+    "source_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+    "main_before": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+    "merge_commit": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+    "actual_parents": [
+      "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+      "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e"
+    ],
+    "actual_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+    "opt_outs_verified": true,
+    "all_applicable_automated_jobs_passed": true,
+    "qualification_archive_sha256": "8eb127426bcf216b840bc10d5243fccdb8964d4ba17bf53b6282920406b57859",
+    "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-promotion-context.json",
+    "scope": "Primary ae69 only; documented open gates remain; not new CODEX-5 source qualification."
+  },
+  "codex5_followup_837fe": {
+    "status": "TESTING",
+    "implementation_status": "COMPLETE",
+    "code_commit": "5b5328ee83ee4990b3311f7ac90e2f5e5f76f800",
+    "code_tree": "1e12edd510399fd92da6867cd071394ceb7fc95b",
+    "remote_code_commit": "92dfc4d4d2ef9d604bc9db1a639d4f19add535a8",
+    "recovered_donor": "36b58a7d857690a8bf0093bcee1edd5036189b30",
+    "qualification": {
+      "source_commit": "5b5328ee83ee4990b3311f7ac90e2f5e5f76f800",
+      "source_tree": "1e12edd510399fd92da6867cd071394ceb7fc95b",
+      "remote_code_commit": "92dfc4d4d2ef9d604bc9db1a639d4f19add535a8",
+      "distinct_affected_passed": 1548,
+      "case_count": 1550,
+      "selection_node_selectors": 66,
+      "failed": 0,
+      "errors": 0,
+      "ordinary_skipped": 0,
+      "xfailed": 2,
+      "expected_failure_ids": [
+        "tests.test_codex_pkg_workflows::test_pip_downloads_require_hashes",
+        "tests.test_codex5_command_audit_20261121::test_all_explicit_workflow_pip_installs_are_protected"
+      ],
+      "command_seconds": 84.021,
+      "whole_tree_ruff": "passed",
+      "dependencies": "passed",
+      "isolated_source_import": "passed; clean source-bound checkout before and after",
+      "independent_review": {
+        "passed": 226,
+        "strict_xfailed": 2,
+        "lexical_controls": 20,
+        "yaml_controls": 3,
+        "typed_expected_outcomes": true,
+        "counts_overlap_root_selection": true
+      },
+      "final_source_hosted": "PENDING for future final follow-up PR/records source",
+      "main_merge_status": "PENDING for new CODEX-5 source",
+      "prior_full_attempt": {
+        "source": "93b053a88e4373d9f5c69cd68f96e1a49305d579",
+        "started_from_modified_worktree": true,
+        "exit_code": -9,
+        "wrapper_exit_code": 247,
+        "seconds": 498.536,
+        "cause": "unknown",
+        "aggregate_summary": null,
+        "second_local_full_attempt": false,
+        "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/author-history.zip"
+      },
+      "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/combined-focused.json"
+    },
+    "current_census": {
+      "workflows": 21,
+      "runs": 200,
+      "installs": 42,
+      "unprotected": 41
+    },
+    "open_gates": [
+      "Broad CODEX-5 host/build/application/dev/signing/engine hash closures; both strict expected failures remain.",
+      "Ghidra original-archive cache-hit acceptance remains a distinct gate.",
+      "Tier R coverage warnings, Tier W environment blocks, and native blocked checks remain; green wrapper jobs do not erase them.",
+      "Manual, trust, accessibility, full raw provenance, and separate L1/L2/L3 acceptance remain open.",
+      "New CODEX-5 source still requires final publication, applicable hosted/full qualification, and guarded main merge."
+    ],
+    "historical_dispositions": [
+      {
+        "branch": "chatgpt/java-probe-ci-fix-20261016",
+        "head": "0254841e3e635ed717e35abcf83021f001d7df29",
+        "classification": "DUPLICATE",
+        "whole_branch_accounted": true,
+        "unique_paths": [
+          "tests/test_backend_java_version.py"
+        ],
+        "reason": "Sole import-order correction is retained; original unchanged donor test passes.",
+        "original_ref_retained": true,
+        "original_census_rewritten": false
+      },
+      {
+        "branch": "chatgpt/java-probe-boundaries-20261016",
+        "head": "09bb4519d7d8e9ff8f40abcba7e11cb297d8b61e",
+        "classification": "SUPERSEDED",
+        "whole_branch_accounted": true,
+        "unique_paths": [
+          "tests/test_backend_java_version.py"
+        ],
+        "reason": "All donor cancellation/retry/error/missing-Java behavior tests are retained; current explicit fixture state improves lint compatibility; complete donor tests pass unchanged.",
+        "original_ref_retained": true,
+        "original_census_rewritten": false
+      },
+      {
+        "branch": "claude/bundle-license-gate",
+        "head": "d3617acf9af7834582b4962a8c149969a7d55a22",
+        "classification": "SUPERSEDED",
+        "whole_branch_accounted": true,
+        "merge_base": "21a005e242177f07a984937a7cd924e826c17b9f",
+        "unique_paths": [
+          ".github/workflows/backend-bundle.yml",
+          "docs/notices.md",
+          "tests/test_backend_pin.py",
+          "tests/test_build_backend_bundle.py",
+          "tests/test_build_full_variants.py",
+          "tests/test_codex_pkg_packaging.py",
+          "tools/backend_pin.json",
+          "tools/build_backend_bundle.py",
+          "tools/build_linux.py",
+          "tools/build_windows.py",
+          "tools/check_backend_pin.py"
+        ],
+        "reason": "All eleven branch paths are semantically integrated;69/74 top-level symbols identical, five bounded later extensions reviewed; no unique missing compatible delta found. Donor and maintained execution results remain separate and overlapping. Original branch retained.",
+        "evidence": "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-license-classification.json",
+        "original_ref_retained": true,
+        "original_census_rewritten": false
+      },
+      {
+        "branch": "codex/patchtrace-buildenv-header-help-20261121-a1",
+        "head": "09f07582d8d9017fe2be080605120b5c4cfd0b91",
+        "classification": "SUPERSEDED",
+        "commits": 9,
+        "changed_paths": 8,
+        "reason": "All five header help mappings, registration and table behavior already provided by current reviewed C4 implementation; two module AST comparisons and unchanged donor7-case Qt replay pass. Tooltip wording differs within the same evidence semantics. Current actual controller/host/copy/audit tests are stronger. Historical donor QA/ledger/handoff records retained, not copied over current state.",
+        "new_test_result": "7 passed in0.43s against current source; not added to1444selection",
+        "original_ref_retained": true,
+        "original_census_rewritten": false
+      },
+      {
+        "branch": "evidence/patchtrace-pr349-initial-ci-20261121-95fe",
+        "head": "566c43cd1647697cc770ea0cb92a0fb130015ec9",
+        "classification": "ARCHIVE",
+        "commits": 1,
+        "changed_paths": 11,
+        "reason": "Unique original11f publication/initial-advisory-failure evidence only; no source implementation. Original raw metadata, log and compressed representation remain retained with verified original manifests and gzip equality.",
+        "qualification": "Historical initial snapshot, not current-source acceptance",
+        "original_ref_retained": true,
+        "original_census_rewritten": false
+      }
+    ],
+    "original_census_preserved": {
+      "unmatched": 181,
+      "patch_equivalent": 16
+    },
+    "main_merge_eligible": false,
+    "release_ready": false,
+    "report": "docs/engineering/cycle837fe-codex5-20261121.md",
+    "combined_pages_source": {
+      "code_commit": "0cdd5bf37130206c2ddec399450be6338ae8e4fd",
+      "code_tree": "6d532dd606a1fdf987245a03271970758a03fe57",
+      "remote_code_commit": "06b5ed67c78aac30972e657b4a7ae5a17de739b8",
+      "c5_implementation_bytes_unchanged": true,
+      "workflow_delta": "Only configure-pages receives the existing deploy predicate; upload/tests/build and deploy job unchanged."
+    }
   }
 }

@@ -104,3 +104,53 @@ failure. Workflow behavior is preserved; local source checks do not establish
 hosted/native acceptance or a fully immutable transitive dependency closure.
 See the [source-specific result and retained failures](../engineering/codex1-direct-action-pins-20261121.md)
 and [direct-reference contract](../specs/ci-action-pinning.md).
+
+
+## CODEX-5 per-command audit precision contract (2026-11-21, isolated continuation)
+
+This is an additive **audit test contract**, not an implementation of hashed
+package closure. The original 2026-10-14 finding and its broad open gate remain
+historical evidence. The Pages build's separately qualified hashed wheel lock
+does not qualify other build/install workflows.
+
+1. A scanned `run` scalar can contain several independent shell commands.
+   Examine each supported `python -m pip install` / `pip install` invocation
+   separately. A `--require-hashes` or `--no-index` token belongs only to the
+   invocation in which it occurs. A flag in another command, comment or quoted
+   `echo` message may never exempt a different install.
+2. Cover plain, single/double-quoted, literal-block and folded-block workflow
+   `run` scalars; shell continuation lines and `&&`, `||`, `;` and pipeline
+   boundaries within supported invocations. Exclude non-`run` YAML fields.
+   Do not execute shell scripts or run downloaded packages in the audit.
+3. The conservative scanner may report uncertainty as a failure on unparseable
+   matching source. It is **not** a general shell/PowerShell interpreter, and a
+   passing scan is not evidence that transitive wheel dependencies are fully
+   hash-locked, that a remote `--find-links` endpoint is safe, or that
+   subprocesses cannot invoke a package installer indirectly.
+4. The broad CODEX-5 strict expected failure remains while any workflow still
+   installs without a qualifying per-command boundary. The old source-level test
+   is retained on the integration branch until a coordinated replacement is
+   independently reviewed. The isolated follow-up introduces a disjoint scanner
+   and coverage tests to prevent regressions without rewriting that owned test.
+5. Acceptance: fixture controls must include mixed safe/unsafe installs within
+   one run block, comment-only flags, quoted echo text, same-line separators,
+   literal/folded YAML, continuation lines and a single safe hash/no-index
+   command. Run actual checked-out pytest, Ruff and independent peer review.
+   No PR349/PR350 integration, main promotion or release is authorized by this
+   audit-only source.
+
+
+### Recovered audit repair contract (2026-11-21)
+
+The isolated donor `36b58a7d857690a8bf0093bcee1edd5036189b30` did not meet
+its preceding extraction contract: valid YAML block-header comments and folded
+blank lines lost installs, metadata keys named `run` became commands, and the
+current `if ! python -m pip install ...; then` form was omitted. Its original
+fixture-only results remain evidence, not full-source qualification.
+
+The repair uses the already declared PyYAML development dependency for actual
+`jobs.*.steps[].run` values and explicitly separates unsupported/invalid source
+errors from the known missing-flag expected failure. The bounded shell scope,
+current-source census and acceptance conditions are specified in
+[the command-audit contract](../specs/ci-pip-command-audit.md). The old CODEX-5
+strict xfail and all workflow bytes remain untouched; broad lock closure stays open.
