@@ -1,0 +1,39 @@
+{
+  "base_commit": "11f51c105bf63946f59373ae605b937c4fee607a",
+  "code_commit": "ff6c79f1a9c97877d061995cae40be38e42154f9",
+  "code_tree": "82ea9ce307974544abd787e3649e2574e38036b5",
+  "spec_commit": "d4ccc3a0d05442862feb6d2ac64bdf71525e5e03",
+  "first_pin_candidate": "d66f170fdd54a6bac4b858467be7ecbc6aafed0d",
+  "workflow_files": 21,
+  "replaced_uses": 176,
+  "unchanged_previously_pinned_uses": 2,
+  "final_immutable_uses": 178,
+  "baseline": {
+    "failed": 1,
+    "command_mode": "single maintained CODEX-1 test with --runxfail"
+  },
+  "first_candidate": {
+    "passed": 267,
+    "failed": 1,
+    "xfailed": 1,
+    "finding": "Old live-unified plain-scalar source check refused valid YAML version comments."
+  },
+  "final_focused": {
+    "passed": 272,
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 1,
+    "remaining_expected_failure": "CODEX-5",
+    "files": 12
+  },
+  "ruff": "passed on final code source",
+  "pip_check": "passed on first code candidate; no dependency or application source changed in followup",
+  "source_binding": "python -I verified own checkout on final code source",
+  "workflow_preservation": "Text and parsed YAML match baseline except the 176 mapped uses and version comments.",
+  "limits": [
+    "Direct repository uses only; nested Pages upload action remains mutable.",
+    "Codex npm installs and Node/Python/Java patch selection remain separate.",
+    "No final-head hosted or native acceptance, release or deployment performed by this worker."
+  ],
+  "upstream_map_sha256": "6a62192db7bf6f0b8a6e0611a688d205962ba83ecd45f141e1928482d851e981"
+}
