@@ -238,3 +238,20 @@ def test_snapshot_accepts_reordered_columns_and_extra_named_metadata(graph, tmp_
     old_limit = csv.field_size_limit()
     assert tool.branches(tool.Git(repo), "origin", snapshot) == [("topic", topic)]
     assert csv.field_size_limit() == old_limit
+
+
+def test_invalid_snapshot_headers_leave_previous_published_evidence_unchanged(graph, tmp_path, capsys):
+    repo, _, main, candidate, topic, *_ = graph
+    snapshot = tmp_path / "wrong-heading.tsv"
+    snapshot.write_text(f"branch\ttip_sha\tbranch\noriginal\t{topic}\tforged\n", encoding="utf-8")
+    pulls = tmp_path / "pulls.json"
+    pulls.write_text("[]", encoding="utf-8")
+    output = tmp_path / "inventory.tsv"
+    output.write_text("previous successful evidence\n", encoding="utf-8")
+
+    with pytest.raises(SystemExit) as error:
+        tool.main(["--repo", str(repo), "--main", main, "--candidate", candidate,
+                   "--pulls-json", str(pulls), "--refs-tsv", str(snapshot), "--output", str(output)])
+    assert error.value.code == 2
+    assert "invalid branch snapshot TSV" in capsys.readouterr().err
+    assert output.read_text(encoding="utf-8") == "previous successful evidence\n"
