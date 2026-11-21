@@ -33,8 +33,10 @@ def admission_errors(source: str) -> list[str]:
         except AssertionError:
             errors.append(f"{label}: missing or duplicate named step")
             continue
-        if f"path: {archive_dir}" not in restore or f"key: {label}-" not in restore:
-            errors.append(f"{label}: cache must contain only an archive")
+        if (f"path: {archive_dir}" not in restore
+                or f"key: {label}-archive-v1-" not in restore
+                or "restore-keys:" in restore):
+            errors.append(f"{label}: archive-only cache namespace must not restore extracted trees")
         if f"steps.{key}.outputs.cache-hit" in setup or (label == "rizin" and re.search(
             r"^\s+if:\s*steps\.rizin-cache\.outputs\.cache-hit", setup, re.MULTILINE
         )):
@@ -78,6 +80,8 @@ def test_cached_tools_are_verified_archives_before_use():
     [
         ("path: rizin-archive", "path: rizin"),
         ("path: ghidra-archive", "path: ghidra-runtime"),
+        ("key: rizin-archive-v1-", "key: rizin-"),
+        ("key: ghidra-archive-v1-", "key: ghidra-"),
         ("sha256sum -c -", "true # no integrity check"),
         ("tar -xJf", "echo # skip extraction"),
         ("unzip -q", "echo # skip extraction"),
