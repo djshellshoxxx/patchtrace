@@ -2329,7 +2329,7 @@
     "status": "TESTING",
     "owner": "root837fe",
     "base_pr": 349,
-    "base_commit": "11f51c105bf63946f59373ae605b937c4fee607a",
+    "base_commit": "daee337c48c63dda8aeac149c407e900c79dcc86",
     "reviewed_application_commit": "b880c317add4de3ac22c87cd842abb0e7ccc615d",
     "publication_evidence_commit": "36ead053fdfd7a69cbd06bf2c60431bbc15bf471",
     "target_branch": "integration/patchtrace-20261121-95fe-c3",
@@ -2362,7 +2362,7 @@
     "next_action": "Publish reviewed Intel+C4 exact source to PR349; inspect full/Qt/native/package/frozen gates and actual Windows Intel; guarded REST main merge only when qualified, with both opt-out flags.",
     "code_commit": "6bf79feffe68a9fdc1293a69900320e12be662bc",
     "code_tree": "dc659c7ef80e317b6c13c120e09f47c5d313f3ca",
-    "remote_code_commit": "61b26107d77fb632571ede932e0796d4b643f50c"
+    "remote_code_identity": "Resolve final current code mapping in live PR349 body; prior61b identity remains in continuation history."
   },
   "continuation_history": [
     {

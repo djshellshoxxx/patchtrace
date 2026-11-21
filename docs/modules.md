@@ -1451,4 +1451,4 @@ The [combined PR349 report](engineering/cycle837fe-combined-pr349-20261121.md) a
 
 ### PR349 Intel and C4 integrated follow-up
 
-[Source, validation and handoff](engineering/cycle837fe-native-c4-20261121.md) retain the Windows identity repair,C4 help/Pages work,actual predecessor native evidence and separate release gates.
+[Source, validation and handoff](engineering/cycle837fe-native-c4-20261121.md) retain the Windows identity repair, C4 help/Pages work, actual predecessor native evidence and separate release gates.
