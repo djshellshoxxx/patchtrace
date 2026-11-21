@@ -1,5 +1,19 @@
 # PatchTrace integration queue
 
+## Cycle4 bounded parallel follow-up — 2026-11-21
+
+This is a separate bounded follow-up to PR #349. Its integration remains with
+the parallel 837FE owner. Read the [cycle4 report](cycle4-consolidation-20261121-95fe.md)
+and [authoritative ledger](task-ledger.json); resolve the live follow-up PR for
+the final published head and hosted checks. Earlier sections below remain source-specific history.
+
+Next integration belongs to 837FE: combine this bounded follow-up with its reviewed
+Search/storage repairs and Action pins, then qualify the resulting exact source.
+Keep both panel activations in the shared tooltip audit and both Action refs and
+new install/test commands in Pages. Hosted index resolution and exact-head QA are
+pending. Any main merge requires fresh checks/expected-head guard and both
+`[no release] [no deploy]` in the resulting commit.
+
 ## Current ordered queue — cycle3
 
 | Order | Work | State and next step |

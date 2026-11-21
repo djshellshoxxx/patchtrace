@@ -1,5 +1,19 @@
 # PatchTrace feature matrix
 
+## Cycle4 bounded parallel follow-up — 2026-11-21
+
+This is a separate bounded follow-up to PR #349. Its integration remains with
+the parallel 837FE owner. Read the [cycle4 report](cycle4-consolidation-20261121-95fe.md)
+and [authoritative ledger](task-ledger.json); resolve the live follow-up PR for
+the final published head and hosted checks. Earlier sections below remain source-specific history.
+
+| Scope | Current bounded disposition |
+| --- | --- |
+| Build environment five headers | Implemented; two independent reviews; included in 391 passing final identities |
+| Pages site-only test and dependency lane | Original setup error repaired; seven hashed wheels; actual install/build/refusal controls passed |
+| Other CODEX-5 lanes and audit heuristic | Open;41 other previously counted textual run blocks plus per-command audit repair |
+| Hosted/native/release acceptance | Remains separate and pending where not explicitly qualified |
+
 ## Current bounded feature status — cycle3
 
 [Authoritative ledger](task-ledger.json) · [Qualification](cycle3-consolidation-20261121-95fe.md).

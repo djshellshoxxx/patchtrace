@@ -1,5 +1,19 @@
 # PatchTrace audit findings
 
+## Cycle4 bounded parallel follow-up — 2026-11-21
+
+This is a separate bounded follow-up to PR #349. Its integration remains with
+the parallel 837FE owner. Read the [cycle4 report](cycle4-consolidation-20261121-95fe.md)
+and [authoritative ledger](task-ledger.json); resolve the live follow-up PR for
+the final published head and hosted checks. Earlier sections below remain source-specific history.
+
+Resolved locally: five missing Build environment header bindings; confirmed Pages
+site-only pydantic fixture error; and P3 S-PAGES-01 (pytest prerequisite documentation).
+All four independent source reviews have zero remaining findings. Preserve the
+original failures and intentional negative controls. The separate CODEX-5
+run-block audit blind spot remains open; no compromised workflow is inferred.
+PR #349's previously recorded Windows advisory findings remain with its qualification owner.
+
 ## Cycle3 current findings and disposition
 
 | ID | Finding | Disposition |

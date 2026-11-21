@@ -1,5 +1,17 @@
 # PatchTrace branch inventory
 
+## Cycle4 bounded parallel follow-up — 2026-11-21
+
+This is a separate bounded follow-up to PR #349. Its integration remains with
+the parallel 837FE owner. Read the [cycle4 report](cycle4-consolidation-20261121-95fe.md)
+and [authoritative ledger](task-ledger.json); resolve the live follow-up PR for
+the final published head and hosted checks. Earlier sections below remain source-specific history.
+
+Separate planned branch `integration/patchtrace-20261121-95fe-c4` starts at `11f51c105bf63946f59373ae605b937c4fee607a`. Ten local source commits
+are preserved with exact REST tree/parent mappings and an original-history bundle.
+No fresh whole-repository census or branch deletion classification was performed.
+The earlier 364-branch observation predates this publication and is not a live count.
+
 ## Current reference snapshot — cycle3, 21 November 2026 UTC
 
 [Authoritative ledger](task-ledger.json) · [Complete census and comparison](evidence/cycle3-95fe/inventory-report.md).

@@ -1,3 +1,16 @@
+## Cycle4 follow-up: release remains held
+
+The two reviewed follow-ups are locally qualified, not a release qualification.
+The final affected selection is391 passed/2expected failures/0 ordinary skips;
+Pages-only tests are247 passed/1 existing optional GUI skip with actual offline
+hashed installation and build verified. No hosted Pages index-resolution,
+Windows manual/accessibility, broader CODEX-5, raw provenance or L1/L2/L3 gate
+is closed by those results. The 837FE owner retains PR #349's integration and
+advisory-failure disposition. Main merge requires fresh exact-head qualification;
+its actual commit must include `[no release] [no deploy]`.
+
+[Current bounded report](cycle4-consolidation-20261121-95fe.md).
+
 ## Pending CODEX-14 Linux frozen CLI qualification (2026-11-21)
 
 An isolated PR348 child now runs `tools/frozen_smoke.py` on the extracted

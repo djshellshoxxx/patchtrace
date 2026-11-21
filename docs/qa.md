@@ -1,3 +1,19 @@
+## Cycle4 bounded follow-up qualification
+
+Clean combined source 8c5e77e2 passed 391 affected tests, with 2 existing CODEX-1/5
+expected failures and 0 ordinary skips. Whole-tree Ruff, pip consistency, isolated
+source binding and whitespace passed. Four independent source reviews passed;
+their README prerequisite finding was fixed and rechecked. The separate clean
+Pages environment passed 247 with1 existing optional GUI skip, and actual hashed
+install/build and both intended pip refusals passed. The GUI case passed in the
+combined full-dependency environment. Counts overlap and are not additive.
+
+Original14-failure header baseline, hidden-host audit failure, Pages setup error,
+four source-contract failures and deliberate negative controls are preserved.
+Actual installation used verified offline wheels; hosted index/build and new-head
+full QA remain separate. [Report and evidence](engineering/cycle4-consolidation-20261121-95fe.md).
+PR #349's integration and remaining qualification belong to the parallel 837FE owner.
+
 ## Cycle 2 current checkpoint
 
 Clean reviewed source 3cf7ad23 passes 188 affected cases with no skips/failures, whole-tree Ruff, dependencies and isolated import binding. The initial 187-pass/1-audit-failure run and Ruff finding are retained alongside corrected results. The fresh peer confirms the audit fails when an actual header mapping is removed. [Complete qualification](engineering/cycle2-consolidation-20261121-2bad.md).

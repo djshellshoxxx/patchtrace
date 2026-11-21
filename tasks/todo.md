@@ -1,3 +1,19 @@
+## Cycle4 bounded parallel follow-up
+
+- [x] Implement and independently review all five Build environment header mappings.
+- [x] Make the global registry audit observe real initialized Build environment headers.
+- [x] Reproduce and fix the Pages site-only pydantic fixture-setup error.
+- [x] Verify and hash-lock the seven-package Linux/Python 3.12 site environment.
+- [x] Execute actual hashed installation, real site build and wrong-hash/missing-dependency refusals.
+- [x] Pass391 combined affected cases with 2 retained expected failures and 0 ordinary skips.
+- [x] Close the reviewed pytest prerequisite documentation finding.
+- [ ] Integrate with the independently owned 837FE Search/storage/Action-pin source and qualify the exact resulting head.
+- [ ] Qualify hosted Pages index resolution/build and all applicable hosted QA.
+- [ ] Complete other CODEX-5 lanes and repair its separately recorded per-command audit blind spot.
+
+[Authoritative cycle4 report](../docs/engineering/cycle4-consolidation-20261121-95fe.md).
+Preserve the standing release, deployment and native/manual acceptance holds.
+
 ## Cycle 2 current checkpoint
 
 - [x] Independently qualify the recovered sibling admission and inventory successors using actual repository source.

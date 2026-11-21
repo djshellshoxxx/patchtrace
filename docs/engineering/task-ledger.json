@@ -1,6 +1,6 @@
 {
   "schema": "patchtrace-engineering-task-ledger/1",
-  "updated_at": "2026-11-21T05:17:48.422568+00:00",
+  "updated_at": "2026-11-21T06:31:01.751439+00:00",
   "repository": "https://github.com/djshellshoxxx/PatchTrace",
   "integration_branch": "integration/patchtrace-20261121-95fe-c3",
   "checkpoint_local_commit": "e5a531668ef523cd6faa26d5fec59aa552749134",
@@ -989,6 +989,30 @@
       "source_commit": "19601a60",
       "evidence": "docs/engineering/evidence/cycle3-95fe/document-recovery.json",
       "result_or_next_action": "All20 absent PR346 engineering/evidence files recovered with exact original blobs. Six current indexes updated separately; no whole-branch semantic supersession or deletion claim."
+    },
+    {
+      "id": "buildenv-header-help-20261121-95fe",
+      "status": "implemented-independently-reviewed-local-qualified",
+      "owner": "95FE-C4 completed author and two independent reviewers",
+      "source_commit": "8c5e77e2c1ad3f6cfa62c2e474f7bcc2f4af1dd5",
+      "evidence": "docs/engineering/evidence/cycle4-95fe/README.md",
+      "result_or_next_action": "All five actual headers registered; original labels/cells/copy and production ASTs preserved. Real-host audit detects a removed Basis mapping. Included in 391-pass final selection; exact combined hosted/native acceptance remains separate."
+    },
+    {
+      "id": "pages-site-isolation-and-hashes-20261121-95fe",
+      "status": "implemented-independently-reviewed-local-qualified",
+      "owner": "95FE-C4 completed author and two independent reviewers",
+      "source_commit": "8c5e77e2c1ad3f6cfa62c2e474f7bcc2f4af1dd5",
+      "evidence": "docs/engineering/evidence/cycle4-95fe/qualification.json",
+      "result_or_next_action": "Confirmed missing-pydantic site-only fixture error repaired by explicit pytest isolation. Seven verified Linux/Python 3.12 wheels are pinned and hashed. Fresh offline install/build and both refusal controls verified; 247 site passes and one existing optional GUI skip. The final full-dependency selection includes a passing GUI screenshot test. Hosted index/build and broader CODEX-5 remain open."
+    },
+    {
+      "id": "codex5-per-command-audit-gap-20261121-95fe",
+      "status": "open-follow-up",
+      "owner": "next coordinated audit worker; preserve 837FE Action-pin file ownership",
+      "source_commit": "11f51c105bf63946f59373ae605b937c4fee607a",
+      "evidence": "docs/engineering/evidence/cycle4-95fe/codex5-research.md",
+      "result_or_next_action": "Current run-block heuristic accepts hash/offline flags anywhere, including unrelated commands/comments. Synthetic text controls retained. Implement per-command and referenced-lock checks without weakening global strict xfail; no current workflow compromise inferred."
     }
   ],
   "aggregate_source_commit": "e5a531668ef523cd6faa26d5fec59aa552749134",
@@ -1583,5 +1607,33 @@
     "qa_qt_native_package_smokes": "all-current-non-release-checks-success",
     "source_scope": "PR348 only; tree identity independently verified. PR345\u2013347 also green on their own retained heads.",
     "evidence": "docs/engineering/evidence/cycle3-95fe/hosted-qualification.json"
+  },
+  "parallel_followup_cycle4": {
+    "scope": "Separate bounded follow-up; does not replace the live PR349 integration owner.",
+    "base": "11f51c105bf63946f59373ae605b937c4fee607a",
+    "branch": "integration/patchtrace-20261121-95fe-c4",
+    "tested_source": "8c5e77e2c1ad3f6cfa62c2e474f7bcc2f4af1dd5",
+    "tested_tree": "6fe242cc10a5e7c3afe74c40a0f701cbab73aef1",
+    "remote_code_checkpoint": "2162708d86bb655f85410d8064aea04c396d5e6e",
+    "remote_reviewed_documentation_checkpoint": "f1f8ef664fd6ee88bf47a375538e4be0d8f11992",
+    "status": "implemented-reviewed-local-qualified-hosted-pending",
+    "report": "docs/engineering/cycle4-consolidation-20261121-95fe.md",
+    "handoff": "docs/engineering-handoffs/cycle4-20261121-95fe.md",
+    "evidence": "docs/engineering/evidence/cycle4-95fe/qualification.json",
+    "qualification": {
+      "passed": 391,
+      "expected_failures": 2,
+      "ordinary_skips": 0,
+      "failures": 0,
+      "errors": 0,
+      "unique_identities": 393,
+      "expected_failure_ids": [
+        "CODEX-1",
+        "CODEX-5"
+      ],
+      "receipt": "cycle4-review-evidence.zip::root/final-affected-selection.json"
+    },
+    "ownership": "837FE retains PR349/Search/storage/Action-pin integration; refresh live coordination before action.",
+    "live_head_rule": "Resolve this separate follow-up PR body and fresh remote branch for final publication head and checks."
   }
 }

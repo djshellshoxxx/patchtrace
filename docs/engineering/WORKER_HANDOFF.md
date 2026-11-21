@@ -1,5 +1,18 @@
 # PatchTrace worker handoff
 
+## Cycle4 bounded parallel follow-up — 2026-11-21
+
+This is a separate bounded follow-up to PR #349. Its integration remains with
+the parallel 837FE owner. Read the [cycle4 report](cycle4-consolidation-20261121-95fe.md)
+and [authoritative ledger](task-ledger.json); resolve the live follow-up PR for
+the final published head and hosted checks. Earlier sections below remain source-specific history.
+
+Both feature authors, the dependency researcher and four independent review
+assignments completed. Read the [cycle4 handoff](../engineering-handoffs/cycle4-20261121-95fe.md)
+for exact sources, overlaps, source-bound evidence and remaining acceptance gates.
+The initial and final record audits passed; final publication verification is
+recorded in the live follow-up PR. Do not infer worker liveness from these historical records.
+
 ## Current continuation — cycle3
 
 Read [task-ledger.json](task-ledger.json), [cycle3 handoff](../engineering-handoffs/cycle3-20261121-95fe.md), [source qualification](cycle3-consolidation-20261121-95fe.md), and [integration queue](INTEGRATION_QUEUE.md) first. These current sections supersede historical next-action statements below only for their named scope.
