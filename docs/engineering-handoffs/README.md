@@ -1,3 +1,7 @@
+# Current isolated continuation — exact Git commit identity in offline inventory (2026-11-20)
+
+Start with [the latest handoff](inventory-tip-oid-20261120.md) and the authoritative [task ledger](../engineering/task-ledger.json). A contract-first PR347/TSV-shape successor refuses mutable Git revision expressions as snapshot `tip_sha` and checks that a full SHA-1/SHA-256 tip resolves to the exact same commit object. Seven repository cases are authored; temporary synthetic Git controls reproduced the old mutable-ref acceptance and verified the corrected guard. Checked-out pytest/Ruff, exact-source native/Qt/CI and independent review are still pending. The PR345 Windows QA NSIS Chocolatey HTTP 503 failure is recorded separately; no duplicate run or release.
+
 # Current isolated continuation — inventory replay column integrity (2026-11-20)
 
 Read [the source-specific handoff](inventory-tsv-shape-20261120.md) and authoritative task ledger. A contract-first, isolated PR347 successor refuses malformed TSV headers and rows before replaying Git heads, preserving previous inventory evidence and large-note compatibility. Six red/green malformed-shape and one positive standalone algorithm controls completed; eight repository cases authored but checked-out pytest/Ruff and independent review remain pending. PR347 hosted QA/native remains active, so no duplicate draft/workflow was initiated. Main and release remain blocked.
