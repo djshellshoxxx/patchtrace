@@ -1641,3 +1641,10 @@ for exact commits and limitations. No main merge/release.
 - [ ] Obtain independent complete-source reviewer and exact-source hosted Windows/Linux QA, Qt/native/package/smoke checks. Inspect queued predecessor jobs without claiming green.
 - [ ] Map application ColumnSpec tip IDs with real registered entries and tests; maintain separate native screen-reader and Windows trust acceptance.
 - [ ] Retain full raw Winbindex/index provenance and resolver membership, historical donor semantic review and L1/L2/L3-specific accuracy; no release or main merge while blocked.
+
+
+### 2026-11-20 inventory exact-tip continuation (unqualified)
+
+- [ ] On a supported checked-out source, verify seven exact Git SHA replay regressions and the full `tests/test_branch_inventory.py` suite; run whole-tree Ruff and source-bound focused/full checks with termination evidence. See `docs/engineering-handoffs/inventory-tip-oid-20261120.md`.
+- [ ] Obtain independent review of exact SHA-1/SHA-256 admission, annotated-tag mismatch, all-rows prevalidation and TSV prior-output preservation; do not equate synthetic Git control success with repository pytest.
+- [ ] Retain PR345 Windows QA failure (Chocolatey NSIS v3.13 feed HTTP 503) as a packaging availability gate; inspect terminal PR347 QA/Qt/package and qualify successor exact source without duplicate jobs. No main/release merge while other blockers remain.
