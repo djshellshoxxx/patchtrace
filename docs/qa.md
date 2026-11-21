@@ -2318,7 +2318,7 @@ and allowed a hit to bypass archive digest verification. On branch
 `codex/patchtrace-corpus-archive-integrity-20261121` the norm is to cache
 only original pinned archives and verify SHA-256 before a clean extraction
 on every hit and miss. Ten negative JS source mutations were detected;
-12 connector-fetched structural checks passed. Four synthetic shell
+14 connector-fetched structural checks passed. Four synthetic shell
 archive/digest controls passed (rizin/Ghidra valid/corrupt); no actual native
 archive, engine, target binary or full repository source was executed.
 The retained CODEX-6 strict xfail becomes a positive source regression only
