@@ -58,7 +58,7 @@ def test_builds_with_the_site_tool_and_deploys_the_dist_artifact_to_github_pages
     build = TEXT.split('\n  build:\n', 1)[1].split('\n  deploy:\n', 1)[0]
     assert '[no deploy]' not in TEXT.split('\n  deploy:\n', 1)[0]
     assert not re.search(r'^    if:', build, re.M)
-    assert 'run: python -m pytest -q tests/test_site_*.py' in build
+    assert 'run: python -m pytest --noconftest --disable-plugin-autoload -q tests/test_site_*.py' in build
     assert 'run: python tools/site/build_site.py\n' in build
     assert 'actions/upload-pages-artifact@' in build
     assert re.search(
@@ -66,7 +66,7 @@ def test_builds_with_the_site_tool_and_deploys_the_dist_artifact_to_github_pages
         r'(?: +#[^\n]*)?\n\s+with:\n\s+path: site/dist', TEXT, re.M)
     assert 'needs: build' in TEXT
     assert re.search(r'environment:\n\s+name: github-pages\n\s+url: \$\{\{ steps\.deployment\.outputs\.page_url \}\}', TEXT)
-    assert 'tools/site/requirements.txt' in TEXT  # site tools only; never the app's dependencies
+    assert 'tools/site/requirements-ci.lock' in TEXT  # site tools only; never the app's dependencies
 
 
 def test_no_secret_or_untrusted_event_data_is_interpolated_into_shell_commands():

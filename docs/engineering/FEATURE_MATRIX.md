@@ -1,5 +1,32 @@
 # PatchTrace feature matrix
 
+## Cycle4 parent integration update — 2026-11-21 UTC
+
+The separate C4 follow-up includes PR349 `daee337c` and preserves both implementations
+and histories. Source `111803d5` / REST code checkpoint `7ddb1130` passed 580 cases,
+with one CODEX-5 expected failure and no ordinary skips; all 110 registry cases are
+included. Required Ruff/pip/source binding and independent merge/history reviews
+passed. CODEX-1 is closed by the parent; wider CODEX-5 and hosted/native/manual/release
+gates remain open. [Current report](cycle4-consolidation-20261121-95fe.md) and [exact qualification](evidence/cycle4-parent-20261121/qualification.json)
+supersede the earlier pending C4 combination state. PR349 ownership stays with 837FE;
+resolve final follow-up head/checks from its live PR. Main/release eligibility remains
+false. A qualified main commit requires `[no release] [no deploy]`. Earlier sections
+remain source-specific history.
+
+## Cycle4 bounded parallel follow-up — 2026-11-21
+
+This is a separate bounded follow-up to PR #349. Its integration remains with
+the parallel 837FE owner. Read the [cycle4 report](cycle4-consolidation-20261121-95fe.md)
+and [authoritative ledger](task-ledger.json); resolve the live follow-up PR for
+the final published head and hosted checks. Earlier sections below remain source-specific history.
+
+| Scope | Current bounded disposition |
+| --- | --- |
+| Build environment five headers | Implemented; two independent reviews; included in 391 passing final identities |
+| Pages site-only test and dependency lane | Original setup error repaired; seven hashed wheels; actual install/build/refusal controls passed |
+| Other CODEX-5 lanes and audit heuristic | Open;41 other previously counted textual run blocks plus per-command audit repair |
+| Hosted/native/release acceptance | Remains separate and pending where not explicitly qualified |
+
 ## Current bounded feature status — cycle3
 
 [Authoritative ledger](task-ledger.json) · [Qualification](cycle3-consolidation-20261121-95fe.md).

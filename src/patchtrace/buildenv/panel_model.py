@@ -23,11 +23,11 @@ KIND = {'B0': 'no-project', 'B1': 'loading', 'B2': 'partial', 'B3': 'ready', 'B4
 ACTIONS = {'B2': ('setup',), 'B7': ('refresh',), 'B8': ('retry', 'copy'), 'B9': ('setup',)}
 
 COLUMNS = (
-    ColumnSpec('fact', 'Fact', lambda r: r.label, width_em=24),
-    ColumnSpec('older', 'OLDER', lambda r: r.older, width_em=26),
-    ColumnSpec('newer', 'NEWER', lambda r: r.newer, width_em=26),
-    ColumnSpec('status', 'Status', lambda r: r.status, width_em=18),
-    ColumnSpec('basis', 'Basis', lambda r: r.basis, width_em=32))
+    ColumnSpec('fact', 'Fact', lambda r: r.label, width_em=24, tip_id='build_env.col.fact'),
+    ColumnSpec('older', 'OLDER', lambda r: r.older, width_em=26, tip_id='build_env.col.older'),
+    ColumnSpec('newer', 'NEWER', lambda r: r.newer, width_em=26, tip_id='build_env.col.newer'),
+    ColumnSpec('status', 'Status', lambda r: r.status, width_em=18, tip_id='build_env.col.status'),
+    ColumnSpec('basis', 'Basis', lambda r: r.basis, width_em=32, tip_id='build_env.col.basis'))
 SPEC = TableSpec(row_key=lambda r: r.key, search_text=lambda r: f'{r.label} {r.older} {r.newer}')
 
 

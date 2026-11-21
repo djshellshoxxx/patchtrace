@@ -1,3 +1,32 @@
+## Cycle4 parent integration update — 2026-11-21 UTC
+
+The separate C4 follow-up includes PR349 `daee337c` and preserves both implementations
+and histories. Source `111803d5` / REST code checkpoint `7ddb1130` passed 580 cases,
+with one CODEX-5 expected failure and no ordinary skips; all 110 registry cases are
+included. Required Ruff/pip/source binding and independent merge/history reviews
+passed. CODEX-1 is closed by the parent; wider CODEX-5 and hosted/native/manual/release
+gates remain open. [Current report](engineering/cycle4-consolidation-20261121-95fe.md) and [exact qualification](engineering/evidence/cycle4-parent-20261121/qualification.json)
+supersede the earlier pending C4 combination state. PR349 ownership stays with 837FE;
+resolve final follow-up head/checks from its live PR. Main/release eligibility remains
+false. A qualified main commit requires `[no release] [no deploy]`. Earlier sections
+remain source-specific history.
+
+## Cycle4 bounded follow-up qualification
+
+Clean combined source 8c5e77e2 passed 391 affected tests, with 2 existing CODEX-1/5
+expected failures and 0 ordinary skips. Whole-tree Ruff, pip consistency, isolated
+source binding and whitespace passed. Four independent source reviews passed;
+their README prerequisite finding was fixed and rechecked. The separate clean
+Pages environment passed 247 with1 existing optional GUI skip, and actual hashed
+install/build and both intended pip refusals passed. The GUI case passed in the
+combined full-dependency environment. Counts overlap and are not additive.
+
+Original14-failure header baseline, hidden-host audit failure, Pages setup error,
+four source-contract failures and deliberate negative controls are preserved.
+Actual installation used verified offline wheels; hosted index/build and new-head
+full QA remain separate. [Report and evidence](engineering/cycle4-consolidation-20261121-95fe.md).
+PR #349's integration and remaining qualification belong to the parallel 837FE owner.
+
 ## Cycle 2 current checkpoint
 
 Clean reviewed source 3cf7ad23 passes 188 affected cases with no skips/failures, whole-tree Ruff, dependencies and isolated import binding. The initial 187-pass/1-audit-failure run and Ruff finding are retained alongside corrected results. The fresh peer confirms the audit fails when an actual header mapping is removed. [Complete qualification](engineering/cycle2-consolidation-20261121-2bad.md).

@@ -1,0 +1,14 @@
+{
+  "prerequisites": [
+    "36584f8153983d64605dd7f4141e88c9fabfa6ef",
+    "daee337c48c63dda8aeac149c407e900c79dcc86"
+  ],
+  "head": "111803d54cfebc1b779f4832a069904b3ee91a7c",
+  "bundle_heads": "111803d54cfebc1b779f4832a069904b3ee91a7c HEAD\n",
+  "original_commits": [
+    "a76189cc0e7ec4312baf3662da5946d39bdd019c",
+    "e7391634a46bbb1f9f1fdc3563abadb837d1b45b",
+    "111803d54cfebc1b779f4832a069904b3ee91a7c"
+  ],
+  "verification_returncode": 0
+}

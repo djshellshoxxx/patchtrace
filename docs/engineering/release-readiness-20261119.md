@@ -1,3 +1,29 @@
+## Cycle4 parent integration update — 2026-11-21 UTC
+
+The separate C4 follow-up includes PR349 `daee337c` and preserves both implementations
+and histories. Source `111803d5` / REST code checkpoint `7ddb1130` passed 580 cases,
+with one CODEX-5 expected failure and no ordinary skips; all 110 registry cases are
+included. Required Ruff/pip/source binding and independent merge/history reviews
+passed. CODEX-1 is closed by the parent; wider CODEX-5 and hosted/native/manual/release
+gates remain open. [Current report](cycle4-consolidation-20261121-95fe.md) and [exact qualification](evidence/cycle4-parent-20261121/qualification.json)
+supersede the earlier pending C4 combination state. PR349 ownership stays with 837FE;
+resolve final follow-up head/checks from its live PR. Main/release eligibility remains
+false. A qualified main commit requires `[no release] [no deploy]`. Earlier sections
+remain source-specific history.
+
+## Cycle4 follow-up: release remains held
+
+The two reviewed follow-ups are locally qualified, not a release qualification.
+The final affected selection is391 passed/2expected failures/0 ordinary skips;
+Pages-only tests are247 passed/1 existing optional GUI skip with actual offline
+hashed installation and build verified. No hosted Pages index-resolution,
+Windows manual/accessibility, broader CODEX-5, raw provenance or L1/L2/L3 gate
+is closed by those results. The 837FE owner retains PR #349's integration and
+advisory-failure disposition. Main merge requires fresh exact-head qualification;
+its actual commit must include `[no release] [no deploy]`.
+
+[Current bounded report](cycle4-consolidation-20261121-95fe.md).
+
 ## Pending CODEX-14 Linux frozen CLI qualification (2026-11-21)
 
 An isolated PR348 child now runs `tools/frozen_smoke.py` on the extracted

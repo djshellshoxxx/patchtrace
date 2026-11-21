@@ -1,6 +1,6 @@
 {
   "schema": "patchtrace-engineering-task-ledger/1",
-  "updated_at": "2026-11-21T06:30:54.785396+00:00",
+  "updated_at": "2026-11-21T07:00:42.904420+00:00",
   "repository": "https://github.com/djshellshoxxx/PatchTrace",
   "integration_branch": "integration/patchtrace-20261121-95fe-c3",
   "checkpoint_local_commit": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
@@ -76,7 +76,7 @@
       "owner": "cycle3 independent census reviewer",
       "source_commit": "e5a531668ef523cd6faa26d5fec59aa552749134",
       "evidence": "docs/engineering/evidence/cycle3-95fe/inventory-summary.json",
-      "result_or_next_action": "364 branches and338 all-state PRs (82open/172merged/84closed-unmerged), fully paginated 04:55:49\u201304:57:48UTC.10new names vs frozen354-branch cycle95fe; no moved/missing names.23new vs explicit341-branch g30-at-PR348 file. Reference census only; historical semantic backlog remains.",
+      "result_or_next_action": "364 branches and338 all-state PRs (82open/172merged/84closed-unmerged), fully paginated 04:55:49–04:57:48UTC.10new names vs frozen354-branch cycle95fe; no moved/missing names.23new vs explicit341-branch g30-at-PR348 file. Reference census only; historical semantic backlog remains.",
       "snapshot_note": "Frozen 341-branch / 330-PR observation predates PR342 publication; all 671 recorded branch/PR SHAs resolve. Classification is not full semantic verification.",
       "latest_evidence": "docs/engineering/evidence/cycle2-coordinator-20261121-2bad.json"
     },
@@ -1363,6 +1363,30 @@
       "merge_status": "No code port required in reviewed scopes; preserve donor branches",
       "evidence": "docs/engineering/evidence/cycle837fe-combined-20261121/historical-followup-dispositions.json",
       "next_action": "Continue remaining semantic backlog without resetting prior source-retention evidence."
+    },
+    {
+      "id": "buildenv-header-help-20261121-95fe",
+      "status": "implemented-independently-reviewed-local-qualified",
+      "owner": "95FE-C4 completed author and two independent reviewers",
+      "source_commit": "8c5e77e2c1ad3f6cfa62c2e474f7bcc2f4af1dd5",
+      "evidence": "docs/engineering/evidence/cycle4-95fe/README.md",
+      "result_or_next_action": "All five actual headers registered; original labels/cells/copy and production ASTs preserved. Real-host audit detects a removed Basis mapping. Included in 391-pass final selection; exact combined hosted/native acceptance remains separate."
+    },
+    {
+      "id": "pages-site-isolation-and-hashes-20261121-95fe",
+      "status": "implemented-independently-reviewed-local-qualified",
+      "owner": "95FE-C4 completed author and two independent reviewers",
+      "source_commit": "8c5e77e2c1ad3f6cfa62c2e474f7bcc2f4af1dd5",
+      "evidence": "docs/engineering/evidence/cycle4-95fe/qualification.json",
+      "result_or_next_action": "Confirmed missing-pydantic site-only fixture error repaired by explicit pytest isolation. Seven verified Linux/Python 3.12 wheels are pinned and hashed. Fresh offline install/build and both refusal controls verified; 247 site passes and one existing optional GUI skip. The final full-dependency selection includes a passing GUI screenshot test. Hosted index/build and broader CODEX-5 remain open."
+    },
+    {
+      "id": "codex5-per-command-audit-gap-20261121-95fe",
+      "status": "open-follow-up",
+      "owner": "next coordinated audit worker; preserve 837FE Action-pin file ownership",
+      "source_commit": "11f51c105bf63946f59373ae605b937c4fee607a",
+      "evidence": "docs/engineering/evidence/cycle4-95fe/codex5-research.md",
+      "result_or_next_action": "Current run-block heuristic accepts hash/offline flags anywhere, including unrelated commands/comments. Synthetic text controls retained. Implement per-command and referenced-lock checks without weakening global strict xfail; no current workflow compromise inferred."
     }
   ],
   "aggregate_source_commit": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
@@ -2066,7 +2090,7 @@
       "xfailed": 5
     },
     "qa_qt_native_package_smokes": "all-current-non-release-checks-success",
-    "source_scope": "PR348 only; tree identity independently verified. PR345\u2013347 also green on their own retained heads.",
+    "source_scope": "PR348 only; tree identity independently verified. PR345–347 also green on their own retained heads.",
     "evidence": "docs/engineering/evidence/cycle3-95fe/hosted-qualification.json"
   },
   "parallel_continuation_837fe": {
@@ -2153,5 +2177,64 @@
       },
       "local_integration_branch": "codex/patchtrace-continuation-20261121-95fe-c3"
     }
-  ]
+  ],
+  "parallel_followup_cycle4": {
+    "scope": "Separate bounded follow-up; does not replace the live PR349 integration owner.",
+    "base": "daee337c48c63dda8aeac149c407e900c79dcc86",
+    "branch": "integration/patchtrace-20261121-95fe-c4",
+    "tested_source": "111803d54cfebc1b779f4832a069904b3ee91a7c",
+    "tested_tree": "d3264bf26f83d039fa212c26b47c094f86691c3f",
+    "remote_code_checkpoint": "7ddb1130ca501b9cfda9949aa49e684f9f4b8f26",
+    "remote_reviewed_documentation_checkpoint": "7ddb1130ca501b9cfda9949aa49e684f9f4b8f26",
+    "status": "parent-integrated-reviewed-local-qualified-hosted-pending",
+    "report": "docs/engineering/cycle4-consolidation-20261121-95fe.md",
+    "handoff": "docs/engineering-handoffs/cycle4-20261121-95fe.md",
+    "evidence": "docs/engineering/evidence/cycle4-parent-20261121/qualification.json",
+    "qualification": {
+      "passed": 580,
+      "expected_failures": 1,
+      "expected_failure_ids": [
+        "CODEX-5"
+      ],
+      "ordinary_skips": 0,
+      "failures": 0,
+      "errors": 0,
+      "unique_identities": 581,
+      "selectors": 21,
+      "included_registry_identities": 110,
+      "receipt": "qualification-and-review-evidence.zip::root/combined-after.json"
+    },
+    "ownership": "837FE retains PR349/Search/storage/Action-pin integration; refresh live coordination before action.",
+    "live_head_rule": "Resolve this separate follow-up PR body and fresh remote branch for final publication head and checks.",
+    "original_base": "11f51c105bf63946f59373ae605b937c4fee607a",
+    "initial_source_history": {
+      "scope": "Separate bounded follow-up; does not replace the live PR349 integration owner.",
+      "base": "11f51c105bf63946f59373ae605b937c4fee607a",
+      "branch": "integration/patchtrace-20261121-95fe-c4",
+      "tested_source": "8c5e77e2c1ad3f6cfa62c2e474f7bcc2f4af1dd5",
+      "tested_tree": "6fe242cc10a5e7c3afe74c40a0f701cbab73aef1",
+      "remote_code_checkpoint": "2162708d86bb655f85410d8064aea04c396d5e6e",
+      "remote_reviewed_documentation_checkpoint": "f1f8ef664fd6ee88bf47a375538e4be0d8f11992",
+      "status": "implemented-reviewed-local-qualified-hosted-pending",
+      "report": "docs/engineering/cycle4-consolidation-20261121-95fe.md",
+      "handoff": "docs/engineering-handoffs/cycle4-20261121-95fe.md",
+      "evidence": "docs/engineering/evidence/cycle4-95fe/qualification.json",
+      "qualification": {
+        "passed": 391,
+        "expected_failures": 2,
+        "ordinary_skips": 0,
+        "failures": 0,
+        "errors": 0,
+        "unique_identities": 393,
+        "expected_failure_ids": [
+          "CODEX-1",
+          "CODEX-5"
+        ],
+        "receipt": "cycle4-review-evidence.zip::root/final-affected-selection.json"
+      },
+      "ownership": "837FE retains PR349/Search/storage/Action-pin integration; refresh live coordination before action.",
+      "live_head_rule": "Resolve this separate follow-up PR body and fresh remote branch for final publication head and checks."
+    },
+    "parent_integration": "Published PR349 source merged only into the separate C4 branch; no PR349 or main mutation."
+  }
 }

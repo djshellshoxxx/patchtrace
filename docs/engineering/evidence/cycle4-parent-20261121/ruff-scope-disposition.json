@@ -1,0 +1,587 @@
+{
+  "created_at": "2026-11-21T06:54:49.213356+00:00",
+  "source": "111803d54cfebc1b779f4832a069904b3ee91a7c",
+  "accidental_command": [
+    "python",
+    "-m",
+    "ruff",
+    "check",
+    "."
+  ],
+  "required_command": [
+    "python",
+    "-m",
+    "ruff",
+    "check",
+    "src",
+    "tests",
+    "tools"
+  ],
+  "requirement_sources": [
+    "AGENTS.md",
+    ".github/workflows/qa-windows.yml"
+  ],
+  "required_command_receipt": "combined-maintained-ruff.json",
+  "diagnostic_count": 1063,
+  "path_prefix_counts": {
+    "docs": 1052,
+    "help": 11
+  },
+  "unique_files": 138,
+  "all_diagnostic_files_exact_parent_bytes": "daee337c48c63dda8aeac149c407e900c79dcc86",
+  "files": [
+    {
+      "path": "docs/engineering/evidence/cycle837fe-20261121/references/build_inventory.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/engineering/evidence/generation32/frozen-full-suite-launcher.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/engineering/evidence/generation33/cache-independent/test_independent_cache_diagnostics.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/help/tooltip-copy/evidence.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/binary-parsers/c1.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/binary-parsers/c2.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/binary-parsers/c3.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/binary-parsers/fz.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/binary-parsers/fz2.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/binary-parsers/h.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/binary-parsers/s1.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/binary-parsers/s2.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/binary-parsers/s3.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/binary-parsers/s4.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/binary-parsers/s5.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/binary-parsers/s6.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/binary-parsers/s7.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/binary-parsers/s8.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/binary-parsers/t1.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/binary-parsers/t2.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/binary-parsers/t3.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/binary-parsers/t3b.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/binary-parsers/t4.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/binary-parsers/t5.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/binary-parsers/t6.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/binary-parsers/t7.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kbcorrelation/r01_shapes.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kbcorrelation/r02_scope_collision.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kbcorrelation/r03_revision_order.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kbcorrelation/r04_edge_limit.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kbcorrelation/r04b_edge_limit_dedupe.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kbcorrelation/r05_pick_pair.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kbcorrelation/r06_sidecar_repair.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kbcorrelation/r07_sidecar_oserror.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kbcorrelation/r08_fuzz_json.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kbcorrelation/r09_fuzz_xml.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kbcorrelation/r10_fuzz_csaf.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kbcorrelation/r11_small.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kbcorrelation/r12_superseded_scope.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kbcorrelation/r13_lineage.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kbcorrelation/r14_unicode_ubr.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kbcorrelation/r15_unicode_fv.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kbcorrelation/r16_store_ro.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kbcorrelation/r17_hostile.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kbcorrelation/r18_xml_close_events.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kbcorrelation/r19_xml_limit_bypass.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kbcorrelation/r20_xml_tail.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kbcorrelation/r21_scope_file.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kbcorrelation/r22_scope_json.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kev-acquisition/r10_store.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kev-acquisition/r11_deep_entry.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kev-acquisition/r12_wiring_surrogate.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kev-acquisition/r13_prune_install_race.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kev-acquisition/r14_perf.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kev-acquisition/r1_overflow_retry_after.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kev-acquisition/r2_winbindex_hostile.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kev-acquisition/r3_acquire_cli_e2e.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kev-acquisition/r4_bomb_and_fd.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kev-acquisition/r5_fd_leak.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kev-acquisition/r6_kev_future_pin.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kev-acquisition/r7_lookup_echo.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kev-acquisition/r8_cli_md_autolink.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/kev-acquisition/r9_parse_battery.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/cg_countsuffix.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/cg_fuzz.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/cg_neighbour_cap.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/cg_paths_dos.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/cg_support.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/enr_h.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/enr_r10_corrupt_row.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/enr_r11_cve.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/enr_r12_pipeline_snapshot.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/enr_r13_cache_manifest.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/enr_r14_wil_perf.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/enr_r14b_wil_gates.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/enr_r15_signals_perf.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/enr_r16_name_words.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/enr_r17_negative_addr.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/enr_r18_merge_features.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/enr_r19_cve_prefix.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/enr_r1_addr_overflow.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/enr_r2_cursor.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/enr_r3_finding_pairing.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/enr_r4_rva_poison.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/enr_r4b_ctrl.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/enr_r5_hints_perf.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/enr_r6_hostile_ids.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/enr_r7_signature_phrase.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/enr_r8_fold_len.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/enr_r9_fuzz.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/fab_fuzz.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/pilot_be_delta_inconsistent.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/pilot_be_fuzz.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/pilot_be_fuzz2.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/pilot_be_managed_wording.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/pilot_be_report_technical.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/pilot_be_timeline_corrupt.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/pilot_be_timeline_mislabel.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/pilot_mk_sample.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/pilot_nway_deep.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/pilot_nway_escape.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/pilot_nway_longname.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/pilot_pilot_abstained_store.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/pilot_pilot_ctx_label.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/pilot_pilot_fuzz.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/pilot_pilot_md_inject.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/pilot_pilot_queue_count.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/pilot_pilot_review_badtime.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/pilot_pilot_review_badtime_cli.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/pilot_pilot_roundtrip.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/pilot_pilot_why_pairing.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/pilot_sym_fuzz.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/rules_cache_order.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/rules_decision_tie.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/rules_diff_dos.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/rules_expect_deep.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/rules_export_longname.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/rules_gather_devzero.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/rules_regex_dos.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/rules_sidecar_json.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/bug-repros-20261029/round2/rules_window_stopiteration.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/current302-integration-20261118/disposition-zip-normalization-review.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/current302-integration-20261118/lineage-reproduce.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/foundation-saved-scope-20261119/native_scope_probe.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/msrc-20261101-independent-mixed-control.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/msrc-20261101-independent-review-controls.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "docs/qa/winpairs-windows-native-20261118/independent-test_review.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "help/tooltip-copy/build_env.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "help/tooltip-copy/capabilities.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "help/tooltip-copy/graph.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "help/tooltip-copy/kb.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "help/tooltip-copy/kev.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "help/tooltip-copy/leads.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "help/tooltip-copy/rules.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "help/tooltip-copy/search.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "help/tooltip-copy/series.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "help/tooltip-copy/strings.py",
+      "byte_identical_to_parent": true
+    },
+    {
+      "path": "help/tooltip-copy/unified.py",
+      "byte_identical_to_parent": true
+    }
+  ],
+  "disposition": "Retain the broader accidental command failure. All1063 diagnostics are in138 unchanged docs/help files outside the repository-maintained lint targets. The unchanged required command passes; no lint configuration, historical evidence, source or tests are changed to suppress it."
+}

@@ -1,0 +1,97 @@
+{
+  "schema": "patchtrace-cycle4-qualification/1",
+  "created_at_utc": "2026-11-21T06:31:01.751439+00:00",
+  "repository": "djshellshoxxx/PatchTrace",
+  "base": "11f51c105bf63946f59373ae605b937c4fee607a",
+  "planned_branch": "integration/patchtrace-20261121-95fe-c4",
+  "tested_local_commit": "8c5e77e2c1ad3f6cfa62c2e474f7bcc2f4af1dd5",
+  "tested_tree": "6fe242cc10a5e7c3afe74c40a0f701cbab73aef1",
+  "tested_remote_code_checkpoint": "2162708d86bb655f85410d8064aea04c396d5e6e",
+  "reviewed_documentation_local_commit": "36584f8153983d64605dd7f4141e88c9fabfa6ef",
+  "reviewed_documentation_remote_checkpoint": "f1f8ef664fd6ee88bf47a375538e4be0d8f11992",
+  "reviewed_documentation_tree": "377a07bdde10a13bb46b0f5bef5c2b96af9d7210",
+  "final_source": {
+    "passed": 391,
+    "expected_failures": 2,
+    "ordinary_skips": 0,
+    "failures": 0,
+    "errors": 0,
+    "unique_identities": 393,
+    "expected_failure_ids": [
+      "CODEX-1",
+      "CODEX-5"
+    ],
+    "receipt": "cycle4-review-evidence.zip::root/final-affected-selection.json"
+  },
+  "site_only": {
+    "source": "305d2d10fafeb4a7c8e566cdd0a3f67cccd97ec1",
+    "passed": 247,
+    "skipped": 1,
+    "skip": "tests.test_site_screens::test_renderer_draws_the_real_gui_offscreen",
+    "skip_reason": "Optional application GUI requires absent PySide6.",
+    "scope": "CPython 3.12/Linux x86_64; fresh offline verified wheelhouse installation.",
+    "hashed_install": "passed",
+    "actual_build": "passed",
+    "wrong_hash_control": "correctly-refused",
+    "missing_transitive_control": "correctly-refused",
+    "receipt_archive": "pages-implementation-evidence.zip"
+  },
+  "reviews": {
+    "buildenv_spec": "passed",
+    "buildenv_standards": "passed",
+    "pages_spec": "passed",
+    "pages_standards": "passed",
+    "S-PAGES-01": "closed by README-only commit 36584f8153983d64605dd7f4141e88c9fabfa6ef"
+  },
+  "source_controls": {
+    "changed_code_test_workflow_lock_blobs": 8,
+    "retained_local_commits": 10,
+    "verified_wheels": 7,
+    "active_dependency_edges": 4
+  },
+  "archives": [
+    {
+      "path": "codex5-research-evidence.zip",
+      "bytes": 209264,
+      "sha256": "00fe3991af2ea6973fa015e1ec77f8357f524a3f8ef3bd001f7769885769305a"
+    },
+    {
+      "path": "pages-implementation-evidence.zip",
+      "bytes": 20876,
+      "sha256": "eed5fcdd73b40dffc6bf667aae5f4c079b97df9db395087bc86d75f9c8952de8"
+    },
+    {
+      "path": "cycle4-review-evidence.zip",
+      "bytes": 96118,
+      "sha256": "dbef967523f7897acf78e45a6b678b23e435db2e211d9d0c81f0c5c7dddd8670",
+      "payload_count": 68,
+      "entries_with_manifest": 69
+    }
+  ],
+  "source_history_bundle": {
+    "path": "local-source-history.bundle",
+    "bytes": 13572,
+    "sha256": "b5c293785d3113d0a24867f641c83355fd458ce80876c86e1af8558cdbd4113c",
+    "prerequisite": "11f51c105bf63946f59373ae605b937c4fee607a",
+    "head": "36584f8153983d64605dd7f4141e88c9fabfa6ef",
+    "commits": 10
+  },
+  "precision_notes": [
+    "The early single buildenv-host-audit-baseline pass concerns the general control-tooltip test, not the modified registry-coverage test.",
+    "The later 132/391 selections and independent global positive/missing-Basis controls qualify real-host activation.",
+    "Author and reviewer results overlap; do not add them to the 391 distinct final passing identities.",
+    "The author selection includes 15 historical GUI-tip tests outside the final selection; retained but not counted as final passes.",
+    "The optional GUI screenshot test skipped in the site-only environment passed in the final full-dependency environment.",
+    "Original baseline/setup/audit failures and intentional negative controls retain separate dispositions."
+  ],
+  "remaining_gates": [
+    "Exact combined-source hosted QA",
+    "Hosted Pages index-resolution/build acceptance",
+    "PR349 integration with independently owned Search/storage/Action-pin work",
+    "Earlier Windows intel advisory failures require owner disposition",
+    "Other CODEX-5 installation lanes and per-command audit blind spot",
+    "Manual/native Windows, trust/accessibility, raw provenance, historical semantics and separate L1/L2/L3 release gates"
+  ],
+  "main_merge_eligible": false,
+  "release_ready": false
+}

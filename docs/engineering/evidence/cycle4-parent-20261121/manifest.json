@@ -1,0 +1,66 @@
+{
+  "schema": "patchtrace-evidence-directory/1",
+  "created_at_utc": "2026-11-21T07:01:15.231585+00:00",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 3045,
+      "sha256": "106c535e1ce1bcfc991c3b7c39b1e088408df6004953635d687cf6f2aff87103"
+    },
+    {
+      "path": "code-publication-mapping.json",
+      "bytes": 5291,
+      "sha256": "c6aecf0d97c5b4624ae295c4623eb4d1bb013b3fb60730593943730b7220af5c"
+    },
+    {
+      "path": "combined-identity-summary.json",
+      "bytes": 52291,
+      "sha256": "481817b5a60d13e65402255dc835c5700d9a26a8cf0f55e58cfa4b3d3c70561a"
+    },
+    {
+      "path": "merge-resolution.json",
+      "bytes": 1728,
+      "sha256": "5403f3cd1f2b84425675476b35959c545b6682d0e22830c0cca8032af4ca369c"
+    },
+    {
+      "path": "merge-review.md",
+      "bytes": 5325,
+      "sha256": "a01ff18dcd2fd6fd23305e5003cb1019123bb66c0eb04cce161d4a9c8051c86d"
+    },
+    {
+      "path": "original-source-history.bundle",
+      "bytes": 395604,
+      "sha256": "44e07699b3f08424b2a9b02125b303aa1eb7b8176e048a93e00d4b3deba7db80"
+    },
+    {
+      "path": "parent-upgrade-bundle.json",
+      "bytes": 451,
+      "sha256": "333c0a73a261a9859233b08d89f13f8ebc5c6aae55c3967fbb167ca7ac925577"
+    },
+    {
+      "path": "qualification-and-review-evidence.zip",
+      "bytes": 186218,
+      "sha256": "59c369d21424e4549cd000e62155f02b8771c62482a8ea11c229adcdff363318"
+    },
+    {
+      "path": "qualification.json",
+      "bytes": 4351,
+      "sha256": "ee2beaecc72fd08d6d7c24f15d4a17620eb16762997f43214e18d63e56e69ac4"
+    },
+    {
+      "path": "record-review.md",
+      "bytes": 9227,
+      "sha256": "dad9381bc79e48bc87a166af950f14107655f1044b51407b692e5ed42cd8a24d"
+    },
+    {
+      "path": "ruff-scope-disposition.json",
+      "bytes": 18159,
+      "sha256": "c08ffecc05e9adb32e657ee4093555702136a9f547599e4e91355f2e40aec854"
+    },
+    {
+      "path": "source-history-verification.log",
+      "bytes": 345,
+      "sha256": "b9cdb35274be36ca68f8362690a1e58f28d8067902cba47b6d75f31dd553fbc6"
+    }
+  ]
+}

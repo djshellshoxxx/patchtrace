@@ -1,5 +1,30 @@
 # PatchTrace consolidation ledger
 
+## Cycle4 parent integration update — 2026-11-21 UTC
+
+The separate C4 follow-up includes PR349 `daee337c` and preserves both implementations
+and histories. Source `111803d5` / REST code checkpoint `7ddb1130` passed 580 cases,
+with one CODEX-5 expected failure and no ordinary skips; all 110 registry cases are
+included. Required Ruff/pip/source binding and independent merge/history reviews
+passed. CODEX-1 is closed by the parent; wider CODEX-5 and hosted/native/manual/release
+gates remain open. [Current report](cycle4-consolidation-20261121-95fe.md) and [exact qualification](evidence/cycle4-parent-20261121/qualification.json)
+supersede the earlier pending C4 combination state. PR349 ownership stays with 837FE;
+resolve final follow-up head/checks from its live PR. Main/release eligibility remains
+false. A qualified main commit requires `[no release] [no deploy]`. Earlier sections
+remain source-specific history.
+
+## Cycle4 bounded parallel follow-up — 2026-11-21
+
+This is a separate bounded follow-up to PR #349. Its integration remains with
+the parallel 837FE owner. Read the [cycle4 report](cycle4-consolidation-20261121-95fe.md)
+and [authoritative ledger](task-ledger.json); resolve the live follow-up PR for
+the final published head and hosted checks. Earlier sections below remain source-specific history.
+
+Local tested source `8c5e77e2c1ad3f6cfa62c2e474f7bcc2f4af1dd5` maps to `2162708d86bb655f85410d8064aea04c396d5e6e` with identical complete tree.
+The later README-only prerequisite fix is independently reviewed. Both slices retain
+contract-first author histories. Final selection:391 passed,2 CODEX-1/5 xfailed,0 ordinary skips.
+Do not merge over the owner's Search/storage/Action-pin changes.
+
 ## Current integration candidate — cycle3
 
 The isolated local candidate combines reviewed Linux5fa47ac7, cache53e02a47 and Pages e54e4d0a with their histories retained. Tested source: e5a531668ef523cd6faa26d5fec59aa552749134; tree: e622ff8f5624ce73bac63c0976af01c614ce05bb. Planned remote branch: integration/patchtrace-20261121-95fe-c3, base main fdc2696c. [Current report](cycle3-consolidation-20261121-95fe.md) and [machine qualification](evidence/cycle3-95fe/qualification.json).

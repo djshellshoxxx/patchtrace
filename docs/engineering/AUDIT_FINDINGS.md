@@ -1,5 +1,32 @@
 # PatchTrace audit findings
 
+## Cycle4 parent integration update — 2026-11-21 UTC
+
+The separate C4 follow-up includes PR349 `daee337c` and preserves both implementations
+and histories. Source `111803d5` / REST code checkpoint `7ddb1130` passed 580 cases,
+with one CODEX-5 expected failure and no ordinary skips; all 110 registry cases are
+included. Required Ruff/pip/source binding and independent merge/history reviews
+passed. CODEX-1 is closed by the parent; wider CODEX-5 and hosted/native/manual/release
+gates remain open. [Current report](cycle4-consolidation-20261121-95fe.md) and [exact qualification](evidence/cycle4-parent-20261121/qualification.json)
+supersede the earlier pending C4 combination state. PR349 ownership stays with 837FE;
+resolve final follow-up head/checks from its live PR. Main/release eligibility remains
+false. A qualified main commit requires `[no release] [no deploy]`. Earlier sections
+remain source-specific history.
+
+## Cycle4 bounded parallel follow-up — 2026-11-21
+
+This is a separate bounded follow-up to PR #349. Its integration remains with
+the parallel 837FE owner. Read the [cycle4 report](cycle4-consolidation-20261121-95fe.md)
+and [authoritative ledger](task-ledger.json); resolve the live follow-up PR for
+the final published head and hosted checks. Earlier sections below remain source-specific history.
+
+Resolved locally: five missing Build environment header bindings; confirmed Pages
+site-only pydantic fixture error; and P3 S-PAGES-01 (pytest prerequisite documentation).
+All four independent source reviews have zero remaining findings. Preserve the
+original failures and intentional negative controls. The separate CODEX-5
+run-block audit blind spot remains open; no compromised workflow is inferred.
+PR #349's previously recorded Windows advisory findings remain with its qualification owner.
+
 ## Cycle3 current findings and disposition
 
 | ID | Finding | Disposition |

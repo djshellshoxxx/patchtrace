@@ -1,0 +1,11 @@
+{
+  "path": "final-record-audit.zip",
+  "bytes": 18878,
+  "sha256": "b58588b55f7af560bf4c6ab2b5150dff4e1d6095548399c834952a61aae077f7",
+  "payload_count": 9,
+  "verified_relative_links_in_audited_package": 209,
+  "audited_history_task_count": 77,
+  "append_only_tasks": 3,
+  "finding_status": "zero-blocking-findings",
+  "scope": "Final audit of the assembled prepublication records; final ref/tree verification follows publication."
+}

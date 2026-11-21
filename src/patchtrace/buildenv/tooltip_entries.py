@@ -23,6 +23,28 @@ TIPS = {
         'One row per build fact with its older value, newer value, status and basis.',
         'Shows what changed between the builds and how each fact is known.',
         'Selecting a row shows its detail; Ctrl+C copies the selected rows as text.'),
+    'build_env.col.fact': _tip(
+        'The build-environment property described by this row.',
+        'Identifies the compiler, linker, runtime or other recorded build detail.',
+        'Explains the heading; displayed values and comparison states stay unchanged.'),
+    'build_env.col.older': _tip(
+        'The recorded value shown for the older file in this row.',
+        'Compare it with NEWER and read Status and Basis together. A dash means no value is shown for this side.',
+        'Explains the heading; displayed values and comparison states stay unchanged.'),
+    'build_env.col.newer': _tip(
+        'The recorded value shown for the newer file in this row.',
+        'Compare it with OLDER and read Status and Basis together. A dash means no value is shown for this side.',
+        'Explains the heading; displayed values and comparison states stay unchanged.'),
+    'build_env.col.status': _tip(
+        'The recorded comparison state for this build fact.',
+        'Changed, added, removed, same, or unknown (one side) describes this fact only. Unknown is not a difference.',
+        'Explains the heading; displayed values and comparison states stay unchanged.',
+        'The build-environment comparison of the recorded facts.'),
+    'build_env.col.basis': _tip(
+        'The recorded source or sources supporting this fact comparison.',
+        'Shows where the values came from, such as a PE header or Detect It Easy signature. '
+        'Signatures and header fields do not prove how a file was built.',
+        'Explains the heading; displayed values and comparison states stay unchanged.'),
     'build_env.detail': _tip(
         'Provenance of the facts: file hashes, tool version, database and cautions, as plain text.',
         'Lets you check where each fact came from.', 'Read-only text; at most 8 KiB.'),

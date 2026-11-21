@@ -1,0 +1,6 @@
+The bundle contains this ref:
+36584f8153983d64605dd7f4141e88c9fabfa6ef HEAD
+The bundle requires this ref:
+11f51c105bf63946f59373ae605b937c4fee607a 
+The bundle uses this hash algorithm: sha1
+/workspace/scratch/patchtrace-95fe-c4/coordinator/docs/engineering/evidence/cycle4-95fe/local-source-history.bundle is okay
