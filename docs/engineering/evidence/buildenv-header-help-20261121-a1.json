@@ -1,0 +1,63 @@
+{
+  "schema": "patchtrace-buildenv-header-help-controls/1",
+  "base_commit": "11f51c105bf63946f59373ae605b937c4fee607a",
+  "branch": "codex/patchtrace-buildenv-header-help-20261121-a1",
+  "source_blobs": {
+    "src/patchtrace/buildenv/panel_model.py": "c0d9af1e0d3618cfea829d9a19eadbe8a011fa27",
+    "src/patchtrace/buildenv/tooltip_entries.py": "ff5c8819a4d92d13ad38a9a13021552c0594dc82"
+  },
+  "baseline_blobs": {
+    "src/patchtrace/buildenv/panel_model.py": "d33a35ca9a45219df0ea3f33e76127b0a878aa07",
+    "src/patchtrace/buildenv/tooltip_entries.py": "19dbfa8017b9b9660995942e2fe5783c9da9b0b9"
+  },
+  "controls": {
+    "source_check": true,
+    "baseline_check": false,
+    "removed_bindings": [
+      {
+        "id": "fact",
+        "detected": true
+      },
+      {
+        "id": "older",
+        "detected": true
+      },
+      {
+        "id": "newer",
+        "detected": true
+      },
+      {
+        "id": "status",
+        "detected": true
+      },
+      {
+        "id": "basis",
+        "detected": true
+      }
+    ],
+    "removed_registrations": [
+      {
+        "id": "fact",
+        "detected": true
+      },
+      {
+        "id": "older",
+        "detected": true
+      },
+      {
+        "id": "newer",
+        "detected": true
+      },
+      {
+        "id": "status",
+        "detected": true
+      },
+      {
+        "id": "basis",
+        "detected": true
+      }
+    ]
+  },
+  "method": "Connector-fetched immutable GitHub file blobs; JS exact-text contract and 10 single-site negative mutations; no Python import or Qt runtime.",
+  "limits": "Not repository pytest, Ruff, Qt accessibility, genuine independent review or hosted acceptance."
+}
