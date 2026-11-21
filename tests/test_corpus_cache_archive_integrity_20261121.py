@@ -46,8 +46,14 @@ def admission_errors(source: str) -> list[str]:
         elif setup.index("sha256sum -c -") > setup.index(extractor):
             errors.append(f"{label}: pinned digest must precede extraction")
         if label == "rizin":
-            if "rm -rf rizin" not in setup or "rizin-archive/$RIZIN_ASSET" not in setup:
-                errors.append("rizin: clean extraction and archive identity required")
+            if "rm -rf rizin" not in setup:
+                errors.append("rizin: clean extraction required")
+            if not all(fragment in setup for fragment in (
+                'archive="rizin-archive/$RIZIN_ASSET"',
+                'echo "${RIZIN_SHA256}  ${archive}" | sha256sum -c -',
+                'tar -xJf "$archive" -C rizin',
+            )):
+                errors.append("rizin: download, digest check and extraction must bind one archive")
         else:
             if "rm -rf ghidra-runtime" not in setup:
                 errors.append("ghidra: clean extraction required")
@@ -78,6 +84,8 @@ def test_cached_tools_are_verified_archives_before_use():
         ("rm -rf rizin", "echo skip-rizin-clean"),
         ("rm -rf ghidra-runtime", "echo skip-ghidra-clean"),
         ("rizin-archive/$RIZIN_ASSET", "rizin/$RIZIN_ASSET"),
+        ('echo "${RIZIN_SHA256}  ${archive}" | sha256sum -c -', 'echo "${RIZIN_SHA256}  unchecked" | sha256sum -c -'),
+        ('tar -xJf "$archive" -C rizin', 'tar -xJf unchecked.tar.xz -C rizin'),
         ("ghidra-archive/ghidra.zip", "ghidra-runtime/ghidra.zip"),
         ("contains(env.ENGINES, 'ghidriff')", "true"),
     ],
