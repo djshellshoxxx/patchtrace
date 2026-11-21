@@ -118,13 +118,20 @@ def test_pip_downloads_require_hashes():
     assert not unhashed, unhashed
 
 
-@pytest.mark.xfail(strict=True, reason='CODEX-6')
 def test_corpus_cache_does_not_skip_verification():
     source = (WORKFLOWS / 'corpus-tier-r.yml').read_text(encoding='utf-8')
     scripts = '\n'.join(run_scripts(source))
-    # Pin verification must not disappear just because the extracted tree was restored.
+    # Pin verification must not disappear just because the archive was restored.
     assert "steps.rizin-cache.outputs.cache-hit != 'true'" not in source
     assert 'steps.ghidra-cache.outputs.cache-hit' not in scripts
+    assert 'path: rizin-archive' in source and 'path: ghidra-archive' in source
+    # Each branch verifies before extracting, rather than trusting a cache key.
+    for env_name, extraction in (('RIZIN_SHA256', 'tar -xJf'),
+                                 ('GHIDRA_SHA256', 'unzip -q')):
+        marker = f'${{{env_name}}}'
+        assert marker in scripts
+        assert extraction in scripts
+    assert scripts.count('sha256sum -c -') >= 2
 
 
 def test_gate_parse_error_cannot_publish_for_pr(gate):
