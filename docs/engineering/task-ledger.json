@@ -1,6 +1,6 @@
 {
   "schema": "patchtrace-engineering-task-ledger/1",
-  "updated_at": "2026-11-21T02:49:19.534442+00:00",
+  "updated_at": "2026-11-21T03:15:24.191Z",
   "repository": "https://github.com/djshellshoxxx/PatchTrace",
   "integration_branch": "codex/patchtrace-integration-20261121-2bad",
   "checkpoint_local_commit": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
@@ -52,7 +52,8 @@
     "Inventory tip OID continuation: previously retained TSV tip_sha was passed verbatim to git rev-parse and could be HEAD, abbreviated sha or HEAD~0, so replay could silently resolve changed history. On isolated successor to inventory TSV shape, contract/test-first strict full lowercase SHA-1/SHA-256 commit IDs are admitted before any Git access; resolved OID must equal requested OID (no tag peeling). Seven repository pytest cases authored, synthetic Git controls verified 6 pre-Git refusals, 1 positive, 1 tag-peeling refusal, and 3 original mutable ref admissions. Actual repository pytest/Ruff/CI and genuinely independent review pending.",
     "Follow-up author-side regression review corrected a new test fixture's unused local binding (F841 risk) at 18b400c699b4e0bed512be6f45ed720749ed4faa. Full repository Ruff remains unrun; this does not constitute a separate independent reviewer.",
     "Strict PR JSON continuation: saved all-pages JSON accepted duplicate PR/head/repo keys and nonfinite constants under default Python decoder. Contract/test-first isolated branch adds strict duplicate and parse_constant rejection, fixed malformed/deep errors, and validates saved PR metadata before any branch Git lookup. Eleven authored regression cases and nine copied-parser controls, no checked-out pytest/Ruff or independent review yet. Existing prior-output and historical failures retained.",
-    "Strict PR JSON local control extension: 11 copied-reader outcomes passed; invalid UTF-8 fixed refusal and prior-output/no-Git replay also checked. Not source-bound pytest or independent reviewer acceptance."
+    "Strict PR JSON local control extension: 11 copied-reader outcomes passed; invalid UTF-8 fixed refusal and prior-output/no-Git replay also checked. Not source-bound pytest or independent reviewer acceptance.",
+    "CODEX-14 continuation 2026-11-21: prior Linux artifact pipeline ran only --self-test. New isolated successor adds checkout and declared host-side fixtures, then invokes full tools/frozen_smoke.py on checksum-verified extracted Linux archive on Ubuntu 22.04/24.04. Static original strict xfail is replaced by positive workflow contract plus a Qt-mode preservation test. 13 author-side source checks pass; actual CI, frozen CLI behavior and independent peer pending. CODEX-1/5/6 and release gates unaffected."
   ],
   "tasks": [
     {
@@ -897,6 +898,22 @@
       "source_commit": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
       "evidence": "docs/engineering/cycle2-historical-ui-review-20261121-2bad.md",
       "result_or_next_action": "Four strict expected failures remain: CODEX-1 mutable Action tags; CODEX-5 unhashed package installs; CODEX-6 cache-hit verification bypasses; CODEX-14 missing full Linux frozen CLI smoke. Historical donor has no implementing patch. Plan each as a separate reviewed source-specific change; do not remove xfails or substitute existing GUI self-tests."
+    },
+    {
+      "id": "codex14-linux-frozen-cli-smoke-20261121",
+      "owner": "isolated CODEX-14 source author; fresh independent peer review not yet assigned",
+      "status": "implemented-static-source-reviewed-hosted-frozen-binary-unqualified",
+      "branch": "codex/patchtrace-linux-frozen-cli-smoke-20261121",
+      "base_commit": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+      "scope": "Add full actual frozen CLI harness to unpacked checksum-verified Linux onedir release artifact on ubuntu-22.04 and ubuntu-24.04 without removing existing Qt offscreen/xcb checks.",
+      "contract_commit": "68cfff469618f0123df81740c4ab2a0bf3e24e00",
+      "test_commit": "d34f6100c01d06c4ff2681d3b6ca6d6fca07ed8d",
+      "workflow_commit": "93a6698b1a8f38e26199638ee9d72d2adc985dd3",
+      "tests": "tests/test_codex_pkg_packaging.py (previous CODEX-14 strict xfail promoted to source contract assertion; 1 preserved/enhanced case and 1 new Qt-modes preservation case)",
+      "contract": "docs/linux.md (frozen Linux CLI acceptance)",
+      "evidence": "docs/engineering/codex14-linux-frozen-cli-smoke-20261121.md",
+      "review_status": "Author-side structural and source inspection; 13 explicit source invariants pass, not a separately staffed reviewer and not live artifact execution",
+      "result_or_next_action": "Fetch exact PR348 QA and native terminal results; create stacked draft for this branch and await source-specific both-OS Linux smoke jobs and QA/Qt/native/package plus independent peer, then guard any qualified merge on fresh expected head. Full archive smoke, release, Windows/manual/trust and L1/L2/L3 remain unverified."
     }
   ],
   "aggregate_source_commit": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
