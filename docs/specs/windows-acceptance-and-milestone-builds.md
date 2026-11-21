@@ -260,6 +260,49 @@ Run A2 to A5 in the release job after `tools/build_windows.py`. Run A6 to A8 in 
 
 A7 must drive the real `jobs.run_process` path and write the grandchild PID to a temp file for the assertion. A PowerShell-only harness proves nothing about PatchTrace.
 
+### 2.1 Original Ghidra archive in the native matrix (2026-11-21)
+
+The existing five-variant `live-backend.yml` matrix retains only the original
+Ghidra ZIP in `ghidra-archive/ghidra.zip`, using the Tier R archive convention
+from `known-answer-corpus.md`. Reuse pinned
+`actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830` with path
+`ghidra-archive` and exact key `ghidra-archive-v1-${{ env.GHIDRA_SHA256 }}`.
+No restore-key fallback or extracted `ghidra-runtime` tree belongs in the cache.
+Keep the existing Ghidra 12.0.4 release URL and SHA-256
+`c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120`,
+Python 3.12, Temurin 25 and Ghidriff revision unchanged.
+
+The PowerShell provisioning step runs for every variant on hits and misses.
+It refuses a missing or malformed pin before download, downloads only when the
+original ZIP is absent, and verifies that ZIP against the source-reviewed pin
+before changing the extraction directory. A corrupt restored ZIP fails the
+step; it is not silently replaced by a download. After a matching SHA-256,
+remove any prior `ghidra-runtime`, extract the same verified ZIP afresh and
+export `GHIDRA_INSTALL_DIR` as before. Download, hash, removal and extraction
+errors are terminating. Keep the verified original ZIP available for the cache
+action's normal successful-job save hook.
+
+Preserve all five native cases and their existing strict assertions:
+`repro-plain-ghidriff`, `patchtrace-clean`, `patchtrace-seeded-store`,
+`patchtrace-seeded-store-no-adjacent-pdb` and `raw-cache-hit`. Fixture compilation,
+symbol-store setup, native commands, diagnostic upload, triggers, permissions,
+concurrency and the 25-minute job limit remain unchanged. The raw-analysis cache
+check remains separate from the original-archive cache.
+
+`tests/test_live_ghidra_archive.py` checks the workflow contract and replays only
+the actual provisioning step against tiny authored ZIPs, with a local download
+double and no engine or target execution. PowerShell fixtures skip explicitly
+where `pwsh` is unavailable; Windows QA requires it. These checks establish no
+hosted cache or native acceptance. Exact-source hosted evidence must separately
+show a cold miss, pinned download/checksum/fresh extraction and successful cache
+save, followed by an actual exact-key restore/checksum/fresh extraction, with
+all five native outcomes retained. Complete the first run before the second:
+the existing concurrency policy can cancel an earlier same-event/ref run.
+Cache access also depends on ref scope and the action's internal version, so a
+matching key alone proves neither availability nor a restore. An archive pin
+does not hash-lock Java or the Ghidriff Python dependency graph, qualify the
+import-only Tier R Ghidriff evaluator, or close manual/air-gap acceptance.
+
 ---
 
 ## 3. Manual acceptance checklist (clean Windows 11 profile)
