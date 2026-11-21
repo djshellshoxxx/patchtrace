@@ -1,5 +1,15 @@
 # PatchTrace consolidation ledger
 
+## Current integration candidate — cycle3
+
+The isolated local candidate combines reviewed Linux5fa47ac7, cache53e02a47 and Pages e54e4d0a with their histories retained. Tested source: e5a531668ef523cd6faa26d5fec59aa552749134; tree: e622ff8f5624ce73bac63c0976af01c614ce05bb. Planned remote branch: integration/patchtrace-20261121-95fe-c3, base main fdc2696c. [Current report](cycle3-consolidation-20261121-95fe.md) and [machine qualification](evidence/cycle3-95fe/qualification.json).
+
+Recovered20 previously published PR #346 documentation/evidence files without overwriting application source; exact recovery blobs are recorded. Both candidate histories are local merge parents; REST publication will preserve complete trees and mapped parent relationships. No blanket PR #346 ancestry/supersession or branch deletion claim is made.
+
+469 distinct affected tests pass; whole-tree Ruff/dependencies pass; independent source reviews have no blocking finding. Exact new-source hosted checks remain pending. PR #348's earlier full/platform successes remain separate evidence. Main/release/deployment have not changed. A future qualified main merge requires `[no release] [no deploy]` in its actual message and a fresh expected-head REST guard.
+
+## Retained historical cycle95fe record
+
 The machine-readable authority is [task-ledger.json](task-ledger.json).
 This page and the other uppercase engineering pages are navigation and current
 human-readable views of that record. Historical dated evidence remains intact.

@@ -1,5 +1,15 @@
 # PatchTrace worker handoff
 
+## Current continuation — cycle3
+
+Read [task-ledger.json](task-ledger.json), [cycle3 handoff](../engineering-handoffs/cycle3-20261121-95fe.md), [source qualification](cycle3-consolidation-20261121-95fe.md), and [integration queue](INTEGRATION_QUEUE.md) first. These current sections supersede historical next-action statements below only for their named scope.
+
+Tested local source: e5a531668ef523cd6faa26d5fec59aa552749134; tree: e622ff8f5624ce73bac63c0976af01c614ce05bb. Planned remote branch: integration/patchtrace-20261121-95fe-c3. Resolve live branch/PR and exact CI results before action. Root owns publication/qualification; source/review/census workers have completed and are not silently running in the background.
+
+469 distinct affected passes, 2 unchanged expected failures; lint/dependencies pass. New-source hosted checks remain pending. Original failures and all 20 recovered PR #346 artifacts are retained. Qualified merge only via REST expected-head guard with `[no release] [no deploy]` in the actual resulting merge commit; no release/deployment/deletion/force-push.
+
+## Retained historical cycle95fe record
+
 Start with [task-ledger.json](task-ledger.json), then
 [the cycle 95fe handoff](../engineering-handoffs/cycle-95fe-20261120.md),
 [qualification](cycle-95fe-qualification.md), and

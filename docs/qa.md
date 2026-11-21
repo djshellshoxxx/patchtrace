@@ -2353,3 +2353,9 @@ its single failed-job retry is now successful on that ancestor, not this
 source. Parent PR #348 Windows full pytest still in progress on inspection.
 Other CODEX-1/5, CODEX-14, manual/raw-provenance/accuracy gates remain open.
 See `docs/engineering/codex6-corpus-cache-archive-20261121.md`.
+
+## Cycle3 combined source qualification — 21 November 2026 UTC
+
+On clean source e5a531668ef523cd6faa26d5fec59aa552749134 (tree e622ff8f5624ce73bac63c0976af01c614ce05bb), the14-file normal-conftest offscreen selection completed458 passed/11 skipped/2 xfailed. All11 skips were missing declared site-build Pillow/segno dependencies. Installed pinned requirements and replayed exactly those11 identities:11 passed, zero skips/failures.469 distinct affected cases now pass; CODEX-1/5 remain expected failures. WholeRuff, pip check and exact source binding pass. Source-specific full hosted and both actual frozen Linux jobs are pending. [Current qualification](engineering/cycle3-consolidation-20261121-95fe.md).
+
+Preserved original cache test1 failure/29 passes/2 xfail and2Ruff I001, Linux unused-import F401, Pages missing-condition red control, reviewer initial control failure, PR345NSISHTTP503 and historical SIGKILLs. None was overwritten or inferred successful. CODEX-6/14 and Pages changes received independent source reviews; a P3 report-count inconsistency was corrected against the final14/14 author receipt. Application src tree is unchanged from hosted-qualified PR #348; this does not transfer hosted qualification to the changed workflows.

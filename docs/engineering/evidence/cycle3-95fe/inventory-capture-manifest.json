@@ -1,0 +1,147 @@
+{
+  "schema": "patchtrace-reference-census/1",
+  "repository": "https://github.com/djshellshoxxx/PatchTrace",
+  "capture_window": {
+    "started_at_utc": "2026-11-21T04:55:49.621Z",
+    "completed_at_utc": "2026-11-21T04:57:48.373Z",
+    "atomic": false
+  },
+  "collection_method": "GitHub REST GET through GitHub connector",
+  "limits": [
+    "Paginated observation, not an atomic repository transaction.",
+    "No semantic supersession or live-worker ownership classification.",
+    "No tests, builds, native qualification, workflow dispatch, or ref mutations."
+  ],
+  "pages": [
+    {
+      "collection": "branches",
+      "page": 1,
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/branches?per_page=100&page=1",
+      "capture_started_at_utc": "2026-11-21T04:55:49.621Z",
+      "captured_at_utc": "2026-11-21T04:55:50.000Z",
+      "items": 100,
+      "body_text_code_units": 23241,
+      "path": "raw/branches-page-1.json",
+      "bytes": 23241,
+      "sha256": "5433469ef5574e06654466e3888679d6afb51a57713bf8c882b6c753bacb6d60",
+      "serialization": "Exact UTF-8 body returned by the GitHub REST connector."
+    },
+    {
+      "collection": "branches",
+      "page": 2,
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/branches?per_page=100&page=2",
+      "capture_started_at_utc": "2026-11-21T04:56:06.068Z",
+      "captured_at_utc": "2026-11-21T04:56:06.593Z",
+      "items": 100,
+      "body_text_code_units": 24345,
+      "path": "raw/branches-page-2.json",
+      "bytes": 24345,
+      "sha256": "7fa29a76ce5443f0312b1bc393b2e74ebe49ad390a67ef8de599b3b4c882f862",
+      "serialization": "Exact UTF-8 body returned by the GitHub REST connector."
+    },
+    {
+      "collection": "branches",
+      "page": 3,
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/branches?per_page=100&page=3",
+      "capture_started_at_utc": "2026-11-21T04:56:06.069Z",
+      "captured_at_utc": "2026-11-21T04:56:06.453Z",
+      "items": 100,
+      "body_text_code_units": 23215,
+      "path": "raw/branches-page-3.json",
+      "bytes": 23215,
+      "sha256": "a67fa4972aef64cef2ec61983b5f56bcbcf94b5a06adbe7594d4446ddcc5d109",
+      "serialization": "Exact UTF-8 body returned by the GitHub REST connector."
+    },
+    {
+      "collection": "branches",
+      "page": 4,
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/branches?per_page=100&page=4",
+      "capture_started_at_utc": "2026-11-21T04:56:06.069Z",
+      "captured_at_utc": "2026-11-21T04:56:06.474Z",
+      "items": 64,
+      "body_text_code_units": 15235,
+      "path": "raw/branches-page-4.json",
+      "bytes": 15235,
+      "sha256": "05104604e9cba44f8d96df11f5ca7604e11865db54713213da4377c1c186c82c",
+      "serialization": "Exact UTF-8 body returned by the GitHub REST connector."
+    },
+    {
+      "collection": "branches",
+      "page": 5,
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/branches?per_page=100&page=5",
+      "capture_started_at_utc": "2026-11-21T04:57:47.891Z",
+      "captured_at_utc": "2026-11-21T04:57:48.373Z",
+      "items": 0,
+      "body_text_code_units": 2,
+      "path": "raw/branches-page-5.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "serialization": "Exact UTF-8 body returned by the GitHub REST connector."
+    },
+    {
+      "collection": "pulls",
+      "page": 1,
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/pulls?state=all&sort=created&direction=asc&per_page=100&page=1",
+      "capture_started_at_utc": "2026-11-21T04:55:49.622Z",
+      "captured_at_utc": "2026-11-21T04:55:50.989Z",
+      "items": 100,
+      "body_text_code_units": 1788252,
+      "path": "raw/pulls-page-1.json",
+      "bytes": 1788501,
+      "sha256": "db9a34d0d73d3e9b2dece8be14acb9e093d868e306ffecc140f6d7924a9d1037",
+      "serialization": "Exact UTF-8 body returned by the GitHub REST connector."
+    },
+    {
+      "collection": "pulls",
+      "page": 2,
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/pulls?state=all&sort=created&direction=asc&per_page=100&page=2",
+      "capture_started_at_utc": "2026-11-21T04:56:06.069Z",
+      "captured_at_utc": "2026-11-21T04:56:06.994Z",
+      "items": 100,
+      "body_text_code_units": 1880894,
+      "path": "raw/pulls-page-2.json",
+      "bytes": 1881097,
+      "sha256": "eccba13045eb1535f5ebd0e49d5975d2415307ace4481b9a04d6e83a88328602",
+      "serialization": "Exact UTF-8 body returned by the GitHub REST connector."
+    },
+    {
+      "collection": "pulls",
+      "page": 3,
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/pulls?state=all&sort=created&direction=asc&per_page=100&page=3",
+      "capture_started_at_utc": "2026-11-21T04:56:06.069Z",
+      "captured_at_utc": "2026-11-21T04:56:07.264Z",
+      "items": 100,
+      "body_text_code_units": 1879729,
+      "path": "raw/pulls-page-3.json",
+      "bytes": 1879884,
+      "sha256": "0356bbfe3ed00d5a9d64f380b1543dc8cc7a3a04edfcf4a7c1c399f08330544d",
+      "serialization": "Exact UTF-8 body returned by the GitHub REST connector."
+    },
+    {
+      "collection": "pulls",
+      "page": 4,
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/pulls?state=all&sort=created&direction=asc&per_page=100&page=4",
+      "capture_started_at_utc": "2026-11-21T04:56:06.069Z",
+      "captured_at_utc": "2026-11-21T04:56:06.782Z",
+      "items": 38,
+      "body_text_code_units": 769409,
+      "path": "raw/pulls-page-4.json",
+      "bytes": 769473,
+      "sha256": "0055eb18b206dcf14142952cf0f17d588e8efcb842675ead03bb7003b87be8e1",
+      "serialization": "Exact UTF-8 body returned by the GitHub REST connector."
+    },
+    {
+      "collection": "pulls",
+      "page": 5,
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/pulls?state=all&sort=created&direction=asc&per_page=100&page=5",
+      "capture_started_at_utc": "2026-11-21T04:57:47.892Z",
+      "captured_at_utc": "2026-11-21T04:57:48.204Z",
+      "items": 0,
+      "body_text_code_units": 2,
+      "path": "raw/pulls-page-5.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "serialization": "Exact UTF-8 body returned by the GitHub REST connector."
+    }
+  ]
+}

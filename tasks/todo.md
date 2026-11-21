@@ -1693,3 +1693,14 @@ Owner/branch: `codex/patchtrace-linux-frozen-cli-smoke-20261121`; handoff
 - [ ] Review PR348 Windows QA terminal result before stacked PR/full jobs;
   do not infer CODEX-6 branch qualification from original PR347 or PR345.
   Keep CODEX-1/5 and separate CODEX-14, manual/trust/raw and L1/L2/L3 gates.
+
+## Current cycle3 continuation — 21 November 2026 UTC
+
+- [x] Reconcile exact-source hosted PR #345–348 success, preserving the original failed NSIS attempt and successful retry.
+- [x] Review retained CODEX-6/CODEX-14; repair the actual cache-test oracle and3 Ruff findings; preserve all failed receipts.
+- [x] Specify, implement and independently review Pages push-head deployment opt-out without skipping QA/build/artifacts.
+- [x] Combine reviewed histories;469 distinct affected cases passed after declared site dependencies resolved11 skips; whole-tree Ruff/pip check passed.
+- [x] Recover20 missing PR #346 engineering/evidence files with exact blobs; reconcile six required indexes and complete reference census.
+- [ ] Publish and inspect exact new-source full/Qt/native/package, TierR and both Linux frozen CLI checks; retain real cache-hit/Ghidriff acceptance boundaries.
+- [ ] Perform only a qualified expected-head REST main merge, actual message including `[no release] [no deploy]`; no release or deployment.
+- [ ] Keep CODEX-1/5, remaining help mappings, historical semantics, manual/native/raw-provenance and separate accuracy gates open.

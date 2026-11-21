@@ -1,0 +1,113 @@
+{
+  "capture_window": {
+    "started_at_utc": "2026-11-21T04:55:49.621Z",
+    "completed_at_utc": "2026-11-21T04:57:48.373Z",
+    "atomic": false
+  },
+  "branches": 364,
+  "pull_requests": {
+    "all_state": 338,
+    "open": 82,
+    "merged": 172,
+    "closed_unmerged": 84,
+    "open_draft": 66,
+    "open_ready": 16
+  },
+  "comparisons": {
+    "g30_at_pr348": {
+      "new_branches": 23,
+      "moved_branches": 0,
+      "missing_branches": 0,
+      "new_prs": [
+        341,
+        342,
+        343,
+        344,
+        345,
+        346,
+        347,
+        348
+      ],
+      "changed_prs": []
+    },
+    "recovered_cycle95fe": {
+      "new_branches": 10,
+      "moved_branches": 0,
+      "missing_branches": 0,
+      "new_prs": [
+        345,
+        346,
+        347,
+        348
+      ],
+      "changed_prs": []
+    }
+  },
+  "latest_prs": [
+    {
+      "number": 348,
+      "state": "open",
+      "draft": true,
+      "head_ref": "codex/patchtrace-integration-20261121-2bad",
+      "head_sha": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+      "base_ref": "codex/patchtrace-pr345-346-unique-recovery-20261120"
+    },
+    {
+      "number": 347,
+      "state": "open",
+      "draft": true,
+      "head_ref": "codex/patchtrace-pr345-346-unique-recovery-20261120",
+      "head_sha": "b461ac64eb9beb74449ce2b18b6795a2af34a02a",
+      "base_ref": "codex/autonomous-consolidation-20261120-2bad"
+    },
+    {
+      "number": 346,
+      "state": "open",
+      "draft": true,
+      "head_ref": "consolidation/patchtrace-20261120-95fe",
+      "head_sha": "c07774ecf5a3f7337834f95a9a4c51c8ec5fad44",
+      "base_ref": "codex/patchtrace-candidate-component-type-20261120-g41"
+    },
+    {
+      "number": 345,
+      "state": "open",
+      "draft": true,
+      "head_ref": "codex/autonomous-consolidation-20261120-2bad",
+      "head_sha": "39c38a02f126963fc03827fa49741255590227ad",
+      "base_ref": "codex/patchtrace-candidate-component-type-20261120-g41"
+    },
+    {
+      "number": 344,
+      "state": "open",
+      "draft": true,
+      "head_ref": "codex/patchtrace-candidate-component-type-20261120-g41",
+      "head_sha": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+      "base_ref": "codex/patchtrace-advisory-lead-type-20261120-g40"
+    },
+    {
+      "number": 343,
+      "state": "open",
+      "draft": true,
+      "head_ref": "codex/patchtrace-windows-qt-timeout-evidence-20261120-g38",
+      "head_sha": "1c60d91ab1d2038ba481d21d58611137f21b8454",
+      "base_ref": "codex/patchtrace-native-cache-receipt-20261120-g37"
+    },
+    {
+      "number": 342,
+      "state": "open",
+      "draft": true,
+      "head_ref": "codex/patchtrace-verified-integration-20261120-g30",
+      "head_sha": "5f34fb57267637b986814ddc81dba11550992fff",
+      "base_ref": "codex/patchtrace-qa-ruff-imports-20261120-g29"
+    },
+    {
+      "number": 341,
+      "state": "open",
+      "draft": true,
+      "head_ref": "codex/patchtrace-acquire-destination-symlink-20261120-g30",
+      "head_sha": "20d3bb173c9f6d65a144fe26ebed8f22e3c79a00",
+      "base_ref": "codex/patchtrace-qa-ruff-imports-20261120-g29"
+    }
+  ],
+  "generated_at_utc": "2026-11-21T05:00:31.133119+00:00"
+}

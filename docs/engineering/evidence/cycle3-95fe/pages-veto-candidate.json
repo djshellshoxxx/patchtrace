@@ -1,0 +1,97 @@
+{
+  "schema": "patchtrace-pages-deploy-veto-local-qualification/1",
+  "captured_at": "2026-11-21T04:58:19.258144+00:00",
+  "worktree": "/workspace/scratch/patchtrace-95fe-c3/pages-guard",
+  "branch": "codex/patchtrace-pages-deploy-veto-20261121-95fe",
+  "base": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+  "spec_commit": "00183247016fef5668beb3c6d07aedaa9f451262",
+  "source_commit": "e54e4d0afbcdc3916539c62810877faa65842d5e",
+  "before": {
+    "head": "e54e4d0afbcdc3916539c62810877faa65842d5e",
+    "tree": "ecc943693a310455f1427fff7e3d1abad8f07dd0",
+    "status": ""
+  },
+  "after": {
+    "head": "e54e4d0afbcdc3916539c62810877faa65842d5e",
+    "tree": "ecc943693a310455f1427fff7e3d1abad8f07dd0",
+    "status": ""
+  },
+  "changed_files": [
+    {
+      "path": ".github/workflows/pages.yml",
+      "blob": "f192b5099eeedcf04309a9b29667ecbaa48fd19c",
+      "sha256": "852eda1630dd9b121e4568f8562a32d86a0b3d133663f174858a903931e20848",
+      "bytes": 1414
+    },
+    {
+      "path": "docs/specs/pages-deployment-control.md",
+      "blob": "f9f67ac8a8bdf98bade32f423dc533495a67b03e",
+      "sha256": "923a7f089ea3df00e46fd1d734b8c54d4bdb79411945cd56bb7e8b599de077ea",
+      "bytes": 2183
+    },
+    {
+      "path": "site/README.md",
+      "blob": "8a9c8e2df9d376c6b787173c1b996685c228e89d",
+      "sha256": "1058fcb418d8ab3415487f0a21aed4d0948bb678b5506593f641fdc6936b76eb",
+      "bytes": 5771
+    },
+    {
+      "path": "tests/test_site_workflow.py",
+      "blob": "8c0e2cf8deb7d85af1d9b06581495929a7fd22c8",
+      "sha256": "b13b83e4abffaca3b3ccdc70295aa159e5a1b5adcb49137fd03cb9d0a1bd8688",
+      "bytes": 3673
+    }
+  ],
+  "verification": [
+    {
+      "name": "focused",
+      "argv": [
+        "/workspace/scratch/patchtrace-95fe-c3/venv/bin/python",
+        "-B",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "tests/test_site_workflow.py",
+        "tests/test_workflows.py",
+        "--junitxml=/workspace/scratch/patchtrace-95fe-c3-ci/pages-veto-final.xml"
+      ],
+      "exit_code": 0,
+      "log": "/workspace/scratch/patchtrace-95fe-c3-ci/pages-veto-final.log",
+      "summary": "....................................................                     [100%]\n52 passed in 0.24s"
+    },
+    {
+      "name": "ruff",
+      "argv": [
+        "/workspace/scratch/patchtrace-95fe-c3/venv/bin/python",
+        "-B",
+        "-m",
+        "ruff",
+        "check",
+        "--no-cache",
+        "src",
+        "tests",
+        "tools"
+      ],
+      "exit_code": 0,
+      "log": "/workspace/scratch/patchtrace-95fe-c3-ci/pages-veto-final-ruff.log",
+      "summary": "All checks passed!"
+    }
+  ],
+  "source_binding": {
+    "test_file": "/workspace/scratch/patchtrace-95fe-c3/pages-guard/tests/test_site_workflow.py",
+    "helper_root": "/workspace/scratch/patchtrace-95fe-c3/pages-guard",
+    "builder_file": "/workspace/scratch/patchtrace-95fe-c3/pages-guard/tools/site/build_site.py",
+    "app_modules_loaded": [],
+    "workflow_file": "/workspace/scratch/patchtrace-95fe-c3/pages-guard/.github/workflows/pages.yml"
+  },
+  "scope": "Static workflow source assertions, not GitHub expression-engine execution or hosted deployment evidence. Conftest and plugin autoload intentionally disabled to avoid unrelated application imports. No deployment, dispatch, remote ref mutation or release.",
+  "red_control": {
+    "failed": 1,
+    "passed": 6,
+    "cause": "deploy job had no if condition before implementation",
+    "log": "/workspace/scratch/patchtrace-95fe-c3-ci/pages-veto-red.log"
+  }
+}

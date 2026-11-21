@@ -1,5 +1,15 @@
 # PatchTrace branch inventory
 
+## Current reference snapshot — cycle3, 21 November 2026 UTC
+
+[Authoritative ledger](task-ledger.json) · [Complete census and comparison](evidence/cycle3-95fe/inventory-report.md).
+
+Captured 04:55:49–04:57:48 UTC using all REST pages and empty terminal pages:364 branches; 338 PRs (82 open,172 merged, 84 closed-unmerged). Open PRs comprise66 drafts and16 non-drafts. PR #345–348 are unchanged open drafts at their recorded heads. Relative to recovered cycle95fe's354 branches:10 new, 0 moved, 0 missing. Relative to the explicit341-branch g30-at-PR #348 file:23 new, 0 moved, 0 missing. This snapshot predates the new cycle3 publication branch/PR and is not a current-count extrapolation.
+
+The20 missing PR #346 documents/evidence files were recovered exactly; [blob receipt](evidence/cycle3-95fe/document-recovery.json). Original cycle95fe raw capture times are unavailable; inventory replay times are not substituted. Source census is not semantic supersession, branch deletion permission, or live ownership.
+
+## Retained historical cycle95fe record
+
 The authoritative task states remain in [task-ledger.json](task-ledger.json).
 This page records discovery and the replay contract for `tools/branch_inventory.py`.
 Earlier dated inventories remain historical evidence.

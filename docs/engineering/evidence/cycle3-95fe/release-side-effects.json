@@ -1,0 +1,206 @@
+{
+  "schema": "patchtrace-release-side-effect-audit/1",
+  "captured_at": "2026-11-21T04:53:26.001845+00:00",
+  "remote": {
+    "main_ref": {
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/git/ref/heads/main",
+      "data": {
+        "ref": "refs/heads/main",
+        "node_id": "REF_kwDOVEPRFa9yZWZzL2hlYWRzL21haW4",
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/refs/heads/main",
+        "object": {
+          "sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+          "type": "commit",
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/git/commits/fdc2696c23bdbfe7668348f25e3b336ce33039f7"
+        }
+      }
+    },
+    "pr348": {
+      "url": "https://api.github.com/repos/djshellshoxxx/PatchTrace/pulls/348",
+      "head": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+      "base": "b461ac64eb9beb74449ce2b18b6795a2af34a02a",
+      "draft": true
+    },
+    "latest_release": {
+      "tag": "v0.1.0-beta.1035",
+      "target": "1836eb120571bb3c3a09fd3014447498621e2103",
+      "published": "2026-11-15T07:13:33Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/releases/tag/v0.1.0-beta.1035"
+    },
+    "release_count": 59,
+    "main_gate_log": [
+      "2026-11-19T09:52:45.0094940Z release_gate: publish=true milestones=3 reason=3 counted merges since v0.1.0-beta.1035, the publish threshold is 3"
+    ],
+    "main_jobs": [
+      {
+        "id": 135440201420,
+        "name": "qa (ubuntu-latest)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135440201420",
+        "failed_steps": []
+      },
+      {
+        "id": 135440201818,
+        "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135440201818",
+        "failed_steps": []
+      },
+      {
+        "id": 135440201840,
+        "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135440201840",
+        "failed_steps": []
+      },
+      {
+        "id": 135440201850,
+        "name": "qt-gate (windows-latest, 5, 1/1)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135440201850",
+        "failed_steps": []
+      },
+      {
+        "id": 135440201914,
+        "name": "release-gate",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135440201914",
+        "failed_steps": []
+      },
+      {
+        "id": 135440201942,
+        "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135440201942",
+        "failed_steps": []
+      },
+      {
+        "id": 135440202267,
+        "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135440202267",
+        "failed_steps": []
+      },
+      {
+        "id": 135440204383,
+        "name": "qa (windows-latest)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135440204383",
+        "failed_steps": []
+      },
+      {
+        "id": 135514886000,
+        "name": "linux-package",
+        "conclusion": "failure",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135514886000",
+        "failed_steps": [
+          "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1 libxcb-cursor0 libxkbcommon-x11-0 xvfb"
+        ]
+      },
+      {
+        "id": 135558754887,
+        "name": "linux-smoke",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135558754887",
+        "failed_steps": []
+      },
+      {
+        "id": 135558756040,
+        "name": "release",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44489196124/job/135558756040",
+        "failed_steps": []
+      }
+    ]
+  },
+  "source": {
+    "main": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+    "head": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+    "blobs": [
+      {
+        "path": ".github/workflows/qa-windows.yml",
+        "main": "4f40db05893e436230d2f739efe2d3ca87e5e8aa",
+        "head": "4f40db05893e436230d2f739efe2d3ca87e5e8aa"
+      },
+      {
+        "path": ".github/workflows/pages.yml",
+        "main": "c7b722b631a46e90f8d0934bf4cbc7d731bba652",
+        "head": "c7b722b631a46e90f8d0934bf4cbc7d731bba652"
+      },
+      {
+        "path": "tools/release_gate.py",
+        "main": "9c5b3ae26733990d6fade46e43c2a3b488613b21",
+        "head": "9c5b3ae26733990d6fade46e43c2a3b488613b21"
+      },
+      {
+        "path": "tests/test_release_gate.py",
+        "main": "46497fc0091a3fffa17bc5957d30d0c00de1f3c4",
+        "head": "46497fc0091a3fffa17bc5957d30d0c00de1f3c4"
+      },
+      {
+        "path": "docs/release-process.md",
+        "main": "7473413619a97ff508fa67a892454eed3684bf01",
+        "head": "7473413619a97ff508fa67a892454eed3684bf01"
+      }
+    ]
+  },
+  "cadence": {
+    "anchor": {
+      "tag": "v0.1.0-beta.1035",
+      "commit": "1836eb120571bb3c3a09fd3014447498621e2103",
+      "published": "2026-11-15T07:13:33Z"
+    },
+    "main_decision": {
+      "publish": true,
+      "milestones": 3,
+      "reason": "3 counted merges since v0.1.0-beta.1035, the publish threshold is 3"
+    },
+    "prospective_merge_decision": {
+      "publish": true,
+      "milestones": 4,
+      "reason": "4 counted merges since v0.1.0-beta.1035, the publish threshold is 3"
+    },
+    "in_memory_only": true,
+    "first_parent_commits": [
+      {
+        "sha": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+        "parents": [
+          "9c411ca3d7b47f950be5f0c6f01b3c54184554c6",
+          "88b0b52281dd314aa72f93819145a73135618bc4"
+        ],
+        "message": "Merge reviewed foundation and saved-scope admission repair (#317) [no release]\n\nConsolidate the independently reviewed foundation and exact saved-scope repair. Verified unchanged head 88b0b52281dd314aa72f93819145a73135618bc4 against main 9c411ca3d7b47f950be5f0c6f01b3c54184554c6: all eight workflows completed successfully; 33 successful checks, with release, release-gate and optional MSVC advisory intentionally skipped. Linux and Windows full QA, repeated Qt, native adapters, Linux package/smokes and Windows package/installer gates passed. Preserve all source branches. No release qualification or accuracy claim is implied. [no release]",
+        "counts": true
+      },
+      {
+        "sha": "9c411ca3d7b47f950be5f0c6f01b3c54184554c6",
+        "parents": [
+          "7401078490eb7a447f5ec7274339cb08b051f395",
+          "45997cfc997b06996a982705e6cd60dc73a8fae1"
+        ],
+        "message": "Merge pull request #300 from djshellshoxxx/consolidation/desktop-keyboard-accessibility-20261116\n\nRecover desktop keyboard navigation and Files status announcements",
+        "counts": true
+      },
+      {
+        "sha": "7401078490eb7a447f5ec7274339cb08b051f395",
+        "parents": [
+          "1836eb120571bb3c3a09fd3014447498621e2103"
+        ],
+        "message": "test: validate Linux MinGW workflow path with POSIX semantics on Windows (#296)",
+        "counts": true
+      }
+    ]
+  },
+  "pages": {
+    "watched_path_diff": [],
+    "ahead_commits": 245,
+    "changed_files": 639,
+    "normal_result": "skip",
+    "independent_deploy_veto": false,
+    "exception": "GitHub diff-generation timeout runs path-filtered workflows"
+  },
+  "conclusion": {
+    "release_source_change_required": false,
+    "existing_release_hold": "[no release] in actual push-head message",
+    "absolute_pages_hold_requires_candidate": true
+  }
+}

@@ -1,3 +1,7 @@
+# Current continuation — cycle3 reviewed workflow integration
+
+[Current cycle3 handoff](cycle3-20261121-95fe.md) and [authoritative ledger](../engineering/task-ledger.json) supersede earlier next-action paragraphs for the named integrated scopes.469 distinct affected tests pass; independent reviews are complete; new-source hosted acceptance remains pending. Preserve release/deployment holds.
+
 # Latest bounded continuation — CODEX-14 Linux frozen CLI acceptance
 
 [CODEX-14 handoff](codex14-linux-frozen-cli-smoke-20261121.md) tracks an isolated child of draft PR348. The extracted Linux archive now has a full CLI smoke invocation in the workflow and stronger packaging regressions; 13 source-only checks pass, but exact-source hosted Linux 22.04/24.04, full/Qt/native/package and independent review are pending. Do not merge or release yet.

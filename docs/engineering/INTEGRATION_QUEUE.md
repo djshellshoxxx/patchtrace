@@ -1,5 +1,21 @@
 # PatchTrace integration queue
 
+## Current ordered queue — cycle3
+
+| Order | Work | State and next step |
+| --- | --- | --- |
+|1|PR #345–348 existing stack|Exact-source current non-release checks passed; retain drafts/history and original failures|
+|2|Combined Linux/cache/Pages source|Locally integrated and independently reviewed; 469 distinct affected passes, whole-tree Ruff/dependencies pass|
+|3|Publish main-integration candidate|One new branch/ordinary PR after record audit; final tree and local/remote mapping in PR body|
+|4|New-source qualification|Inspect complete Linux/Windows, Qt/native/package, both Linux frozen CLI jobs and applicable TierR cache paths; do not reuse parent green checks as successor evidence|
+|5|Main integration|Only after applicable green checks/no blocking findings; fresh expected-head REST merge and actual message `[no release] [no deploy]`|
+|6|Other unowned work|Remaining header help and bounded historical semantic review; preserve separate raw/manual/accuracy gates|
+|7|Release or deployment|Not authorized; keep both opt-outs and no tag/release/package publication|
+
+[Current handoff](../engineering-handoffs/cycle3-20261121-95fe.md) preserves commands, source identities and ownership. No duplicate full workflows or speculative retry. Existing hourly continuation remains the coordination mechanism.
+
+## Retained historical cycle95fe record
+
 Authority: [task-ledger.json](task-ledger.json). Refresh remote refs, source-specific
 checks and active ownership before every consequential action.
 

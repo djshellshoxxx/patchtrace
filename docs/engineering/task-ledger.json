@@ -1,20 +1,23 @@
 {
   "schema": "patchtrace-engineering-task-ledger/1",
-  "updated_at": "2026-11-21T04:32:00+00:00",
+  "updated_at": "2026-11-21T05:17:48.422568+00:00",
   "repository": "https://github.com/djshellshoxxx/PatchTrace",
-  "integration_branch": "codex/patchtrace-integration-20261121-2bad",
-  "checkpoint_local_commit": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
-  "starting_candidate": "91618abec4c4f13a27fd5821a25d1500f17601e4",
+  "integration_branch": "integration/patchtrace-20261121-95fe-c3",
+  "checkpoint_local_commit": "e5a531668ef523cd6faa26d5fec59aa552749134",
+  "starting_candidate": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
   "main_at_discovery": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
   "remote_publication": {
-    "status": "reviewed-focused-qualified-awaiting-hosted",
-    "branch": "codex/patchtrace-integration-20261121-2bad",
-    "base_branch": "codex/patchtrace-pr345-346-unique-recovery-20261120",
-    "base_commit": "b461ac64eb9beb74449ce2b18b6795a2af34a02a",
-    "git_parent": "e2385c22c0397a547b15b2fbca9f0c07dc4ac199",
-    "head_rule": "Resolve the live branch and matching draft PR; its body records exact local/remote publication head and complete tree equality.",
-    "publication_transport": "connected GitHub Git Data API; no force update",
-    "history_bundle": "docs/engineering/evidence/cycle2-local-history-20261121-2bad.bundle"
+    "status": "reviewed-local-qualified-publication-prepared",
+    "branch": "integration/patchtrace-20261121-95fe-c3",
+    "base_branch": "main",
+    "base_commit": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+    "original_qualified_baseline": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+    "publication_transport": "connected GitHub REST Git Data API; preserve trees and mapped parents; no force update",
+    "head_rule": "Resolve the live branch and matching non-draft PR; body records local/remote SHA and complete tree equality. Current-source CI must be green before any guarded merge.",
+    "history_bundle": "docs/engineering/evidence/cycle3-95fe/local-source-history.bundle",
+    "verified_code_remote_commit": "e15584e2fe474ddcbe01501d380d626cc00c8402",
+    "verified_code_tree": "e622ff8f5624ce73bac63c0976af01c614ce05bb",
+    "commit_mapping": "docs/engineering/evidence/cycle3-95fe/code-publication-mapping.json"
   },
   "release_ready": false,
   "main_merge_eligible": false,
@@ -58,16 +61,17 @@
     "CODEX-6 Tier R archive cache 2026-11-21: an isolated PR348-based branch now caches the original pinned rizin/Ghidra archives rather than extracted trees, verifies SHA-256 on every applicable cache hit before clean extraction, and preserves Ghidriff condition. Twelve source mutation controls and four synthetic shell checks passed; no repository pytest/Ruff, hosted Tier R, native engine or genuinely independent peer acceptance. Original CODEX-6 strict xfail graduated on this branch only; CODEX-1/5 remain. Ancestor PR347 and PR345 success is not this branch qualification.",
     "CODEX-6 cache integrity peer-style follow-up found a hidden migration defect: reuse of old extracted-tree cache keys would cause new archive-only cache paths to miss forever on old cache hits. Versioned rizin-archive-v1 and ghidra-archive-v1 keys with no restore fallback repaired after spec/test update. Exact connector source structural checks 14 and negative mutations 14 now pass, still author-side only.",
     "CODEX-6 fixture-only cache-hit successor 2026-11-21: an isolated branch adds four runnable Bash cache-hit controls against authored tar.xz/ZIP archives, including corruption refusal and no-network enforcement. Production workflow unchanged. This is published test source only; source-bound pytest, Ruff, separate review and hosted exact-head cache-hit acceptance remain pending. Do not count parent PR348 checks as this successor acceptance.",
-    "Cycle3 P3 evidence consistency: the retained CODEX-6 author receipt records 14 structural invariants and 14 negative mutations. Earlier 12/10 current-summary labels are corrected; older dated narrative and Git history remain preserved, and author controls are not relabeled as checked-out pytest."
+    "Cycle3 P3 evidence consistency: the retained CODEX-6 author receipt records 14 structural invariants and 14 negative mutations. Earlier 12/10 current-summary labels are corrected; older dated narrative and Git history remain preserved, and author controls are not relabeled as checked-out pytest.",
+    "Cycle3 95fe: restored missing six uppercase engineering indexes and fourteen linked original documents/evidence files from PR346; all20 blobs verified. Integrated independent-review-qualified CODEX14/CODEX6 sources and Pages deploy opt-out on an isolated candidate; original failed oracle/Ruff/red-control receipts preserved. 469 distinct affected tests pass after resolving11 site-tool dependency skips; CODEX1/5 remain expected failures. This is not full new-source/hosted acceptance and does not close manual/native/cache-hit/raw-provenance/accuracy gates."
   ],
   "tasks": [
     {
       "id": "reference-census",
-      "status": "completed-frozen-reference-delta",
-      "owner": "root and completed independent workers",
-      "source_commit": "52fa66e063689a790ea986f3ace5d7883efa2165",
-      "evidence": "docs/engineering/consolidation-inventory-20261120-g30.json",
-      "result_or_next_action": "360 remote heads, 59 tags, 337 fetched PR head refs; 6 new names and no moved/missing prior heads relative to 354-head snapshot. Five new heads are ancestors of91618abe; sibling346 code was selectively recovered. This is a ref delta, not a new all-pages PR semantic inventory.",
+      "status": "completed-paginated-reference-snapshot",
+      "owner": "cycle3 independent census reviewer",
+      "source_commit": "e5a531668ef523cd6faa26d5fec59aa552749134",
+      "evidence": "docs/engineering/evidence/cycle3-95fe/inventory-summary.json",
+      "result_or_next_action": "364 branches and338 all-state PRs (82open/172merged/84closed-unmerged), fully paginated 04:55:49\u201304:57:48UTC.10new names vs frozen354-branch cycle95fe; no moved/missing names.23new vs explicit341-branch g30-at-PR348 file. Reference census only; historical semantic backlog remains.",
       "snapshot_note": "Frozen 341-branch / 330-PR observation predates PR342 publication; all 671 recorded branch/PR SHAs resolve. Classification is not full semantic verification.",
       "latest_evidence": "docs/engineering/evidence/cycle2-coordinator-20261121-2bad.json"
     },
@@ -170,11 +174,11 @@
     },
     {
       "id": "combined-suite",
-      "status": "incomplete-local-SIGKILL-hosted-required",
+      "status": "historical-local-SIGKILL-retained-PR348-hosted-full-success-new-candidate-pending",
       "owner": "root and completed independent workers",
       "source_commit": "bffcfa99d6a5044024256edbc0457ab20c92cbae",
       "evidence": "docs/engineering/aggregate-qualification-20261119.md",
-      "result_or_next_action": "Final 1d0f60f3: 43-file run and two bounded batches ended SIGKILL/no JUnit. Third 16-file batch completed 429 passed/2 native skips. Earlier full 84798a04 collected 24029 then SIGKILL. No full or all-affected pass.",
+      "result_or_next_action": "Final 1d0f60f3: 43-file run and two bounded batches ended SIGKILL/no JUnit. Third 16-file batch completed 429 passed/2 native skips. Earlier full 84798a04 collected 24029 then SIGKILL. No full or all-affected pass. Cycle3 independently verifies full PR348 Linux/Windows success at source6b6fcd35, without explaining earlier local SIGKILLs. New workflow candidate requires its own exact-head full hosted acceptance.",
       "latest_attempt": {
         "source_commit": "c0108749e8813dfa6165e953b1a2dc2ad736e982",
         "status": "pending-new-local-and-hosted-qualification",
@@ -774,10 +778,10 @@
     {
       "id": "95fe-inventory-replay",
       "owner": "completed cycle2 workers and coordinator",
-      "status": "integrated-source-tested-and-independently-reviewed-hosted-pending",
+      "status": "independently-reviewed-PR348-hosted-passed",
       "source_commit": "076c1ffaea35e922b206da5818023fe96459de23",
       "evidence": "docs/engineering/cycle2-consolidation-20261121-2bad.md",
-      "result_or_next_action": "Actual-source lower-baseline regressions retained; maintained 40 cases and 11 independent controls pass, with overlap against combined 188. Real SHA-1/SHA-256 and 353-row byte-identical snapshot compatibility verified. New-source hosted gates remain pending.",
+      "result_or_next_action": "Actual-source lower-baseline regressions retained; maintained 40 cases and 11 independent controls pass, with overlap against combined 188. Real SHA-1/SHA-256 and 353-row byte-identical snapshot compatibility verified. New-source hosted gates remain pending. Cycle3 records PR348 exact-tree full/platform CI success. This bounded source claim does not close remaining historical semantic review or qualify the new workflow candidate.",
       "retained_source_qualification": "076c1ffaea35e922b206da5818023fe96459de23",
       "combined_head_qualification": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
       "latest_evidence": "docs/engineering/cycle2-inventory-review-20261121-2bad.md",
@@ -785,7 +789,8 @@
         "commit": "c07774ecf5a3f7337834f95a9a4c51c8ec5fad44",
         "path": "docs/engineering/CONSOLIDATION_LEDGER.md",
         "url": "https://github.com/djshellshoxxx/PatchTrace/blob/c07774ecf5a3f7337834f95a9a4c51c8ec5fad44/docs/engineering/CONSOLIDATION_LEDGER.md"
-      }
+      },
+      "latest_hosted_evidence": "docs/engineering/evidence/cycle3-95fe/hosted-qualification.json"
     },
     {
       "id": "95fe-csv-qt-coverage",
@@ -821,10 +826,10 @@
     {
       "id": "95fe-qualification",
       "owner": "interactive-95fe",
-      "status": "bounded-combined-pass-full-and-hosted-blocked",
+      "status": "historical-local-bounded-pass-PR346-hosted-success-preserved",
       "source_commit": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
       "evidence": "docs/engineering/cycle2-consolidation-20261121-2bad.md",
-      "result_or_next_action": "183 + 50 - 21 shared = 212 distinct passing cases on clean ccc3664f; four interrupted -9 runs retained; full/native/hosted gates remain required",
+      "result_or_next_action": "183 + 50 - 21 shared = 212 distinct passing cases on clean ccc3664f; four interrupted -9 runs retained; full/native/hosted gates remain required PR346 remote c07774ec full/Qt/native/package checks later passed; see cycle3 hosted receipt. Historical ccc3664f local interrupted runs remain incomplete.",
       "retained_source_qualification": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
       "combined_head_qualification": "pending",
       "retained_donor_evidence": {
@@ -836,7 +841,7 @@
     {
       "id": "inventory-snapshot-column-shape-20261120",
       "owner": "completed cycle2 workers and coordinator",
-      "status": "integrated-source-tested-and-independently-reviewed-hosted-pending",
+      "status": "independently-reviewed-PR348-hosted-passed",
       "branch": "codex/patchtrace-inventory-tsv-shape-20261120",
       "base_commit": "b461ac64eb9beb74449ce2b18b6795a2af34a02a",
       "contract_commit": "007302ed551e3a2aa4fdfe44470718049d396cba",
@@ -844,14 +849,15 @@
       "regression_commit": "e9b02971e7babccd045d031cc38722c2b84cb3c5",
       "handoff": "docs/engineering-handoffs/inventory-tsv-shape-20261120.md",
       "receipt": "docs/engineering/evidence/inventory-tsv-shape-20261120.json",
-      "result_or_next_action": "Actual-source lower-baseline regressions retained; maintained 40 cases and 11 independent controls pass, with overlap against combined 188. Real SHA-1/SHA-256 and 353-row byte-identical snapshot compatibility verified. New-source hosted gates remain pending.",
+      "result_or_next_action": "Actual-source lower-baseline regressions retained; maintained 40 cases and 11 independent controls pass, with overlap against combined 188. Real SHA-1/SHA-256 and 353-row byte-identical snapshot compatibility verified. New-source hosted gates remain pending. Cycle3 records PR348 exact-tree full/platform CI success. This bounded source claim does not close remaining historical semantic review or qualify the new workflow candidate.",
       "combined_head_qualification": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
-      "latest_evidence": "docs/engineering/cycle2-inventory-review-20261121-2bad.md"
+      "latest_evidence": "docs/engineering/cycle2-inventory-review-20261121-2bad.md",
+      "latest_hosted_evidence": "docs/engineering/evidence/cycle3-95fe/hosted-qualification.json"
     },
     {
       "id": "inventory-snapshot-immutable-tip-oid-20261120",
       "owner": "completed cycle2 workers and coordinator",
-      "status": "integrated-source-tested-and-independently-reviewed-hosted-pending",
+      "status": "independently-reviewed-PR348-hosted-passed",
       "branch": "codex/patchtrace-inventory-tip-oid-20261120",
       "base_commit": "eaae7e504f8b43051f0c0d6d57c314d37c66d7ff",
       "contract_commit": "f9feb421e0e5d880429556dba734acdf675fedcf",
@@ -859,15 +865,16 @@
       "runtime_commit": "30411f9a344be757da26aa0f9b914605c7699353",
       "evidence": "docs/engineering/evidence/inventory-tip-oid-controls-20261120.json",
       "handoff": "docs/engineering-handoffs/inventory-tip-oid-20261120.md",
-      "result_or_next_action": "Actual-source lower-baseline regressions retained; maintained 40 cases and 11 independent controls pass, with overlap against combined 188. Real SHA-1/SHA-256 and 353-row byte-identical snapshot compatibility verified. New-source hosted gates remain pending.",
+      "result_or_next_action": "Actual-source lower-baseline regressions retained; maintained 40 cases and 11 independent controls pass, with overlap against combined 188. Real SHA-1/SHA-256 and 353-row byte-identical snapshot compatibility verified. New-source hosted gates remain pending. Cycle3 records PR348 exact-tree full/platform CI success. This bounded source claim does not close remaining historical semantic review or qualify the new workflow candidate.",
       "test_cleanup_commit": "18b400c699b4e0bed512be6f45ed720749ed4faa",
       "combined_head_qualification": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
-      "latest_evidence": "docs/engineering/cycle2-inventory-review-20261121-2bad.md"
+      "latest_evidence": "docs/engineering/cycle2-inventory-review-20261121-2bad.md",
+      "latest_hosted_evidence": "docs/engineering/evidence/cycle3-95fe/hosted-qualification.json"
     },
     {
       "id": "inventory-strict-saved-pr-json-20261120",
       "owner": "completed cycle2 workers and coordinator",
-      "status": "integrated-source-tested-and-independently-reviewed-hosted-pending",
+      "status": "independently-reviewed-PR348-hosted-passed",
       "branch": "codex/patchtrace-pr-snapshot-json-strict-20261120",
       "base_commit": "a63a20b2a272d53a09422222050080823fc3c664",
       "contract_commit": "1b0c90a82846c9c3d4c284306aa7c3a973d27be4",
@@ -876,38 +883,40 @@
       "receipt": "docs/engineering/evidence/inventory-pr-json-strict-controls-20261120.json",
       "handoff": "docs/engineering-handoffs/inventory-pr-json-strict-20261120.md",
       "review_status": "author source inspection only; independent signoff outstanding",
-      "result_or_next_action": "Actual-source lower-baseline regressions retained; maintained 40 cases and 11 independent controls pass, with overlap against combined 188. Real SHA-1/SHA-256 and 353-row byte-identical snapshot compatibility verified. New-source hosted gates remain pending.",
+      "result_or_next_action": "Actual-source lower-baseline regressions retained; maintained 40 cases and 11 independent controls pass, with overlap against combined 188. Real SHA-1/SHA-256 and 353-row byte-identical snapshot compatibility verified. New-source hosted gates remain pending. Cycle3 records PR348 exact-tree full/platform CI success. This bounded source claim does not close remaining historical semantic review or qualify the new workflow candidate.",
       "combined_head_qualification": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
-      "latest_evidence": "docs/engineering/cycle2-inventory-review-20261121-2bad.md"
+      "latest_evidence": "docs/engineering/cycle2-inventory-review-20261121-2bad.md",
+      "latest_hosted_evidence": "docs/engineering/evidence/cycle3-95fe/hosted-qualification.json"
     },
     {
       "id": "inventory-strict-quoted-fields-cycle2",
-      "status": "repaired-independently-reviewed-focused-qualified",
+      "status": "independently-reviewed-PR348-hosted-passed",
       "owner": "completed inventory author and fresh integrated peer",
       "source_commit": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
       "evidence": "docs/engineering/cycle2-peer-review-20261121-2bad.md",
-      "result_or_next_action": "Three genuine baseline failures repaired by strict CSV parsing before Git/publication. Preserve complete quoted multiline notes, CSV global restoration and prior output. Actual UTF8 fixture corrected with the old invalid-escape control retained."
+      "result_or_next_action": "Three genuine baseline failures repaired by strict CSV parsing before Git/publication. Preserve complete quoted multiline notes, CSV global restoration and prior output. Actual UTF8 fixture corrected with the old invalid-escape control retained. Cycle3 records PR348 exact-tree full/platform CI success. This bounded source claim does not close remaining historical semantic review or qualify the new workflow candidate.",
+      "latest_hosted_evidence": "docs/engineering/evidence/cycle3-95fe/hosted-qualification.json"
     },
     {
       "id": "pr345-nsis-package-feed",
-      "status": "confirmed-external-failure-one-failed-job-retry-active",
-      "owner": "coordinator",
+      "status": "resolved-by-single-source-specific-retry-original-failure-retained",
+      "owner": "completed cycle3 CI audit",
       "source_commit": "39c38a02f126963fc03827fa49741255590227ad",
-      "evidence": "docs/engineering/hosted-qualification-cycle2-20261120-2bad.md",
-      "result_or_next_action": "Original Windows pytest/Ruff/build/frozen/portable success followed by Chocolatey NSIS HTTP 503 is retained. One failed-job-only retry accepted for run 44840721370; inspect its terminal result, no repeated dispatch or inferred package success."
+      "evidence": "docs/engineering/evidence/cycle3-95fe/hosted-qualification.json",
+      "result_or_next_action": "Original Windows job136648122555 failed at NSIS feed HTTP503 after successful pytest/build. Attempt2 job136700047285 and downstream jobs succeeded on same PR345 source. No further retry required; do not erase first failure."
     },
     {
       "id": "historical-audit-gates-cycle2",
-      "status": "open-existing-gates-confirmed",
+      "status": "CODEX1-5-open-CODEX6-14-reviewed-local-source-hosted-pending",
       "owner": "next bounded engineering worker",
       "source_commit": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
       "evidence": "docs/engineering/cycle2-historical-ui-review-20261121-2bad.md",
-      "result_or_next_action": "Four strict expected failures remain: CODEX-1 mutable Action tags; CODEX-5 unhashed package installs; CODEX-6 cache-hit verification bypasses; CODEX-14 missing full Linux frozen CLI smoke. Historical donor has no implementing patch. Plan each as a separate reviewed source-specific change; do not remove xfails or substitute existing GUI self-tests."
+      "result_or_next_action": "CODEX1 mutable Action tags and CODEX5 unhashed package installs remain strict expected failures. CODEX6 and CODEX14 have separate reviewed source repairs and passing actual-source tests, now combined; their hosted acceptance remains open. Previous audit findings/failed source receipts stay historical."
     },
     {
       "id": "codex14-linux-frozen-cli-smoke-20261121",
-      "owner": "isolated CODEX-14 source author; fresh independent peer review not yet assigned",
-      "status": "implemented-static-source-reviewed-hosted-frozen-binary-unqualified",
+      "owner": "completed independent spec/standards reviews; coordinator qualification",
+      "status": "implemented-independently-reviewed-local-passed-hosted-frozen-pending",
       "branch": "codex/patchtrace-linux-frozen-cli-smoke-20261121",
       "base_commit": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
       "scope": "Add full actual frozen CLI harness to unpacked checksum-verified Linux onedir release artifact on ubuntu-22.04 and ubuntu-24.04 without removing existing Qt offscreen/xcb checks.",
@@ -917,16 +926,19 @@
       "tests": "tests/test_codex_pkg_packaging.py (previous CODEX-14 strict xfail promoted to source contract assertion; 1 preserved/enhanced case and 1 new Qt-modes preservation case)",
       "contract": "docs/linux.md (frozen Linux CLI acceptance)",
       "evidence": "docs/engineering/codex14-linux-frozen-cli-smoke-20261121.md",
-      "review_status": "Author-only source inspection and 7 mutation controls, all detected. Host run/actual source pytest and independent reviewer remain pending.",
-      "result_or_next_action": "Fetch exact PR348 QA and native terminal results; create stacked draft for this branch and await source-specific both-OS Linux smoke jobs and QA/Qt/native/package plus independent peer, then guard any qualified merge on fresh expected head. Full archive smoke, release, Windows/manual/trust and L1/L2/L3 remain unverified.",
+      "review_status": "Two independent axes found no blocking defect; root unused-import repair separately reviewed.",
+      "result_or_next_action": "91 focused tests passed on retained source before import-only cleanup; final combined source has469 distinct affected passes, wholeRuff passed. Require exact-candidate Ubuntu22.04/24.04 full frozen CLI jobs plus applicable QA/native/package. No frozen executable execution inferred from text controls.",
       "smoke_docstring_commit": "2af9a5c37eaf25198fada253fcc586e8fe0183ba",
       "test_hardening_commit": "6ea0ff2538159bdc714d840ab1368fdecc2b6d77",
-      "negative_controls": "7/7 author-side in-memory workflow mutations detected, evidence docs/engineering/evidence/codex14-linux-smoke-static-review-20261121.json; not independent review"
+      "negative_controls": "7/7 author-side in-memory workflow mutations detected, evidence docs/engineering/evidence/codex14-linux-smoke-static-review-20261121.json; not independent review",
+      "source_commit": "5fa47ac7b03451f404c2f0acd871e8700067c13f",
+      "combined_source": "e5a531668ef523cd6faa26d5fec59aa552749134",
+      "latest_evidence": "docs/engineering/evidence/cycle3-95fe/qualification.json"
     },
     {
       "id": "codex6-corpus-cache-archive-20261121",
-      "owner": "isolated CODEX-6 cache-integrity source author; independent reviewer unassigned",
-      "status": "implemented-source-static-verified-hosted-and-peer-pending",
+      "owner": "completed independent spec/standards reviews; coordinator qualification",
+      "status": "implemented-repaired-independently-reviewed-local-passed-hosted-cache-pending",
       "branch": "codex/patchtrace-corpus-archive-integrity-20261121",
       "base_branch": "codex/patchtrace-integration-20261121-2bad",
       "base_commit": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
@@ -940,20 +952,46 @@
       ],
       "source_repair_commit": "c32449278d0712fa9e653f4b7c51eb5f679a693c",
       "verification": "Historical author receipt: 14 fetched-source invariants and 14 author JS mutations; previous 12-invariant current-summary label corrected by cycle3 review. Actual source-bound results and independent reviews are recorded in cycle3 qualification; native cache acceptance is separate.",
-      "result_or_next_action": "Parent PR348 still has active Windows full QA; preserve CODEX14 separate. Run source-bound pytest/Ruff/complete suite; separate reviewer verify extracted-cache absence, every-hit archive SHA verification and Ghidriff branch. Then source-specific Tier R with rizin-only and Ghidriff path, guarded PR/integration only after qualified acceptance. Retain CODEX1/5 strict xfails, all main/release gates. Old action caches used same keys for extracted dirs; archive-specific -archive-v1 namespace now validated in spec, 2 additional negative mutations and workflow code."
+      "result_or_next_action": "Original d250 test oracle failed1/29passed/2xfail; repaired full rizin heading and original-valid precondition. Corrected selection30pass/2existingxfail and wholeRuff pass. Actual Bash fixture cache-hit cases pass on both archive formats. Combined469 passes overlap. Hosted TierR/cache-hit and separate Ghidriff path remain unverified; do not treat PR348 or fixture data as that acceptance.",
+      "source_commit": "53e02a478235498563a092d7943c7feaf40adda6",
+      "combined_source": "e5a531668ef523cd6faa26d5fec59aa552749134",
+      "review_status": "No blocking workflow/runtime finding. P3 current-summary counts reconciled against final14/14 author receipt.",
+      "latest_evidence": "docs/engineering/evidence/cycle3-95fe/qualification.json"
     },
     {
       "id": "codex6-cache-hit-fixture-20261121",
-      "status": "implemented-unqualified",
-      "owner": "bounded current author cycle; separate reviewer unassigned",
+      "status": "implemented-repaired-independently-reviewed-local-passed-hosted-cache-pending",
+      "owner": "completed independent spec/standards reviews; coordinator qualification",
       "base_commit": "658cc814aa74d1eaebf0d7e6dd4553d06aaef0eb",
       "branch": "codex/patchtrace-codex6-cache-hit-fixture-tests-20261121",
       "evidence": "docs/engineering-handoffs/codex6-cache-hit-fixture-20261121.md",
       "tests": "tests/test_corpus_archive_cache_hit_shell_20261121.py",
-      "result_or_next_action": "Run exact branch pytest/Ruff, independently review, and verify same-key hosted Tier R cache hit for both engines without executing analyzed targets; retain CODEX-6 hosted gate open."
+      "result_or_next_action": "Original d250 test oracle failed1/29passed/2xfail; repaired full rizin heading and original-valid precondition. Corrected selection30pass/2existingxfail and wholeRuff pass. Actual Bash fixture cache-hit cases pass on both archive formats. Combined469 passes overlap. Hosted TierR/cache-hit and separate Ghidriff path remain unverified; do not treat PR348 or fixture data as that acceptance.",
+      "source_commit": "53e02a478235498563a092d7943c7feaf40adda6",
+      "combined_source": "e5a531668ef523cd6faa26d5fec59aa552749134",
+      "review_status": "No blocking workflow/runtime finding. P3 current-summary counts reconciled against final14/14 author receipt.",
+      "latest_evidence": "docs/engineering/evidence/cycle3-95fe/qualification.json"
+    },
+    {
+      "id": "cycle3-pages-deployment-control",
+      "status": "implemented-independently-reviewed-local-passed-hosted-pending",
+      "owner": "completed author and two independent review axes",
+      "source_commit": "e54e4d0afbcdc3916539c62810877faa65842d5e",
+      "combined_source": "e5a531668ef523cd6faa26d5fec59aa552749134",
+      "contract": "docs/specs/pages-deployment-control.md",
+      "evidence": "docs/engineering/evidence/cycle3-95fe/pages-veto-candidate.json",
+      "result_or_next_action": "Actual push-head [no deploy] veto is limited to Pages deploy; manual dispatch, build/artifacts and permissions unchanged. Source red1fail/6pass; repaired52staticchecks; combined tests pass. No deployment invoked. Actual main merge must contain both [no release] [no deploy]."
+    },
+    {
+      "id": "cycle3-engineering-index-recovery",
+      "status": "recovered-verified-and-currently-reconciled",
+      "owner": "root",
+      "source_commit": "19601a60",
+      "evidence": "docs/engineering/evidence/cycle3-95fe/document-recovery.json",
+      "result_or_next_action": "All20 absent PR346 engineering/evidence files recovered with exact original blobs. Six current indexes updated separately; no whole-branch semantic supersession or deletion claim."
     }
   ],
-  "aggregate_source_commit": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
+  "aggregate_source_commit": "e5a531668ef523cd6faa26d5fec59aa552749134",
   "workers": [
     {
       "name": "repository_inventory",
@@ -993,7 +1031,7 @@
     },
     {
       "name": "root",
-      "status": "publication-and-handoff"
+      "status": "cycle3-publication-and-hosted-qualification"
     },
     {
       "name": "generation31_integration_review",
@@ -1068,9 +1106,24 @@
       "name": "cycle2_historical_ui_review",
       "status": "completed",
       "session": "cycle2-20261121-2bad"
+    },
+    {
+      "name": "cycle3_linux_spec",
+      "status": "completed-source-review-or-census",
+      "session": "cycle3-20261121-95fe"
+    },
+    {
+      "name": "cycle3_linux_standards",
+      "status": "completed-source-review-or-census",
+      "session": "cycle3-20261121-95fe"
+    },
+    {
+      "name": "cycle3_ci_qualification",
+      "status": "completed-source-review-or-census",
+      "session": "cycle3-20261121-95fe"
     }
   ],
-  "local_integration_branch": "codex/patchtrace-integration-20261121-2bad",
+  "local_integration_branch": "codex/patchtrace-continuation-20261121-95fe-c3",
   "hosted_initial_candidate": {
     "head": "3862cb5de3256efec8f6392a3b6fb4d9e600c377",
     "captured_at": "2026-11-20T01:03:45Z",
@@ -1188,20 +1241,40 @@
       "later_evidence_only_commits": "Resolve current PR head; runtime/test/tool identities remain the recorded 97ca0adf checkpoint."
     }
   },
-  "aggregate_source_tree": "60ed420c11116f1b92bdbedae34e3e82269458e5",
+  "aggregate_source_tree": "e622ff8f5624ce73bac63c0976af01c614ce05bb",
   "current_qualification": {
-    "source_commit": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
-    "source_tree": "60ed420c11116f1b92bdbedae34e3e82269458e5",
-    "affected_passed": 188,
-    "affected_skipped": 0,
+    "source_commit": "e5a531668ef523cd6faa26d5fec59aa552749134",
+    "source_tree": "e622ff8f5624ce73bac63c0976af01c614ce05bb",
+    "distinct_affected_passed": 469,
+    "selection_files": 14,
+    "initial_run": {
+      "passed": 458,
+      "skipped": 11,
+      "xfailed": 2,
+      "failed": 0
+    },
+    "site_dependency_replay": {
+      "passed": 11,
+      "skipped": 0,
+      "xfailed": 0,
+      "failed": 0
+    },
+    "unresolved_skips_in_selection": 0,
+    "expected_failures": [
+      "CODEX-1",
+      "CODEX-5"
+    ],
     "whole_tree_ruff": "passed",
     "dependencies": "passed",
-    "isolated_source_import": "verified-current-checkout",
-    "independent_review": "no-blocking-finding-in-reviewed-scope",
-    "evidence": "docs/engineering/evidence/cycle2-coordinator-20261121-2bad.json",
-    "final_source_hosted": "pending"
+    "isolated_source_import": "Dedicated root checkout observed with python -I at487e0811; unchanged src tree through tested e5a53166. Final-head tests/Ruff/pip receipts are clean; no fresh final-head -I run claimed.",
+    "independent_review": "no-blocking-findings-in-named-CODEX6-CODEX14-Pages-scopes",
+    "evidence": "docs/engineering/evidence/cycle3-95fe/qualification.json",
+    "final_source_hosted": "pending-new-publication",
+    "full_suite": "not-rerun-locally; source-specific hosted QA required",
+    "final_record_audit": "passed-no-blocking-factual-link-or-identity-errors",
+    "final_record_review": "docs/engineering/evidence/cycle3-95fe/final-record-review.md"
   },
-  "current_handoff": "docs/engineering-handoffs/cycle2-20261121-2bad.md",
+  "current_handoff": "docs/engineering-handoffs/cycle3-20261121-95fe.md",
   "previous_session_qualification": {
     "source_commit": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
     "source_tree": "a8ef4316a88ab58619d966744e26b0067d66ff33",
@@ -1271,9 +1344,9 @@
     "integration_commit": "71b535cc5c1ca0ccc6762831a5d8a137644d14fc"
   },
   "continuation": {
-    "status": "reviewed-cycle2-handoff",
-    "handoff": "docs/engineering-handoffs/cycle2-20261121-2bad.md",
-    "next_action": "Refresh exact successor hosted checks and PR #345 failed-job-only retry; resolve concrete failures and merge only with applicable green checks and no blocker. Continue remaining header mappings and bounded semantic donor review without duplicating cycle2."
+    "status": "cycle3-source-qualified-awaiting-exact-head-hosted-checks",
+    "handoff": "docs/engineering-handoffs/cycle3-20261121-95fe.md",
+    "next_action": "Refresh live branch/PR/CI and ownership; retain all failures. Inspect both Ubuntu frozen CLI jobs and TierR archive/cache paths on the new source. Merge only after applicable checks and blockers are resolved with fresh expected-head REST guard and BOTH [no release] [no deploy] in the actual merge commit. Continue other unowned bounded work without duplicate full workflows."
   },
   "sibling_95fe_qualification": {
     "source_commit": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
@@ -1415,6 +1488,18 @@
       "main_merge_eligible": false,
       "release_ready": false,
       "coordinator_archive_sha256": "961d81699d1ce25d212708028f4274978aad536a424b44a5711cfb57955479f6"
+    },
+    {
+      "source_commit": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
+      "source_tree": "60ed420c11116f1b92bdbedae34e3e82269458e5",
+      "affected_passed": 188,
+      "affected_skipped": 0,
+      "whole_tree_ruff": "passed",
+      "dependencies": "passed",
+      "isolated_source_import": "verified-current-checkout",
+      "independent_review": "no-blocking-finding-in-reviewed-scope",
+      "evidence": "docs/engineering/evidence/cycle2-coordinator-20261121-2bad.json",
+      "final_source_hosted": "pending"
     }
   ],
   "prior_publication_checkpoint": {
@@ -1457,5 +1542,46 @@
     "release_ready": false,
     "qualification": "manual source-equivalent red/green only; new-head checks and independent review pending",
     "handoff": "docs/engineering-handoffs/inventory-tsv-shape-20261120.md"
+  },
+  "previous_cycle2_qualification": {
+    "source_commit": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
+    "source_tree": "60ed420c11116f1b92bdbedae34e3e82269458e5",
+    "affected_passed": 188,
+    "affected_skipped": 0,
+    "whole_tree_ruff": "passed",
+    "dependencies": "passed",
+    "isolated_source_import": "verified-current-checkout",
+    "independent_review": "no-blocking-finding-in-reviewed-scope",
+    "evidence": "docs/engineering/evidence/cycle2-coordinator-20261121-2bad.json",
+    "final_source_hosted": "pending"
+  },
+  "previous_remote_publication_cycle2": {
+    "status": "reviewed-focused-qualified-awaiting-hosted",
+    "branch": "codex/patchtrace-integration-20261121-2bad",
+    "base_branch": "codex/patchtrace-pr345-346-unique-recovery-20261120",
+    "base_commit": "b461ac64eb9beb74449ce2b18b6795a2af34a02a",
+    "git_parent": "e2385c22c0397a547b15b2fbca9f0c07dc4ac199",
+    "head_rule": "Resolve the live branch and matching draft PR; its body records exact local/remote publication head and complete tree equality.",
+    "publication_transport": "connected GitHub Git Data API; no force update",
+    "history_bundle": "docs/engineering/evidence/cycle2-local-history-20261121-2bad.bundle"
+  },
+  "baseline_hosted_qualification_cycle3": {
+    "source_commit": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+    "source_tree": "9cb2ba74b088dfce7d87d37403108bcd3aa05326",
+    "synthetic_merge_commit": "8b29d4d48274a250cc63f3795d322430b237313d",
+    "captured_utc": "2026-11-21T04:36:00Z/2026-11-21T04:40:00Z",
+    "linux": {
+      "passed": 24043,
+      "skipped": 53,
+      "xfailed": 6
+    },
+    "windows": {
+      "passed": 23916,
+      "skipped": 181,
+      "xfailed": 5
+    },
+    "qa_qt_native_package_smokes": "all-current-non-release-checks-success",
+    "source_scope": "PR348 only; tree identity independently verified. PR345\u2013347 also green on their own retained heads.",
+    "evidence": "docs/engineering/evidence/cycle3-95fe/hosted-qualification.json"
   }
 }

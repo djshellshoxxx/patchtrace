@@ -1,5 +1,22 @@
 # PatchTrace feature matrix
 
+## Current bounded feature status — cycle3
+
+[Authoritative ledger](task-ledger.json) · [Qualification](cycle3-consolidation-20261121-95fe.md).
+
+| Scope | Current state | Remaining acceptance |
+| --- | --- | --- |
+| Prior PR #348 application repairs and eight Strings header IDs | Independently reviewed; exact-tree full/platform CI passed | Other header mappings and native accessibility remain open |
+| CODEX-14 full extracted Linux CLI smoke | Implemented, independently reviewed, local tests/lint passed | Both new-source Ubuntu frozen jobs and applicable hosted gates |
+| CODEX-6 archive integrity and cache-hit fixtures | Implemented; test oracle repaired; two independent reviews; actual Bash fixture controls passed | Hosted restore/save/cache-hit and Ghidriff-path acceptance |
+| Pages deployment opt-out | Implemented and reviewed; source regressions pass | New-source hosted QA; no deployment authorized |
+| Engineering indexes/evidence |20 omitted files recovered with exact original blobs; six indexes reconciled | Keep source-specific CI/publication state current |
+| Whole-product/manual/raw/accuracy work | Partial; no defensible overall percentage | Unchanged explicit release and historical-review gates |
+
+Clean combined source e5a53166 has469 distinct affected passes after resolving11 missing-site-dependency skips; CODEX-1/5 remain2expectedfailures. Counts overlap prior author/peer selections and are not a full-suite total.
+
+## Retained historical cycle95fe record
+
 Authority: [task-ledger.json](task-ledger.json). The existing detailed feature
 record remains [feature-status-20261119.json](feature-status-20261119.json).
 Percentages below estimate only the named implementation slice; they do not

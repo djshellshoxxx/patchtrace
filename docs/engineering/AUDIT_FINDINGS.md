@@ -1,5 +1,19 @@
 # PatchTrace audit findings
 
+## Cycle3 current findings and disposition
+
+| ID | Finding | Disposition |
+| --- | --- | --- |
+| C3-01 | Cache contract reader searched an incomplete rizin step name; negative controls could pass on an already-invalid baseline | Fixed in53e02a47; baseline failure retained; actual-source selection30 passes/2existingxfails; independently reviewed |
+| C3-02 | Two cache import-spacing errors and obsolete Linux pytest import failed whole-tree Ruff | Narrow test-only repairs53e02a47/5fa47ac7; original errors retained; final lint passes |
+| C3-03 | Sibling reconciliation omitted six required engineering indexes and 14 linked original artifacts | All20 files recovered and blob-verified; current indexes reconciled separately |
+| C3-04 | Cache author-control summaries disagreed at12/10 versus retained14/14 receipt | P3 current summaries corrected; older Git versions and original receipt preserved |
+| C3-05 | Pages had no explicit per-push deployment hold for authorized integration without deployment | Separate contract/source-reviewed deploy-only `[no deploy]` condition; no deployment performed |
+
+Two independent CODEX-6/CODEX-14 review axes and independent Pages reviews found no blocking source defect in their named changes. This is not a whole-repository security or correctness certification. CODEX-1/5 and broader native/manual/raw/accuracy acceptance remain open. [All reviews and failures](evidence/cycle3-95fe/README.md).
+
+## Retained historical cycle95fe record
+
 Authority: [task-ledger.json](task-ledger.json). Scope: cycle 95fe and the named
 late-stack repairs, not an assertion that all repository code has been audited.
 

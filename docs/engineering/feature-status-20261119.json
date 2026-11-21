@@ -1,7 +1,7 @@
 {
   "schema": "patchtrace-feature-status/1",
-  "updated_at": "2026-11-21T02:49:19.534442+00:00",
-  "checkpoint_local_commit": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
+  "updated_at": "2026-11-21T05:10:18.976908+00:00",
+  "checkpoint_local_commit": "e5a531668ef523cd6faa26d5fec59aa552749134",
   "release_ready": false,
   "features": [
     {
@@ -127,7 +127,7 @@
       "previous_remaining_snapshot": "Exact final-head full QA/Qt/package/native acceptance, native Qt disposition, Linux forced-export race, full raw-input membership, Windows trust/manual and separate accuracy gates remain open."
     }
   ],
-  "current_handoff": "docs/engineering-handoffs/cycle2-20261121-2bad.md",
+  "current_handoff": "docs/engineering-handoffs/cycle3-20261121-95fe.md",
   "generation36_note": "Isolated, test-only cross-column Strings CSV regression extension: source-level review found prior 13 cases checked display only; two additional parameterized cases guard cues, functions, lineage_groups, reasons and assert JSON remains unchanged. Two stand-alone source-equivalent controls passed, repository pytest/Ruff and external independent review pending. PR342 source-specific native/live/Linux QA success does not qualify g36 or erase initial native cache failure.",
   "generation37_note": "Evidence-only successor parsed PR342 exact-head successful Windows native raw-cache artifact: both Java 25.0.5 probes returned 0, raw hashes matched, second run contains cache-origin and recorded reuse, acceptance result passed. Original 5cc java=unverified failure remained without diagnostic artifact and unexplained; no runtime/cache rule change or release gate closure. G36 CSV tests remain independent, unqualified.",
   "generation38_note": "Exact PR342 Windows Qt 5x repeat shard failed 2 investigation project create waitUntil timeouts after 10,423 passed. Generation38 isolated test-only diagnostics preserve original 10000ms and cause while recording safe pending operation/worker busy/flags. Four regression cases authored; seven synthetic controls pass, not native Qt/repository source. A review-found unhashable operation masking path was corrected. Full QA/Ruff and independent post-change review pending; original failure and release blockers retained.",
@@ -154,13 +154,16 @@
   ],
   "cycle2_current_note": "Clean combined188 passes, whole-tree Ruff/dependencies/source binding pass, independent review clear. Inventory large-field/TSV/OID/strictJSON repairs now repository-tested; damaged quoted TSV additionally fixed. All eight Strings headers wired. Hosted qualification for the successor remains pending; predecessor receipts remain source-specific.",
   "codex14_linux_frozen_cli_smoke": {
-    "status": "implemented-static-contract-hosted-pending",
+    "status": "reviewed-local-passed-hosted-frozen-pending",
     "branch": "codex/patchtrace-linux-frozen-cli-smoke-20261121",
     "parent": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
     "scope": "Run full frozen_smoke against extracted checksum-verified Linux x86-64 on Ubuntu 22.04/24.04; retain both offscreen/xcb self-tests.",
     "source_controls": "13 author-side static source invariants passed; not repository pytest or frozen executable acceptance",
-    "remaining": "Live source-specific full CLI smoke both distros, full QA/Qt/native/package, independent review, and all unchanged release gates.",
-    "evidence": "docs/engineering/codex14-linux-frozen-cli-smoke-20261121.md"
+    "remaining": "Exact-source Ubuntu22.04/24.04 full frozen CLI, applicable QA/Qt/native/package, unchanged manual/release gates.",
+    "evidence": "docs/engineering/evidence/cycle3-95fe/qualification.json",
+    "combined_source": "e5a531668ef523cd6faa26d5fec59aa552749134"
   },
-  "ci_tier_r_cache_integrity_note": "Isolated PR348-based CODEX-6 successor now caches original rizin/Ghidra archives, verifies SHA-256 on every cache hit/miss before clean extraction. Author-side exact fetched-source static controls and synthetic tamper shell checks pass. Checkout pytest/Ruff, hosted rizin/Ghidriff cache-hit acceptance, independent review, merge/release remain open. CODEX-1/5 and the separate CODEX-14 branch remain unqualified."
+  "ci_tier_r_cache_integrity_note": "Source repair53e02a47 and independent spec/standards review accepted within bounded scope; actual checked-out30pass/2xfail plus four real-workflow Bash fixture cases. Original validator and Ruff failures retained. Combined source e5a53166 passes469distinct affected cases; real hosted cache restore/save and Ghidriff path acceptance remain open.",
+  "cycle3_current_evidence": "docs/engineering/evidence/cycle3-95fe/qualification.json",
+  "cycle3_current_note": "469 distinct affected cases pass after replaying11 originally skipped site-tool cases with declared dependencies;2existingexpectedfailures CODEX1/5 remain. CODEX6/14/Pages independently reviewed and locally integrated; exact new-source hosted/native/cache acceptance remains pending. PR348 full Linux/Windows success is recorded separately.20 omitted PR346 indexes/evidence recovered. No main merge/release/deployment claimed."
 }
