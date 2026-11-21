@@ -2326,3 +2326,9 @@ independent review are **not** yet verified. Prior local scratch paths are
 absent and shell DNS cannot resolve GitHub. Source, test and contract:
 `docs/engineering/codex14-linux-frozen-cli-smoke-20261121.md`.
 Do not clear CODEX-1/5/6, Windows/manual/trust or L1/L2/L3 gates.
+
+CODEX-14 author-only negative controls: all seven in-memory workflow mutations
+were refused by a source-bound static contract; see
+`docs/engineering/evidence/codex14-linux-smoke-static-review-20261121.json`.
+The existing `tools/frozen_smoke.py` runtime is unchanged (docstring clarified).
+No Linux frozen execution or independent peer pass has been recorded.
