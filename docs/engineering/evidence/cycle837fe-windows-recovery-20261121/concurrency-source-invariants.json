@@ -1,0 +1,42 @@
+{
+  "base_head": "2ae1bbad2ad9cc78c29541872381750e347c670e",
+  "base_tree": "6001ef506c38930fd590bd827f428b997c3b2797",
+  "changed_paths": [
+    ".github/workflows/qa-windows.yml",
+    "docs/specs/REGISTRY.md",
+    "docs/specs/windows-acceptance-and-milestone-builds.md",
+    "tests/test_release_gate.py"
+  ],
+  "allowed_workflow_delta_only": true,
+  "all_job_definitions_identical_except_one_windows_upload_input": true,
+  "pins_permissions_triggers_publication_holds_Qt_native_gates_unchanged": true,
+  "other_workflows_and_runtime_paths_unchanged": true,
+  "original_donor_regression_ast_identical": true,
+  "census": {
+    "workflows": 21,
+    "run_scalars": 200,
+    "explicit_installs": 42,
+    "unprotected_installs": 41
+  },
+  "source_binding": {
+    "mode": "Isolated interpreter with explicit current source paths; no editable rebind or installation",
+    "patchtrace": "/workspace/scratch/837fe19aae3a/repair-ci-publication-concurrency/src/patchtrace/__init__.py",
+    "audit": "/workspace/scratch/837fe19aae3a/repair-ci-publication-concurrency/tools/ci_pip_install_audit.py",
+    "interpreter": "/workspace/scratch/837fe19aae3a/pages-config-hold-venv/bin/python",
+    "unchanged_existing_editable": {
+      "dir_info": {
+        "editable": true
+      },
+      "url": "file:///workspace/scratch/837fe19aae3a/repair-pages-config-hold"
+    }
+  },
+  "file_sha256": {
+    ".github/workflows/qa-windows.yml": "f5bd37a3bca21570a490a10a2691c10f12c524105eb0a57cadf6fb48f031c1f8",
+    "docs/specs/REGISTRY.md": "d11ef0a3de1eab8bd966d3ecab8bcd40838a54ed9594d4eaf2b7df1a62c60192",
+    "docs/specs/windows-acceptance-and-milestone-builds.md": "2256ade9537316e599ffb048e582738cf1c5d53f10fb7792297084efbca7d7c1",
+    "tests/test_release_gate.py": "8b665b86bfd9ec56a257858b8498fe8e4e01c6e6b757f8ed55171ec9f395cc78"
+  },
+  "hosted_acceptance": false,
+  "native_or_package_execution": false,
+  "broad_CODEX5_closed": false
+}

@@ -1,0 +1,1102 @@
+{
+  "schema": "patchtrace/post-main-qualification/1",
+  "source": {
+    "repo_full_name": "djshellshoxxx/PatchTrace",
+    "pull_request": 349,
+    "pr_head_sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+    "actual_main_merge_sha": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+    "complete_tree_sha": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+    "parents": [
+      "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+      "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e"
+    ],
+    "merged_at": "2026-11-21T09:25:16Z",
+    "actual_commit_message": "Merge qualified PatchTrace consolidation (#349) [no release] [no deploy]\n\n[no release] [no deploy]\n\nPromote reviewed source ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e, complete tree c3f09435deb99ca0ddb3406e27ab315dba7740cf. All eight applicable exact-source workflows completed successfully; 30 applicable jobs passed and four intentionally inapplicable jobs were skipped. Tested synthetic merge 66f153a8372ad93c72e2f5b10365dcf210681684 has parents fdc2696c23bdbfe7668348f25e3b336ce33039f7 and ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e.\n\nLinux full suite: 24,190 passed, 53 skipped, 3 expected failures. Windows full suite: 24,059 passed, 185 skipped, 2 expected failures. Whole-tree Ruff, Qt repetition, actual Windows standalone/portable/installer/uninstall, and Ubuntu 22.04/24.04 frozen smoke checks passed. Native and packaging qualification details and independent reviews are preserved in PR #349 and source-specific evidence. Sealed primary evidence SHA256: 8eb127426bcf216b840bc10d5243fccdb8964d4ba17bf53b6282920406b57859.\n\nThis merge preserves the broader CODEX-5, Tier R/Tier W native, manual accessibility/trust/provenance, and L1/L2/L3 acceptance gates. It does not authorize a release, tag, Pages deployment, or deletion of historical branches.",
+    "no_release_marker_in_actual_message": true,
+    "no_deploy_marker_in_actual_message": true,
+    "live_main_ref_at_final_observation": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+    "final_job_observation": "2026-11-21 10:36:55 UTC",
+    "identity_evidence_file": "initial-main-identity-and-runs.json",
+    "actual_commit_title": "Merge qualified PatchTrace consolidation (#349) [no release] [no deploy]",
+    "hold_markers_present_in_title_and_body": true
+  },
+  "verdict": {
+    "all_six_observed_runs_completed": true,
+    "all_observed_runs_successful": false,
+    "observed_workflow_counts": {
+      "total": 6,
+      "success": 5,
+      "failure": 1
+    },
+    "job_counts": {
+      "total": 29,
+      "success": 25,
+      "failure": 1,
+      "skipped": 3
+    },
+    "all_required_qa_jobs_successful": true,
+    "all_26_captured_job_checkout_logs_match_main": true,
+    "release_job_actually_skipped": true,
+    "pages_deploy_job_actually_skipped": true,
+    "pages_build_succeeded": false,
+    "status": "qa_and_publication_holds_confirmed_with_separate_pages_configuration_failure"
+  },
+  "runs": [
+    {
+      "run_id": 44889511427,
+      "name": "Live rizin rz-diff acceptance",
+      "event": "push",
+      "head_sha": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511427",
+      "jobs": [
+        {
+          "id": 136802040159,
+          "name": "live rz-diff (ubuntu-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-21T09:26:16Z",
+          "completed_at": "2026-11-21T09:27:01Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511427/job/136802040159",
+          "checkout_verified": true,
+          "log_file": "logs/136802040159.log"
+        },
+        {
+          "id": 136802040605,
+          "name": "live rz-diff (windows-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-21T09:27:29Z",
+          "completed_at": "2026-11-21T09:28:35Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511427/job/136802040605",
+          "checkout_verified": true,
+          "log_file": "logs/136802040605.log"
+        }
+      ]
+    },
+    {
+      "run_id": 44889511406,
+      "name": "GitHub Pages",
+      "event": "push",
+      "head_sha": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511406",
+      "jobs": [
+        {
+          "id": 136802040292,
+          "name": "build",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-21T09:26:14Z",
+          "completed_at": "2026-11-21T09:26:29Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511406/job/136802040292",
+          "checkout_verified": true,
+          "log_file": "logs/136802040292.log"
+        },
+        {
+          "id": 136802309849,
+          "name": "deploy",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-11-21T09:26:29Z",
+          "completed_at": "2026-11-21T09:26:29Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511406/job/136802309849",
+          "checkout_verified": null,
+          "log_file": null
+        }
+      ]
+    },
+    {
+      "run_id": 44889511400,
+      "name": "Corpus Tier R (sharded)",
+      "event": "push",
+      "head_sha": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511400",
+      "jobs": [
+        {
+          "id": 136802040286,
+          "name": "plan",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-21T09:25:52Z",
+          "completed_at": "2026-11-21T09:26:13Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511400/job/136802040286",
+          "checkout_verified": true,
+          "log_file": "logs/136802040286.log"
+        },
+        {
+          "id": 136802040465,
+          "name": "windows advisory (smoke)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-21T09:30:50Z",
+          "completed_at": "2026-11-21T09:31:37Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511400/job/136802040465",
+          "checkout_verified": true,
+          "log_file": "logs/136802040465.log"
+        },
+        {
+          "id": 136802041401,
+          "name": "msvc cl advisory (windows-2022)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-11-21T09:25:23Z",
+          "completed_at": "2026-11-21T09:25:23Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511400/job/136802041401",
+          "checkout_verified": null,
+          "log_file": null
+        },
+        {
+          "id": 136802246520,
+          "name": "shard 1 of 2",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-21T09:26:53Z",
+          "completed_at": "2026-11-21T09:28:42Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511400/job/136802246520",
+          "checkout_verified": true,
+          "log_file": "logs/136802246520.log"
+        },
+        {
+          "id": 136802246554,
+          "name": "shard 0 of 2",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-21T09:32:57Z",
+          "completed_at": "2026-11-21T09:35:31Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511400/job/136802246554",
+          "checkout_verified": true,
+          "log_file": "logs/136802246554.log"
+        },
+        {
+          "id": 136804468220,
+          "name": "merge",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-21T09:35:45Z",
+          "completed_at": "2026-11-21T09:36:11Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511400/job/136804468220",
+          "checkout_verified": true,
+          "log_file": "logs/136804468220.log"
+        }
+      ]
+    },
+    {
+      "run_id": 44889511349,
+      "name": "Native Windows Ghidriff acceptance",
+      "event": "push",
+      "head_sha": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511349",
+      "jobs": [
+        {
+          "id": 136802040331,
+          "name": "native (repro-plain-ghidriff)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-21T09:26:13Z",
+          "completed_at": "2026-11-21T09:29:53Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511349/job/136802040331",
+          "checkout_verified": true,
+          "log_file": "logs/136802040331.log"
+        },
+        {
+          "id": 136802040527,
+          "name": "native (patchtrace-clean)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-21T09:34:15Z",
+          "completed_at": "2026-11-21T09:38:00Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511349/job/136802040527",
+          "checkout_verified": true,
+          "log_file": "logs/136802040527.log"
+        },
+        {
+          "id": 136802040529,
+          "name": "native (patchtrace-seeded-store)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-21T09:31:40Z",
+          "completed_at": "2026-11-21T09:35:42Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511349/job/136802040529",
+          "checkout_verified": true,
+          "log_file": "logs/136802040529.log"
+        },
+        {
+          "id": 136802040532,
+          "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-21T09:30:19Z",
+          "completed_at": "2026-11-21T09:35:42Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511349/job/136802040532",
+          "checkout_verified": true,
+          "log_file": "logs/136802040532.log"
+        },
+        {
+          "id": 136802040593,
+          "name": "native (raw-cache-hit)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-21T09:34:32Z",
+          "completed_at": "2026-11-21T09:37:51Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511349/job/136802040593",
+          "checkout_verified": true,
+          "log_file": "logs/136802040593.log"
+        }
+      ]
+    },
+    {
+      "run_id": 44889511388,
+      "name": "Live unified extraction (SPEC-31 S1)",
+      "event": "push",
+      "head_sha": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511388",
+      "jobs": [
+        {
+          "id": 136802040261,
+          "name": "windows",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-21T09:29:07Z",
+          "completed_at": "2026-11-21T09:38:14Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511388/job/136802040261",
+          "checkout_verified": true,
+          "log_file": "logs/136802040261.log"
+        },
+        {
+          "id": 136805106286,
+          "name": "linux",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-21T09:38:16Z",
+          "completed_at": "2026-11-21T09:43:01Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511388/job/136805106286",
+          "checkout_verified": true,
+          "log_file": "logs/136805106286.log"
+        }
+      ]
+    },
+    {
+      "run_id": 44889511435,
+      "name": "QA and Windows standalone",
+      "event": "push",
+      "head_sha": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511435",
+      "jobs": [
+        {
+          "id": 136802040528,
+          "name": "qa (ubuntu-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-21T09:28:02Z",
+          "completed_at": "2026-11-21T09:58:54Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511435/job/136802040528",
+          "checkout_verified": true,
+          "log_file": "logs/136802040528.log"
+        },
+        {
+          "id": 136802040615,
+          "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-21T09:28:16Z",
+          "completed_at": "2026-11-21T10:09:09Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511435/job/136802040615",
+          "checkout_verified": true,
+          "log_file": "logs/136802040615.log"
+        },
+        {
+          "id": 136802040648,
+          "name": "qa (windows-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-21T09:32:45Z",
+          "completed_at": "2026-11-21T10:26:00Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511435/job/136802040648",
+          "checkout_verified": true,
+          "log_file": "logs/136802040648.log"
+        },
+        {
+          "id": 136802040681,
+          "name": "release-gate",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-21T09:30:23Z",
+          "completed_at": "2026-11-21T09:30:33Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511435/job/136802040681",
+          "checkout_verified": true,
+          "log_file": "logs/136802040681.log"
+        },
+        {
+          "id": 136802040722,
+          "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-21T09:33:42Z",
+          "completed_at": "2026-11-21T09:59:39Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511435/job/136802040722",
+          "checkout_verified": true,
+          "log_file": "logs/136802040722.log"
+        },
+        {
+          "id": 136802040730,
+          "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-21T09:28:20Z",
+          "completed_at": "2026-11-21T09:47:56Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511435/job/136802040730",
+          "checkout_verified": true,
+          "log_file": "logs/136802040730.log"
+        },
+        {
+          "id": 136802040731,
+          "name": "qt-gate (windows-latest, 5, 1/1)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-21T09:35:13Z",
+          "completed_at": "2026-11-21T10:29:14Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511435/job/136802040731",
+          "checkout_verified": true,
+          "log_file": "logs/136802040731.log"
+        },
+        {
+          "id": 136802040829,
+          "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-21T09:34:51Z",
+          "completed_at": "2026-11-21T10:14:06Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511435/job/136802040829",
+          "checkout_verified": true,
+          "log_file": "logs/136802040829.log"
+        },
+        {
+          "id": 136817354464,
+          "name": "linux-package",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-21T10:29:22Z",
+          "completed_at": "2026-11-21T10:31:26Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511435/job/136817354464",
+          "checkout_verified": true,
+          "log_file": "logs/136817354464.log"
+        },
+        {
+          "id": 136817892906,
+          "name": "linux-smoke (ubuntu-22.04)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-21T10:34:00Z",
+          "completed_at": "2026-11-21T10:35:35Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511435/job/136817892906",
+          "checkout_verified": true,
+          "log_file": "logs/136817892906.log"
+        },
+        {
+          "id": 136817892915,
+          "name": "linux-smoke (ubuntu-24.04)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-21T10:33:35Z",
+          "completed_at": "2026-11-21T10:34:47Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511435/job/136817892915",
+          "checkout_verified": true,
+          "log_file": "logs/136817892915.log"
+        },
+        {
+          "id": 136818878992,
+          "name": "release",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-11-21T10:35:35Z",
+          "completed_at": "2026-11-21T10:35:35Z",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511435/job/136818878992",
+          "checkout_verified": null,
+          "log_file": null
+        }
+      ]
+    }
+  ],
+  "qa": {
+    "run_id": 44889511435,
+    "conclusion": "success",
+    "required_job_ids": [
+      136802040528,
+      136802040615,
+      136802040648,
+      136802040722,
+      136802040730,
+      136802040731,
+      136802040829,
+      136817354464,
+      136817892906,
+      136817892915
+    ],
+    "full_linux": {
+      "job_id": 136802040528,
+      "passed": 24190,
+      "skipped": 53,
+      "xfailed": 3,
+      "warnings": 21,
+      "seconds": 1783.81,
+      "junit_file": "main-linux-qa-artifact-14701514854.json",
+      "junit": {
+        "path": "qa-results.xml",
+        "test_cases": 24246,
+        "failures": 0,
+        "errors": 0,
+        "skipped_including_xfails": 56
+      }
+    },
+    "full_windows": {
+      "job_id": 136802040648,
+      "passed": 24059,
+      "skipped": 185,
+      "xfailed": 2,
+      "warnings": 22,
+      "seconds": 2974.71,
+      "junit_file": "main-windows-qa-artifact-14703566032.json",
+      "junit": {
+        "path": "qa-results.xml",
+        "test_cases": 24246,
+        "failures": 0,
+        "errors": 0,
+        "skipped_including_xfails": 187
+      }
+    },
+    "boundary_controls": {
+      "linux": {
+        "passed": 108,
+        "skipped": 2
+      },
+      "windows": {
+        "passed": 107,
+        "skipped": 3
+      },
+      "included_in_full_totals": false
+    },
+    "qt": [
+      {
+        "job_id": 136802040615,
+        "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+        "status": "completed",
+        "conclusion": "success",
+        "summary": "2026-11-21T10:09:06.4840141Z 13320 passed, 40 warnings in 2413.85s (0:40:13)",
+        "checkout_verified": true
+      },
+      {
+        "job_id": 136802040722,
+        "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+        "status": "completed",
+        "conclusion": "success",
+        "summary": "2026-11-21T09:59:35.1795639Z 9840 passed in 1490.14s (0:24:50)",
+        "checkout_verified": true
+      },
+      {
+        "job_id": 136802040730,
+        "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+        "status": "completed",
+        "conclusion": "success",
+        "summary": "2026-11-21T09:47:54.2307527Z 8460 passed in 1122.92s (0:18:42)",
+        "checkout_verified": true
+      },
+      {
+        "job_id": 136802040731,
+        "name": "qt-gate (windows-latest, 5, 1/1)",
+        "status": "completed",
+        "conclusion": "success",
+        "summary": "2026-11-21T10:29:09.0056119Z 10620 passed, 10 warnings in 3181.37s (0:53:01)",
+        "checkout_verified": true
+      },
+      {
+        "job_id": 136802040829,
+        "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+        "status": "completed",
+        "conclusion": "success",
+        "summary": "2026-11-21T10:14:03.1548196Z 10860 passed in 2328.90s (0:38:48)",
+        "checkout_verified": true
+      }
+    ],
+    "windows_platform_receipt_file": "main-windows-completion.json",
+    "windows_frozen_cli": {
+      "passed": 64,
+      "failed": 0
+    },
+    "windows_portable_smoke_passed": true,
+    "windows_installer_install_launch_uninstall_passed": true,
+    "linux_package_job_id": 136817354464,
+    "linux_smoke": [
+      {
+        "job_id": 136817892906,
+        "name": "linux-smoke (ubuntu-22.04)",
+        "conclusion": "success",
+        "checkout_verified": true,
+        "pass": 64,
+        "fail": 0,
+        "downloaded_product_id": 14703114005,
+        "artifact_download_digest_verified": true,
+        "tar_checksum_ok": true,
+        "self_test_steps": [
+          {
+            "name": "Run QT_QPA_PLATFORM=offscreen PatchTrace/PatchTrace --self-test",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run QT_QPA_PLATFORM=xcb xvfb-run -a PatchTrace/PatchTrace --self-test",
+            "conclusion": "success"
+          }
+        ],
+        "missing_library_warnings": [],
+        "raw_log": "logs/136817892906.log"
+      },
+      {
+        "job_id": 136817892915,
+        "name": "linux-smoke (ubuntu-24.04)",
+        "conclusion": "success",
+        "checkout_verified": true,
+        "pass": 64,
+        "fail": 0,
+        "downloaded_product_id": 14703114005,
+        "artifact_download_digest_verified": true,
+        "tar_checksum_ok": true,
+        "self_test_steps": [
+          {
+            "name": "Run QT_QPA_PLATFORM=offscreen PatchTrace/PatchTrace --self-test",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run QT_QPA_PLATFORM=xcb xvfb-run -a PatchTrace/PatchTrace --self-test",
+            "conclusion": "success"
+          }
+        ],
+        "missing_library_warnings": [],
+        "raw_log": "logs/136817892915.log"
+      }
+    ],
+    "product_artifact_metadata": [
+      {
+        "id": 14703446738,
+        "node_id": "MDg6QXJ0aWZhY3QxNDcwMzQ0NjczOA==",
+        "name": "PatchTrace-windows-x64",
+        "size_in_bytes": 178994817,
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14703446738",
+        "archive_download_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14703446738/zip",
+        "expired": false,
+        "digest": "sha256:0b2cc3ccc7a260a023f4cd207f4973a40d4ca2166e7b11c79ec2a7f9f8c381fe",
+        "created_at": "2026-11-21T10:25:57Z",
+        "updated_at": "2026-11-21T10:25:57Z",
+        "expires_at": "2027-02-19T09:25:23Z",
+        "workflow_run": {
+          "id": 44889511435,
+          "repository_id": 1413730581,
+          "head_repository_id": 1413730581,
+          "head_branch": "main",
+          "head_sha": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4"
+        }
+      },
+      {
+        "id": 14703114005,
+        "node_id": "MDg6QXJ0aWZhY3QxNDcwMzExNDAwNQ==",
+        "name": "PatchTrace-linux-x86_64",
+        "size_in_bytes": 118324744,
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14703114005",
+        "archive_download_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14703114005/zip",
+        "expired": false,
+        "digest": "sha256:8927bcf7b8bbd56b26d61979717d2930a7f6a38e577dec96636ec27d4ff057d1",
+        "created_at": "2026-11-21T10:31:23Z",
+        "updated_at": "2026-11-21T10:31:23Z",
+        "expires_at": "2027-02-19T09:25:23Z",
+        "workflow_run": {
+          "id": 44889511435,
+          "repository_id": 1413730581,
+          "head_repository_id": 1413730581,
+          "head_branch": "main",
+          "head_sha": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4"
+        }
+      }
+    ],
+    "large_product_bytes_downloaded_locally": false
+  },
+  "publication": {
+    "release_gate": {
+      "job_id": 136802040681,
+      "conclusion": "success",
+      "publish": true,
+      "receipt": "2026-11-21T09:30:31.7423494Z release_gate: publish=true milestones=4 reason=4 counted merges since v0.1.0-beta.1035, the publish threshold is 3"
+    },
+    "release": {
+      "job_id": 136818878992,
+      "conclusion": "skipped",
+      "hold_predicate": "(startsWith(github.ref, 'refs/tags/v') || needs.release-gate.outputs.publish == 'true') && !contains(github.event.head_commit.message, '[no release]')",
+      "hold_predicate_false_on_actual_commit": true
+    },
+    "pages": {
+      "run_id": 44889511406,
+      "build_job_id": 136802040292,
+      "build_conclusion": "failure",
+      "site_tests": {
+        "passed": 247,
+        "skipped": 1
+      },
+      "static_site_build_step_success": true,
+      "configure_step_failure": "GET Pages site returned HTTP 404 with enablement=false",
+      "configure_action_pin": "983d7736d9b0ae728b81ab479565c72886d7745b",
+      "artifact_upload_skipped": true,
+      "deploy_job_id": 136802309849,
+      "deploy_conclusion": "skipped",
+      "hold_predicate_false_on_actual_commit": true,
+      "causality_limit": "The build failure independently blocks deployment, so the observed skipped deploy alone does not isolate the marker as the sole cause.",
+      "assessment_file": "pages-config-404-assessment.json",
+      "fix_source_scope": "The later PR351 configure-only guard is separate; no successful hosted run of that repair is claimed in this main902 record."
+    },
+    "release_baseline_comparison_file": "release-baseline-comparison.json"
+  },
+  "native_actual_evidence_file": "native-checkpoint-002.json",
+  "native_cache_source_specific_file": "tier-r-cache-source-specific.json",
+  "unified_cross_os_file": "unified-cross-os-comparison.json",
+  "prior_primary_archive": {
+    "relative_directory": "../final-ae69-qualification",
+    "archive_file": "final-ae69-evidence.zip",
+    "sha256": "8eb127426bcf216b840bc10d5243fccdb8964d4ba17bf53b6282920406b57859",
+    "status": "Sealed premerge success with documented open gates; kept separate and unmodified.",
+    "unchanged_sha256_verified_before_post_main_seal": true
+  },
+  "observation_constraints": {
+    "read_only_hosted_observation": true,
+    "no_retries_dispatches_cancels_or_source_changes": true,
+    "no_local_native_or_analyzed_target_execution": true
+  },
+  "native_actual": {
+    "head_sha": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+    "scope": "Fresh main-run actual evidence; primary PR archive remains frozen. CI wrapper success is distinguished from coverage outcomes.",
+    "ghidriff": {
+      "three_known_patch_positives": true,
+      "change_records_each": 1,
+      "expected_negative_control": "success",
+      "cache": {
+        "status": "passed",
+        "raw_sha256_first": "d79b7dd03b2a425876da27c319c9254f3045485fa0371cd6ac0ff7f0f909f116",
+        "raw_sha256_second": "d79b7dd03b2a425876da27c319c9254f3045485fa0371cd6ac0ff7f0f909f116",
+        "first_run": "completed",
+        "second_run": "completed",
+        "matches_first": 1,
+        "matches_second": 1,
+        "second_cache_event": [
+          {
+            "stage": "cache",
+            "message": "raw output reused from cache"
+          }
+        ],
+        "artifact_id": 14702140175
+      }
+    },
+    "rizin": {
+      "Linux": {
+        "archive_sha256": "9102249a9f0b6319c5334a2e5cf8d9cc3f2035e1d3def027c41f6a90f647e8cf",
+        "duration_seconds": 5.87,
+        "engine_run": {
+          "argv_digest": "b7165fe711c2d7d25febc57cb9af3a1d3a55404045d66a54c7b6ba3b89e9da19",
+          "error_code": null,
+          "status": "ok"
+        },
+        "errors": [],
+        "fixture_sha256": {
+          "newer": "b403f1b9dcfc6dc7098efd08b12f4f8d2b6066f76083448b12e43d35ab46720d",
+          "older": "9330ae9aec8e157379e359b1031ff62b6712acad59a51cd2465c9008d7f8ea22"
+        },
+        "help_flags": {
+          "-C": true,
+          "-j": true,
+          "-t": true
+        },
+        "kind": "live-rzdiff",
+        "match_count": 30,
+        "mocked": false,
+        "os": "Linux",
+        "output_sha256": "be34eee2d2f489268e4c417f6175120d2ed1f2a2c79df3ebf1b543a80fa38f9b",
+        "pin": "0.9.1",
+        "rizin_version": "0.9.1",
+        "status": "passed"
+      },
+      "Windows": {
+        "archive_sha256": "2d14e0a6ecba1196dcd742d63de83bbaffed2a7a78ef5a0a9b4e92a0f73d1d28",
+        "duration_seconds": 3.45,
+        "engine_run": {
+          "argv_digest": "f9e98c5b84164a4fdd50b50317fd07d001fd9321da22f7e435ad463e344732c7",
+          "error_code": null,
+          "status": "ok"
+        },
+        "errors": [],
+        "fixture_sha256": {
+          "newer": "93bcb641c2838dec657df1eb6f7f503c50d24dc09cbe366b34eaf9eae577a717",
+          "older": "6b3cdd4374baed2791fa6b6a9545bef1670476a70fe47a8ba56f7e3ef551d39a"
+        },
+        "help_flags": {
+          "-C": true,
+          "-j": true,
+          "-t": true
+        },
+        "kind": "live-rzdiff",
+        "match_count": 322,
+        "mocked": false,
+        "os": "Windows",
+        "output_sha256": "dbc09c00260c6369427f258c803e0084dd4aa70b177eadc84a88019b8f736aac",
+        "pin": "0.9.1",
+        "rizin_version": "0.9.1",
+        "status": "passed"
+      }
+    },
+    "tier_r": {
+      "actual_ci_summary": {
+        "cases": {
+          "ok": 11,
+          "skipped": 1
+        },
+        "contract": "tier-r-ci-summary/1",
+        "engines": [
+          {
+            "attempted": 11,
+            "blocked": 0,
+            "completed": 5,
+            "completion": 0.454545,
+            "engine": "rz-diff",
+            "failed": 6,
+            "strata": [
+              {
+                "attempted": 1,
+                "blocked": 0,
+                "completed": 0,
+                "completion": 0.0,
+                "failed": 1,
+                "stratum": "aa"
+              },
+              {
+                "attempted": 1,
+                "blocked": 0,
+                "completed": 0,
+                "completion": 0.0,
+                "failed": 1,
+                "stratum": "authored"
+              },
+              {
+                "attempted": 2,
+                "blocked": 0,
+                "completed": 2,
+                "completion": 1.0,
+                "failed": 0,
+                "stratum": "cve"
+              },
+              {
+                "attempted": 1,
+                "blocked": 0,
+                "completed": 0,
+                "completion": 0.0,
+                "failed": 1,
+                "stratum": "mutation"
+              },
+              {
+                "attempted": 3,
+                "blocked": 0,
+                "completed": 0,
+                "completion": 0.0,
+                "failed": 3,
+                "stratum": "noise"
+              },
+              {
+                "attempted": 3,
+                "blocked": 0,
+                "completed": 3,
+                "completion": 1.0,
+                "failed": 0,
+                "stratum": "release"
+              }
+            ]
+          }
+        ],
+        "plan_sha256": "7f686fab1934b771a8f6daaedb012e750566fe304a32f7d191e132913f0de608",
+        "reason": null,
+        "report_sha256": "364c87d3a16c6cca92c325eb2f4d593c5e9562561e39b787004c1d6248642b4a",
+        "shards": 2,
+        "status": "warning",
+        "subset": "smoke",
+        "warnings": [
+          "rz-diff: only 5 of 11 pairs completed (below 90%)"
+        ]
+      },
+      "windows_advisory": {
+        "case_count": 11,
+        "outcomes": [
+          {
+            "id": "aa:_template/tiny",
+            "status": "findings",
+            "reason": "exit 1"
+          },
+          {
+            "id": "card:zlib-deflateprime-bits-range-check",
+            "status": "findings",
+            "reason": "exit 1"
+          },
+          {
+            "id": "card:zlib-gzwrite-nonblocking-overflow-cve-2026-85091",
+            "status": "findings",
+            "reason": "exit 1"
+          },
+          {
+            "id": "card:zlib-typo-fixes-no-code-change-2022-08",
+            "status": "findings",
+            "reason": "exit 1"
+          },
+          {
+            "id": "card:zlib-v1.3-to-v1.3.1",
+            "status": "findings",
+            "reason": "exit 1"
+          },
+          {
+            "id": "card:zlib-v1.3.1-to-v1.3.1.2",
+            "status": "findings",
+            "reason": "exit 1"
+          },
+          {
+            "id": "card:zlib-v1.3.1.2-to-v1.3.2",
+            "status": "findings",
+            "reason": "exit 1"
+          },
+          {
+            "id": "mutate:_template/tiny:cmp-flip:1000",
+            "status": "findings",
+            "reason": "exit 1"
+          },
+          {
+            "id": "noise:_template/tiny",
+            "status": "findings",
+            "reason": "exit 1"
+          },
+          {
+            "id": "suite:_template/tiny",
+            "status": "findings",
+            "reason": "exit 1"
+          },
+          {
+            "id": "evaluate:rz-diff",
+            "status": "findings",
+            "reason": "exit 1"
+          }
+        ],
+        "reports": []
+      }
+    },
+    "unified_windows": {
+      "job_id": 136802040261,
+      "fixtures": [
+        {
+          "fixture": "ci-pair",
+          "passed": 45,
+          "failed": 0
+        },
+        {
+          "fixture": "probe-pair",
+          "passed": 45,
+          "failed": 0
+        }
+      ],
+      "artifact_id": 14701767082
+    },
+    "unified_linux": {
+      "job_id": 136805106286,
+      "fixtures": [
+        {
+          "fixture": "ci-pair",
+          "passed": 46,
+          "failed": 0
+        },
+        {
+          "fixture": "probe-pair",
+          "passed": 46,
+          "failed": 0
+        }
+      ],
+      "artifact_id": 14701772697,
+      "cross_os_comparison": "unified-cross-os-comparison.json"
+    },
+    "completed_native_workflows": [
+      44889511349,
+      44889511427,
+      44889511400,
+      44889511388
+    ]
+  },
+  "native_cache_observation": {
+    "source_head": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+    "run_id": 44889511400,
+    "shards": [
+      {
+        "job_id": 136802246520,
+        "name": "shard 1 of 2",
+        "expected_archive_sha256": "9102249a9f0b6319c5334a2e5cf8d9cc3f2035e1d3def027c41f6a90f647e8cf",
+        "cache_hit": false,
+        "cache_miss": true,
+        "cache_saved": true,
+        "original_archive_hash_check_ok": true,
+        "cache_receipts": [
+          "2026-11-21T09:27:23.4181698Z Cache not found for input keys: rizin-archive-v1-9102249a9f0b6319c5334a2e5cf8d9cc3f2035e1d3def027c41f6a90f647e8cf",
+          "2026-11-21T09:27:24.0504521Z rizin-archive/rizin-v0.9.1-static-x86_64.tar.xz: OK",
+          "2026-11-21T09:28:40.4786779Z Cache saved with key: rizin-archive-v1-9102249a9f0b6319c5334a2e5cf8d9cc3f2035e1d3def027c41f6a90f647e8cf"
+        ],
+        "ghidra_java_steps": [
+          {
+            "name": "Java for Ghidra (only when ghidriff is requested)",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Restore Ghidra",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Install Ghidra and Ghidriff (fail closed on digest mismatch)",
+            "conclusion": "skipped"
+          }
+        ],
+        "checkout_verified": true,
+        "raw_log": "logs/136802246520.log"
+      },
+      {
+        "job_id": 136802246554,
+        "name": "shard 0 of 2",
+        "expected_archive_sha256": "9102249a9f0b6319c5334a2e5cf8d9cc3f2035e1d3def027c41f6a90f647e8cf",
+        "cache_hit": true,
+        "cache_miss": false,
+        "cache_saved": false,
+        "original_archive_hash_check_ok": true,
+        "cache_receipts": [
+          "2026-11-21T09:33:46.2148672Z Cache hit for: rizin-archive-v1-9102249a9f0b6319c5334a2e5cf8d9cc3f2035e1d3def027c41f6a90f647e8cf",
+          "2026-11-21T09:33:49.4795541Z Cache restored successfully",
+          "2026-11-21T09:33:49.6948471Z Cache restored from key: rizin-archive-v1-9102249a9f0b6319c5334a2e5cf8d9cc3f2035e1d3def027c41f6a90f647e8cf",
+          "2026-11-21T09:33:49.8470363Z rizin-archive/rizin-v0.9.1-static-x86_64.tar.xz: OK",
+          "2026-11-21T09:35:28.4928816Z Cache hit occurred on the primary key rizin-archive-v1-9102249a9f0b6319c5334a2e5cf8d9cc3f2035e1d3def027c41f6a90f647e8cf, not saving cache."
+        ],
+        "ghidra_java_steps": [
+          {
+            "name": "Java for Ghidra (only when ghidriff is requested)",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Restore Ghidra",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Install Ghidra and Ghidriff (fail closed on digest mismatch)",
+            "conclusion": "skipped"
+          }
+        ],
+        "checkout_verified": true,
+        "raw_log": "logs/136802246554.log"
+      }
+    ],
+    "interpretation": "The actual main run observed one original-rizin-archive cache miss and save, then one cache hit. Both verified the original archive SHA-256. Ghidra and Java steps were skipped; there is no Ghidra cache acceptance claim."
+  },
+  "native_coverage_limits": [
+    "Ghidriff known-patch fixtures and the expected cached-PDB negative control are separate outcomes; raw-cache equality proves within-run reuse, not independent-analysis determinism.",
+    "Rizin's 30 Linux and 322 Windows matches are observed counts on synthetic fixtures, not accuracy measurements.",
+    "Tier R's successful CI wrapper contains a warning: 5/11 completed, 6 failed, 0 blocked; Windows advisory has 11 findings with exit 1 and no substantive native reports. MSVC advisory is skipped.",
+    "Main Tier R specifically observed one original-archive cache miss/save and one cache hit, each with original SHA-256 verification. Ghidra and Java steps were skipped; there is no Ghidra cache acceptance.",
+    "Unified extraction covers two authored pairs, with 45 Windows and 46 Linux PASS per pair, zero failures, verified four input hashes/content equality, and retained-GZF content checks; informational hash-class limits remain."
+  ],
+  "expected_failures": [
+    {
+      "platform": "Linux",
+      "id": "tests.test_codex_pkg_workflows::test_pip_downloads_require_hashes",
+      "type": "pytest.xfail",
+      "message": "CODEX-5"
+    },
+    {
+      "platform": "Linux",
+      "id": "tests.test_tier_w_symbols::test_live_llvm_pdbutil_agrees_with_the_stdlib_reader",
+      "type": "pytest.xfail",
+      "message": "BLOCKED: llvm-pdbutil is not installed on this runner"
+    },
+    {
+      "platform": "Linux",
+      "id": "tests.test_tier_w_symbols::test_live_ghidra_export_runs_or_records_blocked",
+      "type": "pytest.xfail",
+      "message": "BLOCKED: no --ghidra-dir given"
+    },
+    {
+      "platform": "Windows",
+      "id": "tests.test_codex_pkg_workflows::test_pip_downloads_require_hashes",
+      "type": "pytest.xfail",
+      "message": "CODEX-5"
+    },
+    {
+      "platform": "Windows",
+      "id": "tests.test_tier_w_symbols::test_live_ghidra_export_runs_or_records_blocked",
+      "type": "pytest.xfail",
+      "message": "BLOCKED: no --ghidra-dir given"
+    }
+  ],
+  "expected_failures_remain_open": true,
+  "release_baseline_comparison": {
+    "schema": "patchtrace/release-baseline-comparison/1",
+    "baseline_observed_utc": "2026-11-21T08:24:43Z",
+    "post_main_observed_utc": "2026-11-21 10:38:43 UTC",
+    "baseline_source": "/workspace/scratch/837fe19aae3a/evidence/tier-r-final-publication/premerge-release-baseline.json",
+    "baseline_copy": "premerge-release-baseline-input.json",
+    "baseline_sha256": "383f045081961721715f3bc19795b71573af3e682d4f5ef2a40146f8f1156897",
+    "post_main_source": "final-release-list.json",
+    "compared_newest_release_count": 3,
+    "compared_identity_fields": [
+      "id",
+      "tag",
+      "published_at",
+      "draft",
+      "prerelease",
+      "url"
+    ],
+    "newest_three_releases_unchanged": true,
+    "current_visible_release_count": 59,
+    "published_since_main_merge": [],
+    "latest_release": {
+      "id": 445877110,
+      "tag": "v0.1.0-beta.1035",
+      "published_at": "2026-11-15T07:13:33Z",
+      "draft": false,
+      "prerelease": true,
+      "url": "https://github.com/djshellshoxxx/patchtrace/releases/tag/v0.1.0-beta.1035"
+    },
+    "scope": "The premerge baseline retains the newest three release identities, not the complete prior release count or prior asset metadata. Current release and asset metadata are retained separately; no baseline asset equality claim is made."
+  },
+  "artifact_validation": {
+    "selected_small_downloaded_artifacts": 9,
+    "native_download_receipts": "downloaded-artifact-records-002.json",
+    "qa_download_receipts": [
+      "main-linux-qa-artifact-14701514854.json",
+      "main-windows-qa-artifact-14703566032.json"
+    ],
+    "selected_original_zips_verified_against_api_digest_and_crc": true,
+    "large_product_artifacts_excluded_from_archive": true,
+    "large_product_bytes_downloaded_or_hashed_locally": false,
+    "linux_product_digest_verified_in_both_hosted_download_logs": true,
+    "windows_product_digest_matches_api_and_hosted_upload_log": true
+  },
+  "evidence": {
+    "manifest_file": "evidence-manifest.json",
+    "archive_file": "main-9023761-postmerge-evidence.zip",
+    "archive_receipt_file": "archive-receipt.json"
+  }
+}

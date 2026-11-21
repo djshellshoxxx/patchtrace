@@ -1,0 +1,1480 @@
+{
+  "schema": "patchtrace/historical-packaging-independent/1",
+  "reviewed_utc": "2026-11-21T10:50:21.912077+00:00",
+  "comparison_head": "0cdd5bf37130206c2ddec399450be6338ae8e4fd",
+  "comparison_tree": "6d532dd606a1fdf987245a03271970758a03fe57",
+  "verdict": "CLEAR: CI PORT(partial), WIN1 SUPERSEDED",
+  "blockers": [],
+  "branches": [
+    {
+      "branch": "claude/awesome-ramanujan-o3pxx3-ci",
+      "head": "0bf1f8309e8425ba34199657009d3055215336f1",
+      "tree": "ac731c7a1443d74de1a74ec27a0b13dbb8b2c174",
+      "merge_base": "99f8328ce89d02f200cf9fbc5852d9801761af28",
+      "paths": [
+        ".github/workflows/qa-windows.yml",
+        "docs/release-process.md",
+        "docs/specs/windows-acceptance-and-milestone-builds.md",
+        "docs/specs/windows-release-signing-policy.md",
+        "pyproject.toml",
+        "tests/test_codex_pkg_packaging.py",
+        "tests/test_milestone_notes.py",
+        "tests/test_release_gate.py",
+        "tests/test_windows_installer_manifest.py",
+        "tools/milestone_notes.py",
+        "tools/package_windows_installer.py"
+      ],
+      "original_bucket": "unmatched-patches-review-required",
+      "disposition": "PORT(partial)"
+    },
+    {
+      "branch": "claude/awesome-ramanujan-o3pxx3-win1",
+      "head": "7ac57759f3b9b332eaafb48c82f366566892f1b1",
+      "tree": "957e97ca170a076476e57a481e7cd248c3ffcf68",
+      "merge_base": "99f8328ce89d02f200cf9fbc5852d9801761af28",
+      "paths": [
+        ".gitattributes",
+        "docs/modules.md",
+        "docs/specs/windows-release-signing-policy.md",
+        "pyproject.toml",
+        "src/patchtrace/__main__.py",
+        "src/patchtrace/app_icon.py",
+        "src/patchtrace/resources/patchtrace-mark.svg",
+        "tests/test_windows_build_resources.py",
+        "tools/build_windows.py",
+        "tools/check_windows_exe.py",
+        "tools/pyinstaller_hooks/hook-patchtrace.app_icon.py",
+        "tools/windows_icon.py",
+        "tools/windows_version_info.py"
+      ],
+      "original_bucket": "unmatched-patches-review-required",
+      "disposition": "SUPERSEDED"
+    }
+  ],
+  "checks_passed": 314,
+  "checks": [
+    {
+      "name": "Exact original comparison source",
+      "passed": true
+    },
+    {
+      "name": "Original181/16 census preserved",
+      "passed": true
+    },
+    {
+      "name": "ci: exact complete branch scope",
+      "passed": true
+    },
+    {
+      "name": "ci: one unique commit, original parent and merge base",
+      "passed": true
+    },
+    {
+      "name": "ci: original unmatched bucket, no deletion authority",
+      "passed": true
+    },
+    {
+      "name": "ci: branch patch exact",
+      "passed": true
+    },
+    {
+      "name": "ci: donor-current delta exact",
+      "passed": true
+    },
+    {
+      "name": "ci: source comparison .github/workflows/qa-windows.yml",
+      "passed": true
+    },
+    {
+      "name": "ci: source comparison docs/release-process.md",
+      "passed": true
+    },
+    {
+      "name": "ci: source comparison docs/specs/windows-acceptance-and-milestone-builds.md",
+      "passed": true
+    },
+    {
+      "name": "ci: source comparison docs/specs/windows-release-signing-policy.md",
+      "passed": true
+    },
+    {
+      "name": "ci: source comparison pyproject.toml",
+      "passed": true
+    },
+    {
+      "name": "ci: source comparison tests/test_codex_pkg_packaging.py",
+      "passed": true
+    },
+    {
+      "name": "ci: complete changed-symbol accounting tests/test_codex_pkg_packaging.py",
+      "passed": true
+    },
+    {
+      "name": "ci: source comparison tests/test_milestone_notes.py",
+      "passed": true
+    },
+    {
+      "name": "ci: complete changed-symbol accounting tests/test_milestone_notes.py",
+      "passed": true
+    },
+    {
+      "name": "ci: source comparison tests/test_release_gate.py",
+      "passed": true
+    },
+    {
+      "name": "ci: complete changed-symbol accounting tests/test_release_gate.py",
+      "passed": true
+    },
+    {
+      "name": "ci: source comparison tests/test_windows_installer_manifest.py",
+      "passed": true
+    },
+    {
+      "name": "ci: complete changed-symbol accounting tests/test_windows_installer_manifest.py",
+      "passed": true
+    },
+    {
+      "name": "ci: source comparison tools/milestone_notes.py",
+      "passed": true
+    },
+    {
+      "name": "ci: complete changed-symbol accounting tools/milestone_notes.py",
+      "passed": true
+    },
+    {
+      "name": "ci: source comparison tools/package_windows_installer.py",
+      "passed": true
+    },
+    {
+      "name": "ci: complete changed-symbol accounting tools/package_windows_installer.py",
+      "passed": true
+    },
+    {
+      "name": "ci: original structural count reproducible",
+      "passed": true
+    },
+    {
+      "name": "win1: exact complete branch scope",
+      "passed": true
+    },
+    {
+      "name": "win1: one unique commit, original parent and merge base",
+      "passed": true
+    },
+    {
+      "name": "win1: original unmatched bucket, no deletion authority",
+      "passed": true
+    },
+    {
+      "name": "win1: branch patch exact",
+      "passed": true
+    },
+    {
+      "name": "win1: donor-current delta exact",
+      "passed": true
+    },
+    {
+      "name": "win1: source comparison .gitattributes",
+      "passed": true
+    },
+    {
+      "name": "win1: source comparison docs/modules.md",
+      "passed": true
+    },
+    {
+      "name": "win1: source comparison docs/specs/windows-release-signing-policy.md",
+      "passed": true
+    },
+    {
+      "name": "win1: source comparison pyproject.toml",
+      "passed": true
+    },
+    {
+      "name": "win1: source comparison src/patchtrace/__main__.py",
+      "passed": true
+    },
+    {
+      "name": "win1: complete changed-symbol accounting src/patchtrace/__main__.py",
+      "passed": true
+    },
+    {
+      "name": "win1: source comparison src/patchtrace/app_icon.py",
+      "passed": true
+    },
+    {
+      "name": "win1: complete changed-symbol accounting src/patchtrace/app_icon.py",
+      "passed": true
+    },
+    {
+      "name": "win1: source comparison src/patchtrace/resources/patchtrace-mark.svg",
+      "passed": true
+    },
+    {
+      "name": "win1: source comparison tests/test_windows_build_resources.py",
+      "passed": true
+    },
+    {
+      "name": "win1: complete changed-symbol accounting tests/test_windows_build_resources.py",
+      "passed": true
+    },
+    {
+      "name": "win1: source comparison tools/build_windows.py",
+      "passed": true
+    },
+    {
+      "name": "win1: complete changed-symbol accounting tools/build_windows.py",
+      "passed": true
+    },
+    {
+      "name": "win1: source comparison tools/check_windows_exe.py",
+      "passed": true
+    },
+    {
+      "name": "win1: complete changed-symbol accounting tools/check_windows_exe.py",
+      "passed": true
+    },
+    {
+      "name": "win1: source comparison tools/pyinstaller_hooks/hook-patchtrace.app_icon.py",
+      "passed": true
+    },
+    {
+      "name": "win1: complete changed-symbol accounting tools/pyinstaller_hooks/hook-patchtrace.app_icon.py",
+      "passed": true
+    },
+    {
+      "name": "win1: source comparison tools/windows_icon.py",
+      "passed": true
+    },
+    {
+      "name": "win1: complete changed-symbol accounting tools/windows_icon.py",
+      "passed": true
+    },
+    {
+      "name": "win1: source comparison tools/windows_version_info.py",
+      "passed": true
+    },
+    {
+      "name": "win1: complete changed-symbol accounting tools/windows_version_info.py",
+      "passed": true
+    },
+    {
+      "name": "win1: original structural count reproducible",
+      "passed": true
+    },
+    {
+      "name": "All24 path rows and22 distinct names accounted",
+      "passed": true
+    },
+    {
+      "name": "All65 available base/donor/current snapshots retained",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/donor/.github/workflows/qa-windows.yml",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/donor/docs/release-process.md",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/donor/docs/specs/windows-acceptance-and-milestone-builds.md",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/donor/docs/specs/windows-release-signing-policy.md",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/donor/pyproject.toml",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/donor/tests/test_codex_pkg_packaging.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/donor/tests/test_milestone_notes.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/donor/tests/test_release_gate.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/donor/tests/test_windows_installer_manifest.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/donor/tools/milestone_notes.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/donor/tools/package_windows_installer.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/merge-base/.github/workflows/qa-windows.yml",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/merge-base/docs/release-process.md",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/merge-base/docs/specs/windows-acceptance-and-milestone-builds.md",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/merge-base/docs/specs/windows-release-signing-policy.md",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/merge-base/pyproject.toml",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/merge-base/tests/test_codex_pkg_packaging.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/merge-base/tests/test_milestone_notes.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/merge-base/tests/test_release_gate.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/merge-base/tests/test_windows_installer_manifest.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/merge-base/tools/milestone_notes.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/merge-base/tools/package_windows_installer.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/current/.github/workflows/qa-windows.yml",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/current/docs/release-process.md",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/current/docs/specs/windows-acceptance-and-milestone-builds.md",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/current/docs/specs/windows-release-signing-policy.md",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/current/pyproject.toml",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/current/tests/test_codex_pkg_packaging.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/current/tests/test_milestone_notes.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/current/tests/test_release_gate.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/current/tests/test_windows_installer_manifest.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/current/tools/milestone_notes.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot ci/current/tools/package_windows_installer.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/donor/.gitattributes",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/donor/docs/modules.md",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/donor/docs/specs/windows-release-signing-policy.md",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/donor/pyproject.toml",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/donor/src/patchtrace/__main__.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/donor/src/patchtrace/app_icon.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/donor/src/patchtrace/resources/patchtrace-mark.svg",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/donor/tests/test_windows_build_resources.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/donor/tools/build_windows.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/donor/tools/check_windows_exe.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/donor/tools/pyinstaller_hooks/hook-patchtrace.app_icon.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/donor/tools/windows_icon.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/donor/tools/windows_version_info.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/merge-base/.gitattributes",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/merge-base/docs/modules.md",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/merge-base/docs/specs/windows-release-signing-policy.md",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/merge-base/pyproject.toml",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/merge-base/src/patchtrace/__main__.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/merge-base/tools/build_windows.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/current/.gitattributes",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/current/docs/modules.md",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/current/docs/specs/windows-release-signing-policy.md",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/current/pyproject.toml",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/current/src/patchtrace/__main__.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/current/src/patchtrace/app_icon.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/current/src/patchtrace/resources/patchtrace-mark.svg",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/current/tests/test_windows_build_resources.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/current/tools/build_windows.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/current/tools/check_windows_exe.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/current/tools/pyinstaller_hooks/hook-patchtrace.app_icon.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/current/tools/windows_icon.py",
+      "passed": true
+    },
+    {
+      "name": "Snapshot win1/current/tools/windows_version_info.py",
+      "passed": true
+    },
+    {
+      "name": "Recorded test import binding is clean original source",
+      "passed": true
+    },
+    {
+      "name": "Preserved prior input prior-inputs/docs/engineering/task-ledger.json",
+      "passed": true
+    },
+    {
+      "name": "Preserved prior input prior-inputs/docs/engineering/consolidation-inventory.json",
+      "passed": true
+    },
+    {
+      "name": "Preserved prior input prior-inputs/docs/engineering/consolidation-inventory-20261120-g30.json",
+      "passed": true
+    },
+    {
+      "name": "Preserved prior input prior-inputs/docs/engineering/branch-recovery-20261120-2bad.json",
+      "passed": true
+    },
+    {
+      "name": "Preserved prior input prior-inputs/docs/engineering/cycle-95fe-semantic-review.json",
+      "passed": true
+    },
+    {
+      "name": "Preserved prior input prior-inputs/docs/engineering/cycle2-historical-ui-review-20261121-2bad.json",
+      "passed": true
+    },
+    {
+      "name": "Preserved prior input prior-inputs/docs/engineering/evidence/cycle837fe-20261121/references/technical-inventory.compact.json.gz",
+      "passed": true
+    },
+    {
+      "name": "Preserved prior input prior-inputs/docs/engineering/evidence/cycle837fe-20261121/historical-semantic-dispositions.json",
+      "passed": true
+    },
+    {
+      "name": "Preserved prior input prior-inputs/docs/engineering/evidence/cycle837fe-combined-20261121/historical-followup-dispositions.json",
+      "passed": true
+    },
+    {
+      "name": "Preserved prior input prior-inputs/docs/engineering/evidence/cycle837fe-native-c4-20261121/historical-correlation-dispositions.json",
+      "passed": true
+    },
+    {
+      "name": "Preserved prior input prior-inputs/docs/engineering/evidence/cycle837fe-codex5-20261121/historical-dispositions.json",
+      "passed": true
+    },
+    {
+      "name": "WIN1 exact retained implementation src/patchtrace/app_icon.py",
+      "passed": true
+    },
+    {
+      "name": "WIN1 exact retained implementation src/patchtrace/resources/patchtrace-mark.svg",
+      "passed": true
+    },
+    {
+      "name": "WIN1 exact retained implementation tools/pyinstaller_hooks/hook-patchtrace.app_icon.py",
+      "passed": true
+    },
+    {
+      "name": "WIN1 SVG remains owner site mark",
+      "passed": true
+    },
+    {
+      "name": "WIN1 package-data hunk retained",
+      "passed": true
+    },
+    {
+      "name": "WIN1 actual SVG keeps explicit LF rule",
+      "passed": true
+    },
+    {
+      "name": "CI exact retained implementation tools/package_windows_installer.py",
+      "passed": true
+    },
+    {
+      "name": "CI exact retained implementation tools/milestone_notes.py",
+      "passed": true
+    },
+    {
+      "name": "CI exact retained implementation tests/test_windows_installer_manifest.py",
+      "passed": true
+    },
+    {
+      "name": "WIN1 current API explicitly requires numeric quad",
+      "passed": true
+    },
+    {
+      "name": "WIN1 stricter resource evidence is explicit",
+      "passed": true
+    },
+    {
+      "name": "Retained exact JUnit outcome maintained",
+      "passed": true
+    },
+    {
+      "name": "Retained exact source/exit binding maintained",
+      "passed": true
+    },
+    {
+      "name": "Retained exact JUnit outcome donor-ci",
+      "passed": true
+    },
+    {
+      "name": "Retained exact source/exit binding donor-ci",
+      "passed": true
+    },
+    {
+      "name": "Retained exact JUnit outcome donor-win1",
+      "passed": true
+    },
+    {
+      "name": "Retained exact source/exit binding donor-win1",
+      "passed": true
+    },
+    {
+      "name": "Retained exact JUnit outcome donor-replay",
+      "passed": true
+    },
+    {
+      "name": "Retained exact source/exit binding donor-replay",
+      "passed": true
+    },
+    {
+      "name": "Retained exact JUnit outcome donor-replay-initial-wrapper-error",
+      "passed": true
+    },
+    {
+      "name": "Retained exact source/exit binding donor-replay-initial-wrapper-error",
+      "passed": true
+    },
+    {
+      "name": "Both WIN1 failures preserve original API cause",
+      "passed": true
+    },
+    {
+      "name": "Original wrapper error remains ROOT NameError",
+      "passed": true
+    },
+    {
+      "name": "Replay compiles unchanged original bytes test_ci_codex_pkg_packaging.py",
+      "passed": true
+    },
+    {
+      "name": "Only wrapper guard and traceback filename corrections test_ci_codex_pkg_packaging.py",
+      "passed": true
+    },
+    {
+      "name": "Replay compiles unchanged original bytes test_ci_milestone_notes.py",
+      "passed": true
+    },
+    {
+      "name": "Only wrapper guard and traceback filename corrections test_ci_milestone_notes.py",
+      "passed": true
+    },
+    {
+      "name": "Replay compiles unchanged original bytes test_ci_release_gate.py",
+      "passed": true
+    },
+    {
+      "name": "Only wrapper guard and traceback filename corrections test_ci_release_gate.py",
+      "passed": true
+    },
+    {
+      "name": "Replay compiles unchanged original bytes test_ci_windows_installer_manifest.py",
+      "passed": true
+    },
+    {
+      "name": "Only wrapper guard and traceback filename corrections test_ci_windows_installer_manifest.py",
+      "passed": true
+    },
+    {
+      "name": "Replay compiles unchanged original bytes test_win1_windows_build_resources.py",
+      "passed": true
+    },
+    {
+      "name": "Only wrapper guard and traceback filename corrections test_win1_windows_build_resources.py",
+      "passed": true
+    },
+    {
+      "name": "Exact historical archive digest and size",
+      "passed": true
+    },
+    {
+      "name": "Exact historical manifest digest",
+      "passed": true
+    },
+    {
+      "name": "Full138-member archive and CRC verified",
+      "passed": true
+    },
+    {
+      "name": "Archive member REVIEW.md",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/branch.patch",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/changed-paths.json",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/cherry.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/commit.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/current/.github/workflows/qa-windows.yml",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/current/docs/release-process.md",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/current/docs/specs/windows-acceptance-and-milestone-builds.md",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/current/docs/specs/windows-release-signing-policy.md",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/current/pyproject.toml",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/current/tests/test_codex_pkg_packaging.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/current/tests/test_milestone_notes.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/current/tests/test_release_gate.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/current/tests/test_windows_installer_manifest.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/current/tools/milestone_notes.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/current/tools/package_windows_installer.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/donor/.github/workflows/qa-windows.yml",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/donor/docs/release-process.md",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/donor/docs/specs/windows-acceptance-and-milestone-builds.md",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/donor/docs/specs/windows-release-signing-policy.md",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/donor/pyproject.toml",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/donor/tests/test_codex_pkg_packaging.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/donor/tests/test_milestone_notes.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/donor/tests/test_release_gate.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/donor/tests/test_windows_installer_manifest.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/donor/tools/milestone_notes.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/donor/tools/package_windows_installer.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/donor-to-current.patch",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/merge-base/.github/workflows/qa-windows.yml",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/merge-base/docs/release-process.md",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/merge-base/docs/specs/windows-acceptance-and-milestone-builds.md",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/merge-base/docs/specs/windows-release-signing-policy.md",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/merge-base/pyproject.toml",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/merge-base/tests/test_codex_pkg_packaging.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/merge-base/tests/test_milestone_notes.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/merge-base/tests/test_release_gate.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/merge-base/tests/test_windows_installer_manifest.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/merge-base/tools/milestone_notes.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/merge-base/tools/package_windows_installer.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/source-comparison.json",
+      "passed": true
+    },
+    {
+      "name": "Archive member ci/unique-log.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive member classification.json",
+      "passed": true
+    },
+    {
+      "name": "Archive member donor-ci-receipt.json",
+      "passed": true
+    },
+    {
+      "name": "Archive member donor-ci.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive member donor-ci.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive member donor-ci.xml",
+      "passed": true
+    },
+    {
+      "name": "Archive member donor-original-history.idx",
+      "passed": true
+    },
+    {
+      "name": "Archive member donor-original-history.pack",
+      "passed": true
+    },
+    {
+      "name": "Archive member donor-original-history.rev",
+      "passed": true
+    },
+    {
+      "name": "Archive member donor-original-objects.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive member donor-replay/test_ci_codex_pkg_packaging.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member donor-replay/test_ci_milestone_notes.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member donor-replay/test_ci_release_gate.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member donor-replay/test_ci_windows_installer_manifest.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member donor-replay/test_win1_windows_build_resources.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member donor-replay-initial-wrapper-error-receipt.json",
+      "passed": true
+    },
+    {
+      "name": "Archive member donor-replay-initial-wrapper-error.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive member donor-replay-initial-wrapper-error.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive member donor-replay-initial-wrapper-error.xml",
+      "passed": true
+    },
+    {
+      "name": "Archive member donor-replay-receipt.json",
+      "passed": true
+    },
+    {
+      "name": "Archive member donor-replay-selectors.json",
+      "passed": true
+    },
+    {
+      "name": "Archive member donor-replay-wrapper-correction.json",
+      "passed": true
+    },
+    {
+      "name": "Archive member donor-replay.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive member donor-replay.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive member donor-replay.xml",
+      "passed": true
+    },
+    {
+      "name": "Archive member donor-win1-receipt.json",
+      "passed": true
+    },
+    {
+      "name": "Archive member donor-win1.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive member donor-win1.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive member donor-win1.xml",
+      "passed": true
+    },
+    {
+      "name": "Archive member fresh-branch-refs.json",
+      "passed": true
+    },
+    {
+      "name": "Archive member history-preservation.json",
+      "passed": true
+    },
+    {
+      "name": "Archive member initial-wrappers/test_ci_codex_pkg_packaging.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member initial-wrappers/test_ci_codex_pkg_packaging.py.virtual-filename",
+      "passed": true
+    },
+    {
+      "name": "Archive member initial-wrappers/test_ci_milestone_notes.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member initial-wrappers/test_ci_milestone_notes.py.virtual-filename",
+      "passed": true
+    },
+    {
+      "name": "Archive member initial-wrappers/test_ci_release_gate.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member initial-wrappers/test_ci_release_gate.py.virtual-filename",
+      "passed": true
+    },
+    {
+      "name": "Archive member initial-wrappers/test_ci_windows_installer_manifest.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member initial-wrappers/test_ci_windows_installer_manifest.py.virtual-filename",
+      "passed": true
+    },
+    {
+      "name": "Archive member initial-wrappers/test_win1_windows_build_resources.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member initial-wrappers/test_win1_windows_build_resources.py.virtual-filename",
+      "passed": true
+    },
+    {
+      "name": "Archive member maintained-receipt.json",
+      "passed": true
+    },
+    {
+      "name": "Archive member maintained.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive member maintained.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive member maintained.xml",
+      "passed": true
+    },
+    {
+      "name": "Archive member prior-input-manifest.json",
+      "passed": true
+    },
+    {
+      "name": "Archive member prior-inputs/docs/engineering/branch-recovery-20261120-2bad.json",
+      "passed": true
+    },
+    {
+      "name": "Archive member prior-inputs/docs/engineering/consolidation-inventory-20261120-g30.json",
+      "passed": true
+    },
+    {
+      "name": "Archive member prior-inputs/docs/engineering/consolidation-inventory.json",
+      "passed": true
+    },
+    {
+      "name": "Archive member prior-inputs/docs/engineering/cycle-95fe-semantic-review.json",
+      "passed": true
+    },
+    {
+      "name": "Archive member prior-inputs/docs/engineering/cycle2-historical-ui-review-20261121-2bad.json",
+      "passed": true
+    },
+    {
+      "name": "Archive member prior-inputs/docs/engineering/evidence/cycle837fe-20261121/historical-semantic-dispositions.json",
+      "passed": true
+    },
+    {
+      "name": "Archive member prior-inputs/docs/engineering/evidence/cycle837fe-20261121/references/technical-inventory.compact.json.gz",
+      "passed": true
+    },
+    {
+      "name": "Archive member prior-inputs/docs/engineering/evidence/cycle837fe-codex5-20261121/historical-dispositions.json",
+      "passed": true
+    },
+    {
+      "name": "Archive member prior-inputs/docs/engineering/evidence/cycle837fe-combined-20261121/historical-followup-dispositions.json",
+      "passed": true
+    },
+    {
+      "name": "Archive member prior-inputs/docs/engineering/evidence/cycle837fe-native-c4-20261121/historical-correlation-dispositions.json",
+      "passed": true
+    },
+    {
+      "name": "Archive member prior-inputs/docs/engineering/task-ledger.json",
+      "passed": true
+    },
+    {
+      "name": "Archive member source-binding-and-preservation.json",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/branch.patch",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/changed-paths.json",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/cherry.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/commit.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/current/.gitattributes",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/current/docs/modules.md",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/current/docs/specs/windows-release-signing-policy.md",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/current/pyproject.toml",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/current/src/patchtrace/__main__.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/current/src/patchtrace/app_icon.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/current/src/patchtrace/resources/patchtrace-mark.svg",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/current/tests/test_windows_build_resources.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/current/tools/build_windows.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/current/tools/check_windows_exe.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/current/tools/pyinstaller_hooks/hook-patchtrace.app_icon.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/current/tools/windows_icon.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/current/tools/windows_version_info.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/donor/.gitattributes",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/donor/docs/modules.md",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/donor/docs/specs/windows-release-signing-policy.md",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/donor/pyproject.toml",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/donor/src/patchtrace/__main__.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/donor/src/patchtrace/app_icon.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/donor/src/patchtrace/resources/patchtrace-mark.svg",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/donor/tests/test_windows_build_resources.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/donor/tools/build_windows.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/donor/tools/check_windows_exe.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/donor/tools/pyinstaller_hooks/hook-patchtrace.app_icon.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/donor/tools/windows_icon.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/donor/tools/windows_version_info.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/donor-to-current.patch",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/merge-base/.gitattributes",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/merge-base/docs/modules.md",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/merge-base/docs/specs/windows-release-signing-policy.md",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/merge-base/pyproject.toml",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/merge-base/src/patchtrace/__main__.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/merge-base/tools/build_windows.py",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/source-comparison.json",
+      "passed": true
+    },
+    {
+      "name": "Archive member win1/unique-log.txt",
+      "passed": true
+    },
+    {
+      "name": "Exact original nonthin41-object pack",
+      "passed": true
+    },
+    {
+      "name": "Every introduced Git object verified",
+      "passed": true
+    },
+    {
+      "name": "Current narrow recoveries have exact ancestry",
+      "passed": true
+    },
+    {
+      "name": "Original dev-pin policy still open",
+      "passed": true
+    },
+    {
+      "name": "WIN1 full13-path source unchanged through narrow recoveries",
+      "passed": true
+    },
+    {
+      "name": "Release-process prose correction is still future work",
+      "passed": true
+    },
+    {
+      "name": "Narrow recovery does not reproduce old topology or full host-Python smoke invocation",
+      "passed": true
+    },
+    {
+      "name": "Recovered conditional cancellation and empty-upload control present",
+      "passed": true
+    },
+    {
+      "name": "Sealed narrow independent review unchanged ci-publication-concurrency-independent",
+      "passed": true
+    },
+    {
+      "name": "Sealed narrow independent review unchanged windows-artifact-validation-independent",
+      "passed": true
+    }
+  ],
+  "symbol_proof": {
+    "ci": {
+      "changed": 10,
+      "AST_identical": 4,
+      "missing_names": [
+        "test_build_backend_and_dev_tools_are_exact_pins",
+        "test_required_gates_and_the_windows_build_run_on_pull_requests",
+        "test_the_windows_build_is_validated_from_the_uploaded_bytes_and_the_release_rechecks_them",
+        "test_runs_that_can_publish_are_never_cancelled_by_a_newer_run"
+      ]
+    },
+    "win1": {
+      "changed": 43,
+      "AST_identical": 30,
+      "missing_names": []
+    }
+  },
+  "retained_test_outcomes": {
+    "maintained": {
+      "passed": 198,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failures": []
+    },
+    "donor-ci": {
+      "passed": 5,
+      "failed": 7,
+      "errors": 0,
+      "skipped": 0,
+      "failures": [
+        {
+          "name": "test_build_backend_and_dev_tools_are_exact_pins",
+          "message": "AssertionError: ['setuptools>=75,<100', 'pytest>=8,<10', 'pytest-qt>=4,<5', 'ruff>=0.12,<1', 'hypothesis>=6.100,<7', 'networkx>=3.3,<4', 'pefile>=2024.8.26,<2030', 'pygments>=2.18,<3', 'pyyaml>=6,<7']"
+        },
+        {
+          "name": "test_the_release_job_needs_the_gate_and_runs_for_a_tag_or_a_gate_yes_only",
+          "message": "AssertionError"
+        },
+        {
+          "name": "test_required_gates_and_the_windows_build_run_on_pull_requests[qa-windows]",
+          "message": "KeyError: 'qa-windows'"
+        },
+        {
+          "name": "test_required_gates_and_the_windows_build_run_on_pull_requests[windows-package]",
+          "message": "KeyError: 'windows-package'"
+        },
+        {
+          "name": "test_required_gates_and_the_windows_build_run_on_pull_requests[windows-validate]",
+          "message": "KeyError: 'windows-validate'"
+        },
+        {
+          "name": "test_the_windows_build_is_validated_from_the_uploaded_bytes_and_the_release_rechecks_them",
+          "message": "KeyError: 'windows-validate'"
+        },
+        {
+          "name": "test_runs_that_can_publish_are_never_cancelled_by_a_newer_run",
+          "message": "AssertionError"
+        }
+      ]
+    },
+    "donor-win1": {
+      "passed": 33,
+      "failed": 2,
+      "errors": 0,
+      "skipped": 0,
+      "failures": [
+        {
+          "name": "test_generated_file_is_what_pyinstaller_embeds_and_patchtrace_reads_it_back",
+          "message": "TypeError: problems() missing 1 required positional argument: 'quad'"
+        },
+        {
+          "name": "test_check_rejects_a_publisher_name_and_a_missing_version_resource",
+          "message": "TypeError: problems() missing 1 required positional argument: 'quad'"
+        }
+      ]
+    },
+    "donor-replay": {
+      "passed": 38,
+      "failed": 9,
+      "errors": 0,
+      "skipped": 0,
+      "failures": [
+        {
+          "name": "test_build_backend_and_dev_tools_are_exact_pins",
+          "message": "AssertionError: ['setuptools>=75,<100', 'pytest>=8,<10', 'pytest-qt>=4,<5', 'ruff>=0.12,<1', 'hypothesis>=6.100,<7', 'networkx>=3.3,<4', 'pefile>=2024.8.26,<2030', 'pygments>=2.18,<3', 'pyyaml>=6,<7']"
+        },
+        {
+          "name": "test_the_release_job_needs_the_gate_and_runs_for_a_tag_or_a_gate_yes_only",
+          "message": "AssertionError"
+        },
+        {
+          "name": "test_required_gates_and_the_windows_build_run_on_pull_requests[qa-windows]",
+          "message": "KeyError: 'qa-windows'"
+        },
+        {
+          "name": "test_required_gates_and_the_windows_build_run_on_pull_requests[windows-package]",
+          "message": "KeyError: 'windows-package'"
+        },
+        {
+          "name": "test_required_gates_and_the_windows_build_run_on_pull_requests[windows-validate]",
+          "message": "KeyError: 'windows-validate'"
+        },
+        {
+          "name": "test_the_windows_build_is_validated_from_the_uploaded_bytes_and_the_release_rechecks_them",
+          "message": "KeyError: 'windows-validate'"
+        },
+        {
+          "name": "test_runs_that_can_publish_are_never_cancelled_by_a_newer_run",
+          "message": "AssertionError"
+        },
+        {
+          "name": "test_generated_file_is_what_pyinstaller_embeds_and_patchtrace_reads_it_back",
+          "message": "TypeError: problems() missing 1 required positional argument: 'quad'"
+        },
+        {
+          "name": "test_check_rejects_a_publisher_name_and_a_missing_version_resource",
+          "message": "TypeError: problems() missing 1 required positional argument: 'quad'"
+        }
+      ]
+    },
+    "donor-replay-initial-wrapper-error": {
+      "passed": 0,
+      "failed": 0,
+      "errors": 1,
+      "skipped": 0,
+      "failures": []
+    }
+  },
+  "reviewer_tests_executed": 0,
+  "original_census": {
+    "unmatched": 181,
+    "patch_equivalent": 16,
+    "rewritten": false,
+    "both_reviewed_heads_from": "unmatched-patches-review-required"
+  },
+  "current_recovery_references": [
+    {
+      "path": "evidence/ci-publication-concurrency-independent/review.json",
+      "sha256": "7485d3def53a45b7302d15072056f2858f772b618e8ad0e08c156ebcbdd55f49"
+    },
+    {
+      "path": "evidence/windows-artifact-validation-independent/review.json",
+      "sha256": "0e43697fe785346ed5f607cf6a0a2bd8729467f8aea9979becfa3a17fbed578a"
+    }
+  ],
+  "current_recovery_limits": [
+    "c4 recovers conditional concurrency and empty upload refusal.",
+    "1c adapts same-run downloaded portable/installer verification; full frozen CLI remains builder-side, without donor host-Python/dev installation or split-job topology.",
+    "Exact development/build pin policy remains open; no broad dependency/CODEX-5 closure.",
+    "docs/release-process.md correction is planned, not applied or accepted by this report.",
+    "No new hosted/native qualification claim; original historical report and outcomes remain unchanged."
+  ],
+  "author_archive": {
+    "archive_file": "historical-packaging-next-review.zip",
+    "archive_sha256": "b8bd30fc05950a052f46e867866aab8b16e9970af1942384a90e37c98677e2f8",
+    "archive_bytes": 1972909,
+    "manifest_file": "evidence-manifest.json",
+    "manifest_sha256": "f6edbad901d9cf23c0bf1b887cc473fb0d73ec119841aec7d964d2eb746d9c7f",
+    "payload_file_count": 137,
+    "zip_member_count": 138,
+    "archive_crc_verified": true,
+    "all_manifest_members_verified": true,
+    "comparison_head": "0cdd5bf37130206c2ddec399450be6338ae8e4fd",
+    "comparison_tree": "6d532dd606a1fdf987245a03271970758a03fe57"
+  },
+  "mutations": "Only own scratch evidence. No source/ref/PR/CI/ledger/environment changes."
+}

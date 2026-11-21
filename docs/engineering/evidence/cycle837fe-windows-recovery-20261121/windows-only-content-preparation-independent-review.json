@@ -1,0 +1,61 @@
+{
+  "verdict": "CLEAR for exact 1c70 content preparation only; rebind if 88 is included",
+  "final_records_clearance": false,
+  "blockers": [],
+  "context_sha256": "a6327257e1bf9e80d022cb9fcc2eb68ca0c4d38136efb353fc2a66bb53445cef",
+  "report_sha256": "9a310eb4114dce70fbbb4db9978bd686e43e58210ae4a7727e3042d5502157e2",
+  "report_bytes": 15371,
+  "verified_inputs": 37,
+  "input_bytes": 22300481,
+  "new_task_ids": [
+    "837fe-pr351-qualified-main-promotion",
+    "837fe-ci-publication-concurrency-recovery",
+    "837fe-downloaded-windows-artifact-validation",
+    "837fe-historical-ci-win1-branch-accounting",
+    "837fe-historical-byte-integrity-branch-accounting",
+    "837fe-ghidra-archive-acceptance-assessment",
+    "837fe-historical-installer-branch-accounting"
+  ],
+  "new_task_states": [
+    "TESTING",
+    "TESTING",
+    "TESTING",
+    "COMPLETE",
+    "COMPLETE",
+    "BLOCKED",
+    "COMPLETE"
+  ],
+  "placeholders": [
+    "<ACTUAL_PR351_MERGE>",
+    "<PR351_QUALIFICATION_SUMMARY>",
+    "<POST_PR351_PAGES_STATUS>"
+  ],
+  "original_tasks": 104,
+  "new_tasks": 7,
+  "prospective_total_tasks": 111,
+  "notes": 46,
+  "existing_promoted_tasks": 2,
+  "legacy_reconciled_tasks": 3,
+  "legacy_replaced_fields": 7,
+  "source": "1c70cd5f8053f75c269da673a24a82f221180650",
+  "source_tree": "a39d650ca7fa2b41ece017ea492396722a4142d9",
+  "records_applied": false,
+  "product_tests_run": 0,
+  "native_execution": false,
+  "required_task_fields_verified": true,
+  "new_ids_unique_and_noncolliding": true,
+  "all_current_task_links_accounted": true,
+  "first_task_explicitly_pending": true,
+  "corrected_wording": [
+    "Upload fails only when none of its declared paths resolves; four-member completeness belongs to windows-validate.",
+    "Fourteen controls are included in earlier preparation checks.",
+    "Same Linux distribution checked after extraction on both Ubuntu jobs.",
+    "Two existing C5/Pages rows and current C5 object promotion explicitly separate from three legacy rows and seven additions."
+  ],
+  "remaining": [
+    "Actual PR351 merge/qualification/Pages proof and the three placeholder replacements.",
+    "Populate first promotion task and three future PR351 evidence links.",
+    "If88 is integrated, rebind helper/context/source/census/new acceptance scope before final review.",
+    "Final assembled task/history/docs/manifest/DAG and publication planner review."
+  ]
+}

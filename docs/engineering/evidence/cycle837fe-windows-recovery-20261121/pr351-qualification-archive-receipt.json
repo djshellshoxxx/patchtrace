@@ -1,0 +1,17 @@
+{
+  "schema": "patchtrace/evidence-archive-receipt/1",
+  "source_head": "d6679abc6dfddbadce0391c8d18289f7f96338d6",
+  "source_tree": "6001ef506c38930fd590bd827f428b997c3b2797",
+  "sealed_at": "2026-11-21T12:55:59.714339+00:00",
+  "archive_file": "final-d667-evidence.zip",
+  "archive_bytes": 2811379,
+  "archive_sha256": "a4829fc624a1b9b84313801b41b85782d40fd897290195ace45448918c9dbfb6",
+  "manifest_file": "evidence-manifest.json",
+  "manifest_sha256": "95ceaddf821eb906b7e1095de1032c300dd943b6f8c288b2bf2b438b2afadfcc",
+  "payload_file_count": 103,
+  "archive_member_count": 104,
+  "zip_crc_verified": true,
+  "every_manifest_member_size_and_sha256_verified": true,
+  "large_product_binaries_included": false,
+  "final_summary_sha256": "a82d4a8afac234213eccbb76b8e957020ad5d45fe0bbf65a8c5042b74ad0f788"
+}

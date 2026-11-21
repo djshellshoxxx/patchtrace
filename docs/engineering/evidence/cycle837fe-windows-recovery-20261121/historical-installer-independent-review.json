@@ -1,0 +1,84 @@
+{
+  "schema": "patchtrace/historical-installer-independent-review/1",
+  "reviewed_utc": "2026-11-21T11:11:48.380334+00:00",
+  "verdict": "CLEAR: SUPERSEDED for the complete named installer branch; no missing compatible final-tip contribution found",
+  "blockers": [],
+  "branch": "codex/windows-setup-installer-20261017",
+  "head": "9c5fe67bd10a5d1342440bb8ea6a524cca3ce1f2",
+  "head_tree": "338518965bdfb7d10eaa8c3ba8d1a65035cad897",
+  "merge_base": "04d57c72eced716b6c163d29f80b6cd5543c6582",
+  "comparison_head": "2ae1bbad2ad9cc78c29541872381750e347c670e",
+  "comparison_tree": "6001ef506c38930fd590bd827f428b997c3b2797",
+  "later_recovery_source": "1c70cd5f8053f75c269da673a24a82f221180650",
+  "source_history_evidence_checks_passed": 499,
+  "history": {
+    "nonmerge": 31,
+    "merge": 1,
+    "net_changed_paths": 13,
+    "all_history_path_union": 14,
+    "retired_path": "installer/PatchTrace.iss",
+    "source_snapshots": 41,
+    "introduced_git_objects": 135
+  },
+  "original_census": {
+    "unmatched": 181,
+    "patch_equivalent": 16,
+    "branch_bucket": "unmatched-patches-review-required",
+    "snapshot_changed": false
+  },
+  "retained_test_results": [
+    {
+      "label": "original-on-donor",
+      "passed": 4,
+      "replayed_independently": false
+    },
+    {
+      "label": "original-on-current",
+      "passed": 4,
+      "replayed_independently": false
+    },
+    {
+      "label": "maintained-current",
+      "passed": 5,
+      "replayed_independently": false
+    }
+  ],
+  "test_counts_overlap": true,
+  "independent_product_tests_run": 0,
+  "source_scope": {
+    "byte_identical_donor_paths": 6,
+    "original_test_functions_unchanged": 4,
+    "original_helper_functions_unchanged": 3,
+    "main_change": "Existing LF-only checksum helper replaces text-mode sidecar write; all other module AST remains unchanged.",
+    "original_workflow_changes_fully_accounted": true,
+    "comparison_to_1c70_unchanged_paths": 12,
+    "comparison_to_1c70_changed_paths": [
+      ".github/workflows/qa-windows.yml"
+    ]
+  },
+  "nonblocking_current_doc_findings": [
+    "Undated Inno build paragraph already identified by author/root.",
+    "Opening docs/windows.md paragraph promises a Start Menu uninstaller; NSIS creates only the application shortcut and HKCU Apps uninstall registration. Root notified."
+  ],
+  "retired_history_limit": "Retired Inno wizard/platform settings are preserved as historical source and not claimed to match current NSIS settings.",
+  "author_archive": {
+    "archive_file": "historical-next-bounded-review.zip",
+    "archive_sha256": "000ce8ee3f67ebe9107867c71298930896bae93d5bce58aa2c9ca0eca2e46921",
+    "archive_bytes": 1556208,
+    "manifest_file": "evidence-manifest.json",
+    "manifest_sha256": "e888e7db4d547ad9e25940e33c522651c1b2c6834e2b6d687b8f33f0eefe0691",
+    "payload_file_count": 110,
+    "zip_member_count": 111,
+    "archive_crc_verified": true,
+    "all_manifest_members_verified": true,
+    "receipt_external_to_archive": true
+  },
+  "boundaries": [
+    "Whole named branch disposition only; original181/16 census unchanged.",
+    "Retired Inno-only wizard/platform settings are retained as retired source, not asserted to be current NSIS settings.",
+    "No new Windows/native/legal/release acceptance claim.",
+    "No source, ref, PR, CI, ledger or environment mutation."
+  ],
+  "source_proof_sha256": "72175864381fc95ad8c74cd5acb938c6615d5ecd671f6f72294fcbd0b328774c",
+  "no_mutations": "Only own scratch evidence written. No source, helper, context, ledger, ref, PR, CI or environment changes."
+}

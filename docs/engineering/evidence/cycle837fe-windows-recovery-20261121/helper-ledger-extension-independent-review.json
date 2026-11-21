@@ -1,0 +1,237 @@
+{
+  "schema": "patchtrace/records-helper-ledger-extension-independent/1",
+  "reviewed_utc": "2026-11-21T11:27:35.220178+00:00",
+  "verdict": "CLEAR for exact helper extension and normalized proposal; preparation only",
+  "blockers": [],
+  "final_records_clearance": false,
+  "helper_sha256": "3e79cb7b105939c433db86415e136365f08459e40d33e0834f5a587aae85b834",
+  "context_snapshot_sha256": "e4b6c98372367fcfb7a62ce2227bcd5cfb25a4b0bc05e71e99040caaf6bf453b",
+  "source": "1c70cd5f8053f75c269da673a24a82f221180650",
+  "checks_passed": 24,
+  "checks": [
+    {
+      "name": "exact frozen helper hash",
+      "passed": true
+    },
+    {
+      "name": "normalized recommendation exact before-after fields",
+      "passed": true
+    },
+    {
+      "name": "root retains original custom status values separately",
+      "passed": true
+    },
+    {
+      "name": "baseline ledger exact source hash",
+      "passed": true
+    },
+    {
+      "name": "source104 tasks and46 notes",
+      "passed": true
+    },
+    {
+      "name": "exact3-row7-field allowlist",
+      "passed": true
+    },
+    {
+      "name": "exact normalized enums",
+      "passed": true
+    },
+    {
+      "name": "all original pre-assembly/actual-Git-promotion guards unchanged",
+      "passed": true
+    },
+    {
+      "name": "extracted actual extension begins at legacy context read",
+      "passed": true
+    },
+    {
+      "name": "extracted restoration guard is exact row loop",
+      "passed": true
+    },
+    {
+      "name": "valid exact three changed tasks and required states",
+      "passed": true
+    },
+    {
+      "name": "original object and histories untouched",
+      "passed": true
+    },
+    {
+      "name": "complete three before objects deeply retained",
+      "passed": true
+    },
+    {
+      "name": "104 IDs/order and46notes unchanged",
+      "passed": true
+    },
+    {
+      "name": "101 other task objects unchanged",
+      "passed": true
+    },
+    {
+      "name": "before snapshot does not alias mutated task",
+      "passed": true
+    },
+    {
+      "name": "new task identity control exact proposed new task order",
+      "passed": true
+    },
+    {
+      "name": "new task identity control missing new task",
+      "passed": true
+    },
+    {
+      "name": "new task identity control reordered new tasks",
+      "passed": true
+    },
+    {
+      "name": "real checkout exact clean1c70",
+      "passed": true
+    },
+    {
+      "name": "real default invocation refuses incomplete prerequisites",
+      "passed": true
+    },
+    {
+      "name": "actual records/source unchanged after default invocation",
+      "passed": true
+    },
+    {
+      "name": "future evidence directory absent",
+      "passed": true
+    },
+    {
+      "name": "helper source unchanged during review",
+      "passed": true
+    }
+  ],
+  "detached_controls": [
+    {
+      "name": "valid normalized seven-field update",
+      "result": "accepted"
+    },
+    {
+      "name": "wrong baseline ledger digest",
+      "result": "refused",
+      "reason": "Legacy ledger baseline mismatch"
+    },
+    {
+      "name": "independent review still pending",
+      "result": "refused",
+      "reason": "Legacy independent review missing"
+    },
+    {
+      "name": "missing whole-row guard",
+      "result": "refused",
+      "reason": "Unexpected legacy row set"
+    },
+    {
+      "name": "additional whole-row guard",
+      "result": "refused",
+      "reason": "Unexpected legacy row set"
+    },
+    {
+      "name": "changed guarded row",
+      "result": "refused",
+      "reason": "Legacy whole-row before guard failed"
+    },
+    {
+      "name": "wrong field-before value",
+      "result": "refused",
+      "reason": "Legacy field before guard failed"
+    },
+    {
+      "name": "duplicate field replacement",
+      "result": "refused",
+      "reason": "Duplicate legacy field"
+    },
+    {
+      "name": "missing field replacement",
+      "result": "refused",
+      "reason": "Incomplete legacy reconciliation"
+    },
+    {
+      "name": "unexpected task ID",
+      "result": "refused",
+      "reason": "Unexpected legacy field"
+    },
+    {
+      "name": "unexpected field",
+      "result": "refused",
+      "reason": "Unexpected legacy field"
+    },
+    {
+      "name": "wrong registered-header status",
+      "result": "refused",
+      "reason": "Legacy state must use the reviewed user enum"
+    },
+    {
+      "name": "wrong historical-audit status",
+      "result": "refused",
+      "reason": "Legacy state must use the reviewed user enum"
+    },
+    {
+      "name": "wrong Buildenv status",
+      "result": "refused",
+      "reason": "Legacy state must use the reviewed user enum"
+    },
+    {
+      "name": "unrelated legacy nested field changed",
+      "result": "refused",
+      "reason": "Unrelated legacy task field changed"
+    },
+    {
+      "name": "unrelated legacy top-level field changed",
+      "result": "refused",
+      "reason": "Unrelated legacy task field changed"
+    },
+    {
+      "name": "unrelated task changed",
+      "result": "refused",
+      "reason": "Unrelated task changed"
+    },
+    {
+      "name": "exact proposed new task order",
+      "result": "accepted"
+    },
+    {
+      "name": "missing new task",
+      "result": "refused"
+    },
+    {
+      "name": "reordered new tasks",
+      "result": "refused"
+    }
+  ],
+  "accepted": 2,
+  "refused": 18,
+  "default_invocation": {
+    "exit": 1,
+    "reason": "Prerequisites incomplete",
+    "applied": false
+  },
+  "before_after": {
+    "head": "1c70cd5f8053f75c269da673a24a82f221180650",
+    "status": "",
+    "files": {
+      "docs/engineering/task-ledger.json": "9d9ae753a9a7d36ec6e9c2b7778bd98b6c6bff006e4216c0f26e1c5620a287a7",
+      "docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md": "ffd01a55d54c6ad5c15986f4903eb5c7f2866696480f6075b958187650207ae9",
+      "docs/qa.md": "877bbdac9e4fb402a5f84596d4e2fc973f0bba1660497582ddcae5fd0cb70441",
+      "tasks/todo.md": "6b36dfaaabac5ed16ef30ef7c3117e4ea01ad07a45ea820609f370f614e7c553",
+      "docs/release-process.md": "95e46e8eea3b1fe49c6895ec727d07f162311fa538904eae3c4f5e1d6848ca68",
+      "docs/windows.md": "eda84a86a5a7086a99d710d2719ef0f3be110c0ca8b060af45135b028bbd82eb",
+      "docs/package-audit.md": "6fa36acc76286ecf01ff576357a2a97e75d99c107e9a5386bf46209ca5d0c6dd"
+    }
+  },
+  "product_tests_run": 0,
+  "limits": [
+    "Detached controls set independent verdict CLEAR only inside private in-memory data; no real context changed.",
+    "Actual PR351 promotion and final assembled records remain unreviewed.",
+    "Full before objects must appear in final authoritative history; this helper now writes them by deepcopy.",
+    "No source/helper/context/ledger/ref/PR/CI/environment mutation."
+  ],
+  "static_input_count": 35,
+  "static_input_bytes": 22190576,
+  "normalized_proposal_matches_context": true
+}

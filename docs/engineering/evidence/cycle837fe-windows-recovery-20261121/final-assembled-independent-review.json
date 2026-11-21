@@ -1,0 +1,187 @@
+{
+  "schema": "patchtrace/windows-recovery-final-assembled-independent-review/1",
+  "reviewer": "codex1_independent_review",
+  "reviewed_at": "2026-11-21T13:43:23.633922+00:00",
+  "verdict": "CLEAR_FOR_BOUNDED_RECORDS_COMMIT_AND_PUBLICATION_PREPARATION",
+  "blockers": [],
+  "source": "f596471b8909ec8e28e0624041d60f03d520591d",
+  "source_tree": "dffeed541749850ef54a130cec0fa56c0fd2f01c",
+  "remote_source_equivalent": "4202e5e79e2aea6366c75261d74544ea48368ca5",
+  "actual_main_merge": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+  "proposed_local_ordered_parents": [
+    "f596471b8909ec8e28e0624041d60f03d520591d",
+    "3a16290c0fcc4e0c21712fe10474a3ff33fad336"
+  ],
+  "proposed_remote_ordered_parents": [
+    "4202e5e79e2aea6366c75261d74544ea48368ca5",
+    "3a16290c0fcc4e0c21712fe10474a3ff33fad336"
+  ],
+  "reviewed_pre_append_complete_tree": "11b75e5d8f38876c6c1694d69012b6c7426ea08b",
+  "tree_method": "Pure in-memory Git blob/tree hashing; base hash independently matches f596 tree. No index/object writes.",
+  "snapshot": {
+    "files": 96,
+    "file_bytes": 45660375,
+    "payloads": 87,
+    "static_inputs": 84,
+    "ledger_tasks": 116,
+    "notes": 46,
+    "new_tasks": 12,
+    "unchanged_original_tasks": 99,
+    "modified_original_tasks": [
+      "837fe-pages-configuration-hold",
+      "buildenv-header-help-20261121-95fe",
+      "codex5-per-command-audit-20261121",
+      "historical-audit-gates-cycle2",
+      "registered-header-help"
+    ],
+    "context_sha256": "e270f9a8ba5e0891b8045156068c9ab3d254f75899bd609d3759f6346be79d3e",
+    "report_sha256": "d0976daac793cb7512b0b052ef665dc2c723860c8016d2452291101dd8b132ed",
+    "manifest_sha256": "f27d58dc196f6f4ff9c52673f52efc06c45fbf92dbdf5507f8fc922723f729f1"
+  },
+  "checks": {
+    "new_record_preservation": 419,
+    "new_observation_archive_and_validation_bindings": 255,
+    "new_total": 674,
+    "prior_actual_promotion_checks": 166,
+    "product_or_native_tests_run_by_this_final_review": 0,
+    "root_registry_cases_passed": 111
+  },
+  "ledger": {
+    "original_task_count": 104,
+    "original_task_ids_and_order_preserved": true,
+    "new_tasks": 12,
+    "total_tasks": 116,
+    "original_notes_exact": 46,
+    "unchanged_original_task_objects": 99,
+    "changed_original_task_objects": [
+      "837fe-pages-configuration-hold",
+      "buildenv-header-help-20261121-95fe",
+      "codex5-per-command-audit-20261121",
+      "historical-audit-gates-cycle2",
+      "registered-header-help"
+    ],
+    "changed_rows_all_have_deep_before_snapshots": true,
+    "two_existing_C5_Pages_rows_promoted_only_after_actual_PR351_merge": true,
+    "legacy_reconciliation_exactly_three_rows_seven_fields": true,
+    "legacy_states": {
+      "buildenv-header-help-20261121-95fe": "MERGED",
+      "historical-audit-gates-cycle2": "BLOCKED",
+      "registered-header-help": "TESTING"
+    },
+    "old_test_results_and_C5_qualification_preserved": true,
+    "C5_only_fulfilled_merge_gate_removed_four_broader_gates_exact": true,
+    "all_previous_histories_retained": true,
+    "original_historical_census": {
+      "unmatched": 181,
+      "patch_equivalent": 16,
+      "unchanged": true
+    }
+  },
+  "documents": {
+    "old_handoff_QA_todo_bytes_are_exact_suffixes": true,
+    "three_current_doc_replacements_match_prior_independent_clearance": true,
+    "old_package_audit_bytes_are_exact_prefix": true,
+    "report_relative_links_resolve": true,
+    "current_source_and_old_qualification_scopes_separated": true,
+    "historical_failures_and_author_holds_retained": true
+  },
+  "native_evidence": {
+    "source": "4202e5e79e2aea6366c75261d74544ea48368ca5",
+    "tree": "dffeed541749850ef54a130cec0fa56c0fd2f01c",
+    "run_id": 44901791862,
+    "event": "push",
+    "attempt": 1,
+    "earlier_two_mode_snapshot_cut": "2026-11-21 13:05:43 UTC",
+    "later_five_contract_completion_cut": "2026-11-21 13:13:46 UTC",
+    "one_cold_archive_miss_and_save": true,
+    "four_warm_restores_checksum_verified": true,
+    "three_positive_known_patch_variants": true,
+    "one_expected_negative_control": true,
+    "one_application_raw_cache_contract": true,
+    "raw_cache_proof_kept_separate_from_original_tool_archive_cache": true,
+    "no_cross_ref_OS_or_independent_determinism_inference": true,
+    "final_record_head_qualification_claimed": false,
+    "actual_Windows_27_case_suite_claimed": false
+  },
+  "actual_PR351": {
+    "head": "d6679abc6dfddbadce0391c8d18289f7f96338d6",
+    "merge": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+    "tree": "6001ef506c38930fd590bd827f428b997c3b2797",
+    "ordered_parents": [
+      "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "d6679abc6dfddbadce0391c8d18289f7f96338d6"
+    ],
+    "merged_at": "2026-11-21T12:58:35Z",
+    "actual_subject_and_body_each_have_both_markers": true,
+    "fetched_actual_Git_object_and_fresh_API_checked": true,
+    "executed_jobs_passed": 15,
+    "intentional_skips": 2,
+    "runs": 2,
+    "full_Linux": {
+      "passed": 24295,
+      "skipped": 53,
+      "xfail": 4
+    },
+    "full_Windows": {
+      "passed": 24164,
+      "skipped": 185,
+      "xfail": 3
+    },
+    "these_counts_not_attributed_to_f596_or_later_records": true
+  },
+  "PR353_bounded_review": {
+    "initial_pass": 142,
+    "retained_setup_errors": 16,
+    "separate_retry_pass": 16,
+    "distinct_passing_cases": 158,
+    "one_clean_158_invocation_claimed": false,
+    "author_holds_and_full_qualification_pending": true
+  },
+  "main_Pages_observation": {
+    "snapshot": "004",
+    "cut": "2026-11-21 13:22:29 UTC",
+    "state_at_cut": "queued; runner 0; no steps",
+    "later_success_telemetry_is_not_part_of_this_frozen_snapshot": true
+  },
+  "helper_planner": {
+    "helper_sha256": "7f8026469f7b5251236fef89384ce4eb70b722c20ee3988e77e229109a926260",
+    "planner_sha256": "075354bd5516bf8e5750ddb72ea99907ad9b8fe72be6ab40326c25131561bac8",
+    "actual_fetched_merge_object_identity_tree_ordered_parents_markers_guarded": true,
+    "deep_history_before_snapshots_and_output_allowlist_guarded": true,
+    "planner_requires_clean_actual_final_commit_and_single_first_parent_record_delta": true,
+    "planner_not_executed_on_uncommitted_review_snapshot": true,
+    "original_preparation_guard_finding_and_correction_preserved_in_prior_evidence": true
+  },
+  "bounded_post_review_append": {
+    "permitted": "Immutable reviewer JSON/ZIP and external seal receipt; root validation JSON/ZIP; exact preserved pre-review manifest; outer evidence manifest refresh only.",
+    "original_96_output_bytes_must_remain_exact_except_outer_manifest": true,
+    "current_docs_ledger_tasks_history_context_report_unchanged": true,
+    "source_tests_tools_workflows_specs_dependencies_unchanged": true,
+    "no_circular_self_hash_required": true,
+    "review_covers_pre_append_tree_and_exact_frozen_manifest": true,
+    "final_commit_and_remote_equivalent_require_bounded_actual_object_check": true,
+    "actual_final_ordered_parents_and_both_markers_still_required": true
+  },
+  "open_gates": [
+    "Exact later record-bearing head must receive required full Linux/Windows, Qt, package, Windows downloaded-artifact and native qualification before guarded main merge.",
+    "Actual Windows execution of the 27 focused PowerShell cases remains required; local unavailable-PowerShell skips are not acceptance.",
+    "Both strict CODEX-5 expected failures and broader lock/hash closure remain open.",
+    "Historical Tier R fresh producer, coverage/environment/blocked lanes and original downloaded-dev-pin gap are not closed by these records.",
+    "Manual, trust, accessibility, raw provenance and separate L1/L2/L3 acceptance remain open.",
+    "PR352\u2013356 author ownership and qualification holds remain; bounded reviews do not authorize merging those branches.",
+    "Release, tag publication and Pages deployment are not authorized or claimed by this review."
+  ],
+  "main_merge_eligible": false,
+  "release_ready": false,
+  "review_scope": "Read-only record/source preservation and evidence accounting; no new product, native, CI or remote mutation.",
+  "source_index_ref_PR_CI_mutations": false,
+  "evidence": [
+    "record-checks.json",
+    "new-evidence-checks.json",
+    "assembled-file-inventory.json",
+    "manifest-reviewed.json",
+    "context-reviewed.json",
+    "promotion-preparation-independent.zip",
+    "root-assembled-record-validation.zip"
+  ]
+}

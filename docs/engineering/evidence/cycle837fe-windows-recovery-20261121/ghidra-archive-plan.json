@@ -1,0 +1,201 @@
+{
+  "schema": "patchtrace/ghidra-original-archive-acceptance-plan/1",
+  "assessed_at_utc": "2026-11-21T10:04:37.173921+00:00",
+  "local_source": "2ae1bbad2ad9cc78c29541872381750e347c670e",
+  "remote_source": "d6679abc6dfddbadce0391c8d18289f7f96338d6",
+  "source_tree": "6001ef506c38930fd590bd827f428b997c3b2797",
+  "verdict": "BLOCKED for complete native plus cold/warm archive acceptance using existing unchanged dispatch inputs",
+  "dispatch_performed": false,
+  "source_or_ref_changes": false,
+  "dependency_installs": false,
+  "heavy_or_native_engine_execution": false,
+  "product_tests_run": 0,
+  "pure_planning_only": true,
+  "working_tree_clean": true,
+  "case_counts": {
+    "smoke": 10,
+    "suites": 50,
+    "cards": 83,
+    "mutations": 750,
+    "noise": 25,
+    "full": 908
+  },
+  "blockers": [
+    "Ghidriff default provider imports raw PDiff JSON; it explicitly never launches Ghidra/Java/Ghidriff. A fresh shard temp store has no imports producer or dispatch input.",
+    "Missing Ghidriff imports make evaluate return BLOCKED3 and run-shard return3 unless earlier failures take priority; the shard is not continue-on-error. The pinned cache action post save uses success(), so a cold blocked shard does not seed the archive cache.",
+    "smoke includes six external zlib cards plus four tiny authored cases; it violates the authored-fixtures-only restriction. noise/suites/mutations are authored-only but span all 25 suites.",
+    "The only supported cache metadata connector endpoint attempt was rejected with HTTP400 as not allowed. Exact cache presence, version and accessible ref scope are unknown, not absent.",
+    "Unconditional Windows advisory ignores Linux engines/subset and independently plans smoke, including external zlib cards; no supported input suppresses it, so no whole-workflow dispatch satisfies authored-fixtures-only."
+  ],
+  "archive": {
+    "url": "https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip",
+    "sha256": "c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120",
+    "cache_key": "ghidra-archive-v1-c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120",
+    "path": "ghidra-archive",
+    "member": "ghidra.zip",
+    "cache_action": "actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830",
+    "restore_keys": false,
+    "install_step_always_verifies_applicable_hit_or_miss": true,
+    "fresh_extraction_path": "ghidra-runtime"
+  },
+  "dependencies": {
+    "runner": "ubuntu-24.04",
+    "python": "3.12",
+    "java": "Temurin25",
+    "ghidriff_git_pin": "4f5d895fcbb1eacd65efd81145922c15bb7e741d",
+    "compilers": [
+      "gcc-mingw-w64-x86-64",
+      "llvm",
+      "lld",
+      "clang"
+    ],
+    "tools": [
+      "curl",
+      "sha256sum",
+      "unzip",
+      "tar"
+    ],
+    "rizin_install_unconditional": true,
+    "limits": "Archive pin does not close Ghidriff/Java/dev dependency hashes; live download or installation availability was not probed."
+  },
+  "budgets_and_extra_jobs": {
+    "plan_minutes": 10,
+    "linux_shard_minutes": 120,
+    "per_case_and_evaluate_timeout_seconds": 1800,
+    "merge_minutes": 15,
+    "windows_advisory_minutes": 45,
+    "windows_advisory_unconditional": true,
+    "optional_msvc_advisory_minutes": 45,
+    "optional_msvc_condition": "workflow_dispatch && vars.TIER_R_MSVC == '1'",
+    "windows_advisory_scope": "Always smoke with default rz-diff, independently of requested Linux subset/engine; no dispatch input disables it.",
+    "concurrency": "Same workflow/event/ref cancel-in-progress; complete any approved cold run/cache save before starting warm."
+  },
+  "one_or_two_run_decision": {
+    "visible_matching_archive_cache": "One run can prove restored archive digest and fresh extraction if exact cache hit is observed; it cannot prove a new cold save or real Ghidra execution via this evaluator.",
+    "cache_miss": "Normally two sequential successful same-ref runs: first verified download plus post-job save, then exact restore hit plus checksum and extraction. Unchanged current ghidriff path cannot ensure first success/save.",
+    "unknown_cache": "Do not assume warm or cold. Inspect permitted cache metadata if later available or actual restore logs of an independently authorized run.",
+    "scope": "Cache includes key, internal version and branch; default-branch caches are available to other branches. Same-ref sequential runs avoid sibling-ref assumptions."
+  },
+  "required_acceptance_receipts": [
+    "Exact workflow source head and checkout SHA, dispatch inputs, plan digest and scope",
+    "Java/Ghidra setup unskipped; exact pinned GHIDRA_URL/digest and ghidra-archive/ghidra.zip: OK before extraction",
+    "Cold case: cache miss plus verified archive download and successful post save of exact key",
+    "Warm case: actual exact-key cache restore success plus repeated sha256sum OK before fresh extraction; a key string alone is insufficient",
+    "A separate actual native Ghidra/Ghidriff invocation and its exact authored input identity/result is needed for engine acceptance; installed package alone is not engine use",
+    "Record per-pair BLOCKED/failed results and shard exit status separately from aggregate warning/job outcome; retain all original logs/artifacts"
+  ],
+  "next_action": "Keep this gate open on frozen PR351. If root wants to close it, first authorize a separately specified/reviewed minimal archive acceptance path and real engine invocation or explicitly limit acceptance to archive restore/checksum only. Do not suppress blocked statuses or substitute raw-analysis-cache evidence.",
+  "source_files": [
+    {
+      "path": ".github/workflows/corpus-tier-r.yml",
+      "git_blob": "a62d7a6a4355b3a3f888a1dec948d2ce662a77d0",
+      "sha256": "1afb42286c2b99ad25df874ddf7eb11bc9da9cbf3d3df537e733daa3007b59f2",
+      "bytes": 11894
+    },
+    {
+      "path": "docs/specs/known-answer-corpus.md",
+      "git_blob": "7c87df8837c28944f309e466b58a4fab5a2b7bd4",
+      "sha256": "7a1ab9ca0f5e6780cd0e6379edb6896bb42aae768cac3a61b58777c99c8b19a1",
+      "bytes": 40607
+    },
+    {
+      "path": "docs/engineering/codex6-corpus-cache-archive-20261121.md",
+      "git_blob": "180b4ad465f8e589753cb0439104c41669989f82",
+      "sha256": "50c8f21236e956713076caf900c82cb4954d8ff9c5c7209add5d855b413b02fa",
+      "bytes": 4764
+    },
+    {
+      "path": "tests/test_corpus_cache_archive_integrity_20261121.py",
+      "git_blob": "d32d234bc6a2bbe62bdd5295447f14da9c0edce2",
+      "sha256": "94cb101033599a2025178286f03341bb97cf32cedbca74823543a9940ab17080",
+      "bytes": 5075
+    },
+    {
+      "path": "tests/test_corpus_archive_cache_hit_shell_20261121.py",
+      "git_blob": "bff4a96c992bc1caae666846c5d1ce9216326b13",
+      "sha256": "dee07fda0733aa031fb0cf6e7e70c17d57ca68932359b2e53ce406f04e3343a9",
+      "bytes": 4316
+    },
+    {
+      "path": "tests/test_tier_r_shard.py",
+      "git_blob": "9aa2dfe1e0712f58e28815fbc4cb3c6d528ebff2",
+      "sha256": "ff69f601ad34be948081421bf554ad012725c537875836d41e99fd39b925f4d8",
+      "bytes": 20938
+    },
+    {
+      "path": "tests/test_evalcore_engines.py",
+      "git_blob": "048df3c6cf25df5f81027969bfa510b21a527df2",
+      "sha256": "a412490c055d9356cdd2702164ea134a487b7ebd828068985496de51818df1e6",
+      "bytes": 10463
+    },
+    {
+      "path": "tools/calibration/tier_r/shard.py",
+      "git_blob": "e4b0169f8425cb77680ae5744baaaeaccbba1bc0",
+      "sha256": "cb8deb0ed3cf6333f9ac00deaa106118ccf1131f4fb6f3f54132b85ed0a79aa9",
+      "bytes": 37912
+    },
+    {
+      "path": "tools/calibration/tier_r/cli.py",
+      "git_blob": "a1297cbfc68184f08985b5c3420136a125e5d496",
+      "sha256": "a3283ba98bbb57908f00d2720d4e5842ad90204a29744f3f199276c191474c24",
+      "bytes": 21598
+    },
+    {
+      "path": "tools/calibration/tier_r/factory.py",
+      "git_blob": "6031a93227b3562296fd35eb89548a8331f47984",
+      "sha256": "f854363a3e70f629c43fd5da2db4cfb3f047133407f5ffc3b87faa24aba6e1c7",
+      "bytes": 23119
+    },
+    {
+      "path": "tools/calibration/tier_r/evaluate.py",
+      "git_blob": "7fb23b958b0b16ee377d49470256590f36ead0e0",
+      "sha256": "ad4fc881e4fd0b807a9c93f4a7ec4fb936346c846b4b84d2b3b0611cdae44617",
+      "bytes": 22778
+    },
+    {
+      "path": "tools/calibration/evalcore/engines/ghidriff.py",
+      "git_blob": "08ce684e7fcd13ddc8194bc251f7c9c0f4b0c7cb",
+      "sha256": "79c4295effa001be3ea40b2a46e177a8c7185e56bf1c479f9e72b55d7e39d47b",
+      "bytes": 5490
+    },
+    {
+      "path": "tools/calibration/ci_summary.py",
+      "git_blob": "c3efa92323d685fef93f8f82e8fc04e737a1aef8",
+      "sha256": "68716838156fb9eee3ee35a57f913bf3dc9b4983a3d112eb646e16830567c776",
+      "bytes": 7980
+    },
+    {
+      "path": "tools/calibration/tier_r/build.py",
+      "git_blob": "4f172d36a3d0e8ed8441d43285988719fddf7b39",
+      "sha256": "0d45dc6e18a43994b2e6884a542910b82fd04f82fad9e06c77095ae48cda6dcc",
+      "bytes": 22965
+    },
+    {
+      "path": ".github/workflows/live-backend.yml",
+      "git_blob": "cc6523e398e090bdbc09b30e05024d2263741f88",
+      "sha256": "89aebb3620d896f6b8288b05ec6994f85079ec3497b4470a9ae3dd28199e8a1c",
+      "bytes": 4864
+    }
+  ],
+  "official_action_sources": [
+    "https://github.com/actions/cache/blob/0057852bfaa89a56745cba8c7296529d2fc39830/action.yml",
+    "https://github.com/actions/cache/blob/0057852bfaa89a56745cba8c7296529d2fc39830/README.md"
+  ],
+  "smallest_linux_authored_only_by_case_count": {
+    "workflow": ".github/workflows/corpus-tier-r.yml",
+    "ref": "codex/patchtrace-codex5-per-command-audit-20261121",
+    "required_frozen_head": "d6679abc6dfddbadce0391c8d18289f7f96338d6",
+    "inputs": {
+      "engines": "ghidriff",
+      "shards": "1",
+      "subset": "noise",
+      "seed": "1"
+    },
+    "cases": 25,
+    "status": "Diagnostic configuration only; do not dispatch as a complete acceptance plan",
+    "why_not_minimal_engine_fixture": "Noise spans all 25 suites and four default optimization pairs per suite plus available cross-compiler pairs; no single-suite or per-case input exists. Smallest case count is not a timing guarantee.",
+    "whole_workflow_authored_only": false,
+    "unconditional_advisory_exception": "Windows advisory independently runs smoke, including six zlib cards, regardless of Linux inputs."
+  },
+  "raw_analysis_cache_distinction": "live-backend.yml raw-cache-hit executes python tools/live_cache_check.py --diagnostics-dir live-cache-diagnostics after a fresh pinned Ghidra download; it verifies application raw analysis cache behavior, not actions/cache ghidra-archive restore/save."
+}

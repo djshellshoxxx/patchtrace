@@ -1,0 +1,212 @@
+{
+  "source": "f596471b8909ec8e28e0624041d60f03d520591d",
+  "tree": "dffeed541749850ef54a130cec0fa56c0fd2f01c",
+  "counts": {
+    "cases": 478,
+    "passed": 449,
+    "skipped": 27,
+    "xfailed": 2,
+    "failed": 0,
+    "errors": 0
+  },
+  "selectors": [
+    "tests/test_windows_downloaded_artifacts.py",
+    "tests/test_release_gate.py",
+    "tests/test_codex_pkg_packaging.py",
+    "tests/test_milestone_notes.py",
+    "tests/test_windows_installer_manifest.py",
+    "tests/test_codex_pkg_workflows.py",
+    "tests/test_codex5_command_audit_20261121.py",
+    "tests/test_spec_registry.py",
+    "tests/test_site_workflow.py",
+    "tests/test_workflows.py",
+    "tests/test_live_ghidra_archive.py",
+    "tests/test_corpus_cache_archive_integrity_20261121.py",
+    "tests/test_corpus_archive_cache_hit_shell_20261121.py",
+    "tests/test_live_cache_diagnostics.py"
+  ],
+  "command": {
+    "argv": [
+      "/workspace/scratch/837fe19aae3a/windows-recovery-followup-venv/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_windows_downloaded_artifacts.py",
+      "tests/test_release_gate.py",
+      "tests/test_codex_pkg_packaging.py",
+      "tests/test_milestone_notes.py",
+      "tests/test_windows_installer_manifest.py",
+      "tests/test_codex_pkg_workflows.py",
+      "tests/test_codex5_command_audit_20261121.py",
+      "tests/test_spec_registry.py",
+      "tests/test_site_workflow.py",
+      "tests/test_workflows.py",
+      "tests/test_live_ghidra_archive.py",
+      "tests/test_corpus_cache_archive_integrity_20261121.py",
+      "tests/test_corpus_archive_cache_hit_shell_20261121.py",
+      "tests/test_live_cache_diagnostics.py",
+      "--basetemp=/workspace/scratch/837fe19aae3a/evidence/combined-f596-qualification/tmp/run",
+      "--junitxml=/workspace/scratch/837fe19aae3a/evidence/combined-f596-qualification/focused.xml"
+    ],
+    "exit": 0,
+    "seconds": 4.113440378001542,
+    "source": "f596471b8909ec8e28e0624041d60f03d520591d",
+    "tree": "dffeed541749850ef54a130cec0fa56c0fd2f01c"
+  },
+  "skip_cases": [
+    {
+      "classname": "tests.test_windows_downloaded_artifacts",
+      "name": "test_exact_checksum_step_accepts_both_valid_artifacts[ -\\n-False]",
+      "reason": "PowerShell unavailable; exact checksum-step fixtures require pwsh"
+    },
+    {
+      "classname": "tests.test_windows_downloaded_artifacts",
+      "name": "test_exact_checksum_step_accepts_both_valid_artifacts[*-\\r\\n-True]",
+      "reason": "PowerShell unavailable; exact checksum-step fixtures require pwsh"
+    },
+    {
+      "classname": "tests.test_windows_downloaded_artifacts",
+      "name": "test_exact_checksum_step_accepts_both_valid_artifacts[ --False]",
+      "reason": "PowerShell unavailable; exact checksum-step fixtures require pwsh"
+    },
+    {
+      "classname": "tests.test_windows_downloaded_artifacts",
+      "name": "test_exact_checksum_step_rejects_each_missing_member[PatchTrace-0.1.0-windows-x64.zip]",
+      "reason": "PowerShell unavailable; exact checksum-step fixtures require pwsh"
+    },
+    {
+      "classname": "tests.test_windows_downloaded_artifacts",
+      "name": "test_exact_checksum_step_rejects_each_missing_member[PatchTrace-0.1.0-windows-x64.zip.sha256]",
+      "reason": "PowerShell unavailable; exact checksum-step fixtures require pwsh"
+    },
+    {
+      "classname": "tests.test_windows_downloaded_artifacts",
+      "name": "test_exact_checksum_step_rejects_each_missing_member[PatchTrace-Windows-x64-Setup.exe]",
+      "reason": "PowerShell unavailable; exact checksum-step fixtures require pwsh"
+    },
+    {
+      "classname": "tests.test_windows_downloaded_artifacts",
+      "name": "test_exact_checksum_step_rejects_each_missing_member[PatchTrace-Windows-x64-Setup.exe.sha256]",
+      "reason": "PowerShell unavailable; exact checksum-step fixtures require pwsh"
+    },
+    {
+      "classname": "tests.test_windows_downloaded_artifacts",
+      "name": "test_exact_checksum_step_rejects_modified_artifact_bytes[PatchTrace-0.1.0-windows-x64.zip]",
+      "reason": "PowerShell unavailable; exact checksum-step fixtures require pwsh"
+    },
+    {
+      "classname": "tests.test_windows_downloaded_artifacts",
+      "name": "test_exact_checksum_step_rejects_modified_artifact_bytes[PatchTrace-Windows-x64-Setup.exe]",
+      "reason": "PowerShell unavailable; exact checksum-step fixtures require pwsh"
+    },
+    {
+      "classname": "tests.test_windows_downloaded_artifacts",
+      "name": "test_exact_checksum_step_binds_the_record_to_the_executed_filename[PatchTrace-Windows-x64-Setup.exe]",
+      "reason": "PowerShell unavailable; exact checksum-step fixtures require pwsh"
+    },
+    {
+      "classname": "tests.test_windows_downloaded_artifacts",
+      "name": "test_exact_checksum_step_binds_the_record_to_the_executed_filename[patchtrace-0.1.0-windows-x64.zip]",
+      "reason": "PowerShell unavailable; exact checksum-step fixtures require pwsh"
+    },
+    {
+      "classname": "tests.test_windows_downloaded_artifacts",
+      "name": "test_exact_checksum_step_rejects_malformed_sidecars[]",
+      "reason": "PowerShell unavailable; exact checksum-step fixtures require pwsh"
+    },
+    {
+      "classname": "tests.test_windows_downloaded_artifacts",
+      "name": "test_exact_checksum_step_rejects_malformed_sidecars[not-a-digest  {name}\\n]",
+      "reason": "PowerShell unavailable; exact checksum-step fixtures require pwsh"
+    },
+    {
+      "classname": "tests.test_windows_downloaded_artifacts",
+      "name": "test_exact_checksum_step_rejects_malformed_sidecars[{digest}  {name}\\n{digest}  {name}\\n]",
+      "reason": "PowerShell unavailable; exact checksum-step fixtures require pwsh"
+    },
+    {
+      "classname": "tests.test_windows_downloaded_artifacts",
+      "name": "test_exact_checksum_step_rejects_malformed_sidecars[{digest}  {name}\\n\\n]",
+      "reason": "PowerShell unavailable; exact checksum-step fixtures require pwsh"
+    },
+    {
+      "classname": "tests.test_windows_downloaded_artifacts",
+      "name": "test_exact_checksum_step_rejects_malformed_sidecars[{digest}  {name}\\r]",
+      "reason": "PowerShell unavailable; exact checksum-step fixtures require pwsh"
+    },
+    {
+      "classname": "tests.test_windows_downloaded_artifacts",
+      "name": "test_exact_checksum_step_rejects_malformed_sidecars[{digest} {name}\\n]",
+      "reason": "PowerShell unavailable; exact checksum-step fixtures require pwsh"
+    },
+    {
+      "classname": "tests.test_live_ghidra_archive",
+      "name": "test_exact_step_verifies_downloaded_and_restored_zip_before_fresh_extraction[matching-bytes-missing-archive]",
+      "reason": "PowerShell unavailable; exact archive-step fixtures require pwsh"
+    },
+    {
+      "classname": "tests.test_live_ghidra_archive",
+      "name": "test_exact_step_verifies_downloaded_and_restored_zip_before_fresh_extraction[matching-bytes-restored-archive]",
+      "reason": "PowerShell unavailable; exact archive-step fixtures require pwsh"
+    },
+    {
+      "classname": "tests.test_live_ghidra_archive",
+      "name": "test_exact_step_verifies_downloaded_and_restored_zip_before_fresh_extraction[changed-bytes-missing-archive]",
+      "reason": "PowerShell unavailable; exact archive-step fixtures require pwsh"
+    },
+    {
+      "classname": "tests.test_live_ghidra_archive",
+      "name": "test_exact_step_verifies_downloaded_and_restored_zip_before_fresh_extraction[changed-bytes-restored-archive]",
+      "reason": "PowerShell unavailable; exact archive-step fixtures require pwsh"
+    },
+    {
+      "classname": "tests.test_live_ghidra_archive",
+      "name": "test_exact_step_rejects_missing_or_malformed_pin_before_download[]",
+      "reason": "PowerShell unavailable; exact archive-step fixtures require pwsh"
+    },
+    {
+      "classname": "tests.test_live_ghidra_archive",
+      "name": "test_exact_step_rejects_missing_or_malformed_pin_before_download[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa]",
+      "reason": "PowerShell unavailable; exact archive-step fixtures require pwsh"
+    },
+    {
+      "classname": "tests.test_live_ghidra_archive",
+      "name": "test_exact_step_rejects_missing_or_malformed_pin_before_download[AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA]",
+      "reason": "PowerShell unavailable; exact archive-step fixtures require pwsh"
+    },
+    {
+      "classname": "tests.test_live_ghidra_archive",
+      "name": "test_exact_step_rejects_missing_or_malformed_pin_before_download[not-a-sha256]",
+      "reason": "PowerShell unavailable; exact archive-step fixtures require pwsh"
+    },
+    {
+      "classname": "tests.test_live_ghidra_archive",
+      "name": "test_exact_step_rejects_missing_or_malformed_pin_before_download[terminal-lf]",
+      "reason": "PowerShell unavailable; exact archive-step fixtures require pwsh"
+    },
+    {
+      "classname": "tests.test_live_ghidra_archive",
+      "name": "test_exact_step_stops_on_extraction_error_without_exporting_a_runtime",
+      "reason": "PowerShell unavailable; exact archive-step fixtures require pwsh"
+    }
+  ],
+  "xfail_cases": [
+    {
+      "classname": "tests.test_codex_pkg_workflows",
+      "name": "test_pip_downloads_require_hashes",
+      "reason": "CODEX-5"
+    },
+    {
+      "classname": "tests.test_codex5_command_audit_20261121",
+      "name": "test_all_explicit_workflow_pip_installs_are_protected",
+      "reason": "CODEX-5: repository-wide hashed wheel closure still open"
+    }
+  ],
+  "whole_tree_ruff": "passed",
+  "pip_check": "passed",
+  "isolated_editable_binding": "passed",
+  "clean_before_after": true,
+  "full_suite": false,
+  "native_or_hosted": false,
+  "component_counts_additive": false
+}

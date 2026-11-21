@@ -1,0 +1,27 @@
+{
+  "parent": "88df8cfbe51f91a6bc08c6863cd5d63f86500ca0",
+  "workflow_delta_only_absolute_regex_anchors": true,
+  "all_other_workflow_bytes_unchanged": true,
+  "owned_paths": [
+    ".github/workflows/live-backend.yml",
+    "docs/specs/REGISTRY.md",
+    "docs/specs/windows-acceptance-and-milestone-builds.md",
+    "tests/test_live_ghidra_archive.py"
+  ],
+  "source_unchanged_during_validation": true,
+  "distinct_test_cases": 272,
+  "passed": 260,
+  "skips": 10,
+  "strict_codex5_xfails": 2,
+  "terminal_lf_case": {
+    "classname": "tests.test_live_ghidra_archive",
+    "name": "test_exact_step_rejects_missing_or_malformed_pin_before_download[terminal-lf]",
+    "outcome": "skipped",
+    "reason": "PowerShell unavailable; exact archive-step fixtures require pwsh"
+  },
+  "source_checks_only": true,
+  "native_execution": false,
+  "PowerShell_execution": false,
+  "spec_sha256": "361850f8c4b7f3b7cafdfe737dba568fef1e0ab8bd4a938eb2e9f338fcd5e778",
+  "registry_sha256": "62f0cb4ed706abc8433de89ea5a546525d0b8dfc99e234e6ce8363ab75ee59c1"
+}

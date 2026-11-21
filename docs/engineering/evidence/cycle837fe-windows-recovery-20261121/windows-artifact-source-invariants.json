@@ -1,0 +1,27 @@
+{
+  "parent": "c4eb63c55a35a1c2a927f4aeb4d42c8b96ff45ff",
+  "staged_tree": "a39d650ca7fa2b41ece017ea492396722a4142d9",
+  "changed_paths": [
+    ".github/workflows/qa-windows.yml",
+    "docs/specs/REGISTRY.md",
+    "docs/specs/windows-acceptance-and-milestone-builds.md",
+    "tests/test_codex5_command_audit_20261121.py",
+    "tests/test_release_gate.py",
+    "tests/test_windows_downloaded_artifacts.py"
+  ],
+  "workflow_old_bytes_restored_by_removing_only_new_job_and_dependency": true,
+  "all_existing_job_fields_unchanged_except_added_release_need": true,
+  "unchanged_smoke_scripts": {
+    "tools/test_windows_portable.ps1": "c9d79307d544f50eb2ffcd35be9ca1f76e541f1a927e882b112df25fa30037a9",
+    "tools/test_windows_installer.ps1": "7a90c5f865490609d3d3e38beefd634ae371959d81c96be3126b50229dd90347",
+    "tools/frozen_smoke.py": "45e0f09fd01b80b2d611da68c76a7dd77ebdf2617d722f0f495ca35538958766"
+  },
+  "census": {
+    "workflows": 21,
+    "run_scalars": 203,
+    "explicit_installs": 42,
+    "unprotected_installs": 41
+  },
+  "native_executions": 0,
+  "powershell_available": false
+}

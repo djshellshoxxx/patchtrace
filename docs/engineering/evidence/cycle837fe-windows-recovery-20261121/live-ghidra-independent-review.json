@@ -1,0 +1,158 @@
+{
+  "schema": "patchtrace/independent-live-ghidra-archive-review/1",
+  "reviewed_at_utc": "2026-11-21T11:56:56.031530+00:00",
+  "verdict": "CLEAR FOR INTEGRATION AND EXACT-SOURCE HOSTED QUALIFICATION",
+  "head": "f596471b8909ec8e28e0624041d60f03d520591d",
+  "tree": "dffeed541749850ef54a130cec0fa56c0fd2f01c",
+  "ordered_parents": [
+    "88df8cfbe51f91a6bc08c6863cd5d63f86500ca0"
+  ],
+  "original_base": "1c70cd5f8053f75c269da673a24a82f221180650",
+  "original_base_tree": "a39d650ca7fa2b41ece017ea492396722a4142d9",
+  "original_candidate": {
+    "head": "88df8cfbe51f91a6bc08c6863cd5d63f86500ca0",
+    "tree": "f22f034f92c0c82c59c86665e8b70acb87974448",
+    "status_at_review": "BLOCKED",
+    "finding": {
+      "status": "BLOCKED",
+      "kind": "source-contract edge",
+      "guard": "^[0-9a-f]{64}$",
+      "input": "64 lowercase hexadecimal characters followed by LF",
+      "effect": "guard admits malformed pin before potential download; digest comparison still prevents extraction",
+      "fixed_workflow_literal_affected": false,
+      "primary_reference": "https://learn.microsoft.com/en-us/dotnet/standard/base-types/anchors-in-regular-expressions",
+      "recommended_guard": "\\A[0-9a-f]{64}\\z"
+    },
+    "finding_resolved_by": "f596471b8909ec8e28e0624041d60f03d520591d",
+    "checks": 115,
+    "workflow_controls": 20
+  },
+  "corrected_candidate": {
+    "checks": 108,
+    "workflow_controls": 22,
+    "platform_controls": 2,
+    "source_snapshots": [
+      {
+        "path": ".github/workflows/live-backend.yml",
+        "git_blob": "88cf7d8da5a5ba95084e913f862d0728b020c622",
+        "bytes": 6032,
+        "sha256": "f6929df7a065a785203c5473e5e34fb5f9bfd08334705663b55daa4cea55d0b0"
+      },
+      {
+        "path": "docs/specs/REGISTRY.md",
+        "git_blob": "59398ae89e24f231875cd345b103a384a5d7dc52",
+        "bytes": 39364,
+        "sha256": "62f0cb4ed706abc8433de89ea5a546525d0b8dfc99e234e6ce8363ab75ee59c1"
+      },
+      {
+        "path": "docs/specs/windows-acceptance-and-milestone-builds.md",
+        "git_blob": "ae4e43ff4733e501cd0022814df00dd8136866d5",
+        "bytes": 37070,
+        "sha256": "361850f8c4b7f3b7cafdfe737dba568fef1e0ab8bd4a938eb2e9f338fcd5e778"
+      },
+      {
+        "path": "tests/test_live_ghidra_archive.py",
+        "git_blob": "abf9444843c25100cab70393f653127252890609",
+        "bytes": 10680,
+        "sha256": "53a6f5d8ceeca3bcdcb4058c3b7d69ca560984319f9f000f957ecac472e2ce70"
+      }
+    ]
+  },
+  "source_preservation": {
+    "four_changed_paths_only": true,
+    "all_other_tracked_paths_unchanged_from_1c": true,
+    "original_workflow_restores_byte_exactly_after_allowed_projection": true,
+    "all_twelve_other_steps_exact_and_ordered": true,
+    "all_five_native_variants_preserved": true,
+    "only_corrective_workflow_delta": "^[0-9a-f]{64}$ -> \\A[0-9a-f]{64}\\z",
+    "both_commit_opt_outs": true,
+    "workflow_census": [
+      21,
+      203,
+      42,
+      41
+    ],
+    "census_order": [
+      "workflows",
+      "run_steps",
+      "explicit_pip_installs",
+      "unprotected_pip_installs"
+    ]
+  },
+  "independent_validation": {
+    "counts": {
+      "total": 272,
+      "passed": 260,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 10,
+      "xfail": 2
+    },
+    "distinct_cases": 272,
+    "modules": 7,
+    "elapsed_seconds": 2.438025965999259,
+    "clean_before": true,
+    "clean_after": true,
+    "source_binding": "Isolated Python explicitly imports candidate patchtrace/backend. Frozen shared environment metadata still points at Pages checkout and was not rebound.",
+    "native_execution": false,
+    "powershell_execution": false,
+    "ordinary_skips": "Ten actual PowerShell archive fixtures unavailable on this host, including terminal-LF.",
+    "strict_expected_failures": "Two existing CODEX-5 tests retain known missing hash-boundary meaning; parser/discovery errors are not reclassified."
+  },
+  "author_evidence_independently_verified": {
+    "original_zip_sha256": "c096caf608c442a51de958701acff3346709349bc024b96e79ffadcd2fc91bd9",
+    "original_zip_bytes": 312675,
+    "original_zip_members": 62,
+    "corrective_zip_sha256": "dfefa8aedef0c6758c54dae9843fc2e35ec4446af12af0315395b481ba2194cf",
+    "corrective_zip_bytes": 442323,
+    "corrective_zip_members": 42,
+    "all_crc_manifest_and_external_member_bytes_equal": true,
+    "original_parent_red": {
+      "total": 12,
+      "passed": 1,
+      "failed": 2,
+      "errors": 0,
+      "skipped": 9,
+      "xfail": 0
+    },
+    "original_parent_final_red": {
+      "total": 13,
+      "passed": 1,
+      "failed": 3,
+      "errors": 0,
+      "skipped": 9,
+      "xfail": 0
+    },
+    "corrective_parent_red": {
+      "total": 14,
+      "passed": 3,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 10,
+      "xfail": 0
+    },
+    "validation_provenance": "Author tests used precommit candidate bytes, each exactly matched to final commit; independent rerun used clean frozen final commit."
+  },
+  "review_harness_history_preserved": [
+    "V1 clean-source guard refused before tests when authorized author correction began; reviewer then materialized all 4727 tracked files from immutable 88 Git objects.",
+    "An initial missing-variant control selected a different earlier quoted condition; retained and corrected to exact unquoted matrix token. Whole-workflow preservation proof was unchanged.",
+    "Initial final-source pytest had 244 pass, 2 xfail and 26 fixture setup errors because scratch --basetemp parent was absent; exact command reran after scratch-only directory creation."
+  ],
+  "pending": [
+    "Actual Windows PowerShell fixture execution",
+    "Cold original-archive save and exact-key warm restore",
+    "All five native matrix outcomes",
+    "Manual/air-gap and broader dependency/pin gates"
+  ],
+  "cache_acceptance_limits": "Pinned key does not prove cache existence: branch scope/internal version still apply. Complete cold job save before warm same-event/ref run to avoid existing cancellation. Original archive proof and Ghidriff raw-analysis cache proof are distinct.",
+  "root_final_records_review": "Still required after actual PR351 promotion and final source/context/remote mapping; prior 1c or d667 Windows counts must not be attributed to this child.",
+  "mutations": {
+    "source": false,
+    "environment": false,
+    "git_refs": false,
+    "remote": false,
+    "PR": false,
+    "CI": false
+  },
+  "primary_reference": "https://learn.microsoft.com/en-us/dotnet/standard/base-types/anchors-in-regular-expressions"
+}

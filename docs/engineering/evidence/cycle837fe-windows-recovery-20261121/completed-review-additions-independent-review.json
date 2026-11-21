@@ -1,0 +1,730 @@
+{
+  "schema": "patchtrace/completed-review-additions-independent/1",
+  "observed_utc": "2026-11-21T12:52:07.317909+00:00",
+  "verdict": "CLEAR FOR PREPARATION ONLY; actual PR351-bound assembled-record review remains required",
+  "blockers": [],
+  "source": "f596471b8909ec8e28e0624041d60f03d520591d",
+  "tree": "dffeed541749850ef54a130cec0fa56c0fd2f01c",
+  "context_sha256": "b1b42a8d47e084e3e0864ed6b5992913809b422b1997f75b79d644781af37596",
+  "prior_context_sha256": "b6cd35e26e99972d936a03c8c0f8b452738bb5458e646ad50d8d940a64a45d64",
+  "report_sha256": "c01f9309c524a7e0080625ca8f687c06fc482d4e9a600316a2ac621562af9ee7",
+  "append_script_sha256": "a25bd7a42948bafc908cd78ce80a6baa7dddf95fb6efd78eeecbfcad568d005d",
+  "static_inputs": 67,
+  "static_input_bytes": 30649939,
+  "prior_inputs_exactly_preserved": 61,
+  "new_evidence_inputs": [
+    {
+      "source": "evidence/historical-after-f596-next-review/historical-ghidriff-sequential-lock-review.zip",
+      "destination": "historical-sequential-lock-author.zip",
+      "bytes": 2661030,
+      "sha256": "907abba74b2de63202f138048266b4202a5d96e68549252c70342c737c63dfb1"
+    },
+    {
+      "source": "evidence/historical-after-f596-next-review/classification.json",
+      "destination": "historical-sequential-lock-classification.json",
+      "bytes": 4156,
+      "sha256": "dc68eeaa9e9a07855ba3675098588c17ee28eea129166d9fe17d4be2ff2471b5"
+    },
+    {
+      "source": "evidence/historical-ghidriff-sequential-lock-independent/historical-ghidriff-sequential-lock-independent.zip",
+      "destination": "historical-sequential-lock-independent.zip",
+      "bytes": 2900045,
+      "sha256": "0a92936d693df71c4287fe539ff09bf2f415204937cb14ba746b092e485fb7f3"
+    },
+    {
+      "source": "evidence/historical-ghidriff-sequential-lock-independent/review.json",
+      "destination": "historical-sequential-lock-independent-review.json",
+      "bytes": 35228,
+      "sha256": "b7566bc9e3398891c11e318635f759afe4709d0de1d5b28035e6de78a0882a04"
+    },
+    {
+      "source": "evidence/pr355-independent-review/pr355-independent-review.zip",
+      "destination": "pr355-independent-review.zip",
+      "bytes": 200123,
+      "sha256": "592351d2c342d713664cb65409dbba57d96a84ae110c46fd2f1512d24ca1725d"
+    },
+    {
+      "source": "evidence/pr355-independent-review/review.json",
+      "destination": "pr355-independent-review.json",
+      "bytes": 3580,
+      "sha256": "10e53d1b3983c8e25a9e7a36f8bf81e52f18a16a9792be03e2ab88b9896d51f7"
+    }
+  ],
+  "draft_tasks": 11,
+  "prior_draft_tasks_exactly_preserved": 9,
+  "existing_ledger_tasks_unchanged": 104,
+  "existing_ledger_notes_unchanged": 46,
+  "historical_dispositions": 6,
+  "prior_historical_dispositions_exactly_preserved": 5,
+  "prior_census": {
+    "unmatched": 181,
+    "patch_equivalent": 16,
+    "rewrite": false
+  },
+  "apply_authorized": false,
+  "checks": [
+    {
+      "check": "exact context key set preserved",
+      "passed": true
+    },
+    {
+      "check": "only four append-only context fields changed",
+      "passed": true
+    },
+    {
+      "check": "complete old prefix retained: historical_dispositions",
+      "passed": true
+    },
+    {
+      "check": "complete old prefix retained: proposed_new_task_ids",
+      "passed": true
+    },
+    {
+      "check": "complete old prefix retained: static_evidence_inputs",
+      "passed": true
+    },
+    {
+      "check": "complete old prefix retained: additional_tasks",
+      "passed": true
+    },
+    {
+      "check": "input/task/disposition cardinalities",
+      "passed": true
+    },
+    {
+      "check": "exact static input byte count",
+      "passed": true
+    },
+    {
+      "check": "destinations remain unique",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: concurrency-independent.zip",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: concurrency-independent-review.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: concurrency-candidate.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: concurrency-source-invariants.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: historical-packaging-classification.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: historical-integrity-independent.zip",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: historical-integrity-independent-review.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: historical-integrity-classification.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: ghidra-archive-plan.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: ghidra-archive-plan.md",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: windows-artifact-author.zip",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: windows-artifact-candidate.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: windows-artifact-source-invariants.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: windows-artifact-focused.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: local-recovery-source.bundle",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: windows-artifact-independent.zip",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: windows-artifact-independent-review.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: main902-postmerge-evidence.zip",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: main902-postmerge-qualification.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: code-publication-mapping.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: code-git-object-verification.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: historical-packaging-independent.zip",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: historical-packaging-independent-review.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: historical-installer-author.zip",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: historical-installer-classification.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: historical-installer-stale-documentation.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: records-preparation-independent.zip",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: historical-installer-independent.zip",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: historical-installer-independent-review.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: document-proposals-independent.zip",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: document-proposals-independent-review.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: legacy-ledger-author.zip",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: normalized-ledger-proposal.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: legacy-ledger-independent.zip",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: legacy-ledger-independent-review.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: helper-ledger-extension-independent.zip",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: helper-ledger-extension-independent-review.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: windows-only-content-preparation-independent.zip",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: windows-only-content-preparation-independent-review.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: live-ghidra-archive-author.zip",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: live-ghidra-archive-candidate.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: live-ghidra-archive-source-proof.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: live-ghidra-pin-repair.zip",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: live-ghidra-pin-repair-candidate.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: live-ghidra-pin-repair-proof.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: live-ghidra-original-pin-finding.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: live-ghidra-independent.zip",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: live-ghidra-independent-review.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: live-ghidra-corrected-source-review.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: combined-source-qualification.zip",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: combined-source-qualification.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: native-source.bundle",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: native-code-publication-mapping.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: native-code-git-verification.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: code-branch-publication.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: combined-source-preparation-independent.zip",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: combined-source-preparation-independent-review.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: final-context-preparation-independent.zip",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: final-context-preparation-independent-review.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: cross-worker-integration-order-review.zip",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: cross-worker-integration-order-review.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: historical-sequential-lock-author.zip",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: historical-sequential-lock-classification.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: historical-sequential-lock-independent.zip",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: historical-sequential-lock-independent-review.json",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: pr355-independent-review.zip",
+      "passed": true
+    },
+    {
+      "check": "exact input bytes/hash: pr355-independent-review.json",
+      "passed": true
+    },
+    {
+      "check": "original ledger/history/census guards retained",
+      "passed": true
+    },
+    {
+      "check": "actual promotion remains blocked and unapplied",
+      "passed": true
+    },
+    {
+      "check": "actual PR351 task remains pending",
+      "passed": true
+    },
+    {
+      "check": "frozen source identity unchanged",
+      "passed": true
+    },
+    {
+      "check": "reviewed assembly helper unchanged",
+      "passed": true
+    },
+    {
+      "check": "reviewed publication planner unchanged",
+      "passed": true
+    },
+    {
+      "check": "two new review task identities",
+      "passed": true
+    },
+    {
+      "check": "task IDs and full task rows agree",
+      "passed": true
+    },
+    {
+      "check": "review completion does not claim source merge or ownership",
+      "passed": true
+    },
+    {
+      "check": "all new task evidence links bound: 837fe-historical-sequential-lock-branch-accounting",
+      "passed": true
+    },
+    {
+      "check": "all new task evidence links bound: 837fe-pr355-independent-source-review",
+      "passed": true
+    },
+    {
+      "check": "sequential task exact donor identity and bounded disposition",
+      "passed": true
+    },
+    {
+      "check": "sequential task retains failures and native distinction",
+      "passed": true
+    },
+    {
+      "check": "PR355 task exact source/tree and scope",
+      "passed": true
+    },
+    {
+      "check": "PR355 exact recorded draft/unmerged observation",
+      "passed": true
+    },
+    {
+      "check": "PR355 review does not authorize merge or native acceptance",
+      "passed": true
+    },
+    {
+      "check": "PR355 author holds remain explicit",
+      "passed": true
+    },
+    {
+      "check": "PR355 current object identity retained",
+      "passed": true
+    },
+    {
+      "check": "PR355 archive and manifest binding",
+      "passed": true
+    },
+    {
+      "check": "PR355 archive exact member set and CRC",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: REVIEW.md",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: context/AGENTS.md",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: context/docs/modules.md",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: context/docs/specs/cli-profile-doctor-runtime.md",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: context/docs/specs/yara-x-rule-workflow.md",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: context/tests/conftest.py",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: context/tests/test_optional_deps.py",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: context/tools/pyinstaller_hooks/hook-patchtrace.optional_deps.py",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: dependency-check.command.json",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: dependency-check.stderr",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: dependency-check.stdout",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: final-pr-snapshot.json",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: focused.command.json",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: focused.stderr",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: focused.stdout",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: focused.xml",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: full-diff.patch",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: import-boundary-controls.json",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: import_boundary_controls.py",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: initial-pr-snapshot.json",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: local-validation.json",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: parent-red.command.json",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: parent-red.stderr",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: parent-red.stdout",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: parent-red.xml",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: review.json",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: run_review_checks.py",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: runtime-versions.json",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: source/5a1154b4eb237280dcdd60dbe944dbd0edd48ce7/commit.txt",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: source/5a1154b4eb237280dcdd60dbe944dbd0edd48ce7/src/patchtrace/optional_deps.py",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: source/5a1154b4eb237280dcdd60dbe944dbd0edd48ce7/tests/test_optional_import_recovery.py",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: source/9023761a4066ac1c50c127ac09d0ba5f56cdc9e4/commit.txt",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: source/9023761a4066ac1c50c127ac09d0ba5f56cdc9e4/src/patchtrace/optional_deps.py",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: source/acfc75569d5d318a5274195a7fc662090ffa75ad/commit.txt",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: source/acfc75569d5d318a5274195a7fc662090ffa75ad/docs/engineering/bug-hunt/PT-BUG-OPT-002.md",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: source/acfc75569d5d318a5274195a7fc662090ffa75ad/src/patchtrace/optional_deps.py",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: source/acfc75569d5d318a5274195a7fc662090ffa75ad/tests/test_optional_import_recovery.py",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: source/da6fb2539d8a1a941b7bcbbf7abd7331b24842cc/commit.txt",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: source/da6fb2539d8a1a941b7bcbbf7abd7331b24842cc/src/patchtrace/optional_deps.py",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: source/da6fb2539d8a1a941b7bcbbf7abd7331b24842cc/tests/test_optional_import_recovery.py",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: source/e2127864cb481026db0157082d688b8a36595e3b/commit.txt",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: source/e2127864cb481026db0157082d688b8a36595e3b/docs/engineering/bug-hunt/PT-BUG-OPT-002.json",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: source/e2127864cb481026db0157082d688b8a36595e3b/docs/engineering/bug-hunt/PT-BUG-OPT-002.md",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: source/e2127864cb481026db0157082d688b8a36595e3b/src/patchtrace/optional_deps.py",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: source/e2127864cb481026db0157082d688b8a36595e3b/tests/test_optional_import_recovery.py",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: source-identity.json",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: source-snapshots.json",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: whole-tree-ruff.command.json",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: whole-tree-ruff.stderr",
+      "passed": true
+    },
+    {
+      "check": "PR355 sealed payload: whole-tree-ruff.stdout",
+      "passed": true
+    },
+    {
+      "check": "PR355 embedded manifest unchanged",
+      "passed": true
+    },
+    {
+      "check": "PR355 retained XML count: focused",
+      "passed": true
+    },
+    {
+      "check": "PR355 retained XML count: parent-red",
+      "passed": true
+    },
+    {
+      "check": "PR355 nine separate synthetic controls retained",
+      "passed": true
+    },
+    {
+      "check": "PR355 source-bound retained command: focused",
+      "passed": true
+    },
+    {
+      "check": "PR355 source-bound retained command: whole-tree-ruff",
+      "passed": true
+    },
+    {
+      "check": "PR355 source-bound retained command: dependency-check",
+      "passed": true
+    },
+    {
+      "check": "six maintained modules and explicit isolated source binding retained",
+      "passed": true
+    },
+    {
+      "check": "previous timestamp wording finding is corrected once",
+      "passed": true
+    },
+    {
+      "check": "corrected timestamp matches original publication receipt",
+      "passed": true
+    },
+    {
+      "check": "entire report reconstructed from prior reviewed bytes plus disclosed additions",
+      "passed": true
+    },
+    {
+      "check": "eleven draft task and six historical branch wording",
+      "passed": true
+    },
+    {
+      "check": "three actual-promotion placeholders remain exact",
+      "passed": true
+    },
+    {
+      "check": "new report limits preserve native and merge boundaries",
+      "passed": true
+    },
+    {
+      "check": "actual 104-task/46-note ledger remains byte-identical to frozen source",
+      "passed": true
+    },
+    {
+      "check": "source checkout remains clean and unapplied",
+      "passed": true
+    },
+    {
+      "check": "context/report stable throughout review",
+      "passed": true
+    }
+  ],
+  "check_count": 163,
+  "new_product_tests_run": 0,
+  "source_reviews_repeated": false,
+  "limitations": [
+    "This is a preparation-delta and evidence-binding audit, not a second PR355 source qualification.",
+    "All original import failures, isolation-policy failures and intended parent failures remain in immutable source archives.",
+    "PR355 draft/author/full/hosted/ownership gates remain; completed review tasks do not authorize its merge.",
+    "No actual PR351 promotion has been supplied; three explicit placeholders and the apply=false blocker remain.",
+    "Current f596 native cold/warm and Windows acceptance are not inferred from source-fixture or historical receipts.",
+    "No source/helper/context/report/ledger/ref/PR/CI changes by this reviewer."
+  ]
+}

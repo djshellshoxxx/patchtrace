@@ -1,0 +1,41 @@
+{
+  "schema": "legacy-ledger-proposal-independent/v1",
+  "reviewed_utc": "2026-11-21T11:24:46.986228+00:00",
+  "verdict": "CLEAR_WITH_REQUESTED_STATUS_NORMALIZATION",
+  "blockers": [],
+  "preparation_only": true,
+  "final_record_clearance": false,
+  "normalization": {
+    "registered-header-help": "TESTING",
+    "historical-audit-gates-cycle2": "BLOCKED",
+    "buildenv-header-help-20261121-95fe": "MERGED"
+  },
+  "scope": {
+    "rows": 3,
+    "field_replacements": 7,
+    "original_ids_order": 104,
+    "unchanged_other_tasks": 101,
+    "notes": 46,
+    "other_fields_histories_and_eligibility_unchanged": true
+  },
+  "proof_files": [
+    "archive-verification.json",
+    "source-and-field-proof.json",
+    "existing-qualification-proof.json"
+  ],
+  "nested_field_assessment": "No contradictory current nested field remains: the sole stale Search qualification is replaced; its original checkpoint/completed/remaining fields persist. Audit and Buildenv rows have no other nested pending fields.",
+  "historical_preservation": "Full before objects and raw custom-status proposal remain in the unchanged original archive. The 90-site/8-ID observation remains historical. The original 181/16 census and 391-pass C4 scope remain separate and unchanged.",
+  "application_conditions": [
+    "Normalize only the status values as recommended; preserve the original proposal.",
+    "Append all three complete before objects to authoritative history before replacement.",
+    "Honor full-row guards and preserve all other fields.",
+    "Keep broad CODEX5, Ghidra archive-cache, other-header and native/manual/accessibility gates open."
+  ],
+  "execution": {
+    "tests_run": 0,
+    "native_execution": false,
+    "remote_calls": 0,
+    "source_helper_context_ledger_ref_PR_CI_mutations": false,
+    "reader_note": "Initial read-only raw-job parsing stopped with KeyError:id; actual retained wrapper was inspected and jobs-snapshot-022 used. No tests or input changes resulted."
+  }
+}

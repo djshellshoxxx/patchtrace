@@ -1,0 +1,69 @@
+{
+  "schema": "patchtrace/assembled-record-validation/1",
+  "source_code": "f596471b8909ec8e28e0624041d60f03d520591d",
+  "actual_main_ancestry": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+  "context_sha256": "e270f9a8ba5e0891b8045156068c9ab3d254f75899bd609d3759f6346be79d3e",
+  "pre_review_manifest_sha256": "f27d58dc196f6f4ff9c52673f52efc06c45fbf92dbdf5507f8fc922723f729f1",
+  "registry": {
+    "cases": 111,
+    "passed": 111,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "whole_tree_ruff": "passed",
+  "pip_check": "passed",
+  "source_binding": "passed;existing dedicated environment was not rebound",
+  "scope": "Existing registry tests on assembled record worktree; counts overlap prior combined selection. No new full or native execution; final hosted source qualification pending.",
+  "commands": [
+    {
+      "name": "binding",
+      "argv": [
+        "/workspace/scratch/837fe19aae3a/windows-recovery-followup-venv/bin/python",
+        "-c",
+        "import patchtrace,sys; from pathlib import Path; print(sys.executable); print(patchtrace.__file__); assert Path(patchtrace.__file__).resolve().is_relative_to(Path(\"/workspace/scratch/837fe19aae3a/PatchTrace-windows-recovery-followup/src\"))"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.020637506000639405
+    },
+    {
+      "name": "registry",
+      "argv": [
+        "/workspace/scratch/837fe19aae3a/windows-recovery-followup-venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_spec_registry.py",
+        "--basetemp=/workspace/scratch/837fe19aae3a/evidence/windows-recovery-record-preparation/assembled-validation/tmp",
+        "--junitxml=/workspace/scratch/837fe19aae3a/evidence/windows-recovery-record-preparation/assembled-validation/registry.xml"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 1.1298623000002408
+    },
+    {
+      "name": "ruff",
+      "argv": [
+        "/workspace/scratch/837fe19aae3a/windows-recovery-followup-venv/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "src",
+        "tests",
+        "tools"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.07354786100040656
+    },
+    {
+      "name": "pip-check",
+      "argv": [
+        "/workspace/scratch/837fe19aae3a/windows-recovery-followup-venv/bin/python",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.2983540790010011
+    }
+  ]
+}

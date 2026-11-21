@@ -1,0 +1,142 @@
+{
+  "schema": "patchtrace/historical-integrity-review/1",
+  "comparison_head": "2ae1bbad2ad9cc78c29541872381750e347c670e",
+  "comparison_tree": "6001ef506c38930fd590bd827f428b997c3b2797",
+  "branches": [
+    {
+      "branch": "feat/artifact-bytes-seam",
+      "head": "91b35d09afd29e9c78169a3b095d9ea3be6c31b1",
+      "tree": "c4f752fe7a953cf282da32b2baff05fd59634773",
+      "merge_base": "f0086f797556afca5848c2b68a3819be5c0c0064",
+      "unique_commits": [
+        "91b35d09afd29e9c78169a3b095d9ea3be6c31b1"
+      ],
+      "changed_paths": [
+        "docs/modules.md",
+        "docs/specs/gui-preflight-inspection.md",
+        "src/patchtrace/artifact_bytes.py",
+        "tests/test_artifact_bytes.py"
+      ],
+      "comparison_head": "2ae1bbad2ad9cc78c29541872381750e347c670e",
+      "classification": "SUPERSEDED",
+      "scope": "entire unique branch delta from exact merge base",
+      "missing_compatible_contributions": [],
+      "delete_authorized": false,
+      "original_census_bucket": "patch-equivalent-semantics-unreviewed (original 16)",
+      "paths": [
+        {
+          "path": "docs/modules.md",
+          "classification": "RETAINED",
+          "reason": "All four added module rows (artifact bytes, PE overview, byte representations, tooltip registry) remain verbatim in current modules.md. This branch only declared the latter three modules; it did not implement them."
+        },
+        {
+          "path": "docs/specs/gui-preflight-inspection.md",
+          "classification": "RETAINED",
+          "reason": "The complete added Alpha shared byte seam section remains verbatim, including verified same-handle reads, cap, EOF policy, all nine stable error codes, and no guessed bytes."
+        },
+        {
+          "path": "src/patchtrace/artifact_bytes.py",
+          "classification": "SUPERSEDED",
+          "reason": "Public open_path/open_artifact/read/context-manager behavior is retained. Current implementation adds regular-file/nonblocking opening, ctime hints, before/after verification state, short-read handling, same-byte 4 KiB digest checks on touched blocks, post-read state checks and digest release on close. Constructor/internal stat shape changed for this stronger verification; donor factory contract and tests remain satisfied."
+        },
+        {
+          "path": "tests/test_artifact_bytes.py",
+          "classification": "RETAINED_AND_EXTENDED",
+          "reason": "All original test functions remain. All except test_closed_reader are AST-identical; that test only adds an assertion that close releases digest storage. Ten additional parametrized cases exercise current content integrity and bounded block reads. Original donor file is preserved unchanged and passes against current source."
+        }
+      ]
+    },
+    {
+      "branch": "feat/byte-representations",
+      "head": "303bc452d0bb6cd46ee67f731f64ec951e1ee215",
+      "tree": "60a2ab753407986c95113d1ce92d1cc5b70c1ad1",
+      "merge_base": "0ec471016d2838a90753e014a0d647dd90168e87",
+      "unique_commits": [
+        "303bc452d0bb6cd46ee67f731f64ec951e1ee215"
+      ],
+      "changed_paths": [
+        "docs/specs/byte-representations.md",
+        "src/patchtrace/representations/__init__.py",
+        "src/patchtrace/representations/compare.py",
+        "src/patchtrace/representations/formatters.py",
+        "src/patchtrace/representations/paging.py",
+        "src/patchtrace/representations/render.py",
+        "src/patchtrace/representations/scope.py",
+        "tests/test_representations.py"
+      ],
+      "comparison_head": "2ae1bbad2ad9cc78c29541872381750e347c670e",
+      "classification": "SUPERSEDED",
+      "scope": "entire unique branch delta from exact merge base",
+      "missing_compatible_contributions": [],
+      "delete_authorized": false,
+      "original_census_bucket": "patch-equivalent-semantics-unreviewed (original 16)",
+      "paths": [
+        {
+          "path": "docs/specs/byte-representations.md",
+          "classification": "RETAINED_AND_EXTENDED",
+          "reason": "Original scopes, paging, formatting, captions/copy attribution, error contract and caps remain. Current documentation adds the independently named opt-in alignment extension, strengthens reader provenance to touched-block verification and accurately updates physical I/O/memory bounds. Existing equal-offset comparison/default APIs are explicit unchanged behavior."
+        },
+        {
+          "path": "src/patchtrace/representations/__init__.py",
+          "classification": "RETAINED_AND_EXTENDED",
+          "reason": "All original imports and exports remain; only the separate alignment imports/exports were added."
+        },
+        {
+          "path": "src/patchtrace/representations/compare.py",
+          "classification": "BYTE_IDENTICAL",
+          "reason": "Full file is byte-identical: bounded equal-logical-offset difference mask, including trailing bytes."
+        },
+        {
+          "path": "src/patchtrace/representations/formatters.py",
+          "classification": "BYTE_IDENTICAL",
+          "reason": "Full file is byte-identical: exact Hex/Binary/Base64 formats and argument validation."
+        },
+        {
+          "path": "src/patchtrace/representations/paging.py",
+          "classification": "BYTE_IDENTICAL",
+          "reason": "Full file is byte-identical: bounded segmented reads with true offsets, strict EOF, scope size checks and page SHA-256."
+        },
+        {
+          "path": "src/patchtrace/representations/render.py",
+          "classification": "BYTE_IDENTICAL",
+          "reason": "Full file is byte-identical: exact displayed bytes, original-byte captions and copy attribution, segment labels and cap."
+        },
+        {
+          "path": "src/patchtrace/representations/scope.py",
+          "classification": "BYTE_IDENTICAL",
+          "reason": "Full file is byte-identical: whole-file/file-range/function-RVA scopes, caps, clipping, malformed/unmapped rejection and no guessed bytes."
+        },
+        {
+          "path": "tests/test_representations.py",
+          "classification": "RETAINED_AND_EXTENDED",
+          "reason": "The full original file is an exact byte prefix of current tests; current adds one past-end shorter-side regression. All 56 original parametrized cases pass unchanged against current source."
+        }
+      ]
+    }
+  ],
+  "original_census": {
+    "unmatched_heads": 181,
+    "patch_equivalent_semantics_unreviewed_heads": 16,
+    "rewritten": false,
+    "scope_of_new_findings": "Two named heads from the original 16; no reduction of the 181 unmatched-head census."
+  },
+  "test_results": {
+    "maintained": {
+      "passed": 81,
+      "failed": 0,
+      "error": 0,
+      "skipped": 0
+    },
+    "original-donor": {
+      "passed": 70,
+      "failed": 0,
+      "error": 0,
+      "skipped": 0
+    }
+  },
+  "counts_overlap": true,
+  "prior_harness_failure": "initial-harness-temp-parent-error/disposition.json",
+  "native_or_platform_acceptance_claimed": false,
+  "source_or_ref_or_ledger_or_ci_changes": false,
+  "installs": false
+}

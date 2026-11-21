@@ -1,0 +1,261 @@
+{
+  "scope": "Root-authored helper/context/report preparation only; no independent clearance of reviewer-authored implementation",
+  "helper_sha256": "7f8026469f7b5251236fef89384ce4eb70b722c20ee3988e77e229109a926260",
+  "source": "f596471b8909ec8e28e0624041d60f03d520591d",
+  "tree": "dffeed541749850ef54a130cec0fa56c0fd2f01c",
+  "preexisting_actual_git_merge_guards_unchanged": true,
+  "all_ledger_history_output_guard_bytes_unchanged": true,
+  "exact_local_source_chain": [
+    "1c70cd5f8053f75c269da673a24a82f221180650",
+    "88df8cfbe51f91a6bc08c6863cd5d63f86500ca0",
+    "f596471b8909ec8e28e0624041d60f03d520591d"
+  ],
+  "net_changed_paths": [
+    ".github/workflows/live-backend.yml",
+    "docs/specs/REGISTRY.md",
+    "docs/specs/windows-acceptance-and-milestone-builds.md",
+    "tests/test_live_ghidra_archive.py"
+  ],
+  "baseline_ledger_sha256": "9d9ae753a9a7d36ec6e9c2b7778bd98b6c6bff006e4216c0f26e1c5620a287a7",
+  "baseline_tasks": 104,
+  "baseline_notes": 46,
+  "prior_windows_review_and_qualification_retained_exactly": true,
+  "prior_task_draft_change_only": {
+    "task": "837fe-ghidra-archive-acceptance-assessment",
+    "field": "next_action",
+    "after": "Qualify the separately implementedf596471b live-workflow archive adaptation after independent review. The unchanged Tier R import-only assessment remains historical and BLOCKED; it is not repaired or relabeled by the new workflow."
+  },
+  "prior_evidence_inputs_preserved_exactly": 37,
+  "added_evidence_inputs": [
+    {
+      "source": "evidence/windows-recovery-records-independent/content-preparation/content-preparation-independent.zip",
+      "destination": "windows-only-content-preparation-independent.zip",
+      "bytes": 68550,
+      "sha256": "6e7712640e189dfc5089034c0a7e5b002c02ed5214cc8032a3ea8dd28119cb81"
+    },
+    {
+      "source": "evidence/windows-recovery-records-independent/content-preparation/review.json",
+      "destination": "windows-only-content-preparation-independent-review.json",
+      "bytes": 2394,
+      "sha256": "c550b45b8586b68538e7e54596a0b649d0a8b164d4422398c3613610215d3906"
+    },
+    {
+      "source": "evidence/live-ghidra-archive-recovery/live-ghidra-archive-recovery.zip",
+      "destination": "live-ghidra-archive-author.zip",
+      "bytes": 312675,
+      "sha256": "c096caf608c442a51de958701acff3346709349bc024b96e79ffadcd2fc91bd9"
+    },
+    {
+      "source": "evidence/live-ghidra-archive-recovery/frozen-candidate.json",
+      "destination": "live-ghidra-archive-candidate.json",
+      "bytes": 1804,
+      "sha256": "8bf13c9c8e18e3ff39098fbbf75430e69cc92910af9e10f1f844e299167d6c50"
+    },
+    {
+      "source": "evidence/live-ghidra-archive-recovery/preservation-and-validation-proof.json",
+      "destination": "live-ghidra-archive-source-proof.json",
+      "bytes": 5646,
+      "sha256": "39949b31ebc45a51c3f1c511c7a19731641fea9be33a72b0f12a7a36ba8fc99f"
+    }
+  ],
+  "draft_count": 8,
+  "apply_authorized_now": false,
+  "exact_combined_result": "PENDING",
+  "required_windows_powershell_cases": 27,
+  "actual_pr351_promotion_verified_by_this_review": false,
+  "combined_remote_mapping_verified_by_this_review": false,
+  "detached_guard_controls": [
+    {
+      "id": "component-valid-identity-fixture",
+      "outcome": "accepted-authored-fixture"
+    },
+    {
+      "id": "independent_windows_review-head",
+      "outcome": "expected-refusal",
+      "reason": "Wrong Windows component review"
+    },
+    {
+      "id": "independent_windows_review-tree",
+      "outcome": "expected-refusal",
+      "reason": "Wrong Windows component review"
+    },
+    {
+      "id": "independent_windows_review-blockers",
+      "outcome": "expected-refusal",
+      "reason": "Wrong Windows component review"
+    },
+    {
+      "id": "independent_ghidra_review-head",
+      "outcome": "expected-refusal",
+      "reason": "Wrong Ghidra component review"
+    },
+    {
+      "id": "independent_ghidra_review-tree",
+      "outcome": "expected-refusal",
+      "reason": "Wrong Ghidra component review"
+    },
+    {
+      "id": "independent_ghidra_review-blockers",
+      "outcome": "expected-refusal",
+      "reason": "Wrong Ghidra component review"
+    },
+    {
+      "id": "wrong-original-parent",
+      "outcome": "expected-refusal",
+      "reason": "Combined source must retain the original native source and corrective child"
+    },
+    {
+      "id": "wrong-corrective-parent",
+      "outcome": "expected-refusal",
+      "reason": "Combined source must retain the original native source and corrective child"
+    },
+    {
+      "id": "extra-first-parent",
+      "outcome": "expected-refusal",
+      "reason": "Unexpected combined source history"
+    },
+    {
+      "id": "wrong-windows-tree",
+      "outcome": "expected-refusal",
+      "reason": "Windows source tree mismatch"
+    },
+    {
+      "id": "extra-net-path",
+      "outcome": "expected-refusal",
+      "reason": "Unexpected combined source changes"
+    },
+    {
+      "id": "missing-net-path",
+      "outcome": "expected-refusal",
+      "reason": "Unexpected combined source changes"
+    },
+    {
+      "id": "promotion-valid-authored-fixture",
+      "outcome": "accepted-authored-fixture"
+    },
+    {
+      "id": "promotion-merged",
+      "outcome": "expected-refusal",
+      "reason": "Actual PR351 merge proof required"
+    },
+    {
+      "id": "promotion-pr_number",
+      "outcome": "expected-refusal",
+      "reason": "Actual PR351 merge proof required"
+    },
+    {
+      "id": "promotion-source_head",
+      "outcome": "expected-refusal",
+      "reason": "Wrong qualified source"
+    },
+    {
+      "id": "promotion-source_tree",
+      "outcome": "expected-refusal",
+      "reason": "Wrong qualified source"
+    },
+    {
+      "id": "promotion-actual_tree",
+      "outcome": "expected-refusal",
+      "reason": "Actual ancestry/tree mismatch"
+    },
+    {
+      "id": "promotion-actual_parents",
+      "outcome": "expected-refusal",
+      "reason": "Actual ancestry/tree mismatch"
+    },
+    {
+      "id": "promotion-all_applicable_automated_jobs_passed",
+      "outcome": "expected-refusal",
+      "reason": "Qualification missing"
+    },
+    {
+      "id": "promotion-opt_outs_verified",
+      "outcome": "expected-refusal",
+      "reason": "Qualification missing"
+    },
+    {
+      "id": "promotion-merge_commit",
+      "outcome": "expected-refusal",
+      "reason": "Invalid actual merge identity"
+    },
+    {
+      "id": "non-commit-object",
+      "outcome": "expected-refusal",
+      "reason": "Actual merge must name a fetched commit object"
+    },
+    {
+      "id": "git-tree-mismatch",
+      "outcome": "expected-refusal",
+      "reason": "Git merge tree mismatch"
+    },
+    {
+      "id": "git-parent-mismatch",
+      "outcome": "expected-refusal",
+      "reason": "Git merge ordered parents mismatch"
+    },
+    {
+      "id": "holds-only-in-subject",
+      "outcome": "expected-refusal",
+      "reason": "Actual merge subject and body must each retain both publication holds"
+    },
+    {
+      "id": "holds-only-in-body",
+      "outcome": "expected-refusal",
+      "reason": "Actual merge subject and body must each retain both publication holds"
+    }
+  ],
+  "blocked_full_helper": {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-I",
+      "-B",
+      "/workspace/scratch/837fe19aae3a/evidence/windows-recovery-records-independent/combined-source-preparation/helper-reviewed.py",
+      "--repo",
+      "/workspace/scratch/837fe19aae3a/repair-live-ghidra-archive",
+      "--context",
+      "/workspace/scratch/837fe19aae3a/evidence/windows-recovery-records-independent/combined-source-preparation/context-reviewed.json"
+    ],
+    "exit_code": 1,
+    "reason": "Prerequisites incomplete",
+    "apply_argument": false,
+    "source_status_before_after": ""
+  },
+  "pre_apply_evidence_gap": "The f596 draft links only original88 native evidence; append corrected-child archive/candidate/proof and independent review without replacing88.",
+  "initial_control_failure": "initial-control-failure.json preserves the overbroad equality assumption; exact intentional next_action and five appended evidence inputs are now accounted.",
+  "execution": {
+    "product_tests": 0,
+    "PowerShell_native_target_execution": false,
+    "record_application": false,
+    "source_helper_context_edits": false,
+    "CI_or_remote_operations": false
+  },
+  "verdict": "ROOT_PREPARATION_REBIND_CHECKED; APPLICATION_REMAINS_BLOCKED",
+  "not_a_source_clearance": "Reviewer authored the native adaptation; independent native-code clearance and final assembled-record review belong to C1.",
+  "live_inputs_after_review": [
+    {
+      "path": "assemble_windows_recovery_records.py",
+      "snapshot_sha256": "7f8026469f7b5251236fef89384ce4eb70b722c20ee3988e77e229109a926260",
+      "current_sha256": "7f8026469f7b5251236fef89384ce4eb70b722c20ee3988e77e229109a926260"
+    },
+    {
+      "path": "evidence/windows-recovery-record-preparation/records-helper-before-ghidra.py",
+      "snapshot_sha256": "3e79cb7b105939c433db86415e136365f08459e40d33e0834f5a587aae85b834",
+      "current_sha256": "3e79cb7b105939c433db86415e136365f08459e40d33e0834f5a587aae85b834"
+    },
+    {
+      "path": "windows-recovery-records-context.json",
+      "snapshot_sha256": "e727cfe9112d373d7b58cc32595ba3f92aa19c6e036ac12dbfdfa817bf3194a8",
+      "current_sha256": "e727cfe9112d373d7b58cc32595ba3f92aa19c6e036ac12dbfdfa817bf3194a8"
+    },
+    {
+      "path": "evidence/windows-recovery-record-preparation/report-template.md",
+      "snapshot_sha256": "e43a9c3e2c6d88eb8be4e1d073a5936387deeb271b0c8999116204ada99ad6c9",
+      "current_sha256": "e43a9c3e2c6d88eb8be4e1d073a5936387deeb271b0c8999116204ada99ad6c9"
+    },
+    {
+      "path": "evidence/windows-recovery-record-preparation/context-before-ghidra.json",
+      "snapshot_sha256": "a6327257e1bf9e80d022cb9fcc2eb68ca0c4d38136efb353fc2a66bb53445cef",
+      "current_sha256": "a6327257e1bf9e80d022cb9fcc2eb68ca0c4d38136efb353fc2a66bb53445cef"
+    }
+  ]
+}

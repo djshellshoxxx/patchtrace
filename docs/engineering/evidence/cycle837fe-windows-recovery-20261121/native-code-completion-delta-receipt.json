@@ -1,0 +1,21 @@
+{
+  "schema": "patchtrace/evidence-archive-receipt/1",
+  "source_head": "4202e5e79e2aea6366c75261d74544ea48368ca5",
+  "source_tree": "dffeed541749850ef54a130cec0fa56c0fd2f01c",
+  "sealed_at": "2026-11-21T13:26:33.563580+00:00",
+  "archive_file": "completion-delta-native-4202.zip",
+  "archive_bytes": 241146,
+  "archive_sha256": "5a1dbe04233b04e3b60373ac0953ff077c5885e5e8c107958c22c04d1e4c5a7a",
+  "manifest_file": "completion-delta-evidence-manifest.json",
+  "manifest_sha256": "6b444e07a72da352471a1868b00c930af2f6d5456b7d655fecfcb687d4a6dc9a",
+  "completed_checkpoint_file": "completed-native-checkpoint.json",
+  "completed_checkpoint_sha256": "fe63bba2de722dd14667f1fed721fcb21527c7ab9f7c7a6b5402c1c336e4775c",
+  "base_archive_file": "native-4202-cache-mode-snapshot.zip",
+  "base_archive_sha256": "71657059f356fe7996121b0bd9dbb999c3aaddeba00f9d7fe09cddff3a409623",
+  "payload_file_count": 21,
+  "archive_member_count": 22,
+  "zip_crc_verified": true,
+  "every_manifest_member_size_and_sha256_verified": true,
+  "companion_base_payload_duplicated": false,
+  "final_source_qualification_claimed": false
+}
