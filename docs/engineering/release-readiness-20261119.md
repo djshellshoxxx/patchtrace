@@ -337,3 +337,10 @@ offscreen, native/Qt/package, genuinely independent review and exact-source
 acceptance remain pending. PR343's existing QA/Qt successful results belong
 only to PR343 and its packaging was queued at inspection. All historical and
 release blockers remain; no main merge or release eligibility is claimed.
+
+
+## 2026-11-20 — PR #345/#346 sibling unique-work reconciliation
+
+An isolated PR345-based candidate selectively recovers the reviewed PR346 candidate-admission ordering and 32 MiB bounded lossless inventory TSV replay, along with their exact source tests. Two Qt fallback diagnostic regressions and two Strings form-feed CSV/JSON test cases are retained without replacing PR345's extra Evidence/table GUI assertions or Linux forced-export replacement refusal. Header-help and Evidence runtime are shared, counted and retained only once. Source blob equivalence to the PR346 donor is confirmed for the two runtime/tool files and their full focused tests; it does **not** constitute combined-source acceptance or a genuinely independent post-integration review.
+
+At this reconciliation, PR345 QA/native runs 44840721370 / 44840721268 and PR346 QA/native runs 44841261805 / 44841261831 had jobs queued; release-gates were skipped. The new combined candidate has **no** full repository pytest, whole-tree Ruff or native Windows/Qt/package qualification. Original interrupted runs and their unattributed -9, native java=unverified and Qt failures remain retained. The 429/2 and 212-distinct earlier source-specific bounded results cannot be summed or transferred. Linux forced export remains replacement-refusal mitigation, not safe overwrite restoration. Full raw entry/index provenance and resolver membership, Windows trust/catalog/clean-machine/manual accessibility, historical semantics and separate L1/L2/L3 remain open. **Main promotion and release remain blocked.** See [new handoff](../engineering-handoffs/sibling-reconciliation-20261120.md).
