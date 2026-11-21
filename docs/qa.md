@@ -2339,8 +2339,9 @@ The Tier R shard workflow formerly cached extracted rizin/Ghidra directories
 and allowed a hit to bypass archive digest verification. On branch
 `codex/patchtrace-corpus-archive-integrity-20261121` the norm is to cache
 only original pinned archives and verify SHA-256 before a clean extraction
-on every hit and miss. Ten negative JS source mutations were detected;
-14 connector-fetched structural checks passed. Four synthetic shell
+on every hit and miss. The retained final author receipt records 14 negative
+JS mutations and 14 connector-fetched structural checks. The earlier ten-case
+label was a summary error; the original Git version remains retained. Four synthetic shell
 archive/digest controls passed (rizin/Ghidra valid/corrupt); no actual native
 archive, engine, target binary or full repository source was executed.
 The retained CODEX-6 strict xfail becomes a positive source regression only
