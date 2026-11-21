@@ -1,0 +1,129 @@
+{
+  "verified_at": "2026-11-21T15:54:47.995721+00:00",
+  "source": "9610919d29010d53cf00af3b7c38207ffd84f945",
+  "tree": "3d5e2965ef26235610a08fd8378cac078c6bd9a0",
+  "remote_equivalent": "5c07bfd1a41b399fee86545206ed1c5e9aec0c26",
+  "objects": [
+    {
+      "local": "cd11919b47df46b2b9826da1daf0d1fa4e39af5b",
+      "remote": "08988db1f12c1f74929f3fa5420e4f8c9373eb33",
+      "tree": "69960ef2811df6edd21f6c719cb62a1c5c585725",
+      "ordered_parents": [
+        "00da7e1d5d13f16acba6f6eb54d00f0167e5c62e"
+      ],
+      "complete_tree_equal": true,
+      "message_byte_exact": true,
+      "both_title_body_markers": true,
+      "remote_commit_bytes_sha256": "9e67ce7f93f7a97393218c8564453b2f252f3dc132bdf2cbc4f49646b2b9e85a"
+    },
+    {
+      "local": "1177902b2204314c201900a8def6b7ca69a83515",
+      "remote": "23dc6e7113238d1524e038054aad1b36906a1ef8",
+      "tree": "eb6670fb6a568d91193e8969a3f72a605cfc653c",
+      "ordered_parents": [
+        "08988db1f12c1f74929f3fa5420e4f8c9373eb33"
+      ],
+      "complete_tree_equal": true,
+      "message_byte_exact": true,
+      "both_title_body_markers": true,
+      "remote_commit_bytes_sha256": "8c2d4216364d0afc6a876a24322bfd3358fee8149ead9c0ccf23b211429cc25e"
+    },
+    {
+      "local": "1dcb9729e00ba1197861f801b83e7d414d38950b",
+      "remote": "383a5df6490f203e5a2d612ff53dd657a990bf63",
+      "tree": "9aef9c69c4ba34f04c55db7ca45427113cb2c68e",
+      "ordered_parents": [
+        "23dc6e7113238d1524e038054aad1b36906a1ef8"
+      ],
+      "complete_tree_equal": true,
+      "message_byte_exact": true,
+      "both_title_body_markers": true,
+      "remote_commit_bytes_sha256": "f2e789ed44e8546a424d6ef219ad9f0e0b14befae95383c2aeb6505acc2b54c0"
+    },
+    {
+      "local": "f08632ab81e6ab24fcc34fc994dd2dda2556d267",
+      "remote": "af5606bc233c7e86bcac9242709ce33d42e5b420",
+      "tree": "cb959c1bc0189697241ec2a89c9ec22efabceded",
+      "ordered_parents": [
+        "383a5df6490f203e5a2d612ff53dd657a990bf63"
+      ],
+      "complete_tree_equal": true,
+      "message_byte_exact": true,
+      "both_title_body_markers": true,
+      "remote_commit_bytes_sha256": "8aec47a43579de3eeef2f63338893eff7120f50c2b00084884b0410d8c14bbbd"
+    },
+    {
+      "local": "456db4b6bd3b7f6c845a39f629f15bdc4f9fb513",
+      "remote": "49b0e0d540150bcc9c55ca4b03dd02bd16b226dd",
+      "tree": "7c502a70fa9611fc6d0811dadb99558d1cfc0845",
+      "ordered_parents": [
+        "af5606bc233c7e86bcac9242709ce33d42e5b420"
+      ],
+      "complete_tree_equal": true,
+      "message_byte_exact": true,
+      "both_title_body_markers": true,
+      "remote_commit_bytes_sha256": "5ee8b2572fe229309466ba6e41ab74ed6d85b589e6d01b678441d3f118e83496"
+    },
+    {
+      "local": "e88b6985db2d84b6f9f9e3553ba8c0e7b72ee9e4",
+      "remote": "a5c814f7387698dd65f352fc5c78628de97cf9b2",
+      "tree": "e51e1b8c9eda536c41d426e43a69ab6db34e72c9",
+      "ordered_parents": [
+        "49b0e0d540150bcc9c55ca4b03dd02bd16b226dd"
+      ],
+      "complete_tree_equal": true,
+      "message_byte_exact": true,
+      "both_title_body_markers": true,
+      "remote_commit_bytes_sha256": "cc621e73ebeed7cf54eb8adb14109de71b5c3fb4b15164c9c92e4dcc92b355d7"
+    },
+    {
+      "local": "9610919d29010d53cf00af3b7c38207ffd84f945",
+      "remote": "5c07bfd1a41b399fee86545206ed1c5e9aec0c26",
+      "tree": "3d5e2965ef26235610a08fd8378cac078c6bd9a0",
+      "ordered_parents": [
+        "a5c814f7387698dd65f352fc5c78628de97cf9b2"
+      ],
+      "complete_tree_equal": true,
+      "message_byte_exact": true,
+      "both_title_body_markers": true,
+      "remote_commit_bytes_sha256": "c1072f9eeb2614d83842aadaf188199b0adb76de6846a657ef917ce10c1d5b12"
+    }
+  ],
+  "network_runtime_and_prior_ledger_QA_TODO_unchanged_since_96": true,
+  "unique_commits_above_d60": 38,
+  "changed_paths_above_d60": [
+    ".github/workflows/backend-bundle.yml",
+    ".github/workflows/pilot-eval.yml",
+    "docs/engineering/bug-hunt/PT-BUG-NET-001.md",
+    "docs/engineering/bug-hunt/PT-BUG-NET-003.md",
+    "docs/engineering/bug-hunt/PT-BUG-OPT-002.json",
+    "docs/engineering/bug-hunt/PT-BUG-OPT-002.md",
+    "docs/engineering/bug-hunt/findings.json",
+    "docs/modules.md",
+    "docs/qa.md",
+    "docs/specs/REGISTRY.md",
+    "docs/specs/csaf-cve-interpretation-engine.md",
+    "docs/specs/enrichment-hardening-backlog.md",
+    "docs/specs/pilot-evaluation-tooling-hashes.md",
+    "docs/specs/sigstore-tooling-hashes.md",
+    "src/patchtrace/enrichment/intelligence.py",
+    "src/patchtrace/intelligence/csaf/transport.py",
+    "src/patchtrace/netutil.py",
+    "src/patchtrace/optional_deps.py",
+    "tasks/todo.md",
+    "tests/test_codex5_command_audit_20261121.py",
+    "tests/test_enrichment_intelligence.py",
+    "tests/test_intel_transport.py",
+    "tests/test_netutil_abandoned_cleanup.py",
+    "tests/test_netutil_read_deadline.py",
+    "tests/test_optional_import_recovery.py",
+    "tests/test_pilot_dependency_lock.py",
+    "tests/test_sigstore_dependency_lock.py",
+    "tools/calibration/pilot/requirements-ci.lock",
+    "tools/requirements-sigstore-ci.lock"
+  ],
+  "source_clean_unchanged": true,
+  "ref_moved": false,
+  "pr_created": false,
+  "creation_pending_fields_are_historical_closed_by_this_proof": true
+}

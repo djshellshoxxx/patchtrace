@@ -1,3 +1,13 @@
+## Current network/tooling continuation — 2026-11-21T16:08:48.027704+00:00
+
+Actual PR357 was qualified and merged at `ea16019601486c831941f9bc1a7ba5862a170317` (tree4a07cd88ded407bef30a8aeb81961e4041822dc2), with both publication holds in actual title/body. Its16executed jobs passed and2publicationjobs skipped; final287-check review and actual81-check promotion audit are clear. Earlier main3a postmerge QA/Pages is complete; actualmain ea160 is a separate pending QA/publication stream with its native-only checkpoint preserved.
+
+The separate frozen network/tooling code is `9610919d29010d53cf00af3b7c38207ffd84f945` / tree `3d5e2965ef26235610a08fd8378cac078c6bd9a0`, equivalent immutable remote `5c07bfd1a41b399fee86545206ed1c5e9aec0c26`. Root654passed/2unchangedstrictC5xfails across656distinct cases, wholeRuff/pip and explicit bindings passed. Network96, pilotf086 and Sigstore961 independent reviews are clear within their stated scopes; all donor histories, original reds, setup failures and intermediate YAML error remain. Census42installs:3protected39unprotected. Manual pilot workflow remains unexecuted/access-blocked; its reportwriter is not-evaluated, not an accuracy result.
+
+Final records, independent assembled-record review, actual branch/PR publication, exact final-source hosted qualification and any later guarded main promotion remain pending. No localfullretry, release, deployment or historicalbranch deletion. Existing116task IDs/order,46notes and original181/16census remain; explicit task changes retain fullbefore-images. Details: docs/engineering/cycle837fe-network-recovery-20261121.md. Earlier complete record follows unchanged.
+
+---
+
 ## Enrichment ACQ-2 hard deadline — 2026-11-21 independent continuation
 
 - [x] Inspect current `main` and `AGENTS.md`, identify and avoid existing PR349/351 and dependent KBC integration ownership.

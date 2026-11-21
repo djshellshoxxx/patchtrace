@@ -1,0 +1,29 @@
+{
+  "observed_at": "2026-11-21T15:19:45.933131+00:00",
+  "before": "96baaee20f390a3f2a5629de3764d32323bb80e5",
+  "after": "f08632ab81e6ab24fcc34fc994dd2dda2556d267",
+  "tree": "cb959c1bc0189697241ec2a89c9ec22efabceded",
+  "method": "Guarded fast-forward of owned local integration branch",
+  "retained_four_commits": [
+    "cd11919b47df46b2b9826da1daf0d1fa4e39af5b",
+    "1177902b2204314c201900a8def6b7ca69a83515",
+    "1dcb9729e00ba1197861f801b83e7d414d38950b",
+    "f08632ab81e6ab24fcc34fc994dd2dda2556d267"
+  ],
+  "changed_paths": [
+    ".github/workflows/pilot-eval.yml",
+    "docs/modules.md",
+    "docs/specs/REGISTRY.md",
+    "docs/specs/pilot-evaluation-tooling-hashes.md",
+    "tests/test_codex5_command_audit_20261121.py",
+    "tests/test_pilot_dependency_lock.py",
+    "tools/calibration/pilot/requirements-ci.lock"
+  ],
+  "runtime_and_ledger_qa_todo_blobs_unchanged": true,
+  "independent_review_sha256": "3ff787c68538f82028dbd86f01b2eb52b3812736153bb827e4a9de4e641d96c8",
+  "all_failures_preserved": true,
+  "source_clean": true,
+  "remote_ref_moved": false,
+  "pr357_untouched": true,
+  "combined_final_source_qualification": "Pending after additional independently reviewed tooling child, if any"
+}

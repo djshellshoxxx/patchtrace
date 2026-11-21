@@ -1,0 +1,2178 @@
+{
+  "schema": "patchtrace/final-qualification/1",
+  "observed_at": "2026-11-21 15:20:42 UTC",
+  "source": {
+    "repo_full_name": "djshellshoxxx/PatchTrace",
+    "pull_request": 357,
+    "pull_request_url": "https://github.com/djshellshoxxx/PatchTrace/pull/357",
+    "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+    "head_tree_sha": "4a07cd88ded407bef30a8aeb81961e4041822dc2",
+    "head_parents": [
+      "4202e5e79e2aea6366c75261d74544ea48368ca5",
+      "3a16290c0fcc4e0c21712fe10474a3ff33fad336"
+    ],
+    "base_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+    "synthetic_merge_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+    "synthetic_merge_tree_sha": "4a07cd88ded407bef30a8aeb81961e4041822dc2",
+    "synthetic_merge_parents": [
+      "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+      "d60ac40daf767fe6a93ae152feb21235f6e75e0b"
+    ],
+    "main_at_final_observation": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+    "head_and_synthetic_complete_trees_equal": true,
+    "final_guard_file": "final-source-and-run-guard.json",
+    "expected_checkout_by_run": {
+      "44910528283": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+      "44910528348": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57"
+    }
+  },
+  "verdict": {
+    "source_consistent": true,
+    "all_owned_runs_completed_successfully": true,
+    "all_required_qa_jobs_successful": true,
+    "all_applicable_ci_jobs_successful": true,
+    "qualification_status": "qualified_with_documented_open_gates",
+    "owned_run_count": 2,
+    "actual_job_count": 18,
+    "successful_executed_job_count": 16,
+    "intentional_skipped_job_count": 2,
+    "failed_job_count": 0,
+    "executed_checkout_log_count": 16,
+    "actual_Windows_PowerShell_cases_passed": 27,
+    "downloaded_Windows_product_validation_passed": true,
+    "native_coverage_limits_remaining": true,
+    "expected_failures_remaining": true,
+    "expected_failure_record_count": 7,
+    "interpretation": "All automatically applicable GitHub Actions jobs on this exact PR/head completed successfully or as the two intentional PR release skips. This does not close documented expected failures, assert fresh execution of untriggered native lanes, or preclaim a later guarded main merge and its publication holds."
+  },
+  "runs": [
+    {
+      "id": 44910528283,
+      "name": "QA and Windows standalone",
+      "event": "pull_request",
+      "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+      "head_branch": "codex/patchtrace-windows-native-recovery-20261121-837fe",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528283",
+      "created_at": "2026-11-21T13:46:27Z",
+      "updated_at": "2026-11-21T15:19:15Z",
+      "expected_checkout_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+      "jobs": [
+        {
+          "id": 136865171950,
+          "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+          "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528283/job/136865171950",
+          "created_at": "2026-11-21T13:46:27Z",
+          "started_at": "2026-11-21T14:03:32Z",
+          "completed_at": "2026-11-21T14:43:24Z",
+          "runner_id": 1000075362,
+          "runner_name": "GitHub Actions 1000075362",
+          "labels": [
+            "ubuntu-latest"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+          "log_file": "logs/136865171950.log"
+        },
+        {
+          "id": 136865172018,
+          "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+          "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528283/job/136865172018",
+          "created_at": "2026-11-21T13:46:27Z",
+          "started_at": "2026-11-21T13:51:33Z",
+          "completed_at": "2026-11-21T14:21:02Z",
+          "runner_id": 1000075283,
+          "runner_name": "GitHub Actions 1000075283",
+          "labels": [
+            "ubuntu-latest"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+          "log_file": "logs/136865172018.log"
+        },
+        {
+          "id": 136865172059,
+          "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+          "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528283/job/136865172059",
+          "created_at": "2026-11-21T13:46:27Z",
+          "started_at": "2026-11-21T14:01:36Z",
+          "completed_at": "2026-11-21T14:47:24Z",
+          "runner_id": 1000075352,
+          "runner_name": "GitHub Actions 1000075352",
+          "labels": [
+            "ubuntu-latest"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+          "log_file": "logs/136865172059.log"
+        },
+        {
+          "id": 136865172072,
+          "name": "qt-gate (windows-latest, 5, 1/1)",
+          "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528283/job/136865172072",
+          "created_at": "2026-11-21T13:46:27Z",
+          "started_at": "2026-11-21T14:01:32Z",
+          "completed_at": "2026-11-21T14:55:49Z",
+          "runner_id": 1000075351,
+          "runner_name": "GitHub Actions 1000075351",
+          "labels": [
+            "windows-latest"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+          "log_file": "logs/136865172072.log"
+        },
+        {
+          "id": 136865172146,
+          "name": "qa (ubuntu-latest)",
+          "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528283/job/136865172146",
+          "created_at": "2026-11-21T13:46:27Z",
+          "started_at": "2026-11-21T14:04:41Z",
+          "completed_at": "2026-11-21T14:44:03Z",
+          "runner_id": 1000075367,
+          "runner_name": "GitHub Actions 1000075367",
+          "labels": [
+            "ubuntu-latest"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+          "log_file": "logs/136865172146.log"
+        },
+        {
+          "id": 136865172148,
+          "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+          "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528283/job/136865172148",
+          "created_at": "2026-11-21T13:46:27Z",
+          "started_at": "2026-11-21T14:06:15Z",
+          "completed_at": "2026-11-21T14:22:54Z",
+          "runner_id": 1000075372,
+          "runner_name": "GitHub Actions 1000075372",
+          "labels": [
+            "ubuntu-latest"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+          "log_file": "logs/136865172148.log"
+        },
+        {
+          "id": 136865172158,
+          "name": "qa (windows-latest)",
+          "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528283/job/136865172158",
+          "created_at": "2026-11-21T13:46:27Z",
+          "started_at": "2026-11-21T14:07:05Z",
+          "completed_at": "2026-11-21T15:15:47Z",
+          "runner_id": 1000075373,
+          "runner_name": "GitHub Actions 1000075373",
+          "labels": [
+            "windows-latest"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+          "log_file": "logs/136865172158.log"
+        },
+        {
+          "id": 136865172968,
+          "name": "release-gate",
+          "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+          "status": "completed",
+          "conclusion": "skipped",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528283/job/136865172968",
+          "created_at": "2026-11-21T13:46:27Z",
+          "started_at": "2026-11-21T13:46:27Z",
+          "completed_at": "2026-11-21T13:46:27Z",
+          "runner_id": null,
+          "runner_name": null,
+          "labels": [
+            "ubuntu-latest"
+          ],
+          "checkout_log_verified": null,
+          "skip_scope": "Intentional PR release job skip; no runner or executed checkout."
+        },
+        {
+          "id": 136888380493,
+          "name": "linux-package",
+          "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528283/job/136888380493",
+          "created_at": "2026-11-21T15:15:48Z",
+          "started_at": "2026-11-21T15:15:50Z",
+          "completed_at": "2026-11-21T15:17:23Z",
+          "runner_id": 1000075681,
+          "runner_name": "GitHub Actions 1000075681",
+          "labels": [
+            "ubuntu-22.04"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+          "log_file": "logs/136888380493.log"
+        },
+        {
+          "id": 136888380527,
+          "name": "windows-validate",
+          "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528283/job/136888380527",
+          "created_at": "2026-11-21T15:15:48Z",
+          "started_at": "2026-11-21T15:16:30Z",
+          "completed_at": "2026-11-21T15:17:17Z",
+          "runner_id": 1000075682,
+          "runner_name": "GitHub Actions 1000075682",
+          "labels": [
+            "windows-latest"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+          "log_file": "logs/136888380527.log"
+        },
+        {
+          "id": 136888792650,
+          "name": "linux-smoke (ubuntu-22.04)",
+          "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528283/job/136888792650",
+          "created_at": "2026-11-21T15:17:24Z",
+          "started_at": "2026-11-21T15:17:26Z",
+          "completed_at": "2026-11-21T15:19:08Z",
+          "runner_id": 1000075684,
+          "runner_name": "GitHub Actions 1000075684",
+          "labels": [
+            "ubuntu-22.04"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+          "log_file": "logs/136888792650.log"
+        },
+        {
+          "id": 136888792729,
+          "name": "linux-smoke (ubuntu-24.04)",
+          "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528283/job/136888792729",
+          "created_at": "2026-11-21T15:17:24Z",
+          "started_at": "2026-11-21T15:17:27Z",
+          "completed_at": "2026-11-21T15:19:15Z",
+          "runner_id": 1000075685,
+          "runner_name": "GitHub Actions 1000075685",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+          "log_file": "logs/136888792729.log"
+        },
+        {
+          "id": 136889308090,
+          "name": "release",
+          "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+          "status": "completed",
+          "conclusion": "skipped",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528283/job/136889308090",
+          "created_at": "2026-11-21T15:19:15Z",
+          "started_at": "2026-11-21T15:19:15Z",
+          "completed_at": "2026-11-21T15:19:15Z",
+          "runner_id": null,
+          "runner_name": null,
+          "labels": [
+            "ubuntu-latest"
+          ],
+          "checkout_log_verified": null,
+          "skip_scope": "Intentional PR release job skip; no runner or executed checkout."
+        }
+      ]
+    },
+    {
+      "id": 44910528348,
+      "name": "Native Windows Ghidriff acceptance",
+      "event": "pull_request",
+      "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+      "head_branch": "codex/patchtrace-windows-native-recovery-20261121-837fe",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528348",
+      "created_at": "2026-11-21T13:46:27Z",
+      "updated_at": "2026-11-21T14:10:21Z",
+      "expected_checkout_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+      "jobs": [
+        {
+          "id": 136865171976,
+          "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+          "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528348/job/136865171976",
+          "created_at": "2026-11-21T13:46:27Z",
+          "started_at": "2026-11-21T13:58:37Z",
+          "completed_at": "2026-11-21T14:04:10Z",
+          "runner_id": 1000075328,
+          "runner_name": "GitHub Actions 1000075328",
+          "labels": [
+            "windows-latest"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+          "log_file": "logs/136865171976.log"
+        },
+        {
+          "id": 136865172117,
+          "name": "native (raw-cache-hit)",
+          "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528348/job/136865172117",
+          "created_at": "2026-11-21T13:46:27Z",
+          "started_at": "2026-11-21T14:02:20Z",
+          "completed_at": "2026-11-21T14:04:47Z",
+          "runner_id": 1000075357,
+          "runner_name": "GitHub Actions 1000075357",
+          "labels": [
+            "windows-latest"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+          "log_file": "logs/136865172117.log"
+        },
+        {
+          "id": 136865172123,
+          "name": "native (repro-plain-ghidriff)",
+          "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528348/job/136865172123",
+          "created_at": "2026-11-21T13:46:27Z",
+          "started_at": "2026-11-21T14:02:22Z",
+          "completed_at": "2026-11-21T14:06:01Z",
+          "runner_id": 1000075358,
+          "runner_name": "GitHub Actions 1000075358",
+          "labels": [
+            "windows-latest"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+          "log_file": "logs/136865172123.log"
+        },
+        {
+          "id": 136865172187,
+          "name": "native (patchtrace-clean)",
+          "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528348/job/136865172187",
+          "created_at": "2026-11-21T13:46:27Z",
+          "started_at": "2026-11-21T14:04:13Z",
+          "completed_at": "2026-11-21T14:07:38Z",
+          "runner_id": 1000075365,
+          "runner_name": "GitHub Actions 1000075365",
+          "labels": [
+            "windows-latest"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+          "log_file": "logs/136865172187.log"
+        },
+        {
+          "id": 136865172211,
+          "name": "native (patchtrace-seeded-store)",
+          "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528348/job/136865172211",
+          "created_at": "2026-11-21T13:46:27Z",
+          "started_at": "2026-11-21T14:06:05Z",
+          "completed_at": "2026-11-21T14:10:20Z",
+          "runner_id": 1000075371,
+          "runner_name": "GitHub Actions 1000075371",
+          "labels": [
+            "windows-latest"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+          "log_file": "logs/136865172211.log"
+        }
+      ]
+    }
+  ],
+  "qa": {
+    "run_id": 44910528283,
+    "required_job_ids": [
+      136865171950,
+      136865172018,
+      136865172059,
+      136865172072,
+      136865172146,
+      136865172148,
+      136865172158,
+      136888380493,
+      136888380527,
+      136888792650,
+      136888792729
+    ],
+    "full_pytest": {
+      "Linux": {
+        "passed": 24336,
+        "skipped": 53,
+        "xfailed": 4,
+        "warnings": 21,
+        "seconds": 2314.64,
+        "summary_line": "2026-11-21T14:43:55.2180029Z 24336 passed, 53 skipped, 4 xfailed, 21 warnings in 2314.64s (0:38:34)"
+      },
+      "Windows": {
+        "passed": 24205,
+        "skipped": 185,
+        "xfailed": 3,
+        "warnings": 22,
+        "seconds": 3826.03,
+        "summary_line": "2026-11-21T15:12:03.1859658Z 24205 passed, 185 skipped, 3 xfailed, 22 warnings in 3826.03s (1:03:46)"
+      }
+    },
+    "junit_reports": [
+      {
+        "platform": "Linux",
+        "artifact_id": 14711636807,
+        "path": "pair-publication-results.xml",
+        "test_cases": 110,
+        "failures": 0,
+        "errors": 0,
+        "skipped_including_xfails": 2,
+        "xfails": []
+      },
+      {
+        "platform": "Linux",
+        "artifact_id": 14711636807,
+        "path": "qa-results.xml",
+        "test_cases": 24393,
+        "failures": 0,
+        "errors": 0,
+        "skipped_including_xfails": 57,
+        "xfails": [
+          {
+            "id": "tests.test_codex5_command_audit_20261121::test_all_explicit_workflow_pip_installs_are_protected",
+            "type": "pytest.xfail",
+            "message": "CODEX-5: repository-wide hashed wheel closure still open"
+          },
+          {
+            "id": "tests.test_codex_pkg_workflows::test_pip_downloads_require_hashes",
+            "type": "pytest.xfail",
+            "message": "CODEX-5"
+          },
+          {
+            "id": "tests.test_tier_w_symbols::test_live_llvm_pdbutil_agrees_with_the_stdlib_reader",
+            "type": "pytest.xfail",
+            "message": "BLOCKED: llvm-pdbutil is not installed on this runner"
+          },
+          {
+            "id": "tests.test_tier_w_symbols::test_live_ghidra_export_runs_or_records_blocked",
+            "type": "pytest.xfail",
+            "message": "BLOCKED: no --ghidra-dir given"
+          }
+        ]
+      },
+      {
+        "platform": "Windows",
+        "artifact_id": 14712204882,
+        "path": "pair-publication-results.xml",
+        "test_cases": 110,
+        "failures": 0,
+        "errors": 0,
+        "skipped_including_xfails": 3,
+        "xfails": []
+      },
+      {
+        "platform": "Windows",
+        "artifact_id": 14712204882,
+        "path": "qa-results.xml",
+        "test_cases": 24393,
+        "failures": 0,
+        "errors": 0,
+        "skipped_including_xfails": 188,
+        "xfails": [
+          {
+            "id": "tests.test_codex5_command_audit_20261121::test_all_explicit_workflow_pip_installs_are_protected",
+            "type": "pytest.xfail",
+            "message": "CODEX-5: repository-wide hashed wheel closure still open"
+          },
+          {
+            "id": "tests.test_codex_pkg_workflows::test_pip_downloads_require_hashes",
+            "type": "pytest.xfail",
+            "message": "CODEX-5"
+          },
+          {
+            "id": "tests.test_tier_w_symbols::test_live_ghidra_export_runs_or_records_blocked",
+            "type": "pytest.xfail",
+            "message": "BLOCKED: no --ghidra-dir given"
+          }
+        ]
+      }
+    ],
+    "boundary_controls": {
+      "Linux": {
+        "passed": 108,
+        "skipped": 2,
+        "summary_line": "2026-11-21T14:05:18.5829792Z 108 passed, 2 skipped in 2.40s"
+      },
+      "Windows": {
+        "passed": 107,
+        "skipped": 3,
+        "junit_artifact_id": 14712204882
+      }
+    },
+    "qt": [
+      {
+        "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+        "head_tree_sha": "4a07cd88ded407bef30a8aeb81961e4041822dc2",
+        "synthetic_merge_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+        "run_id": 44910528283,
+        "job_id": 136865172018,
+        "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+        "conclusion": "success",
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528283/job/136865172018",
+        "checkout_verified": true,
+        "passed": 9840,
+        "warnings": 0,
+        "seconds": 1739.23,
+        "summary_line": "2026-11-21T14:20:58.4624716Z 9840 passed in 1739.23s (0:28:59)",
+        "raw_log": "logs/136865172018.log"
+      },
+      {
+        "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+        "head_tree_sha": "4a07cd88ded407bef30a8aeb81961e4041822dc2",
+        "synthetic_merge_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+        "run_id": 44910528283,
+        "job_id": 136865172148,
+        "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+        "conclusion": "success",
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528283/job/136865172148",
+        "checkout_verified": true,
+        "passed": 8460,
+        "warnings": 0,
+        "seconds": 967.03,
+        "summary_line": "2026-11-21T14:22:51.4807198Z 8460 passed in 967.03s (0:16:07)",
+        "raw_log": "logs/136865172148.log"
+      },
+      {
+        "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+        "head_tree_sha": "4a07cd88ded407bef30a8aeb81961e4041822dc2",
+        "synthetic_merge_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+        "run_id": 44910528283,
+        "job_id": 136865171950,
+        "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+        "conclusion": "success",
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528283/job/136865171950",
+        "checkout_verified": true,
+        "passed": 13320,
+        "warnings": 40,
+        "seconds": 2355.42,
+        "summary_line": "2026-11-21T14:43:20.5247580Z 13320 passed, 40 warnings in 2355.42s (0:39:15)",
+        "raw_log": "logs/136865171950.log"
+      },
+      {
+        "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+        "head_tree_sha": "4a07cd88ded407bef30a8aeb81961e4041822dc2",
+        "synthetic_merge_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+        "run_id": 44910528283,
+        "job_id": 136865172059,
+        "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+        "conclusion": "success",
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528283/job/136865172059",
+        "checkout_verified": true,
+        "passed": 10860,
+        "warnings": 0,
+        "seconds": 2712.92,
+        "summary_line": "2026-11-21T14:47:20.7383762Z 10860 passed in 2712.92s (0:45:12)",
+        "raw_log": "logs/136865172059.log"
+      },
+      {
+        "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+        "head_tree_sha": "4a07cd88ded407bef30a8aeb81961e4041822dc2",
+        "synthetic_merge_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+        "run_id": 44910528283,
+        "job_id": 136865172072,
+        "name": "qt-gate (windows-latest, 5, 1/1)",
+        "conclusion": "success",
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528283/job/136865172072",
+        "checkout_verified": true,
+        "passed": 10620,
+        "warnings": 10,
+        "seconds": 3192.07,
+        "summary_line": "2026-11-21T14:55:44.2727508Z 10620 passed, 10 warnings in 3192.07s (0:53:12)",
+        "raw_log": "logs/136865172072.log"
+      }
+    ],
+    "windows_full_build_smoke": {
+      "schema": "patchtrace/windows-producer-completion/1",
+      "observed_at": "2026-11-21 15:16:19 UTC",
+      "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+      "head_tree_sha": "4a07cd88ded407bef30a8aeb81961e4041822dc2",
+      "expected_checkout": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+      "run_id": 44910528283,
+      "job_id": 136865172158,
+      "conclusion": "success",
+      "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528283/job/136865172158",
+      "checkout_verified": true,
+      "runner_id": 1000075373,
+      "runner_name": "GitHub Actions 1000075373",
+      "full_pytest": {
+        "passed": 24205,
+        "skipped": 185,
+        "xfailed": 3,
+        "warnings": 22,
+        "seconds": 3826.03,
+        "summary_line": "2026-11-21T15:12:03.1859658Z 24205 passed, 185 skipped, 3 xfailed, 22 warnings in 3826.03s (1:03:46)"
+      },
+      "frozen_cli": {
+        "passed": 64,
+        "failed": 0,
+        "counts_from_actual_PASS_FAIL_lines": true
+      },
+      "portable_smoke": {
+        "passed": true,
+        "receipt_line": "2026-11-21T15:14:45.2323920Z Portable checksum, clean extraction, Qt plugin, dependencies, and frozen executable smoke passed."
+      },
+      "installer_smoke": {
+        "passed": true,
+        "receipt_line": "2026-11-21T15:15:33.1805376Z Installer registration, Qt/runtime checks, frozen self-test, non-destructive uninstall passed.",
+        "installer_sha256": "eea6f91d47ade687faf3ba657d337c41b47086744c1d16313915ac695be79117"
+      },
+      "product_artifact": {
+        "id": 14712423138,
+        "node_id": "MDg6QXJ0aWZhY3QxNDcxMjQyMzEzOA==",
+        "name": "PatchTrace-windows-x64",
+        "size_in_bytes": 282321110,
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14712423138",
+        "archive_download_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14712423138/zip",
+        "expired": false,
+        "digest": "sha256:0de3cf9aeeb65d1d885153e2bf79f7a0c08b32009aa82e56093996f22e15309d",
+        "created_at": "2026-11-21T15:15:44Z",
+        "updated_at": "2026-11-21T15:15:44Z",
+        "expires_at": "2027-02-19T13:46:27Z",
+        "workflow_run": {
+          "id": 44910528283,
+          "repository_id": 1413730581,
+          "head_repository_id": 1413730581,
+          "head_branch": "codex/patchtrace-windows-native-recovery-20261121-837fe",
+          "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b"
+        },
+        "api_digest_matches_hosted_upload_log": true,
+        "product_bytes_downloaded_locally": false
+      },
+      "required_job_steps": [
+        {
+          "name": "Run python tools/build_windows.py",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-21T15:12:20Z",
+          "completed_at": "2026-11-21T15:13:56Z"
+        },
+        {
+          "name": "Frozen EXE headless smoke (A1-A4) and self-test",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-21T15:13:56Z",
+          "completed_at": "2026-11-21T15:14:35Z"
+        },
+        {
+          "name": "Extract and run portable Windows ZIP outside checkout",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-21T15:14:35Z",
+          "completed_at": "2026-11-21T15:14:45Z"
+        },
+        {
+          "name": "Install pinned NSIS compiler",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-21T15:14:45Z",
+          "completed_at": "2026-11-21T15:14:56Z"
+        },
+        {
+          "name": "Build per-user Windows installer",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-11-21T15:14:56Z",
+          "completed_at": "2026-11-21T15:15:25Z"
+        },
+        {
+          "name": "Install, launch, and uninstall the setup package",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-11-21T15:15:25Z",
+          "completed_at": "2026-11-21T15:15:33Z"
+        }
+      ],
+      "junit_artifact_receipt": "qa-artifact-windows-14712204882.json",
+      "raw_log": "logs/136865172158.log"
+    },
+    "windows_powershell_cases": {
+      "schema": "patchtrace/windows-powershell-cases/1",
+      "source_head": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+      "source_tree": "4a07cd88ded407bef30a8aeb81961e4041822dc2",
+      "synthetic_merge_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+      "run_id": 44910528283,
+      "job_id": 136865172158,
+      "platform": "Windows",
+      "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528283/job/136865172158",
+      "artifact_id": 14712204882,
+      "artifact_zip_sha256": "c1ee82988625752b80f7a0d59bcaa541ea42dbd38d74aac36782275a288eec87",
+      "junit_file": "artifacts/14712204882/qa-results.xml",
+      "junit_sha256": "d0b530e7c8d4e16e5db8ec8587803f9639db6452c4341e8a5c8a3d0cf7c3750e",
+      "expected_case_count": 27,
+      "actual_case_count": 27,
+      "passed": 27,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "selectors": [
+        {
+          "path": "tests/test_windows_downloaded_artifacts.py",
+          "git_blob_sha": "4f7261ad84e87ea3daaf0b25dd7e543949c04d58",
+          "junit_classname": "tests.test_windows_downloaded_artifacts",
+          "expected_cases": 17,
+          "actual_cases": 17,
+          "functions": [
+            {
+              "function": "test_exact_checksum_step_accepts_both_valid_artifacts",
+              "expected_count": 3,
+              "actual_count": 3,
+              "count_matches": true,
+              "all_passed": true,
+              "cases": [
+                {
+                  "id": "tests.test_windows_downloaded_artifacts::test_exact_checksum_step_accepts_both_valid_artifacts[ -\\n-False]",
+                  "classname": "tests.test_windows_downloaded_artifacts",
+                  "name": "test_exact_checksum_step_accepts_both_valid_artifacts[ -\\n-False]",
+                  "seconds": 0.493,
+                  "status": "passed"
+                },
+                {
+                  "id": "tests.test_windows_downloaded_artifacts::test_exact_checksum_step_accepts_both_valid_artifacts[*-\\r\\n-True]",
+                  "classname": "tests.test_windows_downloaded_artifacts",
+                  "name": "test_exact_checksum_step_accepts_both_valid_artifacts[*-\\r\\n-True]",
+                  "seconds": 0.474,
+                  "status": "passed"
+                },
+                {
+                  "id": "tests.test_windows_downloaded_artifacts::test_exact_checksum_step_accepts_both_valid_artifacts[ --False]",
+                  "classname": "tests.test_windows_downloaded_artifacts",
+                  "name": "test_exact_checksum_step_accepts_both_valid_artifacts[ --False]",
+                  "seconds": 0.478,
+                  "status": "passed"
+                }
+              ]
+            },
+            {
+              "function": "test_exact_checksum_step_rejects_each_missing_member",
+              "expected_count": 4,
+              "actual_count": 4,
+              "count_matches": true,
+              "all_passed": true,
+              "cases": [
+                {
+                  "id": "tests.test_windows_downloaded_artifacts::test_exact_checksum_step_rejects_each_missing_member[PatchTrace-0.1.0-windows-x64.zip]",
+                  "classname": "tests.test_windows_downloaded_artifacts",
+                  "name": "test_exact_checksum_step_rejects_each_missing_member[PatchTrace-0.1.0-windows-x64.zip]",
+                  "seconds": 0.594,
+                  "status": "passed"
+                },
+                {
+                  "id": "tests.test_windows_downloaded_artifacts::test_exact_checksum_step_rejects_each_missing_member[PatchTrace-0.1.0-windows-x64.zip.sha256]",
+                  "classname": "tests.test_windows_downloaded_artifacts",
+                  "name": "test_exact_checksum_step_rejects_each_missing_member[PatchTrace-0.1.0-windows-x64.zip.sha256]",
+                  "seconds": 0.555,
+                  "status": "passed"
+                },
+                {
+                  "id": "tests.test_windows_downloaded_artifacts::test_exact_checksum_step_rejects_each_missing_member[PatchTrace-Windows-x64-Setup.exe]",
+                  "classname": "tests.test_windows_downloaded_artifacts",
+                  "name": "test_exact_checksum_step_rejects_each_missing_member[PatchTrace-Windows-x64-Setup.exe]",
+                  "seconds": 0.543,
+                  "status": "passed"
+                },
+                {
+                  "id": "tests.test_windows_downloaded_artifacts::test_exact_checksum_step_rejects_each_missing_member[PatchTrace-Windows-x64-Setup.exe.sha256]",
+                  "classname": "tests.test_windows_downloaded_artifacts",
+                  "name": "test_exact_checksum_step_rejects_each_missing_member[PatchTrace-Windows-x64-Setup.exe.sha256]",
+                  "seconds": 0.607,
+                  "status": "passed"
+                }
+              ]
+            },
+            {
+              "function": "test_exact_checksum_step_rejects_modified_artifact_bytes",
+              "expected_count": 2,
+              "actual_count": 2,
+              "count_matches": true,
+              "all_passed": true,
+              "cases": [
+                {
+                  "id": "tests.test_windows_downloaded_artifacts::test_exact_checksum_step_rejects_modified_artifact_bytes[PatchTrace-0.1.0-windows-x64.zip]",
+                  "classname": "tests.test_windows_downloaded_artifacts",
+                  "name": "test_exact_checksum_step_rejects_modified_artifact_bytes[PatchTrace-0.1.0-windows-x64.zip]",
+                  "seconds": 0.587,
+                  "status": "passed"
+                },
+                {
+                  "id": "tests.test_windows_downloaded_artifacts::test_exact_checksum_step_rejects_modified_artifact_bytes[PatchTrace-Windows-x64-Setup.exe]",
+                  "classname": "tests.test_windows_downloaded_artifacts",
+                  "name": "test_exact_checksum_step_rejects_modified_artifact_bytes[PatchTrace-Windows-x64-Setup.exe]",
+                  "seconds": 0.593,
+                  "status": "passed"
+                }
+              ]
+            },
+            {
+              "function": "test_exact_checksum_step_binds_the_record_to_the_executed_filename",
+              "expected_count": 2,
+              "actual_count": 2,
+              "count_matches": true,
+              "all_passed": true,
+              "cases": [
+                {
+                  "id": "tests.test_windows_downloaded_artifacts::test_exact_checksum_step_binds_the_record_to_the_executed_filename[PatchTrace-Windows-x64-Setup.exe]",
+                  "classname": "tests.test_windows_downloaded_artifacts",
+                  "name": "test_exact_checksum_step_binds_the_record_to_the_executed_filename[PatchTrace-Windows-x64-Setup.exe]",
+                  "seconds": 0.569,
+                  "status": "passed"
+                },
+                {
+                  "id": "tests.test_windows_downloaded_artifacts::test_exact_checksum_step_binds_the_record_to_the_executed_filename[patchtrace-0.1.0-windows-x64.zip]",
+                  "classname": "tests.test_windows_downloaded_artifacts",
+                  "name": "test_exact_checksum_step_binds_the_record_to_the_executed_filename[patchtrace-0.1.0-windows-x64.zip]",
+                  "seconds": 0.566,
+                  "status": "passed"
+                }
+              ]
+            },
+            {
+              "function": "test_exact_checksum_step_rejects_malformed_sidecars",
+              "expected_count": 6,
+              "actual_count": 6,
+              "count_matches": true,
+              "all_passed": true,
+              "cases": [
+                {
+                  "id": "tests.test_windows_downloaded_artifacts::test_exact_checksum_step_rejects_malformed_sidecars[]",
+                  "classname": "tests.test_windows_downloaded_artifacts",
+                  "name": "test_exact_checksum_step_rejects_malformed_sidecars[]",
+                  "seconds": 0.57,
+                  "status": "passed"
+                },
+                {
+                  "id": "tests.test_windows_downloaded_artifacts::test_exact_checksum_step_rejects_malformed_sidecars[not-a-digest  {name}\\n]",
+                  "classname": "tests.test_windows_downloaded_artifacts",
+                  "name": "test_exact_checksum_step_rejects_malformed_sidecars[not-a-digest  {name}\\n]",
+                  "seconds": 0.563,
+                  "status": "passed"
+                },
+                {
+                  "id": "tests.test_windows_downloaded_artifacts::test_exact_checksum_step_rejects_malformed_sidecars[{digest}  {name}\\n{digest}  {name}\\n]",
+                  "classname": "tests.test_windows_downloaded_artifacts",
+                  "name": "test_exact_checksum_step_rejects_malformed_sidecars[{digest}  {name}\\n{digest}  {name}\\n]",
+                  "seconds": 0.558,
+                  "status": "passed"
+                },
+                {
+                  "id": "tests.test_windows_downloaded_artifacts::test_exact_checksum_step_rejects_malformed_sidecars[{digest}  {name}\\n\\n]",
+                  "classname": "tests.test_windows_downloaded_artifacts",
+                  "name": "test_exact_checksum_step_rejects_malformed_sidecars[{digest}  {name}\\n\\n]",
+                  "seconds": 0.566,
+                  "status": "passed"
+                },
+                {
+                  "id": "tests.test_windows_downloaded_artifacts::test_exact_checksum_step_rejects_malformed_sidecars[{digest}  {name}\\r]",
+                  "classname": "tests.test_windows_downloaded_artifacts",
+                  "name": "test_exact_checksum_step_rejects_malformed_sidecars[{digest}  {name}\\r]",
+                  "seconds": 0.558,
+                  "status": "passed"
+                },
+                {
+                  "id": "tests.test_windows_downloaded_artifacts::test_exact_checksum_step_rejects_malformed_sidecars[{digest} {name}\\n]",
+                  "classname": "tests.test_windows_downloaded_artifacts",
+                  "name": "test_exact_checksum_step_rejects_malformed_sidecars[{digest} {name}\\n]",
+                  "seconds": 0.561,
+                  "status": "passed"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path": "tests/test_live_ghidra_archive.py",
+          "git_blob_sha": "abf9444843c25100cab70393f653127252890609",
+          "junit_classname": "tests.test_live_ghidra_archive",
+          "expected_cases": 10,
+          "actual_cases": 10,
+          "functions": [
+            {
+              "function": "test_exact_step_verifies_downloaded_and_restored_zip_before_fresh_extraction",
+              "expected_count": 4,
+              "actual_count": 4,
+              "count_matches": true,
+              "all_passed": true,
+              "cases": [
+                {
+                  "id": "tests.test_live_ghidra_archive::test_exact_step_verifies_downloaded_and_restored_zip_before_fresh_extraction[matching-bytes-missing-archive]",
+                  "classname": "tests.test_live_ghidra_archive",
+                  "name": "test_exact_step_verifies_downloaded_and_restored_zip_before_fresh_extraction[matching-bytes-missing-archive]",
+                  "seconds": 0.862,
+                  "status": "passed"
+                },
+                {
+                  "id": "tests.test_live_ghidra_archive::test_exact_step_verifies_downloaded_and_restored_zip_before_fresh_extraction[matching-bytes-restored-archive]",
+                  "classname": "tests.test_live_ghidra_archive",
+                  "name": "test_exact_step_verifies_downloaded_and_restored_zip_before_fresh_extraction[matching-bytes-restored-archive]",
+                  "seconds": 0.701,
+                  "status": "passed"
+                },
+                {
+                  "id": "tests.test_live_ghidra_archive::test_exact_step_verifies_downloaded_and_restored_zip_before_fresh_extraction[changed-bytes-missing-archive]",
+                  "classname": "tests.test_live_ghidra_archive",
+                  "name": "test_exact_step_verifies_downloaded_and_restored_zip_before_fresh_extraction[changed-bytes-missing-archive]",
+                  "seconds": 0.642,
+                  "status": "passed"
+                },
+                {
+                  "id": "tests.test_live_ghidra_archive::test_exact_step_verifies_downloaded_and_restored_zip_before_fresh_extraction[changed-bytes-restored-archive]",
+                  "classname": "tests.test_live_ghidra_archive",
+                  "name": "test_exact_step_verifies_downloaded_and_restored_zip_before_fresh_extraction[changed-bytes-restored-archive]",
+                  "seconds": 0.565,
+                  "status": "passed"
+                }
+              ]
+            },
+            {
+              "function": "test_exact_step_rejects_missing_or_malformed_pin_before_download",
+              "expected_count": 5,
+              "actual_count": 5,
+              "count_matches": true,
+              "all_passed": true,
+              "cases": [
+                {
+                  "id": "tests.test_live_ghidra_archive::test_exact_step_rejects_missing_or_malformed_pin_before_download[]",
+                  "classname": "tests.test_live_ghidra_archive",
+                  "name": "test_exact_step_rejects_missing_or_malformed_pin_before_download[]",
+                  "seconds": 0.478,
+                  "status": "passed"
+                },
+                {
+                  "id": "tests.test_live_ghidra_archive::test_exact_step_rejects_missing_or_malformed_pin_before_download[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa]",
+                  "classname": "tests.test_live_ghidra_archive",
+                  "name": "test_exact_step_rejects_missing_or_malformed_pin_before_download[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa]",
+                  "seconds": 0.472,
+                  "status": "passed"
+                },
+                {
+                  "id": "tests.test_live_ghidra_archive::test_exact_step_rejects_missing_or_malformed_pin_before_download[AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA]",
+                  "classname": "tests.test_live_ghidra_archive",
+                  "name": "test_exact_step_rejects_missing_or_malformed_pin_before_download[AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA]",
+                  "seconds": 0.459,
+                  "status": "passed"
+                },
+                {
+                  "id": "tests.test_live_ghidra_archive::test_exact_step_rejects_missing_or_malformed_pin_before_download[not-a-sha256]",
+                  "classname": "tests.test_live_ghidra_archive",
+                  "name": "test_exact_step_rejects_missing_or_malformed_pin_before_download[not-a-sha256]",
+                  "seconds": 0.45,
+                  "status": "passed"
+                },
+                {
+                  "id": "tests.test_live_ghidra_archive::test_exact_step_rejects_missing_or_malformed_pin_before_download[terminal-lf]",
+                  "classname": "tests.test_live_ghidra_archive",
+                  "name": "test_exact_step_rejects_missing_or_malformed_pin_before_download[terminal-lf]",
+                  "seconds": 0.468,
+                  "status": "passed"
+                }
+              ]
+            },
+            {
+              "function": "test_exact_step_stops_on_extraction_error_without_exporting_a_runtime",
+              "expected_count": 1,
+              "actual_count": 1,
+              "count_matches": true,
+              "all_passed": true,
+              "cases": [
+                {
+                  "id": "tests.test_live_ghidra_archive::test_exact_step_stops_on_extraction_error_without_exporting_a_runtime",
+                  "classname": "tests.test_live_ghidra_archive",
+                  "name": "test_exact_step_stops_on_extraction_error_without_exporting_a_runtime",
+                  "seconds": 0.899,
+                  "status": "passed"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "all_27_actual_cases_passed": true,
+      "static_only_tests_excluded": true,
+      "scope": "Actual retained Windows JUnit cases bound to exact PowerShell-invoking fixtures; not a substitute for real downloaded-product validation or native Ghidra acceptance."
+    },
+    "windows_downloaded_artifact_validation": {
+      "schema": "patchtrace/windows-downloaded-artifact-validation/1",
+      "observed_at": "2026-11-21 15:17:50 UTC",
+      "source_head": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+      "source_tree": "4a07cd88ded407bef30a8aeb81961e4041822dc2",
+      "synthetic_merge_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+      "run_id": 44910528283,
+      "job_id": 136888380527,
+      "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528283/job/136888380527",
+      "conclusion": "success",
+      "checkout_verified": true,
+      "runner_id": 1000075682,
+      "runner_name": "GitHub Actions 1000075682",
+      "producer_job_id": 136865172158,
+      "producer_runner_id": 1000075373,
+      "distinct_consumer_runner_verified": true,
+      "artifact_id": 14712423138,
+      "artifact_name": "PatchTrace-windows-x64",
+      "artifact_bytes": 282321110,
+      "artifact_digest": "sha256:0de3cf9aeeb65d1d885153e2bf79f7a0c08b32009aa82e56093996f22e15309d",
+      "actual_downloaded_artifact_sha256": "0de3cf9aeeb65d1d885153e2bf79f7a0c08b32009aa82e56093996f22e15309d",
+      "same_run_head_artifact_and_producer_consumer_digest_verified": true,
+      "inner_artifacts": [
+        {
+          "name": "PatchTrace-0.1.0-windows-x64.zip",
+          "sha256": "32c25f035b3f26b4b22dc38c3645973125b4361072f6386e4a61b76fb548df41",
+          "actual_log_line": "2026-11-21T15:16:54.3941334Z Verified downloaded artifact SHA-256: PatchTrace-0.1.0-windows-x64.zip 32C25F035B3F26B4B22DC38C3645973125B4361072F6386E4A61B76FB548DF41"
+        },
+        {
+          "name": "PatchTrace-Windows-x64-Setup.exe",
+          "sha256": "eea6f91d47ade687faf3ba657d337c41b47086744c1d16313915ac695be79117",
+          "actual_log_line": "2026-11-21T15:16:54.5775442Z Verified downloaded artifact SHA-256: PatchTrace-Windows-x64-Setup.exe EEA6F91D47ADE687FAF3BA657D337C41B47086744C1D16313915AC695BE79117"
+        }
+      ],
+      "installer_sha256_matches_producer": true,
+      "checksum_step_completed_before_execution": true,
+      "required_steps": [
+        {
+          "name": "Verify every downloaded Windows artifact before execution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T15:16:53Z",
+          "completed_at": "2026-11-21T15:16:54Z"
+        },
+        {
+          "name": "Extract and run the downloaded portable Windows ZIP",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T15:16:54Z",
+          "completed_at": "2026-11-21T15:17:04Z"
+        },
+        {
+          "name": "Install, launch, and uninstall the downloaded setup package",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T15:17:04Z",
+          "completed_at": "2026-11-21T15:17:13Z"
+        }
+      ],
+      "portable_smoke": {
+        "passed": true,
+        "receipt_line": "2026-11-21T15:17:04.7813912Z Portable checksum, clean extraction, Qt plugin, dependencies, and frozen executable smoke passed."
+      },
+      "installer_smoke": {
+        "passed": true,
+        "receipt_line": "2026-11-21T15:17:13.5052554Z Installer registration, Qt/runtime checks, frozen self-test, non-destructive uninstall passed."
+      },
+      "all_required_contracts_passed": true,
+      "large_product_bytes_downloaded_locally": false,
+      "raw_log": "logs/136888380527.log",
+      "scope": "Actual same-run downloaded Windows product validation on a distinct hosted runner. Exact PowerShell fixture cases and producer frozen CLI results remain separate receipts."
+    },
+    "linux_package": {
+      "schema": "patchtrace/linux-package-completion/1",
+      "observed_at": "2026-11-21 15:17:50 UTC",
+      "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+      "head_tree_sha": "4a07cd88ded407bef30a8aeb81961e4041822dc2",
+      "synthetic_merge_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+      "run_id": 44910528283,
+      "job_id": 136888380493,
+      "conclusion": "success",
+      "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528283/job/136888380493",
+      "checkout_verified": true,
+      "runner_id": 1000075681,
+      "runner_name": "GitHub Actions 1000075681",
+      "labels": [
+        "ubuntu-22.04"
+      ],
+      "started_at": "2026-11-21T15:15:50Z",
+      "completed_at": "2026-11-21T15:17:23Z",
+      "product_artifact": {
+        "id": 14712433241,
+        "node_id": "MDg6QXJ0aWZhY3QxNDcxMjQzMzI0MQ==",
+        "name": "PatchTrace-linux-x86_64",
+        "size_in_bytes": 169987711,
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14712433241",
+        "archive_download_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14712433241/zip",
+        "expired": false,
+        "digest": "sha256:daa3ef2d31f8c1273519ee0ddb9630541e23e31012058677aabb3ca7cdfe6db4",
+        "created_at": "2026-11-21T15:17:21Z",
+        "updated_at": "2026-11-21T15:17:21Z",
+        "expires_at": "2027-02-19T13:46:27Z",
+        "workflow_run": {
+          "id": 44910528283,
+          "repository_id": 1413730581,
+          "head_repository_id": 1413730581,
+          "head_branch": "codex/patchtrace-windows-native-recovery-20261121-837fe",
+          "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b"
+        },
+        "api_digest_matches_hosted_upload_log": true,
+        "product_bytes_downloaded_locally": false
+      },
+      "job_steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T15:15:51Z",
+          "completed_at": "2026-11-21T15:15:51Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T15:15:51Z",
+          "completed_at": "2026-11-21T15:15:57Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T15:15:57Z",
+          "completed_at": "2026-11-21T15:15:57Z"
+        },
+        {
+          "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1 libxcb-cursor0 libxkbcommon-x11-0 xvfb",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T15:15:57Z",
+          "completed_at": "2026-11-21T15:16:11Z"
+        },
+        {
+          "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T15:16:11Z",
+          "completed_at": "2026-11-21T15:16:29Z"
+        },
+        {
+          "name": "Run python tools/check_protobuf_runtime.py",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T15:16:29Z",
+          "completed_at": "2026-11-21T15:16:29Z"
+        },
+        {
+          "name": "Run python tools/build_linux.py",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-21T15:16:29Z",
+          "completed_at": "2026-11-21T15:17:16Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-21T15:17:16Z",
+          "completed_at": "2026-11-21T15:17:21Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-21T15:17:21Z",
+          "completed_at": "2026-11-21T15:17:21Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-11-21T15:17:21Z",
+          "completed_at": "2026-11-21T15:17:21Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-11-21T15:17:21Z",
+          "completed_at": "2026-11-21T15:17:21Z"
+        }
+      ],
+      "raw_log": "logs/136888380493.log"
+    },
+    "linux_frozen_smokes": [
+      {
+        "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+        "synthetic_merge_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+        "run_id": 44910528283,
+        "job_id": 136888792650,
+        "name": "linux-smoke (ubuntu-22.04)",
+        "conclusion": "success",
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528283/job/136888792650",
+        "checkout_verified": true,
+        "runner_id": 1000075684,
+        "runner_name": "GitHub Actions 1000075684",
+        "passed": 64,
+        "failed": 0,
+        "downloaded_product_id": 14712433241,
+        "downloaded_artifact_digest": "sha256:daa3ef2d31f8c1273519ee0ddb9630541e23e31012058677aabb3ca7cdfe6db4",
+        "download_digest_matches_metadata": true,
+        "tar_checksum_ok": true,
+        "self_test_steps": [
+          {
+            "name": "Run QT_QPA_PLATFORM=offscreen PatchTrace/PatchTrace --self-test",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-11-21T15:18:42Z",
+            "completed_at": "2026-11-21T15:18:43Z"
+          },
+          {
+            "name": "Run QT_QPA_PLATFORM=xcb xvfb-run -a PatchTrace/PatchTrace --self-test",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-11-21T15:18:43Z",
+            "completed_at": "2026-11-21T15:18:46Z"
+          }
+        ],
+        "missing_library_warnings": [],
+        "raw_log": "logs/136888792650.log"
+      },
+      {
+        "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+        "synthetic_merge_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+        "run_id": 44910528283,
+        "job_id": 136888792729,
+        "name": "linux-smoke (ubuntu-24.04)",
+        "conclusion": "success",
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528283/job/136888792729",
+        "checkout_verified": true,
+        "runner_id": 1000075685,
+        "runner_name": "GitHub Actions 1000075685",
+        "passed": 64,
+        "failed": 0,
+        "downloaded_product_id": 14712433241,
+        "downloaded_artifact_digest": "sha256:daa3ef2d31f8c1273519ee0ddb9630541e23e31012058677aabb3ca7cdfe6db4",
+        "download_digest_matches_metadata": true,
+        "tar_checksum_ok": true,
+        "self_test_steps": [
+          {
+            "name": "Run QT_QPA_PLATFORM=offscreen PatchTrace/PatchTrace --self-test",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-11-21T15:18:40Z",
+            "completed_at": "2026-11-21T15:18:44Z"
+          },
+          {
+            "name": "Run QT_QPA_PLATFORM=xcb xvfb-run -a PatchTrace/PatchTrace --self-test",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-11-21T15:18:44Z",
+            "completed_at": "2026-11-21T15:18:50Z"
+          }
+        ],
+        "missing_library_warnings": [],
+        "raw_log": "logs/136888792729.log"
+      }
+    ],
+    "release_gate": {
+      "job_id": 136865172968,
+      "conclusion": "skipped"
+    },
+    "release": {
+      "job_id": 136889308090,
+      "conclusion": "skipped"
+    },
+    "counting_note": "Full-suite totals, boundary controls, repeated Qt gates, exact PowerShell subsets, frozen CLI assertions and native cases are reported separately and are not added into one count."
+  },
+  "native": {
+    "schema": "patchtrace/native-observation/1",
+    "observed_at": "2026-11-21 14:12:10 UTC",
+    "source": {
+      "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+      "head_tree_sha": "4a07cd88ded407bef30a8aeb81961e4041822dc2",
+      "base_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+      "run_event": "pull_request",
+      "expected_checkout": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+      "synthetic_merge_tree_sha": "4a07cd88ded407bef30a8aeb81961e4041822dc2",
+      "no_ancestor_acceptance_transfer": true
+    },
+    "run_id": 44910528348,
+    "run_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528348",
+    "run_conclusion": "success",
+    "run_attempt": 1,
+    "all_five_checkout_logs_verified": true,
+    "jobs": [
+      {
+        "job_id": 136865171976,
+        "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+        "conclusion": "success",
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528348/job/136865171976",
+        "started_at": "2026-11-21T13:58:37Z",
+        "completed_at": "2026-11-21T14:04:10Z",
+        "runner_id": 1000075328,
+        "expected_checkout_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+        "checkouts": [
+          "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57"
+        ],
+        "checkout_verified": true,
+        "raw_log": "logs/136865171976.log"
+      },
+      {
+        "job_id": 136865172117,
+        "name": "native (raw-cache-hit)",
+        "conclusion": "success",
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528348/job/136865172117",
+        "started_at": "2026-11-21T14:02:20Z",
+        "completed_at": "2026-11-21T14:04:47Z",
+        "runner_id": 1000075357,
+        "expected_checkout_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+        "checkouts": [
+          "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57"
+        ],
+        "checkout_verified": true,
+        "raw_log": "logs/136865172117.log"
+      },
+      {
+        "job_id": 136865172123,
+        "name": "native (repro-plain-ghidriff)",
+        "conclusion": "success",
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528348/job/136865172123",
+        "started_at": "2026-11-21T14:02:22Z",
+        "completed_at": "2026-11-21T14:06:01Z",
+        "runner_id": 1000075358,
+        "expected_checkout_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+        "checkouts": [
+          "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57"
+        ],
+        "checkout_verified": true,
+        "raw_log": "logs/136865172123.log"
+      },
+      {
+        "job_id": 136865172187,
+        "name": "native (patchtrace-clean)",
+        "conclusion": "success",
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528348/job/136865172187",
+        "started_at": "2026-11-21T14:04:13Z",
+        "completed_at": "2026-11-21T14:07:38Z",
+        "runner_id": 1000075365,
+        "expected_checkout_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+        "checkouts": [
+          "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57"
+        ],
+        "checkout_verified": true,
+        "raw_log": "logs/136865172187.log"
+      },
+      {
+        "job_id": 136865172211,
+        "name": "native (patchtrace-seeded-store)",
+        "conclusion": "success",
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44910528348/job/136865172211",
+        "started_at": "2026-11-21T14:06:05Z",
+        "completed_at": "2026-11-21T14:10:20Z",
+        "runner_id": 1000075371,
+        "expected_checkout_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+        "checkouts": [
+          "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57"
+        ],
+        "checkout_verified": true,
+        "raw_log": "logs/136865172211.log"
+      }
+    ],
+    "actual_outcomes": {
+      "known_patch_positive_variants": 3,
+      "known_patch_changes_per_variant": 1,
+      "positive_job_ids": [
+        136865171976,
+        136865172187,
+        136865172211
+      ],
+      "expected_negative_cached_pdb_control": {
+        "job_id": 136865172123,
+        "contract_passed": true,
+        "actual_error_lines": [
+          "2026-11-21T14:05:55.0974935Z FileExistsError: Symbols are disabled, but the symbol is already downloaded C:\\gout\\symbols\\old.pdb\\B26E7935EC1B4673A42673A1BA448BA21\\old.pdb. Delete symbol or remove --no-symbol flag"
+        ],
+        "positive_analysis_claimed": false
+      },
+      "application_raw_cache": {
+        "schema": "patchtrace/application-raw-cache-observation/1",
+        "source_head": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+        "synthetic_merge_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+        "run_id": 44910528348,
+        "job_id": 136865172117,
+        "artifact_id": 14709594641,
+        "status": "passed",
+        "first_run": {
+          "id": "0da3c9a4-ee50-4e08-af9b-83c5ecca60d7",
+          "status": "completed",
+          "backend_version": "1.0.0",
+          "settings": {
+            "older_sha256": "b7cab547c7b56334058b6958c4dc9038251622760144d56a84e891c6738b6796",
+            "newer_sha256": "2d74fd40c390d537b701e8d5d8e818959ac65168f462e4088b793652acd70305",
+            "python_version": "3.12.10",
+            "pyghidra_version": "3.2.0",
+            "ghidra_version": "12.0.4",
+            "java_runtime_version": "25.0.5",
+            "symbol_policy": "disabled"
+          },
+          "raw_path": "runs/0da3c9a4-ee50-4e08-af9b-83c5ecca60d7/raw/json/b7cab547c7b56334058b6958c4dc9038251622760144d56a84e891c6738b6796.bin-2d74fd40c390d537b701e8d5d8e818959ac65168f462e4088b793652acd70305.bin.ghidriff.json",
+          "error": null
+        },
+        "second_run": {
+          "id": "b4901ecb-4bab-4cc5-bdd6-9bda812aecc5",
+          "status": "completed",
+          "backend_version": "1.0.0",
+          "settings": {
+            "older_sha256": "b7cab547c7b56334058b6958c4dc9038251622760144d56a84e891c6738b6796",
+            "newer_sha256": "2d74fd40c390d537b701e8d5d8e818959ac65168f462e4088b793652acd70305",
+            "python_version": "3.12.10",
+            "pyghidra_version": "3.2.0",
+            "ghidra_version": "12.0.4",
+            "java_runtime_version": "25.0.5",
+            "symbol_policy": "disabled",
+            "cache_origin": {
+              "key": "7e860f08439682ce0bd028312e1134ea5a548b14b632693c83e2243f50f6f017",
+              "created": "2026-11-21T14:04:41.021278+00:00"
+            }
+          },
+          "raw_path": "runs/b4901ecb-4bab-4cc5-bdd6-9bda812aecc5/raw/json/result.ghidriff.json",
+          "error": null
+        },
+        "first_raw_sha256": "0095038a9d3e6026fa500cece69ddd93ab8882325d932ea31512f3d62bd00a42",
+        "second_raw_sha256": "0095038a9d3e6026fa500cece69ddd93ab8882325d932ea31512f3d62bd00a42",
+        "match_count_each": 1,
+        "second_cache_events": [
+          {
+            "stage": "cache",
+            "message": "raw output reused from cache"
+          }
+        ],
+        "both_analysis_records_completed": true,
+        "java_probes_first": [
+          {
+            "executable": "C:\\hostedtoolcache\\windows\\Java_Temurin-Hotspot_jdk\\25.0.5-8.0\\x64\\bin\\java.exe",
+            "argument": "-version",
+            "timeout_seconds": 15,
+            "returncode": 0,
+            "reason": null,
+            "log_tail": "openjdk version \"25.0.5\" 2026-10-20 LTS\r\nOpenJDK Runtime Environment Temurin-25.0.5+8 (build 25.0.5+8-LTS)\r\nOpenJDK 64-Bit Server VM Temurin-25.0.5+8 (build 25.0.5+8-LTS, mixed mode, sharing)\r\n",
+            "elapsed_seconds": 1.656000000000006
+          }
+        ],
+        "java_probes_second": [
+          {
+            "executable": "C:\\hostedtoolcache\\windows\\Java_Temurin-Hotspot_jdk\\25.0.5-8.0\\x64\\bin\\java.exe",
+            "argument": "-version",
+            "timeout_seconds": 15,
+            "returncode": 0,
+            "reason": null,
+            "log_tail": "openjdk version \"25.0.5\" 2026-10-20 LTS\r\nOpenJDK Runtime Environment Temurin-25.0.5+8 (build 25.0.5+8-LTS)\r\nOpenJDK 64-Bit Server VM Temurin-25.0.5+8 (build 25.0.5+8-LTS, mixed mode, sharing)\r\n",
+            "elapsed_seconds": 0.047000000000025466
+          }
+        ],
+        "input_hashes_identical": true,
+        "scope": "The actual hosted checker and downloaded diagnostic records establish within-job application raw-cache reuse. The raw output bytes themselves are not included in this small diagnostic artifact. Separate from original Ghidra tool-ZIP caching; no cross-ref/OS reuse or independent-run determinism is claimed.",
+        "raw_log": "logs/136865172117.log",
+        "artifact_receipt": "artifact-14709594641.json"
+      }
+    },
+    "original_Ghidra_archive_cache": {
+      "pinned_original_zip_sha256": "c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120",
+      "actual_cold_misses": 3,
+      "actual_warm_hits": 2,
+      "actual_successful_saves": 1,
+      "actual_save_reservation_declines": 2,
+      "primary_key_hit_save_skips": 2,
+      "all_five_hosted_original_hash_checks_and_fresh_extraction_steps_succeeded": true,
+      "per_job": [
+        {
+          "job_id": 136865171976,
+          "mode": "miss",
+          "post_save": "saved",
+          "actual_hash_verified": true,
+          "fresh_extraction_step": "success",
+          "verification_lines": [
+            "2026-11-21T13:59:06.8369376Z Verified Ghidra archive SHA-256: ghidra-archive/ghidra.zip (c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120)"
+          ],
+          "save_lines": [
+            "2026-11-21T14:04:05.7799196Z Cache saved with key: ghidra-archive-v1-c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120"
+          ],
+          "skip_lines": [],
+          "reservation_declined_lines": [],
+          "receipt": "original-ghidra-archive-cache-136865171976.json"
+        },
+        {
+          "job_id": 136865172117,
+          "mode": "miss",
+          "post_save": "reservation_declined",
+          "actual_hash_verified": true,
+          "fresh_extraction_step": "success",
+          "verification_lines": [
+            "2026-11-21T14:02:43.2494792Z Verified Ghidra archive SHA-256: ghidra-archive/ghidra.zip (c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120)"
+          ],
+          "save_lines": [],
+          "skip_lines": [],
+          "reservation_declined_lines": [
+            "2026-11-21T14:04:44.0396701Z Failed to save: Unable to reserve cache with key ghidra-archive-v1-c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120, another job may be creating this cache."
+          ],
+          "receipt": "original-ghidra-archive-cache-136865172117.json"
+        },
+        {
+          "job_id": 136865172123,
+          "mode": "miss",
+          "post_save": "reservation_declined",
+          "actual_hash_verified": true,
+          "fresh_extraction_step": "success",
+          "verification_lines": [
+            "2026-11-21T14:02:50.3581820Z Verified Ghidra archive SHA-256: ghidra-archive/ghidra.zip (c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120)"
+          ],
+          "save_lines": [],
+          "skip_lines": [],
+          "reservation_declined_lines": [
+            "2026-11-21T14:05:57.1353439Z Failed to save: Unable to reserve cache with key ghidra-archive-v1-c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120, another job may be creating this cache."
+          ],
+          "receipt": "original-ghidra-archive-cache-136865172123.json"
+        },
+        {
+          "job_id": 136865172187,
+          "mode": "hit",
+          "post_save": "primary_key_hit_save_skipped",
+          "actual_hash_verified": true,
+          "fresh_extraction_step": "success",
+          "verification_lines": [
+            "2026-11-21T14:04:45.2096864Z Verified Ghidra archive SHA-256: ghidra-archive/ghidra.zip (c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120)"
+          ],
+          "save_lines": [],
+          "skip_lines": [
+            "2026-11-21T14:07:31.7375878Z Cache hit occurred on the primary key ghidra-archive-v1-c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120, not saving cache."
+          ],
+          "reservation_declined_lines": [],
+          "receipt": "original-ghidra-archive-cache-136865172187.json"
+        },
+        {
+          "job_id": 136865172211,
+          "mode": "hit",
+          "post_save": "primary_key_hit_save_skipped",
+          "actual_hash_verified": true,
+          "fresh_extraction_step": "success",
+          "verification_lines": [
+            "2026-11-21T14:06:37.1941460Z Verified Ghidra archive SHA-256: ghidra-archive/ghidra.zip (c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120)"
+          ],
+          "save_lines": [],
+          "skip_lines": [
+            "2026-11-21T14:10:17.0062519Z Cache hit occurred on the primary key ghidra-archive-v1-c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120, not saving cache."
+          ],
+          "reservation_declined_lines": [],
+          "receipt": "original-ghidra-archive-cache-136865172211.json"
+        }
+      ],
+      "scope": "Observed on this PR synthetic merge only. Earlier4202 modes are not transferred; no cross-ref or cross-OS cache inference is made. Two declined save reservations are retained separately from successful native job conclusions."
+    },
+    "backend_execution_records": [
+      {
+        "artifact_id": 14710376722,
+        "artifact_name": "native-static-acceptance-patchtrace-seeded-store",
+        "member": "live-project/runs/b069ec46-9771-42bd-beab-c67dde393b98/backend-execution.json",
+        "record": {
+          "contract": "patchtrace-backend-execution/1",
+          "elapsed_seconds": 81.406,
+          "last_observed_stage": "enhancing function/symbol details",
+          "last_output_age_seconds": 0.5149999999999864,
+          "process_state": "stopped",
+          "returncode": 0,
+          "run_id": "b069ec46-9771-42bd-beab-c67dde393b98",
+          "runtime_versions": {
+            "ghidra": "12.0.4",
+            "ghidriff": "1.0.0",
+            "jvm": "unverified",
+            "patchtrace": "0.1.0",
+            "pyghidra": "3.2.0",
+            "python": "3.12.10"
+          },
+          "started_at": "2026-11-21T14:08:53.855299+00:00",
+          "stop_reason": "exited",
+          "stopped_at": "2026-11-21T14:10:15.270396+00:00",
+          "timeout_seconds": 900
+        }
+      },
+      {
+        "artifact_id": 14710346116,
+        "artifact_name": "native-static-acceptance-patchtrace-seeded-store-no-adjacent-pdb",
+        "member": "live-project/runs/72df067e-c3c6-4c7f-a5db-7e389f70535a/backend-execution.json",
+        "record": {
+          "contract": "patchtrace-backend-execution/1",
+          "elapsed_seconds": 124.78100000000006,
+          "last_observed_stage": "enhancing function/symbol details",
+          "last_output_age_seconds": 0.5150000000001,
+          "process_state": "stopped",
+          "returncode": 0,
+          "run_id": "72df067e-c3c6-4c7f-a5db-7e389f70535a",
+          "runtime_versions": {
+            "ghidra": "12.0.4",
+            "ghidriff": "1.0.0",
+            "jvm": "unverified",
+            "patchtrace": "0.1.0",
+            "pyghidra": "3.2.0",
+            "python": "3.12.10"
+          },
+          "started_at": "2026-11-21T14:01:54.600601+00:00",
+          "stop_reason": "exited",
+          "stopped_at": "2026-11-21T14:03:59.386680+00:00",
+          "timeout_seconds": 900
+        }
+      },
+      {
+        "artifact_id": 14709899284,
+        "artifact_name": "native-static-acceptance-patchtrace-clean",
+        "member": "live-project/runs/3ba0a24d-f48a-4eb3-8ff4-4653744cf118/backend-execution.json",
+        "record": {
+          "contract": "patchtrace-backend-execution/1",
+          "elapsed_seconds": 111.76599999999996,
+          "last_observed_stage": "enhancing function/symbol details",
+          "last_output_age_seconds": 0.5629999999999882,
+          "process_state": "stopped",
+          "returncode": 0,
+          "run_id": "3ba0a24d-f48a-4eb3-8ff4-4653744cf118",
+          "runtime_versions": {
+            "ghidra": "12.0.4",
+            "ghidriff": "1.0.0",
+            "jvm": "unverified",
+            "patchtrace": "0.1.0",
+            "pyghidra": "3.2.0",
+            "python": "3.12.10"
+          },
+          "started_at": "2026-11-21T14:05:38.461539+00:00",
+          "stop_reason": "exited",
+          "stopped_at": "2026-11-21T14:07:30.245160+00:00",
+          "timeout_seconds": 900
+        }
+      }
+    ],
+    "artifact_evidence": {
+      "count": 4,
+      "all_original_ZIP_lengths_API_SHA256_and_CRC_verified": true,
+      "artifacts": [
+        {
+          "artifact": {
+            "id": 14710376722,
+            "node_id": "MDg6QXJ0aWZhY3QxNDcxMDM3NjcyMg==",
+            "name": "native-static-acceptance-patchtrace-seeded-store",
+            "size_in_bytes": 96504,
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14710376722",
+            "archive_download_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14710376722/zip",
+            "expired": false,
+            "digest": "sha256:febc3f2fffba01608ce29ab940706b6acb33ae0ab9014e1f2d99c479d7188fdc",
+            "created_at": "2026-11-21T14:10:16Z",
+            "updated_at": "2026-11-21T14:10:16Z",
+            "expires_at": "2027-02-19T13:46:27Z",
+            "workflow_run": {
+              "id": 44910528348,
+              "repository_id": 1413730581,
+              "head_repository_id": 1413730581,
+              "head_branch": "codex/patchtrace-windows-native-recovery-20261121-837fe",
+              "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b"
+            }
+          },
+          "local_original_zip": "artifacts/14710376722/original.zip",
+          "local_zip_bytes": 96504,
+          "local_zip_sha256": "febc3f2fffba01608ce29ab940706b6acb33ae0ab9014e1f2d99c479d7188fdc",
+          "api_digest_verified": true,
+          "zip_crc_verified": true
+        },
+        {
+          "artifact": {
+            "id": 14710346116,
+            "node_id": "MDg6QXJ0aWZhY3QxNDcxMDM0NjExNg==",
+            "name": "native-static-acceptance-patchtrace-seeded-store-no-adjacent-pdb",
+            "size_in_bytes": 96577,
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14710346116",
+            "archive_download_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14710346116/zip",
+            "expired": false,
+            "digest": "sha256:2e1402b70363c55e0e3205af4efd5e0e80854f062cba0abeee4e219a42146006",
+            "created_at": "2026-11-21T14:04:01Z",
+            "updated_at": "2026-11-21T14:04:01Z",
+            "expires_at": "2027-02-19T13:46:27Z",
+            "workflow_run": {
+              "id": 44910528348,
+              "repository_id": 1413730581,
+              "head_repository_id": 1413730581,
+              "head_branch": "codex/patchtrace-windows-native-recovery-20261121-837fe",
+              "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b"
+            }
+          },
+          "local_original_zip": "artifacts/14710346116/original.zip",
+          "local_zip_bytes": 96577,
+          "local_zip_sha256": "2e1402b70363c55e0e3205af4efd5e0e80854f062cba0abeee4e219a42146006",
+          "api_digest_verified": true,
+          "zip_crc_verified": true
+        },
+        {
+          "artifact": {
+            "id": 14709899284,
+            "node_id": "MDg6QXJ0aWZhY3QxNDcwOTg5OTI4NA==",
+            "name": "native-static-acceptance-patchtrace-clean",
+            "size_in_bytes": 96768,
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14709899284",
+            "archive_download_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14709899284/zip",
+            "expired": false,
+            "digest": "sha256:01a66563a36daa904916ba40efa72791b787718b74a7395b7bf0ae01caee1630",
+            "created_at": "2026-11-21T14:07:31Z",
+            "updated_at": "2026-11-21T14:07:31Z",
+            "expires_at": "2027-02-19T13:46:27Z",
+            "workflow_run": {
+              "id": 44910528348,
+              "repository_id": 1413730581,
+              "head_repository_id": 1413730581,
+              "head_branch": "codex/patchtrace-windows-native-recovery-20261121-837fe",
+              "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b"
+            }
+          },
+          "local_original_zip": "artifacts/14709899284/original.zip",
+          "local_zip_bytes": 96768,
+          "local_zip_sha256": "01a66563a36daa904916ba40efa72791b787718b74a7395b7bf0ae01caee1630",
+          "api_digest_verified": true,
+          "zip_crc_verified": true
+        },
+        {
+          "artifact": {
+            "id": 14709594641,
+            "node_id": "MDg6QXJ0aWZhY3QxNDcwOTU5NDY0MQ==",
+            "name": "native-static-acceptance-raw-cache-hit",
+            "size_in_bytes": 2949,
+            "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14709594641",
+            "archive_download_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14709594641/zip",
+            "expired": false,
+            "digest": "sha256:c985671288bdedf5d2300e96be2ff41f7daf1adf6c7200d61fad9c23a87d5d50",
+            "created_at": "2026-11-21T14:04:42Z",
+            "updated_at": "2026-11-21T14:04:42Z",
+            "expires_at": "2027-02-19T13:46:27Z",
+            "workflow_run": {
+              "id": 44910528348,
+              "repository_id": 1413730581,
+              "head_repository_id": 1413730581,
+              "head_branch": "codex/patchtrace-windows-native-recovery-20261121-837fe",
+              "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b"
+            }
+          },
+          "local_original_zip": "artifacts/14709594641/original.zip",
+          "local_zip_bytes": 2949,
+          "local_zip_sha256": "c985671288bdedf5d2300e96be2ff41f7daf1adf6c7200d61fad9c23a87d5d50",
+          "api_digest_verified": true,
+          "zip_crc_verified": true
+        }
+      ]
+    },
+    "limitations": [
+      "Synthetic known-patch fixtures only; no general accuracy measurement.",
+      "The expected-negative control is not a fourth successful known-patch analysis.",
+      "Application raw-cache reuse is separate from original Ghidra tool-ZIP caching; its small diagnostic artifact reports equal raw hashes and explicit reuse but does not contain the raw output bytes themselves.",
+      "Application cache equality is within the hosted case, not independent-run determinism.",
+      "The three positive backend records report JVM version unverified. The separate application-cache diagnostic probes Java25.0.5.",
+      "This receipt establishes the five native contracts only; full QA, exact Windows27 PowerShell cases, windows-validate and other platform gates have their own source-specific receipts."
+    ],
+    "scope_closes_only_five_native_contracts": true,
+    "full_repository_qualification_claimed": false,
+    "source_mutation_dispatch_retry_cancel_or_local_native_execution_performed": false
+  },
+  "artifact_validation": {
+    "downloaded_original_artifacts": [
+      {
+        "artifact": {
+          "id": 14712204882,
+          "node_id": "MDg6QXJ0aWZhY3QxNDcxMjIwNDg4Mg==",
+          "name": "qa-Windows",
+          "size_in_bytes": 432010,
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14712204882",
+          "archive_download_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14712204882/zip",
+          "expired": false,
+          "digest": "sha256:c1ee82988625752b80f7a0d59bcaa541ea42dbd38d74aac36782275a288eec87",
+          "created_at": "2026-11-21T15:15:34Z",
+          "updated_at": "2026-11-21T15:15:34Z",
+          "expires_at": "2027-02-19T13:46:27Z",
+          "workflow_run": {
+            "id": 44910528283,
+            "repository_id": 1413730581,
+            "head_repository_id": 1413730581,
+            "head_branch": "codex/patchtrace-windows-native-recovery-20261121-837fe",
+            "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b"
+          }
+        },
+        "local_original_zip": "artifacts/14712204882/original.zip",
+        "local_bytes": 432010,
+        "local_sha256": "c1ee82988625752b80f7a0d59bcaa541ea42dbd38d74aac36782275a288eec87",
+        "API_size_and_digest_verified": true,
+        "ZIP_CRC_verified": true
+      },
+      {
+        "artifact": {
+          "id": 14711636807,
+          "node_id": "MDg6QXJ0aWZhY3QxNDcxMTYzNjgwNw==",
+          "name": "qa-Linux",
+          "size_in_bytes": 421252,
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14711636807",
+          "archive_download_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14711636807/zip",
+          "expired": false,
+          "digest": "sha256:0fcab9e5e7498770d98274c911c6424e8edc6859fc36fb8a9c757c22349483d1",
+          "created_at": "2026-11-21T14:44:00Z",
+          "updated_at": "2026-11-21T14:44:00Z",
+          "expires_at": "2027-02-19T13:46:27Z",
+          "workflow_run": {
+            "id": 44910528283,
+            "repository_id": 1413730581,
+            "head_repository_id": 1413730581,
+            "head_branch": "codex/patchtrace-windows-native-recovery-20261121-837fe",
+            "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b"
+          }
+        },
+        "local_original_zip": "artifacts/14711636807/original.zip",
+        "local_bytes": 421252,
+        "local_sha256": "0fcab9e5e7498770d98274c911c6424e8edc6859fc36fb8a9c757c22349483d1",
+        "API_size_and_digest_verified": true,
+        "ZIP_CRC_verified": true
+      },
+      {
+        "artifact": {
+          "id": 14710376722,
+          "node_id": "MDg6QXJ0aWZhY3QxNDcxMDM3NjcyMg==",
+          "name": "native-static-acceptance-patchtrace-seeded-store",
+          "size_in_bytes": 96504,
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14710376722",
+          "archive_download_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14710376722/zip",
+          "expired": false,
+          "digest": "sha256:febc3f2fffba01608ce29ab940706b6acb33ae0ab9014e1f2d99c479d7188fdc",
+          "created_at": "2026-11-21T14:10:16Z",
+          "updated_at": "2026-11-21T14:10:16Z",
+          "expires_at": "2027-02-19T13:46:27Z",
+          "workflow_run": {
+            "id": 44910528348,
+            "repository_id": 1413730581,
+            "head_repository_id": 1413730581,
+            "head_branch": "codex/patchtrace-windows-native-recovery-20261121-837fe",
+            "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b"
+          }
+        },
+        "local_original_zip": "artifacts/14710376722/original.zip",
+        "local_bytes": 96504,
+        "local_sha256": "febc3f2fffba01608ce29ab940706b6acb33ae0ab9014e1f2d99c479d7188fdc",
+        "API_size_and_digest_verified": true,
+        "ZIP_CRC_verified": true
+      },
+      {
+        "artifact": {
+          "id": 14710346116,
+          "node_id": "MDg6QXJ0aWZhY3QxNDcxMDM0NjExNg==",
+          "name": "native-static-acceptance-patchtrace-seeded-store-no-adjacent-pdb",
+          "size_in_bytes": 96577,
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14710346116",
+          "archive_download_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14710346116/zip",
+          "expired": false,
+          "digest": "sha256:2e1402b70363c55e0e3205af4efd5e0e80854f062cba0abeee4e219a42146006",
+          "created_at": "2026-11-21T14:04:01Z",
+          "updated_at": "2026-11-21T14:04:01Z",
+          "expires_at": "2027-02-19T13:46:27Z",
+          "workflow_run": {
+            "id": 44910528348,
+            "repository_id": 1413730581,
+            "head_repository_id": 1413730581,
+            "head_branch": "codex/patchtrace-windows-native-recovery-20261121-837fe",
+            "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b"
+          }
+        },
+        "local_original_zip": "artifacts/14710346116/original.zip",
+        "local_bytes": 96577,
+        "local_sha256": "2e1402b70363c55e0e3205af4efd5e0e80854f062cba0abeee4e219a42146006",
+        "API_size_and_digest_verified": true,
+        "ZIP_CRC_verified": true
+      },
+      {
+        "artifact": {
+          "id": 14709899284,
+          "node_id": "MDg6QXJ0aWZhY3QxNDcwOTg5OTI4NA==",
+          "name": "native-static-acceptance-patchtrace-clean",
+          "size_in_bytes": 96768,
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14709899284",
+          "archive_download_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14709899284/zip",
+          "expired": false,
+          "digest": "sha256:01a66563a36daa904916ba40efa72791b787718b74a7395b7bf0ae01caee1630",
+          "created_at": "2026-11-21T14:07:31Z",
+          "updated_at": "2026-11-21T14:07:31Z",
+          "expires_at": "2027-02-19T13:46:27Z",
+          "workflow_run": {
+            "id": 44910528348,
+            "repository_id": 1413730581,
+            "head_repository_id": 1413730581,
+            "head_branch": "codex/patchtrace-windows-native-recovery-20261121-837fe",
+            "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b"
+          }
+        },
+        "local_original_zip": "artifacts/14709899284/original.zip",
+        "local_bytes": 96768,
+        "local_sha256": "01a66563a36daa904916ba40efa72791b787718b74a7395b7bf0ae01caee1630",
+        "API_size_and_digest_verified": true,
+        "ZIP_CRC_verified": true
+      },
+      {
+        "artifact": {
+          "id": 14709594641,
+          "node_id": "MDg6QXJ0aWZhY3QxNDcwOTU5NDY0MQ==",
+          "name": "native-static-acceptance-raw-cache-hit",
+          "size_in_bytes": 2949,
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14709594641",
+          "archive_download_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14709594641/zip",
+          "expired": false,
+          "digest": "sha256:c985671288bdedf5d2300e96be2ff41f7daf1adf6c7200d61fad9c23a87d5d50",
+          "created_at": "2026-11-21T14:04:42Z",
+          "updated_at": "2026-11-21T14:04:42Z",
+          "expires_at": "2027-02-19T13:46:27Z",
+          "workflow_run": {
+            "id": 44910528348,
+            "repository_id": 1413730581,
+            "head_repository_id": 1413730581,
+            "head_branch": "codex/patchtrace-windows-native-recovery-20261121-837fe",
+            "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b"
+          }
+        },
+        "local_original_zip": "artifacts/14709594641/original.zip",
+        "local_bytes": 2949,
+        "local_sha256": "c985671288bdedf5d2300e96be2ff41f7daf1adf6c7200d61fad9c23a87d5d50",
+        "API_size_and_digest_verified": true,
+        "ZIP_CRC_verified": true
+      }
+    ],
+    "large_product_metadata_and_hosted_receipts": [
+      {
+        "id": 14712433241,
+        "node_id": "MDg6QXJ0aWZhY3QxNDcxMjQzMzI0MQ==",
+        "name": "PatchTrace-linux-x86_64",
+        "size_in_bytes": 169987711,
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14712433241",
+        "archive_download_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14712433241/zip",
+        "expired": false,
+        "digest": "sha256:daa3ef2d31f8c1273519ee0ddb9630541e23e31012058677aabb3ca7cdfe6db4",
+        "created_at": "2026-11-21T15:17:21Z",
+        "updated_at": "2026-11-21T15:17:21Z",
+        "expires_at": "2027-02-19T13:46:27Z",
+        "workflow_run": {
+          "id": 44910528283,
+          "repository_id": 1413730581,
+          "head_repository_id": 1413730581,
+          "head_branch": "codex/patchtrace-windows-native-recovery-20261121-837fe",
+          "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b"
+        },
+        "product_bytes_downloaded_locally": false,
+        "hosted_producer_and_consumer_digest_validation_retained": true
+      },
+      {
+        "id": 14712423138,
+        "node_id": "MDg6QXJ0aWZhY3QxNDcxMjQyMzEzOA==",
+        "name": "PatchTrace-windows-x64",
+        "size_in_bytes": 282321110,
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14712423138",
+        "archive_download_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14712423138/zip",
+        "expired": false,
+        "digest": "sha256:0de3cf9aeeb65d1d885153e2bf79f7a0c08b32009aa82e56093996f22e15309d",
+        "created_at": "2026-11-21T15:15:44Z",
+        "updated_at": "2026-11-21T15:15:44Z",
+        "expires_at": "2027-02-19T13:46:27Z",
+        "workflow_run": {
+          "id": 44910528283,
+          "repository_id": 1413730581,
+          "head_repository_id": 1413730581,
+          "head_branch": "codex/patchtrace-windows-native-recovery-20261121-837fe",
+          "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b"
+        },
+        "product_bytes_downloaded_locally": false,
+        "hosted_producer_and_consumer_digest_validation_retained": true
+      }
+    ],
+    "no_large_product_binaries_downloaded_locally": true,
+    "original_Ghidra_tool_ZIP_scope": "Its pinned digest and fresh extraction are proven by actual hosted logs; the large original tool ZIP is not copied into this evidence archive."
+  },
+  "open_gates": {
+    "actual_expected_failures": [
+      {
+        "platform": "Linux",
+        "artifact_id": 14711636807,
+        "id": "tests.test_codex5_command_audit_20261121::test_all_explicit_workflow_pip_installs_are_protected",
+        "type": "pytest.xfail",
+        "message": "CODEX-5: repository-wide hashed wheel closure still open"
+      },
+      {
+        "platform": "Linux",
+        "artifact_id": 14711636807,
+        "id": "tests.test_codex_pkg_workflows::test_pip_downloads_require_hashes",
+        "type": "pytest.xfail",
+        "message": "CODEX-5"
+      },
+      {
+        "platform": "Linux",
+        "artifact_id": 14711636807,
+        "id": "tests.test_tier_w_symbols::test_live_llvm_pdbutil_agrees_with_the_stdlib_reader",
+        "type": "pytest.xfail",
+        "message": "BLOCKED: llvm-pdbutil is not installed on this runner"
+      },
+      {
+        "platform": "Linux",
+        "artifact_id": 14711636807,
+        "id": "tests.test_tier_w_symbols::test_live_ghidra_export_runs_or_records_blocked",
+        "type": "pytest.xfail",
+        "message": "BLOCKED: no --ghidra-dir given"
+      },
+      {
+        "platform": "Windows",
+        "artifact_id": 14712204882,
+        "id": "tests.test_codex5_command_audit_20261121::test_all_explicit_workflow_pip_installs_are_protected",
+        "type": "pytest.xfail",
+        "message": "CODEX-5: repository-wide hashed wheel closure still open"
+      },
+      {
+        "platform": "Windows",
+        "artifact_id": 14712204882,
+        "id": "tests.test_codex_pkg_workflows::test_pip_downloads_require_hashes",
+        "type": "pytest.xfail",
+        "message": "CODEX-5"
+      },
+      {
+        "platform": "Windows",
+        "artifact_id": 14712204882,
+        "id": "tests.test_tier_w_symbols::test_live_ghidra_export_runs_or_records_blocked",
+        "type": "pytest.xfail",
+        "message": "BLOCKED: no --ghidra-dir given"
+      }
+    ],
+    "CODEX5_repository_wide_hashed_wheel_closure_open": true,
+    "TierW_live_Ghidra_export_missing_directory_on_both_platforms": true,
+    "TierW_live_llvm_pdbutil_missing_on_Linux": true,
+    "native_limits": [
+      "Synthetic known-patch fixtures only; no general accuracy measurement.",
+      "The expected-negative control is not a fourth successful known-patch analysis.",
+      "Application raw-cache reuse is separate from original Ghidra tool-ZIP caching; its small diagnostic artifact reports equal raw hashes and explicit reuse but does not contain the raw output bytes themselves.",
+      "Application cache equality is within the hosted case, not independent-run determinism.",
+      "The three positive backend records report JVM version unverified. The separate application-cache diagnostic probes Java25.0.5.",
+      "This receipt establishes the five native contracts only; full QA, exact Windows27 PowerShell cases, windows-validate and other platform gates have their own source-specific receipts."
+    ],
+    "post_merge_publication_holds": "Pending an actual guarded main merge and its automatic source-specific workflows; not preclaimed here."
+  },
+  "source_applicability": {
+    "actual_automatic_runs": [
+      44910528283,
+      44910528348
+    ],
+    "both_events": "pull_request",
+    "runtime_and_workflow_diff_receipt": "source-tree-diff.json",
+    "no_untriggered_native_lane_acceptance_claimed": true,
+    "no_ancestor_result_transfer": true
+  },
+  "prior_evidence": {
+    "scope": "Historical records remain source-specific. No ancestor acceptance is transferred to d60. Original PR349 Linux and Windows registry failures and all superseded outcomes are preserved by the copied predecessor index.",
+    "original_failure_index": {
+      "file": "predecessor-evidence-index.json",
+      "sha256": "43427e31887836fa84b9b5a24377b5471a280a8a8dc2969e25e9aaff2face64a"
+    },
+    "archives": [
+      {
+        "source": "ae69 primary qualification",
+        "file": "../final-ae69-qualification/final-ae69-evidence.zip",
+        "sha256": "8eb127426bcf216b840bc10d5243fccdb8964d4ba17bf53b6282920406b57859"
+      },
+      {
+        "source": "main902 postmerge, including original Pages404",
+        "file": "../main-9023761-publication-holds/main-9023761-postmerge-evidence.zip",
+        "sha256": "74d7390d7ded8087bc6869bab34c997e16e63a4a77d5b7f75d8291da0c3052bf"
+      },
+      {
+        "source": "PR351 d667 qualification",
+        "file": "../final-d667-qualification/final-d667-evidence.zip",
+        "sha256": "a4829fc624a1b9b84313801b41b85782d40fd897290195ace45448918c9dbfb6"
+      },
+      {
+        "source": "main3a completed postmerge qualification and publication holds",
+        "file": "../main-3a16290-publication-holds/main-3a16290-postmerge-evidence.zip",
+        "sha256": "14180b596d46a22319bd07c9afc79bac7bcbc5e09819f4097f074da140d1d0a1"
+      },
+      {
+        "source": "4202 bounded original-ZIP cold/warm checkpoint",
+        "file": "../native-4202-cache-mode-snapshot/native-4202-cache-mode-snapshot.zip",
+        "sha256": "71657059f356fe7996121b0bd9dbb999c3aaddeba00f9d7fe09cddff3a409623"
+      },
+      {
+        "source": "4202 subsequent five-case native completion delta",
+        "file": "../native-4202-code-qualification/completion-delta-native-4202.zip",
+        "sha256": "5a1dbe04233b04e3b60373ac0953ff077c5885e5e8c107958c22c04d1e4c5a7a"
+      }
+    ]
+  },
+  "independent_bounded_reviews": [
+    {
+      "file": "independent-reviews/native-audit.json",
+      "sha256": "4c72cac167dd3928501501ee3e3b0dd794df1e602d3f57c043b5de308186d257",
+      "assertions": 175,
+      "failures": 0,
+      "scope": "Five native cases and Windows27 source/gate plan; not full repository qualification at that cut."
+    },
+    {
+      "file": "independent-reviews/qa-delta-review.zip",
+      "sha256": "4012cd0e22af25bf26dc43f36b21470e2bc181adf13a0a467df4a5faeeb63206",
+      "assertions": 96,
+      "failures": 0,
+      "scope": "Completed full/JUnit/Qt/Windows27/producer/consumer/Linux package evidence; final Ubuntu smokes, release skip and this archive reserved for the final review delta."
+    }
+  ],
+  "archive_policy": {
+    "all_current_source_actual_logs_and_small_original_QA_native_artifact_ZIPs_included": true,
+    "large_product_binaries_excluded_with_downloadable_ID_URL_and_digest_receipts": true,
+    "earlier_bounded_records_preserved_unchanged": true,
+    "initial_README_is_an_earlier_observation_cut": "FINAL_README.md and final-qualification.json are the definitive completion records.",
+    "source_dispatch_retry_cancel_ref_merge_or_local_native_execution_performed": false
+  }
+}

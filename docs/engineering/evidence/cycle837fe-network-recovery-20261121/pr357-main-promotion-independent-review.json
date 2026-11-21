@@ -1,0 +1,432 @@
+{
+  "schema": "patchtrace/pr357-main-promotion-independent-review/1",
+  "completed_at": "2026-11-21T15:46:22.666223+00:00",
+  "verdict": "clear_promotion_with_separate_new_main_qualification",
+  "author_independence": "Reviewer did not author root PR357 promotion; prior pilot/Sigstore author work is outside this bounded review.",
+  "actual_main": "ea16019601486c831941f9bc1a7ba5862a170317",
+  "ordered_parents": [
+    "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+    "d60ac40daf767fe6a93ae152feb21235f6e75e0b"
+  ],
+  "tree": "4a07cd88ded407bef30a8aeb81961e4041822dc2",
+  "actual_raw_commit_sha256": "0b35a56ca2017f4971a0300a66c31b43cf120e0130c62071818b2e834c7bda34",
+  "check_count": 81,
+  "failure_count": 0,
+  "checks": [
+    {
+      "check": "promotion archive exact size and SHA256",
+      "passed": true
+    },
+    {
+      "check": "promotion manifest exact SHA256",
+      "passed": true
+    },
+    {
+      "check": "promotion archive has exactly 12 unique members and valid CRC",
+      "passed": true
+    },
+    {
+      "check": "promotion member inventory equals manifest plus manifest",
+      "passed": true
+    },
+    {
+      "check": "archived manifest equals sealed filesystem manifest",
+      "passed": true
+    },
+    {
+      "check": "promotion member active-task-checkpoint.json",
+      "passed": true
+    },
+    {
+      "check": "promotion member actual-main-proof.json",
+      "passed": true
+    },
+    {
+      "check": "promotion member actual-merge-commit.txt",
+      "passed": true
+    },
+    {
+      "check": "promotion member body-update-request.json",
+      "passed": true
+    },
+    {
+      "check": "promotion member body-update-verification.json",
+      "passed": true
+    },
+    {
+      "check": "promotion member continuation-update.json",
+      "passed": true
+    },
+    {
+      "check": "promotion member merge-request.json",
+      "passed": true
+    },
+    {
+      "check": "promotion member merge-result.json",
+      "passed": true
+    },
+    {
+      "check": "promotion member postmerge-api.json",
+      "passed": true
+    },
+    {
+      "check": "promotion member premerge-guard.json",
+      "passed": true
+    },
+    {
+      "check": "promotion member seal_pr357_main_promotion.py",
+      "passed": true
+    },
+    {
+      "check": "actual main proof exact SHA256",
+      "passed": true
+    },
+    {
+      "check": "actual raw Git object hashes to named commit",
+      "passed": true
+    },
+    {
+      "check": "actual raw Git object equals sealed fetched bytes",
+      "passed": true
+    },
+    {
+      "check": "actual commit ordered parents",
+      "passed": true,
+      "detail": [
+        "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+        "d60ac40daf767fe6a93ae152feb21235f6e75e0b"
+      ]
+    },
+    {
+      "check": "actual commit tree",
+      "passed": true
+    },
+    {
+      "check": "retained synthetic identity is exact qualified synthetic",
+      "passed": true
+    },
+    {
+      "check": "actual, qualified source and retained synthetic complete tree identities match",
+      "passed": true,
+      "detail": {
+        "trees": {
+          "ea16019601486c831941f9bc1a7ba5862a170317": "4a07cd88ded407bef30a8aeb81961e4041822dc2",
+          "d60ac40daf767fe6a93ae152feb21235f6e75e0b": "4a07cd88ded407bef30a8aeb81961e4041822dc2",
+          "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57": "4a07cd88ded407bef30a8aeb81961e4041822dc2"
+        },
+        "actual_and_source_basis": "fetched local Git objects",
+        "synthetic_basis": "immutable final-qualification.json, independently hash-verified below"
+      }
+    },
+    {
+      "check": "complete qualified source versus actual main diff empty",
+      "passed": true
+    },
+    {
+      "check": "actual title retains [no release]",
+      "passed": true
+    },
+    {
+      "check": "actual body retains [no release]",
+      "passed": true
+    },
+    {
+      "check": "actual title retains [no deploy]",
+      "passed": true
+    },
+    {
+      "check": "actual body retains [no deploy]",
+      "passed": true
+    },
+    {
+      "check": "merge request exact repository and PR357",
+      "passed": true
+    },
+    {
+      "check": "merge request guarded exact qualified head and merge method",
+      "passed": true
+    },
+    {
+      "check": "actual merge title/body equal requested content",
+      "passed": true
+    },
+    {
+      "check": "merge response succeeded with actual object",
+      "passed": true
+    },
+    {
+      "check": "postmerge API confirms closed merged PR357 and unchanged head",
+      "passed": true
+    },
+    {
+      "check": "postmerge main ref and commit identify actual object",
+      "passed": true
+    },
+    {
+      "check": "postmerge API tree/parents/message equal raw Git object",
+      "passed": true
+    },
+    {
+      "check": "actual commit timestamp equals server merged_at",
+      "passed": true
+    },
+    {
+      "check": "fresh premerge PR open, non-draft, unmerged and cleanly mergeable",
+      "passed": true
+    },
+    {
+      "check": "fresh guard exact head and previous main",
+      "passed": true
+    },
+    {
+      "check": "fresh guard tested synthetic merge identity",
+      "passed": true
+    },
+    {
+      "check": "fresh reviews/comments/inline/rulesets contain no blockers",
+      "passed": true
+    },
+    {
+      "check": "no pending reviewer/team requests in raw guard",
+      "passed": true
+    },
+    {
+      "check": "raw branch has no additional required status contexts",
+      "passed": true
+    },
+    {
+      "check": "raw guard complete check inventory exactly 18",
+      "passed": true
+    },
+    {
+      "check": "all 18 raw checks are completed on exact d60",
+      "passed": true
+    },
+    {
+      "check": "raw checks contain 16 successes and exactly two publication skips",
+      "passed": true
+    },
+    {
+      "check": "combined status and every returned status succeed on d60",
+      "passed": true
+    },
+    {
+      "check": "all checks completed before fresh guard and merge",
+      "passed": true
+    },
+    {
+      "check": "merge response and postmerge read follow actual merge",
+      "passed": true
+    },
+    {
+      "check": "old PR body equals both fresh guard and pre-update postmerge value",
+      "passed": true
+    },
+    {
+      "check": "PR body request is exact prefix plus complete old suffix",
+      "passed": true
+    },
+    {
+      "check": "body-update response and fresh verification equal exact request",
+      "passed": true
+    },
+    {
+      "check": "actual old PR body suffix preserved byte-for-byte as UTF8",
+      "passed": true
+    },
+    {
+      "check": "body lengths and source/result identities are correct",
+      "passed": true
+    },
+    {
+      "check": "immutable referenced archive evidence/final-d60-qualification/final-d60-evidence.zip",
+      "passed": true
+    },
+    {
+      "check": "immutable referenced archive evidence/final-d60-evidence-audit/completion-delta-review.zip",
+      "passed": true
+    },
+    {
+      "check": "final qualification JSON exact referenced hash",
+      "passed": true
+    },
+    {
+      "check": "287-check independent delta exact referenced hash",
+      "passed": true
+    },
+    {
+      "check": "final qualification is exact source/synthetic tree with documented open gates",
+      "passed": true
+    },
+    {
+      "check": "immutable independent delta has 287 checks and zero failures",
+      "passed": true
+    },
+    {
+      "check": "fresh guard jobs match immutable qualified job identities and outcomes",
+      "passed": true
+    },
+    {
+      "check": "referenced run identity/attempt/checkout claims are exact",
+      "passed": true
+    },
+    {
+      "check": "qualification retains 18 total/16 executed/2 intentional skips and seven xfail records",
+      "passed": true
+    },
+    {
+      "check": "Linux promoted full-suite counts match qualified record",
+      "passed": true
+    },
+    {
+      "check": "Windows promoted full-suite counts match qualified record",
+      "passed": true
+    },
+    {
+      "check": "promotion references exact qualification and independent delta hashes",
+      "passed": true
+    },
+    {
+      "check": "actual-main qualification remains explicitly separate and pending",
+      "passed": true
+    },
+    {
+      "check": "no release/deployment or broader lane closure claim introduced",
+      "passed": true
+    },
+    {
+      "check": "continuation original update succeeded for same automation",
+      "passed": true
+    },
+    {
+      "check": "complete prior continuation prompt is exact suffix of original update",
+      "passed": true
+    },
+    {
+      "check": "raw companion prefix equals sealed promotion prefix",
+      "passed": true
+    },
+    {
+      "check": "continuation character counts are independently exact",
+      "passed": true
+    },
+    {
+      "check": "later live continuation prompt equals complete original after response",
+      "passed": true
+    },
+    {
+      "check": "hourly schedule exactly preserved before/update/live",
+      "passed": true
+    },
+    {
+      "check": "continuation title/enabled state preserved",
+      "passed": true
+    },
+    {
+      "check": "timing mode, timezone, conversation and environment selection preserved",
+      "passed": true
+    },
+    {
+      "check": "recorded observer history retained exactly in later live response",
+      "passed": true
+    },
+    {
+      "check": "actual original update time is authoritative across retained records",
+      "passed": true
+    },
+    {
+      "check": "later metadata timestamp is retained without assuming its cause",
+      "passed": true
+    },
+    {
+      "check": "prepared 15:36 prefix label is explicitly distinguished in checkpoint",
+      "passed": true
+    },
+    {
+      "check": "continuation keeps observer-only root ownership and separate new-main qualification",
+      "passed": true
+    },
+    {
+      "check": "all 179 observed parent files remain byte-identical",
+      "passed": true
+    }
+  ],
+  "failures": [],
+  "guard_retrieved_at": "2026-11-21T15:31:52.776Z",
+  "actual_merge_at": "2026-11-21T15:32:22Z",
+  "guard_age_at_merge_seconds": 29.224,
+  "raw_checks": {
+    "total": 18,
+    "successful_executed": 16,
+    "publication_skips": [
+      "release",
+      "release-gate"
+    ]
+  },
+  "pr_body_preservation": {
+    "prefix_characters": 2087,
+    "prior_characters": 4874,
+    "actual_characters": 6961,
+    "prior_sha256_utf8": "ca30668e24e2846316cb8226ba8da4a607c981fa6dac3fdcb3d026fe2d3c934b",
+    "actual_sha256_utf8": "ab798f65468731c09cd4a8c23da00a43c324f304dbd597e5fd437a27e55a5520",
+    "exact_prior_suffix": true
+  },
+  "references_not_duplicated": [
+    {
+      "path": "evidence/final-d60-qualification/final-d60-evidence.zip",
+      "sha256": "0b70d118ec79e9a88230eb7dd404bc7ebf5080f78c6d2c15614dccdb493a6b08",
+      "bytes": 3038215,
+      "members": 145,
+      "copied_into_companion": false
+    },
+    {
+      "path": "evidence/final-d60-evidence-audit/completion-delta-review.zip",
+      "sha256": "884b388584e1f5b840f6bdeb9242442eeac302c1555749420b28464be5b1bcad",
+      "bytes": 12608,
+      "members": 4,
+      "copied_into_companion": false
+    }
+  ],
+  "qualification_json_sha256": "a6f59daaa6d1dc3b495705ec26c6f392a2a4a383b846d20f7a4ccc8c397ea5f1",
+  "independent287_json_sha256": "653b4f4c42ade27077153a948128517902bdef89861e5153ac1738eecc96c58c",
+  "continuation": {
+    "id": "Automation_8671977e1a1081919d2b8650cf5a1c1c",
+    "before_characters": 63965,
+    "prefix_characters": 4365,
+    "after_characters": 68330,
+    "before_prompt_sha256_utf8": "f32faf5d7eed78c017a85264670dfcbe8f874ab2c6de973d460ff5c903c47939",
+    "after_and_live_prompt_sha256_utf8": "9aae88a8b60ab1a7238b6806703f888c4e091ed9757af5bd65e1c50ad7a9fb38",
+    "prepared_prefix_label": "2026-11-21 15:36 UTC",
+    "original_server_update_at": "2026-11-21T15:34:47.917190+00:00",
+    "later_live_metadata_updated_at": "2026-11-21T15:35:09.386592+00:00",
+    "later_timestamp_cause": "not inferred",
+    "exact_prior_suffix_and_live_after_equality": true,
+    "schedule_and_recorded_history_preserved": true,
+    "original_raw_copies": [
+      {
+        "original": "evidence/pr357-main-promotion-continuation-raw/after-update-structured-response.json",
+        "copy": "original-continuation-raw/after-update-structured-response.json",
+        "sha256": "f65dc4b34e2b397bbe8ac73e2d45fcbd67604a537d568361e83bb8a371a76fa0"
+      },
+      {
+        "original": "evidence/pr357-main-promotion-continuation-raw/before-automation-snapshot.json",
+        "copy": "original-continuation-raw/before-automation-snapshot.json",
+        "sha256": "2f87713c69f91ac9ab52bc8c022d664dfda748673e72d1a566177f88ce056d84"
+      },
+      {
+        "original": "evidence/pr357-main-promotion-continuation-raw/prompt-preservation.json",
+        "copy": "original-continuation-raw/prompt-preservation.json",
+        "sha256": "bfe47ec9783438a1f14b39e387a82f12dca6055de82fec24870160af8074445c"
+      }
+    ]
+  },
+  "parent_files_preserved": 179,
+  "limits": [
+    "Qualification references remain exact d60/synthetic254d evidence.",
+    "New actual-main QA/Pages is a separate stream; no success is inferred here.",
+    "Seven inherited xfail records and documented broad gates remain open.",
+    "No release/deployment or other-lane acceptance is claimed.",
+    "This task performed static evidence reads and one read-only automation peek; no tests, CI, source/ref/schedule writes or person-directed messages.",
+    "The initial audit tried to resolve synthetic254d in this local object store and received exit128; the corrected audit references its immutable qualified identity instead, without fetching or changing refs."
+  ]
+}

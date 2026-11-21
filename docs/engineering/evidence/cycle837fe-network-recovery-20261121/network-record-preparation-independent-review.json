@@ -1,0 +1,69 @@
+{
+  "schema": "patchtrace/network-record-preparation-independent/1",
+  "completed_at": "2026-11-21T16:07:49.818170+00:00",
+  "verdict": "CLEAR_PREPARATION_ONLY",
+  "source": "9610919d29010d53cf00af3b7c38207ffd84f945",
+  "tree": "3d5e2965ef26235610a08fd8378cac078c6bd9a0",
+  "remote_equivalent": "5c07bfd1a41b399fee86545206ed1c5e9aec0c26",
+  "actual_prior_main": "ea16019601486c831941f9bc1a7ba5862a170317",
+  "helper_sha256": "65f53340375845bf4d473a7343a97f908448dbbf2aacc7f0e37b7569b2ecad05",
+  "template_sha256": "6d505b98e62f490ea6380182d9502d64892f6f10de50e7045f2431d70f5afaba",
+  "context_builder_sha256": "03a4eac231c1a493db8e3f03792db628482a033483a050d9ea51d0d10a037ded",
+  "blockers": [],
+  "final_records_approved": false,
+  "mechanical_checks": 235,
+  "failed_mechanical_checks": 0,
+  "new_product_tests": 0,
+  "counts": {
+    "actual_mapped_tooling_objects": 7,
+    "original_commits_above_d60": 38,
+    "changed_paths_above_d60": 29,
+    "tooling_paths_since96": 11,
+    "unchanged_entries_since96": 4825,
+    "old_ledger_tasks": 116,
+    "old_ledger_notes": 46,
+    "root_passed": 654,
+    "root_strict_xfailed": 2,
+    "root_unique_cases": 656,
+    "root_selectors": 26,
+    "detached_helper_controls": 55
+  },
+  "findings_resolved": [
+    {
+      "id": "PROMOTION_LITERAL_ID",
+      "original_helper_sha256": "99fe505937d56059edc0c53b6c50b96009d7847ca2179fdc53180f15701cc797",
+      "observed": "Extracted original guard accepted actual merge revision expression ea160...^0.",
+      "resolution": "Corrected helper requires lowercase full40SHA and actual typecommit before parents/tree/markers verification.",
+      "original_failure_retained": "original-helper-guard-controls.json"
+    },
+    {
+      "id": "MANDATORY_SIGSTORE_REVIEW",
+      "original_helper_sha256": "99fe505937d56059edc0c53b6c50b96009d7847ca2179fdc53180f15701cc797",
+      "observed": "Original optional guard accepted absent Sigstore fields.",
+      "resolution": "Corrected helper requires exact961/tree3d current source and mandatory matching clear Sigstore review; real Git tree verified.",
+      "original_failure_retained": "original-helper-guard-controls.json"
+    },
+    {
+      "id": "WINDOWS_CURRENT_CHECKPOINT",
+      "observed": "Preserved old Windows object still carried TESTING/pending after actual357; required explicit current reconciliation.",
+      "resolution": "Corrected helper requires whole-before equality, qualifiedd60 currentMERGED/source/tree and deepstores full old object; builder supplies actual qualification. Actual assembled output remains to be checked."
+    }
+  ],
+  "evidence": [
+    "preparation-proof.json",
+    "source-path-proof.json",
+    "checks.json",
+    "corrected-helper-controls.json",
+    "template-content-review.json",
+    "original-helper-guard-controls.json"
+  ],
+  "limits": [
+    "Review actual generated context/report/prefixes/ledger/manifests and output allowlist after helper application.",
+    "Verify intentional task updates and Windows checkpoint current qualification against actual357 proof, all whole before snapshots and original116/46 preservation.",
+    "Resolve all report placeholders only with exact sealed facts, verify every static byte and nested evidence link.",
+    "Review actual final record commit and remote equivalent tree/ordered ancestry before guarded publication; final record-bearing hosted qualification remains required.",
+    "No new product/native/full executions, signature operations, environment rebind/install, CI/ref/PR changes, or final-record application by reviewer.",
+    "Remote object checks inspect fetched actual immutable Git objects; they do not assert a fresh remote ref inventory or publication.",
+    "Preparation content still contains six deliberate placeholder occurrences; no unwritten record or future hosted/main outcome is approved."
+  ]
+}

@@ -1,0 +1,127 @@
+{
+  "schema": "patchtrace/network-code-object-mapping/1",
+  "source": "96baaee20f390a3f2a5629de3764d32323bb80e5",
+  "tree": "4343dce701f20d3b6bc591297d1a887bb05cc461",
+  "commits": [
+    {
+      "local": "aa01a50844fed15823c6e03491ce3bc671a5ecfc",
+      "remote": "5e4f9090b0a5c1c8a1aa2bfe4bb706356cfdaefb",
+      "tree": "a3f4588f3a21cb257e4d34dd495114a7658b7a08",
+      "ordered_remote_parents": [
+        "e3928ab8c8e2deee7bb01b0f857205f68a1abda2"
+      ],
+      "ordered_local_parents": [
+        "e3928ab8c8e2deee7bb01b0f857205f68a1abda2"
+      ]
+    },
+    {
+      "local": "17962c2403a82a67dea256b163a4a44255948682",
+      "remote": "0fb401a0c86e92b13eaa49c023f6f8d77a4c78d5",
+      "tree": "202d6e32048bd2b6d2fa2d080c13834b8df7dbdf",
+      "ordered_remote_parents": [
+        "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+        "1d475d926314ae116442bfe2b7cd268ad95ea12c"
+      ],
+      "ordered_local_parents": [
+        "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+        "1d475d926314ae116442bfe2b7cd268ad95ea12c"
+      ]
+    },
+    {
+      "local": "8919d8d9ccdc6df8159bfbe6e8daf677a663df1c",
+      "remote": "fb2a3bc857532fdfbcec809c83d7c525e9577de6",
+      "tree": "5b28c2079d1fd3c35240f51aad2cb64105de788d",
+      "ordered_remote_parents": [
+        "0fb401a0c86e92b13eaa49c023f6f8d77a4c78d5",
+        "5e4f9090b0a5c1c8a1aa2bfe4bb706356cfdaefb"
+      ],
+      "ordered_local_parents": [
+        "17962c2403a82a67dea256b163a4a44255948682",
+        "aa01a50844fed15823c6e03491ce3bc671a5ecfc"
+      ]
+    },
+    {
+      "local": "29e9286b24323c905f4b9b847a606ce9102b0e06",
+      "remote": "d0e7aacb71554a83a5af9706d34b95988c6ed589",
+      "tree": "b87e8052c2f5830fa92b414e94d23daaa73dcba3",
+      "ordered_remote_parents": [
+        "fb2a3bc857532fdfbcec809c83d7c525e9577de6",
+        "d0a4bdf439775999340ea760d96a087e032ee6dd"
+      ],
+      "ordered_local_parents": [
+        "8919d8d9ccdc6df8159bfbe6e8daf677a663df1c",
+        "d0a4bdf439775999340ea760d96a087e032ee6dd"
+      ]
+    },
+    {
+      "local": "8fff682f720af634a05939f3e94a9ca273243cb3",
+      "remote": "37a1df96c9b8d84c51aaf965725b4ea2beab9199",
+      "tree": "d440d1a7cdb550ab1f989ebd73d9cd000208a7cd",
+      "ordered_remote_parents": [
+        "d0e7aacb71554a83a5af9706d34b95988c6ed589",
+        "e2127864cb481026db0157082d688b8a36595e3b"
+      ],
+      "ordered_local_parents": [
+        "29e9286b24323c905f4b9b847a606ce9102b0e06",
+        "e2127864cb481026db0157082d688b8a36595e3b"
+      ]
+    },
+    {
+      "local": "96baaee20f390a3f2a5629de3764d32323bb80e5",
+      "remote": "00da7e1d5d13f16acba6f6eb54d00f0167e5c62e",
+      "tree": "4343dce701f20d3b6bc591297d1a887bb05cc461",
+      "ordered_remote_parents": [
+        "37a1df96c9b8d84c51aaf965725b4ea2beab9199"
+      ],
+      "ordered_local_parents": [
+        "8fff682f720af634a05939f3e94a9ca273243cb3"
+      ]
+    }
+  ],
+  "uploaded_blobs": [
+    {
+      "sha": "55a59fdef3db0dc74e5233a1f6b7ed4a6a30919e",
+      "bytes": 52656,
+      "sha256": "9123f03f7cba550702334633a3f77d93b6d8dea47e96cc30710a68073992af9d"
+    },
+    {
+      "sha": "3ac8626e625302b544e345042950325533e38689",
+      "bytes": 21821,
+      "sha256": "ded73f8a9bc4ea5a298883b4dc551e9497dc6986616fb089568237f7df9787f4"
+    },
+    {
+      "sha": "8211fd65f1c28c2f19212ed0eb5788b241aac37c",
+      "bytes": 17161,
+      "sha256": "7f431663b250f6349fafefdcbc31ce923a041f3799b74b820827d537f1fcbc9b"
+    },
+    {
+      "sha": "abdc302ed32a7654100b403058ad0a0b7a790004",
+      "bytes": 432602,
+      "sha256": "dfc19dc2a9fe0b107b67316c67be7add37e4fe13ce37f4a5efc58a03b7815901"
+    },
+    {
+      "sha": "c3f8ee15e1767e5f1ca26109a38216cdc03d6f5d",
+      "bytes": 265737,
+      "sha256": "ec581a3ef0f90f5c7dc3889b631fbceaec5162787490027b30c3ec71a57033b6"
+    },
+    {
+      "sha": "8857c12dc18421e8b40e7ffb52c7966d07c6480e",
+      "bytes": 433733,
+      "sha256": "79ba4a57246ba455c92384111d89e5e7c354c520de56faac84eaad18eb2c7751"
+    },
+    {
+      "sha": "f62d90297603a78d29b86c880708180456471653",
+      "bytes": 266629,
+      "sha256": "0b7c94fcd53650382cce8289481659c5080487e459bc79852cc8ac8247631ec5"
+    },
+    {
+      "sha": "4e091db39b543be57d0cc747d23bd335bb6ae8e5",
+      "bytes": 5437,
+      "sha256": "8d545080c91c6c122f5d6588b9e9b08cc86766c54714653275126862c0e546e8"
+    }
+  ],
+  "remote_objects_created": true,
+  "ref_moved": false,
+  "pr_created": false,
+  "actual_git_verification": "PENDING"
+}

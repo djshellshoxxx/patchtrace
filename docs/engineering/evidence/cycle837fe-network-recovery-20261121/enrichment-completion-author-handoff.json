@@ -1,0 +1,106 @@
+{
+  "schema": "patchtrace/bounded-repair-handoff/1",
+  "scope": "PR352 completed-attempt deadline/cancellation publication only",
+  "status": "SOURCE_FROZEN_FOR_INDEPENDENT_REVIEW",
+  "head": "aa01a50844fed15823c6e03491ce3bc671a5ecfc",
+  "tree": "a3f4588f3a21cb257e4d34dd495114a7658b7a08",
+  "parent": "e3928ab8c8e2deee7bb01b0f857205f68a1abda2",
+  "branch": "codex/patchtrace-enrichment-completion-deadline-20261121-837fe",
+  "worktree": "/workspace/scratch/837fe19aae3a/repair-enrichment-completion-deadline",
+  "changed_paths": [
+    "docs/specs/enrichment-hardening-backlog.md",
+    "src/patchtrace/enrichment/intelligence.py",
+    "tests/test_enrichment_intelligence.py"
+  ],
+  "source_ownership_released_after_handoff": true,
+  "validation": [
+    {
+      "file": "frozen-focused-union.xml",
+      "cases": 181,
+      "passed": 181,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failures": []
+    },
+    {
+      "file": "frozen-inherited-cleanup-blocker.xml",
+      "cases": 1,
+      "passed": 0,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0,
+      "failures": [
+        {
+          "id": "evidence.pr352-independent-review.test_review_attempt_boundaries::test_cancelled_late_opener_cleanup_holds_resource_slot",
+          "message": "AssertionError: late response cleanup still holds one worker/socket\nassert 0 == 1\n +  where 0 = <function abandoned_count at 0x7f0570431580>()\n +    where <function abandoned_count at 0x7f0570431580> = netutil.abandoned_count"
+        }
+      ]
+    },
+    {
+      "file": "parent-new-regressions-red.xml",
+      "cases": 7,
+      "passed": 1,
+      "failed": 6,
+      "errors": 0,
+      "skipped": 0,
+      "failures": [
+        {
+          "id": "tests.test_enrichment_intelligence::test_completed_attempt_past_total_deadline_is_not_published[logical-eof]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "tests.test_enrichment_intelligence::test_completed_attempt_past_total_deadline_is_not_published[logical-close]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "tests.test_enrichment_intelligence::test_completed_attempt_past_total_deadline_is_not_published[wall-eof]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "tests.test_enrichment_intelligence::test_completed_attempt_past_total_deadline_is_not_published[wall-close]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "tests.test_enrichment_intelligence::test_cancel_at_completion_precedes_total_deadline[False]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "tests.test_enrichment_intelligence::test_cancel_at_completion_precedes_total_deadline[True]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        }
+      ]
+    },
+    {
+      "file": "repaired-new-regressions-green.xml",
+      "cases": 7,
+      "passed": 7,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failures": []
+    }
+  ],
+  "whole_ruff_passed": true,
+  "pip_check_passed": true,
+  "source_binding_asserted": true,
+  "environment_rebound": false,
+  "source_clean_before_after_frozen_validation": true,
+  "preserves_pr352_history": true,
+  "netutil_modified": false,
+  "pr354_merged": false,
+  "pr356_merged": false,
+  "merge_markers_in_subject_and_body": true,
+  "independent_review_pending": true,
+  "full_suite_run": false,
+  "native_run": false,
+  "hosted_qualification_claimed": false,
+  "merge_eligible": false,
+  "release_ready": false,
+  "remaining_gates": [
+    "Independent peer review of exact aa01 child",
+    "Existing netutil late-opener cleanup defect: separate frozen control still plain-fails 0 versus 1; PR356/PR354 layering remains root-owned",
+    "Exact final integration tree and applicable full Linux/Windows hosted qualification",
+    "Author qualification/draft/ownership holds remain unchanged; no current root records integration"
+  ]
+}
