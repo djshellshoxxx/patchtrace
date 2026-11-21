@@ -623,7 +623,7 @@ GATE_COMMAND = ('python tools/release_gate.py --head "$GITHUB_SHA" --event "$GIT
 
 
 def test_the_helpers_split_the_real_workflow_into_its_jobs():
-    assert {'qa', 'linux-package', 'linux-smoke', 'release-gate', 'release'} <= set(BLOCKS)
+    assert {'qa', 'windows-validate', 'linux-package', 'linux-smoke', 'release-gate', 'release'} <= set(BLOCKS)
     assert needs_of(BLOCKS['linux-smoke']) == ['linux-package'] and needs_of(BLOCKS['qa']) == []
     assert 'release_gate' not in BLOCKS['qa']
 
@@ -675,7 +675,7 @@ def test_the_gate_outputs_are_publish_milestones_and_reason_from_the_gate_step()
 
 def test_the_release_job_needs_the_gate_and_runs_for_a_tag_or_a_gate_yes_only():
     block = BLOCKS['release']
-    assert needs_of(block) == ['qa', 'qt-gate', 'linux-smoke', 'release-gate']
+    assert needs_of(block) == ['qa', 'qt-gate', 'windows-validate', 'linux-smoke', 'release-gate']
     assert job_key(block, 'if') == (
         "(startsWith(github.ref, 'refs/tags/v') || needs.release-gate.outputs.publish == 'true') "
         "&& !contains(github.event.head_commit.message, '[no release]')")
@@ -684,7 +684,7 @@ def test_the_release_job_needs_the_gate_and_runs_for_a_tag_or_a_gate_yes_only():
 def test_publication_hold_keeps_all_acceptance_jobs_and_artifact_uploads_enabled():
     """A publishing hold must never turn into a QA skip or remove downloadable build artifacts."""
     assert '[no release]' in (job_key(BLOCKS['release'], 'if') or '')
-    for job in ('qa', 'qt-gate', 'linux-package', 'linux-smoke', 'release-gate'):
+    for job in ('qa', 'qt-gate', 'windows-validate', 'linux-package', 'linux-smoke', 'release-gate'):
         assert '[no release]' not in BLOCKS[job]
         assert 'head_commit.message' not in (job_key(BLOCKS[job], 'if') or '')
     assert 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02' in BLOCKS['qa']

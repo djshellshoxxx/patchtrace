@@ -87,6 +87,57 @@ jobs:
             dist/PatchTrace-0.1.0-windows-x64.zip.sha256
             dist/PatchTrace-Windows-x64-Setup.exe
             dist/PatchTrace-Windows-x64-Setup.exe.sha256
+  windows-validate:
+    needs: qa
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      # Checkout cleans untracked files, so it must precede the same-run download.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: PatchTrace-windows-x64
+          path: dist
+      - name: Verify every downloaded Windows artifact before execution
+        id: verify-artifacts
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $artifactDirectory = Join-Path $PWD "dist"
+          $artifactNames = @("PatchTrace-0.1.0-windows-x64.zip", "PatchTrace-Windows-x64-Setup.exe")
+          foreach ($artifactName in $artifactNames) {
+            foreach ($memberName in @($artifactName, "$artifactName.sha256")) {
+              $memberPath = Join-Path $artifactDirectory $memberName
+              if (-not (Test-Path -LiteralPath $memberPath -PathType Leaf)) {
+                throw "Missing downloaded artifact member: $memberName"
+              }
+              $memberInfo = Get-Item -LiteralPath $memberPath -Force
+              if ($memberInfo.Attributes -band [IO.FileAttributes]::ReparsePoint) {
+                throw "Downloaded artifact member must be a regular file: $memberName"
+              }
+            }
+          }
+          foreach ($artifactName in $artifactNames) {
+            $artifactPath = Join-Path $artifactDirectory $artifactName
+            $sidecarRecord = [IO.File]::ReadAllText("$artifactPath.sha256")
+            $recordMatch = [regex]::Match($sidecarRecord, '\A([0-9a-fA-F]{64}) [ *]([^\r\n]+)(?:\r?\n)?\z')
+            if (-not $recordMatch.Success -or $recordMatch.Groups[2].Value -cne $artifactName) {
+              throw "Invalid downloaded artifact SHA-256 sidecar: $artifactName.sha256"
+            }
+            $actualDigest = (Get-FileHash -LiteralPath $artifactPath -Algorithm SHA256).Hash
+            if ($actualDigest -ine $recordMatch.Groups[1].Value) {
+              throw "Downloaded artifact SHA-256 mismatch: $artifactName"
+            }
+            Write-Host "Verified downloaded artifact SHA-256: $artifactName $actualDigest"
+          }
+      - name: Extract and run the downloaded portable Windows ZIP
+        shell: pwsh
+        run: ./tools/test_windows_portable.ps1 -Archive dist/PatchTrace-0.1.0-windows-x64.zip
+      - name: Install, launch, and uninstall the downloaded setup package
+        shell: pwsh
+        run: ./tools/test_windows_installer.ps1 -Installer dist/PatchTrace-Windows-x64-Setup.exe
   # Repeats the GUI test files in one pytest session to expose teardown aborts and thread leaks (GUI plan 8.8).
   qt-gate:
     strategy:
@@ -219,7 +270,7 @@ jobs:
         run: python tools/release_gate.py --head "$GITHUB_SHA" --event "$GITHUB_EVENT_NAME" --ref "$GITHUB_REF" >> "$GITHUB_OUTPUT"
   release:
     if: (startsWith(github.ref, 'refs/tags/v') || needs.release-gate.outputs.publish == 'true') && !contains(github.event.head_commit.message, '[no release]')
-    needs: [qa, qt-gate, linux-smoke, release-gate]
+    needs: [qa, qt-gate, windows-validate, linux-smoke, release-gate]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
