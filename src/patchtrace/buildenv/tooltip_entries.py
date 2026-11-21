@@ -23,6 +23,31 @@ TIPS = {
         'One row per build fact with its older value, newer value, status and basis.',
         'Shows what changed between the builds and how each fact is known.',
         'Selecting a row shows its detail; Ctrl+C copies the selected rows as text.'),
+    'build_env.col.fact': _tip(
+        'Identify the build field being compared.',
+        'Keeps each observation attached to its documented meaning.',
+        'Shows the fact name without changing or deriving a value.',
+        'The BuildFact key and display label.'),
+    'build_env.col.older': _tip(
+        'Read this fact for the older artifact.',
+        'Shows what the baseline evidence records or leaves unknown.',
+        'Displays the retained value without filling missing data.',
+        'The older build fingerprint.'),
+    'build_env.col.newer': _tip(
+        'Read this fact for the newer artifact.',
+        'Shows the later evidence separately from the baseline.',
+        'Displays the retained value without filling missing data.',
+        'The newer build fingerprint.'),
+    'build_env.col.status': _tip(
+        'Read the comparison status for this fact.',
+        'Distinguishes differences, matches and unknown comparisons.',
+        'Displays the status without changing the comparison.',
+        'The build-fact comparison rules.'),
+    'build_env.col.basis': _tip(
+        'Read the evidence basis for this build observation.',
+        'Distinguishes PE fields, derived facts, signature matches and weak hints.',
+        'Displays the recorded source without strengthening the claim.',
+        'The build-fact source and basis metadata.'),
     'build_env.detail': _tip(
         'Provenance of the facts: file hashes, tool version, database and cautions, as plain text.',
         'Lets you check where each fact came from.', 'Read-only text; at most 8 KiB.'),
