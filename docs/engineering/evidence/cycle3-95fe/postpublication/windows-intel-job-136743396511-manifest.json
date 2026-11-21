@@ -1,0 +1,15 @@
+{
+  "schema": "patchtrace-windows-intel-advisory-log-manifest/1",
+  "files": [
+    {
+      "name": "windows-intel-job-136743396511.log",
+      "bytes": 44477,
+      "sha256": "df256369519fa2db7fb275c09905a8ed7e9d5ae0d03af930a6301ca30b48ff11"
+    },
+    {
+      "name": "windows-intel-job-136743396511-receipt.json",
+      "bytes": 6689,
+      "sha256": "59ba3695cc0abf1464f5f96822f5b5b4ef68451398c66d37f35360f308e1f5e4"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "schema": "patchtrace-pr349-initial-snapshot-manifest/1",
+  "files": [
+    {
+      "name": "initial-pr349-rest.json",
+      "bytes": 486697,
+      "sha256": "42aec343d62bd6b3ecfa1445f85ca6199e7ed75d03df2c6dee5872871b6adb4a"
+    },
+    {
+      "name": "initial-pr349-rest.json.gz",
+      "bytes": 19709,
+      "sha256": "a821bea00dbee02b7e8f514639227314a55b4eff1a55e0f5945cf5164b107e91"
+    },
+    {
+      "name": "initial-pr349-summary.json",
+      "bytes": 16798,
+      "sha256": "b9aeaf2e8c52497e3f502f2694f2cb902d9f92c47dc216ab622adcdeeffa0c1d"
+    },
+    {
+      "name": "initial-pr349-applicability.json",
+      "bytes": 4987,
+      "sha256": "710322bf80b1cd1798741e29114c2db36bf9abb72a392e521b10e2e467e2a3b5"
+    },
+    {
+      "name": "initial-pr349-report.md",
+      "bytes": 5899,
+      "sha256": "cfacb23b4c1b47e9f3894dbfc48f7d043e1353a759a205ad823dc1864c29292b"
+    }
+  ]
+}

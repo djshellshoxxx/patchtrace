@@ -1,0 +1,11 @@
+# PR349 publication and initial CI evidence
+
+This is an evidence-only archival child of published candidate `11f51c105bf63946f59373ae605b937c4fee607a`. Its application, test and workflow source is unchanged. The tested/integration candidate and all of its running checks remain pinned to PR349; this receipt branch is not a replacement implementation branch or a new acceptance claim.
+
+[Publication identity](source-publication.json) records the complete ten-commit REST mapping, final local/remote tree equality, actual synthetic merge, and additional merge holds reported by the parallel data-integrity owner. The authoritative task ledger remains `docs/engineering/task-ledger.json`; the live PR body and current coordination handoff carry postpublication state under its explicit head-resolution rule.
+
+[Initial CI report](initial-pr349-report.md) and [summary](initial-pr349-summary.json) describe the bounded 05:22:34–05:23:00 UTC snapshot on 21 November 2026. Later GitHub states can differ. [Raw REST responses](initial-pr349-rest.json), the identical [gzip copy](initial-pr349-rest.json.gz), [applicability](initial-pr349-applicability.json), and [manifest](initial-pr349-manifest.json) preserve every inspected response and the exact seven-workflow applicability analysis.
+
+The green Windows intel-tools job is advisory. Its **actual result is 2 failed, 1 passed, 1 skipped**. [Full decoded job log](windows-intel-job-136743396511.log), [source/job/step receipt](windows-intel-job-136743396511-receipt.json), and [log manifest](windows-intel-job-136743396511-manifest.json) retain the original evidence. capa and FLOSS version identification failed; DIE 3.21 passed; Windows lacks the required `unshare -rn` isolation for the offline case. A successful advisory job is not recorded as successful native-tool compatibility. No newly introduced source regression is inferred from this log alone.
+
+Main promotion remains held for applicable new-head CI, explicit advisory-failure disposition, and reconciliation of the parallel post-commit snapshot / backup-cancellation repairs once independently reviewed. No speculative retry was requested. Any future qualified main merge must include `[no release] [no deploy]` in the actual resulting merge commit. No main merge, release, deployment, force-push or branch deletion occurred in this checkpoint.

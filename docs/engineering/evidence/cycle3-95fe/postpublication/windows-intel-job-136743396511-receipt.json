@@ -1,0 +1,183 @@
+{
+  "schema": "patchtrace-windows-intel-advisory-full-log/1",
+  "original_status_snapshot_window_utc": {
+    "start": "2026-11-21 05:22:34 UTC",
+    "end": "2026-11-21 05:23:00 UTC"
+  },
+  "archive_correction": "Full decoded log archived after the bounded snapshot; no status repoll, retry, or workflow mutation.",
+  "repo": "djshellshoxxx/PatchTrace",
+  "pr": 349,
+  "published_head": "11f51c105bf63946f59373ae605b937c4fee607a",
+  "base": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+  "head_tree": "4939056ceb0e02b419c820b9e5748c869c40a857",
+  "synthetic_merge_commit": "301d21b5da515833cc6e000d9ea5f2e944d67a16",
+  "synthetic_merge_tree": "4939056ceb0e02b419c820b9e5748c869c40a857",
+  "run": {
+    "id": 44870397141,
+    "name": "Live intel tools acceptance",
+    "event": "pull_request",
+    "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397141",
+    "head_sha": "11f51c105bf63946f59373ae605b937c4fee607a",
+    "run_attempt": 1
+  },
+  "job": {
+    "id": 136743396511,
+    "name": "live intel tools (windows-latest)",
+    "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397141/job/136743396511",
+    "head_sha": "11f51c105bf63946f59373ae605b937c4fee607a",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-11-21T05:20:54Z",
+    "completed_at": "2026-11-21T05:22:16Z",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-11-21T05:20:54Z",
+        "completed_at": "2026-11-21T05:20:56Z"
+      },
+      {
+        "name": "Run actions/checkout@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 2,
+        "started_at": "2026-11-21T05:20:56Z",
+        "completed_at": "2026-11-21T05:21:04Z"
+      },
+      {
+        "name": "Run actions/setup-python@v5",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-11-21T05:21:04Z",
+        "completed_at": "2026-11-21T05:21:04Z"
+      },
+      {
+        "name": "Qt runtime libraries (pytest-qt imports Qt; diec needs Qt 5 Core and Script)",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 4,
+        "started_at": "2026-11-21T05:21:04Z",
+        "completed_at": "2026-11-21T05:21:04Z"
+      },
+      {
+        "name": "Run python -m pip install -e .[dev]",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5,
+        "started_at": "2026-11-21T05:21:04Z",
+        "completed_at": "2026-11-21T05:21:47Z"
+      },
+      {
+        "name": "Run actions/cache@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 6,
+        "started_at": "2026-11-21T05:21:47Z",
+        "completed_at": "2026-11-21T05:21:51Z"
+      },
+      {
+        "name": "Provision pinned tools (download + verify + extract; never executes them)",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7,
+        "started_at": "2026-11-21T05:21:51Z",
+        "completed_at": "2026-11-21T05:21:52Z"
+      },
+      {
+        "name": "Live intel tools tests (records passed / failed / blocked)",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8,
+        "started_at": "2026-11-21T05:21:52Z",
+        "completed_at": "2026-11-21T05:22:13Z"
+      },
+      {
+        "name": "Live status summary",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-11-21T05:22:13Z",
+        "completed_at": "2026-11-21T05:22:13Z"
+      },
+      {
+        "name": "Run actions/upload-artifact@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 10,
+        "started_at": "2026-11-21T05:22:13Z",
+        "completed_at": "2026-11-21T05:22:13Z"
+      },
+      {
+        "name": "Post Run actions/cache@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 18,
+        "started_at": "2026-11-21T05:22:13Z",
+        "completed_at": "2026-11-21T05:22:14Z"
+      },
+      {
+        "name": "Post Run actions/setup-python@v5",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 19,
+        "started_at": "2026-11-21T05:22:14Z",
+        "completed_at": "2026-11-21T05:22:14Z"
+      },
+      {
+        "name": "Post Run actions/checkout@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 20,
+        "started_at": "2026-11-21T05:22:14Z",
+        "completed_at": "2026-11-21T05:22:15Z"
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 21,
+        "started_at": "2026-11-21T05:22:15Z",
+        "completed_at": "2026-11-21T05:22:16Z"
+      }
+    ]
+  },
+  "actual_advisory_result": {
+    "failed": 2,
+    "passed": 1,
+    "skipped": 1,
+    "duration_seconds": 18.96,
+    "capa": "version identification failed; no version reported despite exit 0",
+    "floss": "version identification failed; no version reported, exit 1",
+    "diec": "pinned 3.21 reproduced synthetic-pair goldens",
+    "floss_offline": "blocked/skipped because unshare -rn unavailable on Windows",
+    "attribution": "No conclusion that these were newly introduced by this source."
+  },
+  "qualification": "Job success reflects advisory continue-on-error behavior; it does not establish successful capa/FLOSS Windows compatibility.",
+  "archived_at_utc": "2026-11-21T05:28:58.890939+00:00",
+  "file": {
+    "name": "windows-intel-job-136743396511.log",
+    "bytes": 44477,
+    "sha256": "df256369519fa2db7fb275c09905a8ed7e9d5ae0d03af930a6301ca30b48ff11",
+    "encoding": "UTF-8 decoded log; original decoded CR/LF characters preserved"
+  },
+  "actual_checkout": {
+    "sha": "301d21b5da515833cc6e000d9ea5f2e944d67a16",
+    "matches_rest_synthetic_merge": true,
+    "log_lines": [
+      "2026-11-21T05:21:04.6240337Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" log -1 --format=%H",
+      "2026-11-21T05:21:04.6462930Z 301d21b5da515833cc6e000d9ea5f2e944d67a16",
+      "2026-11-21T05:21:04.6780567Z ##[group]Run actions/setup-python@v5"
+    ]
+  },
+  "advisory_step": {
+    "number": 8,
+    "name": "Live intel tools tests (records passed / failed / blocked)",
+    "api_conclusion": "success",
+    "actual_pytest": "2 failed, 1 passed, 1 skipped in 18.96s",
+    "policy": "Windows matrix advisory=true; test step continue-on-error uses matrix.advisory",
+    "workflow_source_url": "https://github.com/djshellshoxxx/patchtrace/blob/11f51c105bf63946f59373ae605b937c4fee607a/.github/workflows/live-intel-tools.yml"
+  }
+}

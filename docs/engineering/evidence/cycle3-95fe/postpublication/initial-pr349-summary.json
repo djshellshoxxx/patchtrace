@@ -1,0 +1,425 @@
+{
+  "schema": "patchtrace-pr349-initial-qualification/1",
+  "snapshot_window_utc": {
+    "start": "2026-11-21 05:22:34 UTC",
+    "end": "2026-11-21 05:23:00 UTC"
+  },
+  "method": "One bounded initial REST sweep; subsequent exact-source applicability reads and one completed advisory-job log read; no polling, dispatch, retry, merge or mutation.",
+  "pull_request": {
+    "number": 349,
+    "url": "https://github.com/djshellshoxxx/patchtrace/pull/349",
+    "state": "open",
+    "draft": false,
+    "head": "11f51c105bf63946f59373ae605b937c4fee607a",
+    "base": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+    "mergeable": true,
+    "mergeable_state": "unstable"
+  },
+  "source_binding": {
+    "head_commit": "11f51c105bf63946f59373ae605b937c4fee607a",
+    "head_tree": "4939056ceb0e02b419c820b9e5748c869c40a857",
+    "merge_commit": "301d21b5da515833cc6e000d9ea5f2e944d67a16",
+    "merge_tree": "4939056ceb0e02b419c820b9e5748c869c40a857",
+    "merge_parents": [
+      "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+      "11f51c105bf63946f59373ae605b937c4fee607a"
+    ],
+    "same_tree": true,
+    "evidence_scope": "GitHub REST commit objects; full QA checkout/execution logs not yet available."
+  },
+  "check_counts": {
+    "skipped": 3,
+    "queued": 15,
+    "in_progress": 4,
+    "success": 3
+  },
+  "check_count": 25,
+  "commit_status": {
+    "state": "success",
+    "statuses": [
+      {
+        "context": "security/snyk (djshellshoxxx)",
+        "state": "success",
+        "description": "No manifest changes detected in 1 project",
+        "url": "https://app.snyk.io/org/djshellshoxxx/pr-checks/f7c680e0-360d-4572-bc17-8cf70001253c"
+      }
+    ]
+  },
+  "runs": [
+    {
+      "id": 44870397150,
+      "name": "Native Windows Ghidriff acceptance",
+      "event": "pull_request",
+      "head_sha": "11f51c105bf63946f59373ae605b937c4fee607a",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397150",
+      "jobs": [
+        {
+          "id": 136743396567,
+          "name": "native (raw-cache-hit)",
+          "status": "in_progress",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397150/job/136743396567",
+          "started_at": "2026-11-21T05:22:36Z",
+          "completed_at": null,
+          "active_steps": [
+            {
+              "name": "Run cl /nologo /LD /Od /GS- /Zi tests\\fixtures\\old.c /Fdtests\\fixtures\\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\\fixtures\\old.dll /PDB:tests\\fixtures\\old.pdb",
+              "status": "in_progress",
+              "conclusion": null
+            }
+          ]
+        },
+        {
+          "id": 136743396645,
+          "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+          "status": "queued",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397150/job/136743396645",
+          "started_at": "2026-11-21T05:20:09Z",
+          "completed_at": null,
+          "active_steps": []
+        },
+        {
+          "id": 136743396677,
+          "name": "native (patchtrace-clean)",
+          "status": "queued",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397150/job/136743396677",
+          "started_at": "2026-11-21T05:20:09Z",
+          "completed_at": null,
+          "active_steps": []
+        },
+        {
+          "id": 136743396718,
+          "name": "native (repro-plain-ghidriff)",
+          "status": "queued",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397150/job/136743396718",
+          "started_at": "2026-11-21T05:20:09Z",
+          "completed_at": null,
+          "active_steps": []
+        },
+        {
+          "id": 136743396809,
+          "name": "native (patchtrace-seeded-store)",
+          "status": "queued",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397150/job/136743396809",
+          "started_at": "2026-11-21T05:20:09Z",
+          "completed_at": null,
+          "active_steps": []
+        }
+      ]
+    },
+    {
+      "id": 44870397208,
+      "name": "Live BinDiff acceptance",
+      "event": "pull_request",
+      "head_sha": "11f51c105bf63946f59373ae605b937c4fee607a",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397208",
+      "jobs": [
+        {
+          "id": 136743396419,
+          "name": "live BinDiff (windows-latest)",
+          "status": "in_progress",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397208/job/136743396419",
+          "started_at": "2026-11-21T05:22:19Z",
+          "completed_at": null,
+          "active_steps": [
+            {
+              "name": "Run python -m pip install -e .[dev]",
+              "status": "in_progress",
+              "conclusion": null
+            }
+          ]
+        },
+        {
+          "id": 136743396620,
+          "name": "live BinDiff (ubuntu-22.04)",
+          "status": "queued",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397208/job/136743396620",
+          "started_at": "2026-11-21T05:20:09Z",
+          "completed_at": null,
+          "active_steps": []
+        }
+      ]
+    },
+    {
+      "id": 44870397157,
+      "name": "Corpus Tier R (sharded)",
+      "event": "pull_request",
+      "head_sha": "11f51c105bf63946f59373ae605b937c4fee607a",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397157",
+      "jobs": [
+        {
+          "id": 136743396459,
+          "name": "windows advisory (smoke)",
+          "status": "queued",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397157/job/136743396459",
+          "started_at": "2026-11-21T05:20:09Z",
+          "completed_at": null,
+          "active_steps": []
+        },
+        {
+          "id": 136743396549,
+          "name": "plan",
+          "status": "queued",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397157/job/136743396549",
+          "started_at": "2026-11-21T05:20:09Z",
+          "completed_at": null,
+          "active_steps": []
+        },
+        {
+          "id": 136743397317,
+          "name": "msvc cl advisory (windows-2022)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397157/job/136743397317",
+          "started_at": "2026-11-21T05:20:09Z",
+          "completed_at": "2026-11-21T05:20:09Z",
+          "active_steps": []
+        }
+      ]
+    },
+    {
+      "id": 44870397228,
+      "name": "QA and Windows standalone",
+      "event": "pull_request",
+      "head_sha": "11f51c105bf63946f59373ae605b937c4fee607a",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397228",
+      "jobs": [
+        {
+          "id": 136743396623,
+          "name": "qa (windows-latest)",
+          "status": "queued",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397228/job/136743396623",
+          "started_at": "2026-11-21T05:20:09Z",
+          "completed_at": null,
+          "active_steps": []
+        },
+        {
+          "id": 136743396804,
+          "name": "qa (ubuntu-latest)",
+          "status": "queued",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397228/job/136743396804",
+          "started_at": "2026-11-21T05:20:09Z",
+          "completed_at": null,
+          "active_steps": []
+        },
+        {
+          "id": 136743396811,
+          "name": "qt-gate (windows-latest, 5, 1/1)",
+          "status": "queued",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397228/job/136743396811",
+          "started_at": "2026-11-21T05:20:09Z",
+          "completed_at": null,
+          "active_steps": []
+        },
+        {
+          "id": 136743396827,
+          "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+          "status": "in_progress",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397228/job/136743396827",
+          "started_at": "2026-11-21T05:20:52Z",
+          "completed_at": null,
+          "active_steps": [
+            {
+              "name": "Run python tools/qt_gate.py --repeat 20 --shard 4/4",
+              "status": "in_progress",
+              "conclusion": null
+            }
+          ]
+        },
+        {
+          "id": 136743396849,
+          "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+          "status": "queued",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397228/job/136743396849",
+          "started_at": "2026-11-21T05:20:09Z",
+          "completed_at": null,
+          "active_steps": []
+        },
+        {
+          "id": 136743396999,
+          "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+          "status": "queued",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397228/job/136743396999",
+          "started_at": "2026-11-21T05:20:09Z",
+          "completed_at": null,
+          "active_steps": []
+        },
+        {
+          "id": 136743397064,
+          "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+          "status": "queued",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397228/job/136743397064",
+          "started_at": "2026-11-21T05:20:09Z",
+          "completed_at": null,
+          "active_steps": []
+        },
+        {
+          "id": 136743398035,
+          "name": "release-gate",
+          "status": "completed",
+          "conclusion": "skipped",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397228/job/136743398035",
+          "started_at": "2026-11-21T05:20:09Z",
+          "completed_at": "2026-11-21T05:20:09Z",
+          "active_steps": []
+        }
+      ]
+    },
+    {
+      "id": 44870397216,
+      "name": "Live rizin rz-diff acceptance",
+      "event": "pull_request",
+      "head_sha": "11f51c105bf63946f59373ae605b937c4fee607a",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397216",
+      "jobs": [
+        {
+          "id": 136743396577,
+          "name": "live rz-diff (windows-latest)",
+          "status": "queued",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397216/job/136743396577",
+          "started_at": "2026-11-21T05:20:09Z",
+          "completed_at": null,
+          "active_steps": []
+        },
+        {
+          "id": 136743396702,
+          "name": "live rz-diff (ubuntu-latest)",
+          "status": "queued",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397216/job/136743396702",
+          "started_at": "2026-11-21T05:20:09Z",
+          "completed_at": null,
+          "active_steps": []
+        }
+      ]
+    },
+    {
+      "id": 44870397141,
+      "name": "Live intel tools acceptance",
+      "event": "pull_request",
+      "head_sha": "11f51c105bf63946f59373ae605b937c4fee607a",
+      "status": "in_progress",
+      "conclusion": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397141",
+      "jobs": [
+        {
+          "id": 136743396347,
+          "name": "live intel tools (ubuntu-22.04)",
+          "status": "in_progress",
+          "conclusion": null,
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397141/job/136743396347",
+          "started_at": "2026-11-21T05:22:38Z",
+          "completed_at": null,
+          "active_steps": [
+            {
+              "name": "Run python -m pip install -e .[dev]",
+              "status": "in_progress",
+              "conclusion": null
+            }
+          ]
+        },
+        {
+          "id": 136743396511,
+          "name": "live intel tools (windows-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397141/job/136743396511",
+          "started_at": "2026-11-21T05:20:54Z",
+          "completed_at": "2026-11-21T05:22:16Z",
+          "active_steps": []
+        },
+        {
+          "id": 136743397631,
+          "name": "live build environment (ubuntu-22.04)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397141/job/136743397631",
+          "started_at": "2026-11-21T05:20:09Z",
+          "completed_at": "2026-11-21T05:20:09Z",
+          "active_steps": []
+        }
+      ]
+    },
+    {
+      "id": 44870397137,
+      "name": "Optional dependency wheels probe",
+      "event": "pull_request",
+      "head_sha": "11f51c105bf63946f59373ae605b937c4fee607a",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397137",
+      "jobs": [
+        {
+          "id": 136743396179,
+          "name": "probe (windows-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397137/job/136743396179",
+          "started_at": "2026-11-21T05:21:34Z",
+          "completed_at": "2026-11-21T05:22:35Z",
+          "active_steps": []
+        },
+        {
+          "id": 136743396360,
+          "name": "probe (ubuntu-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397137/job/136743396360",
+          "started_at": "2026-11-21T05:20:18Z",
+          "completed_at": "2026-11-21T05:20:41Z",
+          "active_steps": []
+        }
+      ]
+    }
+  ],
+  "advisory_log": {
+    "job_id": 136743396511,
+    "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44870397141/job/136743396511",
+    "characters": 44475,
+    "excerpts": [
+      "2026-11-21T05:21:52.7780949Z passed: all pinned tools provisioned",
+      "2026-11-21T05:22:13.0025846Z LIVE ACCEPTANCE BLOCKED: intel-tools-floss-offline (unshare -rn is unavailable on this platform)",
+      "2026-11-21T05:22:13.0027740Z FAILED tests/test_live_intel_tools.py::test_pinned_tool_probes_and_reproduces_the_goldens[capa] - Failed: capa is not usable or not the pinned build: capa did not report a version (exit 0)",
+      "2026-11-21T05:22:13.0028594Z FAILED tests/test_live_intel_tools.py::test_pinned_tool_probes_and_reproduces_the_goldens[floss] - Failed: floss is not usable or not the pinned build: FLOSS did not report a version (exit 1)",
+      "2026-11-21T05:22:13.0029039Z =================== 2 failed, 1 passed, 1 skipped in 18.96s ===================",
+      "2026-11-21T05:22:13.2333927Z | intel-tools-capa.json | intel-tools-capa | failed | capa is not usable or not the pinned build: capa did not report a version (exit 0) |",
+      "2026-11-21T05:22:13.2334385Z | intel-tools-diec.json | intel-tools-diec | passed | pinned 3.21 reproduced the goldens on the synthetic pair |",
+      "2026-11-21T05:22:13.2334845Z | intel-tools-floss-offline.json | intel-tools-floss-offline | blocked | unshare -rn is unavailable on this platform |",
+      "2026-11-21T05:22:13.2335311Z | intel-tools-floss.json | intel-tools-floss | failed | floss is not usable or not the pinned build: FLOSS did not report a version (exit 1) |",
+      "2026-11-21T05:22:13.2335755Z | intel-tools-provision.json | intel-tools-provision | passed | all pinned tools provisioned |",
+      "2026-11-21T05:22:13.2336116Z LIVE ACCEPTANCE BLOCKED: intel-tools-floss-offline (unshare -rn is unavailable on this platform)"
+    ]
+  },
+  "pending_downstream": [
+    "QA linux-package after qa and qt-gate; both Ubuntu smoke legs after package",
+    "Tier R shard matrix and merge after plan",
+    "release is inapplicable to pull_request because release-gate is push-only"
+  ],
+  "qualification": "pending; no completed failing strict check in sampled API results; concrete Windows advisory failures require explicit disposition; no successor pass inferred from predecessor."
+}

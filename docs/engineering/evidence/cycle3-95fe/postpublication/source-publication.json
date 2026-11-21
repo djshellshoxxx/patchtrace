@@ -1,0 +1,172 @@
+{
+  "schema": "patchtrace-pr349-publication-receipt/1",
+  "repository": "djshellshoxxx/PatchTrace",
+  "pull_request": 349,
+  "url": "https://github.com/djshellshoxxx/patchtrace/pull/349",
+  "branch": "integration/patchtrace-20261121-95fe-c3",
+  "published_head": "11f51c105bf63946f59373ae605b937c4fee607a",
+  "local_final_head": "43b7b99706b91d7320497d35fda8ee87e7195f3f",
+  "complete_tree": "4939056ceb0e02b419c820b9e5748c869c40a857",
+  "actual_synthetic_merge": "301d21b5da515833cc6e000d9ea5f2e944d67a16",
+  "main_at_publication": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+  "remote_git_fetch_tree_equality_verified": true,
+  "main_merge_performed": false,
+  "release_performed": false,
+  "deployment_performed": false,
+  "commits": [
+    {
+      "local_commit": "5fa47ac7b03451f404c2f0acd871e8700067c13f",
+      "remote_commit": "5a2167a9e216915c894511a277dcdd790dddc196",
+      "tree": "e7b190bb34dc55da3368002d7c09ca1fe5666188",
+      "local_parents": [
+        "e4854b66ae37024d734e22ae978dedca90a7f3f7"
+      ],
+      "remote_parents": [
+        "e4854b66ae37024d734e22ae978dedca90a7f3f7"
+      ],
+      "changed_files": 1,
+      "tree_equality_verified": true
+    },
+    {
+      "local_commit": "be40e159208bffded53d57cbdfcf3abfaf8a714f",
+      "remote_commit": "8e1dc1f8f8948a3c97f68edd2aad40a88bd96721",
+      "tree": "e7b190bb34dc55da3368002d7c09ca1fe5666188",
+      "local_parents": [
+        "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+        "5fa47ac7b03451f404c2f0acd871e8700067c13f"
+      ],
+      "remote_parents": [
+        "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+        "5a2167a9e216915c894511a277dcdd790dddc196"
+      ],
+      "changed_files": 14,
+      "tree_equality_verified": true
+    },
+    {
+      "local_commit": "53e02a478235498563a092d7943c7feaf40adda6",
+      "remote_commit": "8a150e87f3b36e415e54f6f054217506a0249711",
+      "tree": "34acedca0fc524a20a8def6be4b18e909ea2f772",
+      "local_parents": [
+        "d2507b1415fd0917fcda6b9f26565d0467d7b9ba"
+      ],
+      "remote_parents": [
+        "d2507b1415fd0917fcda6b9f26565d0467d7b9ba"
+      ],
+      "changed_files": 2,
+      "tree_equality_verified": true
+    },
+    {
+      "local_commit": "c94eeade5f587a8fd9beef3c74084455c9f845d7",
+      "remote_commit": "bf29d9ab97998cc08f29cba39b01d0251731291a",
+      "tree": "abf970d40b70ff474336be99aa1c83d768e595e5",
+      "local_parents": [
+        "be40e159208bffded53d57cbdfcf3abfaf8a714f",
+        "53e02a478235498563a092d7943c7feaf40adda6"
+      ],
+      "remote_parents": [
+        "8e1dc1f8f8948a3c97f68edd2aad40a88bd96721",
+        "8a150e87f3b36e415e54f6f054217506a0249711"
+      ],
+      "changed_files": 16,
+      "tree_equality_verified": true
+    },
+    {
+      "local_commit": "19601a604e8ce06e7c52a79394a502a5f3839d71",
+      "remote_commit": "f7a1719e2e053b2645e4f07f179f460da62cc09e",
+      "tree": "a81a2a37ad8983fb66825f836858e4c32df037bd",
+      "local_parents": [
+        "c94eeade5f587a8fd9beef3c74084455c9f845d7"
+      ],
+      "remote_parents": [
+        "bf29d9ab97998cc08f29cba39b01d0251731291a"
+      ],
+      "changed_files": 21,
+      "tree_equality_verified": true
+    },
+    {
+      "local_commit": "487e08113c86636ef9a87aaae8a1b88b224d9f04",
+      "remote_commit": "413d666e8f14170bd7c54abf508a6a26a625e39f",
+      "tree": "a463918dca5943ee2be4b0820c63d61d7f75a4fd",
+      "local_parents": [
+        "19601a604e8ce06e7c52a79394a502a5f3839d71"
+      ],
+      "remote_parents": [
+        "f7a1719e2e053b2645e4f07f179f460da62cc09e"
+      ],
+      "changed_files": 3,
+      "tree_equality_verified": true
+    },
+    {
+      "local_commit": "00183247016fef5668beb3c6d07aedaa9f451262",
+      "remote_commit": "6c76b6f058944fff4aec2385739d4286305dc5c3",
+      "tree": "249373218d0e847592827b2c3a1dcf71369665b5",
+      "local_parents": [
+        "6b6fcd3597a604212032ffc453477aeb6edc69ff"
+      ],
+      "remote_parents": [
+        "6b6fcd3597a604212032ffc453477aeb6edc69ff"
+      ],
+      "changed_files": 2,
+      "tree_equality_verified": true
+    },
+    {
+      "local_commit": "e54e4d0afbcdc3916539c62810877faa65842d5e",
+      "remote_commit": "ac6d7fc2445dbd97271b2de55753cf2fb3657ba6",
+      "tree": "ecc943693a310455f1427fff7e3d1abad8f07dd0",
+      "local_parents": [
+        "00183247016fef5668beb3c6d07aedaa9f451262"
+      ],
+      "remote_parents": [
+        "6c76b6f058944fff4aec2385739d4286305dc5c3"
+      ],
+      "changed_files": 2,
+      "tree_equality_verified": true
+    },
+    {
+      "local_commit": "e5a531668ef523cd6faa26d5fec59aa552749134",
+      "remote_commit": "e15584e2fe474ddcbe01501d380d626cc00c8402",
+      "tree": "e622ff8f5624ce73bac63c0976af01c614ce05bb",
+      "local_parents": [
+        "487e08113c86636ef9a87aaae8a1b88b224d9f04",
+        "e54e4d0afbcdc3916539c62810877faa65842d5e"
+      ],
+      "remote_parents": [
+        "413d666e8f14170bd7c54abf508a6a26a625e39f",
+        "ac6d7fc2445dbd97271b2de55753cf2fb3657ba6"
+      ],
+      "changed_files": 4,
+      "tree_equality_verified": true
+    },
+    {
+      "local_commit": "43b7b99706b91d7320497d35fda8ee87e7195f3f",
+      "remote_commit": "11f51c105bf63946f59373ae605b937c4fee607a",
+      "tree": "4939056ceb0e02b419c820b9e5748c869c40a857",
+      "local_parents": [
+        "e5a531668ef523cd6faa26d5fec59aa552749134"
+      ],
+      "remote_parents": [
+        "e15584e2fe474ddcbe01501d380d626cc00c8402"
+      ],
+      "changed_files": 38,
+      "tree_equality_verified": true
+    }
+  ],
+  "additional_reported_merge_holds": [
+    {
+      "id": "POSTCOMMIT-SERVICE-SNAPSHOT",
+      "status": "parallel-worker-confirmed-P2-repair-and-independent-review-in-progress",
+      "source": "shared coordination record updated 2026-11-21T05:19:32.193395Z; not independently reproduced in cycle3"
+    },
+    {
+      "id": "BACKUP-CLEANUP-CANCELLATION",
+      "status": "parallel-worker-confirmed-P2-repair-and-independent-review-in-progress",
+      "source": "shared coordination record updated 2026-11-21T05:19:32.193395Z; not independently reproduced in cycle3"
+    },
+    {
+      "id": "windows-intel-tools-advisory",
+      "status": "2-failed-1-passed-1-skipped-in-successful-advisory-job; acceptance disposition open",
+      "job": 136743396511
+    }
+  ],
+  "scope": "Evidence-only archival child; candidate source/CI remains frozen at PR349 head. This receipt does not qualify a main merge or transfer test success to another source."
+}

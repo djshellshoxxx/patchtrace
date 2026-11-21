@@ -1,0 +1,155 @@
+{
+  "source": "11f51c105bf63946f59373ae605b937c4fee607a",
+  "base": "fdc2696c23bdbfe7668348f25e3b336ce33039f7",
+  "changed_files": 708,
+  "pr_workflows": [
+    {
+      "workflow": "corpus-tier-r.yml",
+      "name": "Corpus Tier R (sharded)",
+      "patterns": [
+        "tools/calibration/**",
+        "corpus/ours/**",
+        ".github/workflows/corpus-tier-r.yml"
+      ],
+      "matched_count": 1,
+      "sample_matches": [
+        ".github/workflows/corpus-tier-r.yml"
+      ],
+      "job_conditions": {
+        "merge": "always() && needs.plan.result == 'success'",
+        "msvc-advisory": "github.event_name == 'workflow_dispatch' && vars.TIER_R_MSVC == '1'"
+      }
+    },
+    {
+      "workflow": "live-backend.yml",
+      "name": "Native Windows Ghidriff acceptance",
+      "patterns": [
+        "src/**",
+        "tools/live_backend_check.py",
+        "tools/live_cache_check.py",
+        "tools/seed_symbol_cache.py",
+        "tests/fixtures/**",
+        ".github/workflows/live-backend.yml"
+      ],
+      "matched_count": 51,
+      "sample_matches": [
+        ".github/workflows/live-backend.yml",
+        "src/patchtrace/acquisition/winbindex.py",
+        "src/patchtrace/artifact_inspection.py",
+        "src/patchtrace/enrichment/cve.py",
+        "src/patchtrace/enrichment/storage.py",
+        "src/patchtrace/gui/qt/table.py",
+        "src/patchtrace/gui/qt/tasks.py",
+        "src/patchtrace/gui/table_spec.py"
+      ],
+      "job_conditions": {}
+    },
+    {
+      "workflow": "live-bindiff.yml",
+      "name": "Live BinDiff acceptance",
+      "patterns": [
+        "src/patchtrace/secondary/bindiff*",
+        "tools/bindiff_pin.json",
+        "tools/provision_bindiff.py",
+        "tools/check_live_status.py",
+        "tests/test_live_bindiff.py",
+        "tests/bindiff_live_pair.py",
+        ".github/workflows/live-bindiff.yml"
+      ],
+      "matched_count": 1,
+      "sample_matches": [
+        "src/patchtrace/secondary/bindiff.py"
+      ],
+      "job_conditions": {}
+    },
+    {
+      "workflow": "live-intel-tools.yml",
+      "name": "Live intel tools acceptance",
+      "patterns": [
+        "src/patchtrace/intelligence/tools/**",
+        "tools/intel_tools_pin.json",
+        "tools/provision_intel_tools.py",
+        "tests/test_live_intel_tools.py",
+        ".github/workflows/live-intel-tools.yml"
+      ],
+      "matched_count": 1,
+      "sample_matches": [
+        "src/patchtrace/intelligence/tools/admission.py"
+      ],
+      "job_conditions": {
+        "live-buildenv": "github.event_name == 'workflow_dispatch'"
+      }
+    },
+    {
+      "workflow": "live-rizin.yml",
+      "name": "Live rizin rz-diff acceptance",
+      "patterns": [
+        "src/patchtrace/secondary/**",
+        "tools/live_rzdiff_check.py",
+        "tests/fixtures/old.c",
+        "tests/fixtures/new.c",
+        ".github/workflows/live-rizin.yml"
+      ],
+      "matched_count": 3,
+      "sample_matches": [
+        "src/patchtrace/secondary/bindiff.py",
+        "src/patchtrace/secondary/binexport_check.py",
+        "src/patchtrace/secondary/rzdiff.py"
+      ],
+      "job_conditions": {}
+    },
+    {
+      "workflow": "live-unified.yml",
+      "name": "Live unified extraction (SPEC-31 S1)",
+      "patterns": [
+        "src/patchtrace/unified/extract/**",
+        "src/patchtrace/unified/ir/**",
+        "src/patchtrace/backend.py",
+        "src/patchtrace/jobs.py",
+        "tools/live_unified_check.py",
+        "tests/fixtures/old.c",
+        "tests/fixtures/new.c",
+        "tests/fixtures/unified/**",
+        ".github/workflows/live-unified.yml"
+      ],
+      "matched_count": 0,
+      "sample_matches": [],
+      "job_conditions": {}
+    },
+    {
+      "workflow": "optional-deps.yml",
+      "name": "Optional dependency wheels probe",
+      "patterns": [
+        "pyproject.toml",
+        "src/patchtrace/optional_deps.py",
+        ".github/workflows/optional-deps.yml"
+      ],
+      "matched_count": 1,
+      "sample_matches": [
+        "pyproject.toml"
+      ],
+      "job_conditions": {}
+    },
+    {
+      "workflow": "qa-windows.yml",
+      "name": "QA and Windows standalone",
+      "patterns": [],
+      "matched_count": 708,
+      "sample_matches": [
+        ".github/workflows/corpus-tier-r.yml",
+        ".github/workflows/live-backend.yml",
+        ".github/workflows/pages.yml",
+        ".github/workflows/qa-windows.yml",
+        "docs/audits/codex-packaging-1.md",
+        "docs/audits/codex-workflows-1.md",
+        "docs/consolidation/ASM_LEXER_PERFORMANCE_20261119.md",
+        "docs/consolidation/BRANCH_INVENTORY.json"
+      ],
+      "job_conditions": {
+        "release-gate": "github.event_name == 'push'",
+        "release": "(startsWith(github.ref, 'refs/tags/v') || needs.release-gate.outputs.publish == 'true') && !contains(github.event.head_commit.message, '[no release]')"
+      }
+    }
+  ],
+  "path_matching_method": "fnmatch of observed positive patterns; sample exact matches retained. No negative path patterns present."
+}
