@@ -4,6 +4,7 @@ from __future__ import annotations
 from dataclasses import replace
 from types import SimpleNamespace
 
+import pytest
 from PySide6.QtCore import Qt
 
 from patchtrace import tooltips
@@ -65,13 +66,15 @@ def test_actual_build_environment_header_roles_preserve_cell_values_and_identity
     assert model.texts_at(0) == ("Compiler", "MSVC", "Clang", "differs", "signature")
 
 
-def test_missing_single_header_id_reverts_to_plain_text_and_is_detectable(qtbot):
+@pytest.mark.parametrize("index", range(len(HEADERS)))
+def test_removing_any_one_header_help_id_is_detectable(qtbot, index):
     register_tips(TIPS, TEMPLATES)
-    altered = tuple(replace(column, tip_id="") if column.key == "basis" else column for column in COLUMNS)
+    key, title, tip_id = HEADERS[index]
+    altered = tuple(replace(column, tip_id="") if column.key == key else column for column in COLUMNS)
     table = VirtualTable("Build facts table")
     qtbot.addWidget(table)
     table.set_prepared(prepare_table(SPEC, altered, _rows()))
     model = table.table_model
     role = Qt.ItemDataRole.ToolTipRole
-    assert model.headerData(4, Qt.Orientation.Horizontal, role) == "Basis"
-    assert model.headerData(4, Qt.Orientation.Horizontal, role) != tooltips.tooltip("build_env.col.basis")
+    assert model.headerData(index, Qt.Orientation.Horizontal, role) == title
+    assert model.headerData(index, Qt.Orientation.Horizontal, role) != tooltips.tooltip(tip_id)
