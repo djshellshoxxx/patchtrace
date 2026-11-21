@@ -1,0 +1,33 @@
+# Pages CI only: CPython 3.12, Linux x86-64 (Pillow manylinux 2.27/2.28).
+# Wheel SHA-256 values checked against version-specific PyPI metadata and
+# freshly downloaded bytes on 2026-11-21. Keep dependency resolution enabled.
+# Portable build-only declarations remain in requirements.txt.
+# Refresh procedure: docs/specs/pages-build-isolation-and-hashes.md.
+
+# https://pypi.org/pypi/iniconfig/2.3.1/json
+# iniconfig-2.3.1-py3-none-any.whl
+iniconfig==2.3.1 --hash=sha256:9121e2c1fdb355232495be3194c8dfe87ccc2d5dee45947b78e68f499790d7a7
+
+# https://pypi.org/pypi/packaging/26.3/json
+# packaging-26.3-py3-none-any.whl
+packaging==26.3 --hash=sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c
+
+# https://pypi.org/pypi/pillow/12.3.0/json
+# pillow-12.3.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl
+pillow==12.3.0 --hash=sha256:78cb2c6865a35ab8ff8b75fd122f6033b92a62c82801110e48ddd6c936a45d91
+
+# https://pypi.org/pypi/pluggy/1.7.0/json
+# pluggy-1.7.0-py3-none-any.whl
+pluggy==1.7.0 --hash=sha256:7dd7b0d8832ba3cb632c306926ded123429211b83641b35dc5c41ad2d34f9bec
+
+# https://pypi.org/pypi/pygments/2.21.0/json
+# pygments-2.21.0-py3-none-any.whl
+pygments==2.21.0 --hash=sha256:2363c69b61c4a97c838da3b130dcd6468f4848992b21a82f2a63ec34377137d9
+
+# https://pypi.org/pypi/pytest/9.2.0/json
+# pytest-9.2.0-py3-none-any.whl
+pytest==9.2.0 --hash=sha256:07acdcf88ec174f907dc01af70bf52d49b014bbab03faeeade31c96b18c2e588
+
+# https://pypi.org/pypi/segno/1.6.6/json
+# segno-1.6.6-py3-none-any.whl
+segno==1.6.6 --hash=sha256:28c7d081ed0cf935e0411293a465efd4d500704072cdb039778a2ab8736190c7

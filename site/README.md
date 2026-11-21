@@ -34,8 +34,26 @@ tree is `site/dist/`, deployed by `.github/workflows/pages.yml`. Canonical URL:
 python -m pip install -r tools/site/requirements.txt   # Pillow and segno; site tools only
 python tools/site/build_site.py                         # writes site/dist, prints warnings
 python tools/site/build_site.py --write-claims          # regenerates tests/site_claims.md after content edits
-python -m pytest -q tests/test_site_*.py
+python -m pytest --noconftest --disable-plugin-autoload -q tests/test_site_*.py
 ```
+
+The test command needs pytest installed. It runs the complete site-test selection
+without the application's shared test fixtures or unrelated installed pytest
+plugins. The existing screenshot-regeneration test still needs the application
+GUI and reports a skip when PySide6 is absent.
+
+For the same dependency set as Pages CI, use a clean **Linux x86-64, Python 3.12**
+environment and install its complete test/build lock instead:
+
+```sh
+python -m pip install --require-hashes --only-binary=:all: -r tools/site/requirements-ci.lock
+```
+
+This verifies the reviewed wheel hashes for Pillow, Segno, pytest and pytest's
+dependencies. The portable `requirements.txt` remains the build-only option for
+other platforms. See the [isolation and hash contract](../docs/specs/pages-build-isolation-and-hashes.md)
+for the lock's platform scope and update procedure. The application test suite
+continues to use its normal shared fixtures.
 
 Open `site/dist/index.html` in a browser. Exit codes: 0 built, 2 configuration or input error (for example
 an invalid address), 3 the built page failed its quality gate. The gate (`tools/site/checks.py`) fails the
