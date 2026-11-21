@@ -1770,3 +1770,11 @@ Owner/branch: `codex/patchtrace-linux-frozen-cli-smoke-20261121`; handoff
 - [ ] Continue CODEX-5, transitive dependency closure, Ghidra cache acceptance, historical semantics, manual/trust/accessibility/raw-provenance and separate L1/L2/L3 gates.
 
 [Current combined handoff](../docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md).
+
+## CSAF cache read-limit race — isolated continuation 2026-11-21
+
+- [x] Inspect existing offline cache source, SPEC-35 transport/cache contract, and maintained fake-server tests without modifying unrelated active PR ownership.
+- [x] Add a stale-file-size regression and a bounded-index-read assertion before adding the cache fix.
+- [x] Cap the actual cache file reads, re-check length, preserve SHA-256 verification, legacy file layout and no-limit direct API.
+- [ ] Complete focused tests, full offscreen pytest, whole-tree Ruff, dependency checks, independent source review, and actual Linux/Windows CI on current PR head. None were executed or claimed in the authoring environment.
+- [ ] Resolve any CI failures and merge only with current expected-head guard and required `[no release] [no deploy]` merge text. Keep this scope separate from PR352 and Root837FE's existing integration.

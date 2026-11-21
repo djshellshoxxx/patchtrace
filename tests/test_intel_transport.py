@@ -213,6 +213,73 @@ def test_c22_a_failing_cache_write_does_not_fail_a_successful_fetch(tmp_path):
     assert any('cache' in line and 'not updated' in line for line in seen), seen
 
 
+def test_cache_body_stale_stat_does_not_bypass_resource_read_limit(tmp_path, monkeypatch):
+    """A concurrent local growth after stat must never admit an oversized hashed body."""
+    from pathlib import Path
+
+    body = b'x' * (tr.CAPS['hash'] + 9)
+    sha = hashlib.sha256(body).hexdigest()
+    base = tmp_path / 'cache'
+    (base / 'bodies').mkdir(parents=True)
+    target = base / 'bodies' / sha
+    target.write_bytes(body)
+    (base / 'urls.json').write_text(json.dumps({DOC: {'sha256': sha, 'retrieved_at': 'x',
+                                                      'final_url': DOC}}), encoding='utf-8')
+    real_stat = Path.stat
+
+    def stale_body_stat(path, *args, **kwargs):
+        stat_result = real_stat(path, *args, **kwargs)
+        if path == target:
+            class Stale:
+                st_size = 1
+            return Stale()
+        return stat_result
+
+    monkeypatch.setattr(Path, 'stat', stale_body_stat)
+    with pytest.raises(IntelError) as exc:
+        tr.OfflineCache(base).get(DOC, limit=tr.CAPS['hash'])
+    assert exc.value.code == 'PT-INTEL-LIMIT'
+
+
+def test_cache_url_index_uses_explicit_read_cap(tmp_path, monkeypatch):
+    """A size-check/read race must not turn a URL index lookup into an unbounded read."""
+    from pathlib import Path
+
+    base = tmp_path / 'cache'
+    (base / 'bodies').mkdir(parents=True)
+    body = b'valid synthetic cached CSAF bytes'
+    sha = hashlib.sha256(body).hexdigest()
+    (base / 'bodies' / sha).write_bytes(body)
+    legacy = base / 'urls.json'
+    legacy.write_text(json.dumps({DOC: {'sha256': sha, 'retrieved_at': 'x', 'final_url': DOC}}),
+                      encoding='utf-8')
+    original_open = Path.open
+    requested = []
+
+    class ReadGuard:
+        def __init__(self, handle):
+            self.handle = handle
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return self.handle.__exit__(*args)
+
+        def read(self, size=-1):
+            requested.append(size)
+            assert size == tr.OfflineCache.MAX_MAP_BYTES + 1, 'unbounded URL index read'
+            return self.handle.read(size)
+
+    def guarded_open(path, *args, **kwargs):
+        handle = original_open(path, *args, **kwargs)
+        return ReadGuard(handle) if path == legacy else handle
+
+    monkeypatch.setattr(Path, 'open', guarded_open)
+    assert tr.OfflineCache(base).get(DOC, limit=tr.CAPS['document']).body == body
+    assert requested == [tr.OfflineCache.MAX_MAP_BYTES + 1]
+
+
 def test_c22_cached_bodies_are_capped_per_resource_kind(tmp_path):
     body = b'x' * (tr.CAPS['hash'] + 1)  # larger than any .sha256 file may be
     sha = hashlib.sha256(body).hexdigest()
