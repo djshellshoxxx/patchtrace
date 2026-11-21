@@ -1672,7 +1672,7 @@ for exact commits and limitations. No main merge/release.
 - [x] On isolated PR348-based successor, document Tier R cache integrity
   contract; change cached extracted rizin/Ghidra trees to original archives;
   verify SHA-256 on every hit/miss before clean extraction. Positive static
-  tests and ten mutation cases authored. Author JS/synthetic shell controls
+  tests and twelve mutation cases authored. Author JS/synthetic shell controls
   passed; these do not qualify hosted native execution.
 - [ ] Source-bind and run new/maintained repository pytest, whole-tree Ruff,
   dependency checks and appropriate complete QA with preserved failures.
