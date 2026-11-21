@@ -1,3 +1,10 @@
+## Enrichment ACQ-2 hard deadline — 2026-11-21 independent continuation
+
+- [x] Inspect current `main` and `AGENTS.md`, identify and avoid existing PR349/351 and dependent KBC integration ownership.
+- [x] Add two synthetic blocked-operation regressions (connect and read), registered SPEC-07h H9b and source repair on isolated `codex/patchtrace-enrichment-hard-deadline-20261121-assistant`.
+- [ ] Verify exact head with focused and full offscreen pytest, `python -m ruff check src tests tools`, dependency consistency, Linux/Windows hosted CI and an independent code review; no tests were executed/claimed in the authoring session.
+- [ ] Resolve any CI findings, then merge the PR into `main` with a current head-SHA guard and `[no release] [no deploy]`; verify main integration. Avoid mutating Root837FE-owned integration work.
+
 ## Current PR349 Tier R test repair
 
 [Current report](../docs/engineering/cycle837fe-native-c4-20261121.md) and [ledger](../docs/engineering/task-ledger.json): tested 829600f8 / tree 306c4d58, **1,444 passed / 1 CODEX-5 xfailed**, 1,445 distinct cases, 65 selectors. Whole-tree Ruff, dependencies, isolated binding and independent 67-case review pass. The missed Tier R mutable-tag assertion is repaired; all original workflow/digest/permissions/compiler requirements remain. The cancelled predecessor's partial 1 failed / 19,776 passed result and the original review coverage miss are retained.
