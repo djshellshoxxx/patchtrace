@@ -41,13 +41,17 @@ def test_saved_pr_json_accepts_valid_nested_unicode_and_preserves_data(tmp_path)
     assert tool.read_json(path) == data
 
 
-def test_invalid_saved_pr_json_preserves_previous_inventory_output(tmp_path, capsys):
+def test_invalid_saved_pr_json_preserves_previous_inventory_output(tmp_path, capsys, monkeypatch):
     pulls = tmp_path / "pulls.json"
     pulls.write_text('[{"number":1,"number":2}]', encoding="utf-8")
     snapshot = tmp_path / "refs.tsv"
     snapshot.write_text("branch\ttip_sha\n", encoding="utf-8")
     previous = tmp_path / "inventory.tsv"
     previous.write_bytes(b"previous verified inventory\n")
+    def unexpected_replay(*args, **kwargs):
+        pytest.fail("invalid PR metadata must be refused before Git inventory replay")
+
+    monkeypatch.setattr(tool, "branches", unexpected_replay)
     with pytest.raises(SystemExit) as caught:
         tool.main(["--repo", str(tmp_path), "--main", "a" * 40, "--candidate", "b" * 40,
                    "--pulls-json", str(pulls), "--refs-tsv", str(snapshot), "--output", str(previous)])
