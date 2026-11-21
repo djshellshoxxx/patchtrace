@@ -1,3 +1,9 @@
+## Enrichment total-deadline regression — independent branch (2026-11-21)
+
+Scope: audit ACQ-2, `src/patchtrace/enrichment/intelligence.py` / `tests/test_enrichment_intelligence.py`, isolated branch `codex/patchtrace-enrichment-hard-deadline-20261121-assistant`. Reproducing tests for blocked connection-open and single response read were added before the source fix. The source now supervises the entire owned attempt (including cleanup) against a real monotonic total deadline while retaining the existing injected logical clock, explicit cancellation and bounded abandoned-worker rules. SPEC-07h H9b is registered in the existing hardening backlog. No remote network calls were made by these tests.
+
+**Qualification unverified**: this session could not run a checked-out PatchTrace test environment, so no RED/GREEN execution, whole-tree Ruff, Windows/Linux hosted, native compatibility or independent code review is claimed. Required next action: run offscreen focused and full pytest, whole-tree Ruff and dependency checks on the exact PR head; review the complete diff and ownership; merge only after required CI is green, blockers resolved and a guarded head-SHA REST merge is authorized. Do not infer that this branch or PatchTrace is ready for release.
+
 ## Current Windows/native recovery checkpoint — 2026-11-21
 
 PR351 is actually merged at `3a16290c0fcc4e0c21712fe10474a3ff33fad336`, tree `6001ef506c38930fd590bd827f428b997c3b2797`, after15 executed automatic jobs passed and two release jobs intentionally skipped. Actual ordered ancestry and both publication markers in the subject and body are verified. Linux full QA:24,295 passed/53 skipped/4 xfailed; Windows:24,164 passed/185 skipped/3 xfailed. Counts belong to that qualified source.

@@ -1,3 +1,10 @@
+## Enrichment ACQ-2 hard deadline — 2026-11-21 independent continuation
+
+- [x] Inspect current `main` and `AGENTS.md`, identify and avoid existing PR349/351 and dependent KBC integration ownership.
+- [x] Add two synthetic blocked-operation regressions (connect and read), registered SPEC-07h H9b and source repair on isolated `codex/patchtrace-enrichment-hard-deadline-20261121-assistant`.
+- [ ] Verify exact head with focused and full offscreen pytest, `python -m ruff check src tests tools`, dependency consistency, Linux/Windows hosted CI and an independent code review; no tests were executed/claimed in the authoring session.
+- [ ] Resolve any CI findings, then merge the PR into `main` with a current head-SHA guard and `[no release] [no deploy]`; verify main integration. Avoid mutating Root837FE-owned integration work.
+
 ## Current Windows/native recovery checkpoint — 2026-11-21
 
 PR351 is actually merged at `3a16290c0fcc4e0c21712fe10474a3ff33fad336`, tree `6001ef506c38930fd590bd827f428b997c3b2797`, after15 executed automatic jobs passed and two release jobs intentionally skipped. Actual ordered ancestry and both publication markers in the subject and body are verified. Linux full QA:24,295 passed/53 skipped/4 xfailed; Windows:24,164 passed/185 skipped/3 xfailed. Counts belong to that qualified source.
