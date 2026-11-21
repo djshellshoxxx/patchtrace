@@ -73,6 +73,13 @@ Importing invalidates like any new analysis: the revision rises and stored inter
 
 Wraps `ProjectService.backup`: a complete new copy (SQLite online backup plus `artifacts`, `runs`, `exports`, `kb`, `intelligence`). `DIR` must not exist and must be outside the project (exit 2, `PT-STORAGE: backup destination must be new and outside project`); nothing is ever overwritten. The service does not re-read the copy, so the CLI does: it opens the backup read-only (integrity check, snapshot hash, artifact and raw-output hashes) and compares project id, revision and snapshot with the source. Result: `backup` (absolute directory), `project_id`, `revision`, `verified: true`. A copy that fails this check exits 3, names the directory and leaves it in place for inspection. Other service failures exit 3.
 
+Cancellation while constructing the staged copy remains exit 5 with `status: cancelled`. If a filesystem
+error prevents removing an unsuccessful attempt's staging directory, the service preserves the original failure or
+cancellation and attaches a fixed, path-free `PT-STORAGE` exception note that staging may remain; it does
+not claim cleanup succeeded. Successful publication returns without inspecting or removing the former
+staging pathname, which no longer belongs to that completed copy. Staging cleanup must not delete or
+modify the source project or final destination, and no incomplete copy is reported as verified.
+
 ### 3.7 `project swap PROJECT --confirm [--json]`
 
 Wraps `ProjectService.swap_orientation`. Without `--confirm` it exits 2 (`PT-CLI-CONFIRM`) and explains the effect; it never prompts. Effect, as the service implements it: the older and the newer artifact exchange sides; every match is mirrored (`added` and `removed` swap, `split` and `merged` swap); the project revision rises by one; every interpretation context, every finding and every annotation (notes, bookmarks, manual-correction records) is marked stale. Analysis runs, preserved raw results and derived results in the database are not touched; whether a derived result is still current is decided by its own reader. Result: `revision`, `artifacts`, `matches` (`total`, `by_category`), `invalidated` (`interpretations`, `findings`, `annotations`: the records this swap marked stale).
