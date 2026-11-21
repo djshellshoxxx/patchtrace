@@ -476,9 +476,9 @@ matching, provenance semantics, network scope or vulnerability analysis.
 
 ### Generation 41: saved-index candidate component request type admission (2026-11-20)
 
-The desktop/offline `candidate_pairs` request carries a captured `component_name`
+The desktop/offline `candidate_pairs` and `candidate_preview` requests carry a captured `component_name`
 from a normal Qt string input, but the backend request dataclass is also callable
-directly. The candidate snapshot must require an **exact plain `str`** before
+directly. Candidate request admission must require an **exact plain `str`** before
 calling `strip()` or resolving an index filename. Reject null, numeric, byte,
 custom strip-compatible objects and `str` subclasses overriding normalization
 as `PT-KBC-INPUT`, with fixed text that does not echo the input. Valid padded
@@ -487,3 +487,10 @@ candidate workflow. No source lookup, project creation, network operation or
 source-output mutation should happen for an invalid component name. This rule
 does not broaden input formats, alter Windows build matching, or imply provenance
 or accuracy gains.
+
+The dispatcher must perform this candidate-only admission before verifying any
+captured `current_inputs` or constructing the workspace service, including when
+a direct caller combines candidate fields with a current-project snapshot.
+Cancellation and invalid start-mode checks retain their existing precedence.
+Normal candidate requests and valid component names retain their existing
+current-input verification and saved-index behavior.
