@@ -1,0 +1,24 @@
+{
+  "schema": "patchtrace-bug-hunt/1",
+  "updated_on": "2026-11-21",
+  "findings": [
+    {
+      "id": "PT-BUG-NET-001",
+      "classification": "CONFIRMED",
+      "severity": "P2",
+      "component": "src/patchtrace/netutil.py::read_bounded",
+      "source_commit": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "source_blob": "9fff565fd59d3d3d23a7a9f4e0a894bd742f8432",
+      "fix_branch": "fix/netutil-read-deadline-20261121-0318",
+      "fix_blob": "2898798fe08eee87653db4b404f33bd24a069bd0",
+      "regression_file": "tests/test_netutil_read_deadline.py",
+      "local_red": "2 failed",
+      "local_green": "6 passed",
+      "full_repository_tests": "PENDING",
+      "hosted_ci": "PENDING",
+      "independent_review": "PENDING",
+      "merge_status": "UNMERGED",
+      "details": "docs/engineering/bug-hunt/PT-BUG-NET-001.md"
+    }
+  ]
+}
