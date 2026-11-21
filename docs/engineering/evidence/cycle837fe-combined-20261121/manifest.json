@@ -78,6 +78,10 @@
       "bytes": 150736,
       "sha256": "1464db5f37289fa94fb67d40f794df6cccbd31f4428085ff6034b63c50550150"
     },
+    "pr349-qa-jobs-20261121T061932Z.json": {
+      "bytes": 35491,
+      "sha256": "12a96ffe81a32c034cde1758399a7de05450b6a144d61a556062d195ccdeef97"
+    },
     "pr349-registry-failure-evidence.zip": {
       "bytes": 28553,
       "sha256": "f475a95308fcb04630f6ebb65801510c419ec5f6446653a04cd3610b4503e01f"
