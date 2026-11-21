@@ -1,6 +1,6 @@
 {
   "schema": "patchtrace-engineering-task-ledger/1",
-  "updated_at": "2026-11-21T06:23:17.770750+00:00",
+  "updated_at": "2026-11-21T06:30:54.785396+00:00",
   "repository": "https://github.com/djshellshoxxx/PatchTrace",
   "integration_branch": "integration/patchtrace-20261121-95fe-c3",
   "checkpoint_local_commit": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
@@ -1405,7 +1405,9 @@
     },
     {
       "name": "root",
-      "status": "cycle3-publication-and-hosted-qualification"
+      "status": "COMPLETE",
+      "scope": "95FE-C3 cycle3 publication and initial hosted qualification",
+      "ownership": "Explicitly released in completed handoff; superseded by active837FE combined follow-up."
     },
     {
       "name": "generation31_integration_review",
@@ -1789,9 +1791,12 @@
     "integration_commit": "71b535cc5c1ca0ccc6762831a5d8a137644d14fc"
   },
   "continuation": {
-    "status": "cycle3-source-qualified-awaiting-exact-head-hosted-checks",
-    "handoff": "docs/engineering-handoffs/cycle3-20261121-95fe.md",
-    "next_action": "Refresh live branch/PR/CI and ownership; retain all failures. Inspect both Ubuntu frozen CLI jobs and TierR archive/cache paths on the new source. Merge only after applicable checks and blockers are resolved with fresh expected-head REST guard and BOTH [no release] [no deploy] in the actual merge commit. Continue other unowned bounded work without duplicate full workflows."
+    "status": "TESTING",
+    "owner": "root837FE",
+    "handoff": "docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md",
+    "code_commit": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
+    "target_pr": 349,
+    "next_action": "Publish the reviewed combined candidate to existing PR349 with an expected-head fast-forward guard, inspect exact-head hosted full/Qt/native/package/frozen results and Intel diagnostics, resolve applicable blockers, and use guarded REST main merge with both [no release] [no deploy]. Preserve the separate remaining release gates and existing continuation cadence."
   },
   "sibling_95fe_qualification": {
     "source_commit": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
@@ -2137,5 +2142,15 @@
     "code_commit": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
     "code_tree": "2666e72d5efd51600b170cef033103c9947bae3b",
     "remote_code_commit": "61b26107d77fb632571ede932e0796d4b643f50c"
-  }
+  },
+  "continuation_history": [
+    {
+      "scope": "completed 95FE-C3 continuation, preserved after explicit ownership release",
+      "snapshot": {
+        "status": "cycle3-source-qualified-awaiting-exact-head-hosted-checks",
+        "handoff": "docs/engineering-handoffs/cycle3-20261121-95fe.md",
+        "next_action": "Refresh live branch/PR/CI and ownership; retain all failures. Inspect both Ubuntu frozen CLI jobs and TierR archive/cache paths on the new source. Merge only after applicable checks and blockers are resolved with fresh expected-head REST guard and BOTH [no release] [no deploy] in the actual merge commit. Continue other unowned bounded work without duplicate full workflows."
+      }
+    }
+  ]
 }
