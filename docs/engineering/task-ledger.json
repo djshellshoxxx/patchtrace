@@ -1,6 +1,6 @@
 {
   "schema": "patchtrace-engineering-task-ledger/1",
-  "updated_at": "2026-11-21T02:49:19.534442+00:00",
+  "updated_at": "2026-11-21T04:32:00+00:00",
   "repository": "https://github.com/djshellshoxxx/PatchTrace",
   "integration_branch": "codex/patchtrace-integration-20261121-2bad",
   "checkpoint_local_commit": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
@@ -54,7 +54,8 @@
     "Strict PR JSON continuation: saved all-pages JSON accepted duplicate PR/head/repo keys and nonfinite constants under default Python decoder. Contract/test-first isolated branch adds strict duplicate and parse_constant rejection, fixed malformed/deep errors, and validates saved PR metadata before any branch Git lookup. Eleven authored regression cases and nine copied-parser controls, no checked-out pytest/Ruff or independent review yet. Existing prior-output and historical failures retained.",
     "Strict PR JSON local control extension: 11 copied-reader outcomes passed; invalid UTF-8 fixed refusal and prior-output/no-Git replay also checked. Not source-bound pytest or independent reviewer acceptance.",
     "CODEX-6 Tier R archive cache 2026-11-21: an isolated PR348-based branch now caches the original pinned rizin/Ghidra archives rather than extracted trees, verifies SHA-256 on every applicable cache hit before clean extraction, and preserves Ghidriff condition. Twelve source mutation controls and four synthetic shell checks passed; no repository pytest/Ruff, hosted Tier R, native engine or genuinely independent peer acceptance. Original CODEX-6 strict xfail graduated on this branch only; CODEX-1/5 remain. Ancestor PR347 and PR345 success is not this branch qualification.",
-    "CODEX-6 cache integrity peer-style follow-up found a hidden migration defect: reuse of old extracted-tree cache keys would cause new archive-only cache paths to miss forever on old cache hits. Versioned rizin-archive-v1 and ghidra-archive-v1 keys with no restore fallback repaired after spec/test update. Exact connector source structural checks 14 and negative mutations 14 now pass, still author-side only."
+    "CODEX-6 cache integrity peer-style follow-up found a hidden migration defect: reuse of old extracted-tree cache keys would cause new archive-only cache paths to miss forever on old cache hits. Versioned rizin-archive-v1 and ghidra-archive-v1 keys with no restore fallback repaired after spec/test update. Exact connector source structural checks 14 and negative mutations 14 now pass, still author-side only.",
+    "CODEX-6 fixture-only cache-hit successor 2026-11-21: an isolated branch adds four runnable Bash cache-hit controls against authored tar.xz/ZIP archives, including corruption refusal and no-network enforcement. Production workflow unchanged. This is published test source only; source-bound pytest, Ruff, separate review and hosted exact-head cache-hit acceptance remain pending. Do not count parent PR348 checks as this successor acceptance."
   ],
   "tasks": [
     {
@@ -918,6 +919,16 @@
       "source_repair_commit": "c32449278d0712fa9e653f4b7c51eb5f679a693c",
       "verification": "12 exact fetched workflow source invariants and 14 author JS mutations, synthetic shell cache corruption positive/negative; actual checkout pytest/ruff/CI and independent peer not executed",
       "result_or_next_action": "Parent PR348 still has active Windows full QA; preserve CODEX14 separate. Run source-bound pytest/Ruff/complete suite; separate reviewer verify extracted-cache absence, every-hit archive SHA verification and Ghidriff branch. Then source-specific Tier R with rizin-only and Ghidriff path, guarded PR/integration only after qualified acceptance. Retain CODEX1/5 strict xfails, all main/release gates. Old action caches used same keys for extracted dirs; archive-specific -archive-v1 namespace now validated in spec, 2 additional negative mutations and workflow code."
+    },
+    {
+      "id": "codex6-cache-hit-fixture-20261121",
+      "status": "implemented-unqualified",
+      "owner": "bounded current author cycle; separate reviewer unassigned",
+      "base_commit": "658cc814aa74d1eaebf0d7e6dd4553d06aaef0eb",
+      "branch": "codex/patchtrace-codex6-cache-hit-fixture-tests-20261121",
+      "evidence": "docs/engineering-handoffs/codex6-cache-hit-fixture-20261121.md",
+      "tests": "tests/test_corpus_archive_cache_hit_shell_20261121.py",
+      "result_or_next_action": "Run exact branch pytest/Ruff, independently review, and verify same-key hosted Tier R cache hit for both engines without executing analyzed targets; retain CODEX-6 hosted gate open."
     }
   ],
   "aggregate_source_commit": "3cf7ad23f66611d6bbf3e4d08e10daa2715fd300",
