@@ -2284,3 +2284,11 @@ whole-tree Ruff/full offscreen suite were not run in this inaccessible
 checkout; no independent review was recorded. Native Windows Qt PR343 run
 44810716926 was active. Preserve its actual results, do not credit predecessor
 checks or close original blocker receipts.
+
+
+### Sibling PR345/PR346 reconciliation (2026-11-20)
+
+- Read current draft PR345 and PR346 heads before selecting recovery. Existing hosted QA/native runs on both were queued (PR345 44840721370/44840721268; PR346 44841261805/44841261831); no duplicate dispatch.
+- Contract-first and exact donor-blob selective recovery: candidate request validation before snapshot IO/service; branch-inventory bounded large TSV replay. Added PR346-owned tests and two distinct Qt diagnostic tests, plus two CSV form-feed controls, retaining PR345's Linux forced-export refusal.
+- Actual combined-source whole-tree Ruff, full offscreen pytest, Windows package/native/Qt and independent post-integration review are **pending**. Historical SIGKILL attempts lacked final summaries and remain failures/incomplete; no cause attribution.
+- Keep the original 5cc Java-unverified result, PR342 Windows Qt strict failures, ASM strict timing failure and all native/manual, provenance and L1/L2/L3 acceptance gates in separate rows/receipts.
