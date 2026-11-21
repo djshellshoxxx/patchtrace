@@ -328,6 +328,50 @@ def test_fetch_remains_fail_fast():
     assert len(opener.calls) == 1
 
 
+@pytest.mark.parametrize('phase', ('connect', 'read'))
+def test_stalled_network_step_respects_total_deadline_without_cancel(monkeypatch, phase):
+    """An idle socket step must not hold the request past its total timeout (ACQ-2)."""
+    import time
+
+    from patchtrace import netutil
+
+    release = threading.Event()
+    closed = threading.Event()
+
+    class Blocked(Resp):
+        def read(self, size):
+            if phase == 'read':
+                release.wait(1.5)
+            return super().read(size)
+
+        def close(self):
+            super().close()
+            closed.set()
+
+    response = Blocked()
+
+    def opener(url, headers, timeout):
+        if phase == 'connect':
+            release.wait(1.5)
+        return response
+
+    monkeypatch.setattr(it, 'TOTAL_TIMEOUT', 0.12)
+    plan = it.plan_requests([CVE], ('msrc',))
+    started = time.monotonic()
+    try:
+        with pytest.raises(EnrichmentError) as exc:
+            it.fetch(plan, it.FetchConsent.for_plan(plan), opener=opener)
+        assert exc.value.code == 'PT-ENRICH-NETWORK'
+        assert time.monotonic() - started < 0.9
+    finally:
+        release.set()
+    assert closed.wait(2.0)
+    until = time.monotonic() + 2.0
+    while netutil.abandoned_count() and time.monotonic() < until:
+        time.sleep(0.01)
+    assert netutil.abandoned_count() == 0
+
+
 def test_slow_drip_response_stops_at_the_total_deadline(monkeypatch):
     import time
 
