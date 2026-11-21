@@ -208,9 +208,9 @@ def test_intermediate_is_not_integrated_merely_because_surviving_pr_contains_it(
     "blank-tip", "blank-branch",
 ])
 def test_snapshot_refuses_malformed_columns_before_any_git_lookup(graph, tmp_path, shape):
-    repo, _, _, _, topic, *_ = graph
+    _, _, _, _, topic, *_ = graph
     layouts = {
-        "duplicate-header": f"branch\t tip_sha\tbranch\noriginal\t{topic}\tforged\n".replace(" tip_sha", "tip_sha"),
+        "duplicate-header": f"branch\ttip_sha\tbranch\noriginal\t{topic}\tforged\n",
         "extra-cell": f"branch\ttip_sha\tnote\noriginal\t{topic}\tretained\textra\n",
         "missing-cell": f"branch\ttip_sha\tnote\noriginal\t{topic}\n",
         "missing-tip-header": "branch\tnote\noriginal\tretained\n",
