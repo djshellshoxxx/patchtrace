@@ -29,16 +29,16 @@ strict xfail to a passing source contract. New
 `tests/test_corpus_cache_archive_integrity_20261121.py` checks
 archive-only cache paths, obligatory pre-extraction digest verification,
 clean extraction, pinned archive identity and conditional Ghidra.
-Twelve mutation cases refuse removal of these boundaries. The existing
+Fourteen mutation cases refuse removal of these boundaries. The existing
 CODEX-1 and CODEX-5 strict xfails remain unchanged.
 
 ## Evidence / qualification
 
 - Connector-fetched workflow blob after patch:
-  `03444dfd08d97815c0ede48443de1846bd796009`.
+  `c15784337596d03de29a144980312872830b8aa4`.
 - Author-side JS source inspection: **12 structural invariants pass**.
-- Twelve mutations of the exact fetched workflow were passed through a
-  separate JS implementation of the source contract: **12/12 detected**.
+- Fourteen mutations of the exact fetched workflow were passed through a
+  separate JS implementation of the source contract: **14/14 detected**.
   These are not pytest runs or an independent peer reviewer.
 - An isolated **synthetic** shell replay with small fixture archives
   demonstrated both positive checksum+extraction cases and both negative
@@ -72,3 +72,15 @@ No main merge, publication or release is authorized without independent
 review and every applicable green current-source check. Historical
 181 unmatched/16 patch-equivalent heads, full raw membership,
 Windows manual/trust/accessibility and L1/L2/L3 evidence remain open.
+
+### Cache namespace migration review
+
+A second inspection found that keeping the historical cache keys would
+restore old *extracted-directory* payloads despite the new `archive/`
+path. Actions/cache would regard those keys as hits and never save the
+new archive directory. The specification was amended before tests and
+workflow code: only `rizin-archive-v1-${{ env.RIZIN_SHA256 }}` and
+`ghidra-archive-v1-${{ env.GHIDRA_SHA256 }}` may restore. No fallback to old
+keys is configured. Two more negative mutations explicitly refuse reuse of
+extracted-cache keys; new workflow blob is
+`c15784337596d03de29a144980312872830b8aa4`.
