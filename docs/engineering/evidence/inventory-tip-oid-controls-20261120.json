@@ -34,5 +34,7 @@
       "result": "Linux QA and 3/4 Linux Qt shards success; other QA/Qt jobs still in progress at observation"
     }
   },
-  "constraints": "No analyzed target binary execution; no branch deletion/merge/rebase/force push/release/deploy; unknown historic semantic backlog and Windows release gates unchanged"
+  "constraints": "No analyzed target binary execution; no branch deletion/merge/rebase/force push/release/deploy; unknown historic semantic backlog and Windows release gates unchanged",
+  "test_cleanup_commit": "18b400c699b4e0bed512be6f45ed720749ed4faa",
+  "author_side_review": "Corrected unused fixture variable in strict-tip regression after static source inspection; not whole-tree Ruff or independent signoff"
 }
