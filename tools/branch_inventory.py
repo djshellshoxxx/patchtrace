@@ -81,7 +81,7 @@ def read_json(path: Path) -> Any:
 
     try:
         value = json.loads(raw, object_pairs_hook=unique_object, parse_constant=reject_nonfinite)
-    except (json.JSONDecodeError, UnicodeDecodeError):
+    except (json.JSONDecodeError, UnicodeDecodeError, RecursionError):
         raise ValueError("invalid pull-request metadata JSON") from None
     if not isinstance(value, list) or not all(isinstance(row, dict) for row in value):
         raise ValueError("pull-request metadata must be an all-pages JSON array")
