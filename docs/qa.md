@@ -2292,3 +2292,10 @@ checks or close original blocker receipts.
 - Contract-first and exact donor-blob selective recovery: candidate request validation before snapshot IO/service; branch-inventory bounded large TSV replay. Added PR346-owned tests and two distinct Qt diagnostic tests, plus two CSV form-feed controls, retaining PR345's Linux forced-export refusal.
 - Actual combined-source whole-tree Ruff, full offscreen pytest, Windows package/native/Qt and independent post-integration review are **pending**. Historical SIGKILL attempts lacked final summaries and remain failures/incomplete; no cause attribution.
 - Keep the original 5cc Java-unverified result, PR342 Windows Qt strict failures, ASM strict timing failure and all native/manual, provenance and L1/L2/L3 acceptance gates in separate rows/receipts.
+
+
+## 2026-11-20 — isolated branch snapshot exact-tip validation and PR345 Windows packaging failure
+
+Isolated branch `codex/patchtrace-inventory-tip-oid-20261120` requires canonical lowercase 40/64-hex commit IDs in retained TSV tips and refuses different resolved commit identities. Seven repository regressions authored; only offline synthetic Git controls ran (six early rejects, one direct SHA success, one tag peeling reject). No complete source checkout pytest/Ruff/independent review or successor CI has passed.
+
+PR345 Windows QA [run 44840721370](https://github.com/djshellshoxxx/PatchTrace/actions/runs/44840721370), job `136648122555`, **failed** during NSIS v3.13 Chocolatey install: `community.chocolatey.org/api/v2` returned HTTP 503. The same job logged 23,847 pytest passes, 181 skips, 5 xfails; that successful test stage does not change the job's failed conclusion. This establishes a dependency-feed failure, not a product-code cause, and should not prompt blanket retries or gate changes without evidence.
