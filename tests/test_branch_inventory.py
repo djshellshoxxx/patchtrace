@@ -263,7 +263,7 @@ def test_invalid_snapshot_headers_leave_previous_published_evidence_unchanged(gr
     "uppercase-object", "late-invalid-after-valid",
 ])
 def test_snapshot_rejects_noncanonical_tip_before_any_git_access(graph, tmp_path, shape):
-    repo, _, _, _, topic, *_ = graph
+    _, _, _, _, topic, *_ = graph
     invalid_tips = {
         "head-reference": "HEAD",
         "abbreviated-object": topic[:10],
