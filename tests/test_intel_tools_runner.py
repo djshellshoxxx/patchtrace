@@ -247,7 +247,7 @@ def test_windows_environment_layout_is_private_and_semicolon_separated(tmp_path)
     scratch = process.make_scratch('win', tmp_path)
     env = process.tool_env(Path('C:/tools/capa/capa.exe'), scratch, windows=True,
                            environ={'SystemRoot': 'C:\\Windows', 'USERNAME': 'someone', 'HTTP_PROXY': 'x'})
-    assert env['SystemRoot'] == 'C:\\Windows' and 'HTTP_PROXY' not in env and 'USERNAME' not in env
+    assert env['SystemRoot'] == 'C:\\Windows' and 'HTTP_PROXY' not in env and env['USERNAME'] == 'patchtrace'
     assert ';' in env['PATH']
     for key in ('TEMP', 'TMP', 'APPDATA', 'LOCALAPPDATA'):
         assert str(scratch) in env[key]
