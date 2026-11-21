@@ -315,3 +315,28 @@ Order: D1 and D2 in parallel, then D3, then D4/D5/D6 in parallel, then D7, then 
 8. `.NET` severity? Default: IL-only caution, mixed or ReadyToRun notice.
 9. Timeline in the Series window now, or report and CLI first? Default: strip behind the seam; fallback report and CLI.
 10. Treat the Linux and Windows 3.21 database digests as one label? Default: show one label from `KNOWN_DATABASES` and keep evidence non-comparable across executables (T6.1).
+
+
+## 12. Build facts table column-header help (2026-11-21)
+
+The existing five Build environment columns retain their display titles,
+row getters, row keys, default search, sort behavior, sizes and TSV exports.
+On construction the Build environment controller registers the panel tooltip
+entries. Every horizontal `VirtualTable` header section MUST resolve its
+own registered `ColumnSpec.tip_id` rather than falling back to the bare title.
+
+| Column key | Existing label | Registered tooltip ID |
+| --- | --- | --- |
+| `fact` | Fact | `build_env.col.fact` |
+| `older` | OLDER | `build_env.col.older` |
+| `newer` | NEWER | `build_env.col.newer` |
+| `status` | Status | `build_env.col.status` |
+| `basis` | Basis | `build_env.col.basis` |
+
+Each entry explains the meaning and evidence limits of the column; no status
+is inferred from an unavailable value. Header display/accessibility text and
+the underlying cell values MUST be unchanged. Source bindings belong in the
+panel's existing `tooltip_entries.TIPS`; no global tooltip exception or
+shared `VirtualTable` special case is permitted. Test the actual Qt table
+header roles and that prepared display/row identity do not change. Offscreen
+tests are automated UI proxies; Windows NVDA/Narrator acceptance remains open.
