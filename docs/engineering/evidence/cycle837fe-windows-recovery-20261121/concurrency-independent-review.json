@@ -1,0 +1,432 @@
+{
+  "schema": "patchtrace/independent-ci-publication-review/1",
+  "reviewed_at_utc": "2026-11-21T10:15:51.604529+00:00",
+  "source": "c4eb63c55a35a1c2a927f4aeb4d42c8b96ff45ff",
+  "tree": "561befcde425c5de07e113128dc79c21b7616772",
+  "parent": "2ae1bbad2ad9cc78c29541872381750e347c670e",
+  "verdict": "CLEAR: no blocker in the bounded concurrency and empty-upload source change",
+  "blockers": [],
+  "checks_passed": 101,
+  "checks": [
+    {
+      "check": "Exact frozen commit/tree/parent and clean worktree",
+      "passed": true
+    },
+    {
+      "check": "Both commit hold markers retained",
+      "passed": true
+    },
+    {
+      "check": "Exactly four authorized paths",
+      "passed": true,
+      "paths": [
+        ".github/workflows/qa-windows.yml",
+        "docs/specs/REGISTRY.md",
+        "docs/specs/windows-acceptance-and-milestone-builds.md",
+        "tests/test_release_gate.py"
+      ]
+    },
+    {
+      "check": "Exact byte delta is two concurrency fields plus one upload input",
+      "passed": true
+    },
+    {
+      "check": "Exactly one actual required upload step",
+      "passed": true
+    },
+    {
+      "check": "Parsed workflow exact except authorized concurrency/upload fields",
+      "passed": true
+    },
+    {
+      "check": "Concurrency expressions identical to original donor",
+      "passed": true
+    },
+    {
+      "check": "Every pre-existing test/helper function AST unchanged",
+      "passed": true,
+      "preserved_function_count": 74
+    },
+    {
+      "check": "Original donor concurrency regression AST identical",
+      "passed": true
+    },
+    {
+      "check": "Only expected three tests and one bounded helper added",
+      "passed": true
+    },
+    {
+      "check": "All original test module AST nodes retained, additions only",
+      "passed": true
+    },
+    {
+      "check": "Original spec retained with one bounded section insertion",
+      "passed": true
+    },
+    {
+      "check": "Author frozen snapshot matches actual Git blob: .github/workflows/qa-windows.yml",
+      "passed": true
+    },
+    {
+      "check": "Author frozen snapshot matches actual Git blob: docs/specs/REGISTRY.md",
+      "passed": true
+    },
+    {
+      "check": "Author frozen snapshot matches actual Git blob: docs/specs/windows-acceptance-and-milestone-builds.md",
+      "passed": true
+    },
+    {
+      "check": "Author frozen snapshot matches actual Git blob: tests/test_release_gate.py",
+      "passed": true
+    },
+    {
+      "check": "Author archive exact expected identity/size",
+      "passed": true
+    },
+    {
+      "check": "Author archive CRC and unique member inventory",
+      "passed": true
+    },
+    {
+      "check": "Author manifest exact 45 payload inventory",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: HANDOFF.md",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: candidate-commit.txt",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: final-source/.github/workflows/qa-windows.yml",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: final-source/docs/specs/REGISTRY.md",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: final-source/docs/specs/windows-acceptance-and-milestone-builds.md",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: final-source/tests/test_release_gate.py",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: focused-initial-path-boundary-receipt.json",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: focused-initial-path-boundary.stderr.txt",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: focused-initial-path-boundary.stdout.txt",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: focused-initial-path-boundary.xml",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: focused-receipt.json",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: focused.stderr.txt",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: focused.stdout.txt",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: focused.xml",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: frozen-candidate.json",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: historical/REVIEW.md",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: historical/archive-receipt.json",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: historical/ci/branch.patch",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: historical/ci/commit.txt",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: historical/ci/donor/tests/test_release_gate.py",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: historical/classification.json",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: historical/donor-ci-receipt.json",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: historical/donor-ci.stderr.txt",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: historical/donor-ci.stdout.txt",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: historical/donor-ci.xml",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: historical/fresh-branch-refs.json",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: historical/historical-packaging-next-review.zip",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: initial-path-boundary-candidate.diff",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: original/.github/workflows/qa-windows.yml",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: original/docs/specs/REGISTRY.md",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: original/docs/specs/windows-acceptance-and-milestone-builds.md",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: original/tests/test_release_gate.py",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: original-inputs.json",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: path-boundary-correction.json",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: red-receipt.json",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: red.stderr.txt",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: red.stdout.txt",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: red.xml",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: source-invariants.json",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: upstream/action.yml",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: upstream/upload-source-receipt.json",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: validated-candidate.diff",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: whole-ruff-receipt.json",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: whole-ruff.stderr.txt",
+      "passed": true
+    },
+    {
+      "check": "Author payload digest: whole-ruff.stdout.txt",
+      "passed": true
+    },
+    {
+      "check": "Complete historical archive unchanged",
+      "passed": true
+    },
+    {
+      "check": "Nested historical archive CRC",
+      "passed": true
+    },
+    {
+      "check": "Retained actual JUnit outcomes: red.xml",
+      "passed": true
+    },
+    {
+      "check": "Retained actual JUnit outcomes: focused-initial-path-boundary.xml",
+      "passed": true
+    },
+    {
+      "check": "Retained actual JUnit outcomes: focused.xml",
+      "passed": true
+    },
+    {
+      "check": "Validated precommit diff equals frozen source diff",
+      "passed": true
+    },
+    {
+      "check": "Preserved red-stage receipt records contract/tests first on baseline workflow",
+      "passed": true
+    },
+    {
+      "check": "Pinned action input defaults warn and accepts error",
+      "passed": true
+    },
+    {
+      "check": "Pinned action code explicitly fails only zero resolved files for error",
+      "passed": true
+    },
+    {
+      "check": "Historical census is unchanged 181/16",
+      "passed": true
+    },
+    {
+      "check": "Whole historical changed-path accounting: claude/awesome-ramanujan-o3pxx3-ci",
+      "passed": true
+    },
+    {
+      "check": "Whole historical changed-path accounting: claude/awesome-ramanujan-o3pxx3-win1",
+      "passed": true
+    },
+    {
+      "check": "CI remains partial and WIN1 superseded, no wholesale closure",
+      "passed": true
+    },
+    {
+      "check": "Spec preserves downloaded-artifact/member completeness/pin gaps",
+      "passed": true
+    },
+    {
+      "check": "In-memory maintained control: exact frozen candidate",
+      "passed": true
+    },
+    {
+      "check": "In-memory maintained control: unchanged parent workflow",
+      "passed": true
+    },
+    {
+      "check": "Unchanged parent independently reproduces all eight red cases",
+      "passed": true
+    },
+    {
+      "check": "In-memory maintained control: ordinary following job comment remains outside path scalar",
+      "passed": true
+    },
+    {
+      "check": "In-memory maintained control: unconditional cancellation",
+      "passed": true
+    },
+    {
+      "check": "In-memory maintained control: cancellation disabled for PR too",
+      "passed": true
+    },
+    {
+      "check": "In-memory maintained control: group remains shared by ref for pushes",
+      "passed": true
+    },
+    {
+      "check": "In-memory maintained control: PRs use run id and cannot replace earlier PR run",
+      "passed": true
+    },
+    {
+      "check": "In-memory maintained control: event condition incorrectly selects push",
+      "passed": true
+    },
+    {
+      "check": "In-memory maintained control: head ref substitutes different declared grouping",
+      "passed": true
+    },
+    {
+      "check": "In-memory maintained control: missing empty-upload input",
+      "passed": true
+    },
+    {
+      "check": "In-memory maintained control: empty-upload input warns",
+      "passed": true
+    },
+    {
+      "check": "In-memory maintained control: empty-upload input ignores",
+      "passed": true
+    },
+    {
+      "check": "In-memory maintained control: comment-only empty-upload input",
+      "passed": true
+    },
+    {
+      "check": "In-memory maintained control: Windows successful-only upload condition removed",
+      "passed": true
+    },
+    {
+      "check": "In-memory maintained control: one required checksum path absent",
+      "passed": true
+    },
+    {
+      "check": "In-memory maintained control: unexpected fifth artifact path",
+      "passed": true
+    },
+    {
+      "check": "In-memory maintained control: artifact path broadened to wildcard",
+      "passed": true
+    },
+    {
+      "check": "In-memory maintained control: required artifact renamed",
+      "passed": true
+    },
+    {
+      "check": "In-memory maintained control: required upload action pin changed",
+      "passed": true
+    },
+    {
+      "check": "Same-run rerun preserves id group but no running cancellation: push",
+      "passed": true
+    },
+    {
+      "check": "Same-run rerun preserves id group but no running cancellation: workflow_dispatch",
+      "passed": true
+    },
+    {
+      "check": "Frozen worktree remains clean and unchanged",
+      "passed": true
+    }
+  ],
+  "in_memory_controls": 19,
+  "baseline_red_cases": 8,
+  "maintained_receipt": "maintained-receipt.json",
+  "original_functions_preserved": 74,
+  "author_archive_sha256": "2cfe01d16d4f3f0d443208bfaffc8c45594c959f63d3991b749ac273b2ffdd58",
+  "historical_scope": "CI PORT(partial) for two selected controls; uploaded-artifact validation and dependency-pin closure remain open. WIN1 stays SUPERSEDED. Original181/16 snapshot unchanged.",
+  "hosted_scheduling_upload_acceptance": "Pending; no GitHub expression-engine or live scheduler/upload execution performed.",
+  "source_or_refs_modified": false,
+  "full_suite_or_native_execution": false
+}

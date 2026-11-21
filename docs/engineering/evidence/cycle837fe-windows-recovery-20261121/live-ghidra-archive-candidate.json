@@ -1,0 +1,41 @@
+{
+  "schema": "patchtrace/live-ghidra-archive-candidate/1",
+  "head": "88df8cfbe51f91a6bc08c6863cd5d63f86500ca0",
+  "tree": "f22f034f92c0c82c59c86665e8b70acb87974448",
+  "parent": "1c70cd5f8053f75c269da673a24a82f221180650",
+  "parent_tree": "a39d650ca7fa2b41ece017ea492396722a4142d9",
+  "branch": "codex/patchtrace-live-ghidra-archive-20261121-837fe",
+  "worktree": "/workspace/scratch/837fe19aae3a/repair-live-ghidra-archive",
+  "working_tree_clean": true,
+  "owned_paths": [
+    {
+      "path": ".github/workflows/live-backend.yml",
+      "git_blob": "ca3070609047786dd83429b9c149ffc25307a981",
+      "sha256": "0af864d7967673e027b696d2ef70a9b62b5e652e27b79f80e5175ebb1c7b19ff",
+      "bytes": 6030
+    },
+    {
+      "path": "docs/specs/windows-acceptance-and-milestone-builds.md",
+      "git_blob": "aa07e47ddb29c7dcc54fc59f6b04891e28ec8a8d",
+      "sha256": "f518bbe799ce5d05ef3db5d7d93f95bce74d41126c933c7357e7201eaa865f15",
+      "bytes": 36793
+    },
+    {
+      "path": "docs/specs/REGISTRY.md",
+      "git_blob": "f60c2b20afc5ccf0a918b245e4e679772d4cee42",
+      "sha256": "930ff6c92efb54c7d2fc04919d53ddbae162fbe92bc3adacf9faa01731fb7ff1",
+      "bytes": 39324
+    },
+    {
+      "path": "tests/test_live_ghidra_archive.py",
+      "git_blob": "c6df65806bafcaddb24b52cc074e4d323d6adf43",
+      "sha256": "9262b9847ae0483b9c2fcf66d6871fdebcb3fb81b7e651e9b76e840f0a7f353f",
+      "bytes": 10617
+    }
+  ],
+  "qualification_state": "local source and controlled fixtures only; independent and hosted Windows/cache/native qualification pending",
+  "precommit_validation_state": "candidate-before-validation.json records the parent HEAD plus uncommitted exact candidate source; no clean-parent pass is claimed",
+  "remote_actions": false,
+  "native_execution": false,
+  "dependency_install": false
+}

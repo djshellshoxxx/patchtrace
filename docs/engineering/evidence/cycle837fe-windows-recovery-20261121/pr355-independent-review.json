@@ -1,0 +1,111 @@
+{
+  "schema": "patchtrace/pr355-independent-review/1",
+  "verdict": "CLEAR FOR FURTHER EXACT-SOURCE HOSTED QUALIFICATION; NOT MERGE AUTHORIZATION",
+  "head": "e2127864cb481026db0157082d688b8a36595e3b",
+  "tree": "da71960b2edf33f1637c073b0613035843619543",
+  "base": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+  "unique_commits": [
+    "5a1154b4eb237280dcdd60dbe944dbd0edd48ce7",
+    "da6fb2539d8a1a941b7bcbbf7abd7331b24842cc",
+    "acfc75569d5d318a5274195a7fc662090ffa75ad",
+    "e2127864cb481026db0157082d688b8a36595e3b"
+  ],
+  "changed_paths": [
+    "docs/engineering/bug-hunt/PT-BUG-OPT-002.json",
+    "docs/engineering/bug-hunt/PT-BUG-OPT-002.md",
+    "src/patchtrace/optional_deps.py",
+    "tests/test_optional_import_recovery.py"
+  ],
+  "source_blockers": [],
+  "parent_red": {
+    "cases": 3,
+    "failed": 3,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 0
+  },
+  "focused": {
+    "cases": 82,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 82
+  },
+  "independent_controls": {
+    "controls": [
+      {
+        "package": "rapidfuzz",
+        "fault": "OSError",
+        "passed": true,
+        "outcome": "Unavailable capability with actionable preserved error; unrelated capabilities unchanged"
+      },
+      {
+        "package": "rapidfuzz",
+        "fault": "KeyboardInterrupt",
+        "passed": true,
+        "outcome": "Original control-flow exception propagated by identity"
+      },
+      {
+        "package": "rapidfuzz",
+        "fault": "SystemExit",
+        "passed": true,
+        "outcome": "Original control-flow exception propagated by identity"
+      },
+      {
+        "package": "iced_x86",
+        "fault": "OSError",
+        "passed": true,
+        "outcome": "Unavailable capability with actionable preserved error; unrelated capabilities unchanged"
+      },
+      {
+        "package": "iced_x86",
+        "fault": "KeyboardInterrupt",
+        "passed": true,
+        "outcome": "Original control-flow exception propagated by identity"
+      },
+      {
+        "package": "iced_x86",
+        "fault": "SystemExit",
+        "passed": true,
+        "outcome": "Original control-flow exception propagated by identity"
+      },
+      {
+        "package": "yara_x",
+        "fault": "OSError",
+        "passed": true,
+        "outcome": "Unavailable capability with actionable preserved error; unrelated capabilities unchanged"
+      },
+      {
+        "package": "yara_x",
+        "fault": "KeyboardInterrupt",
+        "passed": true,
+        "outcome": "Original control-flow exception propagated by identity"
+      },
+      {
+        "package": "yara_x",
+        "fault": "SystemExit",
+        "passed": true,
+        "outcome": "Original control-flow exception propagated by identity"
+      }
+    ],
+    "count": 9,
+    "source": "/workspace/scratch/837fe19aae3a/review-pr355-optional-imports/src/patchtrace/optional_deps.py",
+    "synthetic": true,
+    "native_fault_acceptance": false
+  },
+  "whole_tree_ruff": "PASS",
+  "pip_check": "PASS",
+  "scope": "Read-only independent review by root837FE; author draft/full/native/ownership holds preserved",
+  "full_suite": false,
+  "windows_or_native_fault_acceptance": false,
+  "frozen_environment_rebound": false,
+  "source_ref_PR_CI_mutations": false,
+  "author_counts_additive": false,
+  "observed_pr_unchanged_at": "2026-11-21T12:45:14Z",
+  "open_gates": [
+    "Exact-head full hosted Linux/Windows QA and all applicable workflows",
+    "Current-main integration reconciliation",
+    "Author draft/ownership holds and fresh guarded REST merge"
+  ],
+  "release_ready": false
+}

@@ -1,0 +1,142 @@
+{
+  "base": "1c70cd5f8053f75c269da673a24a82f221180650",
+  "parent_workflow_sha256": "89aebb3620d896f6b8288b05ec6994f85079ec3497b4470a9ae3dd28199e8a1c",
+  "candidate_workflow_sha256": "0af864d7967673e027b696d2ef70a9b62b5e652e27b79f80e5175ebb1c7b19ff",
+  "whole_workflow_equals_parent_after_removing_two_pin_env_values_new_cache_step_and_restoring_only_archive_step": true,
+  "parent_archive_step_index": [
+    5
+  ],
+  "remaining_parent_steps_equal": 12,
+  "five_native_variants_preserved": true,
+  "protected_files": [
+    {
+      "path": ".github/workflows/corpus-tier-r.yml",
+      "sha256": "1afb42286c2b99ad25df874ddf7eb11bc9da9cbf3d3df537e733daa3007b59f2",
+      "equals_base": true
+    },
+    {
+      "path": "tools/live_backend_check.py",
+      "sha256": "f497f65fc43881d021efafcd4b3f0c08e34614b37f3d7bb589547b6b33785700",
+      "equals_base": true
+    },
+    {
+      "path": "tools/live_cache_check.py",
+      "sha256": "ca6b7a8e7eac91815575948036a959a88068313f869e60711a0fd8c4446c2f25",
+      "equals_base": true
+    },
+    {
+      "path": "tools/seed_symbol_cache.py",
+      "sha256": "bdcb3759340702f4bb4dcd1cb4cad9b57d9c8e56e9e36d11c4b9f91dc453515c",
+      "equals_base": true
+    },
+    {
+      "path": "tests/fixtures/old.c",
+      "sha256": "b0d28c94a901b3b188034ae0112f6dbbba09cfae946d97f115dbdf1165e370e3",
+      "equals_base": true
+    },
+    {
+      "path": "tests/fixtures/new.c",
+      "sha256": "1b908b80063d6aba5648e75ec3661990699481138966c0876dbd2de3554d5cf8",
+      "equals_base": true
+    },
+    {
+      "path": "tests/test_codex_pkg_workflows.py",
+      "sha256": "10b7e32043905f568b40123dd90cf894b42bfa8318bed6b6a06504f4ee41950b",
+      "equals_base": true
+    },
+    {
+      "path": "tests/test_codex5_command_audit_20261121.py",
+      "sha256": "a858f03cadedef6bf9d97c58469d3d46c68812946adff0ab00e6df9b5e60b554",
+      "equals_base": true
+    },
+    {
+      "path": "docs/qa.md",
+      "sha256": "877bbdac9e4fb402a5f84596d4e2fc973f0bba1660497582ddcae5fd0cb70441",
+      "equals_base": true
+    },
+    {
+      "path": "tasks/todo.md",
+      "sha256": "6b36dfaaabac5ed16ef30ef7c3117e4ea01ad07a45ea820609f370f614e7c553",
+      "equals_base": true
+    },
+    {
+      "path": "docs/engineering/task-ledger.json",
+      "sha256": "9d9ae753a9a7d36ec6e9c2b7778bd98b6c6bff006e4216c0f26e1c5620a287a7",
+      "equals_base": true
+    },
+    {
+      "path": "docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md",
+      "sha256": "ffd01a55d54c6ad5c15986f4903eb5c7f2866696480f6075b958187650207ae9",
+      "equals_base": true
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "8c391a0b25e607cf52bb170375a7077c537b298c7fb07c6c2ccad2fda1e1d6d6",
+      "equals_base": true
+    }
+  ],
+  "validation_source_bytes_unchanged": true,
+  "pytest_distinct_test_ids": 271,
+  "passed": 260,
+  "xfails": [
+    {
+      "class": "tests.test_codex_pkg_workflows",
+      "name": "test_pip_downloads_require_hashes",
+      "reason": "CODEX-5"
+    },
+    {
+      "class": "tests.test_codex5_command_audit_20261121",
+      "name": "test_all_explicit_workflow_pip_installs_are_protected",
+      "reason": "CODEX-5: repository-wide hashed wheel closure still open"
+    }
+  ],
+  "skips": [
+    {
+      "class": "tests.test_live_ghidra_archive",
+      "name": "test_exact_step_verifies_downloaded_and_restored_zip_before_fresh_extraction[matching-bytes-missing-archive]",
+      "reason": "PowerShell unavailable; exact archive-step fixtures require pwsh"
+    },
+    {
+      "class": "tests.test_live_ghidra_archive",
+      "name": "test_exact_step_verifies_downloaded_and_restored_zip_before_fresh_extraction[matching-bytes-restored-archive]",
+      "reason": "PowerShell unavailable; exact archive-step fixtures require pwsh"
+    },
+    {
+      "class": "tests.test_live_ghidra_archive",
+      "name": "test_exact_step_verifies_downloaded_and_restored_zip_before_fresh_extraction[changed-bytes-missing-archive]",
+      "reason": "PowerShell unavailable; exact archive-step fixtures require pwsh"
+    },
+    {
+      "class": "tests.test_live_ghidra_archive",
+      "name": "test_exact_step_verifies_downloaded_and_restored_zip_before_fresh_extraction[changed-bytes-restored-archive]",
+      "reason": "PowerShell unavailable; exact archive-step fixtures require pwsh"
+    },
+    {
+      "class": "tests.test_live_ghidra_archive",
+      "name": "test_exact_step_rejects_missing_or_malformed_pin_before_download[]",
+      "reason": "PowerShell unavailable; exact archive-step fixtures require pwsh"
+    },
+    {
+      "class": "tests.test_live_ghidra_archive",
+      "name": "test_exact_step_rejects_missing_or_malformed_pin_before_download[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa]",
+      "reason": "PowerShell unavailable; exact archive-step fixtures require pwsh"
+    },
+    {
+      "class": "tests.test_live_ghidra_archive",
+      "name": "test_exact_step_rejects_missing_or_malformed_pin_before_download[AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA]",
+      "reason": "PowerShell unavailable; exact archive-step fixtures require pwsh"
+    },
+    {
+      "class": "tests.test_live_ghidra_archive",
+      "name": "test_exact_step_rejects_missing_or_malformed_pin_before_download[not-a-sha256]",
+      "reason": "PowerShell unavailable; exact archive-step fixtures require pwsh"
+    },
+    {
+      "class": "tests.test_live_ghidra_archive",
+      "name": "test_exact_step_stops_on_extraction_error_without_exporting_a_runtime",
+      "reason": "PowerShell unavailable; exact archive-step fixtures require pwsh"
+    }
+  ],
+  "native_execution": false,
+  "hosted_archive_acceptance": false
+}

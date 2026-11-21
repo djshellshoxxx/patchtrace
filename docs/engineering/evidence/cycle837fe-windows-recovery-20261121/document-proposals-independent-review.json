@@ -1,0 +1,889 @@
+{
+  "schema": "patchtrace/windows-recovery-document-proposals-independent/1",
+  "reviewed_utc": "2026-11-21T11:19:57.071456+00:00",
+  "verdict": "CLEAR for the exact three scratch proposals; final assembled records/promotion not approved",
+  "blockers": [],
+  "source": "1c70cd5f8053f75c269da673a24a82f221180650",
+  "source_tree": "a39d650ca7fa2b41ece017ea492396722a4142d9",
+  "historical_qualification_source": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+  "context_sha256": "37ffe2f879a9890033f19465e6a81ffce207b754dd97de0e5e5eec84703e76a3",
+  "proposals": [
+    {
+      "path": "docs/package-audit.md",
+      "source_commit": "1c70cd5f8053f75c269da673a24a82f221180650",
+      "source_blob": "29f7db96362dd2c84a94782abd4c5cdadccb7a33",
+      "before_sha256": "6fa36acc76286ecf01ff576357a2a97e75d99c107e9a5386bf46209ca5d0c6dd",
+      "proposal_sha256": "1a4f6204dcb2e1e211c30e7fca96d7ce32a51cb1a46bbaacb4c808b2aaa74eb4",
+      "proposal_bytes": 7918
+    },
+    {
+      "path": "docs/release-process.md",
+      "source_commit": "1c70cd5f8053f75c269da673a24a82f221180650",
+      "source_blob": "1036efe659f190a9b4c4b7660d4d251011c74b2b",
+      "before_sha256": "95e46e8eea3b1fe49c6895ec727d07f162311fa538904eae3c4f5e1d6848ca68",
+      "proposal_sha256": "57d573b9092f7b00ab143adeccdc64478e99895fafbd41f13a597ba187f46e66",
+      "proposal_bytes": 10949
+    },
+    {
+      "path": "docs/windows.md",
+      "source_commit": "1c70cd5f8053f75c269da673a24a82f221180650",
+      "source_blob": "e9e1373e3de6e7778a5bd4852eb548c52ed378ba",
+      "before_sha256": "eda84a86a5a7086a99d710d2719ef0f3be110c0ca8b060af45135b028bbd82eb",
+      "proposal_sha256": "aff71e51afb1b74a51fc19be861899b3b096aea6ebbb71e5e1bae2e815a731da",
+      "proposal_bytes": 4929
+    }
+  ],
+  "checks_passed": 210,
+  "checks": [
+    {
+      "name": "frozen source tree",
+      "passed": true
+    },
+    {
+      "name": "preparation remains unapplied",
+      "passed": true
+    },
+    {
+      "name": "exactly three proposed paths",
+      "passed": true
+    },
+    {
+      "name": "context exact same three replacements",
+      "passed": true
+    },
+    {
+      "name": "before hash guard docs/package-audit.md",
+      "passed": true
+    },
+    {
+      "name": "same old bytes at main902 docs/package-audit.md",
+      "passed": true
+    },
+    {
+      "name": "context exact proposal bytes docs/package-audit.md",
+      "passed": true
+    },
+    {
+      "name": "before hash guard docs/release-process.md",
+      "passed": true
+    },
+    {
+      "name": "same old bytes at main902 docs/release-process.md",
+      "passed": true
+    },
+    {
+      "name": "context exact proposal bytes docs/release-process.md",
+      "passed": true
+    },
+    {
+      "name": "before hash guard docs/windows.md",
+      "passed": true
+    },
+    {
+      "name": "same old bytes at main902 docs/windows.md",
+      "passed": true
+    },
+    {
+      "name": "context exact proposal bytes docs/windows.md",
+      "passed": true
+    },
+    {
+      "name": "release changes only Pipeline section",
+      "passed": true
+    },
+    {
+      "name": "Windows prior findings have unique locations",
+      "passed": true
+    },
+    {
+      "name": "only intended Windows changes",
+      "passed": true
+    },
+    {
+      "name": "full historical audit remains exact prefix",
+      "passed": true
+    },
+    {
+      "name": "audit addition is explicitly dated",
+      "passed": true
+    },
+    {
+      "name": "audit keeps historical and new source qualification separate",
+      "passed": true
+    },
+    {
+      "name": "audit preserves broader gates",
+      "passed": true
+    },
+    {
+      "name": "exact seven jobs documented",
+      "passed": true
+    },
+    {
+      "name": "documented dependency graph qa",
+      "passed": true
+    },
+    {
+      "name": "release table row exists qa",
+      "passed": true
+    },
+    {
+      "name": "documented dependency graph qt-gate",
+      "passed": true
+    },
+    {
+      "name": "release table row exists qt-gate",
+      "passed": true
+    },
+    {
+      "name": "documented dependency graph windows-validate",
+      "passed": true
+    },
+    {
+      "name": "release table row exists windows-validate",
+      "passed": true
+    },
+    {
+      "name": "documented dependency graph linux-package",
+      "passed": true
+    },
+    {
+      "name": "release table row exists linux-package",
+      "passed": true
+    },
+    {
+      "name": "documented dependency graph linux-smoke",
+      "passed": true
+    },
+    {
+      "name": "release table row exists linux-smoke",
+      "passed": true
+    },
+    {
+      "name": "documented dependency graph release-gate",
+      "passed": true
+    },
+    {
+      "name": "release table row exists release-gate",
+      "passed": true
+    },
+    {
+      "name": "documented dependency graph release",
+      "passed": true
+    },
+    {
+      "name": "release table row exists release",
+      "passed": true
+    },
+    {
+      "name": "source triggers",
+      "passed": true
+    },
+    {
+      "name": "cadence gate push-only",
+      "passed": true
+    },
+    {
+      "name": "release hold and no status override",
+      "passed": true
+    },
+    {
+      "name": "PR-only cancellation expression",
+      "passed": true
+    },
+    {
+      "name": "QA both systems",
+      "passed": true
+    },
+    {
+      "name": "four Linux Qt shards and one Windows leg",
+      "passed": true
+    },
+    {
+      "name": "Linux build host and smoke hosts",
+      "passed": true
+    },
+    {
+      "name": "full QA tests and Ruff defined",
+      "passed": true
+    },
+    {
+      "name": "builder frozen CLI and NSIS checks defined",
+      "passed": true
+    },
+    {
+      "name": "Linux checksum and full frozen harness defined",
+      "passed": true
+    },
+    {
+      "name": "fresh Windows job current-run download",
+      "passed": true
+    },
+    {
+      "name": "all four files and both digests before smoke",
+      "passed": true
+    },
+    {
+      "name": "downloaded runner has no dependency/compiler setup",
+      "passed": true
+    },
+    {
+      "name": "downloaded job remains required",
+      "passed": true
+    },
+    {
+      "name": "canonical alias exact checksum/copy sequence",
+      "passed": true
+    },
+    {
+      "name": "documented exact release names",
+      "passed": true
+    },
+    {
+      "name": "prerelease target tag and assets",
+      "passed": true
+    },
+    {
+      "name": "notes failure fallback retained",
+      "passed": true
+    },
+    {
+      "name": "actual uninstaller entry points",
+      "passed": true
+    },
+    {
+      "name": "per-user NSIS and generated manifest",
+      "passed": true
+    },
+    {
+      "name": "actual pinned compiler and source script",
+      "passed": true
+    },
+    {
+      "name": "new spec link target heading exists",
+      "passed": true
+    },
+    {
+      "name": "retained post-main archive exact hash and size",
+      "passed": true
+    },
+    {
+      "name": "post-main139-member archive CRC",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member README.md",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifact-records-44889511349-001.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifact-records-44889511388-001.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifact-records-44889511388-002.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifact-records-44889511400-001.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifact-records-44889511427-001.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14701367115/live-rzdiff-Linux.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14701367115.zip",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14701437052/live-rzdiff-Windows.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14701437052.zip",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14701514854/original.zip",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14701514854/pair-publication-results.xml",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14701514854/qa-results.xml",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14701767082/live-out/live-unified-ci-pair-windows.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14701767082/live-out/live-unified-probe-pair-windows.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14701767082.zip",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14701772697/live-unified-ci-pair-linux.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14701772697/live-unified-probe-pair-linux.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14701772697.zip",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14701776712/ci-summary.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14701776712/ci-summary.md",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14701776712/tier-r-aggregate.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14701776712/tier-r-merge.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14701776712/tier-r-report.md",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14701776712.zip",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14701795999/shard-0.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14701795999.zip",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14702140175/live-cache-diagnostics/first.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14702140175/live-cache-diagnostics/result.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14702140175/live-cache-diagnostics/second.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14702140175.zip",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14703566032/original.zip",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14703566032/pair-publication-results.xml",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member artifacts/14703566032/qa-results.xml",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member downloaded-artifact-records-001.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member downloaded-artifact-records-002.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member final-release-list.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member final-run-44889511349.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member final-run-44889511388.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member final-run-44889511400.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member final-run-44889511406.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member final-run-44889511427.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member final-run-44889511435.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member final-run-discovery.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member initial-main-identity-and-runs.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member jobs-snapshot-001.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member jobs-snapshot-002.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member jobs-snapshot-003.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member jobs-snapshot-004.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member jobs-snapshot-005.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member jobs-snapshot-006.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member jobs-snapshot-007.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member jobs-snapshot-008.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member jobs-snapshot-009.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member jobs-snapshot-010.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member jobs-snapshot-011.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member jobs-snapshot-012.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member jobs-snapshot-013.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member jobs-snapshot-014.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member jobs-snapshot-015.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member jobs-snapshot-016.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member jobs-snapshot-017.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member jobs-snapshot-018.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member jobs-snapshot-019.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member jobs-snapshot-020.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member jobs-snapshot-021.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member logs/136802040159.log",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member logs/136802040261.log",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member logs/136802040286.log",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member logs/136802040292.log",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member logs/136802040331.log",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member logs/136802040465.log",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member logs/136802040527.log",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member logs/136802040528.log",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member logs/136802040529.log",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member logs/136802040532.log",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member logs/136802040593.log",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member logs/136802040605.log",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member logs/136802040615.log",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member logs/136802040648.log",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member logs/136802040681.log",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member logs/136802040722.log",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member logs/136802040730.log",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member logs/136802040731.log",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member logs/136802040829.log",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member logs/136802246520.log",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member logs/136802246554.log",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member logs/136804468220.log",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member logs/136805106286.log",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member logs/136817354464.log",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member logs/136817892906.log",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member logs/136817892915.log",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member main-five-qt-completion.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member main-linux-qa-artifact-14701514854.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member main-windows-completion.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member main-windows-qa-artifact-14703566032.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member native-checkpoint-001.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member native-checkpoint-002.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member pages-assessment-contract-references.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member pages-assessment-detail-sources.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member pages-assessment-initial-sources.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member pages-assessment-task-references.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member pages-config-404-assessment.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member pinned-publication-workflow-sources.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member post-main-qualification.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member premerge-release-baseline-input.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member publication-holds-checkpoint-001.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member publication-holds-checkpoint-002-final.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member raw-job-136802040159.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member raw-job-136802040261.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member raw-job-136802040286.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member raw-job-136802040292.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member raw-job-136802040331.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member raw-job-136802040465.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member raw-job-136802040527.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member raw-job-136802040528.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member raw-job-136802040529.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member raw-job-136802040532.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member raw-job-136802040593.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member raw-job-136802040605.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member raw-job-136802040615.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member raw-job-136802040648.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member raw-job-136802040681.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member raw-job-136802040722.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member raw-job-136802040730.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member raw-job-136802040731.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member raw-job-136802040829.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member raw-job-136802246520.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member raw-job-136802246554.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member raw-job-136804468220.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member raw-job-136805106286.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member raw-job-136817354464.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member raw-job-136817892906.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member raw-job-136817892915.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member release-baseline-comparison.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member tier-r-cache-source-specific.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member unified-check-ledger.json",
+      "passed": true
+    },
+    {
+      "name": "post-main archive member unified-cross-os-comparison.json",
+      "passed": true
+    },
+    {
+      "name": "actual main immutable commit tree/parents",
+      "passed": true
+    },
+    {
+      "name": "actual main source identity",
+      "passed": true
+    },
+    {
+      "name": "64 original frozen CLI passes and no failures",
+      "passed": true
+    },
+    {
+      "name": "main successful step Frozen EXE headless smoke (A1-A4) and self-test",
+      "passed": true
+    },
+    {
+      "name": "main successful step Extract and run portable Windows ZIP outside checkout",
+      "passed": true
+    },
+    {
+      "name": "main successful step Build per-user Windows installer",
+      "passed": true
+    },
+    {
+      "name": "main successful step Install, launch, and uninstall the setup package",
+      "passed": true
+    },
+    {
+      "name": "main log confirms package acceptance messages",
+      "passed": true
+    },
+    {
+      "name": "observed actual release skipped",
+      "passed": true
+    },
+    {
+      "name": "actual main holds",
+      "passed": true
+    },
+    {
+      "name": "installer scripts unchanged since qualified main",
+      "passed": true
+    },
+    {
+      "name": "proposal and context unchanged during review",
+      "passed": true
+    },
+    {
+      "name": "source worktree unchanged",
+      "passed": true
+    }
+  ],
+  "source_worktree_before_after": {
+    "head": "2ae1bbad2ad9cc78c29541872381750e347c670e",
+    "status": ""
+  },
+  "product_tests_run": 0,
+  "native_execution": false,
+  "future_link_dependency": "engineering/cycle837fe-windows-recovery-20261121.md must exist in final assembled records; it is an intended helper output.",
+  "scope": "Only Pipeline section replaced; Windows guide receives two corrections and new job paragraph; full old package-audit bytes remain prefix.",
+  "qualification_limit": "Actual main902 builder-side evidence only; no transfer to new1c70 downloaded-artifact qualification or final record merge.",
+  "no_mutations": "Only own scratch evidence; no source, helper, context, ledger, refs, PRs, CI or environment changes."
+}

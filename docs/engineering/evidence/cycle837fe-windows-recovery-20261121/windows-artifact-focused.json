@@ -1,0 +1,50 @@
+{
+  "argv": [
+    "/workspace/scratch/837fe19aae3a/repair-windows-artifact-validation/../windows-artifact-validation-venv/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "tests/test_windows_downloaded_artifacts.py",
+    "tests/test_release_gate.py",
+    "tests/test_codex_pkg_packaging.py",
+    "tests/test_milestone_notes.py",
+    "tests/test_windows_installer_manifest.py",
+    "tests/test_codex_pkg_workflows.py",
+    "tests/test_codex5_command_audit_20261121.py",
+    "tests/test_spec_registry.py",
+    "tests/test_site_workflow.py",
+    "tests/test_workflows.py",
+    "--junitxml=/workspace/scratch/837fe19aae3a/evidence/windows-artifact-validation-recovery/final-focused.xml"
+  ],
+  "modules": [
+    "tests/test_windows_downloaded_artifacts.py",
+    "tests/test_release_gate.py",
+    "tests/test_codex_pkg_packaging.py",
+    "tests/test_milestone_notes.py",
+    "tests/test_windows_installer_manifest.py",
+    "tests/test_codex_pkg_workflows.py",
+    "tests/test_codex5_command_audit_20261121.py",
+    "tests/test_spec_registry.py",
+    "tests/test_site_workflow.py",
+    "tests/test_workflows.py"
+  ],
+  "exit": 0,
+  "seconds": 2.885,
+  "staged_tree": "a39d650ca7fa2b41ece017ea492396722a4142d9",
+  "counts": {
+    "cases": 434,
+    "failed": 0,
+    "errors": 0,
+    "xfailed": 2,
+    "skipped": 17,
+    "passed": 415
+  },
+  "source_sha256": {
+    ".github/workflows/qa-windows.yml": "656b3a84da31260803e80b680517e64ca7d763454988fbe8cf419b8f731cac07",
+    "docs/specs/REGISTRY.md": "260631ccdf6638c2a9e4d4f437d4258257012bd0e3fd2930592a10a67127d940",
+    "docs/specs/windows-acceptance-and-milestone-builds.md": "4a0e8e421f670a740f3faa88f17a687a8c6b844692087bc97962f8634f40d84f",
+    "tests/test_codex5_command_audit_20261121.py": "a858f03cadedef6bf9d97c58469d3d46c68812946adff0ab00e6df9b5e60b554",
+    "tests/test_release_gate.py": "3744c97c4511c3046533604507c17069065f266ecbd31353b7470fac1d54b94e",
+    "tests/test_windows_downloaded_artifacts.py": "b7747cb4400652c9203056a11a6ed5ee00839d7b7c420d64adaab91af8ea2cfc"
+  }
+}

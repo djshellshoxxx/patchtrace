@@ -1,0 +1,64 @@
+{
+  "schema": "live-ghidra-archive-shell-cache-independent/v1",
+  "reviewed_utc": "2026-11-21T11:45:20.619460+00:00",
+  "source": {
+    "head": "88df8cfbe51f91a6bc08c6863cd5d63f86500ca0",
+    "tree": "f22f034f92c0c82c59c86665e8b70acb87974448",
+    "parent": "1c70cd5f8053f75c269da673a24a82f221180650"
+  },
+  "verdict": "BLOCKED_PRE_DOWNLOAD_PIN_VALIDATION",
+  "blockers": [
+    {
+      "id": "GHA-PIN-TERMINAL-LF",
+      "severity": "narrow source-contract blocker",
+      "path": ".github/workflows/live-backend.yml",
+      "finding": "The pre-download guard uses ^[0-9a-f]{64}$. The .NET $ anchor may match before a final LF, so 64 lowercase hex characters plus LF pass this guard and reach Invoke-WebRequest on a miss. The later full digest comparison fails, so this does not permit extraction of a mismatching archive; it violates malformed-pin refusal before download.",
+      "missing_regression": "Existing malformed-pin parameters cover empty,63 hex,64 uppercase,and nonhex; no terminal LF.",
+      "recommended_fix": "Use absolute anchors \\A[0-9a-f]{64}\\z and add an inert terminal-LF regression asserting no download/extraction/export.",
+      "evidence_scope": "Source and standard .NET regex semantics; no PowerShell/native execution."
+    }
+  ],
+  "confirmed_findings": [
+    "All current URL/digest bytes are moved unchanged from the parent and match the retained Tier R convention.",
+    "The cache input is only ghidra-archive with the full digest key; no restore-keys, extracted-tree cache or hit-based skip is added.",
+    "The install step downloads only if the fixed original ZIP is absent. A present corrupt ZIP is retained, fails its digest check, preserves prior extraction and exports no runtime.",
+    "The digest comparison precedes runtime removal; successful verification is logged before a fresh extraction; download/hash/removal/extraction errors are terminating.",
+    "Nine tiny authored PowerShell fixtures cover 4 cold/restored valid/corrupt combinations,4 malformed pins,and matching-digest/nonZIP extraction failure. Only the downloader is replaced, and ZIP contents contain one text file with no executable payload.",
+    "Windows explicitly fails the fixture setup when pwsh is missing; other platforms skip visibly. No skipped fixture was executed in this review.",
+    "Retained pinned action metadata has success-only post-save; README scopes cache to key/version/branch and documents default cross-OS false. A matching literal key alone proves neither restore nor save.",
+    "Cold/warm qualification remains separate: successful cold download/verify/extract/save first, then actual same-scope restore/verify/extract, retaining all five native outcomes. Raw-result cache is separate."
+  ],
+  "source_hashes": {
+    "workflow_sha256": "0af864d7967673e027b696d2ef70a9b62b5e652e27b79f80e5175ebb1c7b19ff",
+    "test_sha256": "9262b9847ae0483b9c2fcf66d6871fdebcb3fb81b7e651e9b76e840f0a7f353f",
+    "spec_sha256": "f518bbe799ce5d05ef3db5d7d93f95bce74d41126c933c7357e7201eaa865f15"
+  },
+  "retained_upstream": [
+    {
+      "receipt": "pinned-cache-action.json",
+      "receipt_sha256": "54e0aa095bb1512bfc95331f93271e1207a51911422205e96ddfd09f2cb66286",
+      "content_sha256": "5ba9b2391f2acf467bc0604a496001d79550de5af6b2b4e2a70a42599022aacc",
+      "computed_git_blob_sha1": "7af7458c1d5570d2bde23488e55b9f6991abe4eb",
+      "source_url": "https://github.com/actions/cache/blob/0057852bfaa89a56745cba8c7296529d2fc39830/action.yml",
+      "bound_to_author_archive": true
+    },
+    {
+      "receipt": "pinned-cache-readme.json",
+      "receipt_sha256": "dae3a7af0d9d6f76ca5383b569c10aed4a6bc91b8f1c0dff4537dad633b0e9a6",
+      "content_sha256": "ac8652b53f24fd05e4aa508a84a60f3354506e7fffccbd1b85046b5efb308633",
+      "computed_git_blob_sha1": "1c627897431899ffec6ae43409a88c62ed889acb",
+      "source_url": "https://github.com/actions/cache/blob/0057852bfaa89a56745cba8c7296529d2fc39830/README.md",
+      "bound_to_author_archive": true
+    }
+  ],
+  "upstream_provenance_limit": "Retained official pinned-URL receipts and their exact content hashes were checked against the sealed author archive. No new upstream GET or Git object fetch was performed.",
+  "author_archive_sha256": "c096caf608c442a51de958701acff3346709349bc024b96e79ffadcd2fc91bd9",
+  "execution": {
+    "tests_run": 0,
+    "PowerShell_execution": false,
+    "native_execution": false,
+    "downloads": false,
+    "source_environment_ref_PR_CI_mutations": false
+  },
+  "cold_warm_native_acceptance_claimed": false
+}

@@ -1,0 +1,41 @@
+{
+  "scope": "Read-only documentation observations; root owns any correction. No source/docs were edited.",
+  "findings": [
+    {
+      "path": "docs/windows.md",
+      "source_head": "2ae1bbad2ad9cc78c29541872381750e347c670e",
+      "source_sha256": "eda84a86a5a7086a99d710d2719ef0f3be110c0ca8b060af45135b028bbd82eb",
+      "line": 27,
+      "nearest_heading": "# Windows setup and standalone packaging",
+      "classification": "CURRENT_UNDATED_INSTRUCTIONS",
+      "exact_text": "The build creates an onedir distribution, copies licenses/help/specs, archives it and computes SHA-256. Windows CI also compiles installer/PatchTrace.iss with Inno Setup into PatchTrace-Windows-x64-Setup.exe, writes a SHA-256 sidecar, installs it under a path containing spaces and Unicode, runs the installed frozen self-test, and silently uninstalls it. The installer compiler is build-only and is not needed on user systems. Beta binaries are unsigned. Keep Qt DLLs replaceable in the onedir distribution. Update by unpacking a new version separately; projects are never overwritten by updater. Back up projects before future schema migration.",
+      "suggested_disposition": "Correct the build paragraph to name NSIS3.13 and installer/PatchTrace.nsi; preserve unrelated boundaries. This file is current guidance, not explicitly a dated audit entry."
+    },
+    {
+      "path": "docs/package-audit.md",
+      "source_head": "2ae1bbad2ad9cc78c29541872381750e347c670e",
+      "source_sha256": "6fa36acc76286ecf01ff576357a2a97e75d99c107e9a5386bf46209ca5d0c6dd",
+      "line": 32,
+      "nearest_heading": "## Per-user Windows installer follow-up (2026-10-17)",
+      "classification": "EXPLICITLY_DATED_HISTORICAL_FINDING",
+      "exact_text": "The Windows CI packaging change adds an Inno Setup per-user wrapper around the already-tested dist/PatchTrace one-folder bundle. The installer requires Windows x64, targets the current user's LocalAppData, adds a Start Menu shortcut, and has no setup-time downloads, administrator requirement, custom actions or runtime prerequisites. The compiler is a CI build dependency, not a user dependency. The installer is unsigned, consistent with SPEC-52. CI verifies install, Qt DLL/plugin presence, the packaged --self-test, and uninstall from a temporary path containing spaces and Unicode. This row records the implemented acceptance gate; pass status is pending the final Windows workflow run on the release branch.",
+      "suggested_disposition": "Keep the 2026-10-17 Inno entry and following NSIS follow-up as history. Add a clearly dated clarification if reconciling the current implementation; do not rewrite the old pending CI state."
+    },
+    {
+      "path": "tasks/todo.md",
+      "source_head": "2ae1bbad2ad9cc78c29541872381750e347c670e",
+      "source_sha256": "6b36dfaaabac5ed16ef30ef7c3117e4ea01ad07a45ea820609f370f614e7c553",
+      "line": 1165,
+      "nearest_heading": "## Windows per-user installer delivery (2026-10-17)",
+      "classification": "EXPLICITLY_DATED_HISTORICAL_CHECKPOINT",
+      "exact_text": "- [x] Add Inno Setup definition, compiler wrapper and portable-bundle dependency preflights on codex/windows-setup-installer-20261017.",
+      "suggested_disposition": "Retain the checked Inno-era item under the dated 2026-10-17 section; current state belongs in a later checkpoint, not a silent rewrite."
+    }
+  ],
+  "already_correct_path": "docs/release-process.md",
+  "actual_implementation": [
+    "tools/package_windows_installer.py: NSIS_VERSION = 3.13; script installer/PatchTrace.nsi; compiler version equality required",
+    "installer/PatchTrace.nsi: per-user RequestExecutionLevel user, HKCU registration and explicit generated uninstall file list",
+    ".github/workflows/qa-windows.yml: choco install nsis --version=3.13"
+  ]
+}

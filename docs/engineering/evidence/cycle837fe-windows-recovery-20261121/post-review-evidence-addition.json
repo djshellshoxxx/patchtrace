@@ -1,0 +1,520 @@
+{
+  "schema": "patchtrace/record-review-evidence-addition/1",
+  "reviewed_manifest_sha256": "f27d58dc196f6f4ff9c52673f52efc06c45fbf92dbdf5507f8fc922723f729f1",
+  "reviewed_output_snapshot_sha256": "ce63bab617a345f4d503db4c00452cfc9f9efb74b635739dc116be912e2d6a38",
+  "all_96_reviewed_outputs_verified_unchanged_before_addition": true,
+  "reviewed_outputs": [
+    {
+      "path": "docs/engineering/cycle837fe-windows-recovery-20261121.md",
+      "bytes": 28633,
+      "sha256": "d0976daac793cb7512b0b052ef665dc2c723860c8016d2452291101dd8b132ed"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/code-branch-publication.json",
+      "bytes": 18435,
+      "sha256": "85a0e36e6926b8249fa37e83fa9366115aff937ebe4ae67ed274976a667928c6"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/code-git-object-verification.json",
+      "bytes": 865,
+      "sha256": "8d0baf275bb33b18958c6d849aa9fd7329f785f0b64ceb06a7beaf8239ed5d33"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/code-publication-mapping.json",
+      "bytes": 1095,
+      "sha256": "e14cc885605a3b4583f6fd6db3dbb476df2acab502cbf7c9a50c948f6bcba27b"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/combined-source-preparation-independent-review.json",
+      "bytes": 10010,
+      "sha256": "0ef50e48ff3e9f232f26f61455015fdc940931b8744c0d10af802cd259d5b4f1"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/combined-source-preparation-independent.zip",
+      "bytes": 80069,
+      "sha256": "bbbfe49f8c0a7dcc016fe824c0143b10960534ff3ba258ae360fcfbf10b259e9"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/combined-source-qualification.json",
+      "bytes": 9691,
+      "sha256": "8e83ac5e5e2ace73abdf5fbea15b43865968ca2b700bcbf66b8ff61874fc8952"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/combined-source-qualification.zip",
+      "bytes": 20910,
+      "sha256": "8fcc8fb2ae9a5f6898199eddc0f2bb8fca13b1a82dab0b3b28654b2fd67529b0"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/completed-review-additions-independent-review.json",
+      "bytes": 21604,
+      "sha256": "a2f27914cfbffae38e77ac6a4da1d847da24377be5bcddd2bfc5ec4a1563bb8a"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/completed-review-additions-independent.zip",
+      "bytes": 289158,
+      "sha256": "3421bf356b2f4137b57d0490513e7a62f6549711449f30f2ca227d3a0b6c6f5c"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/concurrency-candidate.json",
+      "bytes": 2476,
+      "sha256": "f6093952e5df706eb0d12fd60fb4f0d8f9bf66709f1147d659c18da7b3920bf6"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/concurrency-independent-review.json",
+      "bytes": 12319,
+      "sha256": "7485d3def53a45b7302d15072056f2858f772b618e8ad0e08c156ebcbdd55f49"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/concurrency-independent.zip",
+      "bytes": 2194891,
+      "sha256": "fe1d14e8fe8be63a70c6cf3a4594abca93dce7ce1c1948ee17767bfe1b8aece3"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/concurrency-source-invariants.json",
+      "bytes": 1920,
+      "sha256": "8fe6d10e9c1145c8b24addec17159d01696d2c9132c69f6f1c9fa74964ead427"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/cross-worker-integration-order-review.json",
+      "bytes": 44235,
+      "sha256": "d902569de5c296079f4871cf97e783e65f49abe7495e3713ae398e3c8c64e3bb"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/cross-worker-integration-order-review.zip",
+      "bytes": 92795,
+      "sha256": "e8e162b0583502ad38c7f94f8a765f56399b2ee8882c57d053d2cbeeccab810b"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/document-proposals-independent-review.json",
+      "bytes": 23623,
+      "sha256": "38071000f5486d067cca49ecd9a6f5bc3034d1d64f0226c068a44c3c90195e1d"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/document-proposals-independent.zip",
+      "bytes": 3088843,
+      "sha256": "5f2dfd8d8018355eade678239596c526aa1b8d7d14f246d43ca9565ec89875c0"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/final-context-preparation-independent-review.json",
+      "bytes": 4765,
+      "sha256": "2676442ff74f4016d75e9eed4373273d121e728607035006500cf2a9d6dd53bb"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/final-context-preparation-independent.zip",
+      "bytes": 191950,
+      "sha256": "1f24698d1354994ef14f56b82b1647987209f894b718bf04cb017dbcced1f843"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/ghidra-archive-plan.json",
+      "bytes": 10593,
+      "sha256": "7715c91f48c00cf30403163c028624dc41dd2226f0c0e7d3e1bbd8c31fc8bfb2"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/ghidra-archive-plan.md",
+      "bytes": 7470,
+      "sha256": "f13f3082c2cd7bc328a2c5ead8eef9677cf28fbdb8c737a6711e92175126d1ba"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/helper-ledger-extension-independent-review.json",
+      "bytes": 6828,
+      "sha256": "0dedc15c4d9ada6b26194711920224c0e9b3ae3c6d163216fcdec85a713b7866"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/helper-ledger-extension-independent.zip",
+      "bytes": 103077,
+      "sha256": "294b52af7bc24bde72cb59b0688c3be2f73e20d696a4fa7c97afd9b052470095"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/historical-installer-author.zip",
+      "bytes": 1556208,
+      "sha256": "000ce8ee3f67ebe9107867c71298930896bae93d5bce58aa2c9ca0eca2e46921"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/historical-installer-classification.json",
+      "bytes": 7348,
+      "sha256": "0563d0febfe50dea2554eb9f2fad587c547fe2a57e263a6ab2c002973754b881"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/historical-installer-independent-review.json",
+      "bytes": 3560,
+      "sha256": "719d0f68166235368a2815fb07de0d584c980ef52583a1af7828a9c7c4a45d69"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/historical-installer-independent.zip",
+      "bytes": 1570269,
+      "sha256": "5a5a48e22176bb52417c22bf86e0b7919d8e50bc354824bdc49cbfd6d9341158"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/historical-installer-stale-documentation.json",
+      "bytes": 3797,
+      "sha256": "5072526134a291fe58e02f2bfd011031a6a5d0b5315ca9862a7d482127f3fc9f"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/historical-integrity-classification.json",
+      "bytes": 7058,
+      "sha256": "db5c76c8d61968cff4bf413678294581606e8b1eb572404ed54bf7680b8739c8"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/historical-integrity-independent-review.json",
+      "bytes": 26639,
+      "sha256": "dd786b6d91bc246d9d4c38e7eb017de87be78e132158b20b03089080eea7af56"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/historical-integrity-independent.zip",
+      "bytes": 934992,
+      "sha256": "6c0749490f5a977420440f93ce0fa92f3224b3fb964b3b96bcedee18ea8601bd"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/historical-packaging-classification.json",
+      "bytes": 18933,
+      "sha256": "4384553e9796882a46bd560310062b52a6c3f2a99b66916cbffcf5df5f309edc"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/historical-packaging-independent-review.json",
+      "bytes": 42497,
+      "sha256": "e90a8dde757a52feccb54e8a1ef8407110d37b50c8a107741a88e357213cbe18"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/historical-packaging-independent.zip",
+      "bytes": 1986489,
+      "sha256": "305dd4d2493760eb2d97081aa658cd18c307dde54ef9313523621ccf2b7260ce"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/historical-sequential-lock-author.zip",
+      "bytes": 2661030,
+      "sha256": "907abba74b2de63202f138048266b4202a5d96e68549252c70342c737c63dfb1"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/historical-sequential-lock-classification.json",
+      "bytes": 4156,
+      "sha256": "dc68eeaa9e9a07855ba3675098588c17ee28eea129166d9fe17d4be2ff2471b5"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/historical-sequential-lock-independent-review.json",
+      "bytes": 35228,
+      "sha256": "b7566bc9e3398891c11e318635f759afe4709d0de1d5b28035e6de78a0882a04"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/historical-sequential-lock-independent.zip",
+      "bytes": 2900045,
+      "sha256": "0a92936d693df71c4287fe539ff09bf2f415204937cb14ba746b092e485fb7f3"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/legacy-ledger-author.zip",
+      "bytes": 3551953,
+      "sha256": "2c461a8c825d86c8615a9fce71072c4a6ea18c74cccbaa77040bfe79f9589dbb"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/legacy-ledger-independent-review.json",
+      "bytes": 1977,
+      "sha256": "2ed4c5d095318cff12d1faf863b9a3d829ad4f6a1010b3725dd9d7e9609cf435"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/legacy-ledger-independent.zip",
+      "bytes": 3558240,
+      "sha256": "fe893d641f7a6ea873745d4d3f53416f9d6996608dfcb70a43b59b4176f00f36"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/live-ghidra-archive-author.zip",
+      "bytes": 312675,
+      "sha256": "c096caf608c442a51de958701acff3346709349bc024b96e79ffadcd2fc91bd9"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/live-ghidra-archive-candidate.json",
+      "bytes": 1804,
+      "sha256": "8bf13c9c8e18e3ff39098fbbf75430e69cc92910af9e10f1f844e299167d6c50"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/live-ghidra-archive-source-proof.json",
+      "bytes": 5646,
+      "sha256": "39949b31ebc45a51c3f1c511c7a19731641fea9be33a72b0f12a7a36ba8fc99f"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/live-ghidra-corrected-source-review.json",
+      "bytes": 212567,
+      "sha256": "51db3f8434292514cd6084d738bf304dfee0c2d80ed30b7b62f98364f4604695"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/live-ghidra-independent-review.json",
+      "bytes": 6514,
+      "sha256": "8a5cdbb3d4c190df8c5d31980f65d4d5b80a9863049630f5ab35e14509737f0b"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/live-ghidra-independent.zip",
+      "bytes": 1002837,
+      "sha256": "5bee287692badcf41124b8e40395d2d4d3bde0967dbbef6a3fb2ecec38066266"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/live-ghidra-original-pin-finding.json",
+      "bytes": 4524,
+      "sha256": "012bd0a99f6e370093100f215aa12048057f1fd348b291cfdf855eae907adcfc"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/live-ghidra-pin-repair-candidate.json",
+      "bytes": 1853,
+      "sha256": "afc2f1fefde3b39350c151383f686931d95a610e00dc1f04c3e51cc5b4977ca3"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/live-ghidra-pin-repair-proof.json",
+      "bytes": 1039,
+      "sha256": "6b4e2f783871e2251ebd6da13ba96e8e2e2e649080f5da8aba52661425de813b"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/live-ghidra-pin-repair.zip",
+      "bytes": 442323,
+      "sha256": "dfefa8aedef0c6758c54dae9843fc2e35ec4446af12af0315395b481ba2194cf"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/local-recovery-source.bundle",
+      "bytes": 9449,
+      "sha256": "3653b4cfbcc1222b8284f181990419b090fc084a16703e2c6c725a6e47cc890c"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/main3a-preassembly-jobs-snapshot.json",
+      "bytes": 13890,
+      "sha256": "e472597adeb243cfc0a2b5ef35c34dee3e9b085463a052c38737aea587765907"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/main902-postmerge-evidence.zip",
+      "bytes": 3038331,
+      "sha256": "74d7390d7ded8087bc6869bab34c997e16e63a4a77d5b7f75d8291da0c3052bf"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/main902-postmerge-qualification.json",
+      "bytes": 41889,
+      "sha256": "5d65673b4ea47852b2708342b94e5ed3b22c7e2a385f4e5836741ac66525a5a1"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/manifest.json",
+      "bytes": 15226,
+      "sha256": "f27d58dc196f6f4ff9c52673f52efc06c45fbf92dbdf5507f8fc922723f729f1"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/native-code-completed-checkpoint.json",
+      "bytes": 16319,
+      "sha256": "fe63bba2de722dd14667f1fed721fcb21527c7ab9f7c7a6b5402c1c336e4775c"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/native-code-completion-delta-receipt.json",
+      "bytes": 1109,
+      "sha256": "008ca4b9f2573a06c11900e82cde76c9c6a032e55bd1cfeaf0193407bd6b95e0"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/native-code-completion-delta.zip",
+      "bytes": 241146,
+      "sha256": "5a1dbe04233b04e3b60373ac0953ff077c5885e5e8c107958c22c04d1e4c5a7a"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/native-code-git-verification.json",
+      "bytes": 903,
+      "sha256": "32241d0c947c15d094d041e989c56fc2676a03d91443eaa68ad216d0ad8137ad"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/native-code-publication-mapping.json",
+      "bytes": 833,
+      "sha256": "9ae5253618f632a3b9eaceb4c4f696e82cee354480b2ff26696f9da9fba038f6"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/native-code-two-mode-snapshot.zip",
+      "bytes": 308539,
+      "sha256": "71657059f356fe7996121b0bd9dbb999c3aaddeba00f9d7fe09cddff3a409623"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/native-code-two-mode-summary.json",
+      "bytes": 21579,
+      "sha256": "2810ae052081259874cd076638bcf2083d89b90d29117c6cdf80a78a8273f100"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/native-source.bundle",
+      "bytes": 7974,
+      "sha256": "e4701e776efddfa9ec8ee6c391418ca44be32d4102b7de6a9cebba5130ce9203"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/normalized-ledger-proposal.json",
+      "bytes": 9520,
+      "sha256": "f75d06315abe3fd5f3ce8b9846847ed2fcf1ba41e67d84b5ded537dd5e8fdee0"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/pr351-final-qualification.json",
+      "bytes": 71262,
+      "sha256": "a82d4a8afac234213eccbb76b8e957020ad5d45fe0bbf65a8c5042b74ad0f788"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/pr351-main-promotion-evidence.zip",
+      "bytes": 56069,
+      "sha256": "1fa443147d131e507a8950dfa65ace41bbd4b6f8a9a483c6ccea47e99440bdc2"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/pr351-merge-proof.json",
+      "bytes": 13766,
+      "sha256": "cd077552e5550136480d622d5751764cfdf62c237637fef4769d0ba809b8ed31"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/pr351-premerge-independent-review.json",
+      "bytes": 31242,
+      "sha256": "ae1f1decf48711f3a4a2d2d54c10872e59dcb6f2259d87b5dd727a8a2dd4e19a"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/pr351-premerge-independent-review.zip",
+      "bytes": 6437089,
+      "sha256": "db95a9d2e853558f7c7bd4186edeb2bd569edc0a9d14eaccc627e921bd3f19ae"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/pr351-qualification-archive-receipt.json",
+      "bytes": 808,
+      "sha256": "8a3deac19eea83ddc1888f52f1f8a595f89f3dae0e099e4275a4db7ead60cb7a"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/pr351-qualification-evidence.zip",
+      "bytes": 2811379,
+      "sha256": "a4829fc624a1b9b84313801b41b85782d40fd897290195ace45448918c9dbfb6"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/pr353-independent-review.json",
+      "bytes": 2346,
+      "sha256": "e58d7ae2126340fe95aee002f117fda0f03297902c36ccdcf1e33fc1b9295aeb"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/pr353-independent-source-review.zip",
+      "bytes": 2729894,
+      "sha256": "5426060e7c21f744d356eb8ebe9b48a26ddd6f682a724c2e87dddfeddcfbe70a"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/pr355-independent-review.json",
+      "bytes": 3580,
+      "sha256": "10e53d1b3983c8e25a9e7a36f8bf81e52f18a16a9792be03e2ab88b9896d51f7"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/pr355-independent-review.zip",
+      "bytes": 200123,
+      "sha256": "592351d2c342d713664cb65409dbba57d96a84ae110c46fd2f1512d24ca1725d"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/prior-ledger-d667.json",
+      "bytes": 263276,
+      "sha256": "9d9ae753a9a7d36ec6e9c2b7778bd98b6c6bff006e4216c0f26e1c5620a287a7"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/promotion-and-recovery-context.json",
+      "bytes": 253134,
+      "sha256": "e270f9a8ba5e0891b8045156068c9ab3d254f75899bd609d3759f6346be79d3e"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/records-assembly-helper.py",
+      "bytes": 18460,
+      "sha256": "7f8026469f7b5251236fef89384ce4eb70b722c20ee3988e77e229109a926260"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/records-preparation-independent.zip",
+      "bytes": 123324,
+      "sha256": "d6543924f0a69eb3d1bdf2e894e67c1e6cb16a5469a2a7ebd65d465c1bc6ffa6"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/windows-artifact-author.zip",
+      "bytes": 107875,
+      "sha256": "ad51b0d521d9d35cd90c185f575fffabcae5cc88676b442ae0acde7e7b12596d"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/windows-artifact-candidate.json",
+      "bytes": 1249,
+      "sha256": "e7b96b1ea24a6faad6d2537820859b57e6ad6c5ed37d6d6104fd757d36c55832"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/windows-artifact-focused.json",
+      "bytes": 2032,
+      "sha256": "61827af34b3243f6fed2a2cc32a8edadcf9937be679dcf881cee3c57a44b0ccf"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/windows-artifact-independent-review.json",
+      "bytes": 4196,
+      "sha256": "0e43697fe785346ed5f607cf6a0a2bd8729467f8aea9979becfa3a17fbed578a"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/windows-artifact-independent.zip",
+      "bytes": 237565,
+      "sha256": "e96ab69c5e3a2ad2583a1593d336b7cbfdfa2758e30c1c7aacb3bdd1fd57be0b"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/windows-artifact-source-invariants.json",
+      "bytes": 1091,
+      "sha256": "146a7eb25202addeffb3b5faebfce58df89c58e2ae1a9e1d8bafe0bf18bacbc9"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/windows-only-content-preparation-independent-review.json",
+      "bytes": 2394,
+      "sha256": "c550b45b8586b68538e7e54596a0b649d0a8b164d4422398c3613610215d3906"
+    },
+    {
+      "path": "docs/engineering/evidence/cycle837fe-windows-recovery-20261121/windows-only-content-preparation-independent.zip",
+      "bytes": 68550,
+      "sha256": "6e7712640e189dfc5089034c0a7e5b002c02ed5214cc8032a3ea8dd28119cb81"
+    },
+    {
+      "path": "docs/engineering/task-ledger.json",
+      "bytes": 629192,
+      "sha256": "de78c50d97456f9b0fdcb1f37f4b6d2a883c9c762a5c97b05a2857055104cc57"
+    },
+    {
+      "path": "docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md",
+      "bytes": 15276,
+      "sha256": "e876922eba3e514c3f8bbbeb10ec8cfb4e15c00793004102f12ba6e332e3d452"
+    },
+    {
+      "path": "docs/package-audit.md",
+      "bytes": 7918,
+      "sha256": "1a4f6204dcb2e1e211c30e7fca96d7ce32a51cb1a46bbaacb4c808b2aaa74eb4"
+    },
+    {
+      "path": "docs/qa.md",
+      "bytes": 431338,
+      "sha256": "3671c1c529d6a83fd37a03a02c457345164769ca55d09b9d63be3d616ebe80e1"
+    },
+    {
+      "path": "docs/release-process.md",
+      "bytes": 10949,
+      "sha256": "57d573b9092f7b00ab143adeccdc64478e99895fafbd41f13a597ba187f46e66"
+    },
+    {
+      "path": "docs/windows.md",
+      "bytes": 4929,
+      "sha256": "aff71e51afb1b74a51fc19be861899b3b096aea6ebbb71e5e1bae2e815a731da"
+    },
+    {
+      "path": "tasks/todo.md",
+      "bytes": 264906,
+      "sha256": "990be802739e1456f59dff617437b699b9d689cca7bd5855033389845d80391e"
+    }
+  ],
+  "additions": [
+    {
+      "path": "assembled-record-qualification.json",
+      "bytes": 2411,
+      "sha256": "bb0b08a5076602ac22f4ce496f2cf873e6487d2669e1014a83473656dfa59b07"
+    },
+    {
+      "path": "assembled-record-validation.zip",
+      "bytes": 5069,
+      "sha256": "79785eefad9678ae92a1af424be9d1d081ec3c46133fab530a327e5315b7a03f"
+    },
+    {
+      "path": "final-assembled-independent-review.json",
+      "bytes": 8348,
+      "sha256": "82eea8f24268483c54543c0f0c3389b08333230455bd83c2556fe1c231ea504b"
+    },
+    {
+      "path": "final-assembled-independent.zip",
+      "bytes": 650523,
+      "sha256": "a508d082ec79c5910afd6dabca8d894c325a529ac2fcb8900ed7251cf8b0cbd1"
+    },
+    {
+      "path": "pre-independent-review-manifest.json",
+      "bytes": 15226,
+      "sha256": "f27d58dc196f6f4ff9c52673f52efc06c45fbf92dbdf5507f8fc922723f729f1"
+    }
+  ],
+  "only_existing_file_modified": "manifest.json",
+  "prior_manifest_preserved_as": "pre-independent-review-manifest.json",
+  "current_docs_ledger_context_report_source_changed": false,
+  "qualification_scope": "Immutable final review and prior executed record-validation receipts only; no new product/native/full-suite claim",
+  "self_reference": "This proof is hashed by the new outer manifest; it does not hash itself or the future commit"
+}

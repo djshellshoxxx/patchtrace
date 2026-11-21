@@ -1,0 +1,1290 @@
+{
+  "schema": "patchtrace/independent-historical-branch-review/1",
+  "reviewed_at_utc": "2026-11-21T12:44:39.539994+00:00",
+  "reviewer": "/root/codex1_independent_review",
+  "branch": "chatgpt/ghidriff-sequential-lock-fix-20261017",
+  "donor_head": "f6b7545bcc7a161440ab7119233c204510571370",
+  "donor_tree": "af5312f2802e1ba926104df7df189549b5a63c0e",
+  "merge_base": "70e33fd77570329ba23afc58a38616270636d37c",
+  "comparison_source": "f596471b8909ec8e28e0624041d60f03d520591d",
+  "comparison_tree": "dffeed541749850ef54a130cec0fa56c0fd2f01c",
+  "verdict": "CLEAR: SUPERSEDED for the complete five-commit/three-path branch scope",
+  "blockers": [],
+  "missing_compatible_contribution_found": false,
+  "checks": [
+    {
+      "check": "current complete tree",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "donor complete tree",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "exact merge base",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "entire unique five-commit list",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "no omitted unique merge commits",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "entire net three-path list",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "raw commit ff3afa5a44fcf54a9c6acf3e8bb1d3552f59955e",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "ordered parent/tree ff3afa5a44fcf54a9c6acf3e8bb1d3552f59955e",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "complete per-commit paths ff3afa5a44fcf54a9c6acf3e8bb1d3552f59955e",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "complete retained patch ff3afa5a44fcf54a9c6acf3e8bb1d3552f59955e",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "raw commit ef9262cb8883e49a5d8af3c776a87524ca9a352f",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "ordered parent/tree ef9262cb8883e49a5d8af3c776a87524ca9a352f",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "complete per-commit paths ef9262cb8883e49a5d8af3c776a87524ca9a352f",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "complete retained patch ef9262cb8883e49a5d8af3c776a87524ca9a352f",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "raw commit a660dcf515a99adeeef145520e1c37f1d42aef48",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "ordered parent/tree a660dcf515a99adeeef145520e1c37f1d42aef48",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "complete per-commit paths a660dcf515a99adeeef145520e1c37f1d42aef48",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "complete retained patch a660dcf515a99adeeef145520e1c37f1d42aef48",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "raw commit 4156565476b3c2aeea48bc513d9ec40ea0128246",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "ordered parent/tree 4156565476b3c2aeea48bc513d9ec40ea0128246",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "complete per-commit paths 4156565476b3c2aeea48bc513d9ec40ea0128246",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "complete retained patch 4156565476b3c2aeea48bc513d9ec40ea0128246",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "raw commit f6b7545bcc7a161440ab7119233c204510571370",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "ordered parent/tree f6b7545bcc7a161440ab7119233c204510571370",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "complete per-commit paths f6b7545bcc7a161440ab7119233c204510571370",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "complete retained patch f6b7545bcc7a161440ab7119233c204510571370",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "historical union includes all three paths",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "all nineteen selected snapshots counted",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "selected source 70e33fd77570329ba23afc58a38616270636d37c:src/patchtrace/backend.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "selected source ff3afa5a44fcf54a9c6acf3e8bb1d3552f59955e:src/patchtrace/backend.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "selected source ff3afa5a44fcf54a9c6acf3e8bb1d3552f59955e:tests/test_ghidriff_threading.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "selected source ef9262cb8883e49a5d8af3c776a87524ca9a352f:src/patchtrace/backend.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "selected source ef9262cb8883e49a5d8af3c776a87524ca9a352f:tests/test_ghidriff_threading.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "selected source a660dcf515a99adeeef145520e1c37f1d42aef48:docs/qa/ghidriff-windows-lock-20261017.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "selected source a660dcf515a99adeeef145520e1c37f1d42aef48:src/patchtrace/backend.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "selected source a660dcf515a99adeeef145520e1c37f1d42aef48:tests/test_ghidriff_threading.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "selected source 4156565476b3c2aeea48bc513d9ec40ea0128246:docs/qa/ghidriff-windows-lock-20261017.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "selected source 4156565476b3c2aeea48bc513d9ec40ea0128246:src/patchtrace/backend.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "selected source 4156565476b3c2aeea48bc513d9ec40ea0128246:tests/test_ghidriff_threading.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "selected source f6b7545bcc7a161440ab7119233c204510571370:docs/qa/ghidriff-windows-lock-20261017.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "selected source f6b7545bcc7a161440ab7119233c204510571370:src/patchtrace/backend.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "selected source f6b7545bcc7a161440ab7119233c204510571370:tests/test_ghidriff_threading.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "selected source f596471b8909ec8e28e0624041d60f03d520591d:docs/qa/ghidriff-windows-lock-20261017.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "selected source f596471b8909ec8e28e0624041d60f03d520591d:src/patchtrace/backend.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "selected source f596471b8909ec8e28e0624041d60f03d520591d:tests/test_ghidriff_threading.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "selected source f596471b8909ec8e28e0624041d60f03d520591d:src/patchtrace/enrichment/cache.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "selected source f596471b8909ec8e28e0624041d60f03d520591d:tests/test_enrichment_cache.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "adapter /1 to /2 preserved",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "entire donor backend differs only by reviewed builder/call/version",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "complete original argument suffix retained structurally",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "exactly one sequential option and no enabling option",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "both direct and local returns use shared sequential args",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "only compatible argument appends",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "stronger unconditional isolated Python retained",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "production uses builder once and passes argv to process",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "actual raw cache key receives adapter version",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "runtime fingerprint has adapter field",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "fingerprint serialization/key include complete fields",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "entire test changes only stronger isolation assertion",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "entire dated nine-line incident note unchanged",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "current specification explicitly retains sequential and isolated launch",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "documentation-only epoch preserves src/patchtrace/backend.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "documentation-only epoch preserves tests/test_ghidriff_threading.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "author archive exact size/hash",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "author manifest exact hash",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "author ZIP CRC/member set",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archived manifest exact external bytes",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload REVIEW.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload classification.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload commits/4156565476b3c2aeea48bc513d9ec40ea0128246.patch",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload commits/4156565476b3c2aeea48bc513d9ec40ea0128246.txt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload commits/a660dcf515a99adeeef145520e1c37f1d42aef48.patch",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload commits/a660dcf515a99adeeef145520e1c37f1d42aef48.txt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload commits/ef9262cb8883e49a5d8af3c776a87524ca9a352f.patch",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload commits/ef9262cb8883e49a5d8af3c776a87524ca9a352f.txt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload commits/f6b7545bcc7a161440ab7119233c204510571370.patch",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload commits/f6b7545bcc7a161440ab7119233c204510571370.txt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload commits/ff3afa5a44fcf54a9c6acf3e8bb1d3552f59955e.patch",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload commits/ff3afa5a44fcf54a9c6acf3e8bb1d3552f59955e.txt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload current-adapter-cache-provenance-receipt.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload current-adapter-cache-provenance.stderr.txt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload current-adapter-cache-provenance.stdout.txt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload current-adapter-cache-provenance.xml",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload current-cache-context-source.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload discovery-errors.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload donor-source-for-fixtures.zip",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload final-donor-receipt.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload final-donor.stderr.txt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload final-donor.stdout.txt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload final-donor.xml",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload final-source-binding.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload first-implementation-receipt.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload first-implementation.stderr.txt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload first-implementation.stdout.txt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload first-implementation.xml",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload fixture-source-bindings.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload history-pack-receipt.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload initial-red-import-receipt.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload initial-red-import.stderr.txt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload initial-red-import.stdout.txt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload initial-red-import.xml",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload intermediate-refactor-import-receipt.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload intermediate-refactor-import.stderr.txt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload intermediate-refactor-import.stdout.txt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload intermediate-refactor-import.xml",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload introduced-object-ids.txt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload introduced-objects.idx",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload introduced-objects.pack",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload introduced-objects.rev",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload maintained-current-receipt.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload maintained-current.stderr.txt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload maintained-current.stdout.txt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload maintained-current.xml",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload metadata-shortlist.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload original-tip-test-on-current-receipt.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload original-tip-test-on-current.stderr.txt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload original-tip-test-on-current.stdout.txt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload original-tip-test-on-current.xml",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload pack-verification.stderr.txt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload pack-verification.stdout.txt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload prior-inputs/AGENTS.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload prior-inputs/docs/engineering/consolidation-inventory-20261120-g30.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload prior-inputs/docs/engineering/consolidation-inventory.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload prior-inputs/docs/engineering/cycle-95fe-semantic-review.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload prior-inputs/docs/engineering/evidence/cycle837fe-20261121/historical-semantic-dispositions.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload prior-inputs/docs/engineering/task-ledger.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload prior-inputs/docs/modules.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload prior-inputs/docs/specs/ghidriff-launcher-symbols.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload ref-refresh-invalid-url.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload ref-refresh.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload run_bound_pytest.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload seal_evidence.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload selected-original-inventory-record.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload selected-technical-inventory-record.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload semantic-proofs.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload source/4156565476b3c2aeea48bc513d9ec40ea0128246/docs/qa/ghidriff-windows-lock-20261017.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload source/4156565476b3c2aeea48bc513d9ec40ea0128246/src/patchtrace/backend.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload source/4156565476b3c2aeea48bc513d9ec40ea0128246/tests/test_ghidriff_threading.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload source/70e33fd77570329ba23afc58a38616270636d37c/src/patchtrace/backend.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload source/a660dcf515a99adeeef145520e1c37f1d42aef48/docs/qa/ghidriff-windows-lock-20261017.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload source/a660dcf515a99adeeef145520e1c37f1d42aef48/src/patchtrace/backend.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload source/a660dcf515a99adeeef145520e1c37f1d42aef48/tests/test_ghidriff_threading.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload source/ef9262cb8883e49a5d8af3c776a87524ca9a352f/src/patchtrace/backend.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload source/ef9262cb8883e49a5d8af3c776a87524ca9a352f/tests/test_ghidriff_threading.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload source/f596471b8909ec8e28e0624041d60f03d520591d/docs/qa/ghidriff-windows-lock-20261017.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload source/f596471b8909ec8e28e0624041d60f03d520591d/src/patchtrace/backend.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload source/f596471b8909ec8e28e0624041d60f03d520591d/src/patchtrace/enrichment/cache.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload source/f596471b8909ec8e28e0624041d60f03d520591d/tests/test_enrichment_cache.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload source/f596471b8909ec8e28e0624041d60f03d520591d/tests/test_ghidriff_threading.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload source/f6b7545bcc7a161440ab7119233c204510571370/docs/qa/ghidriff-windows-lock-20261017.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload source/f6b7545bcc7a161440ab7119233c204510571370/src/patchtrace/backend.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload source/f6b7545bcc7a161440ab7119233c204510571370/tests/test_ghidriff_threading.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload source/ff3afa5a44fcf54a9c6acf3e8bb1d3552f59955e/src/patchtrace/backend.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload source/ff3afa5a44fcf54a9c6acf3e8bb1d3552f59955e/tests/test_ghidriff_threading.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload source-history.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "archive payload test-outcomes.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "full donor source archive size/hash",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "donor source ZIP CRC and full bounded 518-file source selection",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "all donor fixture source files equal Git blobs",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "all 518 source-bound runtime files f6b7545bcc7a161440ab7119233c204510571370",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "runtime backend/test binding f6b7545bcc7a161440ab7119233c204510571370",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "all 518 source-bound runtime files ff3afa5a44fcf54a9c6acf3e8bb1d3552f59955e",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "runtime backend/test binding ff3afa5a44fcf54a9c6acf3e8bb1d3552f59955e",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "all 518 source-bound runtime files ef9262cb8883e49a5d8af3c776a87524ca9a352f",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "runtime backend/test binding ef9262cb8883e49a5d8af3c776a87524ca9a352f",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "all 518 source-bound runtime files 4156565476b3c2aeea48bc513d9ec40ea0128246",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "runtime backend/test binding 4156565476b3c2aeea48bc513d9ec40ea0128246",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "all 23 introduced Git objects listed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "introduced object pack bytes/hash",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "pack verifies and contains exactly introduced objects",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "unchanged prior input AGENTS.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "unchanged prior input docs/engineering/consolidation-inventory-20261120-g30.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "unchanged prior input docs/engineering/consolidation-inventory.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "unchanged prior input docs/engineering/cycle-95fe-semantic-review.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "unchanged prior input docs/engineering/evidence/cycle837fe-20261121/historical-semantic-dispositions.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "unchanged prior input docs/engineering/task-ledger.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "unchanged prior input docs/modules.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "unchanged prior input docs/specs/ghidriff-launcher-symbols.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "original whole inventory row selected-original-inventory-record.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "exact technical inventory row against correct canonical gzip",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "branch belongs to unmatched census, not patch-equivalent sixteen",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "author keeps original census snapshot without closure",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "retained fresh exact ref observation",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "all seven retained execution receipts included",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "receipt preserved initial-red-import",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "independent XML outcomes initial-red-import",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "exit semantics initial-red-import",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "actual backend import binding initial-red-import",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "bounded isolated invocation initial-red-import",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "unchanged fixture bytes initial-red-import",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "historical missing-helper collection failure retained initial-red-import",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "receipt preserved first-implementation",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "independent XML outcomes first-implementation",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "exit semantics first-implementation",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "actual backend import binding first-implementation",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "bounded isolated invocation first-implementation",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "unchanged fixture bytes first-implementation",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "receipt preserved intermediate-refactor-import",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "independent XML outcomes intermediate-refactor-import",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "exit semantics intermediate-refactor-import",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "actual backend import binding intermediate-refactor-import",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "bounded isolated invocation intermediate-refactor-import",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "unchanged fixture bytes intermediate-refactor-import",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "historical missing-helper collection failure retained intermediate-refactor-import",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "receipt preserved final-donor",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "independent XML outcomes final-donor",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "exit semantics final-donor",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "actual backend import binding final-donor",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "bounded isolated invocation final-donor",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "unchanged fixture bytes final-donor",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "receipt preserved original-tip-test-on-current",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "independent XML outcomes original-tip-test-on-current",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "exit semantics original-tip-test-on-current",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "actual backend import binding original-tip-test-on-current",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "bounded isolated invocation original-tip-test-on-current",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "unchanged fixture bytes original-tip-test-on-current",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "both current original failures are stronger isolation only",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "receipt preserved maintained-current",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "independent XML outcomes maintained-current",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "exit semantics maintained-current",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "actual backend import binding maintained-current",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "bounded isolated invocation maintained-current",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "unchanged fixture bytes maintained-current",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "receipt preserved current-adapter-cache-provenance",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "independent XML outcomes current-adapter-cache-provenance",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "exit semantics current-adapter-cache-provenance",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "actual backend import binding current-adapter-cache-provenance",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "bounded isolated invocation current-adapter-cache-provenance",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "runner binds source before invoking pytest",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "current worktree remains clean and unchanged",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "check_count": 230,
+  "unique_commits": [
+    "ff3afa5a44fcf54a9c6acf3e8bb1d3552f59955e",
+    "ef9262cb8883e49a5d8af3c776a87524ca9a352f",
+    "a660dcf515a99adeeef145520e1c37f1d42aef48",
+    "4156565476b3c2aeea48bc513d9ec40ea0128246",
+    "f6b7545bcc7a161440ab7119233c204510571370"
+  ],
+  "all_historical_and_net_paths": [
+    "docs/qa/ghidriff-windows-lock-20261017.md",
+    "src/patchtrace/backend.py",
+    "tests/test_ghidriff_threading.py"
+  ],
+  "source_snapshots_verified": 19,
+  "introduced_objects_verified": 23,
+  "author_archive": {
+    "archive_file": "historical-ghidriff-sequential-lock-review.zip",
+    "archive_sha256": "907abba74b2de63202f138048266b4202a5d96e68549252c70342c737c63dfb1",
+    "archive_bytes": 2661030,
+    "manifest_file": "evidence-manifest.json",
+    "manifest_sha256": "3762ed0994ff1ca6b32908b82914ddebfffd35ae81b0b09c65547a5c9d223896",
+    "payload_file_count": 89,
+    "zip_member_count": 90,
+    "archive_crc_verified": true,
+    "all_manifest_members_verified": true,
+    "classification": "SUPERSEDED",
+    "head": "f596471b8909ec8e28e0624041d60f03d520591d",
+    "head_tree": "dffeed541749850ef54a130cec0fa56c0fd2f01c",
+    "donor_head": "f6b7545bcc7a161440ab7119233c204510571370",
+    "missing_compatible_contribution_found": false
+  },
+  "verified_prior_execution_results": [
+    {
+      "label": "initial-red-import",
+      "source_commit": "ff3afa5a44fcf54a9c6acf3e8bb1d3552f59955e",
+      "counts": {
+        "passed": 0,
+        "failed": 0,
+        "errors": 1,
+        "skipped": 0
+      },
+      "exit_code": 2
+    },
+    {
+      "label": "first-implementation",
+      "source_commit": "ef9262cb8883e49a5d8af3c776a87524ca9a352f",
+      "counts": {
+        "passed": 1,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "exit_code": 0
+    },
+    {
+      "label": "intermediate-refactor-import",
+      "source_commit": "4156565476b3c2aeea48bc513d9ec40ea0128246",
+      "counts": {
+        "passed": 0,
+        "failed": 0,
+        "errors": 1,
+        "skipped": 0
+      },
+      "exit_code": 2
+    },
+    {
+      "label": "final-donor",
+      "source_commit": "f6b7545bcc7a161440ab7119233c204510571370",
+      "counts": {
+        "passed": 4,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "exit_code": 0
+    },
+    {
+      "label": "original-tip-test-on-current",
+      "source_commit": "f596471b8909ec8e28e0624041d60f03d520591d",
+      "counts": {
+        "passed": 2,
+        "failed": 2,
+        "errors": 0,
+        "skipped": 0
+      },
+      "exit_code": 1
+    },
+    {
+      "label": "maintained-current",
+      "source_commit": "f596471b8909ec8e28e0624041d60f03d520591d",
+      "counts": {
+        "passed": 4,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "exit_code": 0
+    },
+    {
+      "label": "current-adapter-cache-provenance",
+      "source_commit": "f596471b8909ec8e28e0624041d60f03d520591d",
+      "counts": {
+        "passed": 1,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "exit_code": 0
+    }
+  ],
+  "independent_product_tests_run": 0,
+  "counts_additive": false,
+  "original_census_snapshot_preserved": {
+    "unmatched": 181,
+    "patch_equivalent": 16
+  },
+  "limits": [
+    "Semantic retention only; current donor head is not asserted merged by ancestry and no branch deletion is authorized.",
+    "Current unconditional -I -X utf8 is intentional stronger isolation; do not port the obsolete bundle-only expectation.",
+    "Original import failures and two current isolation-policy failures remain in the sealed author archive.",
+    "Pure argv/cache fixture receipts do not prove the private Windows lock incident resolved; no native, target, full-suite or new product test execution.",
+    "No source/ref/PR/CI/ledger mutations; original 181/16 snapshot remains historical, not a recalculated backlog.",
+    "Actual PR351 qualification and assembled promotion-bound records review remain separate and outstanding."
+  ]
+}

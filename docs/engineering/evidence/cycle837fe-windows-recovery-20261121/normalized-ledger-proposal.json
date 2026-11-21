@@ -1,0 +1,149 @@
+{
+  "schema": "patchtrace/legacy-ledger-reconciliation-proposal/1",
+  "state": "ROOT_NORMALIZED_PROPOSAL_NOT_APPLIED",
+  "permission_to_apply": false,
+  "base_ledger_head": "2ae1bbad2ad9cc78c29541872381750e347c670e",
+  "base_ledger_tree": "6001ef506c38930fd590bd827f428b997c3b2797",
+  "base_ledger_sha256": "9d9ae753a9a7d36ec6e9c2b7778bd98b6c6bff006e4216c0f26e1c5620a287a7",
+  "base_task_count": 104,
+  "qualified_source_head": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+  "qualified_source_tree": "c3f09435deb99ca0ddb3406e27ab315dba7740cf",
+  "actual_main_merge": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+  "changes": [
+    {
+      "task_id": "registered-header-help",
+      "field": "status",
+      "json_pointer": "/tasks/59/status",
+      "before": "strings-eight-columns-complete-other-panels-open",
+      "after": "TESTING",
+      "reason": "Current qualified scope is eight Strings, six Search and five Buildenv mappings. This is not a complete application-header census or native accessibility acceptance.",
+      "proof_ids": [
+        "promotion",
+        "qualified_source",
+        "hosted_cases",
+        "strings",
+        "search",
+        "buildenv"
+      ],
+      "original_proposed_after": "strings-search-buildenv-scopes-MERGED-other-panels-native-accessibility-open"
+    },
+    {
+      "task_id": "registered-header-help",
+      "field": "result_or_next_action",
+      "json_pointer": "/tasks/59/result_or_next_action",
+      "before": "All eight Strings headers use registered escaped help before/after results; global real-host audit fails when a mapping is removed.90 direct construction sites, 8 explicit IDs; other panels and native screen-reader acceptance remain open.",
+      "after": "Eight Strings, six Search and five Build environment header mappings are present in qualified source ae69f1e6 (tree c3f09435) and merged through main commit 9023761a. Existing labels/cells/copy and real-host positive/missing-mapping controls are retained. These are three bounded table scopes; other panels and native screen-reader/accessibility acceptance remain open. The earlier 90-site/8-ID observation is retained as historical inventory, not a current application-wide coverage total.",
+      "reason": "Updates the aggregate row without claiming that every header has registered help, and stops presenting the earlier construction-site/ID count as a current total.",
+      "proof_ids": [
+        "promotion",
+        "qualified_source",
+        "hosted_cases",
+        "strings",
+        "search",
+        "buildenv"
+      ]
+    },
+    {
+      "task_id": "registered-header-help",
+      "field": "parallel_scope_837fe.qualification",
+      "json_pointer": "/tasks/59/parallel_scope_837fe/qualification",
+      "before": "exact-source hosted pending",
+      "after": "Search source is included in qualified ae69f1e6 (tree c3f09435) and merged through main commit 9023761a; exact-tree Linux/Windows QA and Qt gates passed. Native screen-reader/accessibility acceptance remains open.",
+      "reason": "Replaces the explicit Search exact-source-hosted-pending value while preserving its original code checkpoint, completed scope and remaining gates.",
+      "proof_ids": [
+        "promotion",
+        "qualified_source",
+        "hosted_cases",
+        "search",
+        "primary"
+      ]
+    },
+    {
+      "task_id": "historical-audit-gates-cycle2",
+      "field": "status",
+      "json_pointer": "/tasks/71/status",
+      "before": "CODEX1-5-open-CODEX6-14-reviewed-local-source-hosted-pending",
+      "after": "BLOCKED",
+      "reason": "The archived CODEX1/6/14 contracts pass on both OSes; direct pins/source repairs are promoted. CODEX5 remains strict xfail and actual Ghidra archive provisioning was skipped.",
+      "proof_ids": [
+        "promotion",
+        "hosted_cases",
+        "direct_pins",
+        "cache",
+        "frozen_linux"
+      ],
+      "original_proposed_after": "CODEX1-6-14-source-MERGED-CODEX5-and-Ghidra-archive-acceptance-open"
+    },
+    {
+      "task_id": "historical-audit-gates-cycle2",
+      "field": "result_or_next_action",
+      "json_pointer": "/tasks/71/result_or_next_action",
+      "before": "CODEX1 mutable Action tags and CODEX5 unhashed package installs remain strict expected failures. CODEX6 and CODEX14 have separate reviewed source repairs and passing actual-source tests, now combined; their hosted acceptance remains open. Previous audit findings/failed source receipts stay historical.",
+      "after": "CODEX-1 direct Action pins and CODEX-6/14 source repairs are present in ae69f1e6 (tree c3f09435) and merged through main commit 9023761a. CODEX-14's extracted Linux artifact passed 64 checks with zero failures on each Ubuntu 22.04/24.04 smoke job. CODEX-6 verified both rizin archive-cache hits; Ghidra archive provisioning was skipped, so that gate remains open and separate Ghidriff raw-cache success does not close it. Broad CODEX-5 hash closure remains open with its strict expected failure. Preserve original audit/failure receipts and all wider native/manual/accessibility gates.",
+      "reason": "Removes the false current CODEX1 xfail and CODEX14 hosted-pending claims. Keeps source completion distinct from archive-specific Ghidra acceptance and broader open gates.",
+      "proof_ids": [
+        "promotion",
+        "hosted_cases",
+        "direct_pins",
+        "cache",
+        "frozen_linux",
+        "primary"
+      ]
+    },
+    {
+      "task_id": "buildenv-header-help-20261121-95fe",
+      "field": "status",
+      "json_pointer": "/tasks/90/status",
+      "before": "implemented-independently-reviewed-local-qualified",
+      "after": "MERGED",
+      "reason": "The local 8c5e77e2 content maps to ancestral remote commit 2162708d with the same tree; its two production files and maintained header test are byte-identical in qualified ae69 and promoted main902. Fifteen Buildenv cases passed in each archived full OS suite.",
+      "proof_ids": [
+        "promotion",
+        "qualified_source",
+        "hosted_cases",
+        "buildenv"
+      ],
+      "original_proposed_after": "MERGED"
+    },
+    {
+      "task_id": "buildenv-header-help-20261121-95fe",
+      "field": "result_or_next_action",
+      "json_pointer": "/tasks/90/result_or_next_action",
+      "before": "All five actual headers registered; original labels/cells/copy and production ASTs preserved. Real-host audit detects a removed Basis mapping. Included in 391-pass final selection; exact combined hosted/native acceptance remains separate.",
+      "after": "All five Build environment headers are registered; original labels/cells/copy and production ASTs are preserved. The retained real-host control detects a removed Basis mapping. The 391-pass C4 selection remains historical and overlaps later qualification. This bounded source is included in ae69f1e6 (tree c3f09435), passed exact-tree Linux/Windows QA and repeated Qt gates, and was merged through main commit 9023761a. Native screen-reader, high-contrast/DPI and broader manual acceptance remain separate.",
+      "reason": "Replaces only obsolete combined-hosted-pending wording; preserves local-result history and native/manual limits.",
+      "proof_ids": [
+        "promotion",
+        "qualified_source",
+        "hosted_cases",
+        "buildenv",
+        "primary"
+      ]
+    }
+  ],
+  "proof_catalog": {
+    "promotion": "promotion-proof.json; primary/primary-promotion-context.json; primary/actual-main-merge-commit.txt",
+    "qualified_source": "qualified-source-binding.json",
+    "hosted_cases": "archived-relevant-junit-cases.json (read-only extraction from hash-verified primary archive)",
+    "primary": "primary/final-qualification.json",
+    "buildenv": "retained/docs/engineering/evidence/cycle4-95fe/qualification.json; retained/docs/engineering/evidence/cycle4-95fe/buildenv-spec-review.md; retained/docs/engineering/evidence/cycle4-95fe/buildenv-standards-review.md; retained/docs/engineering/evidence/cycle4-95fe/code-publication-mapping.json",
+    "search": "retained/docs/engineering/cycle837fe-recovery-and-search-20261121.md; retained/search-independent/review-addendum.json",
+    "strings": "retained/docs/engineering/cycle2-strings-header-help-20261121-2bad.md",
+    "direct_pins": "retained/docs/engineering/codex1-direct-action-pins-20261121.md",
+    "cache": "primary/tier-r-cache-evidence.json; retained/docs/engineering/codex6-corpus-cache-archive-20261121.md",
+    "frozen_linux": "primary/linux-smoke-136798676256-receipt.json; primary/linux-smoke-136798676259-receipt.json; primary/linux-package-receipt.json"
+  },
+  "preserve": [
+    "Every task ID and original order",
+    "All unrelated rows and fields",
+    "All original source_commit/evidence/owner values",
+    "Full before objects and their source-specific history",
+    "Broad CODEX5 and Ghidra archive-cache acceptance gates",
+    "Other header scopes and native/manual/accessibility limits",
+    "Top-level publication/release eligibility fields"
+  ],
+  "application_boundary": "Root owns any separately reviewed application. First retain the full before objects as historical checkpoints; reject if any guarded before row changed. These updates do not qualify the later CODEX5/Pages/concurrency follow-up source or PR351.",
+  "new_tests_executed": 0,
+  "normalization": "Use the explicit user task-state enum; retain the original sealed author proposal and all bounded qualification wording.",
+  "original_proposal_sha256": "e04f36aa1b348b44261e9960cf63d87d974cfd66b977e449bb1601500e158751"
+}

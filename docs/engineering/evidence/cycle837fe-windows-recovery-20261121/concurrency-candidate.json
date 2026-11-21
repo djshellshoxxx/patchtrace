@@ -1,0 +1,69 @@
+{
+  "head": "c4eb63c55a35a1c2a927f4aeb4d42c8b96ff45ff",
+  "tree": "561befcde425c5de07e113128dc79c21b7616772",
+  "parent": "2ae1bbad2ad9cc78c29541872381750e347c670e",
+  "parent_tree": "6001ef506c38930fd590bd827f428b997c3b2797",
+  "branch": "codex/patchtrace-ci-publication-concurrency-20261121-837fe",
+  "message": "Preserve publication-capable QA runs and require Windows artifacts [no release] [no deploy]",
+  "worktree_clean": true,
+  "changed_paths": [
+    ".github/workflows/qa-windows.yml",
+    "docs/specs/REGISTRY.md",
+    "docs/specs/windows-acceptance-and-milestone-builds.md",
+    "tests/test_release_gate.py"
+  ],
+  "validation_bytes_equal_frozen_commit": true,
+  "tests": {
+    "red": {
+      "cases": 8,
+      "failed": 8,
+      "errors": 0,
+      "skipped": 0
+    },
+    "focused-initial-path-boundary": {
+      "cases": 370,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 2
+    },
+    "focused": {
+      "cases": 370,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 2
+    }
+  },
+  "whole_tree_ruff": "passed",
+  "source_binding": {
+    "mode": "Isolated interpreter with explicit current source paths; no editable rebind or installation",
+    "patchtrace": "/workspace/scratch/837fe19aae3a/repair-ci-publication-concurrency/src/patchtrace/__init__.py",
+    "audit": "/workspace/scratch/837fe19aae3a/repair-ci-publication-concurrency/tools/ci_pip_install_audit.py",
+    "interpreter": "/workspace/scratch/837fe19aae3a/pages-config-hold-venv/bin/python",
+    "unchanged_existing_editable": {
+      "dir_info": {
+        "editable": true
+      },
+      "url": "file:///workspace/scratch/837fe19aae3a/repair-pages-config-hold"
+    }
+  },
+  "workflow_census": {
+    "workflows": 21,
+    "run_scalars": 200,
+    "explicit_installs": 42,
+    "unprotected_installs": 41
+  },
+  "original_donor_regression_ast_identical": true,
+  "original_historical_archive_sha256": "b8bd30fc05950a052f46e867866aab8b16e9970af1942384a90e37c98677e2f8",
+  "publication_performed": false,
+  "hosted_acceptance": "pending independent review and separate follow-up publication/CI",
+  "native_or_package_execution": false,
+  "full_suite_run": false,
+  "installs": false,
+  "C5_branch_modified": false,
+  "scope_open": [
+    "Windows uploaded-artifact download/smoke validation",
+    "required-member completeness beyond an empty result",
+    "historical exact build/dev pin policy and broad CODEX-5 closure",
+    "separate native/signing/manual/trust/accessibility gates"
+  ]
+}

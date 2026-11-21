@@ -1,0 +1,144 @@
+{
+  "schema": "patchtrace/historical-next-review/1",
+  "branch": "codex/windows-setup-installer-20261017",
+  "head": "9c5fe67bd10a5d1342440bb8ea6a524cca3ce1f2",
+  "head_tree": "338518965bdfb7d10eaa8c3ba8d1a65035cad897",
+  "comparison_head": "2ae1bbad2ad9cc78c29541872381750e347c670e",
+  "comparison_tree": "6001ef506c38930fd590bd827f428b997c3b2797",
+  "merge_bases": [
+    "04d57c72eced716b6c163d29f80b6cd5543c6582"
+  ],
+  "unique_commits": [
+    "104bbc905776d5c73bb015dabba900b4479768c1",
+    "56eaea3ee55175b2bab00d729060a8bba42da31c",
+    "14b4250e805d0957f2d0a16748ff7e75c6c75f43",
+    "9f4e185ec05a3efad49e6e6388037130b03706bd",
+    "bf59ac4d008374dd86c2ca535507f24b701e4f07",
+    "a904dd960b4ee1c0d2c81127192e020b2630020d",
+    "5c121c85867f9b7c5e372cae2303d05865757487",
+    "8163be72dacc469b471a28cdc439dc6e9f4fe012",
+    "70ae6eb8ff8718cc8a149e0efb4cfa084b35f894",
+    "6fa3f694deb02f64e9fba9cd12fbfdafe3063622",
+    "185023088cd48df8c528e0dff8c7da1a6f1ad3e8",
+    "b6689d8b7b64aa8816f1274f67e4c8ec7ed1ce5a",
+    "b3a425bff8d80d3fb76425cea112f8a46ce31fce",
+    "1991a72d595fb409fe236ecac8984a83752f113a",
+    "5e2c806268cdb5e8a444c89fdc46283c08feeba1",
+    "2af8900c965ea814c4b4df958f09aa49dba1e82a",
+    "157292221328a242a596eafa24d70df3d1b41e9d",
+    "f8f648f24b4040116ae5caaa94ca8df889c719ec",
+    "9e7722885728dd9e3ec33dcc50308840fc8d67f9",
+    "41383e63868830b196967bb141cc3d69cfd95564",
+    "5ce8bea744efebc3fec384e416747e055a25ff6e",
+    "77e797c01015778394eba6e50563314a7d0b44a8",
+    "1e8b6ee64a75c067e2056fa1aada22d85d3f83ff",
+    "36f7a8dbe094ea699bfd59e32000a161351bfca2",
+    "cf2ff26ad3e5a387a7720916e42aa6ec04612b20",
+    "92f88e8899abb076664e3c7ada9b5082471fcc39",
+    "28ae017a5754c903e2426c21eaf22ff9257cea52",
+    "8d03eb78715a65cea710d58975becd2edd930f39",
+    "fd4da2b14b7c1e740c2239d7870723a29e2fc4be",
+    "3d7a9ace33976baec185c31582bdbcafafdd6e3d",
+    "6f42dd1482f4d65b490a739886011dc3b50cf3c6",
+    "9c5fe67bd10a5d1342440bb8ea6a524cca3ce1f2"
+  ],
+  "changed_paths": [
+    ".github/workflows/qa-windows.yml",
+    "docs/package-audit.md",
+    "docs/qa.md",
+    "docs/release-process.md",
+    "docs/windows.md",
+    "installer/PatchTrace.nsi",
+    "tasks/claude-progress.md",
+    "tasks/todo.md",
+    "tests/test_windows_installer_manifest.py",
+    "third_party/notices/nsis-3.13/COPYING",
+    "tools/package_windows_installer.py",
+    "tools/test_windows_installer.ps1",
+    "tools/test_windows_portable.ps1"
+  ],
+  "current_local_worktree_head_at_capture": "2ae1bbad2ad9cc78c29541872381750e347c670e",
+  "current_status_at_capture": "",
+  "classification": "SUPERSEDED",
+  "whole_branch_scope": true,
+  "original_census_bucket": "unmatched-patches-review-required (original 181)",
+  "paths": [
+    {
+      "path": ".github/workflows/qa-windows.yml",
+      "classification": "RETAINED_AND_EXTENDED",
+      "reason": "Four exact Windows steps, installer assets and canonical portable-release logic remain. Current workflow additionally pins upload action, verifies Setup checksum and honors publication holds. No old action tag or topology should be restored."
+    },
+    {
+      "path": "docs/package-audit.md",
+      "classification": "BYTE_IDENTICAL_HISTORICAL_TEXT",
+      "reason": "Exact donor file retained, including old Inno text followed by the NSIS follow-up and explicitly pending original PR95 Windows qualification. Stale wording is not missing implementation or current acceptance."
+    },
+    {
+      "path": "docs/qa.md",
+      "classification": "RETAINED_FOLLOWUP_WITH_CORRUPT_TRUNCATION_REJECTED",
+      "reason": "All five substantive added PR95 path-fix heading/result lines remain. Donor also replaced 744 old lines with tool-output truncation text; that destructive record change is not a compatible contribution. Complete original donor/base/current blobs are preserved."
+    },
+    {
+      "path": "docs/release-process.md",
+      "classification": "SUPERSEDED",
+      "reason": "Windows NSIS/data-retention/artifact contract remains. Duplicate obsolete Inno table row removed; asset instructions strengthened to the current offline release verifier and explicit publication holds."
+    },
+    {
+      "path": "docs/windows.md",
+      "classification": "BYTE_IDENTICAL_WITH_LEGACY_WORDING",
+      "reason": "Exact donor file retained. It still refers to the removed Inno .iss in one paragraph despite the NSIS instructions and implementation. This is preexisting documentation debt, not an unmerged runtime contribution."
+    },
+    {
+      "path": "installer/PatchTrace.nsi",
+      "classification": "BYTE_IDENTICAL",
+      "reason": "Per-user NSIS script, HKCU Apps registration, current-user shortcut, repository-root paths and generated explicit uninstall manifest all retained."
+    },
+    {
+      "path": "tasks/claude-progress.md",
+      "classification": "BYTE_IDENTICAL_HISTORICAL_TEXT",
+      "reason": "Exact historical branch/queued-CI/native-license/open-gate handoff retained. Its 2026-10-17 state is not a fresh qualification claim."
+    },
+    {
+      "path": "tasks/todo.md",
+      "classification": "RETAINED_HISTORICAL_CHECKPOINTS",
+      "reason": "Every nonblank line added by the donor remains. Original Inno-era and NSIS-era checklists coexist with later checkpoints; no historical pending state is rewritten here."
+    },
+    {
+      "path": "tests/test_windows_installer_manifest.py",
+      "classification": "RETAINED_AND_EXTENDED",
+      "reason": "Original full file is an exact prefix and all four functions are AST-identical. Current adds the LF checksum regression; original tests pass on both donor and exact-current helpers."
+    },
+    {
+      "path": "third_party/notices/nsis-3.13/COPYING",
+      "classification": "RETAINED_WHITESPACE_NORMALIZED",
+      "reason": "Only trailing whitespace differs; all notice text remains."
+    },
+    {
+      "path": "tools/package_windows_installer.py",
+      "classification": "SUPERSEDED",
+      "reason": "Compiler discovery, streaming hash and explicit manifest helper are AST-identical. Main uses the newer byte-written LF checksum helper; pinned NSIS 3.13, preflights, data-preserving manifest and compile contract remain."
+    },
+    {
+      "path": "tools/test_windows_installer.ps1",
+      "classification": "BYTE_IDENTICAL",
+      "reason": "Original Windows lifecycle definition retained, including inside/outside user-data sentinels, HKCU registration, notices, runtime files and shortcut checks. Inspected only, not executed."
+    },
+    {
+      "path": "tools/test_windows_portable.ps1",
+      "classification": "BYTE_IDENTICAL",
+      "reason": "Original sidecar, clean Unicode/spaces extraction, runtime/notices checks and isolated self-test/CLI definition retained. Inspected only, not executed."
+    }
+  ],
+  "unique_history": {
+    "nonmerge_commits": 31,
+    "merge_commits": 1,
+    "empty_nonmerge_commit": "77e797c01015778394eba6e50563314a7d0b44a8",
+    "transient_path": "installer/PatchTrace.iss",
+    "transient_disposition": "Explicitly removed by donor commit70ae6eb8 when migrating to NSIS; absent at both donor tip and current. Preserved as original history, not a recovery candidate."
+  },
+  "missing_compatible_contributions": [],
+  "native_acceptance_claimed": false,
+  "original_census_rewritten": false,
+  "delete_authorized": false,
+  "source_ref_ledger_ci_or_pr_mutations": false
+}

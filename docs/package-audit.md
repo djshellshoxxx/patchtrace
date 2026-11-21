@@ -34,3 +34,10 @@ The Windows CI packaging change adds an Inno Setup per-user wrapper around the a
 ## Windows installer packaging follow-up (2026-10-17)
 
 The unmerged installer work in PR #95 uses pinned NSIS 3.13 on a Windows runner, with its license text copied to `licenses/installer/COPYING`. The installer includes the exact frozen application directory produced by `tools/build_windows.py` and its existing dependency/notice inventory. A generated, explicit uninstall manifest removes only packaged files and prunes empty directories, instead of recursively deleting `$INSTDIR`; the Windows smoke test checks both in-directory user project retention and Windows Apps registration. The portable ZIP is extracted outside checkout under a path containing spaces and Unicode before running frozen smoke checks. Results remain **unverified until PR #95 Windows CI completes**. No code signing is performed.
+
+
+## Current installer implementation and retained history (2026-11-21 UTC)
+
+The two 2026-10-17 sections above are historical checkpoints. The temporary Inno implementation was removed during the original installer branch's development. Current builds use `installer/PatchTrace.nsi` and pinned **NSIS 3.13** through `tools/package_windows_installer.py`; the earlier Inno paragraph is not a current build instruction. The original branch and its history are retained in the [Windows recovery record](engineering/cycle837fe-windows-recovery-20261121.md).
+
+Actual main commit `9023761a4066ac1c50c127ac09d0ba5f56cdc9e4` completed its [Windows QA/build job](https://github.com/djshellshoxxx/PatchTrace/actions/runs/44889511435/job/136802040648): 64 frozen CLI checks, portable extraction/runtime smoke, NSIS installer construction, installation/runtime self-test and non-destructive uninstall with inside/outside project-data sentinels. This proves that exact source and builder-side workflow. The separately added downloaded-artifact job requires its own exact-source hosted qualification, recorded separately in the recovery report. That held main integration published no release; signing/trust, upgrade and manual desktop/accessibility acceptance remain separate gates.

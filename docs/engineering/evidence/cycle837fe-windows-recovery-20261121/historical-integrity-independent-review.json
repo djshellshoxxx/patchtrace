@@ -1,0 +1,922 @@
+{
+  "schema": "patchtrace/historical-integrity-independent/1",
+  "reviewed_at_utc": "2026-11-21T10:32:31.501789+00:00",
+  "comparison_head": "2ae1bbad2ad9cc78c29541872381750e347c670e",
+  "comparison_tree": "6001ef506c38930fd590bd827f428b997c3b2797",
+  "verdict": "CLEAR: both complete named branch deltas are SUPERSEDED",
+  "branches": [
+    {
+      "branch": "feat/artifact-bytes-seam",
+      "head": "91b35d09afd29e9c78169a3b095d9ea3be6c31b1",
+      "tree": "c4f752fe7a953cf282da32b2baff05fd59634773",
+      "merge_base": "f0086f797556afca5848c2b68a3819be5c0c0064",
+      "changed_paths": [
+        "docs/modules.md",
+        "docs/specs/gui-preflight-inspection.md",
+        "src/patchtrace/artifact_bytes.py",
+        "tests/test_artifact_bytes.py"
+      ],
+      "classification": "SUPERSEDED"
+    },
+    {
+      "branch": "feat/byte-representations",
+      "head": "303bc452d0bb6cd46ee67f731f64ec951e1ee215",
+      "tree": "60a2ab753407986c95113d1ce92d1cc5b70c1ad1",
+      "merge_base": "0ec471016d2838a90753e014a0d647dd90168e87",
+      "changed_paths": [
+        "docs/specs/byte-representations.md",
+        "src/patchtrace/representations/__init__.py",
+        "src/patchtrace/representations/compare.py",
+        "src/patchtrace/representations/formatters.py",
+        "src/patchtrace/representations/paging.py",
+        "src/patchtrace/representations/render.py",
+        "src/patchtrace/representations/scope.py",
+        "tests/test_representations.py"
+      ],
+      "classification": "SUPERSEDED"
+    }
+  ],
+  "blockers": [],
+  "missing_compatible_contributions": [],
+  "checks_passed": 206,
+  "checks": [
+    {
+      "name": "Exact comparison source and tree",
+      "passed": true
+    },
+    {
+      "name": "Original census remains181 unmatched and16 patch-equivalent",
+      "passed": true
+    },
+    {
+      "name": "Selected inventory records remain exact copies",
+      "passed": true
+    },
+    {
+      "name": "reader: exact whole branch scope",
+      "passed": true
+    },
+    {
+      "name": "reader: sole unique commit and base",
+      "passed": true
+    },
+    {
+      "name": "reader: original patch-equivalent classification",
+      "passed": true
+    },
+    {
+      "name": "reader: no deletion or global closure",
+      "passed": true
+    },
+    {
+      "name": "reader: complete branch patch preserved",
+      "passed": true
+    },
+    {
+      "name": "reader: exact donor-to-current delta preserved",
+      "passed": true
+    },
+    {
+      "name": "representations: exact whole branch scope",
+      "passed": true
+    },
+    {
+      "name": "representations: sole unique commit and base",
+      "passed": true
+    },
+    {
+      "name": "representations: original patch-equivalent classification",
+      "passed": true
+    },
+    {
+      "name": "representations: no deletion or global closure",
+      "passed": true
+    },
+    {
+      "name": "representations: complete branch patch preserved",
+      "passed": true
+    },
+    {
+      "name": "representations: exact donor-to-current delta preserved",
+      "passed": true
+    },
+    {
+      "name": "Exactly26 source snapshots",
+      "passed": true
+    },
+    {
+      "name": "Exact snapshot: reader/merge-base/docs/modules.md",
+      "passed": true
+    },
+    {
+      "name": "Exact snapshot: reader/merge-base/docs/specs/gui-preflight-inspection.md",
+      "passed": true
+    },
+    {
+      "name": "Exact snapshot: reader/donor/docs/modules.md",
+      "passed": true
+    },
+    {
+      "name": "Exact snapshot: reader/donor/docs/specs/gui-preflight-inspection.md",
+      "passed": true
+    },
+    {
+      "name": "Exact snapshot: reader/donor/src/patchtrace/artifact_bytes.py",
+      "passed": true
+    },
+    {
+      "name": "Exact snapshot: reader/donor/tests/test_artifact_bytes.py",
+      "passed": true
+    },
+    {
+      "name": "Exact snapshot: reader/current/docs/modules.md",
+      "passed": true
+    },
+    {
+      "name": "Exact snapshot: reader/current/docs/specs/gui-preflight-inspection.md",
+      "passed": true
+    },
+    {
+      "name": "Exact snapshot: reader/current/src/patchtrace/artifact_bytes.py",
+      "passed": true
+    },
+    {
+      "name": "Exact snapshot: reader/current/tests/test_artifact_bytes.py",
+      "passed": true
+    },
+    {
+      "name": "Exact snapshot: representations/donor/docs/specs/byte-representations.md",
+      "passed": true
+    },
+    {
+      "name": "Exact snapshot: representations/donor/src/patchtrace/representations/__init__.py",
+      "passed": true
+    },
+    {
+      "name": "Exact snapshot: representations/donor/src/patchtrace/representations/compare.py",
+      "passed": true
+    },
+    {
+      "name": "Exact snapshot: representations/donor/src/patchtrace/representations/formatters.py",
+      "passed": true
+    },
+    {
+      "name": "Exact snapshot: representations/donor/src/patchtrace/representations/paging.py",
+      "passed": true
+    },
+    {
+      "name": "Exact snapshot: representations/donor/src/patchtrace/representations/render.py",
+      "passed": true
+    },
+    {
+      "name": "Exact snapshot: representations/donor/src/patchtrace/representations/scope.py",
+      "passed": true
+    },
+    {
+      "name": "Exact snapshot: representations/donor/tests/test_representations.py",
+      "passed": true
+    },
+    {
+      "name": "Exact snapshot: representations/current/docs/specs/byte-representations.md",
+      "passed": true
+    },
+    {
+      "name": "Exact snapshot: representations/current/src/patchtrace/representations/__init__.py",
+      "passed": true
+    },
+    {
+      "name": "Exact snapshot: representations/current/src/patchtrace/representations/compare.py",
+      "passed": true
+    },
+    {
+      "name": "Exact snapshot: representations/current/src/patchtrace/representations/formatters.py",
+      "passed": true
+    },
+    {
+      "name": "Exact snapshot: representations/current/src/patchtrace/representations/paging.py",
+      "passed": true
+    },
+    {
+      "name": "Exact snapshot: representations/current/src/patchtrace/representations/render.py",
+      "passed": true
+    },
+    {
+      "name": "Exact snapshot: representations/current/src/patchtrace/representations/scope.py",
+      "passed": true
+    },
+    {
+      "name": "Exact snapshot: representations/current/tests/test_representations.py",
+      "passed": true
+    },
+    {
+      "name": "Reader original methods retained",
+      "passed": true
+    },
+    {
+      "name": "Reader method AST retained: open_artifact",
+      "passed": true
+    },
+    {
+      "name": "Reader method AST retained: size",
+      "passed": true
+    },
+    {
+      "name": "Reader method AST retained: sha256",
+      "passed": true
+    },
+    {
+      "name": "Reader method AST retained: label",
+      "passed": true
+    },
+    {
+      "name": "Reader method AST retained: __enter__",
+      "passed": true
+    },
+    {
+      "name": "Reader method AST retained: __exit__",
+      "passed": true
+    },
+    {
+      "name": "Reader documented signature retained: __exit__",
+      "passed": true
+    },
+    {
+      "name": "Reader documented signature retained: label",
+      "passed": true
+    },
+    {
+      "name": "Reader documented signature retained: __enter__",
+      "passed": true
+    },
+    {
+      "name": "Reader documented signature retained: open_artifact",
+      "passed": true
+    },
+    {
+      "name": "Reader documented signature retained: size",
+      "passed": true
+    },
+    {
+      "name": "Reader documented signature retained: read",
+      "passed": true
+    },
+    {
+      "name": "Reader documented signature retained: close",
+      "passed": true
+    },
+    {
+      "name": "Reader documented signature retained: open_path",
+      "passed": true
+    },
+    {
+      "name": "Reader documented signature retained: sha256",
+      "passed": true
+    },
+    {
+      "name": "Original reader module documentation retained",
+      "passed": true
+    },
+    {
+      "name": "Stable reader error class retained",
+      "passed": true
+    },
+    {
+      "name": "Type, bounds, EOF and cap validation retained",
+      "passed": true
+    },
+    {
+      "name": "Original reader test/helper retained: write",
+      "passed": true
+    },
+    {
+      "name": "Original reader test/helper retained: test_reads_exact_bytes_including_nulls_and_high_bit",
+      "passed": true
+    },
+    {
+      "name": "Original reader test/helper retained: test_hash_and_size_mismatch_fail_closed",
+      "passed": true
+    },
+    {
+      "name": "Original reader test/helper retained: test_missing_file_is_unreadable",
+      "passed": true
+    },
+    {
+      "name": "Original reader test/helper retained: test_invalid_ranges_rejected",
+      "passed": true
+    },
+    {
+      "name": "Original reader test/helper retained: test_clipping_and_strict_end",
+      "passed": true
+    },
+    {
+      "name": "Original reader test/helper retained: test_read_cap",
+      "passed": true
+    },
+    {
+      "name": "Original reader test/helper retained: test_mutation_after_verification_detected",
+      "passed": true
+    },
+    {
+      "name": "Only added reader close test assertion is digest release",
+      "passed": true
+    },
+    {
+      "name": "Original reader test/helper retained: test_closed_reader",
+      "passed": true
+    },
+    {
+      "name": "Original reader test/helper retained: test_cancel_during_verification",
+      "passed": true
+    },
+    {
+      "name": "Original reader test/helper retained: test_open_project_artifact_and_reject_traversal",
+      "passed": true
+    },
+    {
+      "name": "Four module declarations retained verbatim",
+      "passed": true
+    },
+    {
+      "name": "Full introduced byte seam specification retained",
+      "passed": true
+    },
+    {
+      "name": "Prior input preserved: prior-inputs/docs/engineering/task-ledger.json",
+      "passed": true
+    },
+    {
+      "name": "Prior input preserved: prior-inputs/docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md",
+      "passed": true
+    },
+    {
+      "name": "Prior input preserved: prior-inputs/docs/engineering/cycle837fe-codex5-20261121.md",
+      "passed": true
+    },
+    {
+      "name": "Prior input preserved: prior-inputs/docs/engineering/branch-recovery-20261120-2bad.json",
+      "passed": true
+    },
+    {
+      "name": "Prior input preserved: prior-inputs/docs/engineering/cycle-95fe-semantic-review.json",
+      "passed": true
+    },
+    {
+      "name": "Prior input preserved: prior-inputs/docs/engineering/cycle2-historical-ui-review-20261121-2bad.json",
+      "passed": true
+    },
+    {
+      "name": "Prior input preserved: prior-inputs/docs/engineering/evidence/cycle837fe-20261121/references/technical-inventory.compact.json.gz",
+      "passed": true
+    },
+    {
+      "name": "Prior input preserved: prior-inputs/docs/engineering/evidence/cycle837fe-20261121/historical-semantic-dispositions.json",
+      "passed": true
+    },
+    {
+      "name": "Prior input preserved: prior-inputs/docs/engineering/evidence/cycle837fe-combined-20261121/historical-followup-dispositions.json",
+      "passed": true
+    },
+    {
+      "name": "Prior input preserved: prior-inputs/docs/engineering/evidence/cycle837fe-native-c4-20261121/historical-correlation-dispositions.json",
+      "passed": true
+    },
+    {
+      "name": "Prior input preserved: prior-inputs/docs/engineering/evidence/cycle837fe-codex5-20261121/historical-dispositions.json",
+      "passed": true
+    },
+    {
+      "name": "Carrier source equals exact comparison source",
+      "passed": true
+    },
+    {
+      "name": "Recorded isolated editable source binding",
+      "passed": true
+    },
+    {
+      "name": "Imported exact source: patchtrace",
+      "passed": true
+    },
+    {
+      "name": "Imported exact source: patchtrace.artifact_bytes",
+      "passed": true
+    },
+    {
+      "name": "Imported exact source: patchtrace.representations",
+      "passed": true
+    },
+    {
+      "name": "Imported exact source: patchtrace.representations.compare",
+      "passed": true
+    },
+    {
+      "name": "Imported exact source: patchtrace.representations.formatters",
+      "passed": true
+    },
+    {
+      "name": "Imported exact source: patchtrace.representations.paging",
+      "passed": true
+    },
+    {
+      "name": "Imported exact source: patchtrace.representations.render",
+      "passed": true
+    },
+    {
+      "name": "Imported exact source: patchtrace.representations.scope",
+      "passed": true
+    },
+    {
+      "name": "maintained: exact JUnit outcomes",
+      "passed": true
+    },
+    {
+      "name": "maintained: exact source-bound test files",
+      "passed": true
+    },
+    {
+      "name": "original-donor: exact JUnit outcomes",
+      "passed": true
+    },
+    {
+      "name": "original-donor: exact source-bound test files",
+      "passed": true
+    },
+    {
+      "name": "initial-harness-temp-parent-error/maintained: exact JUnit outcomes",
+      "passed": true
+    },
+    {
+      "name": "initial-harness-temp-parent-error/maintained: exact source-bound test files",
+      "passed": true
+    },
+    {
+      "name": "initial-harness-temp-parent-error/maintained: fixture parent errors only",
+      "passed": true
+    },
+    {
+      "name": "initial-harness-temp-parent-error/original-donor: exact JUnit outcomes",
+      "passed": true
+    },
+    {
+      "name": "initial-harness-temp-parent-error/original-donor: exact source-bound test files",
+      "passed": true
+    },
+    {
+      "name": "initial-harness-temp-parent-error/original-donor: fixture parent errors only",
+      "passed": true
+    },
+    {
+      "name": "Harness repair only creates owned temporary parent",
+      "passed": true
+    },
+    {
+      "name": "Overlapping replays and no native claims",
+      "passed": true
+    },
+    {
+      "name": "Author archive exact bytes and digest",
+      "passed": true
+    },
+    {
+      "name": "Author manifest exact digest",
+      "passed": true
+    },
+    {
+      "name": "Author archive complete and CRC-valid",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: REVIEW.md",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: build_review_proof.py",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: classification.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: fresh-branch-refs.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: initial-harness-temp-parent-error/disposition.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: initial-harness-temp-parent-error/maintained.receipt.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: initial-harness-temp-parent-error/maintained.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: initial-harness-temp-parent-error/maintained.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: initial-harness-temp-parent-error/maintained.xml",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: initial-harness-temp-parent-error/original-donor.receipt.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: initial-harness-temp-parent-error/original-donor.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: initial-harness-temp-parent-error/original-donor.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: initial-harness-temp-parent-error/original-donor.xml",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: initial-harness-temp-parent-error/run_bounded_tests.py",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: initial-harness-temp-parent-error/source-binding.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: initial-harness-temp-parent-error/validation-summary.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: maintained.receipt.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: maintained.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: maintained.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: maintained.xml",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: original-donor-per-branch-counts.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: original-donor.receipt.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: original-donor.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: original-donor.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: original-donor.xml",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: preserved-git-objects/historical-integrity-introduced.idx",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: preserved-git-objects/historical-integrity-introduced.pack",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: preserved-git-objects/historical-integrity-introduced.rev",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: preserved-git-objects/index-pack.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: preserved-git-objects/index-pack.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: preserved-git-objects/objects.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: preserved-git-objects/receipt.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: preserved-git-objects/verify-pack.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: prior-input-manifest.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: prior-inputs/docs/engineering/branch-recovery-20261120-2bad.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: prior-inputs/docs/engineering/cycle-95fe-semantic-review.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: prior-inputs/docs/engineering/cycle2-historical-ui-review-20261121-2bad.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: prior-inputs/docs/engineering/cycle837fe-codex5-20261121.md",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: prior-inputs/docs/engineering/evidence/cycle837fe-20261121/historical-semantic-dispositions.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: prior-inputs/docs/engineering/evidence/cycle837fe-20261121/references/technical-inventory.compact.json.gz",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: prior-inputs/docs/engineering/evidence/cycle837fe-codex5-20261121/historical-dispositions.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: prior-inputs/docs/engineering/evidence/cycle837fe-combined-20261121/historical-followup-dispositions.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: prior-inputs/docs/engineering/evidence/cycle837fe-native-c4-20261121/historical-correlation-dispositions.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: prior-inputs/docs/engineering/task-ledger.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: prior-inputs/docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: reader/branch.patch",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: reader/cherry.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: reader/classification.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: reader/commit.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: reader/current/docs/modules.md",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: reader/current/docs/specs/gui-preflight-inspection.md",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: reader/current/src/patchtrace/artifact_bytes.py",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: reader/current/tests/test_artifact_bytes.py",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: reader/donor/docs/modules.md",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: reader/donor/docs/specs/gui-preflight-inspection.md",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: reader/donor/src/patchtrace/artifact_bytes.py",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: reader/donor/tests/test_artifact_bytes.py",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: reader/donor-to-current.patch",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: reader/identity.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: reader/merge-base/docs/modules.md",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: reader/merge-base/docs/specs/gui-preflight-inspection.md",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: reader/source-comparison.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: representations/branch.patch",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: representations/cherry.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: representations/classification.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: representations/commit.txt",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: representations/current/docs/specs/byte-representations.md",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: representations/current/src/patchtrace/representations/__init__.py",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: representations/current/src/patchtrace/representations/compare.py",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: representations/current/src/patchtrace/representations/formatters.py",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: representations/current/src/patchtrace/representations/paging.py",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: representations/current/src/patchtrace/representations/render.py",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: representations/current/src/patchtrace/representations/scope.py",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: representations/current/tests/test_representations.py",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: representations/donor/docs/specs/byte-representations.md",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: representations/donor/src/patchtrace/representations/__init__.py",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: representations/donor/src/patchtrace/representations/compare.py",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: representations/donor/src/patchtrace/representations/formatters.py",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: representations/donor/src/patchtrace/representations/paging.py",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: representations/donor/src/patchtrace/representations/render.py",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: representations/donor/src/patchtrace/representations/scope.py",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: representations/donor/tests/test_representations.py",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: representations/donor-to-current.patch",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: representations/identity.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: representations/source-comparison.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: run_bounded_tests.py",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: seal_archive.py",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: selected-original-inventory-records.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: snapshot-verification.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: source-binding.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: structural-proof.json",
+      "passed": true
+    },
+    {
+      "name": "Archive payload: validation-summary.json",
+      "passed": true
+    },
+    {
+      "name": "Exact nonthin introduced-object pack",
+      "passed": true
+    },
+    {
+      "name": "All27 introduced Git objects independently verified",
+      "passed": true
+    },
+    {
+      "name": "Separate representation whole-branch review sealed",
+      "passed": true
+    }
+  ],
+  "representation_subreview": {
+    "checks_passed": 20,
+    "path": "byte-representation-subreview/review.json",
+    "sha256": "fa034d6ed8232e7e889694b7919910d480343d4173f7bdb4f45d4920682d67b0"
+  },
+  "original_census": {
+    "unmatched_heads": 181,
+    "patch_equivalent_semantics_unreviewed_heads": 16,
+    "rewritten": false,
+    "scope": "Two named heads from original16. No181 decrement, global remaining count or deletion authorization."
+  },
+  "test_provenance_verified": {
+    "maintained": {
+      "passed": 81,
+      "failed": 0,
+      "error": 0,
+      "skipped": 0
+    },
+    "original-donor": {
+      "passed": 70,
+      "failed": 0,
+      "error": 0,
+      "skipped": 0
+    },
+    "initial-harness-temp-parent-error/maintained": {
+      "passed": 41,
+      "failed": 0,
+      "error": 40,
+      "skipped": 0
+    },
+    "initial-harness-temp-parent-error/original-donor": {
+      "passed": 41,
+      "failed": 0,
+      "error": 29,
+      "skipped": 0
+    }
+  },
+  "reviewer_tests_executed": 0,
+  "test_counts_additive": false,
+  "native_platform_qualification_claimed": false,
+  "author_archive": {
+    "archive_file": "historical-integrity-next-review.zip",
+    "archive_sha256": "e571a7d348139fcfc651e3a80e69c1365db4418ab02ec05383751ca0b4e4668a",
+    "archive_bytes": 910931,
+    "manifest_file": "evidence-manifest.json",
+    "manifest_sha256": "c85a0b922f356669a29828beb7cf22131dba8f5111ac234a18f86b1796388197",
+    "payload_file_count": 92,
+    "zip_member_count": 93,
+    "archive_crc_verified": true,
+    "all_manifest_members_verified": true,
+    "receipt_external_to_archive": true
+  },
+  "pack_limits": "Exact27 introduced objects, not full historical parent ancestry.",
+  "mutations": "Only own scratch evidence files; no source, ref, PR, CI, ledger or environment changes."
+}

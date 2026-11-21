@@ -1,0 +1,752 @@
+{
+  "scope": "Read-only metadata, ownership, path and ancestry review only",
+  "checks": [
+    {
+      "name": "both owned sources retain main902",
+      "passed": true
+    },
+    {
+      "name": "owned sources not already in main902",
+      "passed": true
+    },
+    {
+      "name": "main snapshot unchanged",
+      "passed": true
+    },
+    {
+      "name": "PR351 still frozen and open",
+      "passed": true
+    },
+    {
+      "name": "published next code unchanged",
+      "passed": true
+    },
+    {
+      "name": "exact open head and base PR352",
+      "passed": true
+    },
+    {
+      "name": "complete file page PR352",
+      "passed": true
+    },
+    {
+      "name": "complete commit page PR352",
+      "passed": true
+    },
+    {
+      "name": "linear exact parent PR352/5413e4ddc05c21128346109c970c34d74f9efab2",
+      "passed": true
+    },
+    {
+      "name": "linear exact parent PR352/a1efd07a7f4be7c9cc4689335d059c54a20c1325",
+      "passed": true
+    },
+    {
+      "name": "linear exact parent PR352/fe73b2ef7a01e890cf3f6da2a045cb19f2aad279",
+      "passed": true
+    },
+    {
+      "name": "linear exact parent PR352/df63006f2a5f56a218af0912ca58bc1502d45e39",
+      "passed": true
+    },
+    {
+      "name": "linear exact parent PR352/e3928ab8c8e2deee7bb01b0f857205f68a1abda2",
+      "passed": true
+    },
+    {
+      "name": "no new branch commit already in our source ancestry PR352",
+      "passed": true
+    },
+    {
+      "name": "no submitted review or comment PR352",
+      "passed": true
+    },
+    {
+      "name": "exact open head and base PR353",
+      "passed": true
+    },
+    {
+      "name": "complete file page PR353",
+      "passed": true
+    },
+    {
+      "name": "complete commit page PR353",
+      "passed": true
+    },
+    {
+      "name": "linear exact parent PR353/d3628353658ac8b31f9c50b2df7dd6a1df409431",
+      "passed": true
+    },
+    {
+      "name": "linear exact parent PR353/07488438cd899460f47a148eb340e5533c7a3912",
+      "passed": true
+    },
+    {
+      "name": "linear exact parent PR353/2fba26edec79a010ca2d3ca89fc8ac274ad16691",
+      "passed": true
+    },
+    {
+      "name": "linear exact parent PR353/6585f7431dbb7814ad4a1f3454f6a2b86eb34a95",
+      "passed": true
+    },
+    {
+      "name": "linear exact parent PR353/4c2a741ecac7f10d58a5b46a11cc64db79f065d0",
+      "passed": true
+    },
+    {
+      "name": "linear exact parent PR353/d0a4bdf439775999340ea760d96a087e032ee6dd",
+      "passed": true
+    },
+    {
+      "name": "no new branch commit already in our source ancestry PR353",
+      "passed": true
+    },
+    {
+      "name": "no submitted review or comment PR353",
+      "passed": true
+    },
+    {
+      "name": "exact open head and base PR354",
+      "passed": true
+    },
+    {
+      "name": "complete file page PR354",
+      "passed": true
+    },
+    {
+      "name": "complete commit page PR354",
+      "passed": true
+    },
+    {
+      "name": "linear exact parent PR354/e53bfdeb8b0383ee12340729e20047ff5ddfe62c",
+      "passed": true
+    },
+    {
+      "name": "linear exact parent PR354/e92a55c5e37c2766510e74210429f68a5f3c73a2",
+      "passed": true
+    },
+    {
+      "name": "linear exact parent PR354/ef190e6d12cc14d0aaebcd1cc524f741d37fb09f",
+      "passed": true
+    },
+    {
+      "name": "linear exact parent PR354/523e528090d4de2d5d9c408becb916adef4d0a7a",
+      "passed": true
+    },
+    {
+      "name": "linear exact parent PR354/db6532710b22e23361cfaebecabd36b92032d159",
+      "passed": true
+    },
+    {
+      "name": "linear exact parent PR354/a41c7a0d594d1fe26c16da395e6f6f9b33b07eca",
+      "passed": true
+    },
+    {
+      "name": "no new branch commit already in our source ancestry PR354",
+      "passed": true
+    },
+    {
+      "name": "no submitted review or comment PR354",
+      "passed": true
+    },
+    {
+      "name": "exact open head and base PR355",
+      "passed": true
+    },
+    {
+      "name": "complete file page PR355",
+      "passed": true
+    },
+    {
+      "name": "complete commit page PR355",
+      "passed": true
+    },
+    {
+      "name": "linear exact parent PR355/5a1154b4eb237280dcdd60dbe944dbd0edd48ce7",
+      "passed": true
+    },
+    {
+      "name": "linear exact parent PR355/da6fb2539d8a1a941b7bcbbf7abd7331b24842cc",
+      "passed": true
+    },
+    {
+      "name": "linear exact parent PR355/acfc75569d5d318a5274195a7fc662090ffa75ad",
+      "passed": true
+    },
+    {
+      "name": "linear exact parent PR355/e2127864cb481026db0157082d688b8a36595e3b",
+      "passed": true
+    },
+    {
+      "name": "no new branch commit already in our source ancestry PR355",
+      "passed": true
+    },
+    {
+      "name": "no submitted review or comment PR355",
+      "passed": true
+    },
+    {
+      "name": "exact open head and base PR356",
+      "passed": true
+    },
+    {
+      "name": "complete file page PR356",
+      "passed": true
+    },
+    {
+      "name": "complete commit page PR356",
+      "passed": true
+    },
+    {
+      "name": "linear exact parent PR356/3e0c37bc1a9fcda47df2bdd99bdf8acfd6e1e205",
+      "passed": true
+    },
+    {
+      "name": "linear exact parent PR356/de96f3b38d14f7ede10dff5b66e551e2413e59c4",
+      "passed": true
+    },
+    {
+      "name": "linear exact parent PR356/82f518829b7eb44e4449d804e8d25dee5e30b10c",
+      "passed": true
+    },
+    {
+      "name": "linear exact parent PR356/1d475d926314ae116442bfe2b7cd268ad95ea12c",
+      "passed": true
+    },
+    {
+      "name": "no new branch commit already in our source ancestry PR356",
+      "passed": true
+    },
+    {
+      "name": "no submitted review or comment PR356",
+      "passed": true
+    },
+    {
+      "name": "only expected pairwise changed-path overlaps",
+      "passed": true
+    },
+    {
+      "name": "owned runtime bytes equal existing main for src/patchtrace/enrichment/intelligence.py",
+      "passed": true
+    },
+    {
+      "name": "owned runtime bytes equal existing main for src/patchtrace/intelligence/csaf/transport.py",
+      "passed": true
+    },
+    {
+      "name": "owned runtime bytes equal existing main for src/patchtrace/netutil.py",
+      "passed": true
+    },
+    {
+      "name": "owned runtime bytes equal existing main for src/patchtrace/optional_deps.py",
+      "passed": true
+    },
+    {
+      "name": "stacked356 complete scope includes parent",
+      "passed": true
+    },
+    {
+      "name": "source checkout unchanged",
+      "passed": true
+    }
+  ],
+  "prs": [
+    {
+      "number": 352,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/352",
+      "title": "fix(enrichment): enforce hard deadline during stalled network operations [no release] [no deploy]",
+      "head": "e3928ab8c8e2deee7bb01b0f857205f68a1abda2",
+      "head_tree": "ee0a8bdf70b497c0b2d0e5ed5eeca9b9e9f648e1",
+      "base_ref": "main",
+      "base": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "state": "open",
+      "draft": false,
+      "head_branch": "codex/patchtrace-enrichment-hard-deadline-20261121-assistant",
+      "github_author": "djshellshoxxx",
+      "assignees": [],
+      "requested_reviewers": [],
+      "maintainer_can_modify": false,
+      "mergeable_metadata": true,
+      "mergeable_state_metadata": "unstable",
+      "qualification_inferred": false,
+      "incremental_commit_count": 5,
+      "incremental_path_count": 5,
+      "paths": [
+        "docs/qa.md",
+        "docs/specs/enrichment-hardening-backlog.md",
+        "src/patchtrace/enrichment/intelligence.py",
+        "tasks/todo.md",
+        "tests/test_enrichment_intelligence.py"
+      ],
+      "overlap_our_d667_vs_main902": [
+        "docs/qa.md",
+        "tasks/todo.md"
+      ],
+      "overlap_our_f596_vs_main902": [
+        "docs/qa.md",
+        "tasks/todo.md"
+      ],
+      "overlap_our_f596_vs_d667": [],
+      "reviews": [],
+      "body": "## Scope\nFix audit **ACQ-2** in the existing CVE enrichment transport. The per-request 30-second total limit was checked only between blocking network steps. A stalled opener or response read could remain blocked beyond the total budget, including when the caller provided no cancellation event.\n\n## Implementation\n- Add SPEC-07h **H9b** to `docs/specs/enrichment-hardening-backlog.md` before code changes.\n- Add parameterized regression cases for stalled **connect/open** and **body read**, using entirely synthetic responses (no remote network).\n- Supervise the complete `_attempt` (including owned `response.close()`) through the existing bounded `netutil.interruptible` worker, enforcing a real monotonic wall-clock budget in addition to the injectable logical clock.\n- Preserve explicit cancellation `PT-ENRICH-CANCEL` versus timeout `PT-ENRICH-NETWORK`, existing consent/redirect/byte caps and the global abandoned-worker cap.\n- Track blocked verification in `docs/qa.md` and `tasks/todo.md`.\n\n## Qualification status \u2014 NOT YET VERIFIED\nThis connector authoring session could inspect and update GitHub, but could not execute an actual PatchTrace checkout. **Do not infer test passes, red-test reproduction, Ruff success, independent review or Linux/Windows support** from the code changes. The reproduction tests were written before the repair, but the red run was not executed.\n\n**Merge gates:** run `QT_QPA_PLATFORM=offscreen python -m pytest -q` (and the focused test file), `python -m ruff check src tests tools`, dependency consistency and the full applicable GitHub-hosted QA/Windows matrix on the **exact head SHA**; inspect CI logs and an independent review. Repair failures before a guarded REST merge, with `[no release] [no deploy]` in the merge commit. No release/deployment/tag requested.\n\nSeparate ongoing integration owned by Root837FE (PR #351) and the dependent KBC draft chain are intentionally untouched.",
+      "snapshot_utc": "2026-11-21 12:20:12 UTC",
+      "common_ancestor_with_our_sources": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "ancestry_method": "Complete API parent chain to main902 (via354 for356), plus local owned-source ancestor objects; no remote refs fetched or modified."
+    },
+    {
+      "number": 353,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/353",
+      "title": "fix(csaf): enforce cache byte limits despite local stat/read races [no release] [no deploy]",
+      "head": "d0a4bdf439775999340ea760d96a087e032ee6dd",
+      "head_tree": "9ccd50655b7456d1f09618e63775c5f68d649d1f",
+      "base_ref": "main",
+      "base": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "state": "open",
+      "draft": false,
+      "head_branch": "codex/patchtrace-csaf-cache-read-limits-20261121-assistant",
+      "github_author": "djshellshoxxx",
+      "assignees": [],
+      "requested_reviewers": [],
+      "maintainer_can_modify": false,
+      "mergeable_metadata": true,
+      "mergeable_state_metadata": "unstable",
+      "qualification_inferred": false,
+      "incremental_commit_count": 6,
+      "incremental_path_count": 5,
+      "paths": [
+        "docs/qa.md",
+        "docs/specs/csaf-cve-interpretation-engine.md",
+        "src/patchtrace/intelligence/csaf/transport.py",
+        "tasks/todo.md",
+        "tests/test_intel_transport.py"
+      ],
+      "overlap_our_d667_vs_main902": [
+        "docs/qa.md",
+        "tasks/todo.md"
+      ],
+      "overlap_our_f596_vs_main902": [
+        "docs/qa.md",
+        "tasks/todo.md"
+      ],
+      "overlap_our_f596_vs_d667": [],
+      "reviews": [],
+      "body": "## Scope\nStrengthen the existing opt-in CSAF offline-cache read path (SPEC-35 \u00a7D) without changing file layout or network behavior. The pre-read `stat().st_size` guard could be defeated when a local writer grew a URL index or hashed resource body between stat and `read_text()` / `read_bytes()`. If the body hash also matched, the old code could return data exceeding the resource-kind cap.\n\n## Changes\n- Specify read-level byte bounds in `docs/specs/csaf-cve-interpretation-engine.md`.\n- Add two fake/local-only regressions **before** changing source: a stale-stat, matching-SHA oversized cached body and an instrumented index stream that refuses an unbounded read.\n- Replace unbounded index read with `open('rb').read(MAX_MAP_BYTES+1)`; reject over-cap bytes before JSON parsing.\n- Bound cached-body reads by `limit+1`, then reject over-cap bytes before hashing/returning.\n- Preserve early stat rejection, the legacy `urls.json` fallback, strict cache-write behavior, SHA-256 verification, no-limit direct `OfflineCache.get` semantics, and zero network access in offline mode.\n- Record exact limits and pending gates at the end of `docs/qa.md` and `tasks/todo.md`.\n\n## Current qualification \u2014 NOT VERIFIED\nThis authoring context has GitHub read/write access but no executable full PatchTrace checkout; it has **not** executed the new regression tests, the full suite or Ruff. No independent reviewer has checked this branch. Automated GitHub checks are required on the current head, along with review of both stale-size and bounded-stream tests. Do not claim compatibility or merge readiness from the patch alone.\n\nMerge only after required current-head Linux/Windows QA, Qt/native gates where applicable, lint, independent review and no blocking findings. Use a fresh head-SHA guard and an actual main merge commit with `[no release] [no deploy]`. No release or deployment requested. Keep PR #352 and Root837FE-owned PR #351 independent.",
+      "snapshot_utc": "2026-11-21 12:20:12 UTC",
+      "common_ancestor_with_our_sources": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "ancestry_method": "Complete API parent chain to main902 (via354 for356), plus local owned-source ancestor objects; no remote refs fetched or modified."
+    },
+    {
+      "number": 354,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/354",
+      "title": "fix(netutil): honor body deadlines during blocked HTTP reads [no release] [no deploy]",
+      "head": "a41c7a0d594d1fe26c16da395e6f6f9b33b07eca",
+      "head_tree": "cb591be1fb4037e709a1586a41983837bb423741",
+      "base_ref": "main",
+      "base": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "state": "open",
+      "draft": true,
+      "head_branch": "fix/netutil-read-deadline-20261121-0318",
+      "github_author": "djshellshoxxx",
+      "assignees": [],
+      "requested_reviewers": [],
+      "maintainer_can_modify": false,
+      "mergeable_metadata": true,
+      "mergeable_state_metadata": "unstable",
+      "qualification_inferred": false,
+      "incremental_commit_count": 6,
+      "incremental_path_count": 4,
+      "paths": [
+        "docs/engineering/bug-hunt/PT-BUG-NET-001.md",
+        "docs/engineering/bug-hunt/findings.json",
+        "src/patchtrace/netutil.py",
+        "tests/test_netutil_read_deadline.py"
+      ],
+      "overlap_our_d667_vs_main902": [],
+      "overlap_our_f596_vs_main902": [],
+      "overlap_our_f596_vs_d667": [],
+      "reviews": [],
+      "body": "## Confirmed bug (P2): stalled HTTP body read can exceed total deadline\n\n**Source:** `main` `9023761a4066ac1c50c127ac09d0ba5f56cdc9e4`; original `src/patchtrace/netutil.py` blob `9fff565fd59d3d3d23a7a9f4e0a894bd742f8432`.\n\nThe current `read_bounded` implementation checks its deadline before reads, not during them. With `cancel=None`, the read is inline; with an unset cancel event, a stalled read is not interrupted by deadline expiry. Two regression cases failed on the byte-identical original source (both `DID NOT RAISE DeadlineExceeded`).\n\nA second runtime probe confirmed that abandoning a blocked CPython HTTP read can leave `response.close()` waiting for the stream lock. The repair now shortens (never lengthens) the `http.client.HTTPResponse` socket timeout to the remaining deadline, allowing standard HTTP response closure to complete promptly. A composite deadline/cancellation stop condition and post-read validation enforce the original declared deadline contract. Existing cancellation and cap semantics are preserved.\n\n### TDD evidence\n\n- Original source, exact Git blob, two new focused regressions: **2 failed**, reproducing the bug.\n- Isolated fixed exact source/test blobs: **6 focused pytest passed** (Python 3.13 / pytest 9.0.2).\n- Real localhost HTTP stalled-read probe: deadline raised at ~0.151 s, close finished at ~0.152 s, no abandoned worker after cleanup.\n- Fixed source blob: `2898798fe08eee87653db4b404f33bd24a069bd0`; test blob `1a4ab63b68850f24c6e3a94ec5e7012c246b2eba`.\n- Evidence ledger: `docs/engineering/bug-hunt/PT-BUG-NET-001.md`, `findings.json`.\n\n### Remaining gates \u2014 keep as draft\n\n- [ ] Actual complete repository pytest and Ruff (not available in the isolated local source mirror).\n- [ ] Exact-head hosted Linux and Windows CI.\n- [ ] Independent peer review, especially HTTPResponse socket timeout behavior and failure classification on Windows.\n- [ ] Fresh integration ownership/main reconciliation and guarded merge.\n\nThe fix does **not** guarantee prompt `close()` for arbitrary custom response wrappers without CPython's HTTP socket. It does not change acquisition transport, provider APIs, or add features.\n\n**No release, no deployment, no merge until qualified.**",
+      "snapshot_utc": "2026-11-21 12:20:12 UTC",
+      "common_ancestor_with_our_sources": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "ancestry_method": "Complete API parent chain to main902 (via354 for356), plus local owned-source ancestor objects; no remote refs fetched or modified."
+    },
+    {
+      "number": 355,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/355",
+      "title": "fix(optional): survive optional extension initialization errors [no release] [no deploy]",
+      "head": "e2127864cb481026db0157082d688b8a36595e3b",
+      "head_tree": "da71960b2edf33f1637c073b0613035843619543",
+      "base_ref": "main",
+      "base": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "state": "open",
+      "draft": true,
+      "head_branch": "fix/optional-import-init-exceptions-20261121-0318",
+      "github_author": "djshellshoxxx",
+      "assignees": [],
+      "requested_reviewers": [],
+      "maintainer_can_modify": false,
+      "mergeable_metadata": true,
+      "mergeable_state_metadata": "unstable",
+      "qualification_inferred": false,
+      "incremental_commit_count": 4,
+      "incremental_path_count": 4,
+      "paths": [
+        "docs/engineering/bug-hunt/PT-BUG-OPT-002.json",
+        "docs/engineering/bug-hunt/PT-BUG-OPT-002.md",
+        "src/patchtrace/optional_deps.py",
+        "tests/test_optional_import_recovery.py"
+      ],
+      "overlap_our_d667_vs_main902": [],
+      "overlap_our_f596_vs_main902": [],
+      "overlap_our_f596_vs_d667": [],
+      "reviews": [],
+      "body": "## Confirmed P2 bug: an optional package that crashes during import can abort startup\n\n**Current-main base:** `9023761a4066ac1c50c127ac09d0ba5f56cdc9e4`.\n\n`src/patchtrace/optional_deps.py` promises imports never raise when optional packages are broken or missing. Its three optional import handlers only caught `ImportError`, but an installed extension can instead raise an ordinary `RuntimeError` during module initialization. Reproduced by loading the exact original source with an isolated, deterministic failing optional-package importer.\n\n### Regression-first repair\n\n- Red: **3 failures** against original SHA-1 blob `2de1a4a884bdc404f3604641be837b297174e33e`.\n- Green: **7 passed** against exact patched source: 3 new failure-injection cases and 4 unmodified existing optional capability tests.\n- Repair changes exactly three handlers from `except ImportError` to `except Exception`; `BaseException` (e.g. `KeyboardInterrupt` and `SystemExit`) is not caught.\n- No dependency, public API or product-feature changes. Normal missing-package behaviour remains unchanged.\n- Actual fixed module blob `b99ebfb1f24bf86123dd244204d80601d8bcb628`, test blob `01b5dcb2c056cc79498801f3e5f76f1be054485e`.\n- Reproduction, root cause, tests, and hold conditions: `docs/engineering/bug-hunt/PT-BUG-OPT-002.md`; machine-readable `PT-BUG-OPT-002.json`.\n\n### Merge hold (draft)\n\n- [ ] Exact-head hosted Linux/Windows full QA and lint.\n- [ ] Whole-repository checkout-based pytest and Ruff.\n- [ ] Genuinely independent review.\n- [ ] Live main/head, protection, and other-worker ownership reconciliation.\n\nThe 7-pass selection is **a byte-identical local module source mirror**, not a complete repository test or native-extension/Windows acceptance. Do not merge without qualifying required gates. No release/deploy.",
+      "snapshot_utc": "2026-11-21 12:20:12 UTC",
+      "common_ancestor_with_our_sources": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "ancestry_method": "Complete API parent chain to main902 (via354 for356), plus local owned-source ancestor objects; no remote refs fetched or modified."
+    },
+    {
+      "number": 356,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/356",
+      "title": "fix(netutil): hold abandoned slots until late response cleanup ends [no release] [no deploy]",
+      "head": "1d475d926314ae116442bfe2b7cd268ad95ea12c",
+      "head_tree": "72d30ce1b4ea8ec03b5634a2922d53e0ba7dcb88",
+      "base_ref": "fix/netutil-read-deadline-20261121-0318",
+      "base": "a41c7a0d594d1fe26c16da395e6f6f9b33b07eca",
+      "state": "open",
+      "draft": true,
+      "head_branch": "fix/netutil-abandoned-cleanup-cap-20261121-0318",
+      "github_author": "djshellshoxxx",
+      "assignees": [],
+      "requested_reviewers": [],
+      "maintainer_can_modify": false,
+      "mergeable_metadata": true,
+      "mergeable_state_metadata": "unstable",
+      "qualification_inferred": false,
+      "incremental_commit_count": 4,
+      "incremental_path_count": 4,
+      "paths": [
+        "docs/engineering/bug-hunt/PT-BUG-NET-003.md",
+        "docs/engineering/bug-hunt/findings.json",
+        "src/patchtrace/netutil.py",
+        "tests/test_netutil_abandoned_cleanup.py"
+      ],
+      "overlap_our_d667_vs_main902": [],
+      "overlap_our_f596_vs_main902": [],
+      "overlap_our_f596_vs_d667": [],
+      "reviews": [],
+      "body": "## Confirmed P2 bug: abandoned-call cap released before late response is closed\n\n**Stacked on draft [PR #354](https://github.com/djshellshoxxx/PatchTrace/pull/354)** at exact head `a41c7a0d594d1fe26c16da395e6f6f9b33b07eca`. Neither its branch nor its running CI was modified.\n\nWhen `interruptible` cancelled a network read, `_abandoned` was correctly incremented. But once a late response arrived, the worker **decremented the count before calling `cleanup`**, so four simultaneously blocked response closures could be incorrectly counted as zero. This defeats the current cap's resource-accounting invariant and lets additional calls start.\n\n### Actual-source red/green reproduction\n\n1. Reproduced against exact PR #354 parent source blob `2898798fe08eee87653db4b404f33bd24a069bd0`. Four synthetic late-response cleanup callbacks block; original `abandoned_count()` returned **0 instead of 4**: **1 new test failed, 1 companion test passed**.\n2. Changed only the accounting lifetime: publish ordinary successful outcomes as before; for abandoned calls, run cleanup and decrement the reserved slot in `finally`.\n3. Exact fixed blob `60b7e113607d88c26fe7cbcb772969c5af4619e4` and test blob `9e88b76de08bacc43af9bfad856f1875699235f6`.\n4. **2/2 new tests green** on exact patched source; a **15-pass** local mirror selection additionally covered six parent deadline regressions and seven separately isolated optional-import tests (overlap acknowledged; not whole-repo QA).\n5. Evidence and remaining gates: `docs/engineering/bug-hunt/PT-BUG-NET-003.md` and the preserved `findings.json` index.\n\n### Holds / coordination\n\n- [ ] Hosted Linux and Windows exact-head full suite, Ruff, and concurrency/transport gates.\n- [ ] Genuine independent review.\n- [ ] Qualify parent #354 first. Once #354 is merged, retarget/reconcile this PR to current `main` and verify the exact final head; do **not** merge either unqualified.\n- [ ] Coordinate with active PatchTrace integration owner.\n- No release, deployment, or unrelated refactoring.\n\n**Scope:** existing network-worker resource accounting only; the cap value and cancellation semantics are unchanged.",
+      "snapshot_utc": "2026-11-21 12:20:12 UTC",
+      "common_ancestor_with_our_sources": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "ancestry_method": "Complete API parent chain to main902 (via354 for356), plus local owned-source ancestor objects; no remote refs fetched or modified."
+    }
+  ],
+  "our_sources": {
+    "main_observed": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+    "pr351_head": "d6679abc6dfddbadce0391c8d18289f7f96338d6",
+    "pr351_synthetic": "a93005c69fe6091b940d7bc9ad1f5a38542e6e71",
+    "local_next": "f596471b8909ec8e28e0624041d60f03d520591d",
+    "published_next": "4202e5e79e2aea6366c75261d74544ea48368ca5",
+    "d667_changed_paths_from_main": [
+      ".github/workflows/pages.yml",
+      "docs/audits/codex-workflows-1.md",
+      "docs/engineering-handoffs/codex5-command-audit-20261121.md",
+      "docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md",
+      "docs/engineering/cycle837fe-codex5-20261121.md",
+      "docs/engineering/evidence/codex5-per-command-audit-20261121.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/ae69-native-intel-source-identity.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/ae69-native-intel-summary.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/ae69-native-intel.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/ancillary-branch-summary.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/ancillary-branches.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/ancillary-independent-review.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/author-history.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/code-publication-mapping.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/combined-focused.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/combined-pages-record-validation.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/combined-pages-record-validation.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/final-records-independent-review.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/final-records-independent-review.md",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/final-records-independent-review.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-dispositions.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-java-and-code-remote-verification.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-java-independent-review.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-java-probe.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-java-probe.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-license-classification.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-license-independent-review.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-license-independent.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-license-review.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/independent-primary-input-review.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/independent-review.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/independent-review.md",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/independent-review.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/local-codex5-pages-source.bundle",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/main-publication-gate-review.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/manifest.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/pages-code-publication-mapping.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/pages-config-404-independent-assessment.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/pages-config-hold-candidate.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/pages-config-hold-handoff.md",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/pages-config-hold-repair.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/pages-independent-review.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/pages-independent-review.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/pr-chain-reconciliation-review.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/pr-chain-reconciliation-review.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-acceptance-reconciliation.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-archive-receipt.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-evidence-manifest.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-final-ae69-evidence.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-final-qualification.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-merge-proof.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-pr-closures.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-promotion-context.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/prior-ledger-ae69.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/qualification.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/records-assembly-helper.py",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/records-helper-preparation.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/recovered-donor-task-and-notes.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/ref-refresh-summary.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/ref-refresh.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/root-validation.zip",
+      "docs/engineering/task-ledger.json",
+      "docs/modules.md",
+      "docs/qa.md",
+      "docs/specs/REGISTRY.md",
+      "docs/specs/ci-pip-command-audit.md",
+      "docs/specs/pages-deployment-control.md",
+      "tasks/todo.md",
+      "tests/test_codex5_command_audit_20261121.py",
+      "tests/test_site_workflow.py",
+      "tools/ci_pip_install_audit.py"
+    ],
+    "f596_changed_paths_from_main": [
+      ".github/workflows/live-backend.yml",
+      ".github/workflows/pages.yml",
+      ".github/workflows/qa-windows.yml",
+      "docs/audits/codex-workflows-1.md",
+      "docs/engineering-handoffs/codex5-command-audit-20261121.md",
+      "docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md",
+      "docs/engineering/cycle837fe-codex5-20261121.md",
+      "docs/engineering/evidence/codex5-per-command-audit-20261121.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/ae69-native-intel-source-identity.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/ae69-native-intel-summary.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/ae69-native-intel.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/ancillary-branch-summary.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/ancillary-branches.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/ancillary-independent-review.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/author-history.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/code-publication-mapping.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/combined-focused.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/combined-pages-record-validation.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/combined-pages-record-validation.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/final-records-independent-review.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/final-records-independent-review.md",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/final-records-independent-review.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-dispositions.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-java-and-code-remote-verification.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-java-independent-review.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-java-probe.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-java-probe.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-license-classification.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-license-independent-review.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-license-independent.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/historical-license-review.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/independent-primary-input-review.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/independent-review.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/independent-review.md",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/independent-review.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/local-codex5-pages-source.bundle",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/main-publication-gate-review.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/manifest.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/pages-code-publication-mapping.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/pages-config-404-independent-assessment.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/pages-config-hold-candidate.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/pages-config-hold-handoff.md",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/pages-config-hold-repair.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/pages-independent-review.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/pages-independent-review.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/pr-chain-reconciliation-review.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/pr-chain-reconciliation-review.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-acceptance-reconciliation.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-archive-receipt.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-evidence-manifest.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-final-ae69-evidence.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-final-qualification.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-merge-proof.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-pr-closures.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/primary-promotion-context.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/prior-ledger-ae69.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/qualification.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/records-assembly-helper.py",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/records-helper-preparation.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/recovered-donor-task-and-notes.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/ref-refresh-summary.json",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/ref-refresh.zip",
+      "docs/engineering/evidence/cycle837fe-codex5-20261121/root-validation.zip",
+      "docs/engineering/task-ledger.json",
+      "docs/modules.md",
+      "docs/qa.md",
+      "docs/specs/REGISTRY.md",
+      "docs/specs/ci-pip-command-audit.md",
+      "docs/specs/pages-deployment-control.md",
+      "docs/specs/windows-acceptance-and-milestone-builds.md",
+      "tasks/todo.md",
+      "tests/test_codex5_command_audit_20261121.py",
+      "tests/test_live_ghidra_archive.py",
+      "tests/test_release_gate.py",
+      "tests/test_site_workflow.py",
+      "tests/test_windows_downloaded_artifacts.py",
+      "tools/ci_pip_install_audit.py"
+    ],
+    "f596_only_changes_from_d667": [
+      ".github/workflows/live-backend.yml",
+      ".github/workflows/qa-windows.yml",
+      "docs/specs/REGISTRY.md",
+      "docs/specs/windows-acceptance-and-milestone-builds.md",
+      "tests/test_codex5_command_audit_20261121.py",
+      "tests/test_live_ghidra_archive.py",
+      "tests/test_release_gate.py",
+      "tests/test_windows_downloaded_artifacts.py"
+    ]
+  },
+  "pairwise_changed_path_overlap": [
+    {
+      "prs": [
+        352,
+        353
+      ],
+      "shared_changed_paths": [
+        "docs/qa.md",
+        "tasks/todo.md"
+      ]
+    },
+    {
+      "prs": [
+        354,
+        356
+      ],
+      "shared_changed_paths": [
+        "docs/engineering/bug-hunt/findings.json",
+        "src/patchtrace/netutil.py"
+      ]
+    }
+  ],
+  "existing_runtime_blob_identity": [
+    {
+      "path": "src/patchtrace/enrichment/intelligence.py",
+      "blobs": {
+        "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4": "172d8f4ce4a66567cd14d0d01f069fd0a7074dd4",
+        "d6679abc6dfddbadce0391c8d18289f7f96338d6": "172d8f4ce4a66567cd14d0d01f069fd0a7074dd4",
+        "f596471b8909ec8e28e0624041d60f03d520591d": "172d8f4ce4a66567cd14d0d01f069fd0a7074dd4"
+      }
+    },
+    {
+      "path": "src/patchtrace/intelligence/csaf/transport.py",
+      "blobs": {
+        "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4": "3f1c14f53e77b2a70eab1d0050b35037bc91fc29",
+        "d6679abc6dfddbadce0391c8d18289f7f96338d6": "3f1c14f53e77b2a70eab1d0050b35037bc91fc29",
+        "f596471b8909ec8e28e0624041d60f03d520591d": "3f1c14f53e77b2a70eab1d0050b35037bc91fc29"
+      }
+    },
+    {
+      "path": "src/patchtrace/netutil.py",
+      "blobs": {
+        "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4": "9fff565fd59d3d3d23a7a9f4e0a894bd742f8432",
+        "d6679abc6dfddbadce0391c8d18289f7f96338d6": "9fff565fd59d3d3d23a7a9f4e0a894bd742f8432",
+        "f596471b8909ec8e28e0624041d60f03d520591d": "9fff565fd59d3d3d23a7a9f4e0a894bd742f8432"
+      }
+    },
+    {
+      "path": "src/patchtrace/optional_deps.py",
+      "blobs": {
+        "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4": "2de1a4a884bdc404f3604641be837b297174e33e",
+        "d6679abc6dfddbadce0391c8d18289f7f96338d6": "2de1a4a884bdc404f3604641be837b297174e33e",
+        "f596471b8909ec8e28e0624041d60f03d520591d": "2de1a4a884bdc404f3604641be837b297174e33e"
+      }
+    }
+  ],
+  "pr356_scope_from_main": {
+    "commits": 10,
+    "paths": [
+      "docs/engineering/bug-hunt/PT-BUG-NET-001.md",
+      "docs/engineering/bug-hunt/PT-BUG-NET-003.md",
+      "docs/engineering/bug-hunt/findings.json",
+      "src/patchtrace/netutil.py",
+      "tests/test_netutil_abandoned_cleanup.py",
+      "tests/test_netutil_read_deadline.py"
+    ]
+  },
+  "semantic_coupling_inference": "PR352 body explicitly relies on netutil.interruptible; PR354 and stacked356 change netutil. Integrated network tests/review are needed despite different352 file paths. No implementation correctness inferred.",
+  "ownership": {
+    "parent_assignment": "Root837FE retains PR351 and published Windows/native code ownership through15:00UTC; no takeover or external message authorized.",
+    "remote_observations": "All five use the same GitHub account; no assignees/requested reviewers or submitted reviews. Bodies contain merge holds, not a worker-lease release."
+  },
+  "ordering_recommendation": [
+    "Preserve current PR351/main902 qualification and ownership; do not merge unqualified sibling PRs to advance main during this checkpoint.",
+    "After actual351 promotion, finish promotion-bound records and re-evaluate any newer main before final qualification/merge.",
+    "Qualify354 before356; then retarget/reconcile356 to actual current main and qualify the exact resulting head.",
+    "Treat352 with354/356 as an interface-coupled network integration concern; qualify combined behavior when adopted.",
+    "Reconcile352/353 docs/qa.md and tasks/todo.md with each other and our records, preserving all failures/history; path overlap alone does not prove a textual conflict.",
+    "355 has no changed-path overlap with the other four or our source delta, but its explicit independent-review and full-platform gates remain."
+  ],
+  "main_advancement_implications": [
+    "Merging another branch before351 changes the tested base/synthetic combination and invalidates the prepared exact[902,d667]/tree6001 promotion assumptions. Fresh integration qualification and reviewed records are then required.",
+    "Advancing main after351 but before the follow-up changes the actual integration base. Do not reuse prior exact-source success or an ours merge to discard another worker contribution; preserve frozen checkpoints and reconcile a separate descendant under ownership.",
+    "Existing GitHub mergeable/unstable metadata is not proof of QA success or merge readiness."
+  ],
+  "source_qualification": false,
+  "product_tests": 0,
+  "source_ref_PR_CI_mutations": false,
+  "final_refresh": [
+    {
+      "key": "pr-351",
+      "observed_utc": "2026-11-21 12:25:05 UTC",
+      "head_base_body_and_holds_stable": true
+    },
+    {
+      "key": "pr-352",
+      "observed_utc": "2026-11-21 12:25:05 UTC",
+      "head_base_body_and_holds_stable": true
+    },
+    {
+      "key": "pr-353",
+      "observed_utc": "2026-11-21 12:25:05 UTC",
+      "head_base_body_and_holds_stable": true
+    },
+    {
+      "key": "pr-354",
+      "observed_utc": "2026-11-21 12:25:05 UTC",
+      "head_base_body_and_holds_stable": true
+    },
+    {
+      "key": "pr-355",
+      "observed_utc": "2026-11-21 12:25:05 UTC",
+      "head_base_body_and_holds_stable": true
+    },
+    {
+      "key": "pr-356",
+      "observed_utc": "2026-11-21 12:25:05 UTC",
+      "head_base_body_and_holds_stable": true
+    },
+    {
+      "key": "main",
+      "observed_utc": "2026-11-21 12:25:05 UTC",
+      "head_base_body_and_holds_stable": true
+    },
+    {
+      "key": "our-code-ref",
+      "observed_utc": "2026-11-21 12:25:05 UTC",
+      "head_base_body_and_holds_stable": true
+    }
+  ],
+  "checked_as_of_utc": "2026-11-21 12:25:05 UTC",
+  "verdict": "Metadata/path/ancestry review complete; respect all author and root holds. No independent source qualification or merge authorization.",
+  "explicit_holds_by_pr": {
+    "352": "Non-draft but explicitly NOT YET VERIFIED: no test/red/Ruff/independent/Linux/Windows claims; requires exact-head whole-checkout and hosted QA plus independent review. Body explicitly leaves Root837FE PR351 and KBC chain untouched.",
+    "353": "Non-draft but explicitly NOT VERIFIED: no executed regression/full/Ruff or independent review; exact-head Linux/Windows/Qt/native where applicable and independent review required; keep352 and root351 independent.",
+    "354": "Draft: whole-repository pytest/Ruff, exact-head Linux/Windows and independent Windows-aware review outstanding; fresh integration ownership/main reconciliation required. Isolated-source claims are separate.",
+    "355": "Draft: exact-head full Linux/Windows/lint, whole-repository validation, independent review and live ownership/main reconciliation outstanding. Seven local-mirror tests are not whole-repository/native acceptance.",
+    "356": "Draft stacked on exact354: qualify parent first, then retarget/reconcile to current main and verify exact final head; full hosted/concurrency/transport and independent review required; active integration-owner coordination required."
+  }
+}

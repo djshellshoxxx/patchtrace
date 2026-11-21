@@ -4,14 +4,23 @@ How a PatchTrace prerelease is produced and published. Sources: `tools/release_g
 
 ## Pipeline
 
-A push to `main` (or a `v*` tag) runs `qa-windows.yml`:
+A push to `main` or a `v*` tag runs `qa-windows.yml`. Pull requests and manual runs exercise acceptance but never publish.
 
-1. `qa` on Ubuntu and Windows: the test suite and Ruff. The Windows job also builds the one-folder package with `tools/build_windows.py`, runs the frozen-app smoke (`tools/frozen_smoke.py dist/PatchTrace/PatchTrace.exe`, includes the self-test) and checks a clean portable ZIP extraction under a Unicode path, builds the NSIS 3.13 per-user installer, verifies installation/frozen startup/uninstallation while retaining user-created project files, and uploads the Windows ZIP, Setup.exe, and both `.sha256` sidecars. The Linux build job uploads `PatchTrace-0.1.0-linux-x86_64.tar.gz` and its `.sha256`.
-2. `linux-smoke` downloads the Linux artifact, checks `sha256sum -c`, extracts it and runs both offscreen/Xvfb self-tests plus the full `tools/frozen_smoke.py` CLI harness against the extracted executable on Ubuntu 22.04 and 24.04. See [Linux acceptance](linux.md).
-3. `release-gate` runs `tools/release_gate.py` and decides whether to publish.
-4. `release` runs only if the ref is a `v*` tag or the gate says `publish=true`, and only after `qa`, `linux-smoke` and `release-gate` succeeded. It generates evidence notes (`tools/milestone_notes.py`; if that fails, a static preamble is used and the release is neither blocked nor faked), then creates a GitHub **prerelease** named `PatchTrace beta <run number>` tagged `v0.1.0-beta.<run number>` (or the pushed tag) at the run's commit, with the Windows ZIP, Windows Setup.exe, Linux tar.gz, and their SHA-256 checksum files attached.
+| Job | Required jobs | Work performed |
+|---|---|---|
+| `qa` | none | Full pytest and Ruff on Ubuntu and Windows; Windows package, frozen CLI, portable and installer checks before upload |
+| `qt-gate` | none | Repeated GUI tests on four Ubuntu shards and one Windows leg |
+| `windows-validate` | `qa` | Downloads this run's Windows artifact onto a fresh Windows runner; checks all four members and both filename-bound SHA-256 records before portable and installer smoke |
+| `linux-package` | `qa`, `qt-gate` | Builds on Ubuntu 22.04 and uploads the Linux tarball and checksum |
+| `linux-smoke` | `linux-package` | Verifies the downloaded tarball, then runs offscreen/Xvfb self-tests and the full frozen CLI harness on Ubuntu 22.04 and 24.04 |
+| `release-gate` | none; push events only | Determines publication cadence with `tools/release_gate.py` |
+| `release` | `qa`, `qt-gate`, `windows-validate`, `linux-smoke`, `release-gate` | Publishes for a `v*` tag or `publish=true`, provided the head message does not contain `[no release]` |
 
-Pull-request and other non-push events never publish. A push to any ref other than `main` or a tag never publishes.
+The Windows builder creates the one-folder package, runs the full `tools/frozen_smoke.py` harness, checks portable extraction outside checkout under a Unicode path, and builds and exercises the NSIS 3.13 per-user installer. The downloaded-artifact job repeats the maintained portable and installer lifecycle without installing application/development dependencies or the compiler; full frozen CLI coverage remains on the builder. A fresh hosted runner still has its standard image software, so manual acceptance on a pristine Windows profile remains separate. See [Windows artifact acceptance](specs/windows-acceptance-and-milestone-builds.md#112-downloaded-windows-artifact-acceptance-2026-11-21) and [Linux acceptance](linux.md).
+
+Before publication, `release` rechecks the Windows ZIP and Setup.exe sidecars and creates and verifies the byte-identical canonical `PatchTrace-Windows-x64-Portable.zip`. `tools/milestone_notes.py` generates evidence notes, falling back to the static preamble if generation fails without inventing successful evidence. Main builds use `PatchTrace beta <run number> (Windows x64, Linux x86-64)` and tag `v0.1.0-beta.<run number>`. A pushed `v*` tag uses `PatchTrace <tag> (Windows x64, Linux x86-64)`. Both paths create prereleases at the run's commit with the Windows ZIPs, Setup.exe, Linux tarball and checksum files.
+
+Failed, cancelled or skipped required jobs prevent publication. Only older runs for the same pull-request ref may be cancelled by the concurrency rule; separate push, tag and manual runs use run-specific groups. That scheduling rule does not authorize publication. Pushes to other branches do not start this workflow, and non-push events never publish.
 
 ## The release gate
 

@@ -1,0 +1,456 @@
+{
+  "schema": "patchtrace/native-archive-cache-mode-checkpoint/1",
+  "observed_through": "2026-11-21 13:05:43 UTC",
+  "source": {
+    "repo_full_name": "djshellshoxxx/PatchTrace",
+    "head_sha": "4202e5e79e2aea6366c75261d74544ea48368ca5",
+    "complete_tree_sha": "dffeed541749850ef54a130cec0fa56c0fd2f01c",
+    "branch": "codex/patchtrace-windows-native-recovery-20261121-837fe",
+    "run_id": 44901791862,
+    "run_event": "push",
+    "run_attempt": 1,
+    "expected_checkout_sha": "4202e5e79e2aea6366c75261d74544ea48368ca5",
+    "workflow_path": ".github/workflows/live-backend.yml",
+    "workflow_blob_sha": "88cf7d8da5a5ba95084e913f862d0728b020c622",
+    "workflow_bindings": [
+      {
+        "path": ".github/workflows/live-backend.yml",
+        "git_blob_sha": "88cf7d8da5a5ba95084e913f862d0728b020c622",
+        "decoded_source_bytes": 6032,
+        "decoded_source_sha256": "f6929df7a065a785203c5473e5e34fb5f9bfd08334705663b55daa4cea55d0b0"
+      },
+      {
+        "path": ".github/workflows/qa-windows.yml",
+        "git_blob_sha": "ba43dc77da3c8f883eaa4b9592038e81a716da95",
+        "decoded_source_bytes": 17427,
+        "decoded_source_sha256": "656b3a84da31260803e80b680517e64ca7d763454988fbe8cf419b8f731cac07"
+      }
+    ]
+  },
+  "verdict": {
+    "two_mode_checkpoint_complete": true,
+    "cold_miss_hash_fresh_extraction_and_save_observed": true,
+    "warm_hit_hash_and_fresh_extraction_observed": true,
+    "completed_positive_case_count": 2,
+    "known_patch_changes_per_case": 1,
+    "full_five_case_native_qualification_complete": false,
+    "final_record_source_qualification_complete": false,
+    "windows_powershell_27_case_gate_complete": false,
+    "full_QA_and_platform_gates_complete": false,
+    "scope": "Only the two completed code-checkpoint cases are accepted here. This is not a final-source qualification."
+  },
+  "original_ghidra_archive": {
+    "url": "https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip",
+    "sha256": "c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120",
+    "cache_key": "ghidra-archive-v1-c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120",
+    "cache_action_pin": "0057852bfaa89a56745cba8c7296529d2fc39830",
+    "cache_path": "ghidra-archive",
+    "archive_file_in_runner": "ghidra-archive/ghidra.zip",
+    "runtime_extraction_root": "ghidra-runtime",
+    "original_tool_zip_downloaded_locally": false,
+    "hosted_hash_verification_observed_for_both_cases": true,
+    "fresh_extraction_basis": "Pinned executed step verifies the original ZIP, removes any old runtime directory, and unconditionally expands the archive into the runtime directory; both completed steps succeeded and subsequent native analysis used that runtime.",
+    "cross_ref_or_cross_OS_restore_claimed": false
+  },
+  "completed_cases": [
+    {
+      "schema": "patchtrace/original-ghidra-archive-cache-observation/1",
+      "observed_at": {
+        "current_time": "2026-11-21 12:56:27 UTC"
+      },
+      "source_head": "4202e5e79e2aea6366c75261d74544ea48368ca5",
+      "run_id": 44901791862,
+      "job_id": 136839042813,
+      "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+      "job_conclusion": "success",
+      "checkout_sha": "4202e5e79e2aea6366c75261d74544ea48368ca5",
+      "checkout_verified": true,
+      "archive_sha256": "c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120",
+      "original_archive_cache": {
+        "status": "miss",
+        "miss_lines": [
+          "2026-11-21T12:41:21.3452522Z Cache not found for input keys: ghidra-archive-v1-c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120"
+        ],
+        "hit_lines": [],
+        "verification_lines": [
+          "2026-11-21T12:41:27.5048864Z Verified Ghidra archive SHA-256: ghidra-archive/ghidra.zip (c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120)"
+        ],
+        "post_save_lines": [
+          "2026-11-21T12:45:03.9957135Z Cache saved with key: ghidra-archive-v1-c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120"
+        ],
+        "fresh_extraction_step": {
+          "name": "Install pinned Ghidra (verify archive before fresh extraction)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-21T12:41:21Z",
+          "completed_at": "2026-11-21T12:41:37Z"
+        },
+        "runtime_paths": [
+          "D:\\a\\patchtrace\\patchtrace\\ghidra-runtime\\ghidra_12.0.4_PUBLIC"
+        ],
+        "warm_restore_claimed": false
+      },
+      "native_positive_lines": [
+        "2026-11-21T12:44:58.0320027Z Known patch accepted: 1 change records"
+      ],
+      "application_raw_analysis_cache": {
+        "case_executed_by_this_job": false,
+        "scope": "This original tool-ZIP cache evidence is separate from the queued raw-cache-hit application case."
+      },
+      "raw_log": "logs/136839042813.log",
+      "artifact_id": 14707871761,
+      "backend_execution_records": [
+        {
+          "member": "live-project/runs/54c27f29-3553-42b1-859d-111350b5f116/backend-execution.json",
+          "data": {
+            "contract": "patchtrace-backend-execution/1",
+            "elapsed_seconds": 79.20299999999997,
+            "last_observed_stage": "enhancing function/symbol details",
+            "last_output_age_seconds": 0.5309999999999491,
+            "process_state": "stopped",
+            "returncode": 0,
+            "run_id": "54c27f29-3553-42b1-859d-111350b5f116",
+            "runtime_versions": {
+              "ghidra": "12.0.4",
+              "ghidriff": "1.0.0",
+              "jvm": "unverified",
+              "patchtrace": "0.1.0",
+              "pyghidra": "3.2.0",
+              "python": "3.12.10"
+            },
+            "started_at": "2026-11-21T12:43:38.689832+00:00",
+            "stop_reason": "exited",
+            "stopped_at": "2026-11-21T12:44:57.909683+00:00",
+            "timeout_seconds": 900
+          }
+        }
+      ],
+      "completed_job_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44901791862/job/136839042813",
+      "known_patch_accepted_change_records": 1
+    },
+    {
+      "schema": "patchtrace/original-ghidra-archive-cache-observation/1",
+      "observed_at": {
+        "current_time": "2026-11-21 13:05:43 UTC"
+      },
+      "source_head": "4202e5e79e2aea6366c75261d74544ea48368ca5",
+      "run_id": 44901791862,
+      "job_id": 136839043092,
+      "name": "native (patchtrace-clean)",
+      "job_conclusion": "success",
+      "checkout_sha": "4202e5e79e2aea6366c75261d74544ea48368ca5",
+      "checkout_verified": true,
+      "archive_sha256": "c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120",
+      "original_archive_cache": {
+        "status": "hit",
+        "miss_lines": [],
+        "hit_lines": [
+          "2026-11-21T13:01:50.9659157Z Cache restored from key: ghidra-archive-v1-c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120"
+        ],
+        "verification_lines": [
+          "2026-11-21T13:01:52.2383492Z Verified Ghidra archive SHA-256: ghidra-archive/ghidra.zip (c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120)"
+        ],
+        "post_save_lines": [],
+        "post_save_skip_lines": [
+          "2026-11-21T13:04:53.1921261Z Cache hit occurred on the primary key ghidra-archive-v1-c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120, not saving cache."
+        ],
+        "post_save_outcome": "primary_key_hit_save_skipped",
+        "fresh_extraction_step": {
+          "name": "Install pinned Ghidra (verify archive before fresh extraction)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-21T13:01:51Z",
+          "completed_at": "2026-11-21T13:02:05Z"
+        },
+        "runtime_paths": [
+          "D:\\a\\patchtrace\\patchtrace\\ghidra-runtime\\ghidra_12.0.4_PUBLIC"
+        ],
+        "warm_restore_claimed": true
+      },
+      "native_positive_lines": [
+        "2026-11-21T13:04:51.2798569Z Known patch accepted: 1 change records"
+      ],
+      "application_raw_analysis_cache": {
+        "case_executed_by_this_job": false,
+        "scope": "Original tool-ZIP caching is separate from the application raw-analysis cache; its separate artifact receipt controls the latter conclusion."
+      },
+      "raw_log": "logs/136839043092.log",
+      "artifact_id": 14708920069,
+      "backend_execution_records": [
+        {
+          "member": "live-project/runs/aaf83ab8-f246-452e-8787-272c896b40ec/backend-execution.json",
+          "data": {
+            "contract": "patchtrace-backend-execution/1",
+            "elapsed_seconds": 121.75,
+            "last_observed_stage": "enhancing function/symbol details",
+            "last_output_age_seconds": 0.5149999999999864,
+            "process_state": "stopped",
+            "returncode": 0,
+            "run_id": "aaf83ab8-f246-452e-8787-272c896b40ec",
+            "runtime_versions": {
+              "ghidra": "12.0.4",
+              "ghidriff": "1.0.0",
+              "jvm": "unverified",
+              "patchtrace": "0.1.0",
+              "pyghidra": "3.2.0",
+              "python": "3.12.10"
+            },
+            "started_at": "2026-11-21T13:02:49.392690+00:00",
+            "stop_reason": "exited",
+            "stopped_at": "2026-11-21T13:04:51.149756+00:00",
+            "timeout_seconds": 900
+          }
+        }
+      ],
+      "completed_job_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44901791862/job/136839043092",
+      "known_patch_accepted_change_records": 1
+    }
+  ],
+  "remaining_three_native_cases_at_snapshot_cut": [
+    {
+      "id": 136839043113,
+      "name": "native (raw-cache-hit)",
+      "status": "in_progress",
+      "conclusion": null,
+      "runner_id": 1000074989,
+      "runner_name": "GitHub Actions 1000074989",
+      "created_at": "2026-11-21T12:00:54Z",
+      "started_at": "2026-11-21T13:02:31Z",
+      "completed_at": null
+    },
+    {
+      "id": 136839043120,
+      "name": "native (repro-plain-ghidriff)",
+      "status": "in_progress",
+      "conclusion": null,
+      "runner_id": 1000074999,
+      "runner_name": "GitHub Actions 1000074999",
+      "created_at": "2026-11-21T12:00:54Z",
+      "started_at": "2026-11-21T13:05:04Z",
+      "completed_at": null
+    },
+    {
+      "id": 136839043125,
+      "name": "native (patchtrace-seeded-store)",
+      "status": "queued",
+      "conclusion": null,
+      "runner_id": 0,
+      "runner_name": "",
+      "created_at": "2026-11-21T12:00:54Z",
+      "started_at": "2026-11-21T12:00:54Z",
+      "completed_at": null
+    }
+  ],
+  "open_gates": [
+    "Remaining seeded-store positive, expected-negative plain-Ghidriff control, and application raw-analysis cache case are outside this two-mode checkpoint; their recorded states are at the explicit observation cut.",
+    "The later final record-bearing source is not qualified by this checkpoint and requires its own actual native/QA runs.",
+    "Actual Windows execution of the 27 PowerShell cases remains a final-source gate.",
+    "Full Linux/Windows QA, five Qt gates, Windows build/frozen/portable/installer and both Linux frozen CLI package smokes remain final-source gates."
+  ],
+  "limitations": [
+    "Two synthetic positive fixtures, one accepted change each; no broad native accuracy claim.",
+    "Original Ghidra tool-ZIP caching is separate from application raw-analysis caching; no application cache acceptance is asserted here.",
+    "Warm restore is established only for this Windows branch/run context, not across refs or operating systems.",
+    "Both backend-execution records return zero/exited but report JVM version as unverified.",
+    "Later run completions or branch supersession do not modify this immutable two-case observation cut."
+  ],
+  "artifact_evidence": {
+    "count": 2,
+    "all_original_artifact_zip_bytes_api_sha256_crc_and_members_verified": true,
+    "artifacts": [
+      {
+        "schema": "patchtrace/downloaded-native-artifact/1",
+        "source_head": "4202e5e79e2aea6366c75261d74544ea48368ca5",
+        "artifact": {
+          "id": 14707871761,
+          "node_id": "MDg6QXJ0aWZhY3QxNDcwNzg3MTc2MQ==",
+          "name": "native-static-acceptance-patchtrace-seeded-store-no-adjacent-pdb",
+          "size_in_bytes": 96569,
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14707871761",
+          "archive_download_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14707871761/zip",
+          "expired": false,
+          "digest": "sha256:9267d7fa4263bbdaff4d26f9478bfd3ea175e4301bf141bdbf8b5685b11ebcb8",
+          "created_at": "2026-11-21T12:44:59Z",
+          "updated_at": "2026-11-21T12:44:59Z",
+          "expires_at": "2027-02-19T12:00:53Z",
+          "workflow_run": {
+            "id": 44901791862,
+            "repository_id": 1413730581,
+            "head_repository_id": 1413730581,
+            "head_branch": "codex/patchtrace-windows-native-recovery-20261121-837fe",
+            "head_sha": "4202e5e79e2aea6366c75261d74544ea48368ca5"
+          }
+        },
+        "local_original_zip": "artifacts/14707871761/original.zip",
+        "local_zip_bytes": 96569,
+        "local_zip_sha256": "9267d7fa4263bbdaff4d26f9478bfd3ea175e4301bf141bdbf8b5685b11ebcb8",
+        "api_digest_verified": true,
+        "zip_crc_verified": true,
+        "members": [
+          {
+            "name": "live-project/runs/54c27f29-3553-42b1-859d-111350b5f116/analysis.log",
+            "bytes": 35236,
+            "sha256": "b5cde7cc251cbcc6908f548820003ba6226d723e7fd819e6f6c6b9057979f31e"
+          },
+          {
+            "name": "live-project/runs/54c27f29-3553-42b1-859d-111350b5f116/backend-execution.json",
+            "bytes": 639,
+            "sha256": "e65e13794a65dd012b1b3e3fc8b3960afc3fee001d55f9523854a25f1a0168c0"
+          },
+          {
+            "name": "live-project/runs/54c27f29-3553-42b1-859d-111350b5f116/raw/de68beea3df64c0c6816f836673c477339717efdb0e280ab7d25c0bc79fbf46d.bin-e2622a147f9882e5f4a66125218371e29eef4a9644af1312b0bec8888ab5f049.bin.ghidriff.md",
+            "bytes": 23359,
+            "sha256": "0a1e0f2908eb3e718d82704f3e4a0237f653a3df32a297be6303724ea2258edf"
+          },
+          {
+            "name": "live-project/runs/54c27f29-3553-42b1-859d-111350b5f116/raw/ghidriff.log",
+            "bytes": 40663,
+            "sha256": "e0d06809d849658c4ae389047131574ca6fd1d83c3736e2ecc1409b779960876"
+          },
+          {
+            "name": "live-project/runs/54c27f29-3553-42b1-859d-111350b5f116/raw/json/de68beea3df64c0c6816f836673c477339717efdb0e280ab7d25c0bc79fbf46d.bin-e2622a147f9882e5f4a66125218371e29eef4a9644af1312b0bec8888ab5f049.bin.ghidriff.json",
+            "bytes": 727779,
+            "sha256": "b65430bd3f34bdd302a5b3af47e68a75a17b2b141e4c833626207eebd1c40082"
+          },
+          {
+            "name": "live-project/runs/54c27f29-3553-42b1-859d-111350b5f116/raw/json/de68beea3df64c0c6816f836673c477339717efdb0e280ab7d25c0bc79fbf46d.bin-e2622a147f9882e5f4a66125218371e29eef4a9644af1312b0bec8888ab5f049.bin.ghidriff.matches.json",
+            "bytes": 625972,
+            "sha256": "0ce34257b3a3356d8df52ba77e10063890244eab5c0895cf0c4dc9b1aa7318b7"
+          },
+          {
+            "name": "live-project/project.sqlite3",
+            "bytes": 24576,
+            "sha256": "eb9d869e415e5b9e2b957eb4d10ba589babd1118a439acd99175a06ab3026590"
+          }
+        ],
+        "selected_records": [
+          {
+            "member": "live-project/runs/54c27f29-3553-42b1-859d-111350b5f116/backend-execution.json",
+            "data": {
+              "contract": "patchtrace-backend-execution/1",
+              "elapsed_seconds": 79.20299999999997,
+              "last_observed_stage": "enhancing function/symbol details",
+              "last_output_age_seconds": 0.5309999999999491,
+              "process_state": "stopped",
+              "returncode": 0,
+              "run_id": "54c27f29-3553-42b1-859d-111350b5f116",
+              "runtime_versions": {
+                "ghidra": "12.0.4",
+                "ghidriff": "1.0.0",
+                "jvm": "unverified",
+                "patchtrace": "0.1.0",
+                "pyghidra": "3.2.0",
+                "python": "3.12.10"
+              },
+              "started_at": "2026-11-21T12:43:38.689832+00:00",
+              "stop_reason": "exited",
+              "stopped_at": "2026-11-21T12:44:57.909683+00:00",
+              "timeout_seconds": 900
+            }
+          }
+        ]
+      },
+      {
+        "schema": "patchtrace/downloaded-native-artifact/1",
+        "source_head": "4202e5e79e2aea6366c75261d74544ea48368ca5",
+        "artifact": {
+          "id": 14708920069,
+          "node_id": "MDg6QXJ0aWZhY3QxNDcwODkyMDA2OQ==",
+          "name": "native-static-acceptance-patchtrace-clean",
+          "size_in_bytes": 96779,
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14708920069",
+          "archive_download_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14708920069/zip",
+          "expired": false,
+          "digest": "sha256:f81d87a9fd8f52ad0fcfab741a30cf2f76bfa2e9b5481c596d6448f2657460d2",
+          "created_at": "2026-11-21T13:04:52Z",
+          "updated_at": "2026-11-21T13:04:52Z",
+          "expires_at": "2027-02-19T12:00:53Z",
+          "workflow_run": {
+            "id": 44901791862,
+            "repository_id": 1413730581,
+            "head_repository_id": 1413730581,
+            "head_branch": "codex/patchtrace-windows-native-recovery-20261121-837fe",
+            "head_sha": "4202e5e79e2aea6366c75261d74544ea48368ca5"
+          }
+        },
+        "local_original_zip": "artifacts/14708920069/original.zip",
+        "local_zip_bytes": 96779,
+        "local_zip_sha256": "f81d87a9fd8f52ad0fcfab741a30cf2f76bfa2e9b5481c596d6448f2657460d2",
+        "api_digest_verified": true,
+        "zip_crc_verified": true,
+        "members": [
+          {
+            "name": "live-project/runs/aaf83ab8-f246-452e-8787-272c896b40ec/analysis.log",
+            "bytes": 35440,
+            "sha256": "dd5672e4ff495f358419f3837efb9c9a25db1ef2171e75d3afbcaf328a213eb2"
+          },
+          {
+            "name": "live-project/runs/aaf83ab8-f246-452e-8787-272c896b40ec/backend-execution.json",
+            "bytes": 628,
+            "sha256": "9dc0a762ff174a91281d1296a083c1a2345373c5e09a906c4c2f7c90aac6ddea"
+          },
+          {
+            "name": "live-project/runs/aaf83ab8-f246-452e-8787-272c896b40ec/raw/43fa7e72ef9eb309d7e218e70494c434043b30fe010d61276491025f9625fb81.bin-02cfd4d9a6f355690287fc1d81bf3d1e52dc40ce5304c3cf01ca1b8422bc052f.bin.ghidriff.md",
+            "bytes": 23359,
+            "sha256": "01af53eb08c7636ccb0d88964b11016f92e57f6420140615fde725ee01ceaf39"
+          },
+          {
+            "name": "live-project/runs/aaf83ab8-f246-452e-8787-272c896b40ec/raw/ghidriff.log",
+            "bytes": 41370,
+            "sha256": "0d45b73fc30b1c10a0d036f878d65f37b14c382a83156f3e2471589001caf9c3"
+          },
+          {
+            "name": "live-project/runs/aaf83ab8-f246-452e-8787-272c896b40ec/raw/json/43fa7e72ef9eb309d7e218e70494c434043b30fe010d61276491025f9625fb81.bin-02cfd4d9a6f355690287fc1d81bf3d1e52dc40ce5304c3cf01ca1b8422bc052f.bin.ghidriff.json",
+            "bytes": 727781,
+            "sha256": "b6a7b483c9a0da0f4a49d7d84c255955287600931ea13b239b789853485e8fcf"
+          },
+          {
+            "name": "live-project/runs/aaf83ab8-f246-452e-8787-272c896b40ec/raw/json/43fa7e72ef9eb309d7e218e70494c434043b30fe010d61276491025f9625fb81.bin-02cfd4d9a6f355690287fc1d81bf3d1e52dc40ce5304c3cf01ca1b8422bc052f.bin.ghidriff.matches.json",
+            "bytes": 625972,
+            "sha256": "20a458175b578c82cfccfc3902564187a7fd4eedfe2c21a02b239ea794210acc"
+          },
+          {
+            "name": "live-project/project.sqlite3",
+            "bytes": 24576,
+            "sha256": "85f69323f426d2b58ca9b7a0b56fb3415cfb3eb53e7f8bda4ad0657d4b1f4b95"
+          }
+        ],
+        "selected_records": [
+          {
+            "member": "live-project/runs/aaf83ab8-f246-452e-8787-272c896b40ec/backend-execution.json",
+            "data": {
+              "contract": "patchtrace-backend-execution/1",
+              "elapsed_seconds": 121.75,
+              "last_observed_stage": "enhancing function/symbol details",
+              "last_output_age_seconds": 0.5149999999999864,
+              "process_state": "stopped",
+              "returncode": 0,
+              "run_id": "aaf83ab8-f246-452e-8787-272c896b40ec",
+              "runtime_versions": {
+                "ghidra": "12.0.4",
+                "ghidriff": "1.0.0",
+                "jvm": "unverified",
+                "patchtrace": "0.1.0",
+                "pyghidra": "3.2.0",
+                "python": "3.12.10"
+              },
+              "started_at": "2026-11-21T13:02:49.392690+00:00",
+              "stop_reason": "exited",
+              "stopped_at": "2026-11-21T13:04:51.149756+00:00",
+              "timeout_seconds": 900
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "evidence": {
+    "archive_file": "native-4202-cache-mode-snapshot.zip",
+    "manifest_file": "evidence-manifest.json",
+    "archive_receipt_file": "archive-receipt.json",
+    "copied_from": "/workspace/scratch/837fe19aae3a/evidence/native-4202-code-qualification",
+    "no_new_dispatch_retry_cancel_source_write_or_local_native_execution": true
+  }
+}

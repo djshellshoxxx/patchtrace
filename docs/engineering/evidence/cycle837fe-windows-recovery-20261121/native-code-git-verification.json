@@ -1,0 +1,23 @@
+{
+  "schema": "patchtrace/native-archive-code-mapping/1",
+  "mapping": [
+    {
+      "local_commit": "88df8cfbe51f91a6bc08c6863cd5d63f86500ca0",
+      "local_parent": "1c70cd5f8053f75c269da673a24a82f221180650",
+      "remote_commit": "9caf1a9692921b4ec788676d93462465c1f5e6ef",
+      "remote_parent": "0fd52f47f1d9c161d2c74746365c90b94e567985",
+      "tree": "f22f034f92c0c82c59c86665e8b70acb87974448",
+      "actual_git_verified": true
+    },
+    {
+      "local_commit": "f596471b8909ec8e28e0624041d60f03d520591d",
+      "local_parent": "88df8cfbe51f91a6bc08c6863cd5d63f86500ca0",
+      "remote_commit": "4202e5e79e2aea6366c75261d74544ea48368ca5",
+      "remote_parent": "9caf1a9692921b4ec788676d93462465c1f5e6ef",
+      "tree": "dffeed541749850ef54a130cec0fa56c0fd2f01c",
+      "actual_git_verified": true
+    }
+  ],
+  "remote_head": "4202e5e79e2aea6366c75261d74544ea48368ca5",
+  "ref_moved": false
+}

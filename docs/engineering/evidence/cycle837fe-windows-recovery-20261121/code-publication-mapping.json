@@ -1,0 +1,26 @@
+{
+  "schema": "patchtrace/windows-recovery-code-mapping/1",
+  "root": "/workspace/scratch/837fe19aae3a/repair-windows-artifact-validation",
+  "base": "d6679abc6dfddbadce0391c8d18289f7f96338d6",
+  "mappings": [
+    {
+      "local_commit": "c4eb63c55a35a1c2a927f4aeb4d42c8b96ff45ff",
+      "remote_commit": "a24d2aa08852eb6c48214155af3fbf8ceafcb48b",
+      "complete_tree": "561befcde425c5de07e113128dc79c21b7616772",
+      "local_parent": "2ae1bbad2ad9cc78c29541872381750e347c670e",
+      "remote_parent": "d6679abc6dfddbadce0391c8d18289f7f96338d6"
+    },
+    {
+      "local_commit": "1c70cd5f8053f75c269da673a24a82f221180650",
+      "remote_commit": "0fd52f47f1d9c161d2c74746365c90b94e567985",
+      "complete_tree": "a39d650ca7fa2b41ece017ea492396722a4142d9",
+      "local_parent": "c4eb63c55a35a1c2a927f4aeb4d42c8b96ff45ff",
+      "remote_parent": "a24d2aa08852eb6c48214155af3fbf8ceafcb48b"
+    }
+  ],
+  "remote_head": "0fd52f47f1d9c161d2c74746365c90b94e567985",
+  "tree": "a39d650ca7fa2b41ece017ea492396722a4142d9",
+  "ref_moved": false,
+  "pr_created": false,
+  "hosted_acceptance": false
+}

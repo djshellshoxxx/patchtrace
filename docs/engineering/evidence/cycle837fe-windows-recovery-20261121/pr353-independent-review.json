@@ -1,0 +1,68 @@
+{
+  "schema": "patchtrace/pr353-independent-source-review/1",
+  "head": "d0a4bdf439775999340ea760d96a087e032ee6dd",
+  "tree": "9ccd50655b7456d1f09618e63775c5f68d649d1f",
+  "base": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+  "merge_base": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+  "verdict": "NO_BLOCKING_SOURCE_FINDING_WITHIN_BOUNDED_SCOPE",
+  "blockers": [],
+  "complete_unique_commits": 6,
+  "complete_changed_paths": [
+    "docs/qa.md",
+    "docs/specs/csaf-cve-interpretation-engine.md",
+    "src/patchtrace/intelligence/csaf/transport.py",
+    "tasks/todo.md",
+    "tests/test_intel_transport.py"
+  ],
+  "tests": {
+    "original_before_fix": {
+      "failed": 2,
+      "errors": 0
+    },
+    "initial_current": {
+      "passed": 142,
+      "setup_errors": 16
+    },
+    "resumed_current": {
+      "passed": 16,
+      "failed": 0,
+      "errors": 0
+    },
+    "distinct_selected_cases_with_passing_outcomes": 158,
+    "one_clean_158_case_invocation_claimed": false,
+    "case_counts_by_module": {
+      "tests.test_intel_transport": 25,
+      "tests.test_intel_offline_cache": 11,
+      "tests.test_intel_discovery": 12,
+      "tests.test_spec_registry": 110
+    },
+    "whole_src_tests_tools_ruff": "passed",
+    "pip_check": "passed",
+    "exact_source_import_binding": "passed",
+    "worktree_clean": true
+  },
+  "author_hold_changed": false,
+  "source_or_tests_changed": false,
+  "remote_ref_or_PR_mutations": false,
+  "hosted_full_native_or_package_qualification_claimed": false,
+  "merge_approved": false,
+  "release_ready": false,
+  "remaining": [
+    "Preserve author NOT VERIFIED hold; root owns author coordination.",
+    "Required exact-source hosted/full/platform qualification and guarded merge conditions remain outside this bounded review.",
+    "New main3a promotion is recorded separately and does not qualify PR353."
+  ],
+  "history_bundle": {
+    "file": "pr353-six-commits.bundle",
+    "bytes": 6008,
+    "sha256": "a26aaef7c200de2e8885ba75658f538274cd5d57f79bc9593cd4e1950a0ebba8",
+    "verify_exit_code": 0,
+    "prerequisite": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+    "contains_exact_unique_commit_history": 6,
+    "source_or_active_ref_mutations": false
+  },
+  "report": "REVIEW.md",
+  "final_pr_metadata": "final-pr-read.json",
+  "final_fresh_head_unchanged": true,
+  "final_author_hold_present": true
+}

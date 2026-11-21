@@ -1,0 +1,73 @@
+{
+  "schema": "patchtrace/historical-branch-accounting/1",
+  "branch": "chatgpt/ghidriff-sequential-lock-fix-20261017",
+  "head": "f6b7545bcc7a161440ab7119233c204510571370",
+  "head_tree": "af5312f2802e1ba926104df7df189549b5a63c0e",
+  "merge_base": "70e33fd77570329ba23afc58a38616270636d37c",
+  "comparison_source": "f596471b8909ec8e28e0624041d60f03d520591d",
+  "comparison_tree": "dffeed541749850ef54a130cec0fa56c0fd2f01c",
+  "classification": "SUPERSEDED",
+  "scope": "complete unique branch delta, including all five commits and all three historical/net paths",
+  "unique_commits": [
+    "ff3afa5a44fcf54a9c6acf3e8bb1d3552f59955e",
+    "ef9262cb8883e49a5d8af3c776a87524ca9a352f",
+    "a660dcf515a99adeeef145520e1c37f1d42aef48",
+    "4156565476b3c2aeea48bc513d9ec40ea0128246",
+    "f6b7545bcc7a161440ab7119233c204510571370"
+  ],
+  "unique_merge_commits": 0,
+  "path_accounting": [
+    {
+      "path": "src/patchtrace/backend.py",
+      "disposition": "SUPERSEDED",
+      "unique_contribution": "Sequential --no-threaded argv used by run_comparison; raw adapter version changes /1 to /2; final reusable argv builder replaces the temporary tuple helper.",
+      "current_proof": "Version /2 unchanged; exactly one --no-threaded in the shared argv list for direct and local launcher branches; run_comparison still passes that argv to run_process; RuntimeFingerprint uses RAW_ADAPTER_VERSION.",
+      "compatible_extensions": "Always-isolated -I -X utf8 launch, venv symlink-preserving absolute interpreter, optional local-symbol launcher and force-identical argument preserve the sequential option.",
+      "remaining_limit": "Argument construction/cache-key proof only; no native Windows lock resolution or upstream execution accepted."
+    },
+    {
+      "path": "tests/test_ghidriff_threading.py",
+      "disposition": "SUPERSEDED",
+      "unique_contribution": "Final four bundle/symbol combinations assert one --no-threaded, no --threaded, symbol toggle and option ordering.",
+      "current_proof": "Whole test file byte-equal after replacing only obsolete bundle-only isolation expectation with mandatory -I -X utf8 assertion. Maintained four pass; original final tests on donor four pass; unchanged original on current two pass/two isolation-policy failures retained.",
+      "historical_failures": "Initial test-only commit and intermediate refactor replay each raise missing-helper ImportError; initial implementation one pass; final test update repairs the test seam.",
+      "remaining_limit": "No native/target execution; overlapping counts not summed."
+    },
+    {
+      "path": "docs/qa/ghidriff-windows-lock-20261017.md",
+      "disposition": "DUPLICATE",
+      "unique_contribution": "Dated user-log observation, explicit causal uncertainty and required real Windows repeat/cancellation validation.",
+      "current_proof": "Entire nine-line donor note remains byte-identical.",
+      "remaining_limit": "Original private logs were never committed and are not reconstructed; the historical claim does not establish present native success."
+    }
+  ],
+  "missing_compatible_contribution_found": false,
+  "followup_implementation": null,
+  "fresh_ref_verified": true,
+  "original_census_preserved": {
+    "unmatched": 181,
+    "patch_equivalent": 16
+  },
+  "branch_deletion_authorized": false,
+  "inventory_exhausted": false,
+  "evidence": {
+    "source_snapshots": 19,
+    "introduced_git_objects": 23,
+    "full_donor_fixture_archive": "donor-source-for-fixtures.zip",
+    "test_receipts": "test-outcomes.json",
+    "raw_history": "commits/",
+    "git_object_pack": "introduced-objects.pack"
+  },
+  "testing": {
+    "counts_additive": false,
+    "no_heavy_installs": true,
+    "no_native_or_target_execution": true,
+    "no_full_suite": true,
+    "source_worktree_clean_after": true
+  },
+  "limits": [
+    "Retains stronger current launch isolation; do not port the obsolete non-bundle expectation.",
+    "Source and authored-fixture results do not prove resolution of the original private Windows Ghidra incident.",
+    "No active source/workflow/ledger/doc/ref/PR/CI changes and no closure of unrelated branches or product gates."
+  ]
+}

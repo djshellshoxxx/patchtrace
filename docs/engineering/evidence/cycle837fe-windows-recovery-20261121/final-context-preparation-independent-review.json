@@ -1,0 +1,119 @@
+{
+  "schema": "patchtrace/windows-recovery-final-context-preparation-review/1",
+  "reviewed_at_utc": "2026-11-21T12:15:03.271459+00:00",
+  "verdict": "CLEAR FOR PREPARATION; actual PR351 promotion and final assembled records remain outstanding",
+  "source": "f596471b8909ec8e28e0624041d60f03d520591d",
+  "tree": "dffeed541749850ef54a130cec0fa56c0fd2f01c",
+  "remote_code": "4202e5e79e2aea6366c75261d74544ea48368ca5",
+  "input_bindings": [
+    [
+      "windows-recovery-records-context.json",
+      "context-reviewed.json",
+      "5db4348539da9fe9edefad59fde050b8b26bfcca6ece7c2155c6a69ee2897cac"
+    ],
+    [
+      "assemble_windows_recovery_records.py",
+      "helper-reviewed.py",
+      "7f8026469f7b5251236fef89384ce4eb70b722c20ee3988e77e229109a926260"
+    ],
+    [
+      "prepare_windows_record_publication.py",
+      "planner-reviewed.py",
+      "075354bd5516bf8e5750ddb72ea99907ad9b8fe72be6ab40326c25131561bac8"
+    ],
+    [
+      "evidence/windows-recovery-record-preparation/report-template.md",
+      "report-reviewed.md",
+      "22705192d4895811d55b2e3417bcbeeaef8e21ce34aaef966ae4ad6cdadaf8cb"
+    ]
+  ],
+  "context_checks": 197,
+  "static_inputs": {
+    "count": 57,
+    "bytes": 24512032,
+    "all_hashes_and_sizes_verified": true,
+    "previous_inputs_preserved_exactly": 42,
+    "added": 15
+  },
+  "closed_prior_finding": "Corrective f596 archive/candidate/proof, original pin finding, independent review and root combined qualification are all retained and linked without replacing88 evidence.",
+  "ledger_preparation": {
+    "existing_tasks": 104,
+    "notes": 46,
+    "additional_drafts": 8,
+    "prospective_tasks": 112,
+    "prior_census": [
+      181,
+      16
+    ],
+    "existing_promotion_scope": "Two C5/Pages rows plus the current C5 follow-up object, only after actual qualified PR351 merge.",
+    "legacy_reconciliation": "Seven fields in three rows, normalized MERGED/BLOCKED/TESTING, prior rows retained.",
+    "prior_task_history_and_document_guards": "Unchanged reviewed helper 7f802; no records applied."
+  },
+  "root_combined_qualification": {
+    "source": "f596471b8909ec8e28e0624041d60f03d520591d",
+    "tree": "dffeed541749850ef54a130cec0fa56c0fd2f01c",
+    "counts": {
+      "passed": 449,
+      "skipped_no_pwsh": 27,
+      "strict_C5_xfailed": 2,
+      "cases": 478
+    },
+    "selectors": 14,
+    "distinct_xml_cases_verified": true,
+    "new_tests_run_by_this_review": 0,
+    "native_or_full_suite_claim": false
+  },
+  "git_provenance": {
+    "local_and_remote_native_commit_objects_verified": true,
+    "ordered_parent_chain_verified": true,
+    "complete_trees_equal": true,
+    "publication_receipt": "Retained code branch and native push run44901791862 queued observation; no fresh remote query or qualification claim."
+  },
+  "planner": {
+    "sha256": "075354bd5516bf8e5750ddb72ea99907ad9b8fe72be6ab40326c25131561bac8",
+    "detached_controls": 31,
+    "accepted": 3,
+    "refused": 28,
+    "local_parents": [
+      "f596471b8909ec8e28e0624041d60f03d520591d",
+      "actual PR351 merge"
+    ],
+    "remote_parents": [
+      "4202e5e79e2aea6366c75261d74544ea48368ca5",
+      "same actual PR351 merge"
+    ],
+    "scope": "One explicit first-parent records delta; approved docs/evidence only; no deletions or non-file modes; both holds separately in subject and body.",
+    "actual_execution": false,
+    "actual_output_created": false,
+    "ref_movement_authorized_by_plan": false
+  },
+  "report": {
+    "future_placeholders": [
+      "ACTUAL_PR351_MERGE",
+      "PR351_QUALIFICATION_SUMMARY",
+      "POST_PR351_PAGES_STATUS"
+    ],
+    "unresolved_generated_or_future_links": [
+      "manifest.json",
+      "pr351-final-qualification.json",
+      "pr351-merge-proof.json",
+      "pr351-qualification-evidence.zip",
+      "prior-ledger-d667.json"
+    ],
+    "count_and_source_scoping": "1c Windows,88 original native,f596 correction and root combined results remain separately identified with overlap limits.",
+    "nonblocking_precision_note": "Initial reviewed report uses 12:00:58 UTC for queued discovery; linked publication receipt observed_utc is 12:01:47 UTC. Prefer retained receipt time unless earlier observation is separately retained."
+  },
+  "still_required": [
+    "Actual PR351 qualification and fetched main-merge proof",
+    "Final context application and full104-task/46-note/history preservation audit",
+    "Final records commit and exact local/remote complete tree/ordered-parent checks",
+    "Exact final-source hosted/full/native qualification; observed cold/warm cache modes"
+  ],
+  "execution": {
+    "product_tests": 0,
+    "native_or_target_execution": false,
+    "actual_planner_execution": false,
+    "records_applied": false,
+    "source_helper_context_ref_PR_CI_mutations": false
+  }
+}

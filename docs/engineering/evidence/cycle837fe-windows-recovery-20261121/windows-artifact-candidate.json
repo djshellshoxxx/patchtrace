@@ -1,0 +1,39 @@
+{
+  "observed_utc": "2026-11-21T10:33:50.712079+00:00",
+  "head": "1c70cd5f8053f75c269da673a24a82f221180650",
+  "tree": "a39d650ca7fa2b41ece017ea492396722a4142d9",
+  "parent": "c4eb63c55a35a1c2a927f4aeb4d42c8b96ff45ff",
+  "worktree_clean": true,
+  "branch": "codex/patchtrace-windows-artifact-validation-20261121-837fe",
+  "validated_bytes_equal_commit": true,
+  "validation": {
+    "cases": 434,
+    "failed": 0,
+    "errors": 0,
+    "xfailed": 2,
+    "skipped": 17,
+    "passed": 415
+  },
+  "whole_tree_ruff": "passed",
+  "source_binding_and_pip_check": "passed; dedicated environment",
+  "initial_harness_collection_error": {
+    "exit": 4,
+    "errors": 1,
+    "reason": "unmatched parenthesis in new test file; retained before correction"
+  },
+  "intended_red": {
+    "failed": 5,
+    "source": "unchanged c4eb workflow"
+  },
+  "code5_census": {
+    "workflows": 21,
+    "run_scalars": 203,
+    "installs": 42,
+    "unprotected": 41
+  },
+  "full_suite": "pending exact-source hosted QA; no new local full attempt",
+  "native_windows": "pending exact-source hosted QA and new windows-validate job",
+  "publication": false,
+  "release_or_deploy": false,
+  "ownership": "source frozen and released for independent review; root owns publication"
+}

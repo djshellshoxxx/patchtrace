@@ -1,0 +1,89 @@
+{
+  "schema": "patchtrace/windows-artifact-validation-independent/1",
+  "reviewed_utc": "2026-11-21T10:41:45.346819+00:00",
+  "head": "1c70cd5f8053f75c269da673a24a82f221180650",
+  "tree": "a39d650ca7fa2b41ece017ea492396722a4142d9",
+  "parent": "c4eb63c55a35a1c2a927f4aeb4d42c8b96ff45ff",
+  "verdict": "CLEAR for exact-source hosted qualification; no source blocker found",
+  "blockers": [],
+  "source_evidence_checks": 140,
+  "shell_upstream_subreview_checks": 27,
+  "workflow_controls": {
+    "total": 35,
+    "valid": 2,
+    "rejected": 33,
+    "included_parent_reds": 5
+  },
+  "independent_maintained": {
+    "counts": {
+      "passed": 415,
+      "failure": 0,
+      "error": 0,
+      "xfailed": 2,
+      "skipped": 17
+    },
+    "total_cases": 434,
+    "seconds": 2.8638916015625,
+    "clean_before": true,
+    "clean_after": true,
+    "overlaps_author_selection": true
+  },
+  "powerShell_and_hosted_windows": "No PowerShell interpreter is installed here;17 fixtures explicitly skipped. Exact-source hosted fixtures plus downloaded portable/installer job remain required before platform acceptance.",
+  "current_C5_corpus": {
+    "workflows": 21,
+    "run_scalars": 203,
+    "explicit_pip_installs": 42,
+    "unprotected_installs": 41,
+    "strict_xfails_preserved": 2
+  },
+  "prior_failures_preserved": [
+    "Author initial new-test syntax/collection error, exit4, no product assertion result",
+    "Author five intended regression failures on unchanged parent c4eb",
+    "Reviewer isolated tools-namespace collection error, exit2, zero product assertions; resolved by explicit frozen source-root bootstrap only"
+  ],
+  "protected_bytes": "Removing only windows-validate and its release needs entry reproduces c4eb workflow byte-for-byte; all other jobs/holds/defaults/paths/pins/permissions and all runtime/tool bytes preserved.",
+  "powershell_stderr_assessment": {
+    "scope": "Primary-source formatting assessment only; no PowerShell process was executed.",
+    "formatter_tags": [
+      "v7.4.6",
+      "v7.5.0"
+    ],
+    "asserted_prefix_lengths": {
+      "Missing downloaded artifact member:": 35,
+      "Downloaded artifact SHA-256 mismatch:": 37,
+      "Invalid downloaded artifact SHA-256 sidecar:": 44
+    },
+    "filename_lengths": {
+      "PatchTrace-0.1.0-windows-x64.zip": 32,
+      "PatchTrace-Windows-x64-Setup.exe": 32,
+      "PatchTrace-0.1.0-windows-x64.zip.sha256": 39,
+      "PatchTrace-Windows-x64-Setup.exe.sha256": 39
+    },
+    "concise_view_margin": 7,
+    "reasoning": [
+      "ConciseView truncates at whitespace; complete filenames contain no whitespace.",
+      "ANSI sequences decorate prefixes/whole message lines, not arbitrary characters inside asserted tokens.",
+      "The longest asserted error prefix plus display margin is 51 columns; longest basename plus margin is 46.",
+      "At 80 columns or wider, each asserted prefix and filename survives the formatter's wrapping as one substring.",
+      "A host narrower than 51 columns, unavailable Windows console, or different future formatter is untested here.",
+      "PowerShell sources were read at two explicit version tags and their exact blob hashes were independently recomputed; neither tag is claimed to identify the eventual hosted runner version."
+    ],
+    "verdict": "No demonstrated formatting blocker; actual hosted Windows fixtures remain required."
+  },
+  "upstream_subreview_sha256": "f7392d8589144d594f6b36b871573869658ca65dd5040df78a53d990a4daf8af",
+  "author_archive": {
+    "archive": "windows-artifact-validation-recovery-1c70cd5f.zip",
+    "bytes": 107875,
+    "members": 35,
+    "sha256": "ad51b0d521d9d35cd90c185f575fffabcae5cc88676b442ae0acde7e7b12596d",
+    "manifest_sha256": "1e41d20ed8039449f7f8b090a8915c8c50f6cb1fb010acbfc50746977f087be7"
+  },
+  "historical_accounting": "Narrow CI donor recovery only; no whole-donor merge/classification claim. Build/dev pin closure remains open. Original181/16 snapshot not modified.",
+  "execution_boundaries": {
+    "source_ref_PR_CI_ledger_mutations": false,
+    "environment_installs_or_rebinding": false,
+    "native_package_or_target_execution": false,
+    "full_suite_executed": false
+  },
+  "final_worktree_status": ""
+}

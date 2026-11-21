@@ -1,3 +1,15 @@
+## Current Windows/native recovery checkpoint — 2026-11-21
+
+PR351 is actually merged at `3a16290c0fcc4e0c21712fe10474a3ff33fad336`, tree `6001ef506c38930fd590bd827f428b997c3b2797`, after15 executed automatic jobs passed and two release jobs intentionally skipped. Actual ordered ancestry and both publication markers in the subject and body are verified. Linux full QA:24,295 passed/53 skipped/4 xfailed; Windows:24,164 passed/185 skipped/3 xfailed. Counts belong to that qualified source.
+
+The next reviewed code is local `f596471b8909ec8e28e0624041d60f03d520591d`, remote `4202e5e79e2aea6366c75261d74544ea48368ca5`, tree `dffeed541749850ef54a130cec0fa56c0fd2f01c`. It adds independent downloaded-Windows artifact verification, non-PR concurrency isolation, strict upload failure, and original Ghidra ZIP verification before fresh extraction. Local combined selection:449 passed/27 explicit no-PowerShell skips/2 strict CODEX-5 xfails. Automatic code-source native run44901791862 passed all five contracts with one original-ZIP cold miss/save and four verified warm restores. This is not final-record-source or Windows27 acceptance.
+
+Final assembled-record review, publication, exact final-source full/Qt/platform/native qualification and guarded main merge remain pending. The automatic main3a Pages build was still queued at13:22:29UTC; its configure skip/upload/deploy-skip behavior remains unobserved. PR353 and355 bounded reviews preserve both authors' holds; other concurrent branches remain separately owned. Twelve scoped task records supplement the preserved104-task/46-note ledger; the original181 unmatched/16 patch-equivalent census remains historical. Wider CODEX-5, Tier R/native, manual/accessibility/DPI/trust/signing, provenance and L1/L2/L3 gates remain open. Release readiness is false. Retain `[no release] [no deploy]` in the actual merge title and body.
+
+Details and immutable evidence: [recovery report](../engineering/cycle837fe-windows-recovery-20261121.md). The complete previous content follows unchanged.
+
+---
+
 ## Current combined source checkpoint — CODEX-5 and Pages configuration hold
 
 Implementation source `0cdd5bf37130206c2ddec399450be6338ae8e4fd` / tree `6d532dd606a1fdf987245a03271970758a03fe57` maps exactly to remote code object `06b5ed67c78aac30972e657b4a7ae5a17de739b8`. Both bounded source changes have independent signoff. Earlier `5b5328ee` evidence below remains source-specific; its scanner, tests and runtime bytes are unchanged. Independent records review passed 141 mechanical checks on tree `e7ecad2c0b1128a83876bf137634cf9f64d29f1f`, with zero blockers; these are record checks, not product test cases. Applicable hosted qualification and main merge remain pending. Resolve the final published head from live PR/CI metadata; this checkpoint does not assert future success.

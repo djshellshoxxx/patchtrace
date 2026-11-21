@@ -8,6 +8,9 @@ on:
     paths: ['src/**', 'tools/live_backend_check.py', 'tools/live_cache_check.py', 'tools/seed_symbol_cache.py', 'tests/fixtures/**', '.github/workflows/live-backend.yml']
 permissions:
   contents: read
+env:
+  GHIDRA_URL: https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip
+  GHIDRA_SHA256: c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120
 concurrency:
   group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
@@ -35,11 +38,30 @@ jobs:
         run: |
           cl /nologo /LD /Od /GS- /Zi tests\fixtures\old.c /Fdtests\fixtures\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\fixtures\old.dll /PDB:tests\fixtures\old.pdb
           cl /nologo /LD /Od /GS- /Zi tests\fixtures\new.c /Fdtests\fixtures\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\fixtures\new.dll /PDB:tests\fixtures\new.pdb
-      - shell: pwsh
+      # Retain the original archive, never the extracted runtime. A cache hit
+      # still passes the source-reviewed digest check before fresh extraction.
+      - name: Restore pinned Ghidra archive
+        id: ghidra-cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ghidra-archive
+          key: ghidra-archive-v1-${{ env.GHIDRA_SHA256 }}
+      - name: Install pinned Ghidra (verify archive before fresh extraction)
+        shell: pwsh
         run: |
-          Invoke-WebRequest 'https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip' -OutFile ghidra.zip
-          if ((Get-FileHash ghidra.zip -Algorithm SHA256).Hash.ToLower() -ne 'c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120') { throw 'Ghidra archive digest mismatch' }
-          Expand-Archive ghidra.zip -DestinationPath ghidra-runtime
+          $ErrorActionPreference = 'Stop'
+          if ($env:GHIDRA_SHA256 -cnotmatch '\A[0-9a-f]{64}\z') { throw 'Missing or malformed pinned Ghidra SHA-256' }
+          $archive = 'ghidra-archive/ghidra.zip'
+          New-Item -ItemType Directory -Force ghidra-archive | Out-Null
+          if (-not (Test-Path -LiteralPath $archive -PathType Leaf)) {
+            Invoke-WebRequest $env:GHIDRA_URL -OutFile $archive
+          }
+          if ((Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne $env:GHIDRA_SHA256) { throw 'Ghidra archive digest mismatch' }
+          Write-Host "Verified Ghidra archive SHA-256: $archive ($env:GHIDRA_SHA256)"
+          if (Test-Path -LiteralPath ghidra-runtime) {
+            Remove-Item -LiteralPath ghidra-runtime -Recurse -Force
+          }
+          Expand-Archive -LiteralPath $archive -DestinationPath ghidra-runtime
           $ghidra = (Get-ChildItem ghidra-runtime -Directory | Select-Object -First 1).FullName
           "GHIDRA_INSTALL_DIR=$ghidra" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
       - run: python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'

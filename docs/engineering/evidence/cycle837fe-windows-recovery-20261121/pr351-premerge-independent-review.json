@@ -1,0 +1,1078 @@
+{
+  "schema": "patchtrace/pr351-final-premerge-evidence-audit/1",
+  "reviewed_at_utc": "2026-11-21T12:56:51.276985+00:00",
+  "source": {
+    "repo_full_name": "djshellshoxxx/PatchTrace",
+    "pull_request": 351,
+    "pull_request_url": "https://github.com/djshellshoxxx/PatchTrace/pull/351",
+    "head_sha": "d6679abc6dfddbadce0391c8d18289f7f96338d6",
+    "head_tree_sha": "6001ef506c38930fd590bd827f428b997c3b2797",
+    "base_sha": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+    "synthetic_merge_sha": "a93005c69fe6091b940d7bc9ad1f5a38542e6e71",
+    "synthetic_merge_tree_sha": "6001ef506c38930fd590bd827f428b997c3b2797",
+    "synthetic_merge_parents": [
+      "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "d6679abc6dfddbadce0391c8d18289f7f96338d6"
+    ],
+    "main_at_final_observation": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+    "head_and_synthetic_complete_trees_equal": true,
+    "final_guard_file": "final-source-and-run-guard.json",
+    "expected_checkout_by_run": {
+      "44892118810": "a93005c69fe6091b940d7bc9ad1f5a38542e6e71",
+      "44892116389": "d6679abc6dfddbadce0391c8d18289f7f96338d6"
+    }
+  },
+  "qualification_archive": {
+    "schema": "patchtrace/evidence-archive-receipt/1",
+    "source_head": "d6679abc6dfddbadce0391c8d18289f7f96338d6",
+    "source_tree": "6001ef506c38930fd590bd827f428b997c3b2797",
+    "sealed_at": "2026-11-21T12:55:59.714339+00:00",
+    "archive_file": "final-d667-evidence.zip",
+    "archive_bytes": 2811379,
+    "archive_sha256": "a4829fc624a1b9b84313801b41b85782d40fd897290195ace45448918c9dbfb6",
+    "manifest_file": "evidence-manifest.json",
+    "manifest_sha256": "95ceaddf821eb906b7e1095de1032c300dd943b6f8c288b2bf2b438b2afadfcc",
+    "payload_file_count": 103,
+    "archive_member_count": 104,
+    "zip_crc_verified": true,
+    "every_manifest_member_size_and_sha256_verified": true,
+    "large_product_binaries_included": false,
+    "final_summary_sha256": "a82d4a8afac234213eccbb76b8e957020ad5d45fe0bbf65a8c5042b74ad0f788"
+  },
+  "verdict": "CLEAR_FOR_GUARDED_PREMERGE",
+  "mechanical_checks": 184,
+  "checks": [
+    {
+      "check": "sealed archive filename",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed archive digest",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed archive length",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed manifest digest",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed archive CRC",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed complete member inventory",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member count and no duplicate names",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "external and archived manifests identical",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "external and archived final qualification identical",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: README.md",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: artifacts/14702623076/live-cache-diagnostics/first.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: artifacts/14702623076/live-cache-diagnostics/result.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: artifacts/14702623076/live-cache-diagnostics/second.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: artifacts/14702623076/original.zip",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: artifacts/14702877082/live-project/runs/22b6aff2-e64a-4e02-a9f7-72cf6e9dbda1/backend-execution.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: artifacts/14702877082/live-project/runs/22b6aff2-e64a-4e02-a9f7-72cf6e9dbda1/raw/e5a208efcc0e96841774dd9750e6a124d6dcdae84b91d0dd28c78f938fb1c09b.bin-1bc283aadf493f75790eb3604fbd4840a8ee791659394184aa200ba02c859ada.bin.ghidriff.md",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: artifacts/14702877082/live-project/runs/22b6aff2-e64a-4e02-a9f7-72cf6e9dbda1/raw/json/e5a208efcc0e96841774dd9750e6a124d6dcdae84b91d0dd28c78f938fb1c09b.bin-1bc283aadf493f75790eb3604fbd4840a8ee791659394184aa200ba02c859ada.bin.ghidriff.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: artifacts/14702877082/live-project/runs/22b6aff2-e64a-4e02-a9f7-72cf6e9dbda1/raw/json/e5a208efcc0e96841774dd9750e6a124d6dcdae84b91d0dd28c78f938fb1c09b.bin-1bc283aadf493f75790eb3604fbd4840a8ee791659394184aa200ba02c859ada.bin.ghidriff.matches.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: artifacts/14702877082/original.zip",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: artifacts/14703171462/live-project/runs/bb556714-1441-4387-830b-826f8c62274b/backend-execution.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: artifacts/14703171462/live-project/runs/bb556714-1441-4387-830b-826f8c62274b/raw/911b26ef4e2949b19463836b33e17683635b03110d0794eb9e64f29345db125b.bin-368944e41486ddaa3b8047ffcaaf2d5a5154579f586641c75a97992dddd8ae36.bin.ghidriff.md",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: artifacts/14703171462/live-project/runs/bb556714-1441-4387-830b-826f8c62274b/raw/json/911b26ef4e2949b19463836b33e17683635b03110d0794eb9e64f29345db125b.bin-368944e41486ddaa3b8047ffcaaf2d5a5154579f586641c75a97992dddd8ae36.bin.ghidriff.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: artifacts/14703171462/live-project/runs/bb556714-1441-4387-830b-826f8c62274b/raw/json/911b26ef4e2949b19463836b33e17683635b03110d0794eb9e64f29345db125b.bin-368944e41486ddaa3b8047ffcaaf2d5a5154579f586641c75a97992dddd8ae36.bin.ghidriff.matches.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: artifacts/14703171462/original.zip",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: artifacts/14703276383/live-project/runs/3f1f3379-6d2c-4402-9d08-b17144ee8a3f/backend-execution.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: artifacts/14703276383/live-project/runs/3f1f3379-6d2c-4402-9d08-b17144ee8a3f/raw/297855b858c66fd331f804e7651346279c3740965a02c014307747810aad5cd7.bin-c31f99eed73b6272be192ab15f597f94620788cff5690893254060f51a7eb87b.bin.ghidriff.md",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: artifacts/14703276383/live-project/runs/3f1f3379-6d2c-4402-9d08-b17144ee8a3f/raw/json/297855b858c66fd331f804e7651346279c3740965a02c014307747810aad5cd7.bin-c31f99eed73b6272be192ab15f597f94620788cff5690893254060f51a7eb87b.bin.ghidriff.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: artifacts/14703276383/live-project/runs/3f1f3379-6d2c-4402-9d08-b17144ee8a3f/raw/json/297855b858c66fd331f804e7651346279c3740965a02c014307747810aad5cd7.bin-c31f99eed73b6272be192ab15f597f94620788cff5690893254060f51a7eb87b.bin.ghidriff.matches.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: artifacts/14703276383/original.zip",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: artifacts/14704492014/original.zip",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: artifacts/14704492014/pair-publication-results.xml",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: artifacts/14704492014/qa-leg-result.txt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: artifacts/14704492014/qa-results.xml",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: artifacts/14705395915/original.zip",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: artifacts/14705395915/pair-publication-results.xml",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: artifacts/14705395915/qa-leg-result.txt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: artifacts/14705395915/qa-results.xml",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: checkout-receipts.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: downloaded-native-artifact-records.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: final-artifact-metadata.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: final-job-records.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: final-qualification.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: final-run-44892116389.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: final-run-44892118810.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: final-source-and-run-guard.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: five-qt-completion.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: initial-run-and-source-records.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: jobs-snapshot-001.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: jobs-snapshot-002.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: jobs-snapshot-003.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: jobs-snapshot-004.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: jobs-snapshot-005.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: jobs-snapshot-006.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: jobs-snapshot-007.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: jobs-snapshot-008.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: jobs-snapshot-009.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: jobs-snapshot-010.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: jobs-snapshot-011.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: jobs-snapshot-012.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: jobs-snapshot-013.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: jobs-snapshot-014.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: jobs-snapshot-015.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: jobs-snapshot-016.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: jobs-snapshot-017.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: jobs-snapshot-018.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: jobs-snapshot-019.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: jobs-snapshot-020.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: linux-full-completion.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: linux-package-completion.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: linux-smoke-136843246854.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: linux-smoke-136843246894.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: logs/136810012270.log",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: logs/136810012295.log",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: logs/136810012309.log",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: logs/136810012336.log",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: logs/136810012407.log",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: logs/136810019664.log",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: logs/136810019804.log",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: logs/136810019864.log",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: logs/136810019884.log",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: logs/136810019907.log",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: logs/136810019927.log",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: logs/136810019928.log",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: logs/136831550032.log",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: logs/136843246854.log",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: logs/136843246894.log",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: native-summary.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: package-queue-observation.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: pages-applicability-and-source.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: predecessor-evidence-index.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: qa-artifact-linux-14704492014.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: qa-artifact-windows-14705395915.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: qa-live-status.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: queue-receipt-20261121T1015Z.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: raw-job-136810012270.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: raw-job-136810012295.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: raw-job-136810012309.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: raw-job-136810012336.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: raw-job-136810012407.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: raw-job-136810019664.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: raw-job-136810019804.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: raw-job-136810019864.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: raw-job-136810019884.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: raw-job-136810019907.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: raw-job-136810019927.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: raw-job-136810019928.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: raw-job-136831550032.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: raw-job-136843246854.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: raw-job-136843246894.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: run-discovery-20261121T1012Z.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: source-tree-diff.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "sealed member digest: windows-full-and-platform-completion.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "manifest payload count agrees with receipt",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "watcher receipt declares completed integrity verification",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "watcher receipt source and final-summary bindings",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "final source identity",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "final verdict flag: source_consistent",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "final verdict flag: all_owned_runs_completed_successfully",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "final verdict flag: all_required_qa_jobs_successful",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "final verdict flag: all_applicable_ci_jobs_successful",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "qualification remains limited by documented open gates",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "required QA inventory is exactly the ten executed gates",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "final applicable run IDs are unchanged",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "run 44892118810: exact source successful attempt1",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "run 44892118810: event",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "run 44892118810: complete exact job inventory",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810019664: completed success",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810019664: logged checkout",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810019664: previously audited log unchanged",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810019804: completed success",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810019804: logged checkout",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810019804: previously audited log unchanged",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810019864: completed success",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810019864: logged checkout",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810019864: previously audited log unchanged",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810019884: completed success",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810019884: logged checkout",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810019884: previously audited log unchanged",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810019907: completed success",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810019907: logged checkout",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810019907: previously audited log unchanged",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810019927: completed success",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810019927: logged checkout",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810019927: previously audited log unchanged",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810019928: completed success",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810019928: logged checkout",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810019928: previously audited log unchanged",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810020819: actual intentional release skip",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136831550032: completed success",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136831550032: logged checkout",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136831550032: previously audited log unchanged",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136843246854: completed success",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136843246854: logged checkout",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136843246894: completed success",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136843246894: logged checkout",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136850824693: actual intentional release skip",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "run 44892116389: exact source successful attempt1",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "run 44892116389: event",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "run 44892116389: complete exact job inventory",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810012270: completed success",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810012270: logged checkout",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810012270: previously audited log unchanged",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810012295: completed success",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810012295: logged checkout",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810012295: previously audited log unchanged",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810012309: completed success",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810012309: logged checkout",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810012309: previously audited log unchanged",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810012336: completed success",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810012336: logged checkout",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810012336: previously audited log unchanged",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810012407: completed success",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810012407: logged checkout",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "job 136810012407: previously audited log unchanged",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "final owned job counts are 15 successes and two skips",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "ubuntu-22.04: exact source and 64/0 acceptance",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "ubuntu-22.04: 64 actual PASS log lines",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "ubuntu-22.04: accepted exact packaged artifact",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "ubuntu-22.04: offscreen and XCB self-tests succeeded",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "ubuntu-24.04: exact source and 64/0 acceptance",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "ubuntu-24.04: 64 actual PASS log lines",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "ubuntu-24.04: accepted exact packaged artifact",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "ubuntu-24.04: offscreen and XCB self-tests succeeded",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "check": "retained source/review/completed-result/guard audits remain clear",
+      "passed": true,
+      "evidence": null
+    }
+  ],
+  "blockers": [],
+  "owned_runs": 2,
+  "successful_executed_jobs": 15,
+  "intentional_skips": {
+    "136810020819": "release-gate",
+    "136850824693": "release"
+  },
+  "linux_frozen_smokes": [
+    {
+      "head_sha": "d6679abc6dfddbadce0391c8d18289f7f96338d6",
+      "synthetic_merge_sha": "a93005c69fe6091b940d7bc9ad1f5a38542e6e71",
+      "run_id": 44892118810,
+      "job_id": 136843246854,
+      "name": "linux-smoke (ubuntu-22.04)",
+      "conclusion": "success",
+      "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44892118810/job/136843246854",
+      "checkout_verified": true,
+      "passed": 64,
+      "failed": 0,
+      "downloaded_product_id": 14707060565,
+      "downloaded_artifact_digest": "sha256:5ee4bf5f11d1fb51980f4df3c567e4b8fa4fdf88b6d7015542dcfb90d1db2de1",
+      "download_digest_matches_metadata": true,
+      "tar_checksum_ok": true,
+      "self_test_steps": [
+        {
+          "name": "Run QT_QPA_PLATFORM=offscreen PatchTrace/PatchTrace --self-test",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run QT_QPA_PLATFORM=xcb xvfb-run -a PatchTrace/PatchTrace --self-test",
+          "conclusion": "success"
+        }
+      ],
+      "missing_library_warnings": [],
+      "raw_log": "logs/136843246854.log"
+    },
+    {
+      "head_sha": "d6679abc6dfddbadce0391c8d18289f7f96338d6",
+      "synthetic_merge_sha": "a93005c69fe6091b940d7bc9ad1f5a38542e6e71",
+      "run_id": 44892118810,
+      "job_id": 136843246894,
+      "name": "linux-smoke (ubuntu-24.04)",
+      "conclusion": "success",
+      "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44892118810/job/136843246894",
+      "checkout_verified": true,
+      "passed": 64,
+      "failed": 0,
+      "downloaded_product_id": 14707060565,
+      "downloaded_artifact_digest": "sha256:5ee4bf5f11d1fb51980f4df3c567e4b8fa4fdf88b6d7015542dcfb90d1db2de1",
+      "download_digest_matches_metadata": true,
+      "tar_checksum_ok": true,
+      "self_test_steps": [
+        {
+          "name": "Run QT_QPA_PLATFORM=offscreen PatchTrace/PatchTrace --self-test",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run QT_QPA_PLATFORM=xcb xvfb-run -a PatchTrace/PatchTrace --self-test",
+          "conclusion": "success"
+        }
+      ],
+      "missing_library_warnings": [],
+      "raw_log": "logs/136843246894.log"
+    }
+  ],
+  "release_ready": false,
+  "remaining_gates": [
+    "Broad CODEX-5 host/build/application/dev/signing/engine hash closures; both strict expected failures remain.",
+    "Ghidra original-archive cache-hit acceptance remains a distinct gate.",
+    "Tier R coverage warnings, Tier W environment blocks, and native blocked checks remain; green wrapper jobs do not erase them.",
+    "Manual, trust, accessibility, full raw provenance, and separate L1/L2/L3 acceptance remain open."
+  ],
+  "premerge_conditions": [
+    "Root refreshes expected main/head and uses its guarded merge.",
+    "Actual main merge parents/tree and both opt-out markers require post-merge verification.",
+    "Held Pages configure/upload/deploy behavior requires the subsequent actual main run."
+  ],
+  "independence_scope": "Evidence consistency audit; author-owned C5/Pages implementation relies on preserved C1 source review. No independent self-clearance of authored code.",
+  "source_tests_executed": 0,
+  "source_or_ref_or_remote_mutations": false,
+  "inputs": [
+    {
+      "path": "final-d667-qualification/archive-receipt.json",
+      "sha256": "8a3deac19eea83ddc1888f52f1f8a595f89f3dae0e099e4275a4db7ead60cb7a",
+      "bytes": 808
+    },
+    {
+      "path": "final-d667-qualification/final-qualification.json",
+      "sha256": "a82d4a8afac234213eccbb76b8e957020ad5d45fe0bbf65a8c5042b74ad0f788",
+      "bytes": 71262
+    },
+    {
+      "path": "final-d667-qualification/evidence-manifest.json",
+      "sha256": "95ceaddf821eb906b7e1095de1032c300dd943b6f8c288b2bf2b438b2afadfcc",
+      "bytes": 19361
+    },
+    {
+      "path": "final-d667-qualification/final-d667-evidence.zip",
+      "sha256": "a4829fc624a1b9b84313801b41b85782d40fd897290195ace45448918c9dbfb6",
+      "bytes": 2811379
+    },
+    {
+      "path": "final-d667-qualification/linux-smoke-136843246854.json",
+      "sha256": "2edded1d5ff3a33d1b2aee28e6ec4e5d162462bfc7c9ebedc9a1a081f6344a3f",
+      "bytes": 984
+    },
+    {
+      "path": "final-d667-qualification/linux-smoke-136843246894.json",
+      "sha256": "f0a78ce2c0a4bc4c37c8b5fa786f3cdba6cd83ed35b786c5ede348701cfa9fb4",
+      "bytes": 985
+    }
+  ]
+}
