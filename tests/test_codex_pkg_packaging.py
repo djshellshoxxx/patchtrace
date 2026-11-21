@@ -110,8 +110,11 @@ def test_linux_package_runs_full_cli_smoke():
     ]
     for term in required:
         assert term in smoke, f'linux-smoke missing {term}'
+    assert smoke.index('actions/checkout@v4') < smoke.index('actions/download-artifact@v4')
+    assert 'persist-credentials: false' in smoke
+    assert smoke.index('actions/setup-python@v5') < smoke.index('python tools/frozen_smoke.py')
     assert smoke.index('sha256sum -c ') < smoke.index('tar xzf ') < smoke.index('python tools/frozen_smoke.py')
-    assert 'QT_QPA_PLATFORM=offscreen' in smoke
+    assert 'QT_QPA_PLATFORM: offscreen' in smoke
     assert 'LANG: C.UTF-8' in smoke
     assert 'matrix:\n        os: [ubuntu-22.04, ubuntu-24.04]' in smoke
 
