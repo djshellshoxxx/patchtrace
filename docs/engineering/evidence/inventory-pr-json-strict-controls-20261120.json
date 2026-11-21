@@ -46,11 +46,19 @@
     {
       "case": "deeply nested JSON",
       "new": "fixed input error"
+    },
+    {
+      "case": "invalid UTF-8 bytes",
+      "new": "fixed input error"
+    },
+    {
+      "case": "invalid metadata before Git replay with prior inventory",
+      "new": "zero Git lookup; original inventory bytes unchanged"
     }
   ],
   "summary": {
     "reproduced_ambiguous_defaults": 6,
-    "standalone_mirrored_controls_passed": 9,
+    "standalone_mirrored_controls_passed": 11,
     "repository_tests_authored": 11,
     "repository_pytest": "not run",
     "whole_tree_ruff": "not run",
@@ -70,5 +78,6 @@
     "not a full checkout-based pass",
     "not a release qualification",
     "not semantic branch equivalence"
-  ]
+  ],
+  "control_notes": "Eleven independent assertion outcomes from a hand-copied local Python algorithm; not independent peer review or an imported source checkout. Nine initial + two subsequent controls."
 }
