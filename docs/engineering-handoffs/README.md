@@ -1,3 +1,7 @@
+# Current isolated continuation — inventory replay column integrity (2026-11-20)
+
+Read [the source-specific handoff](inventory-tsv-shape-20261120.md) and authoritative task ledger. A contract-first, isolated PR347 successor refuses malformed TSV headers and rows before replaying Git heads, preserving previous inventory evidence and large-note compatibility. Six red/green malformed-shape and one positive standalone algorithm controls completed; eight repository cases authored but checked-out pytest/Ruff and independent review remain pending. PR347 hosted QA/native remains active, so no duplicate draft/workflow was initiated. Main and release remain blocked.
+
 # Current handoff — PR345/PR346 selective reconciliation (2026-11-20)
 
 Start with [the new handoff](sibling-reconciliation-20261120.md) and the authoritative task ledger. Unique PR346 candidate ordering/inventory replay has been selectively recovered onto an isolated PR345-based source, with two Qt and two CSV controls; shared Evidence/header-help runtime is retained once. All full/new-head hosted/native/independent acceptance is pending. No release or merge.
