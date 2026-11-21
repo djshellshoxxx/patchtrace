@@ -37,7 +37,9 @@ python tools/site/build_site.py --write-claims          # regenerates tests/site
 python -m pytest --noconftest --disable-plugin-autoload -q tests/test_site_*.py
 ```
 
-The test command needs pytest installed. It runs the complete site-test selection
+Install the tested pytest version with `python -m pip install pytest==9.2.0`
+before running the test command. The `--disable-plugin-autoload` option requires
+pytest 8.4 or newer. The command runs the complete site-test selection
 without the application's shared test fixtures or unrelated installed pytest
 plugins. The existing screenshot-regeneration test still needs the application
 GUI and reports a skip when PySide6 is absent.
