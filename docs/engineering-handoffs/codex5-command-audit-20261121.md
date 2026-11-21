@@ -24,3 +24,24 @@ Scanner bounds are deliberate: it is not a full POSIX/PowerShell interpreter or 
 5. Preserve exact-source hosted Pages, Intel Windows and all older failures, manual/native/accessibility, raw provenance, historical semantic and separate L1/L2/L3 acceptance gates.
 
 No workers have been claimed to run in the background. No CI dispatch/retry, tag, release, deployment, main merge or branch deletion occurred.
+
+
+## Post-publication exact-byte and negative-control receipt
+
+The two locally mirrored **new Python files**, and only those files, were
+independently compared using Git blob identity against connector-fetched remote
+blobs: scanner `9c356458d14a6bb7e76d075868dae1cad94a7ce7`, tests
+`0065c0510e179247b06ebd75910d558929080888`. Both match byte-for-byte.
+The 17-pass/one-strict-xfail pytest fixture result therefore executes the
+exact new scanner/test bytes, but **not** the complete remote workflow tree or
+full checked-out repository. This removes ambiguity about source-mirror drift,
+not the remaining hosted/peer acceptance requirements.
+
+Three altered copies of the scanner were tested in isolation and restored
+afterward. Removing shell-comment stripping, removing the `&&` boundary,
+and disabling folded YAML joining each caused exactly its corresponding
+parameterized test to fail (one failed, fourteen passed, three deselected per
+mutation). The clean local scanner Git blob SHA was checked after restoration
+and remained `9c356458...`. These are author-side mutation controls,
+**not** a genuinely separate reviewer. Full raw record:
+`docs/engineering/evidence/codex5-per-command-audit-20261121.json`.
