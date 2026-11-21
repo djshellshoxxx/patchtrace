@@ -12,19 +12,19 @@ from importlib import metadata
 try:
     import rapidfuzz  # noqa: F401
     from rapidfuzz import fuzz, process  # noqa: F401
-except ImportError as exc:  # pragma: no cover - exercised through _IMPORT_ERRORS in tests
+except Exception as exc:  # noqa: BLE001 - broken optional imports must not prevent startup
     rapidfuzz, _rf_error = None, repr(exc)
 else:
     _rf_error = ''
 try:
     import iced_x86  # noqa: F401
-except ImportError as exc:  # pragma: no cover
+except Exception as exc:  # noqa: BLE001 - optional imports are best-effort
     iced_x86, _ix_error = None, repr(exc)
 else:
     _ix_error = ''
 try:
     import yara_x  # noqa: F401
-except ImportError as exc:  # pragma: no cover
+except Exception as exc:  # noqa: BLE001 - optional imports are best-effort
     yara_x, _yx_error = None, repr(exc)
 else:
     _yx_error = ''
