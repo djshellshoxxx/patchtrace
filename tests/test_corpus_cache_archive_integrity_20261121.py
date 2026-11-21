@@ -49,8 +49,15 @@ def admission_errors(source: str) -> list[str]:
             if "rm -rf rizin" not in setup or "rizin-archive/$RIZIN_ASSET" not in setup:
                 errors.append("rizin: clean extraction and archive identity required")
         else:
-            if "rm -rf ghidra-runtime" not in setup or "ghidra-archive/ghidra.zip" not in setup:
-                errors.append("ghidra: clean extraction and archive identity required")
+            if "rm -rf ghidra-runtime" not in setup:
+                errors.append("ghidra: clean extraction required")
+            if not all(fragment in setup for fragment in (
+                "if [ ! -f ghidra-archive/ghidra.zip ]; then",
+                "curl -fsSL -o ghidra-archive/ghidra.zip",
+                'echo "${GHIDRA_SHA256}  ghidra-archive/ghidra.zip" | sha256sum -c -',
+                "unzip -q ghidra-archive/ghidra.zip -d ghidra-runtime",
+            )):
+                errors.append("ghidra: the same pinned archive must be downloaded, verified and extracted")
             if "contains(env.ENGINES, 'ghidriff')" not in setup:
                 errors.append("ghidra: keep engine-conditional setup")
     return errors
