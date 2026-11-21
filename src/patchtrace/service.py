@@ -119,9 +119,12 @@ class ProjectService:
         from .sample import create_sample
         return create_sample(root)
 
-    def _commit(self, candidate: ComparisonProject) -> None:
+    def _check_reconciled(self) -> None:
         if self._commit_uncertain:
             raise ValueError('PT-STORAGE: project save outcome is uncertain; reopen the project before editing')
+
+    def _commit(self, candidate: ComparisonProject) -> None:
+        self._check_reconciled()
         try:
             self.project = self.store.save(candidate)
         except BaseException as failure:
@@ -152,6 +155,7 @@ class ProjectService:
         self.store.close()
 
     def backup(self, destination: Path) -> Path:
+        self._check_reconciled()
         # load() may persist interrupted-run recovery; keep the service on the committed snapshot.
         self.project = self.store.load()
         return self.store.backup(destination)
