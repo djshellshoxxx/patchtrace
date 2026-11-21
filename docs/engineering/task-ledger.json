@@ -1,6 +1,6 @@
 {
   "schema": "patchtrace-engineering-task-ledger/1",
-  "updated_at": "2026-11-21T00:20:55.609Z",
+  "updated_at": "2026-11-21T01:21:06.061Z",
   "repository": "https://github.com/djshellshoxxx/PatchTrace",
   "integration_branch": "codex/autonomous-consolidation-20261120-2bad",
   "checkpoint_local_commit": "1d0f60f3004db9e32f314518d5be661b85ef4d71",
@@ -45,7 +45,8 @@
     "Generation41: offline saved-index candidate component_name.strip() was unguarded; null/integer raised AttributeError, non-text .strip objects could bypass a typed request boundary. SPEC-31-F, 6 regression cases and exact-str guard committed in isolated branch. Hand-copied algorithm controls only; checkout pytest/Ruff, source CI and independent signoff pending. No predecessor or main ref moved.",
     "Current session distinguishes completed selections from interrupted runs. Missing summaries and dot counts are not passes. This ledger is authoritative; prior generation narratives retain historical source-specific claims.",
     "PR345/346 sibling reconciliation, 2026-11-20: both draft heads refreshed unchanged (39c38a02 and c07774ec), PR345 kept as source base. Recovered exact donor blobs for pre-service candidate admission, malformed candidate tests, bounded 32 MiB TSV replay tool and tests; retained PR345 TaskRunner/report/Linux refusal and more-complete Evidence/table GUI tests. Ported two Qt diagnostic controls and two Strings form-feed CSV/JSON controls only; did not overwrite Linux force-refusal expectations. No tested complete combined source yet; PR345/346 native and QA queues pending. No main/release merge.",
-    "Shared header-help/Evidence implementation recovered once: src/patchtrace/gui/qt/table.py and gui/table_spec.py are byte-identical across PR345/346; ui_evidence.py differs only formatting. 95fe GUI worker's separate 212-case selection not added to 2bad counts. 95fe bounded 212 distinct passing test identities belong only to ccc3664f source, not this combined branch. Original SIGKILLs and historic native Qt remain open."
+    "Shared header-help/Evidence implementation recovered once: src/patchtrace/gui/qt/table.py and gui/table_spec.py are byte-identical across PR345/346; ui_evidence.py differs only formatting. 95fe GUI worker's separate 212-case selection not added to 2bad counts. 95fe bounded 212 distinct passing test identities belong only to ccc3664f source, not this combined branch. Original SIGKILLs and historic native Qt remain open.",
+    "Isolated PR347 successor source review found a new provenance-mapping admission: csv.DictReader silently accepts duplicate branch headers, extra TSV cells, and missing values, potentially misassociating a retained Git tip with a forged branch label. SPEC-first, six malformed parametrized regression shapes, valid reordered-column control, and one CLI prior-output test authored; exact-source repository pytest/Ruff and independent signoff pending. Manual Python stdlib red/green algorithm controls: original six malformed shapes accepted at parse; repaired algorithm refuses six, compatible case accepted. PR347 QA/native still active; no duplicate workflow, main merge or release."
   ],
   "tasks": [
     {
@@ -791,6 +792,19 @@
       "result_or_next_action": "183 + 50 - 21 shared = 212 distinct passing cases on clean ccc3664f; four interrupted -9 runs retained; full/native/hosted gates remain required",
       "retained_source_qualification": "ccc3664f11a81d3d30f907da36fc3d22da0063d0",
       "combined_head_qualification": "pending"
+    },
+    {
+      "id": "inventory-snapshot-column-shape-20261120",
+      "owner": "isolated inventory TSV validation scope; independent reviewer unassigned",
+      "status": "contract-first-source-and-regressions-branch-published-unqualified",
+      "branch": "codex/patchtrace-inventory-tsv-shape-20261120",
+      "base_commit": "b461ac64eb9beb74449ce2b18b6795a2af34a02a",
+      "contract_commit": "007302ed551e3a2aa4fdfe44470718049d396cba",
+      "source_commit": "fbdb66a7a44b6170782b3f981887db284765bfd6",
+      "regression_commit": "e9b02971e7babccd045d031cc38722c2b84cb3c5",
+      "handoff": "docs/engineering-handoffs/inventory-tsv-shape-20261120.md",
+      "receipt": "docs/engineering/evidence/inventory-tsv-shape-20261120.json",
+      "result_or_next_action": "No actual checked-out pytest/Ruff or independent review yet. Run branch-inventory pytest and whole-tree Ruff on supported source-bound checkout, then exact source-hosted QA/native/Qt/package only when active parent PR347 checks are terminal. Preserve previous published evidence and all historical failure receipts; do not mark branch semantic review or release complete."
     }
   ],
   "aggregate_source_commit": "1d0f60f3004db9e32f314518d5be661b85ef4d71",
@@ -1080,7 +1094,7 @@
     "release_ready": false,
     "coordinator_archive_sha256": "961d81699d1ce25d212708028f4274978aad536a424b44a5711cfb57955479f6"
   },
-  "current_handoff": "docs/engineering-handoffs/sibling-reconciliation-20261120.md",
+  "current_handoff": "docs/engineering-handoffs/inventory-tsv-shape-20261120.md",
   "previous_session_qualification": {
     "source_commit": "bbdef5a62482bc6e0709f2f5e842d651a4b91a6b",
     "source_tree": "a8ef4316a88ab58619d966744e26b0067d66ff33",
@@ -1238,5 +1252,16 @@
     "release_ready": false,
     "qualification": "no final-source full/hosted/independent acceptance yet",
     "handoff": "docs/engineering-handoffs/sibling-reconciliation-20261120.md"
+  },
+  "previous_handoff": "docs/engineering-handoffs/sibling-reconciliation-20261120.md",
+  "next_defensive_candidate": {
+    "branch": "codex/patchtrace-inventory-tsv-shape-20261120",
+    "base_branch": "codex/patchtrace-pr345-346-unique-recovery-20261120",
+    "base_head": "b461ac64eb9beb74449ce2b18b6795a2af34a02a",
+    "source_area": "offline inventory TSV column-shape validation only",
+    "main_merge_eligible": false,
+    "release_ready": false,
+    "qualification": "manual source-equivalent red/green only; new-head checks and independent review pending",
+    "handoff": "docs/engineering-handoffs/inventory-tsv-shape-20261120.md"
   }
 }
