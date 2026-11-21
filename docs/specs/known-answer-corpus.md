@@ -406,7 +406,12 @@ fail closed; it must not execute previously extracted data or silently
 replace the pin. Extraction MUST target a fresh directory in the job
 workspace. No extracted tree is stored in the actions/cache namespace.
 The existing install of Ghidriff and Java is not counted as covered by the
-rizin/Ghidra archive pins.
+rizin/Ghidra archive pins. Cache keys MUST use a new archive-specific
+namespace (e.g. `rizin-archive-v1-` and `ghidra-archive-v1-` plus their
+respective pinned digest) so older cache records containing extracted
+rizin/Ghidra directories cannot be restored under the new archive-only
+cache path. Do not introduce a fallback or restore-key prefix accepting the
+old extracted-tree keys.
 
 The test boundary is source/YAML structural admission plus negative
 mutations, followed by a source-specific hosted Tier R shard run (with the
