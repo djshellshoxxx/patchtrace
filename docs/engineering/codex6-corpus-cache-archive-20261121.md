@@ -36,7 +36,7 @@ CODEX-1 and CODEX-5 strict xfails remain unchanged.
 
 - Connector-fetched workflow blob after patch:
   `c15784337596d03de29a144980312872830b8aa4`.
-- Author-side JS source inspection: **12 structural invariants pass**.
+- Author-side JS source inspection: **14 structural invariants pass**.
 - Fourteen mutations of the exact fetched workflow were passed through a
   separate JS implementation of the source contract: **14/14 detected**.
   These are not pytest runs or an independent peer reviewer.
