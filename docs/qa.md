@@ -2309,3 +2309,25 @@ checks or close original blocker receipts.
 Isolated branch `codex/patchtrace-inventory-tip-oid-20261120` requires canonical lowercase 40/64-hex commit IDs in retained TSV tips and refuses different resolved commit identities. Seven repository regressions authored; only offline synthetic Git controls ran (six early rejects, one direct SHA success, one tag peeling reject). No complete source checkout pytest/Ruff/independent review or successor CI has passed.
 
 PR345 Windows QA [run 44840721370](https://github.com/djshellshoxxx/PatchTrace/actions/runs/44840721370), job `136648122555`, **failed** during NSIS v3.13 Chocolatey install: `community.chocolatey.org/api/v2` returned HTTP 503. The same job logged 23,847 pytest passes, 181 skips, 5 xfails; that successful test stage does not change the job's failed conclusion. This establishes a dependency-feed failure, not a product-code cause, and should not prompt blanket retries or gate changes without evidence.
+
+
+## 2026-11-21 — isolated CODEX-6 archive-cache repair; source-specific qualification pending
+
+The Tier R shard workflow formerly cached extracted rizin/Ghidra directories
+and allowed a hit to bypass archive digest verification. On branch
+`codex/patchtrace-corpus-archive-integrity-20261121` the norm is to cache
+only original pinned archives and verify SHA-256 before a clean extraction
+on every hit and miss. Ten negative JS source mutations were detected;
+12 connector-fetched structural checks passed. Four synthetic shell
+archive/digest controls passed (rizin/Ghidra valid/corrupt); no actual native
+archive, engine, target binary or full repository source was executed.
+The retained CODEX-6 strict xfail becomes a positive source regression only
+on this successor. Missing checks: source-bound pytest/Ruff/pip check,
+independent review, rizin-only and Ghidriff-enabled hosted Tier R (including
+cache-hit behavior), complete QA/Qt/native/package and merge guard.
+The original PR #345 Windows Chocolatey NSIS 503 remains historical;
+its single failed-job retry is now successful on that ancestor, not this
+source. Parent PR #348 Windows full pytest still in progress on inspection.
+Other CODEX-1/5, CODEX-14, manual/raw-provenance/accuracy gates remain open.
+See `docs/engineering/codex6-corpus-cache-archive-20261121.md`.
+
