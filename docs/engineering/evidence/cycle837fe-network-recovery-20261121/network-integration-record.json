@@ -1,0 +1,181 @@
+{
+  "schema": "patchtrace/network-source-integration/1",
+  "observed_at": "2026-11-21T14:16:44.398991+00:00",
+  "base": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+  "head": "8fff682f720af634a05939f3e94a9ca273243cb3",
+  "tree": "d440d1a7cdb550ab1f989ebd73d9cd000208a7cd",
+  "records": [
+    {
+      "label": "netutil354356",
+      "incoming": "1d475d926314ae116442bfe2b7cd268ad95ea12c",
+      "before": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+      "merge_base": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "commit": "17962c2403a82a67dea256b163a4a44255948682",
+      "tree": "202d6e32048bd2b6d2fa2d080c13834b8df7dbdf",
+      "ordered_parents": [
+        "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+        "1d475d926314ae116442bfe2b7cd268ad95ea12c"
+      ],
+      "incoming_paths": [
+        "docs/engineering/bug-hunt/PT-BUG-NET-001.md",
+        "docs/engineering/bug-hunt/PT-BUG-NET-003.md",
+        "docs/engineering/bug-hunt/findings.json",
+        "src/patchtrace/netutil.py",
+        "tests/test_netutil_abandoned_cleanup.py",
+        "tests/test_netutil_read_deadline.py"
+      ],
+      "merge_exit": 0,
+      "conflicts": [],
+      "resolutions": [],
+      "incoming_nonappend_bytes_exact": true,
+      "all_prior_append_bytes_preserved": true
+    },
+    {
+      "label": "enrichment352",
+      "incoming": "aa01a50844fed15823c6e03491ce3bc671a5ecfc",
+      "before": "17962c2403a82a67dea256b163a4a44255948682",
+      "merge_base": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "commit": "8919d8d9ccdc6df8159bfbe6e8daf677a663df1c",
+      "tree": "5b28c2079d1fd3c35240f51aad2cb64105de788d",
+      "ordered_parents": [
+        "17962c2403a82a67dea256b163a4a44255948682",
+        "aa01a50844fed15823c6e03491ce3bc671a5ecfc"
+      ],
+      "incoming_paths": [
+        "docs/qa.md",
+        "docs/specs/enrichment-hardening-backlog.md",
+        "src/patchtrace/enrichment/intelligence.py",
+        "tasks/todo.md",
+        "tests/test_enrichment_intelligence.py"
+      ],
+      "merge_exit": 1,
+      "conflicts": [
+        "docs/qa.md",
+        "tasks/todo.md"
+      ],
+      "resolutions": [
+        {
+          "path": "docs/qa.md",
+          "method": "Preserve complete ours bytes and exact incoming one-sided addition",
+          "addition_side": "prefix",
+          "addition_sha256": "55c8da0d313749e5c4de4fe1249ccc3ee864daefde80efc3ffb2a991277cdeb6",
+          "stages": {
+            "1": {
+              "bytes": 424962,
+              "sha256": "0be91ba10f46a117bc812f14809606c46f912626ccff5ae94616b1b969bdf1c3"
+            },
+            "2": {
+              "bytes": 431338,
+              "sha256": "3671c1c529d6a83fd37a03a02c457345164769ca55d09b9d63be3d616ebe80e1"
+            },
+            "3": {
+              "bytes": 426226,
+              "sha256": "cc68e2f439a0494ed82a1e4c72b2cb69c843670c27f1b788b1145c5fc6cb236b"
+            }
+          },
+          "resolved_bytes": 432602,
+          "resolved_sha256": "dfc19dc2a9fe0b107b67316c67be7add37e4fe13ce37f4a5efc58a03b7815901"
+        },
+        {
+          "path": "tasks/todo.md",
+          "method": "Preserve complete ours bytes and exact incoming one-sided addition",
+          "addition_side": "prefix",
+          "addition_sha256": "3f87c23ff7f05b3602b04e90d6d5466da263591258c2646f67592c4b9f5bab13",
+          "stages": {
+            "1": {
+              "bytes": 258506,
+              "sha256": "3c4352bd6c94dd6d656e7c37284718fc97ff2f4b512ec4c42980a4e4e02b0da7"
+            },
+            "2": {
+              "bytes": 264906,
+              "sha256": "990be802739e1456f59dff617437b699b9d689cca7bd5855033389845d80391e"
+            },
+            "3": {
+              "bytes": 259337,
+              "sha256": "9d64d652ed7a5479f027bf14b04f54b1a2d09300ea9b57988628cb1172976495"
+            }
+          },
+          "resolved_bytes": 265737,
+          "resolved_sha256": "ec581a3ef0f90f5c7dc3889b631fbceaec5162787490027b30c3ec71a57033b6"
+        }
+      ],
+      "incoming_nonappend_bytes_exact": true,
+      "all_prior_record_bytes_preserved": true
+    },
+    {
+      "label": "csaf353",
+      "incoming": "d0a4bdf439775999340ea760d96a087e032ee6dd",
+      "before": "8919d8d9ccdc6df8159bfbe6e8daf677a663df1c",
+      "merge_base": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "commit": "29e9286b24323c905f4b9b847a606ce9102b0e06",
+      "tree": "b87e8052c2f5830fa92b414e94d23daaa73dcba3",
+      "ordered_parents": [
+        "8919d8d9ccdc6df8159bfbe6e8daf677a663df1c",
+        "d0a4bdf439775999340ea760d96a087e032ee6dd"
+      ],
+      "incoming_paths": [
+        "docs/qa.md",
+        "docs/specs/csaf-cve-interpretation-engine.md",
+        "src/patchtrace/intelligence/csaf/transport.py",
+        "tasks/todo.md",
+        "tests/test_intel_transport.py"
+      ],
+      "merge_exit": 0,
+      "conflicts": [],
+      "resolutions": [],
+      "incoming_nonappend_bytes_exact": true,
+      "all_prior_record_bytes_preserved": true
+    },
+    {
+      "label": "optional355",
+      "incoming": "e2127864cb481026db0157082d688b8a36595e3b",
+      "before": "29e9286b24323c905f4b9b847a606ce9102b0e06",
+      "merge_base": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "commit": "8fff682f720af634a05939f3e94a9ca273243cb3",
+      "tree": "d440d1a7cdb550ab1f989ebd73d9cd000208a7cd",
+      "ordered_parents": [
+        "29e9286b24323c905f4b9b847a606ce9102b0e06",
+        "e2127864cb481026db0157082d688b8a36595e3b"
+      ],
+      "incoming_paths": [
+        "docs/engineering/bug-hunt/PT-BUG-OPT-002.json",
+        "docs/engineering/bug-hunt/PT-BUG-OPT-002.md",
+        "src/patchtrace/optional_deps.py",
+        "tests/test_optional_import_recovery.py"
+      ],
+      "merge_exit": 0,
+      "conflicts": [],
+      "resolutions": [],
+      "incoming_nonappend_bytes_exact": true,
+      "all_prior_record_bytes_preserved": true
+    }
+  ],
+  "complete_changed_paths": [
+    "docs/engineering/bug-hunt/PT-BUG-NET-001.md",
+    "docs/engineering/bug-hunt/PT-BUG-NET-003.md",
+    "docs/engineering/bug-hunt/PT-BUG-OPT-002.json",
+    "docs/engineering/bug-hunt/PT-BUG-OPT-002.md",
+    "docs/engineering/bug-hunt/findings.json",
+    "docs/qa.md",
+    "docs/specs/csaf-cve-interpretation-engine.md",
+    "docs/specs/enrichment-hardening-backlog.md",
+    "src/patchtrace/enrichment/intelligence.py",
+    "src/patchtrace/intelligence/csaf/transport.py",
+    "src/patchtrace/netutil.py",
+    "src/patchtrace/optional_deps.py",
+    "tasks/todo.md",
+    "tests/test_enrichment_intelligence.py",
+    "tests/test_intel_transport.py",
+    "tests/test_netutil_abandoned_cleanup.py",
+    "tests/test_netutil_read_deadline.py",
+    "tests/test_optional_import_recovery.py"
+  ],
+  "all_original_sources_are_ancestors": true,
+  "prior_d60_qa_todo_complete_bytes_preserved_once": true,
+  "initial_guard_failure_preserved": "initial-preparation-guard.json",
+  "main_mutated": false,
+  "external_refs_moved": false,
+  "current357_qualification_unchanged": true,
+  "combined_qualification_pending": true,
+  "release_ready": false
+}

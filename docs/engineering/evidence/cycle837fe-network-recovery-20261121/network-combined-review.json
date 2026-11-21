@@ -1,0 +1,198 @@
+{
+  "schema": "patchtrace/network-combined-independent-review/1",
+  "observed_at": "2026-11-21T14:38:11.295759+00:00",
+  "reviewer": "codex1_independent_review",
+  "verdict": "NO_BLOCKING_SOURCE_FINDING_WITHIN_BOUNDED_COMBINED_SOURCE_SCOPE",
+  "source": {
+    "head": "96baaee20f390a3f2a5629de3764d32323bb80e5",
+    "tree": "4343dce701f20d3b6bc591297d1a887bb05cc461",
+    "parent": "8fff682f720af634a05939f3e94a9ca273243cb3",
+    "base": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+    "worktree": "/workspace/scratch/837fe19aae3a/PatchTrace-network-recovery-followup",
+    "clean_before_and_after": true
+  },
+  "source_blockers": [],
+  "mechanical_checks": 289,
+  "complete_changed_paths": [
+    "docs/engineering/bug-hunt/PT-BUG-NET-001.md",
+    "docs/engineering/bug-hunt/PT-BUG-NET-003.md",
+    "docs/engineering/bug-hunt/PT-BUG-OPT-002.json",
+    "docs/engineering/bug-hunt/PT-BUG-OPT-002.md",
+    "docs/engineering/bug-hunt/findings.json",
+    "docs/qa.md",
+    "docs/specs/csaf-cve-interpretation-engine.md",
+    "docs/specs/enrichment-hardening-backlog.md",
+    "src/patchtrace/enrichment/intelligence.py",
+    "src/patchtrace/intelligence/csaf/transport.py",
+    "src/patchtrace/netutil.py",
+    "src/patchtrace/optional_deps.py",
+    "tasks/todo.md",
+    "tests/test_enrichment_intelligence.py",
+    "tests/test_intel_transport.py",
+    "tests/test_netutil_abandoned_cleanup.py",
+    "tests/test_netutil_read_deadline.py",
+    "tests/test_optional_import_recovery.py"
+  ],
+  "complete_unique_commits_above_base": 31,
+  "unchanged_other_tracked_entries": 4812,
+  "original_incoming_commit_groups": [
+    {
+      "label": "netutil354356",
+      "head": "1d475d926314ae116442bfe2b7cd268ad95ea12c",
+      "count": 10,
+      "commits": [
+        "e53bfdeb8b0383ee12340729e20047ff5ddfe62c",
+        "e92a55c5e37c2766510e74210429f68a5f3c73a2",
+        "ef190e6d12cc14d0aaebcd1cc524f741d37fb09f",
+        "523e528090d4de2d5d9c408becb916adef4d0a7a",
+        "db6532710b22e23361cfaebecabd36b92032d159",
+        "a41c7a0d594d1fe26c16da395e6f6f9b33b07eca",
+        "3e0c37bc1a9fcda47df2bdd99bdf8acfd6e1e205",
+        "de96f3b38d14f7ede10dff5b66e551e2413e59c4",
+        "82f518829b7eb44e4449d804e8d25dee5e30b10c",
+        "1d475d926314ae116442bfe2b7cd268ad95ea12c"
+      ]
+    },
+    {
+      "label": "enrichment352",
+      "head": "aa01a50844fed15823c6e03491ce3bc671a5ecfc",
+      "count": 6,
+      "commits": [
+        "5413e4ddc05c21128346109c970c34d74f9efab2",
+        "a1efd07a7f4be7c9cc4689335d059c54a20c1325",
+        "fe73b2ef7a01e890cf3f6da2a045cb19f2aad279",
+        "df63006f2a5f56a218af0912ca58bc1502d45e39",
+        "e3928ab8c8e2deee7bb01b0f857205f68a1abda2",
+        "aa01a50844fed15823c6e03491ce3bc671a5ecfc"
+      ]
+    },
+    {
+      "label": "csaf353",
+      "head": "d0a4bdf439775999340ea760d96a087e032ee6dd",
+      "count": 6,
+      "commits": [
+        "d3628353658ac8b31f9c50b2df7dd6a1df409431",
+        "07488438cd899460f47a148eb340e5533c7a3912",
+        "2fba26edec79a010ca2d3ca89fc8ac274ad16691",
+        "6585f7431dbb7814ad4a1f3454f6a2b86eb34a95",
+        "4c2a741ecac7f10d58a5b46a11cc64db79f065d0",
+        "d0a4bdf439775999340ea760d96a087e032ee6dd"
+      ]
+    },
+    {
+      "label": "optional355",
+      "head": "e2127864cb481026db0157082d688b8a36595e3b",
+      "count": 4,
+      "commits": [
+        "5a1154b4eb237280dcdd60dbe944dbd0edd48ce7",
+        "da6fb2539d8a1a941b7bcbbf7abd7331b24842cc",
+        "acfc75569d5d318a5274195a7fc662090ffa75ad",
+        "e2127864cb481026db0157082d688b8a36595e3b"
+      ]
+    }
+  ],
+  "all_incoming_nonrecord_bytes_exact_except_disclosed_docstring": true,
+  "docstring_only_entire_normalized_ast_and_inverse_bytes_equal": true,
+  "H9_policy_unchanged_by_clarification": true,
+  "QA_TODO_reconstruction": "exact aa01 prefix + complete d60 bytes + exact PR353 suffix; each contribution once",
+  "QA_TODO_three_conflict_stages_and_resolved_bytes_verified": true,
+  "findings_json_exact356_and_no_conflict": true,
+  "independent_pytest": {
+    "passed": 44,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "distinct_cases": 44,
+    "composition": {
+      "completion_boundaries": 24,
+      "unchanged_attempt_controls_including_cleanup": 7,
+      "socket_controls": 13
+    },
+    "xml": "independent-controls.xml"
+  },
+  "separate_optional_import_controls": {
+    "passed": 9,
+    "failed": 0,
+    "receipt": "import-boundary-controls.json",
+    "native_fault_acceptance": false
+  },
+  "previous_cleanup_blocker": {
+    "test": "test_cancelled_late_opener_cleanup_holds_resource_slot",
+    "previous_exact_aa01_result": "plain failure with slot released before blocked close",
+    "actual_combined_result": "unchanged test passed; slot retained until cleanup ends",
+    "prior_failure_preserved": true
+  },
+  "binding": {
+    "mode": "existing Python -I -B, explicit all4 actual combined module path/blob/SHA checks",
+    "socket_alias": "actual imported combined patchtrace.netutil",
+    "existing_editable_metadata_unchanged": "repair-pages-config-hold",
+    "source_receipt": "source-binding.json",
+    "rebound_or_installed": false,
+    "residual_abandoned_count": 0,
+    "residual_new_net_workers": 0
+  },
+  "root_receipts_verified": {
+    "maintained_distinct_cases": 480,
+    "passed": 480,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "unique_modules": 17,
+    "whole_ruff_pass_receipt": true,
+    "pip_check_pass_receipt": true,
+    "tests_or_tools_rerun_by_reviewer": false,
+    "aggregated_with_independent_counts": false,
+    "archives": [
+      {
+        "archive": "/workspace/scratch/837fe19aae3a/evidence/network-recovery-integration/network-recovery-integration.zip",
+        "sha256": "0b75faf312ea69e1d895a1ca7c6ff6bfa09104c5ab003b7fb9e87a6878bb98fd",
+        "bytes": 1749533,
+        "members": 68,
+        "manifest_sha256": "48707b8e8b0ccc634df5a15cf90cfef8bb6e12a652cebbc9d6ce068fe41e7039"
+      },
+      {
+        "archive": "/workspace/scratch/837fe19aae3a/evidence/network-recovery-combined-qualification/network-recovery-combined-qualification.zip",
+        "sha256": "c45742011888c485379883cc69c3fab5a90c07f70fdd61d9a2906d4e4a367c94",
+        "bytes": 16513,
+        "members": 15,
+        "manifest_sha256": "ba31cc355c8bec8c27c7f0f929d4af7f3fe2d1b92ad72207d6d1b10f5d592276"
+      }
+    ]
+  },
+  "bundle": {
+    "verifies": true,
+    "advertises": "96baaee20f390a3f2a5629de3764d32323bb80e5",
+    "explicit_prerequisites": [
+      "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "d60ac40daf767fe6a93ae152feb21235f6e75e0b"
+    ],
+    "902_is_ancestor_of_d60": true
+  },
+  "preserved_failures": [
+    "Original PR352 completion and inherited cleanup findings",
+    "Original completion-repair parent reds and aa01 inherited cleanup failure",
+    "Both base902/356 strict-docstring-bound failures",
+    "Root original PR354/356 regression and intermediate close/cleanup failures",
+    "Root initial integration suffix-only guard failure",
+    "Reviewer initial one-prerequisite assertion failure, correctly classified as a harness assumption"
+  ],
+  "retained_immutable_evidence_files": 32,
+  "retained_immutable_evidence_bytes": 5792637,
+  "all_retained_evidence_copies_byte_identical": true,
+  "open_gates": [
+    "Final authoritative records and actual-main ancestry reconciliation",
+    "Exact final-source full hosted Linux and Windows QA",
+    "All applicable platform/native/packaging/artifact qualification",
+    "Fresh current heads, main, author draft/qualification conditions, ownership and approval guards before expected-head promotion"
+  ],
+  "limits": [
+    "Controlled fixtures only; no external network, loopback server, native engine or target execution by independent replay",
+    "No full-suite rerun, environment install/rebind, source/ref/PR/CI/ledger mutation",
+    "Source-specific prior pass/failure counts remain separate; this review does not waive platform qualification or approve main merge/release"
+  ],
+  "full_hosted_native_package_or_release_acceptance_claimed": false,
+  "source_ref_PR_CI_mutations": false,
+  "review_report": "README.md",
+  "proof": "source-and-receipt-proof.json",
+  "all_check_rows": "checks.json"
+}

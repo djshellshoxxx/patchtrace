@@ -1,3 +1,20 @@
+## Current network/tooling continuation — 2026-11-21T16:08:48.027704+00:00
+
+Actual PR357 was qualified and merged at `ea16019601486c831941f9bc1a7ba5862a170317` (tree4a07cd88ded407bef30a8aeb81961e4041822dc2), with both publication holds in actual title/body. Its16executed jobs passed and2publicationjobs skipped; final287-check review and actual81-check promotion audit are clear. Earlier main3a postmerge QA/Pages is complete; actualmain ea160 is a separate pending QA/publication stream with its native-only checkpoint preserved.
+
+The separate frozen network/tooling code is `9610919d29010d53cf00af3b7c38207ffd84f945` / tree `3d5e2965ef26235610a08fd8378cac078c6bd9a0`, equivalent immutable remote `5c07bfd1a41b399fee86545206ed1c5e9aec0c26`. Root654passed/2unchangedstrictC5xfails across656distinct cases, wholeRuff/pip and explicit bindings passed. Network96, pilotf086 and Sigstore961 independent reviews are clear within their stated scopes; all donor histories, original reds, setup failures and intermediate YAML error remain. Census42installs:3protected39unprotected. Manual pilot workflow remains unexecuted/access-blocked; its reportwriter is not-evaluated, not an accuracy result.
+
+Final records, independent assembled-record review, actual branch/PR publication, exact final-source hosted qualification and any later guarded main promotion remain pending. No localfullretry, release, deployment or historicalbranch deletion. Existing116task IDs/order,46notes and original181/16census remain; explicit task changes retain fullbefore-images. Details: docs/engineering/cycle837fe-network-recovery-20261121.md. Earlier complete record follows unchanged.
+
+---
+
+## Enrichment ACQ-2 hard deadline — 2026-11-21 independent continuation
+
+- [x] Inspect current `main` and `AGENTS.md`, identify and avoid existing PR349/351 and dependent KBC integration ownership.
+- [x] Add two synthetic blocked-operation regressions (connect and read), registered SPEC-07h H9b and source repair on isolated `codex/patchtrace-enrichment-hard-deadline-20261121-assistant`.
+- [ ] Verify exact head with focused and full offscreen pytest, `python -m ruff check src tests tools`, dependency consistency, Linux/Windows hosted CI and an independent code review; no tests were executed/claimed in the authoring session.
+- [ ] Resolve any CI findings, then merge the PR into `main` with a current head-SHA guard and `[no release] [no deploy]`; verify main integration. Avoid mutating Root837FE-owned integration work.
+
 ## Current Windows/native recovery checkpoint — 2026-11-21
 
 PR351 is actually merged at `3a16290c0fcc4e0c21712fe10474a3ff33fad336`, tree `6001ef506c38930fd590bd827f428b997c3b2797`, after15 executed automatic jobs passed and two release jobs intentionally skipped. Actual ordered ancestry and both publication markers in the subject and body are verified. Linux full QA:24,295 passed/53 skipped/4 xfailed; Windows:24,164 passed/185 skipped/3 xfailed. Counts belong to that qualified source.
@@ -1808,3 +1825,11 @@ Owner/branch: `codex/patchtrace-linux-frozen-cli-smoke-20261121`; handoff
 - [ ] Continue CODEX-5, transitive dependency closure, Ghidra cache acceptance, historical semantics, manual/trust/accessibility/raw-provenance and separate L1/L2/L3 gates.
 
 [Current combined handoff](../docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md).
+
+## CSAF cache read-limit race — isolated continuation 2026-11-21
+
+- [x] Inspect existing offline cache source, SPEC-35 transport/cache contract, and maintained fake-server tests without modifying unrelated active PR ownership.
+- [x] Add a stale-file-size regression and a bounded-index-read assertion before adding the cache fix.
+- [x] Cap the actual cache file reads, re-check length, preserve SHA-256 verification, legacy file layout and no-limit direct API.
+- [ ] Complete focused tests, full offscreen pytest, whole-tree Ruff, dependency checks, independent source review, and actual Linux/Windows CI on current PR head. None were executed or claimed in the authoring environment.
+- [ ] Resolve any CI failures and merge only with current expected-head guard and required `[no release] [no deploy]` merge text. Keep this scope separate from PR352 and Root837FE's existing integration.

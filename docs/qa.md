@@ -1,3 +1,19 @@
+## Current network/tooling continuation — 2026-11-21T16:08:48.027704+00:00
+
+Actual PR357 was qualified and merged at `ea16019601486c831941f9bc1a7ba5862a170317` (tree4a07cd88ded407bef30a8aeb81961e4041822dc2), with both publication holds in actual title/body. Its16executed jobs passed and2publicationjobs skipped; final287-check review and actual81-check promotion audit are clear. Earlier main3a postmerge QA/Pages is complete; actualmain ea160 is a separate pending QA/publication stream with its native-only checkpoint preserved.
+
+The separate frozen network/tooling code is `9610919d29010d53cf00af3b7c38207ffd84f945` / tree `3d5e2965ef26235610a08fd8378cac078c6bd9a0`, equivalent immutable remote `5c07bfd1a41b399fee86545206ed1c5e9aec0c26`. Root654passed/2unchangedstrictC5xfails across656distinct cases, wholeRuff/pip and explicit bindings passed. Network96, pilotf086 and Sigstore961 independent reviews are clear within their stated scopes; all donor histories, original reds, setup failures and intermediate YAML error remain. Census42installs:3protected39unprotected. Manual pilot workflow remains unexecuted/access-blocked; its reportwriter is not-evaluated, not an accuracy result.
+
+Final records, independent assembled-record review, actual branch/PR publication, exact final-source hosted qualification and any later guarded main promotion remain pending. No localfullretry, release, deployment or historicalbranch deletion. Existing116task IDs/order,46notes and original181/16census remain; explicit task changes retain fullbefore-images. Details: docs/engineering/cycle837fe-network-recovery-20261121.md. Earlier complete record follows unchanged.
+
+---
+
+## Enrichment total-deadline regression — independent branch (2026-11-21)
+
+Scope: audit ACQ-2, `src/patchtrace/enrichment/intelligence.py` / `tests/test_enrichment_intelligence.py`, isolated branch `codex/patchtrace-enrichment-hard-deadline-20261121-assistant`. Reproducing tests for blocked connection-open and single response read were added before the source fix. The source now supervises the entire owned attempt (including cleanup) against a real monotonic total deadline while retaining the existing injected logical clock, explicit cancellation and bounded abandoned-worker rules. SPEC-07h H9b is registered in the existing hardening backlog. No remote network calls were made by these tests.
+
+**Qualification unverified**: this session could not run a checked-out PatchTrace test environment, so no RED/GREEN execution, whole-tree Ruff, Windows/Linux hosted, native compatibility or independent code review is claimed. Required next action: run offscreen focused and full pytest, whole-tree Ruff and dependency checks on the exact PR head; review the complete diff and ownership; merge only after required CI is green, blockers resolved and a guarded head-SHA REST merge is authorized. Do not infer that this branch or PatchTrace is ready for release.
+
 ## Current Windows/native recovery checkpoint — 2026-11-21
 
 PR351 is actually merged at `3a16290c0fcc4e0c21712fe10474a3ff33fad336`, tree `6001ef506c38930fd590bd827f428b997c3b2797`, after15 executed automatic jobs passed and two release jobs intentionally skipped. Actual ordered ancestry and both publication markers in the subject and body are verified. Linux full QA:24,295 passed/53 skipped/4 xfailed; Windows:24,164 passed/185 skipped/3 xfailed. Counts belong to that qualified source.
@@ -2446,3 +2462,9 @@ Final reviewed code `b880c317` passes **450 affected tests**, Ruff, dependency, 
 ## Combined PR349 qualification — 837FE, 2026-11-21 UTC
 
 Clean combined source `2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c` passed **1,296 cases with one CODEX-5 expected failure**, zero failures/errors/ordinary skips, and 1,297 distinct identities. Whole-tree Ruff, dependencies and isolated source binding passed. All storage/Search, CODEX-1 and Intel source reviews are complete. Original PR349 Linux full QA failed only its missing Pages spec citation (1 failed/24,066 passed/53 skipped/4 xfailed); the unchanged registry selection passes 108 after registering all 3 new specs. Native Windows FLOSS exit1 remains unresolved; bounded actual probe diagnostics are now retained. Prior full local AF_UNIX failure and unexplained SIGKILL remain unsuccessful evidence. Final combined hosted full/Qt/native/package/frozen checks are required. [Report](engineering/cycle837fe-combined-pr349-20261121.md).
+
+## CSAF offline-cache bounded-read hardening — isolated branch, 2026-11-21
+
+Scope: `src/patchtrace/intelligence/csaf/transport.py`, `tests/test_intel_transport.py`, SPEC-35 §D. Previously the sharded/legacy URL-map and cached-body loaders checked `stat().st_size` before unbounded `read_text()` / `read_bytes()`. A concurrent local writer can grow a file after stat, causing a larger-than-permitted body to be read and even returned when its hash matches. The fix caps the actual `open('rb').read(max+1)` calls and rechecks returned length before parsing or hashing; the legacy no-resource-limit API remains unchanged. Two synthetic tests were written first: a stale stat against an actually oversized, matching-hash body and an instrumented URL-index stream forbidding unbounded reads. No live/network calls are made by those tests.
+
+**Verification pending:** actual checked-out red/green test runs, whole-tree Ruff, Linux/Windows hosted QA and independent review were unavailable in the authoring session. Do not claim any of these passed. Require exact-head CI/review before a guarded main merge. No release, deploy or tag.

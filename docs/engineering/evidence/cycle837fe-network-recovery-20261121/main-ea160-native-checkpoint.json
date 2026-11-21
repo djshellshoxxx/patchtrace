@@ -1,0 +1,302 @@
+{
+  "schema": "patchtrace/completed-native-only-main-checkpoint/1",
+  "observed_at": "2026-11-21 15:54:33 UTC",
+  "sealed_at": "2026-11-21T16:01:38.096539+00:00",
+  "source": {
+    "repository": "djshellshoxxx/PatchTrace",
+    "pr": 357,
+    "actual_main_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+    "complete_tree_sha": "4a07cd88ded407bef30a8aeb81961e4041822dc2",
+    "ordered_parents": [
+      "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+      "d60ac40daf767fe6a93ae152feb21235f6e75e0b"
+    ],
+    "merged_at": "2026-11-21T15:32:22Z",
+    "expected_checkout_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+    "subject_and_body_markers": {
+      "[no release]": {
+        "subject": true,
+        "body": true
+      },
+      "[no deploy]": {
+        "subject": true,
+        "body": true
+      }
+    },
+    "initial_api_guard": "initial-source-and-runs.json",
+    "independent_root_git_guard": "root-actual-main-promotion-proof.json"
+  },
+  "verdict": {
+    "native_five_contracts_complete": true,
+    "all_applicable_main_jobs_complete": false,
+    "full_main_qualification_claimed": false,
+    "actual_release_hold_verified": false,
+    "actual_pages_deploy_hold_verified_for_this_source": false
+  },
+  "native": {
+    "run_id": 44919714141,
+    "event": "push",
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "success",
+    "job_count": 5,
+    "all_actual_checkouts_verified": true,
+    "jobs": [
+      {
+        "job_id": 136892880706,
+        "name": "native (patchtrace-clean)",
+        "conclusion": "success",
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714141/job/136892880706",
+        "checkouts": [
+          "ea16019601486c831941f9bc1a7ba5862a170317"
+        ],
+        "checkout_verified": true,
+        "raw_log": "logs/136892880706.log"
+      },
+      {
+        "job_id": 136892880879,
+        "name": "native (repro-plain-ghidriff)",
+        "conclusion": "success",
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714141/job/136892880879",
+        "checkouts": [
+          "ea16019601486c831941f9bc1a7ba5862a170317"
+        ],
+        "checkout_verified": true,
+        "raw_log": "logs/136892880879.log"
+      },
+      {
+        "job_id": 136892880876,
+        "name": "native (patchtrace-seeded-store)",
+        "conclusion": "success",
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714141/job/136892880876",
+        "checkouts": [
+          "ea16019601486c831941f9bc1a7ba5862a170317"
+        ],
+        "checkout_verified": true,
+        "raw_log": "logs/136892880876.log"
+      },
+      {
+        "job_id": 136892880825,
+        "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+        "conclusion": "success",
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714141/job/136892880825",
+        "checkouts": [
+          "ea16019601486c831941f9bc1a7ba5862a170317"
+        ],
+        "checkout_verified": true,
+        "raw_log": "logs/136892880825.log"
+      },
+      {
+        "job_id": 136892880798,
+        "name": "native (raw-cache-hit)",
+        "conclusion": "success",
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714141/job/136892880798",
+        "checkouts": [
+          "ea16019601486c831941f9bc1a7ba5862a170317"
+        ],
+        "checkout_verified": true,
+        "raw_log": "logs/136892880798.log"
+      }
+    ],
+    "positive_known_patch_cases": 3,
+    "expected_negative_controls": 1,
+    "application_raw_cache_cases": 1,
+    "summary": "native-summary.json",
+    "summary_sha256": "7e5dd4e9af1d224fded1d69eb9cb4934b8d18f170c3cebde2337bf61645ae771",
+    "artifacts": [
+      {
+        "id": 14713745094,
+        "name": "native-static-acceptance-patchtrace-clean",
+        "bytes": 96760,
+        "sha256": "c5f3ef63b4e6e4b4b78d0356701b9a62cbe21ed2d829ac7ae52788071abede0f",
+        "api_digest_verified": true,
+        "zip_crc_verified": true,
+        "receipt": "artifact-14713745094.json",
+        "original_zip": "artifacts/14713745094/original.zip"
+      },
+      {
+        "id": 14712943977,
+        "name": "native-static-acceptance-raw-cache-hit",
+        "bytes": 2961,
+        "sha256": "a7bfb526454aa3d14724699c21e6665623c577a096dbe1c38c68416d4be8de64",
+        "api_digest_verified": true,
+        "zip_crc_verified": true,
+        "receipt": "artifact-14712943977.json",
+        "original_zip": "artifacts/14712943977/original.zip"
+      },
+      {
+        "id": 14712834286,
+        "name": "native-static-acceptance-patchtrace-seeded-store",
+        "bytes": 96533,
+        "sha256": "92ec4ce689bbc42c9e6b64dbc3ab17c3464b01a7af15331ae0fa2aad85438277",
+        "api_digest_verified": true,
+        "zip_crc_verified": true,
+        "receipt": "artifact-14712834286.json",
+        "original_zip": "artifacts/14712834286/original.zip"
+      },
+      {
+        "id": 14712603323,
+        "name": "native-static-acceptance-patchtrace-seeded-store-no-adjacent-pdb",
+        "bytes": 96544,
+        "sha256": "0678eca96cf7f4097617b37d74659f4b095a8c400322362efefadaa4bdaa4799",
+        "api_digest_verified": true,
+        "zip_crc_verified": true,
+        "receipt": "artifact-14712603323.json",
+        "original_zip": "artifacts/14712603323/original.zip"
+      }
+    ],
+    "original_tool_zip_cache": {
+      "pinned_sha256": "c3b458661d69e26e203d739c0c82d143cc8a4a29d9e571f099c2cf4bda62a120",
+      "actual_modes": {
+        "miss": 5
+      },
+      "actual_post_save_outcomes": {
+        "reservation_declined": 4,
+        "saved": 1
+      },
+      "all_five_hash_and_fresh_extraction_steps_verified": true,
+      "warm_restore_claimed": false
+    },
+    "application_raw_cache": {
+      "artifact_id": 14712943977,
+      "result_status": "passed",
+      "first_status": "completed",
+      "second_status": "completed",
+      "first_raw_sha256": "3488ef221e4bb0660a03004e840cc32a515c16c1fce1fa704e306d368f1eb40b",
+      "second_raw_sha256": "3488ef221e4bb0660a03004e840cc32a515c16c1fce1fa704e306d368f1eb40b",
+      "first_matches": 1,
+      "second_matches": 1,
+      "explicit_reuse_events": [
+        {
+          "stage": "cache",
+          "message": "raw output reused from cache"
+        }
+      ],
+      "java_probes": [
+        {
+          "executable": "C:\\hostedtoolcache\\windows\\Java_Temurin-Hotspot_jdk\\25.0.5-8.0\\x64\\bin\\java.exe",
+          "argument": "-version",
+          "timeout_seconds": 15,
+          "returncode": 0,
+          "reason": null,
+          "log_tail": "openjdk version \"25.0.5\" 2026-10-20 LTS\r\nOpenJDK Runtime Environment Temurin-25.0.5+8 (build 25.0.5+8-LTS)\r\nOpenJDK 64-Bit Server VM Temurin-25.0.5+8 (build 25.0.5+8-LTS, mixed mode, sharing)\r\n",
+          "elapsed_seconds": 1.671999999999997
+        }
+      ],
+      "actual_raw_output_bytes_in_diagnostic_artifact": false,
+      "scope": "Hosted checker and retained diagnostic records establish within-case reuse; no independent local recomputation of absent raw output bytes or cross-run determinism is claimed."
+    }
+  },
+  "partial_qa": {
+    "run_id": 44919714193,
+    "event": "push",
+    "status": "in_progress",
+    "observed_at": "2026-11-21 15:54:33 UTC",
+    "snapshot": "jobs-snapshot-002.json",
+    "job_counts": {
+      "in_progress": 7,
+      "success": 1
+    },
+    "jobs": [
+      {
+        "id": 136892880403,
+        "name": "qa (ubuntu-latest)",
+        "status": "in_progress",
+        "conclusion": null,
+        "runner_id": 1000075722,
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714193/job/136892880403"
+      },
+      {
+        "id": 136892880571,
+        "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+        "status": "in_progress",
+        "conclusion": null,
+        "runner_id": 1000075726,
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714193/job/136892880571"
+      },
+      {
+        "id": 136892880617,
+        "name": "release-gate",
+        "status": "completed",
+        "conclusion": "success",
+        "runner_id": 1000075725,
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714193/job/136892880617"
+      },
+      {
+        "id": 136892880628,
+        "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+        "status": "in_progress",
+        "conclusion": null,
+        "runner_id": 1000075723,
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714193/job/136892880628"
+      },
+      {
+        "id": 136892880633,
+        "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+        "status": "in_progress",
+        "conclusion": null,
+        "runner_id": 1000075724,
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714193/job/136892880633"
+      },
+      {
+        "id": 136892880665,
+        "name": "qa (windows-latest)",
+        "status": "in_progress",
+        "conclusion": null,
+        "runner_id": 1000075727,
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714193/job/136892880665"
+      },
+      {
+        "id": 136892880739,
+        "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+        "status": "in_progress",
+        "conclusion": null,
+        "runner_id": 1000075734,
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714193/job/136892880739"
+      },
+      {
+        "id": 136892880761,
+        "name": "qt-gate (windows-latest, 5, 1/1)",
+        "status": "in_progress",
+        "conclusion": null,
+        "runner_id": 1000075733,
+        "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714193/job/136892880761"
+      }
+    ],
+    "release_gate_job_id": 136892880617,
+    "release_gate_publish": true,
+    "release_gate_milestones": 6,
+    "actual_release_job": "not yet present; pending",
+    "full_and_qt_acceptance_claimed": false,
+    "platform_and_windows27_acceptance_claimed": false,
+    "required_remaining": [
+      "Linux and Windows full QA/JUnit",
+      "all five Qt jobs",
+      "actual Windows PowerShell 27 cases",
+      "Windows build/frozen/portable/installer/uninstall",
+      "separate Windows downloaded-artifact validation",
+      "Linux package and both Ubuntu frozen CLI jobs",
+      "actual release-job hold and fresh release identity comparison"
+    ]
+  },
+  "pages_inventory": {
+    "observed_at": "2026-11-21 15:54:33 UTC",
+    "run_discovery": "run-discovery-20261121155433Z.json",
+    "observed_head_specific_pages_runs": 0,
+    "deploy_result": "unobserved; no current-source Pages run in the actual inventory",
+    "prior_source_pages_acceptance_transferred": false
+  },
+  "limitations": [
+    "Synthetic known-patch fixtures only; no general accuracy measurement.",
+    "Expected-negative control and application raw-cache case are separate from the three positive analyses.",
+    "Original tool-ZIP caching and application raw-analysis caching are distinct contracts.",
+    "All five original tool-ZIP restores were misses on this main source; no warm restore is inferred from earlier PR or code-checkpoint runs.",
+    "Raw-cache diagnostic artifact contains reported hashes and explicit reuse, without the raw output bytes themselves.",
+    "Positive backend version fields remain as recorded; separate Java probe evidence is confined to the raw-cache case.",
+    "This immutable checkpoint seals only the completed native phase. The partial QA snapshot and publication state are retained at their actual observation time.",
+    "The release-gate publish=true computation is not the actual release-job outcome.",
+    "No ancestor-source results are accepted as fresh main-source execution."
+  ],
+  "source_mutation_dispatch_retry_cancel_or_local_native_execution_performed": false,
+  "later_complete_archive_guidance": "Retain this exact ZIP and its external receipt by hash; do not rewrite the checkpoint or duplicate its native payloads."
+}

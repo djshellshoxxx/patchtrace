@@ -1,0 +1,1145 @@
+{
+  "schema": "patchtrace/post-main-qualification/1",
+  "observed_at": "2026-11-21 14:47:56 UTC",
+  "source": {
+    "repo_full_name": "djshellshoxxx/PatchTrace",
+    "merged_pull_request": 351,
+    "source_head": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+    "source_tree": "6001ef506c38930fd590bd827f428b997c3b2797",
+    "ordered_parents": [
+      "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "d6679abc6dfddbadce0391c8d18289f7f96338d6"
+    ],
+    "qualified_PR_head": "d6679abc6dfddbadce0391c8d18289f7f96338d6",
+    "merged_at": "2026-11-21T12:58:35Z",
+    "actual_merge_subject": "Merge qualified per-command audit and held Pages repair (#351) [no release] [no deploy]",
+    "markers_in_subject_and_body": {
+      "[no release]": {
+        "subject": true,
+        "body": true
+      },
+      "[no deploy]": {
+        "subject": true,
+        "body": true
+      }
+    },
+    "main_at_final_observation": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+    "source_commit_tree_and_parents_verified": true,
+    "final_guard_file": "final-source-run-release-guard.json"
+  },
+  "verdict": {
+    "source_consistent": true,
+    "all_owned_runs_completed_successfully": true,
+    "all_required_QA_jobs_successful": true,
+    "all_automatically_applicable_jobs_completed": true,
+    "qualification_status": "qualified_with_documented_open_gates_and_publication_holds_verified",
+    "owned_run_count": 2,
+    "actual_job_count": 14,
+    "successful_executed_job_count": 12,
+    "intentional_skipped_job_count": 2,
+    "executed_checkout_log_count": 12,
+    "failed_job_count": 0,
+    "actual_release_skipped": true,
+    "actual_pages_deploy_skipped": true,
+    "expected_failure_record_count": 7,
+    "interpretation": "All exact-source automatic QA and Pages jobs completed successfully or as the two intentional publication skips. Expected failures and broader native limits remain open; this is separate from later PR357 qualification."
+  },
+  "runs": [
+    {
+      "id": 44906524287,
+      "name": "QA and Windows standalone",
+      "event": "push",
+      "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44906524287",
+      "created_at": "2026-11-21T12:58:38Z",
+      "updated_at": "2026-11-21T14:44:54Z",
+      "jobs": [
+        {
+          "id": 136853186206,
+          "name": "qa (windows-latest)",
+          "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44906524287/job/136853186206",
+          "started_at": "2026-11-21T13:34:30Z",
+          "completed_at": "2026-11-21T14:37:58Z",
+          "runner_id": 1000075171,
+          "runner_name": "GitHub Actions 1000075171",
+          "labels": [
+            "windows-latest"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+          "log_file": "logs/136853186206.log"
+        },
+        {
+          "id": 136853186409,
+          "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+          "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44906524287/job/136853186409",
+          "started_at": "2026-11-21T13:38:25Z",
+          "completed_at": "2026-11-21T14:23:13Z",
+          "runner_id": 1000075196,
+          "runner_name": "GitHub Actions 1000075196",
+          "labels": [
+            "ubuntu-latest"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+          "log_file": "logs/136853186409.log"
+        },
+        {
+          "id": 136853186420,
+          "name": "qa (ubuntu-latest)",
+          "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44906524287/job/136853186420",
+          "started_at": "2026-11-21T13:36:38Z",
+          "completed_at": "2026-11-21T14:14:48Z",
+          "runner_id": 1000075183,
+          "runner_name": "GitHub Actions 1000075183",
+          "labels": [
+            "ubuntu-latest"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+          "log_file": "logs/136853186420.log"
+        },
+        {
+          "id": 136853186439,
+          "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+          "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44906524287/job/136853186439",
+          "started_at": "2026-11-21T13:44:23Z",
+          "completed_at": "2026-11-21T14:28:08Z",
+          "runner_id": 1000075251,
+          "runner_name": "GitHub Actions 1000075251",
+          "labels": [
+            "ubuntu-latest"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+          "log_file": "logs/136853186439.log"
+        },
+        {
+          "id": 136853186469,
+          "name": "release-gate",
+          "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44906524287/job/136853186469",
+          "started_at": "2026-11-21T13:38:48Z",
+          "completed_at": "2026-11-21T13:39:03Z",
+          "runner_id": 1000075202,
+          "runner_name": "GitHub Actions 1000075202",
+          "labels": [
+            "ubuntu-latest"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+          "log_file": "logs/136853186469.log"
+        },
+        {
+          "id": 136853186471,
+          "name": "qt-gate (windows-latest, 5, 1/1)",
+          "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44906524287/job/136853186471",
+          "started_at": "2026-11-21T13:43:08Z",
+          "completed_at": "2026-11-21T14:21:37Z",
+          "runner_id": 1000075240,
+          "runner_name": "GitHub Actions 1000075240",
+          "labels": [
+            "windows-latest"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+          "log_file": "logs/136853186471.log"
+        },
+        {
+          "id": 136853186511,
+          "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+          "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44906524287/job/136853186511",
+          "started_at": "2026-11-21T13:04:37Z",
+          "completed_at": "2026-11-21T13:22:55Z",
+          "runner_id": 1000074996,
+          "runner_name": "GitHub Actions 1000074996",
+          "labels": [
+            "ubuntu-latest"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+          "log_file": "logs/136853186511.log"
+        },
+        {
+          "id": 136853186517,
+          "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+          "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44906524287/job/136853186517",
+          "started_at": "2026-11-21T13:46:49Z",
+          "completed_at": "2026-11-21T14:09:49Z",
+          "runner_id": 1000075263,
+          "runner_name": "GitHub Actions 1000075263",
+          "labels": [
+            "ubuntu-latest"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+          "log_file": "logs/136853186517.log"
+        },
+        {
+          "id": 136878394950,
+          "name": "linux-package",
+          "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44906524287/job/136878394950",
+          "started_at": "2026-11-21T14:38:06Z",
+          "completed_at": "2026-11-21T14:40:16Z",
+          "runner_id": 1000075502,
+          "runner_name": "GitHub Actions 1000075502",
+          "labels": [
+            "ubuntu-22.04"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+          "log_file": "logs/136878394950.log"
+        },
+        {
+          "id": 136878984231,
+          "name": "linux-smoke (ubuntu-24.04)",
+          "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44906524287/job/136878984231",
+          "started_at": "2026-11-21T14:43:04Z",
+          "completed_at": "2026-11-21T14:44:51Z",
+          "runner_id": 1000075533,
+          "runner_name": "GitHub Actions 1000075533",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+          "log_file": "logs/136878984231.log"
+        },
+        {
+          "id": 136878984521,
+          "name": "linux-smoke (ubuntu-22.04)",
+          "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44906524287/job/136878984521",
+          "started_at": "2026-11-21T14:43:26Z",
+          "completed_at": "2026-11-21T14:44:54Z",
+          "runner_id": 1000075536,
+          "runner_name": "GitHub Actions 1000075536",
+          "labels": [
+            "ubuntu-22.04"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+          "log_file": "logs/136878984521.log"
+        },
+        {
+          "id": 136880181515,
+          "name": "release",
+          "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+          "status": "completed",
+          "conclusion": "skipped",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44906524287/job/136880181515",
+          "started_at": "2026-11-21T14:44:54Z",
+          "completed_at": "2026-11-21T14:44:54Z",
+          "runner_id": null,
+          "runner_name": null,
+          "labels": [
+            "ubuntu-latest"
+          ],
+          "checkout_log_verified": null,
+          "skip_scope": "Intentional marker-controlled publication skip; no runner or executed checkout."
+        }
+      ]
+    },
+    {
+      "id": 44906524308,
+      "name": "GitHub Pages",
+      "event": "push",
+      "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44906524308",
+      "created_at": "2026-11-21T12:58:38Z",
+      "updated_at": "2026-11-21T13:34:09Z",
+      "jobs": [
+        {
+          "id": 136853186416,
+          "name": "build",
+          "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44906524308/job/136853186416",
+          "started_at": "2026-11-21T13:33:51Z",
+          "completed_at": "2026-11-21T13:34:09Z",
+          "runner_id": 1000075163,
+          "runner_name": "GitHub Actions 1000075163",
+          "labels": [
+            "ubuntu-latest"
+          ],
+          "checkout_log_verified": true,
+          "checkout_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+          "log_file": "pages-completion-main-3a.zip!/logs/136853186416.log"
+        },
+        {
+          "id": 136862103266,
+          "name": "deploy",
+          "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+          "status": "completed",
+          "conclusion": "skipped",
+          "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44906524308/job/136862103266",
+          "started_at": "2026-11-21T13:34:09Z",
+          "completed_at": "2026-11-21T13:34:09Z",
+          "runner_id": null,
+          "runner_name": null,
+          "labels": [
+            "ubuntu-latest"
+          ],
+          "checkout_log_verified": null,
+          "skip_scope": "Intentional marker-controlled publication skip; no runner or executed checkout."
+        }
+      ]
+    }
+  ],
+  "qa": {
+    "run_id": 44906524287,
+    "required_job_ids": [
+      136853186206,
+      136853186409,
+      136853186420,
+      136853186439,
+      136853186471,
+      136853186511,
+      136853186517,
+      136878394950,
+      136878984231,
+      136878984521
+    ],
+    "full_pytest": {
+      "Linux": {
+        "passed": 24295,
+        "skipped": 53,
+        "xfailed": 4,
+        "warnings": 21,
+        "seconds": 2241.64,
+        "summary_line": "2026-11-21T14:14:40.1553706Z 24295 passed, 53 skipped, 4 xfailed, 21 warnings in 2241.64s (0:37:21)"
+      },
+      "Windows": {
+        "passed": 24164,
+        "skipped": 185,
+        "xfailed": 3,
+        "warnings": 22,
+        "seconds": 3524.95,
+        "summary_line": "2026-11-21T14:34:24.0522357Z 24164 passed, 185 skipped, 3 xfailed, 22 warnings in 3524.95s (0:58:44)"
+      }
+    },
+    "boundary_controls": {
+      "Linux": {
+        "passed": 108,
+        "skipped": 2,
+        "summary_line": "2026-11-21T13:37:16.6484179Z 108 passed, 2 skipped in 2.47s",
+        "included_in_full_totals": false
+      },
+      "Windows": {
+        "passed": 107,
+        "skipped": 3,
+        "junit_artifact_id": 14711281365
+      }
+    },
+    "junit_reports": [
+      {
+        "platform": "Linux",
+        "artifact_id": 14710099824,
+        "path": "pair-publication-results.xml",
+        "test_cases": 110,
+        "failures": 0,
+        "errors": 0,
+        "skipped_including_xfails": 2,
+        "xfails": []
+      },
+      {
+        "platform": "Linux",
+        "artifact_id": 14710099824,
+        "path": "qa-results.xml",
+        "test_cases": 24352,
+        "failures": 0,
+        "errors": 0,
+        "skipped_including_xfails": 57,
+        "xfails": [
+          {
+            "id": "tests.test_codex5_command_audit_20261121::test_all_explicit_workflow_pip_installs_are_protected",
+            "type": "pytest.xfail",
+            "message": "CODEX-5: repository-wide hashed wheel closure still open"
+          },
+          {
+            "id": "tests.test_codex_pkg_workflows::test_pip_downloads_require_hashes",
+            "type": "pytest.xfail",
+            "message": "CODEX-5"
+          },
+          {
+            "id": "tests.test_tier_w_symbols::test_live_llvm_pdbutil_agrees_with_the_stdlib_reader",
+            "type": "pytest.xfail",
+            "message": "BLOCKED: llvm-pdbutil is not installed on this runner"
+          },
+          {
+            "id": "tests.test_tier_w_symbols::test_live_ghidra_export_runs_or_records_blocked",
+            "type": "pytest.xfail",
+            "message": "BLOCKED: no --ghidra-dir given"
+          }
+        ]
+      },
+      {
+        "platform": "Windows",
+        "artifact_id": 14711281365,
+        "path": "pair-publication-results.xml",
+        "test_cases": 110,
+        "failures": 0,
+        "errors": 0,
+        "skipped_including_xfails": 3,
+        "xfails": []
+      },
+      {
+        "platform": "Windows",
+        "artifact_id": 14711281365,
+        "path": "qa-results.xml",
+        "test_cases": 24352,
+        "failures": 0,
+        "errors": 0,
+        "skipped_including_xfails": 188,
+        "xfails": [
+          {
+            "id": "tests.test_codex5_command_audit_20261121::test_all_explicit_workflow_pip_installs_are_protected",
+            "type": "pytest.xfail",
+            "message": "CODEX-5: repository-wide hashed wheel closure still open"
+          },
+          {
+            "id": "tests.test_codex_pkg_workflows::test_pip_downloads_require_hashes",
+            "type": "pytest.xfail",
+            "message": "CODEX-5"
+          },
+          {
+            "id": "tests.test_tier_w_symbols::test_live_ghidra_export_runs_or_records_blocked",
+            "type": "pytest.xfail",
+            "message": "BLOCKED: no --ghidra-dir given"
+          }
+        ]
+      }
+    ],
+    "qt": [
+      {
+        "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+        "run_id": 44906524287,
+        "job_id": 136853186511,
+        "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+        "conclusion": "success",
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44906524287/job/136853186511",
+        "checkout_verified": true,
+        "passed": 8460,
+        "warnings": 0,
+        "seconds": 1054.85,
+        "summary_line": "2026-11-21T13:22:53.4567905Z 8460 passed in 1054.85s (0:17:34)",
+        "raw_log": "logs/136853186511.log"
+      },
+      {
+        "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+        "run_id": 44906524287,
+        "job_id": 136853186517,
+        "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+        "conclusion": "success",
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44906524287/job/136853186517",
+        "checkout_verified": true,
+        "passed": 9840,
+        "warnings": 0,
+        "seconds": 1350.8,
+        "summary_line": "2026-11-21T14:09:46.6326584Z 9840 passed in 1350.80s (0:22:30)",
+        "raw_log": "logs/136853186517.log"
+      },
+      {
+        "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+        "run_id": 44906524287,
+        "job_id": 136853186409,
+        "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+        "conclusion": "success",
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44906524287/job/136853186409",
+        "checkout_verified": true,
+        "passed": 10860,
+        "warnings": 0,
+        "seconds": 2650.92,
+        "summary_line": "2026-11-21T14:23:08.7973477Z 10860 passed in 2650.92s (0:44:10)",
+        "raw_log": "logs/136853186409.log"
+      },
+      {
+        "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+        "run_id": 44906524287,
+        "job_id": 136853186471,
+        "name": "qt-gate (windows-latest, 5, 1/1)",
+        "conclusion": "success",
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44906524287/job/136853186471",
+        "checkout_verified": true,
+        "passed": 10620,
+        "warnings": 10,
+        "seconds": 2249.93,
+        "summary_line": "2026-11-21T14:21:33.0360533Z 10620 passed, 10 warnings in 2249.93s (0:37:29)",
+        "raw_log": "logs/136853186471.log"
+      },
+      {
+        "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+        "run_id": 44906524287,
+        "job_id": 136853186439,
+        "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+        "conclusion": "success",
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44906524287/job/136853186439",
+        "checkout_verified": true,
+        "passed": 13320,
+        "warnings": 40,
+        "seconds": 2589.93,
+        "summary_line": "2026-11-21T14:28:04.1012939Z 13320 passed, 40 warnings in 2589.93s (0:43:09)",
+        "raw_log": "logs/136853186439.log"
+      }
+    ],
+    "windows_producer": {
+      "schema": "patchtrace/windows-producer-completion/1",
+      "observed_at": "2026-11-21 14:38:31 UTC",
+      "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+      "head_tree_sha": "6001ef506c38930fd590bd827f428b997c3b2797",
+      "expected_checkout": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+      "run_id": 44906524287,
+      "job_id": 136853186206,
+      "conclusion": "success",
+      "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44906524287/job/136853186206",
+      "checkout_verified": true,
+      "runner_id": 1000075171,
+      "runner_name": "GitHub Actions 1000075171",
+      "full_pytest": {
+        "passed": 24164,
+        "skipped": 185,
+        "xfailed": 3,
+        "warnings": 22,
+        "seconds": 3524.95,
+        "summary_line": "2026-11-21T14:34:24.0522357Z 24164 passed, 185 skipped, 3 xfailed, 22 warnings in 3524.95s (0:58:44)"
+      },
+      "frozen_cli": {
+        "passed": 64,
+        "failed": 0,
+        "counts_from_actual_PASS_FAIL_lines": true
+      },
+      "portable_smoke": {
+        "passed": true,
+        "receipt_line": "2026-11-21T14:36:57.7420851Z Portable checksum, clean extraction, Qt plugin, dependencies, and frozen executable smoke passed."
+      },
+      "installer_smoke": {
+        "passed": true,
+        "receipt_line": "2026-11-21T14:37:43.2102062Z Installer registration, Qt/runtime checks, frozen self-test, non-destructive uninstall passed.",
+        "installer_sha256": "3d1ed5ff398f1288ed0c1a713fdf332c6545f192d06947bde9f8fbb3b610c64e"
+      },
+      "product_artifact": {
+        "id": 14711321319,
+        "node_id": "MDg6QXJ0aWZhY3QxNDcxMTMyMTMxOQ==",
+        "name": "PatchTrace-windows-x64",
+        "size_in_bytes": 194710329,
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14711321319",
+        "archive_download_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14711321319/zip",
+        "expired": false,
+        "digest": "sha256:4a937a2e6125d527af4121e17c40c519296acde147e93cea850c94b78d0fa4c5",
+        "created_at": "2026-11-21T14:37:54Z",
+        "updated_at": "2026-11-21T14:37:54Z",
+        "expires_at": "2027-02-19T12:58:38Z",
+        "workflow_run": {
+          "id": 44906524287,
+          "repository_id": 1413730581,
+          "head_repository_id": 1413730581,
+          "head_branch": "main",
+          "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336"
+        },
+        "api_digest_matches_hosted_upload_log": true,
+        "product_bytes_downloaded_locally": false
+      },
+      "required_job_steps": [
+        {
+          "name": "Run python tools/build_windows.py",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-21T14:34:40Z",
+          "completed_at": "2026-11-21T14:36:09Z"
+        },
+        {
+          "name": "Frozen EXE headless smoke (A1-A4) and self-test",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-21T14:36:09Z",
+          "completed_at": "2026-11-21T14:36:48Z"
+        },
+        {
+          "name": "Extract and run portable Windows ZIP outside checkout",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-21T14:36:48Z",
+          "completed_at": "2026-11-21T14:36:57Z"
+        },
+        {
+          "name": "Install pinned NSIS compiler",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-21T14:36:57Z",
+          "completed_at": "2026-11-21T14:37:09Z"
+        },
+        {
+          "name": "Build per-user Windows installer",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-11-21T14:37:09Z",
+          "completed_at": "2026-11-21T14:37:35Z"
+        },
+        {
+          "name": "Install, launch, and uninstall the setup package",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-11-21T14:37:35Z",
+          "completed_at": "2026-11-21T14:37:43Z"
+        }
+      ],
+      "junit_artifact_receipt": "qa-artifact-windows-14711281365.json",
+      "raw_log": "logs/136853186206.log"
+    },
+    "linux_package": {
+      "schema": "patchtrace/linux-package-completion/1",
+      "observed_at": "2026-11-21 14:40:18 UTC",
+      "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+      "head_tree_sha": "6001ef506c38930fd590bd827f428b997c3b2797",
+      "run_id": 44906524287,
+      "job_id": 136878394950,
+      "conclusion": "success",
+      "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44906524287/job/136878394950",
+      "checkout_verified": true,
+      "runner_id": 1000075502,
+      "runner_name": "GitHub Actions 1000075502",
+      "labels": [
+        "ubuntu-22.04"
+      ],
+      "started_at": "2026-11-21T14:38:06Z",
+      "completed_at": "2026-11-21T14:40:16Z",
+      "product_artifact": {
+        "id": 14711490994,
+        "node_id": "MDg6QXJ0aWZhY3QxNDcxMTQ5MDk5NA==",
+        "name": "PatchTrace-linux-x86_64",
+        "size_in_bytes": 126175435,
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14711490994",
+        "archive_download_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14711490994/zip",
+        "expired": false,
+        "digest": "sha256:bd3b34be52e22e400690b4935c978ee41a8ef5deafdbd238edcd89f329806808",
+        "created_at": "2026-11-21T14:40:13Z",
+        "updated_at": "2026-11-21T14:40:13Z",
+        "expires_at": "2027-02-19T12:58:38Z",
+        "workflow_run": {
+          "id": 44906524287,
+          "repository_id": 1413730581,
+          "head_repository_id": 1413730581,
+          "head_branch": "main",
+          "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336"
+        },
+        "api_digest_matches_hosted_upload_log": true,
+        "product_bytes_downloaded_locally": false
+      },
+      "job_steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T14:38:07Z",
+          "completed_at": "2026-11-21T14:38:08Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T14:38:08Z",
+          "completed_at": "2026-11-21T14:38:12Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T14:38:12Z",
+          "completed_at": "2026-11-21T14:38:13Z"
+        },
+        {
+          "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1 libxcb-cursor0 libxkbcommon-x11-0 xvfb",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T14:38:13Z",
+          "completed_at": "2026-11-21T14:38:42Z"
+        },
+        {
+          "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T14:38:42Z",
+          "completed_at": "2026-11-21T14:39:04Z"
+        },
+        {
+          "name": "Run python tools/check_protobuf_runtime.py",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T14:39:04Z",
+          "completed_at": "2026-11-21T14:39:04Z"
+        },
+        {
+          "name": "Run python tools/build_linux.py",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-21T14:39:04Z",
+          "completed_at": "2026-11-21T14:40:08Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-21T14:40:08Z",
+          "completed_at": "2026-11-21T14:40:13Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-21T14:40:13Z",
+          "completed_at": "2026-11-21T14:40:13Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-11-21T14:40:13Z",
+          "completed_at": "2026-11-21T14:40:13Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-11-21T14:40:13Z",
+          "completed_at": "2026-11-21T14:40:13Z"
+        }
+      ],
+      "raw_log": "logs/136878394950.log"
+    },
+    "linux_frozen_smokes": [
+      {
+        "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+        "run_id": 44906524287,
+        "job_id": 136878984231,
+        "name": "linux-smoke (ubuntu-24.04)",
+        "conclusion": "success",
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44906524287/job/136878984231",
+        "checkout_verified": true,
+        "runner_id": 1000075533,
+        "runner_name": "GitHub Actions 1000075533",
+        "passed": 64,
+        "failed": 0,
+        "downloaded_product_id": 14711490994,
+        "downloaded_artifact_digest": "sha256:bd3b34be52e22e400690b4935c978ee41a8ef5deafdbd238edcd89f329806808",
+        "download_digest_matches_metadata": true,
+        "tar_checksum_ok": true,
+        "self_test_steps": [
+          {
+            "name": "Run QT_QPA_PLATFORM=offscreen PatchTrace/PatchTrace --self-test",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-11-21T14:44:17Z",
+            "completed_at": "2026-11-21T14:44:20Z"
+          },
+          {
+            "name": "Run QT_QPA_PLATFORM=xcb xvfb-run -a PatchTrace/PatchTrace --self-test",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-11-21T14:44:20Z",
+            "completed_at": "2026-11-21T14:44:27Z"
+          }
+        ],
+        "missing_library_warnings": [],
+        "raw_log": "logs/136878984231.log"
+      },
+      {
+        "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+        "run_id": 44906524287,
+        "job_id": 136878984521,
+        "name": "linux-smoke (ubuntu-22.04)",
+        "conclusion": "success",
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44906524287/job/136878984521",
+        "checkout_verified": true,
+        "runner_id": 1000075536,
+        "runner_name": "GitHub Actions 1000075536",
+        "passed": 64,
+        "failed": 0,
+        "downloaded_product_id": 14711490994,
+        "downloaded_artifact_digest": "sha256:bd3b34be52e22e400690b4935c978ee41a8ef5deafdbd238edcd89f329806808",
+        "download_digest_matches_metadata": true,
+        "tar_checksum_ok": true,
+        "self_test_steps": [
+          {
+            "name": "Run QT_QPA_PLATFORM=offscreen PatchTrace/PatchTrace --self-test",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-11-21T14:44:22Z",
+            "completed_at": "2026-11-21T14:44:24Z"
+          },
+          {
+            "name": "Run QT_QPA_PLATFORM=xcb xvfb-run -a PatchTrace/PatchTrace --self-test",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-11-21T14:44:24Z",
+            "completed_at": "2026-11-21T14:44:27Z"
+          }
+        ],
+        "missing_library_warnings": [],
+        "raw_log": "logs/136878984521.log"
+      }
+    ],
+    "release_hold": {
+      "schema": "patchtrace/release-hold-completion/1",
+      "observed_at": "2026-11-21 14:45:54 UTC",
+      "source_head": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+      "source_tree": "6001ef506c38930fd590bd827f428b997c3b2797",
+      "run_id": 44906524287,
+      "release_gate": {
+        "job_id": 136853186469,
+        "conclusion": "success",
+        "publish": true,
+        "milestones": 5,
+        "actual_summary_line": "2026-11-21T13:39:00.2219740Z release_gate: publish=true milestones=5 reason=5 counted merges since v0.1.0-beta.1035, the publish threshold is 3",
+        "original_bounded_observation": "release-gate-completion.json"
+      },
+      "actual_release": {
+        "job_id": 136880181515,
+        "conclusion": "skipped",
+        "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44906524287/job/136880181515",
+        "runner_id": null
+      },
+      "source_condition": "(startsWith(github.ref, 'refs/tags/v') || needs.release-gate.outputs.publish == 'true') && !contains(github.event.head_commit.message, '[no release]')",
+      "actual_merge_markers": {
+        "[no release]": {
+          "subject": true,
+          "body": true
+        },
+        "[no deploy]": {
+          "subject": true,
+          "body": true
+        }
+      },
+      "all_QA_dependencies_successful": true,
+      "hold_verified": true,
+      "interpretation": "The successful gate calculation reported publish=true. The separate release job was actually skipped after successful dependencies; its exact source condition rejects the actual no-release merge marker. The earlier gate-only observation remains unchanged."
+    },
+    "counting_note": "Full-suite, boundary, repeated Qt and frozen CLI counts are separate; they are not summed."
+  },
+  "pages": {
+    "completion_receipt": "pages-completion-main-3a.zip!/pages-hold-completion.json",
+    "embedded_archive_file": "pages-completion-main-3a.zip",
+    "embedded_archive_sha256": "1b9cec5fed0b85fe85caf95181f14b4a1a09c7f75fb0e25c5e6685059a6031c9",
+    "embedded_archive_bytes": 1511254,
+    "earlier_completed_snapshot_preserved_unchanged": true,
+    "site_tests": {
+      "passed": 248,
+      "skipped": 1,
+      "seconds": 4.82,
+      "summary_line": "2026-11-21T13:34:06.2039217Z 248 passed, 1 skipped in 4.82s"
+    },
+    "configure_step_conclusion": "skipped",
+    "upload_step_conclusion": "success",
+    "deploy_job_conclusion": "skipped",
+    "site_artifact_id": 14709361319,
+    "site_artifact_zip_sha256": "05ddfa1ef706a548101d6e2a6aabffbf349243f53e0a44dcc4c04b674c32b79d",
+    "site_artifact_payload_is_embedded_in_the_Pages_archive": true,
+    "previous_pending_snapshot": {
+      "file": "jobs-snapshot-004.json",
+      "observed_at": "2026-11-21 13:22:29 UTC",
+      "sha256": "e472597adeb243cfc0a2b5ef35c34dee3e9b085463a052c38737aea587765907",
+      "state_at_that_cut": "Pages build queued; runner0; steps empty; preserved unchanged"
+    }
+  },
+  "release_baseline_comparison": {
+    "schema": "patchtrace/release-baseline-comparison/1",
+    "observed_at": "2026-11-21 14:47:56 UTC",
+    "source_head": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+    "source_merged_at": "2026-11-21T12:58:35Z",
+    "baseline_file": "release-baseline-main902.json",
+    "baseline_sha256": "f81d6b27b3b2845efb0614201cc1c857404d4fd7284b2dacdd5c20ed875463a7",
+    "baseline_observed_at": "2026-11-21 10:38:43 UTC",
+    "current_source_file": "final-source-run-release-guard.json",
+    "current_release_count": 59,
+    "baseline_release_count": 59,
+    "all_results_fit_first_page": true,
+    "compared_fields": [
+      "id",
+      "tag_name",
+      "target_commitish",
+      "created_at",
+      "published_at",
+      "draft",
+      "prerelease"
+    ],
+    "added_ids": [],
+    "removed_ids": [],
+    "changed_release_identity_ids": [],
+    "releases_published_at_or_after_source_merge": [],
+    "release_identity_list_unchanged": true,
+    "latest_release": {
+      "id": 445877110,
+      "tag_name": "v0.1.0-beta.1035",
+      "published_at": "2026-11-15T07:13:33Z"
+    },
+    "scope": "Fresh API-visible release identity comparison. Product build artifacts are distinct from published releases."
+  },
+  "artifacts": {
+    "QA": [
+      {
+        "platform": "Linux",
+        "artifact": {
+          "id": 14710099824,
+          "node_id": "MDg6QXJ0aWZhY3QxNDcxMDA5OTgyNA==",
+          "name": "qa-Linux",
+          "size_in_bytes": 419861,
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14710099824",
+          "archive_download_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14710099824/zip",
+          "expired": false,
+          "digest": "sha256:c23ebc69fdadc2e69eda43fa1fa67199491239430d68ae13a7fe896327cb6cf2",
+          "created_at": "2026-11-21T14:14:45Z",
+          "updated_at": "2026-11-21T14:14:45Z",
+          "expires_at": "2027-02-19T12:58:38Z",
+          "workflow_run": {
+            "id": 44906524287,
+            "repository_id": 1413730581,
+            "head_repository_id": 1413730581,
+            "head_branch": "main",
+            "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336"
+          }
+        },
+        "local_original_zip": "artifacts/14710099824/original.zip",
+        "local_zip_bytes": 419861,
+        "local_zip_sha256": "c23ebc69fdadc2e69eda43fa1fa67199491239430d68ae13a7fe896327cb6cf2",
+        "api_digest_verified": true,
+        "zip_crc_verified": true,
+        "members": [
+          {
+            "name": "pair-publication-results.xml",
+            "bytes": 18108,
+            "sha256": "9b412029a09c77fef30831198dea6cd0016dc42121b3c5221dd31bcdb53539d5"
+          },
+          {
+            "name": "qa-results.xml",
+            "bytes": 3367003,
+            "sha256": "20f007bd83c31bfed2edf28d7f009db9000bb821975976c71a0c858bbf52c415"
+          },
+          {
+            "name": "qa-leg-result.txt",
+            "bytes": 8,
+            "sha256": "81b2bd4ea98c8db66554fbc8d7637a1a69a130f331feb732b75caab4c4868fd5"
+          }
+        ]
+      },
+      {
+        "platform": "Windows",
+        "artifact": {
+          "id": 14711281365,
+          "node_id": "MDg6QXJ0aWZhY3QxNDcxMTI4MTM2NQ==",
+          "name": "qa-Windows",
+          "size_in_bytes": 430668,
+          "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14711281365",
+          "archive_download_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14711281365/zip",
+          "expired": false,
+          "digest": "sha256:26c60d326ffd8a15872e5d13fbecbb590c68896c84a3a217fd1ac32978b89318",
+          "created_at": "2026-11-21T14:37:45Z",
+          "updated_at": "2026-11-21T14:37:45Z",
+          "expires_at": "2027-02-19T12:58:38Z",
+          "workflow_run": {
+            "id": 44906524287,
+            "repository_id": 1413730581,
+            "head_repository_id": 1413730581,
+            "head_branch": "main",
+            "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336"
+          }
+        },
+        "local_original_zip": "artifacts/14711281365/original.zip",
+        "local_zip_bytes": 430668,
+        "local_zip_sha256": "26c60d326ffd8a15872e5d13fbecbb590c68896c84a3a217fd1ac32978b89318",
+        "api_digest_verified": true,
+        "zip_crc_verified": true,
+        "members": [
+          {
+            "name": "pair-publication-results.xml",
+            "bytes": 18297,
+            "sha256": "e8929eb471067dd3f69b7948031920c48ae14a4afafd431a5070eb22550e6be7"
+          },
+          {
+            "name": "qa-results.xml",
+            "bytes": 3393758,
+            "sha256": "a481b2451b90b39e57a11d6b4a7cb2b78af0b66bd96ca72225de8113153b01f8"
+          },
+          {
+            "name": "qa-leg-result.txt",
+            "bytes": 8,
+            "sha256": "81b2bd4ea98c8db66554fbc8d7637a1a69a130f331feb732b75caab4c4868fd5"
+          }
+        ]
+      }
+    ],
+    "large_product_binaries_downloaded_locally": false,
+    "large_products": [
+      {
+        "id": 14711490994,
+        "node_id": "MDg6QXJ0aWZhY3QxNDcxMTQ5MDk5NA==",
+        "name": "PatchTrace-linux-x86_64",
+        "size_in_bytes": 126175435,
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14711490994",
+        "archive_download_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14711490994/zip",
+        "expired": false,
+        "digest": "sha256:bd3b34be52e22e400690b4935c978ee41a8ef5deafdbd238edcd89f329806808",
+        "created_at": "2026-11-21T14:40:13Z",
+        "updated_at": "2026-11-21T14:40:13Z",
+        "expires_at": "2027-02-19T12:58:38Z",
+        "workflow_run": {
+          "id": 44906524287,
+          "repository_id": 1413730581,
+          "head_repository_id": 1413730581,
+          "head_branch": "main",
+          "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336"
+        }
+      },
+      {
+        "id": 14711321319,
+        "node_id": "MDg6QXJ0aWZhY3QxNDcxMTMyMTMxOQ==",
+        "name": "PatchTrace-windows-x64",
+        "size_in_bytes": 194710329,
+        "url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14711321319",
+        "archive_download_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/artifacts/14711321319/zip",
+        "expired": false,
+        "digest": "sha256:4a937a2e6125d527af4121e17c40c519296acde147e93cea850c94b78d0fa4c5",
+        "created_at": "2026-11-21T14:37:54Z",
+        "updated_at": "2026-11-21T14:37:54Z",
+        "expires_at": "2027-02-19T12:58:38Z",
+        "workflow_run": {
+          "id": 44906524287,
+          "repository_id": 1413730581,
+          "head_repository_id": 1413730581,
+          "head_branch": "main",
+          "head_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336"
+        }
+      }
+    ],
+    "Pages_site_bytes": "Embedded within pages-completion-main-3a.zip"
+  },
+  "open_gates": {
+    "actual_expected_failures": [
+      {
+        "platform": "Linux",
+        "artifact_id": 14710099824,
+        "id": "tests.test_codex5_command_audit_20261121::test_all_explicit_workflow_pip_installs_are_protected",
+        "type": "pytest.xfail",
+        "message": "CODEX-5: repository-wide hashed wheel closure still open"
+      },
+      {
+        "platform": "Linux",
+        "artifact_id": 14710099824,
+        "id": "tests.test_codex_pkg_workflows::test_pip_downloads_require_hashes",
+        "type": "pytest.xfail",
+        "message": "CODEX-5"
+      },
+      {
+        "platform": "Linux",
+        "artifact_id": 14710099824,
+        "id": "tests.test_tier_w_symbols::test_live_llvm_pdbutil_agrees_with_the_stdlib_reader",
+        "type": "pytest.xfail",
+        "message": "BLOCKED: llvm-pdbutil is not installed on this runner"
+      },
+      {
+        "platform": "Linux",
+        "artifact_id": 14710099824,
+        "id": "tests.test_tier_w_symbols::test_live_ghidra_export_runs_or_records_blocked",
+        "type": "pytest.xfail",
+        "message": "BLOCKED: no --ghidra-dir given"
+      },
+      {
+        "platform": "Windows",
+        "artifact_id": 14711281365,
+        "id": "tests.test_codex5_command_audit_20261121::test_all_explicit_workflow_pip_installs_are_protected",
+        "type": "pytest.xfail",
+        "message": "CODEX-5: repository-wide hashed wheel closure still open"
+      },
+      {
+        "platform": "Windows",
+        "artifact_id": 14711281365,
+        "id": "tests.test_codex_pkg_workflows::test_pip_downloads_require_hashes",
+        "type": "pytest.xfail",
+        "message": "CODEX-5"
+      },
+      {
+        "platform": "Windows",
+        "artifact_id": 14711281365,
+        "id": "tests.test_tier_w_symbols::test_live_ghidra_export_runs_or_records_blocked",
+        "type": "pytest.xfail",
+        "message": "BLOCKED: no --ghidra-dir given"
+      }
+    ],
+    "CODEX5_repository_wide_hash_closure_remains_open": true,
+    "TierW_native_tool_blocks_remain_open": true,
+    "native_scope": "Only the two actual automatic workflows listed for this exact main source were observed. No fresh execution of untriggered native lanes, no Windows27 result from later d60, and no ancestor acceptance transfer is asserted."
+  },
+  "prior_publication_failure": {
+    "source_head": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+    "run_id": 44889511406,
+    "failed_job_id": 136802040292,
+    "failure": "configure-pages repository Pages lookup returned HTTP404; tests/static build passed, artifact upload was skipped after configuration failure, deploy was skipped.",
+    "archive": "../main-9023761-publication-holds/main-9023761-postmerge-evidence.zip",
+    "archive_sha256": "74d7390d7ded8087bc6869bab34c997e16e63a4a77d5b7f75d8291da0c3052bf",
+    "source_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44889511406/job/136802040292",
+    "scope": "Prior failure retained separately; main3a repair evidence is source-specific and does not rewrite that observation."
+  },
+  "preservation": {
+    "primary_and_d667_archives_unchanged": true,
+    "earlier_Pages_archive_unchanged": true,
+    "pending_snapshot004_unchanged": true,
+    "no_dispatch_retry_cancel_source_ref_settings_or_release_changes_performed": true
+  }
+}

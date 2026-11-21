@@ -1,0 +1,290 @@
+{
+  "schema": "patchtrace/netutil-stacked-source-review/1",
+  "verdict": "NO_BLOCKING_SOURCE_FINDING_WITHIN_BOUNDED_SCOPE",
+  "recorded_at": "2026-11-21T14:05:53.816639+00:00",
+  "source": {
+    "base": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+    "head354": "a41c7a0d594d1fe26c16da395e6f6f9b33b07eca",
+    "tree354": "cb591be1fb4037e709a1586a41983837bb423741",
+    "head356": "1d475d926314ae116442bfe2b7cd268ad95ea12c",
+    "tree356": "72d30ce1b4ea8ec03b5634a2922d53e0ba7dcb88",
+    "comparison": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+    "complete_commits": 10,
+    "complete_paths": 6
+  },
+  "source_checks": [
+    "354 executable scope: HTTP import/private socket helper/read_bounded body only",
+    "read_bounded signature preserved",
+    "356 changes only nested worker; other runtime AST/signatures/constants identical",
+    "Original354 regression AST unchanged: StallingBody",
+    "Original354 regression AST unchanged: test_deadline_interrupts_blocked_body_without_cancel_event",
+    "Original354 regression AST unchanged: test_deadline_interrupts_blocked_body_even_if_cancel_not_set",
+    "Original354 regression AST unchanged: test_cancelled_read_keeps_cancelled_classification",
+    "Original354 regression AST unchanged: test_fast_body_and_size_cap_are_unchanged",
+    "Original354 regression AST unchanged: test_completed_read_is_refused_if_deadline_passed_during_call",
+    "Only later real HTTP regression added",
+    "Original356 red test bytes equal final tests",
+    "NET001 finding preserved as ordered prefix",
+    "Finding metadata preserved",
+    "Original NET001 report preserved",
+    "Current d60 baseline identical: src/patchtrace/netutil.py",
+    "Current d60 baseline identical: src/patchtrace/enrichment/intelligence.py",
+    "Current d60 baseline identical: src/patchtrace/intelligence/csaf/transport.py",
+    "Current d60 baseline identical: src/patchtrace/providers.py",
+    "Current d60 baseline identical: src/patchtrace/kev/transport.py",
+    "Current d60 baseline identical: tests/test_cancel_latency.py",
+    "Current d60 baseline identical: tests/test_providers_transport.py",
+    "Current d60 baseline identical: tests/test_kev_transport.py",
+    "Current d60 baseline identical: tests/test_intel_transport.py",
+    "Current d60 baseline identical: tests/test_csaf_redirect_integrity.py",
+    "Current d60 baseline identical: tests/test_enrichment_intelligence.py",
+    "Current d60 baseline identical: pyproject.toml",
+    "Actual result verified: deadline-original-red",
+    "Imported bytes verified: deadline-original-red",
+    "Checkout unchanged: deadline-original-red",
+    "Actual result verified: http-pre-socket-red",
+    "Imported bytes verified: http-pre-socket-red",
+    "Checkout unchanged: http-pre-socket-red",
+    "Actual result verified: cleanup-original-red",
+    "Imported bytes verified: cleanup-original-red",
+    "Checkout unchanged: cleanup-original-red",
+    "Actual result verified: deadline-current-green",
+    "Imported bytes verified: deadline-current-green",
+    "Checkout unchanged: deadline-current-green",
+    "Actual result verified: combined-current-green",
+    "Imported bytes verified: combined-current-green",
+    "Checkout unchanged: combined-current-green",
+    "Original deadline failure has intended cause",
+    "Intermediate real HTTP failure is close-latency assertion",
+    "Original cleanup failure has intended cause",
+    "Whole Ruff and pip check passed",
+    "Complete10-commit6-path scope preserved",
+    "Historical blob verified: 9fff565fd59d3d3d23a7a9f4e0a894bd742f8432",
+    "Historical blob verified: 8f7014fb8b10928e1674cb993bc89cdb7af802f8",
+    "Historical blob verified: 4fb2b341328e00f5efd19a47954523f92203b82a",
+    "Historical blob verified: 2898798fe08eee87653db4b404f33bd24a069bd0",
+    "Historical blob verified: 1a4ab63b68850f24c6e3a94ec5e7012c246b2eba",
+    "Historical blob verified: 92797a149d180215a097da0593101f9f5d54d1fd",
+    "Historical blob verified: 1faed5597d3d9aa3dd9f354c47da3db6961606d0",
+    "Historical blob verified: 9e88b76de08bacc43af9bfad856f1875699235f6",
+    "Historical blob verified: 60b7e113607d88c26fe7cbcb772969c5af4619e4",
+    "Historical blob verified: be4b83290b68c3d829e26fcdc740f6b465ce71db",
+    "Historical blob verified: 7c5824978c7088492b42a8cd0625418f875526f2"
+  ],
+  "executions": [
+    {
+      "label": "deadline-original-red",
+      "source_head": "e53bfdeb8b0383ee12340729e20047ff5ddfe62c",
+      "argv": [
+        "/workspace/scratch/837fe19aae3a/windows-recovery-followup-venv/bin/python",
+        "-I",
+        "/workspace/scratch/837fe19aae3a/evidence/netutil-354-356-independent-review/pytest-bootstrap.py",
+        "/workspace/scratch/837fe19aae3a/review-netutil-deadline-parent",
+        "/workspace/scratch/837fe19aae3a/evidence/netutil-354-356-independent-review/deadline-original-red/source-binding.json",
+        "-q",
+        "tests/test_netutil_read_deadline.py",
+        "--rootdir=/workspace/scratch/837fe19aae3a/review-netutil-deadline-parent",
+        "--basetemp=/workspace/scratch/837fe19aae3a/evidence/netutil-354-356-independent-review/deadline-original-red/tmp",
+        "--junitxml=/workspace/scratch/837fe19aae3a/evidence/netutil-354-356-independent-review/deadline-original-red/result.xml"
+      ],
+      "exit": 1,
+      "elapsed_seconds": 2.6268049819991575,
+      "junit": {
+        "cases": 5,
+        "passed": 2,
+        "failed": 3,
+        "errors": 0,
+        "skipped": 0,
+        "nonpasses": [
+          {
+            "id": "tests.test_netutil_read_deadline::test_deadline_interrupts_blocked_body_without_cancel_event",
+            "type": "failure",
+            "message": "Failed: DID NOT RAISE DeadlineExceeded"
+          },
+          {
+            "id": "tests.test_netutil_read_deadline::test_deadline_interrupts_blocked_body_even_if_cancel_not_set",
+            "type": "failure",
+            "message": "Failed: DID NOT RAISE DeadlineExceeded"
+          },
+          {
+            "id": "tests.test_netutil_read_deadline::test_completed_read_is_refused_if_deadline_passed_during_call",
+            "type": "failure",
+            "message": "Failed: DID NOT RAISE DeadlineExceeded"
+          }
+        ]
+      },
+      "worktree_clean_after": true
+    },
+    {
+      "label": "http-pre-socket-red",
+      "source_head": "e92a55c5e37c2766510e74210429f68a5f3c73a2",
+      "argv": [
+        "/workspace/scratch/837fe19aae3a/windows-recovery-followup-venv/bin/python",
+        "-I",
+        "/workspace/scratch/837fe19aae3a/evidence/netutil-354-356-independent-review/pytest-bootstrap.py",
+        "/workspace/scratch/837fe19aae3a/review-netutil-http-pre-socket",
+        "/workspace/scratch/837fe19aae3a/evidence/netutil-354-356-independent-review/http-pre-socket-red/source-binding.json",
+        "-q",
+        "/workspace/scratch/837fe19aae3a/review-netutil-deadline-354/tests/test_netutil_read_deadline.py::test_real_http_stall_does_not_delay_deadline_or_response_close",
+        "--rootdir=/workspace/scratch/837fe19aae3a/review-netutil-http-pre-socket",
+        "--basetemp=/workspace/scratch/837fe19aae3a/evidence/netutil-354-356-independent-review/http-pre-socket-red/tmp",
+        "--junitxml=/workspace/scratch/837fe19aae3a/evidence/netutil-354-356-independent-review/http-pre-socket-red/result.xml"
+      ],
+      "exit": 1,
+      "elapsed_seconds": 3.0259527119997074,
+      "junit": {
+        "cases": 1,
+        "passed": 0,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 0,
+        "nonpasses": [
+          {
+            "id": "::test_real_http_stall_does_not_delay_deadline_or_response_close",
+            "type": "failure",
+            "message": "assert (33516.250417775 - 33514.450600104) < 1.0\n +  where 33516.250417775 = <built-in function monotonic>()\n +    where <built-in function monotonic> = time.monotonic"
+          }
+        ]
+      },
+      "worktree_clean_after": true
+    },
+    {
+      "label": "cleanup-original-red",
+      "source_head": "3e0c37bc1a9fcda47df2bdd99bdf8acfd6e1e205",
+      "argv": [
+        "/workspace/scratch/837fe19aae3a/windows-recovery-followup-venv/bin/python",
+        "-I",
+        "/workspace/scratch/837fe19aae3a/evidence/netutil-354-356-independent-review/pytest-bootstrap.py",
+        "/workspace/scratch/837fe19aae3a/review-netutil-cleanup-parent",
+        "/workspace/scratch/837fe19aae3a/evidence/netutil-354-356-independent-review/cleanup-original-red/source-binding.json",
+        "-q",
+        "tests/test_netutil_abandoned_cleanup.py",
+        "--rootdir=/workspace/scratch/837fe19aae3a/review-netutil-cleanup-parent",
+        "--basetemp=/workspace/scratch/837fe19aae3a/evidence/netutil-354-356-independent-review/cleanup-original-red/tmp",
+        "--junitxml=/workspace/scratch/837fe19aae3a/evidence/netutil-354-356-independent-review/cleanup-original-red/result.xml"
+      ],
+      "exit": 1,
+      "elapsed_seconds": 1.0167679260048317,
+      "junit": {
+        "cases": 2,
+        "passed": 1,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 0,
+        "nonpasses": [
+          {
+            "id": "tests.test_netutil_abandoned_cleanup::test_abandoned_count_includes_late_response_cleanup",
+            "type": "failure",
+            "message": "assert 0 == 4\n +  where 0 = <function abandoned_count at 0x7ff6411f22a0>()\n +    where <function abandoned_count at 0x7ff6411f22a0> = netutil.abandoned_count\n +  and   4 = netutil.MAX_ABANDONED"
+          }
+        ]
+      },
+      "worktree_clean_after": true
+    },
+    {
+      "label": "deadline-current-green",
+      "source_head": "a41c7a0d594d1fe26c16da395e6f6f9b33b07eca",
+      "argv": [
+        "/workspace/scratch/837fe19aae3a/windows-recovery-followup-venv/bin/python",
+        "-I",
+        "/workspace/scratch/837fe19aae3a/evidence/netutil-354-356-independent-review/pytest-bootstrap.py",
+        "/workspace/scratch/837fe19aae3a/review-netutil-deadline-354",
+        "/workspace/scratch/837fe19aae3a/evidence/netutil-354-356-independent-review/deadline-current-green/source-binding.json",
+        "-q",
+        "tests/test_netutil_read_deadline.py",
+        "--rootdir=/workspace/scratch/837fe19aae3a/review-netutil-deadline-354",
+        "--basetemp=/workspace/scratch/837fe19aae3a/evidence/netutil-354-356-independent-review/deadline-current-green/tmp",
+        "--junitxml=/workspace/scratch/837fe19aae3a/evidence/netutil-354-356-independent-review/deadline-current-green/result.xml"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 1.8197018959981506,
+      "junit": {
+        "cases": 6,
+        "passed": 6,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "nonpasses": []
+      },
+      "worktree_clean_after": true
+    },
+    {
+      "label": "combined-current-green",
+      "source_head": "1d475d926314ae116442bfe2b7cd268ad95ea12c",
+      "argv": [
+        "/workspace/scratch/837fe19aae3a/windows-recovery-followup-venv/bin/python",
+        "-I",
+        "/workspace/scratch/837fe19aae3a/evidence/netutil-354-356-independent-review/pytest-bootstrap.py",
+        "/workspace/scratch/837fe19aae3a/review-netutil-cleanup-356",
+        "/workspace/scratch/837fe19aae3a/evidence/netutil-354-356-independent-review/combined-current-green/source-binding.json",
+        "-q",
+        "tests/test_netutil_read_deadline.py",
+        "tests/test_netutil_abandoned_cleanup.py",
+        "tests/test_cancel_latency.py",
+        "tests/test_providers_transport.py",
+        "tests/test_kev_transport.py",
+        "tests/test_intel_transport.py",
+        "tests/test_csaf_redirect_integrity.py",
+        "tests/test_enrichment_intelligence.py",
+        "--rootdir=/workspace/scratch/837fe19aae3a/review-netutil-cleanup-356",
+        "--basetemp=/workspace/scratch/837fe19aae3a/evidence/netutil-354-356-independent-review/combined-current-green/tmp",
+        "--junitxml=/workspace/scratch/837fe19aae3a/evidence/netutil-354-356-independent-review/combined-current-green/result.xml"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 12.71947998199903,
+      "junit": {
+        "cases": 253,
+        "passed": 253,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "nonpasses": []
+      },
+      "worktree_clean_after": true
+    }
+  ],
+  "tool_checks": [
+    {
+      "name": "whole-ruff",
+      "argv": [
+        "/workspace/scratch/837fe19aae3a/windows-recovery-followup-venv/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "src",
+        "tests",
+        "tools"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "pip-check",
+      "argv": [
+        "/workspace/scratch/837fe19aae3a/windows-recovery-followup-venv/bin/python",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "exit": 0
+    }
+  ],
+  "counts_additive": false,
+  "new_code_blockers": [],
+  "separate_inherited_observation": {
+    "evidence": "../netutil-354-356-boundary-review/review.json",
+    "summary": "Five calls admitted before cancellation become abandoned on both902 and356; subsequent admission is refused and all workers drain. Both plain strict-bound assertion failures remain. The docstring overstates an admission threshold; not introduced by356.",
+    "next_action": "Separate owned docstring clarification without runtime policy change."
+  },
+  "remaining_gates": [
+    "Both PRs retain draft/full/hosted/platform/current-main gates.",
+    "356 retains354 dependency; combined source must be requalified.",
+    "352/aa01,353 and355 are not in these checkouts; component results are not combined acceptance.",
+    "Fresh ownership/head/main/review guards and all applicable qualification required before main merge."
+  ],
+  "full_qualification_claimed": false,
+  "merge_approved": false,
+  "release_ready": false,
+  "network_test_scope": "Authored localhost HTTP and inert events only; no external test request",
+  "source_ref_pr_ci_mutations": false,
+  "environment_rebound": false
+}

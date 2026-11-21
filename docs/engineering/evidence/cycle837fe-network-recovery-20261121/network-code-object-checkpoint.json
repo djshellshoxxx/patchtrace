@@ -1,0 +1,14 @@
+{
+  "observed_at": "2026-11-21T14:46:11.426722+00:00",
+  "local_source": "96baaee20f390a3f2a5629de3764d32323bb80e5",
+  "remote_equivalent": "00da7e1d5d13f16acba6f6eb54d00f0167e5c62e",
+  "tree": "4343dce701f20d3b6bc591297d1a887bb05cc461",
+  "actual_fetched_commits_verified": 6,
+  "novel_blobs_verified": 8,
+  "trees_parents_messages_and_holds_verified": true,
+  "ref_moved": false,
+  "pr_created": false,
+  "mapping_pending_field_is_prior_creation_snapshot": true,
+  "original_blob_payloads_preserved_in": "network-recovery-integration.zip source bundle and snapshots",
+  "root_source_unchanged": true
+}

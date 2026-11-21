@@ -1,0 +1,86 @@
+{
+  "schema": "patchtrace/historical-backend-exit-independent-review/1",
+  "reviewed_at": "2026-11-21T14:15:17.552393+00:00",
+  "classification": "SUPERSEDED",
+  "verdict": "CLEAR_COMPLETE_NAMED_BRANCH_DISPOSITION",
+  "blockers": [],
+  "donor_head": "bc00a6912dde57482a301bf64ef6fbc3f324cb92",
+  "donor_tree": "ca7b3bf15c27588560eb09c31802b58be5d7c12b",
+  "base": "736332cf63d3c7927f5c17f4aea5150f624bf957",
+  "comparison_head": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+  "comparison_tree": "4a07cd88ded407bef30a8aeb81961e4041822dc2",
+  "whole_branch_scope": {
+    "commits": 7,
+    "nonmerge": 6,
+    "merge": 1,
+    "net_paths": 6,
+    "historical_paths": 13,
+    "inherited_main_only_paths": 7,
+    "preserved_historical_source_versions": 99,
+    "focused_tar_files": 714
+  },
+  "semantic": "Every original classifier AST branch remains after removal of exactly one later cached-symbol fixed-hint branch. Original regression definitions, integration raise, specification, module and QA lines remain. Maintained fixture only adds explicit script launch while retaining isolated interpreter flags.",
+  "retained_actual_results": {
+    "historical-tests-before-fix": {
+      "passed": 0,
+      "failed": 8,
+      "errors": 0,
+      "skipped": 0,
+      "failure_names": [
+        "test_exit_diagnostics_identify_common_failures_without_echoing_raw_logs[java.lang.IllegalArgumentException: Path element starting with '.' is not permitted-dot-prefixed]",
+        "test_exit_diagnostics_identify_common_failures_without_echoing_raw_logs[java.lang.UnsupportedClassVersionError: class file version-JDK]",
+        "test_exit_diagnostics_identify_common_failures_without_echoing_raw_logs[ModuleNotFoundError: No module named 'ghidriff'-Ghidriff installation]",
+        "test_exit_diagnostics_identify_common_failures_without_echoing_raw_logs[java.lang.OutOfMemoryError: Java heap space-memory]",
+        "test_exit_diagnostics_identify_common_failures_without_echoing_raw_logs[OSError: No space left on device-disk space]",
+        "test_exit_diagnostics_identify_common_failures_without_echoing_raw_logs[java.nio.file.AccessDeniedException: C:/work-permissions]",
+        "test_unknown_exit_diagnostics_keep_original_status_code",
+        "test_nonzero_backend_exit_preserves_classified_error_and_log"
+      ]
+    },
+    "original-donor-tests": {
+      "passed": 8,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failure_names": []
+    },
+    "original-tests-current-source": {
+      "passed": 7,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0,
+      "failure_names": [
+        "test_nonzero_backend_exit_preserves_classified_error_and_log"
+      ]
+    },
+    "maintained-current-tests": {
+      "passed": 10,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failure_names": []
+    }
+  },
+  "obsolete_fixture_failure_explanation_verified": true,
+  "classifier_tail_limit_unit": "The slice is 2*1024*1024 Python string characters; this is unchanged, not a new UTF-8 byte-limit claim.",
+  "bundle_prerequisites": [
+    "736332cf63d3c7927f5c17f4aea5150f624bf957",
+    "0f1b4ce5a0b51526fdceb5533f0553321899fd2a"
+  ],
+  "second_bundle_prerequisite_is_ancestor_of_first": true,
+  "original_census": {
+    "unmatched": 181,
+    "patch_equivalent": 16,
+    "donor_original_bucket": "unmatched-patches-review-required",
+    "unchanged": true,
+    "no_remaining_work_recount": true
+  },
+  "mechanical_checks": 1158,
+  "new_product_or_native_tests_run": 0,
+  "author_archive_sha256": "bc29de9d8b82fd720773d845e641986fb52a00c34ce168c7adf5f1b8cb5035ff",
+  "source_ref_PR_CI_ledger_mutations": false,
+  "branch_deletion_authorized": false,
+  "full_inventory_closed": false,
+  "release_or_native_acceptance_claimed": false,
+  "next_action": "Root may record this one complete named disposition while retaining branch/history/failures and all wider gates; no source port needed."
+}

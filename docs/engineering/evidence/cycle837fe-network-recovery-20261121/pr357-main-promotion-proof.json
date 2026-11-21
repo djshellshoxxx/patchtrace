@@ -1,0 +1,19 @@
+{
+  "schema": "patchtrace/pr357-actual-main-promotion/1",
+  "actual_merge": "ea16019601486c831941f9bc1a7ba5862a170317",
+  "source_head": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+  "previous_main": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+  "tree": "4a07cd88ded407bef30a8aeb81961e4041822dc2",
+  "ordered_parents": [
+    "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+    "d60ac40daf767fe6a93ae152feb21235f6e75e0b"
+  ],
+  "complete_source_diff_empty": true,
+  "subject_markers_verified": true,
+  "body_markers_verified": true,
+  "actual_commit_bytes_sha256": "0b35a56ca2017f4971a0300a66c31b43cf120e0130c62071818b2e834c7bda34",
+  "source_qualification_archive_sha256": "0b70d118ec79e9a88230eb7dd404bc7ebf5080f78c6d2c15614dccdb493a6b08",
+  "independent_completion_review_sha256": "653b4f4c42ade27077153a948128517902bdef89861e5153ac1738eecc96c58c",
+  "new_main_qualification": "separate automatic stream pending",
+  "release_or_deployment_claimed": false
+}

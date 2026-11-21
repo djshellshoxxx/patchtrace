@@ -1,0 +1,62 @@
+{
+  "schema": "patchtrace/network-prepublication-independent/1",
+  "observed_at": "2026-11-21T14:57:43.842621+00:00",
+  "verdict": "CLEAR_WITHIN_IMMUTABLE_OBJECT_AND_STATIC_RECORD_PREPARATION_SCOPE",
+  "source": "96baaee20f390a3f2a5629de3764d32323bb80e5",
+  "tree": "4343dce701f20d3b6bc591297d1a887bb05cc461",
+  "remote_equivalent": "00da7e1d5d13f16acba6f6eb54d00f0167e5c62e",
+  "checks": 217,
+  "actual_git_object_checks": 100,
+  "static_input_checks": 113,
+  "existing_record_retention_checks": 4,
+  "all_checks_passed": true,
+  "source_blockers": [],
+  "actual_commits_verified": 6,
+  "novel_source_blobs_verified": 8,
+  "complete_trees_and_ordered_mapped_parents_equal": true,
+  "all6messages_byte_identical": true,
+  "both_opt_out_markers_in_actual_subjects_and_bodies": true,
+  "public_donor_ancestry_retained": [
+    "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+    "e3928ab8c8e2deee7bb01b0f857205f68a1abda2",
+    "a41c7a0d594d1fe26c16da395e6f6f9b33b07eca",
+    "1d475d926314ae116442bfe2b7cd268ad95ea12c",
+    "d0a4bdf439775999340ea760d96a087e032ee6dd",
+    "e2127864cb481026db0157082d688b8a36595e3b"
+  ],
+  "selected_static_files": 23,
+  "selected_static_bytes": 16615652,
+  "distinct_selected_outer_archives": 6,
+  "all_static_sizes_SHA256_Git_blob_ids_and_member_chains_verified": true,
+  "existing_PR353_PR355_records_exact_at_d60_96_remote00": true,
+  "duplicate_outer_archives_avoided_by_explicit_nested_retention": true,
+  "original_failures_and_history_preserved": true,
+  "creation_pending_mapping_field_preserved_as_history": true,
+  "later_actual_object_proof_and_checkpoint_close_pending_field": true,
+  "static_plan_sha256": "5e4c1c36fc26fb2586020873b5eaf805ec6d73d5dc2fff0c75ba7ba1fa92104c",
+  "source96_clean": true,
+  "records_applied": false,
+  "final_assembled_record_approval": false,
+  "full_native_platform_main_or_release_acceptance": false,
+  "fresh_remote_ref_inventory_performed": false,
+  "remote_static_blob_upload_requeried": false,
+  "product_tests_installation_native_CI_source_ref_PR_actions": false,
+  "remaining_preparation_gates": [
+    "Pilot-tooling implementation and independent review if integrated",
+    "Actual qualified PR357 main promotion and ancestry proof",
+    "Separate main3a acceptance archive",
+    "Final candidate source and independently reviewed records"
+  ],
+  "authority": "Root retains integration/publication authority",
+  "limits": [
+    "Actual immutable Git objects verified from local fetched bytes; no fresh unrelated remote activity assessment",
+    "Static blob identities recomputed from exact selected bytes; no mutation or new upload performed",
+    "This preparation receipt does not qualify an unreviewed pilot descendant or authorize promotion"
+  ],
+  "report": "README.md",
+  "proofs": [
+    "object-proof.json",
+    "static-proof.json",
+    "existing-record-retention.json"
+  ]
+}

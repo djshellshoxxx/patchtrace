@@ -1,0 +1,166 @@
+{
+  "schema": "patchtrace/network-final-records-independent/1",
+  "completed_at": "2026-11-21T16:42:56.833172+00:00",
+  "verdict": "CLEAR_ASSEMBLED_RECORDS_FOR_BOUNDED_PROOF_APPEND_AND_COMMIT",
+  "source": "9610919d29010d53cf00af3b7c38207ffd84f945",
+  "tree": "3d5e2965ef26235610a08fd8378cac078c6bd9a0",
+  "reviewed_record_tree": "3cc6e322a5959edb48abb4c7382099dcb63a2c7a",
+  "reviewed_record_tree_method": "Pure in-memory Git tree encoding verified against frozen source; no index or Git object writes. Actual record commit does not exist at review time.",
+  "blockers": [],
+  "record_scope": {
+    "outputs": 72,
+    "bytes": 50245691,
+    "static_inputs": 61,
+    "evidence_manifest_payloads": 66,
+    "tracked_modified_files": 4,
+    "new_report_and_evidence_paths_only": true,
+    "source_runtime_tests_tools_workflows_specs_unchanged": true
+  },
+  "bindings": {
+    "after_assembly_receipt_sha256": "52204f0e7b5f4889d51c52014fa5f0199fc86905a456e9f37c9e068475d209d9",
+    "context_sha256": "bd39db0388414a2200f1b43c1c33633d5437ecef946fd372035dfd26628ffe12",
+    "manifest_sha256": "9d1d7f5d39b78ac5162d7349812c52900673f872081ce820a6ff81e061f0c718",
+    "static_plan_v5_sha256": "566519d17021f7c47e806706bf416d29cd9ce9b861e6d900f6f7c5a06d96ed94",
+    "initial_interrupted_receipt_sha256": "07d811e45bb15b0e1b21a5660ffdab4badc6fef7ae2502cc775e5ba96676941c",
+    "corrected_assembler_sha256": "65f53340375845bf4d473a7343a97f908448dbbf2aacc7f0e37b7569b2ecad05",
+    "sealed_preparation_review_sha256": "b9059fa599fd7d610ba7b00b06af86022b59bb4b72ca4c3fcbd8dfc8a51a20bb"
+  },
+  "checks": {
+    "record_preservation_transport": 454,
+    "claims_and_ancestry": 33,
+    "top_level_total": 487,
+    "failed_final_top_level_checks": 0,
+    "distinct_nested_archives": 50,
+    "nested_archive_instances": 54,
+    "members_in_unique_archives": 2239,
+    "local_manifest_rows_verified": 2151,
+    "cross_manifest_references_resolved": 154,
+    "cross_manifest_reference_types": {
+      "resolved_nested_members": 48,
+      "resolved_exact_archive": 16,
+      "unchanged_public_d60_git_path": 87,
+      "unchanged_current_candidate_path": 3
+    },
+    "new_product_tests": 0,
+    "actual_evidence_reassembly_invocations": 1
+  },
+  "ledger": {
+    "baseline_tasks": 116,
+    "baseline_task_ids_and_order_retained": true,
+    "notes": 46,
+    "notes_unchanged": true,
+    "explicit_prior_task_updates": 5,
+    "unchanged_prior_tasks": 111,
+    "new_tasks": 14,
+    "total_tasks": 130,
+    "whole_ledger_independently_reconstructed": true,
+    "prior_continuation_history_unchanged": true,
+    "full_changed_task_before_images_preserved": true,
+    "full_previous_current_fields_preserved": true,
+    "full_old_windows_checkpoint_preserved": true,
+    "current_windows_checkpoint": "MERGED qualified d60/4a07 at actual ea160; original f596 pending checkpoint is explicitly historical",
+    "qa_todo_handoff": "Entire frozen961 bytes retained exactly once as suffix after explicit new prefix",
+    "historical_census": {
+      "unmatched": 181,
+      "patch_equivalent": 16,
+      "unchanged": true
+    },
+    "broader_C5_rows": "Remain BLOCKED; current42/3/39 progress does not close broad dependency gates"
+  },
+  "transport": {
+    "original_sealed_archive_sha256": "81a7e43597b9100c7b41a0a4ebcb477db8511d7f222a589faa1e5821140959b3",
+    "archive_bytes": 16865753,
+    "archive_unique_members": 145,
+    "parts": [
+      9999999,
+      6865754
+    ],
+    "concatenation_byte_equal_original": true,
+    "all_original_CRCs_verified": true,
+    "actual_helper_verify_only": "exit0, output=null, exact original hash/size/member count",
+    "original_archive_and_review_seals_unchanged": true,
+    "ledger_changes": "Exactly one evidence link in new Sigstore task124; matching context new-task8 link only",
+    "report": "Complete original16154-byte report retained as prefix; explanatory transport addendum appended",
+    "other_original_outputs_unchanged": 62,
+    "removed_candidate_duplicate": "Only oversized original ZIP copy; exact full bytes retained via indexed segments",
+    "new_files": 6,
+    "repair_archive_sha256": "cf5099560980aae3427c936ec9735d680988c7fa7851858588a5e170286aa802",
+    "initial67_output_state_and_reported_HTTP400_error": "Retained byte-exact in repair archive; original peer archive not repacked or retried by reviewer"
+  },
+  "provenance": {
+    "source_original_commits_above_d60": 38,
+    "source_changed_paths_above_d60": 29,
+    "seven_tooling_equivalent_objects": "Actual complete trees/ordered mapped parents/messages/markers verified in sealed235-check preparation; identical proof retained and current remote object rechecked",
+    "public_donor_ancestry": "Retained; no donor behavior or histories discarded by record assembly",
+    "actual_prior_main": {
+      "sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "parents": [
+        "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+        "d60ac40daf767fe6a93ae152feb21235f6e75e0b"
+      ],
+      "tree": "4a07cd88ded407bef30a8aeb81961e4041822dc2",
+      "raw_sha256": "0b35a56ca2017f4971a0300a66c31b43cf120e0130c62071818b2e834c7bda34"
+    },
+    "remote_code": {
+      "sha": "5c07bfd1a41b399fee86545206ed1c5e9aec0c26",
+      "parents": [
+        "a5c814f7387698dd65f352fc5c78628de97cf9b2"
+      ],
+      "tree": "3d5e2965ef26235610a08fd8378cac078c6bd9a0",
+      "raw_sha256": "c1072f9eeb2614d83842aadaf188199b0adb76de6846a657ef917ce10c1d5b12"
+    },
+    "planned_local_parents": [
+      "9610919d29010d53cf00af3b7c38207ffd84f945",
+      "ea16019601486c831941f9bc1a7ba5862a170317"
+    ],
+    "planned_remote_parents": [
+      "5c07bfd1a41b399fee86545206ed1c5e9aec0c26",
+      "ea16019601486c831941f9bc1a7ba5862a170317"
+    ]
+  },
+  "qualification_limits": {
+    "root_current_source": "654 passed/2 unchanged strictC5 xfails,656distinct,26selectors; no full/native/platform inference",
+    "PR357": "Exactd60 qualification and actualea160 promotion only:18jobs16success2intentional publication skips,27WindowsPowerShellcases,287completion+81promotion peer checks",
+    "older_main3a": "Separate completed14job12success2skip stream;213peerchecks",
+    "new_main_ea160": "Immutable native-only checkpoint; fullQA and actual release/Pages hold outcomes remain separately pending in frozen record",
+    "pilot": "Additional manual workflow unexecuted/access-blocked, reportwriter not-evaluated; no accuracy result",
+    "Sigstore": "Dependency closure plus guarded help/version only; one blocked import-time IPv6 constructor per CLI, zeroDNS/connect/send; no signature/identity/artifact operation",
+    "current_candidate": "Final record-bearing hosted full/platform/native jobs and fresh guarded main promotion remain pending; release_ready=false and main_merge_eligible=false"
+  },
+  "preserved_failures": "All earlier donor/parent regressions, intermediateYAML failure, cleanup/setup/census/bundle/CLI/reviewer errors and unexplainedSIGKILLs remain through byte-identical author/peer archives and unchanged prior ledger; initial helper guard findings remain in sealed preparation; originalHTTP400 retained.",
+  "reviewer_error_retained": {
+    "file": "retained-reviewer-resolution-error.json",
+    "initial_exit_code": 1,
+    "scope": "Reference-resolution harness initially searched nested archives and prior Windows directory but omitted current standalone evidence directory;151of154resolved.",
+    "resolution": "Remaining three files matched exact current candidate/oldmanifest hashes. Corrected final154of154; no candidate mutation or product failure."
+  },
+  "bounded_followup_append": {
+    "allowed": "Add exact sealed peer review JSON/ZIP and preserved pre-review manifest; regenerate outer manifest. Leave frozen ledger/context/report and all71other reviewed outputs unchanged.",
+    "suggested_candidate_names": [
+      "network-final-records-independent-review.json",
+      "network-final-records-independent.zip",
+      "pre-final-records-independent-manifest.json"
+    ],
+    "pre_append_manifest_sha256": "9d1d7f5d39b78ac5162d7349812c52900673f872081ce820a6ff81e061f0c718",
+    "then_required": "Verify actual local commit and mapped remote complete tree/ordered parents/actual markers, followed by guarded publication and exact final-source hosted qualification.",
+    "no_circular_self_hash_requirement": true
+  },
+  "mutations": {
+    "reviewer_source_or_candidate_edits": false,
+    "environment_changes": false,
+    "refs_PR_CI_actions": false,
+    "Git_index_or_object_writes": false,
+    "reviewer_outputs": "Only assigned independent scratch evidence"
+  },
+  "evidence": [
+    "actual-record-checks.json",
+    "actual-record-proof.json",
+    "claims-ancestry-checks.json",
+    "claims-ancestry-proof.json",
+    "transport-nested-archive-proof.json",
+    "transport-external-manifest-resolution.json",
+    "reassembly-verify-only.json",
+    "initial-state.json",
+    "final-state.json"
+  ]
+}

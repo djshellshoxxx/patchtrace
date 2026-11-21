@@ -1,0 +1,1289 @@
+{
+  "schema": "patchtrace/final-completion-delta-independent-review/1",
+  "completed_at": "2026-11-21T15:27:13.416691+00:00",
+  "verdict": "clear_qualified_with_documented_open_gates",
+  "source": {
+    "repo_full_name": "djshellshoxxx/PatchTrace",
+    "pull_request": 357,
+    "pull_request_url": "https://github.com/djshellshoxxx/PatchTrace/pull/357",
+    "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+    "head_tree_sha": "4a07cd88ded407bef30a8aeb81961e4041822dc2",
+    "head_parents": [
+      "4202e5e79e2aea6366c75261d74544ea48368ca5",
+      "3a16290c0fcc4e0c21712fe10474a3ff33fad336"
+    ],
+    "base_sha": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+    "synthetic_merge_sha": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+    "synthetic_merge_tree_sha": "4a07cd88ded407bef30a8aeb81961e4041822dc2",
+    "synthetic_merge_parents": [
+      "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+      "d60ac40daf767fe6a93ae152feb21235f6e75e0b"
+    ],
+    "main_at_final_observation": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+    "head_and_synthetic_complete_trees_equal": true,
+    "final_guard_file": "final-source-and-run-guard.json",
+    "expected_checkout_by_run": {
+      "44910528283": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+      "44910528348": "254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57"
+    }
+  },
+  "parent_archive": {
+    "file": "/workspace/scratch/837fe19aae3a/evidence/final-d60-qualification/final-d60-evidence.zip",
+    "bytes": 3038215,
+    "sha256": "0b70d118ec79e9a88230eb7dd404bc7ebf5080f78c6d2c15614dccdb493a6b08",
+    "manifest_sha256": "4f165202d278f98be242323bb49cc97e4b7b1816183b7d6ca4cc853259c403bb",
+    "qualification_sha256": "a6f59daaa6d1dc3b495705ec26c6f392a2a4a383b846d20f7a4ccc8c397ea5f1",
+    "members": 145,
+    "payloads": 144
+  },
+  "check_count": 287,
+  "failure_count": 0,
+  "checks": [
+    {
+      "name": "Parent ZIP expected bytes and hash",
+      "passed": true
+    },
+    {
+      "name": "Manifest and qualification expected hashes",
+      "passed": true
+    },
+    {
+      "name": "External manifest and qualification unchanged",
+      "passed": true
+    },
+    {
+      "name": "Parent ZIP CRC and complete145-member inventory",
+      "passed": true
+    },
+    {
+      "name": "Parent member FINAL_README.md",
+      "passed": true
+    },
+    {
+      "name": "Parent member README.md",
+      "passed": true
+    },
+    {
+      "name": "Parent member application-raw-cache-result.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifact-14709594641.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifact-14709899284.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifact-14710346116.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifact-14710376722.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14709594641/extracted/live-cache-diagnostics/first.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14709594641/extracted/live-cache-diagnostics/result.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14709594641/extracted/live-cache-diagnostics/second.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14709594641/original.zip",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14709899284/extracted/live-project/runs/3ba0a24d-f48a-4eb3-8ff4-4653744cf118/analysis.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14709899284/extracted/live-project/runs/3ba0a24d-f48a-4eb3-8ff4-4653744cf118/backend-execution.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14709899284/extracted/live-project/runs/3ba0a24d-f48a-4eb3-8ff4-4653744cf118/raw/359578497948f21a5dd133dc6d98eca55c417750cc98d42f51357793c41ceaa5.bin-ee52c6da661fcccc3e1b02707955003a7c69de2938d79ad3cdba252d56e1442c.bin.ghidriff.md",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14709899284/extracted/live-project/runs/3ba0a24d-f48a-4eb3-8ff4-4653744cf118/raw/ghidriff.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14709899284/extracted/live-project/runs/3ba0a24d-f48a-4eb3-8ff4-4653744cf118/raw/json/359578497948f21a5dd133dc6d98eca55c417750cc98d42f51357793c41ceaa5.bin-ee52c6da661fcccc3e1b02707955003a7c69de2938d79ad3cdba252d56e1442c.bin.ghidriff.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14709899284/extracted/live-project/runs/3ba0a24d-f48a-4eb3-8ff4-4653744cf118/raw/json/359578497948f21a5dd133dc6d98eca55c417750cc98d42f51357793c41ceaa5.bin-ee52c6da661fcccc3e1b02707955003a7c69de2938d79ad3cdba252d56e1442c.bin.ghidriff.matches.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14709899284/original.zip",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14710346116/extracted/live-project/runs/72df067e-c3c6-4c7f-a5db-7e389f70535a/analysis.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14710346116/extracted/live-project/runs/72df067e-c3c6-4c7f-a5db-7e389f70535a/backend-execution.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14710346116/extracted/live-project/runs/72df067e-c3c6-4c7f-a5db-7e389f70535a/raw/23975ee1287700638ec5f1bfc741eec8a292337bfb56f7012d12defebaf1fb38.bin-ec89159aa63f8107ad26f2c3afe2a7596ef50d795ae35c1f0819fb63ca3a988e.bin.ghidriff.md",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14710346116/extracted/live-project/runs/72df067e-c3c6-4c7f-a5db-7e389f70535a/raw/ghidriff.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14710346116/extracted/live-project/runs/72df067e-c3c6-4c7f-a5db-7e389f70535a/raw/json/23975ee1287700638ec5f1bfc741eec8a292337bfb56f7012d12defebaf1fb38.bin-ec89159aa63f8107ad26f2c3afe2a7596ef50d795ae35c1f0819fb63ca3a988e.bin.ghidriff.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14710346116/extracted/live-project/runs/72df067e-c3c6-4c7f-a5db-7e389f70535a/raw/json/23975ee1287700638ec5f1bfc741eec8a292337bfb56f7012d12defebaf1fb38.bin-ec89159aa63f8107ad26f2c3afe2a7596ef50d795ae35c1f0819fb63ca3a988e.bin.ghidriff.matches.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14710346116/original.zip",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14710376722/extracted/live-project/runs/b069ec46-9771-42bd-beab-c67dde393b98/analysis.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14710376722/extracted/live-project/runs/b069ec46-9771-42bd-beab-c67dde393b98/backend-execution.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14710376722/extracted/live-project/runs/b069ec46-9771-42bd-beab-c67dde393b98/raw/3114c8a42fccbcedaefca8b0a9e915c1641eaeb8af99b7f9b38638d5e1c18d6d.bin-57324dd3180b1c2bddf9ac8e2c957bfc7fd93a204797561107eb0312f7a9fc12.bin.ghidriff.md",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14710376722/extracted/live-project/runs/b069ec46-9771-42bd-beab-c67dde393b98/raw/ghidriff.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14710376722/extracted/live-project/runs/b069ec46-9771-42bd-beab-c67dde393b98/raw/json/3114c8a42fccbcedaefca8b0a9e915c1641eaeb8af99b7f9b38638d5e1c18d6d.bin-57324dd3180b1c2bddf9ac8e2c957bfc7fd93a204797561107eb0312f7a9fc12.bin.ghidriff.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14710376722/extracted/live-project/runs/b069ec46-9771-42bd-beab-c67dde393b98/raw/json/3114c8a42fccbcedaefca8b0a9e915c1641eaeb8af99b7f9b38638d5e1c18d6d.bin-57324dd3180b1c2bddf9ac8e2c957bfc7fd93a204797561107eb0312f7a9fc12.bin.ghidriff.matches.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14710376722/original.zip",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14711636807/original.zip",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14711636807/pair-publication-results.xml",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14711636807/qa-leg-result.txt",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14711636807/qa-results.xml",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14712204882/original.zip",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14712204882/pair-publication-results.xml",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14712204882/qa-leg-result.txt",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14712204882/qa-results.xml",
+      "passed": true
+    },
+    {
+      "name": "Parent member final-artifact-metadata.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member final-job-records.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member final-native-artifact-metadata.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member final-native-job-records.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member final-qualification.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member final-run-44910528283.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member final-run-44910528348.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member final-source-and-run-guard.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member independent-reviews/native-REVIEW.md",
+      "passed": true
+    },
+    {
+      "name": "Parent member independent-reviews/native-audit.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member independent-reviews/native-audit.py",
+      "passed": true
+    },
+    {
+      "name": "Parent member independent-reviews/qa-delta-archive-receipt.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member independent-reviews/qa-delta-review.zip",
+      "passed": true
+    },
+    {
+      "name": "Parent member initial-source-and-runs.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-001.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-002.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-003.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-004.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-005.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-006.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-007.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-008.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-009.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-010.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-011.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-012.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-013.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-014.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-015.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-016.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-017.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-018.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member linux-frozen-smoke-completion.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member linux-full-completion.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member linux-package-completion.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member logs/136865171950.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member logs/136865171976.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member logs/136865172018.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member logs/136865172059.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member logs/136865172072.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member logs/136865172117.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member logs/136865172123.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member logs/136865172146.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member logs/136865172148.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member logs/136865172158.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member logs/136865172187.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member logs/136865172211.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member logs/136888380493.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member logs/136888380527.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member logs/136888792650.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member logs/136888792729.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member native-artifacts-snapshot-001.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member native-artifacts-snapshot-002.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member native-artifacts-snapshot-003.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member native-summary.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member original-ghidra-archive-cache-136865171976.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member original-ghidra-archive-cache-136865172117.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member original-ghidra-archive-cache-136865172123.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member original-ghidra-archive-cache-136865172187.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member original-ghidra-archive-cache-136865172211.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member pinned-powershell-test-source-binding.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member pinned-powershell-test-sources.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member pinned-workflow-sources.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member predecessor-evidence-index.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member prior-qualification-pointers.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member qa-artifact-linux-14711636807.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member qa-artifact-windows-14712204882.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member qt-completion-136865171950.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member qt-completion-136865172018.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member qt-completion-136865172059.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member qt-completion-136865172072.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member qt-completion-136865172148.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member qt-five-completion.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member raw-job-136865171950.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member raw-job-136865171976.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member raw-job-136865172018.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member raw-job-136865172059.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member raw-job-136865172072.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member raw-job-136865172117.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member raw-job-136865172123.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member raw-job-136865172146.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member raw-job-136865172148.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member raw-job-136865172158.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member raw-job-136865172187.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member raw-job-136865172211.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member raw-job-136888380493.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member raw-job-136888380527.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member raw-job-136888792650.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member raw-job-136888792729.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member required-gate-plan.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member source-and-run-discovery-202611211426Z.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member source-and-run-discovery-202611211433Z.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member source-and-run-discovery-202611211440Z.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member source-and-run-discovery-202611211445Z.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member source-and-run-discovery-202611211454Z.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member source-and-run-discovery-202611211459Z.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member source-and-run-discovery-202611211504Z.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member source-and-run-discovery-202611211509Z.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member source-and-run-discovery-202611211514Z.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member source-and-run-discovery-20261121T1356Z.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member source-tree-diff.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member windows-downloaded-artifact-validation.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member windows-powershell27-completion.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member windows-producer-completion.json",
+      "passed": true
+    },
+    {
+      "name": "External archive receipt agrees",
+      "passed": true
+    },
+    {
+      "name": "Final guard observed15:20:42",
+      "passed": true
+    },
+    {
+      "name": "Exact final PR/head/base/main",
+      "passed": true
+    },
+    {
+      "name": "Exact source complete tree and parents",
+      "passed": true
+    },
+    {
+      "name": "Exact synthetic merge/tree/ordered parents",
+      "passed": true
+    },
+    {
+      "name": "Final summary source matches guard",
+      "passed": true
+    },
+    {
+      "name": "Only two actually discovered applicable runs",
+      "passed": true
+    },
+    {
+      "name": "44910528283: completed PR success attempt1",
+      "passed": true
+    },
+    {
+      "name": "44910528348: completed PR success attempt1",
+      "passed": true
+    },
+    {
+      "name": "18 actual completed jobs16success2skip",
+      "passed": true
+    },
+    {
+      "name": "Exact PR release skips",
+      "passed": true
+    },
+    {
+      "name": "136865171950: exact raw log source/checkout",
+      "passed": true
+    },
+    {
+      "name": "136865172018: exact raw log source/checkout",
+      "passed": true
+    },
+    {
+      "name": "136865172059: exact raw log source/checkout",
+      "passed": true
+    },
+    {
+      "name": "136865172072: exact raw log source/checkout",
+      "passed": true
+    },
+    {
+      "name": "136865172146: exact raw log source/checkout",
+      "passed": true
+    },
+    {
+      "name": "136865172148: exact raw log source/checkout",
+      "passed": true
+    },
+    {
+      "name": "136865172158: exact raw log source/checkout",
+      "passed": true
+    },
+    {
+      "name": "136865172968: no executed runner or steps",
+      "passed": true
+    },
+    {
+      "name": "136888380493: exact raw log source/checkout",
+      "passed": true
+    },
+    {
+      "name": "136888380527: exact raw log source/checkout",
+      "passed": true
+    },
+    {
+      "name": "136888792650: exact raw log source/checkout",
+      "passed": true
+    },
+    {
+      "name": "136888792729: exact raw log source/checkout",
+      "passed": true
+    },
+    {
+      "name": "136889308090: no executed runner or steps",
+      "passed": true
+    },
+    {
+      "name": "136865171976: exact raw log source/checkout",
+      "passed": true
+    },
+    {
+      "name": "136865172117: exact raw log source/checkout",
+      "passed": true
+    },
+    {
+      "name": "136865172123: exact raw log source/checkout",
+      "passed": true
+    },
+    {
+      "name": "136865172187: exact raw log source/checkout",
+      "passed": true
+    },
+    {
+      "name": "136865172211: exact raw log source/checkout",
+      "passed": true
+    },
+    {
+      "name": "All16 actual checkout logs verified",
+      "passed": true
+    },
+    {
+      "name": "Final summary run/job inventory agrees",
+      "passed": true
+    },
+    {
+      "name": "All11 required QA jobs successful",
+      "passed": true
+    },
+    {
+      "name": "Final verdict counts agree",
+      "passed": true
+    },
+    {
+      "name": "Original175 native audit exact and passed",
+      "passed": true
+    },
+    {
+      "name": "Original96 QA audit ZIP exact and passed",
+      "passed": true
+    },
+    {
+      "name": "QA companion CRC/inventory",
+      "passed": true
+    },
+    {
+      "name": "QA companion member qa-delta-audit.py",
+      "passed": true
+    },
+    {
+      "name": "QA companion member qa-delta-REVIEW.md",
+      "passed": true
+    },
+    {
+      "name": "QA companion member qa-delta-review.json",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged native-summary.json",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged initial-source-and-runs.json",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged required-gate-plan.json",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged final-run-44910528348.json",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged final-native-job-records.json",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged final-native-artifact-metadata.json",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged source-tree-diff.json",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged pinned-workflow-sources.json",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged raw-job-136865171976.json",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged logs/136865171976.log",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged original-ghidra-archive-cache-136865171976.json",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged raw-job-136865172117.json",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged logs/136865172117.log",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged original-ghidra-archive-cache-136865172117.json",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged raw-job-136865172123.json",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged logs/136865172123.log",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged original-ghidra-archive-cache-136865172123.json",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged raw-job-136865172187.json",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged logs/136865172187.log",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged original-ghidra-archive-cache-136865172187.json",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged raw-job-136865172211.json",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged logs/136865172211.log",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged original-ghidra-archive-cache-136865172211.json",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged artifact-14710376722.json",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged artifacts/14710376722/original.zip",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged artifact-14710346116.json",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged artifacts/14710346116/original.zip",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged artifact-14709899284.json",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged artifacts/14709899284/original.zip",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged artifact-14709594641.json",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged artifacts/14709594641/original.zip",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged application-raw-cache-result.json",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged pinned-powershell-test-sources.json",
+      "passed": true
+    },
+    {
+      "name": "Native175 original input unchanged pinned-powershell-test-source-binding.json",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged initial-source-and-runs.json",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged required-gate-plan.json",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged jobs-snapshot-017.json",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged linux-full-completion.json",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged windows-producer-completion.json",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged qt-five-completion.json",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged windows-powershell27-completion.json",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged windows-downloaded-artifact-validation.json",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged linux-package-completion.json",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged raw-job-136865172146.json",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged logs/136865172146.log",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged raw-job-136865172158.json",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged logs/136865172158.log",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged raw-job-136888380527.json",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged logs/136888380527.log",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged raw-job-136888380493.json",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged logs/136888380493.log",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged raw-job-136865172018.json",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged logs/136865172018.log",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged raw-job-136865172148.json",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged logs/136865172148.log",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged raw-job-136865171950.json",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged logs/136865171950.log",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged raw-job-136865172059.json",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged logs/136865172059.log",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged raw-job-136865172072.json",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged logs/136865172072.log",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged qa-artifact-linux-14711636807.json",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged artifacts/14711636807/original.zip",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged artifacts/14711636807/pair-publication-results.xml",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged artifacts/14711636807/qa-results.xml",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged artifacts/14711636807/qa-leg-result.txt",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged qa-artifact-windows-14712204882.json",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged artifacts/14712204882/original.zip",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged artifacts/14712204882/pair-publication-results.xml",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged artifacts/14712204882/qa-results.xml",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged artifacts/14712204882/qa-leg-result.txt",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged pinned-powershell-test-sources.json",
+      "passed": true
+    },
+    {
+      "name": "QA96 original input unchanged pinned-powershell-test-source-binding.json",
+      "passed": true
+    },
+    {
+      "name": "Native final summary exact previously audited receipt",
+      "passed": true
+    },
+    {
+      "name": "Full platform final summaries exact",
+      "passed": true
+    },
+    {
+      "name": "Final Qt/sourceWindows27/producer/consumer/package match audited receipts",
+      "passed": true
+    },
+    {
+      "name": "Final JUnit and7xfails match previously parsed evidence",
+      "passed": true
+    },
+    {
+      "name": "Native limitations/no ancestor transfer preserved",
+      "passed": true
+    },
+    {
+      "name": "Both final Ubuntu smoke identities",
+      "passed": true
+    },
+    {
+      "name": "136888792650: actual64PASS0FAIL",
+      "passed": true
+    },
+    {
+      "name": "136888792650: same-run artifact ID/size/actual digest",
+      "passed": true
+    },
+    {
+      "name": "136888792650: tar checksum and executable extraction",
+      "passed": true
+    },
+    {
+      "name": "136888792650: offscreen/XCB/fullCLI success",
+      "passed": true
+    },
+    {
+      "name": "136888792650: individual self-test receipts agree",
+      "passed": true
+    },
+    {
+      "name": "136888792729: actual64PASS0FAIL",
+      "passed": true
+    },
+    {
+      "name": "136888792729: same-run artifact ID/size/actual digest",
+      "passed": true
+    },
+    {
+      "name": "136888792729: tar checksum and executable extraction",
+      "passed": true
+    },
+    {
+      "name": "136888792729: offscreen/XCB/fullCLI success",
+      "passed": true
+    },
+    {
+      "name": "136888792729: individual self-test receipts agree",
+      "passed": true
+    },
+    {
+      "name": "Actual final release136889308090 skip",
+      "passed": true
+    },
+    {
+      "name": "Exactly six original small artifact ZIPs",
+      "passed": true
+    },
+    {
+      "name": "14712204882: final artifact byte/digest/API/source representation",
+      "passed": true
+    },
+    {
+      "name": "14711636807: final artifact byte/digest/API/source representation",
+      "passed": true
+    },
+    {
+      "name": "14710376722: final artifact byte/digest/API/source representation",
+      "passed": true
+    },
+    {
+      "name": "14710346116: final artifact byte/digest/API/source representation",
+      "passed": true
+    },
+    {
+      "name": "14709899284: final artifact byte/digest/API/source representation",
+      "passed": true
+    },
+    {
+      "name": "14709594641: final artifact byte/digest/API/source representation",
+      "passed": true
+    },
+    {
+      "name": "Large product bytes explicitly excluded",
+      "passed": true
+    },
+    {
+      "name": "Final source-specific qualification does not preclaim postmerge holds",
+      "passed": true
+    },
+    {
+      "name": "Parent archive remains unchanged",
+      "passed": true
+    }
+  ],
+  "reused_unchanged_substantive_audits": [
+    {
+      "assertions": 175,
+      "sha256": "4c72cac167dd3928501501ee3e3b0dd794df1e602d3f57c043b5de308186d257"
+    },
+    {
+      "assertions": 96,
+      "archive_sha256": "4012cd0e22af25bf26dc43f36b21470e2bc181adf13a0a467df4a5faeeb63206"
+    }
+  ],
+  "actual_counts": {
+    "runs": 2,
+    "jobs": 18,
+    "executed_success": 16,
+    "intentional_PR_release_skips": 2,
+    "verified_checkout_logs": 16,
+    "small_original_artifact_ZIPs": 6
+  },
+  "newly_verified_Ubuntu_smokes": [
+    {
+      "job_id": 136888792650,
+      "name": "linux-smoke (ubuntu-22.04)",
+      "PASS": 64,
+      "FAIL": 0,
+      "artifact_id": 14712433241,
+      "artifact_digest": "sha256:daa3ef2d31f8c1273519ee0ddb9630541e23e31012058677aabb3ca7cdfe6db4"
+    },
+    {
+      "job_id": 136888792729,
+      "name": "linux-smoke (ubuntu-24.04)",
+      "PASS": 64,
+      "FAIL": 0,
+      "artifact_id": 14712433241,
+      "artifact_digest": "sha256:daa3ef2d31f8c1273519ee0ddb9630541e23e31012058677aabb3ca7cdfe6db4"
+    }
+  ],
+  "actual_release_skip_job": 136889308090,
+  "open_expected_failure_records": [
+    {
+      "platform": "Linux",
+      "artifact_id": 14711636807,
+      "id": "tests.test_codex5_command_audit_20261121::test_all_explicit_workflow_pip_installs_are_protected",
+      "type": "pytest.xfail",
+      "message": "CODEX-5: repository-wide hashed wheel closure still open"
+    },
+    {
+      "platform": "Linux",
+      "artifact_id": 14711636807,
+      "id": "tests.test_codex_pkg_workflows::test_pip_downloads_require_hashes",
+      "type": "pytest.xfail",
+      "message": "CODEX-5"
+    },
+    {
+      "platform": "Linux",
+      "artifact_id": 14711636807,
+      "id": "tests.test_tier_w_symbols::test_live_llvm_pdbutil_agrees_with_the_stdlib_reader",
+      "type": "pytest.xfail",
+      "message": "BLOCKED: llvm-pdbutil is not installed on this runner"
+    },
+    {
+      "platform": "Linux",
+      "artifact_id": 14711636807,
+      "id": "tests.test_tier_w_symbols::test_live_ghidra_export_runs_or_records_blocked",
+      "type": "pytest.xfail",
+      "message": "BLOCKED: no --ghidra-dir given"
+    },
+    {
+      "platform": "Windows",
+      "artifact_id": 14712204882,
+      "id": "tests.test_codex5_command_audit_20261121::test_all_explicit_workflow_pip_installs_are_protected",
+      "type": "pytest.xfail",
+      "message": "CODEX-5: repository-wide hashed wheel closure still open"
+    },
+    {
+      "platform": "Windows",
+      "artifact_id": 14712204882,
+      "id": "tests.test_codex_pkg_workflows::test_pip_downloads_require_hashes",
+      "type": "pytest.xfail",
+      "message": "CODEX-5"
+    },
+    {
+      "platform": "Windows",
+      "artifact_id": 14712204882,
+      "id": "tests.test_tier_w_symbols::test_live_ghidra_export_runs_or_records_blocked",
+      "type": "pytest.xfail",
+      "message": "BLOCKED: no --ghidra-dir given"
+    }
+  ],
+  "native_limits": [
+    "Synthetic known-patch fixtures only; no general accuracy measurement.",
+    "The expected-negative control is not a fourth successful known-patch analysis.",
+    "Application raw-cache reuse is separate from original Ghidra tool-ZIP caching; its small diagnostic artifact reports equal raw hashes and explicit reuse but does not contain the raw output bytes themselves.",
+    "Application cache equality is within the hosted case, not independent-run determinism.",
+    "The three positive backend records report JVM version unverified. The separate application-cache diagnostic probes Java25.0.5.",
+    "This receipt establishes the five native contracts only; full QA, exact Windows27 PowerShell cases, windows-validate and other platform gates have their own source-specific receipts."
+  ],
+  "interpretation": "Final exact-source automatic PR qualification evidence is internally consistent and complete within its documented gates. The root must still perform its own fresh guarded merge. No merge or post-main publication result is claimed by this review.",
+  "no_network_download_test_native_source_ref_CI_or_parent_evidence_mutations": true
+}

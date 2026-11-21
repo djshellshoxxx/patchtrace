@@ -1,0 +1,80 @@
+{
+  "schema": "patchtrace/network-record-transport-repair/1",
+  "recorded_at": "2026-11-21T16:27:39.646210+00:00",
+  "source": "9610919d29010d53cf00af3b7c38207ffd84f945",
+  "tree": "3d5e2965ef26235610a08fd8378cac078c6bd9a0",
+  "original_assembly_receipt_sha256": "07d811e45bb15b0e1b21a5660ffdab4badc6fef7ae2502cc775e5ba96676941c",
+  "original_archive_sha256": "81a7e43597b9100c7b41a0a4ebcb477db8511d7f222a589faa1e5821140959b3",
+  "original_archive_bytes": 16865753,
+  "original_archive_members": 145,
+  "parts": [
+    {
+      "name": "sigstore-independent.zip.part01",
+      "offset": 0,
+      "bytes": 9999999,
+      "sha256": "a5fc8dc881988f15031cf0ecd3d5d19898f3529be56f5b395729ab075c51d624",
+      "git_blob": "e8a32433c7409dff55c2a755b8b23ca654d4099c",
+      "base64_offset": 0,
+      "base64_bytes": 13333332
+    },
+    {
+      "name": "sigstore-independent.zip.part02",
+      "offset": 9999999,
+      "bytes": 6865754,
+      "sha256": "c6fd81df495846f874d7ebefdd3873cf62cc0e3d79d8f49cdb05270f498020a2",
+      "git_blob": "a97cbe021782bbf86d5c84dc4f7ada43b8c90343",
+      "base64_offset": 13333332,
+      "base64_bytes": 9154340
+    }
+  ],
+  "repair_archive": "record-transport-repair.zip",
+  "repair_archive_sha256": "cf5099560980aae3427c936ec9735d680988c7fa7851858588a5e170286aa802",
+  "static_plan_sha256": "566519d17021f7c47e806706bf416d29cd9ce9b861e6d900f6f7c5a06d96ed94",
+  "original_static_plan_sha256": "cfe2830273ae85a34c56110c9246aaadeda498fef1db274c5f1876aebb3788ce",
+  "current_context_sha256": "bd39db0388414a2200f1b43c1c33633d5437ecef946fd372035dfd26628ffe12",
+  "current_ledger_sha256": "684771791b64c665e4ee4f94bb99f54d1cc273e67283d0b112c1682b45b34374",
+  "current_report_sha256": "5f11ea012097c7894d644f5c5a752873c58843ccca87749866ffda57d67b7c0a",
+  "original_report_prefix_bytes": 16154,
+  "original_report_prefix_sha256": "93f6f1d6fb8594cbf965df3187356b58216df4fdc1787345cb5e8a4b88ee6087",
+  "ledger_changes": [
+    {
+      "json_path": [
+        "tasks",
+        124,
+        "evidence_links",
+        0
+      ],
+      "task_id": "837fe-sigstore-tooling-hash-closure",
+      "before": "docs/engineering/evidence/cycle837fe-network-recovery-20261121/sigstore-tooling-hash-closure-independent.zip",
+      "after": "docs/engineering/evidence/cycle837fe-network-recovery-20261121/sigstore-tooling-archive-parts.json"
+    }
+  ],
+  "context_changes": [
+    "additional_tasks[8].evidence_links[0]",
+    "static_inputs",
+    "report_path",
+    "report_sha256",
+    "post_assembly_transport_revision"
+  ],
+  "tasks": 130,
+  "notes": 46,
+  "baseline_tasks": 116,
+  "all_task_ids_and_order_preserved": true,
+  "all_other_task_rows_preserved": true,
+  "prior_notes_history_and_deep_before_images_preserved": true,
+  "original_preservation_record_unchanged": true,
+  "qa_todo_handoff_unchanged": true,
+  "all_other_archives_unchanged": true,
+  "original_v4_builders_and_template_unchanged": true,
+  "original_sealed_archive_and_seal_unchanged": true,
+  "original_census_181_16_unchanged": true,
+  "new_historical_review_incorporated": false,
+  "runtime_tests_and_source_head_unchanged": true,
+  "product_tests_executed": 0,
+  "remote_calls": 0,
+  "ref_pr_commit_ci_mutations": false,
+  "original_error_retained": true,
+  "independent_final_record_audit": "PENDING",
+  "primary_before_inventory_outputs": 67,
+  "expected_after_inventory_outputs": 72
+}
