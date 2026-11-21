@@ -1,6 +1,6 @@
 {
   "schema": "patchtrace-engineering-task-ledger/1",
-  "updated_at": "2026-11-21T07:00:42.904420+00:00",
+  "updated_at": "2026-11-21T07:20:51.829Z",
   "repository": "https://github.com/djshellshoxxx/PatchTrace",
   "integration_branch": "integration/patchtrace-20261121-95fe-c3",
   "checkpoint_local_commit": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
@@ -67,7 +67,8 @@
     "Cycle3 95fe: restored missing six uppercase engineering indexes and fourteen linked original documents/evidence files from PR346; all20 blobs verified. Integrated independent-review-qualified CODEX14/CODEX6 sources and Pages deploy opt-out on an isolated candidate; original failed oracle/Ruff/red-control receipts preserved. 469 distinct affected tests pass after resolving11 site-tool dependency skips; CODEX1/5 remain expected failures. This is not full new-source/hosted acceptance and does not close manual/native/cache-hit/raw-provenance/accuracy gates.",
     "Parallel837fe adds reviewed Search and interruption-safe storage; final code b880c317 passes450 affected cases. Existing global integration ownership and open release gates are retained. Read parallel_continuation_837fe without transferring ancestor test results.",
     "837FE consumed the explicit completed 95FE-C3 handoff and combined the reviewed storage/Search source with PR349. Earlier pending ownership paragraphs are historical; root837FE owns this follow-up until final handoff.",
-    "Current 837FE combined source supersedes earlier pending Action-pin implementation/95FEownership paragraphs for named scopes. Direct CODEX-1 is implemented/reviewed; CODEX-5 and transitive/native/manual/provenance/accuracy gates remain open. Existing PR349 is the single main-integration target."
+    "Current 837FE combined source supersedes earlier pending Action-pin implementation/95FEownership paragraphs for named scopes. Direct CODEX-1 is implemented/reviewed; CODEX-5 and transitive/native/manual/provenance/accuracy gates remain open. Existing PR349 is the single main-integration target.",
+    "2026-11-21 isolated CODEX-5 scanner: per-command run-scalar audit published on an independent C4-descendant branch, preserving both strict CODEX-5 xfails (old plus new) and all parent files. Local authored-fixture source mirror 17 passed/one strict xfailed; compileall and two additional controls pass. Full repository-source pytest/Ruff, independent review and actual workflow package hash closure are NOT established. No main or PR349/350 ref movement."
   ],
   "tasks": [
     {
@@ -1387,6 +1388,20 @@
       "source_commit": "11f51c105bf63946f59373ae605b937c4fee607a",
       "evidence": "docs/engineering/evidence/cycle4-95fe/codex5-research.md",
       "result_or_next_action": "Current run-block heuristic accepts hash/offline flags anywhere, including unrelated commands/comments. Synthetic text controls retained. Implement per-command and referenced-lock checks without weakening global strict xfail; no current workflow compromise inferred."
+    },
+    {
+      "id": "codex5-per-command-audit-20261121",
+      "status": "implemented-unqualified",
+      "owner": "isolated CODEX-5 author; reviewer unassigned; Root837FE owns PR349 integration separately",
+      "branch": "codex/patchtrace-codex5-per-command-audit-20261121",
+      "base_commit": "f928a0cef29eac2b603d390c40fb86448111b91b",
+      "evidence": "docs/engineering-handoffs/codex5-command-audit-20261121.md",
+      "source_paths": [
+        "tools/ci_pip_install_audit.py",
+        "tests/test_codex5_command_audit_20261121.py",
+        "docs/audits/codex-workflows-1.md"
+      ],
+      "result_or_next_action": "17 local synthetic passes/one retained CODEX-5 strict xfail. Require exact checkout pytest/Ruff, fresh independent review and root-coordinated integration only when owned gates allow. Do not count Pages locked install as global CODEX-5 completion."
     }
   ],
   "aggregate_source_commit": "2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c",
