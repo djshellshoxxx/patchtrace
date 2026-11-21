@@ -2359,3 +2359,34 @@ See `docs/engineering/codex6-corpus-cache-archive-20261121.md`.
 On clean source e5a531668ef523cd6faa26d5fec59aa552749134 (tree e622ff8f5624ce73bac63c0976af01c614ce05bb), the14-file normal-conftest offscreen selection completed458 passed/11 skipped/2 xfailed. All11 skips were missing declared site-build Pillow/segno dependencies. Installed pinned requirements and replayed exactly those11 identities:11 passed, zero skips/failures.469 distinct affected cases now pass; CODEX-1/5 remain expected failures. WholeRuff, pip check and exact source binding pass. Source-specific full hosted and both actual frozen Linux jobs are pending. [Current qualification](engineering/cycle3-consolidation-20261121-95fe.md).
 
 Preserved original cache test1 failure/29 passes/2 xfail and2Ruff I001, Linux unused-import F401, Pages missing-condition red control, reviewer initial control failure, PR345NSISHTTP503 and historical SIGKILLs. None was overwritten or inferred successful. CODEX-6/14 and Pages changes received independent source reviews; a P3 report-count inconsistency was corrected against the final14/14 author receipt. Application src tree is unchanged from hosted-qualified PR #348; this does not transfer hosted qualification to the changed workflows.
+
+
+## Isolated Build environment header-help slice — 21 November 2026 UTC
+
+Branch `codex/patchtrace-buildenv-header-help-20261121-a1`, based only
+on PR #349 source head `11f51c105bf63946f59373ae605b937c4fee607a`.
+Five Build facts columns now bind panel-owned `build_env.col.*` tooltip entries
+through the existing `ColumnSpec.tip_id` / `VirtualTable` model. Labels,
+row values, widths, sorting, filtering and export source code are untouched.
+Normative GUI contract amended first in `docs/specs/program-e/DIE-integration-plan.md`.
+The new `tests/test_buildenv_header_help_20261121.py` checks Qt header
+display/accessibility/tooltip roles, row identity and filtering, plus five
+single-header omission controls. Existing global tooltip-audit exemptions
+are unchanged.
+
+**Actually executed:** fetched-source structural admission check passes;
+the pre-change source fails the same check, and 10 individual negative
+source mutations are detected (five binding removals, five registration
+removals). Immutable blob identities and controls are in
+`docs/engineering/evidence/buildenv-header-help-20261121-a1.json`.
+This is source-structure evidence only, **not** checked-out Python pytest,
+Ruff, full Qt/offscreen, independent peer, Windows screen reader, hosted
+or PR #349 qualification.
+
+A reviewer on an isolated checkout must run
+`QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_buildenv_header_help_20261121.py`,
+other Build environment GUI/global tooltip audits, and
+`python -m ruff check src tests tools`; preserve any failures.
+Root837FE owns PR #349/Search/storage repairs and CODEX-1, so this
+branch is not integrated or PR-opened during that ownership lease. Main,
+release and deployment remain blocked.
