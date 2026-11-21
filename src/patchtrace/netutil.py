@@ -59,15 +59,18 @@ def interruptible[T](call: Callable[[], T], cancel: threading.Event | None, *, p
             outcome = (None, exc)
         with _lock:
             late = state['abandoned']
-            if late:
-                _abandoned -= 1
-            else:
+            if not late:
                 state['outcome'] = outcome
-        if late and outcome[1] is None and cleanup is not None:
-            try:
-                cleanup(outcome[0])
-            except Exception:  # noqa: BLE001 - best effort close
-                pass
+        try:
+            if late and outcome[1] is None and cleanup is not None:
+                try:
+                    cleanup(outcome[0])
+                except Exception:  # noqa: BLE001 - best effort close
+                    pass
+        finally:
+            if late:
+                with _lock:
+                    _abandoned -= 1
         done.set()
 
     threading.Thread(target=worker, daemon=True, name='patchtrace-net').start()
