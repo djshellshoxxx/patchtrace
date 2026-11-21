@@ -2,7 +2,7 @@
 
 ## Source and original run
 
-The frozen `b51b17615e2c72e167bfec15727336eaf7cfb57f` run ended with child return **-9**, wrapper exit **137**, after **1,417.602 seconds**, at the last printed **83%** progress. Its source was clean and unchanged. There is no terminal pytest summary or requested JUnit file. The original log and receipt remain unchanged in `../full-suite/`.
+The frozen `b51b17615e2c72e167bfec15727336eaf7cfb57f` run ended with child return **-9**, wrapper exit **137**, after **1,417.602 seconds**, at the last printed **83%** progress. Its source was clean and unchanged. There is no terminal pytest summary or requested JUnit file. The original log and receipt are unchanged in the `prior-source-full-suite/` members of [review-and-test-evidence.zip](review-and-test-evidence.zip).
 
 ## The recorded failure is identified
 
@@ -16,7 +16,7 @@ The same case fails in the same way on final candidate `b880c317add4de3ac22c87cd
 
 The next collected case after the final printed outcome is `tests/test_ui_bundle_setup.py::test_verify_full_success_and_hash_failure`. It passes alone on the frozen source and on the final candidate. Its test and UI implementation blobs match. This is a narrow diagnostic, not evidence that this case caused or explains the termination.
 
-The supervisor has no timeout/alarm/kill/resource-limit call; the original relevant process limits were unlimited. Available follow-up evidence contains no signal-sender identity, kernel OOM record, cgroup memory events, or host termination receipt. Cgroup files are not exposed; dmesg access is denied; no kernel journal is available. Later host memory snapshots cannot reconstruct the killed child. See `signal/README.md` for the independent signal investigation.
+The supervisor has no timeout/alarm/kill/resource-limit call; the original relevant process limits were unlimited. Available follow-up evidence contains no signal-sender identity, kernel OOM record, cgroup memory events, or host termination receipt. Cgroup files are not exposed; dmesg access is denied; no kernel journal is available. Later host memory snapshots cannot reconstruct the killed child. See `suite-diagnosis/signal/README.md` inside the same evidence archive for the independent signal investigation.
 
 No OOM, timeout, Qt-regression or host-policy cause is asserted. The Unix-socket failure has no established causal connection to the later SIGKILL.
 
@@ -34,4 +34,4 @@ These selections are diagnostic and are not summed with author, independent-revi
 
 The full local run remains unsuccessful/incomplete. Inspect exact-final-source supported-runner qualification. If a future required run needs more termination evidence, retain low-overhead per-node phase and child resource observations and obtain runner/kernel/host termination records; preserve all existing test contracts and budgets.
 
-Publish only files listed in `publication-manifest.json`. Exclude `source-final/`, which is the isolated investigation checkout.
+The archive includes only the 24 diagnosis files listed in its `suite-diagnosis/publication-manifest.json`, plus the separately identified author, reviewer and original full-run evidence. The investigation checkout `source-final/` is excluded. The original diagnosis README remains unchanged at `suite-diagnosis/README.md`; this standalone copy adjusts locations for the published archive.

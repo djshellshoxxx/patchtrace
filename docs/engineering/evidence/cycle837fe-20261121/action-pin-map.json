@@ -429,5 +429,8 @@
       "status": "exact action installs @openai/codex and @openai/codex-responses-api-proxy via npm with the codex-version input; default is empty and baseline workflow supplies no override; CLI/proxy package resolution remains separate from action pinning"
     }
   ],
-  "qualification": "read-only upstream resolution and manifest inspection; no workflow edits, CI execution, merge, or full dependency closure qualification"
+  "qualification": "read-only upstream resolution and manifest inspection; no workflow edits, CI execution, merge, or full dependency closure qualification",
+  "evidence_archive": "action-pin-upstream-evidence.zip",
+  "raw_upstream_evidence_member": "raw-upstream-evidence.json",
+  "manifest_file_semantics": "Each manifest_file is a member path inside evidence_archive; manifest_url is the exact upstream source."
 }

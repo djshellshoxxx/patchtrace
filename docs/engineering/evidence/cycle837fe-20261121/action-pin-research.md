@@ -20,11 +20,11 @@ Baseline: `e5a531668ef523cd6faa26d5fec59aa552749134`. Read-only upstream resolut
 
 ## Verification
 
-Every observed major tag was resolved through the official upstream GitHub Git-ref API, checked against its Git-commit object, and matched to a version tag. Annotated tags were peeled to commit objects: the Codex v1 tag object is not a valid substitute for its peeled commit pin. Every action manifest was fetched at the full commit SHA and parsed with PyYAML. Raw API responses, manifests, source identities and digest receipts are retained. Signature fields report GitHub observations and are separate from the tag-to-commit identity checks.
+Every observed major tag was resolved through the official upstream GitHub Git-ref API, checked against its Git-commit object, and matched to a version tag. Annotated tags were peeled to commit objects: the Codex v1 tag object is not a valid substitute for its peeled commit pin. Every action manifest was fetched at the full commit SHA and parsed with PyYAML. Raw API responses and exact manifests are retained in `action-pin-upstream-evidence.zip`; source identities and digest receipts are in `action-pin-map.json`. Signature fields report GitHub observations and are separate from the tag-to-commit identity checks.
 
 ## Candidate patch scope
 
-After active ownership releases, replace the 176 direct `uses` references with their mapped commit SHAs and retain readable version comments. The change spans the workflow files listed in `pin-map.json`; no event, permission, runtime argument, release/deployment guard, or CI concurrency change is needed. Update the CODEX-1 contract/evidence and promote its strict expected failure only when the complete direct-reference check passes. Re-read current workflow source before applying any patch; do not overwrite the active cache, Linux smoke or Pages work.
+After active ownership releases, replace the 176 direct `uses` references with their mapped commit SHAs and retain readable version comments. The change spans the workflow files listed in `action-pin-map.json`; no event, permission, runtime argument, release/deployment guard, or CI concurrency change is needed. Update the CODEX-1 contract/evidence and promote its strict expected failure only when the complete direct-reference check passes. Re-read current workflow source before applying any patch; do not overwrite the active cache, Linux smoke or Pages work.
 
 ## Transitive limits
 
@@ -36,9 +36,8 @@ After active ownership releases, replace the 176 direct `uses` references with t
 
 ## Evidence
 
-- `pin-map.json`: compact exact mapping, canonical/API URLs, per-action file scope, manifest digests and transitive limits.
-- `baseline-census.json`: every direct mutable occurrence at the immutable baseline.
-- `raw-upstream-evidence.json`: official API/tag/commit and source response records.
-- `upstream-manifests/`: exact fetched action definitions, including the inspected composite steps.
+- `action-pin-map.json`: compact exact mapping, canonical/API URLs, per-action file scope, manifest digests and transitive limits.
+- `action-pin-census.json`: every direct mutable occurrence at the immutable baseline.
+- [`action-pin-upstream-evidence.zip`](action-pin-upstream-evidence.zip): `raw-upstream-evidence.json` contains official API/tag/commit and source response records; `upstream-manifests/` contains the exact fetched action definitions, including the inspected composite steps. Map `manifest_file` values identify members inside this archive.
 
 No source files, refs, workflows or remote state were changed.

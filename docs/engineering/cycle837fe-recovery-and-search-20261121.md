@@ -164,3 +164,7 @@ merge only with a fresh expected-head REST guard and no blocker. CODEX-1/5,
 active CODEX-6/14 acceptance, historical semantics, full raw input/index retention,
 Windows manual/trust/accessibility and separate L1/L2/L3 release gates remain open.
 PatchTrace is not declared complete or release-ready by this candidate.
+
+## Publication evidence audit
+
+Independent [publication review](evidence/cycle837fe-20261121/publication-review.md) found and closed PUB-E1, a missing upstream-evidence archive. The corrected audited content has tree `00b23e0a7a2688a4d1a281686d26db6a91066075`; later additions here retain that review itself. All 19 then-published payloads, 215 review ZIP members, 99 internal digest references, the 18-commit source bundle and all 364 inventory records verified. This packaging audit did not rerun product tests and does not qualify a later PR #349 integration.
