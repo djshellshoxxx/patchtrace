@@ -1,6 +1,8 @@
 """Actual-source deadline regressions for a stalled HTTP body read."""
+import http.server
 import threading
 import time
+import urllib.request
 
 import pytest
 
@@ -92,3 +94,47 @@ def test_completed_read_is_refused_if_deadline_passed_during_call():
     clock_values = iter([0., 0., 10.])
     with pytest.raises(netutil.DeadlineExceeded):
         netutil.read_bounded(Eof(), 1024, deadline=5., clock=lambda: next(clock_values), cancel=None)
+
+
+def test_real_http_stall_does_not_delay_deadline_or_response_close():
+    released = threading.Event()
+
+    class Handler(http.server.BaseHTTPRequestHandler):
+        protocol_version = 'HTTP/1.1'
+
+        def do_GET(self):
+            self.send_response(200)
+            self.send_header('Content-Length', '50')
+            self.end_headers()
+            self.wfile.write(b'A')
+            self.wfile.flush()
+            released.wait(2)
+            try:
+                self.wfile.write(b'B' * 49)
+                self.wfile.flush()
+            except (BrokenPipeError, ConnectionResetError):
+                pass
+
+        def log_message(self, *args):
+            pass
+
+    server = http.server.ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        response = urllib.request.urlopen(f'http://127.0.0.1:{server.server_port}/x', timeout=5)
+        started = time.monotonic()
+        try:
+            with pytest.raises(netutil.DeadlineExceeded):
+                netutil.read_bounded(response, 128, deadline=started + 0.15,
+                                     clock=time.monotonic, cancel=None)
+            assert time.monotonic() - started < 1.0
+        finally:
+            close_start = time.monotonic()
+            response.close()
+            assert time.monotonic() - close_start < 1.0
+    finally:
+        released.set()
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=3)
