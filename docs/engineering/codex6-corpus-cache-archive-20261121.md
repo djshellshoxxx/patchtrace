@@ -29,7 +29,7 @@ strict xfail to a passing source contract. New
 `tests/test_corpus_cache_archive_integrity_20261121.py` checks
 archive-only cache paths, obligatory pre-extraction digest verification,
 clean extraction, pinned archive identity and conditional Ghidra.
-Ten mutation cases refuse removal of these boundaries. The existing
+Twelve mutation cases refuse removal of these boundaries. The existing
 CODEX-1 and CODEX-5 strict xfails remain unchanged.
 
 ## Evidence / qualification
@@ -37,8 +37,8 @@ CODEX-1 and CODEX-5 strict xfails remain unchanged.
 - Connector-fetched workflow blob after patch:
   `03444dfd08d97815c0ede48443de1846bd796009`.
 - Author-side JS source inspection: **12 structural invariants pass**.
-- Ten mutations of the exact fetched workflow were passed through a
-  separate JS implementation of the source contract: **10/10 detected**.
+- Twelve mutations of the exact fetched workflow were passed through a
+  separate JS implementation of the source contract: **12/12 detected**.
   These are not pytest runs or an independent peer reviewer.
 - An isolated **synthetic** shell replay with small fixture archives
   demonstrated both positive checksum+extraction cases and both negative
