@@ -1,6 +1,6 @@
 {
   "schema": "patchtrace-engineering-task-ledger/1",
-  "updated_at": "2026-11-21T05:17:48.422568+00:00",
+  "updated_at": "2026-11-21T06:14:57.516Z",
   "repository": "https://github.com/djshellshoxxx/PatchTrace",
   "integration_branch": "integration/patchtrace-20261121-95fe-c3",
   "checkpoint_local_commit": "e5a531668ef523cd6faa26d5fec59aa552749134",
@@ -62,7 +62,8 @@
     "CODEX-6 cache integrity peer-style follow-up found a hidden migration defect: reuse of old extracted-tree cache keys would cause new archive-only cache paths to miss forever on old cache hits. Versioned rizin-archive-v1 and ghidra-archive-v1 keys with no restore fallback repaired after spec/test update. Exact connector source structural checks 14 and negative mutations 14 now pass, still author-side only.",
     "CODEX-6 fixture-only cache-hit successor 2026-11-21: an isolated branch adds four runnable Bash cache-hit controls against authored tar.xz/ZIP archives, including corruption refusal and no-network enforcement. Production workflow unchanged. This is published test source only; source-bound pytest, Ruff, separate review and hosted exact-head cache-hit acceptance remain pending. Do not count parent PR348 checks as this successor acceptance.",
     "Cycle3 P3 evidence consistency: the retained CODEX-6 author receipt records 14 structural invariants and 14 negative mutations. Earlier 12/10 current-summary labels are corrected; older dated narrative and Git history remain preserved, and author controls are not relabeled as checked-out pytest.",
-    "Cycle3 95fe: restored missing six uppercase engineering indexes and fourteen linked original documents/evidence files from PR346; all20 blobs verified. Integrated independent-review-qualified CODEX14/CODEX6 sources and Pages deploy opt-out on an isolated candidate; original failed oracle/Ruff/red-control receipts preserved. 469 distinct affected tests pass after resolving11 site-tool dependency skips; CODEX1/5 remain expected failures. This is not full new-source/hosted acceptance and does not close manual/native/cache-hit/raw-provenance/accuracy gates."
+    "Cycle3 95fe: restored missing six uppercase engineering indexes and fourteen linked original documents/evidence files from PR346; all20 blobs verified. Integrated independent-review-qualified CODEX14/CODEX6 sources and Pages deploy opt-out on an isolated candidate; original failed oracle/Ruff/red-control receipts preserved. 469 distinct affected tests pass after resolving11 site-tool dependency skips; CODEX1/5 remain expected failures. This is not full new-source/hosted acceptance and does not close manual/native/cache-hit/raw-provenance/accuracy gates.",
+    "2026-11-21 isolated Build environment header tip continuation: contract first, five registered panel-local IDs/ColumnSpec bindings, real-QTable regression tests authored, exact-source structural checks and ten removal controls passed. Python/Qt execution, peer and combined-head CI are explicitly unqualified. PR349 and root837FE held scopes untouched."
   ],
   "tasks": [
     {
@@ -71,7 +72,7 @@
       "owner": "cycle3 independent census reviewer",
       "source_commit": "e5a531668ef523cd6faa26d5fec59aa552749134",
       "evidence": "docs/engineering/evidence/cycle3-95fe/inventory-summary.json",
-      "result_or_next_action": "364 branches and338 all-state PRs (82open/172merged/84closed-unmerged), fully paginated 04:55:49\u201304:57:48UTC.10new names vs frozen354-branch cycle95fe; no moved/missing names.23new vs explicit341-branch g30-at-PR348 file. Reference census only; historical semantic backlog remains.",
+      "result_or_next_action": "364 branches and338 all-state PRs (82open/172merged/84closed-unmerged), fully paginated 04:55:49–04:57:48UTC.10new names vs frozen354-branch cycle95fe; no moved/missing names.23new vs explicit341-branch g30-at-PR348 file. Reference census only; historical semantic backlog remains.",
       "snapshot_note": "Frozen 341-branch / 330-PR observation predates PR342 publication; all 671 recorded branch/PR SHAs resolve. Classification is not full semantic verification.",
       "latest_evidence": "docs/engineering/evidence/cycle2-coordinator-20261121-2bad.json"
     },
@@ -989,6 +990,23 @@
       "source_commit": "19601a60",
       "evidence": "docs/engineering/evidence/cycle3-95fe/document-recovery.json",
       "result_or_next_action": "All20 absent PR346 engineering/evidence files recovered with exact original blobs. Six current indexes updated separately; no whole-branch semantic supersession or deletion claim."
+    },
+    {
+      "id": "buildenv-header-help-20261121-a1",
+      "status": "implemented-source-static-verified-independent-and-hosted-pending",
+      "owner": "isolated Build environment headers author; separate reviewer unassigned",
+      "branch": "codex/patchtrace-buildenv-header-help-20261121-a1",
+      "base_commit": "11f51c105bf63946f59373ae605b937c4fee607a",
+      "original_tree": "4939056ceb0e02b419c820b9e5748c869c40a857",
+      "source_blobs": {
+        "src/patchtrace/buildenv/tooltip_entries.py": "ff5c8819a4d92d13ad38a9a13021552c0594dc82",
+        "src/patchtrace/buildenv/panel_model.py": "c0d9af1e0d3618cfea829d9a19eadbe8a011fa27"
+      },
+      "evidence": "docs/engineering/evidence/buildenv-header-help-20261121-a1.json",
+      "handoff": "docs/engineering-handoffs/buildenv-header-help-20261121-a1.md",
+      "contract": "docs/specs/program-e/DIE-integration-plan.md §12",
+      "tests": "tests/test_buildenv_header_help_20261121.py",
+      "result_or_next_action": "Five existing Build environment columns receive registered header help. Connector source checks passed and 10/10 individual mutations were detected, but no checked-out pytest/Ruff/Qt or independent review occurred. Fresh peer must qualify actual host header roles and global tooltip audit before integration. Root837FE owns PR349/Search/storage/CODEX-1 until released; do not modify PR349 or merge main on this evidence."
     }
   ],
   "aggregate_source_commit": "e5a531668ef523cd6faa26d5fec59aa552749134",
@@ -1581,7 +1599,7 @@
       "xfailed": 5
     },
     "qa_qt_native_package_smokes": "all-current-non-release-checks-success",
-    "source_scope": "PR348 only; tree identity independently verified. PR345\u2013347 also green on their own retained heads.",
+    "source_scope": "PR348 only; tree identity independently verified. PR345–347 also green on their own retained heads.",
     "evidence": "docs/engineering/evidence/cycle3-95fe/hosted-qualification.json"
   }
 }
