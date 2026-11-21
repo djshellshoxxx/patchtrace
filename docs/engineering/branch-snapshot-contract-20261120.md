@@ -71,6 +71,10 @@ head SHA), and reject non-finite JSON numeric constants (`NaN`, `Infinity`,
 strict admission is required before any inventory Git analysis or publication.
 Preserve the existing 32 MiB byte limit, ordinary Unicode JSON, valid all-pages
 array shape, existing output on failure and unmodified valid PR records.
+Excessively nested JSON and malformed Unicode/JSON must also return a fixed
+input error rather than an uncaught parser recursion traceback. Read and
+validate the saved PR JSON before remote-branch Git lookups or any inventory
+publication; a corrupt source cannot cause partial Git replay work.
 Error messages must be fixed and must not echo private PR payload contents.
 This is a parser integrity repair, not authentication of the saved PR dataset,
 all-pages completeness proof, or permission to merge/delete any branch.
