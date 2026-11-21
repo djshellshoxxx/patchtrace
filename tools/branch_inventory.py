@@ -13,6 +13,7 @@ import csv
 import io
 import json
 import os
+import re
 import subprocess
 import tempfile
 from collections import Counter
@@ -20,6 +21,7 @@ from pathlib import Path
 from typing import Any
 
 COLUMNS = ("branch", "tip_sha", "pr", "last_commit", "category", "delete_safe", "note")
+CANONICAL_COMMIT_OID = re.compile(r"(?:[0-9a-f]{40}|[0-9a-f]{64})\Z")
 MAX_METADATA_BYTES = 32 * 1024 * 1024
 PARTIAL_PRS = {144, 168, 174, 176, 289}
 DEFERRED_PRS = {61, 167, 170, 171, 186, 279}
@@ -86,14 +88,19 @@ def branches(git: Git, remote: str, snapshot: Path | None = None) -> list[tuple[
                 raise ValueError("invalid branch snapshot TSV headers")
             rows = list(reader)
             if any(None in row or any(value is None for value in row.values())
-                   or not row["branch"].strip() or not row["tip_sha"].strip()
+                   or not row["branch"].strip() or not CANONICAL_COMMIT_OID.fullmatch(row["tip_sha"])
                    for row in rows):
                 raise ValueError("invalid branch snapshot TSV rows")
         except csv.Error as exc:
             raise ValueError("invalid branch snapshot TSV") from exc
         finally:
             csv.field_size_limit(previous_limit)
-        result = [(row["branch"], git.commit(row["tip_sha"])) for row in rows]
+        result = []
+        for row in rows:
+            resolved = git.commit(row["tip_sha"])
+            if resolved != row["tip_sha"]:
+                raise ValueError("branch snapshot tip does not match commit object")
+            result.append((row["branch"], resolved))
     else:
         if not remote or any(char in remote for char in "\r\n\t ") or remote.startswith("-"):
             raise ValueError("invalid remote name")
