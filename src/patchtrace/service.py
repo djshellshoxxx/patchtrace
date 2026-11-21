@@ -123,19 +123,22 @@ class ProjectService:
         if self._commit_uncertain:
             raise ValueError('PT-STORAGE: project save outcome is uncertain; reopen the project before editing')
 
+    def _reconcile_save_failure(self, failure: BaseException) -> None:
+        # Deferred history maintenance may fail after the snapshot committed.
+        # Read the actual outcome without recovering jobs or writing another snapshot.
+        try:
+            self.project = self.store.load(recover_interrupted=False)
+        except BaseException:
+            self._commit_uncertain = True
+            failure.add_note('PT-STORAGE: committed snapshot could not be reloaded; '
+                             'reopen the project before editing')
+
     def _commit(self, candidate: ComparisonProject) -> None:
         self._check_reconciled()
         try:
             self.project = self.store.save(candidate)
         except BaseException as failure:
-            # Deferred history maintenance may fail after the snapshot committed.
-            # Read the actual outcome without recovering jobs or writing another snapshot.
-            try:
-                self.project = self.store.load(recover_interrupted=False)
-            except BaseException:
-                self._commit_uncertain = True
-                failure.add_note('PT-STORAGE: committed snapshot could not be reloaded; '
-                                 'reopen the project before editing')
+            self._reconcile_save_failure(failure)
             raise
 
     def save(self) -> None:
@@ -157,8 +160,12 @@ class ProjectService:
     def backup(self, destination: Path) -> Path:
         self._check_reconciled()
         # load() may persist interrupted-run recovery; keep the service on the committed snapshot.
-        self.project = self.store.load()
-        return self.store.backup(destination)
+        try:
+            self.project = self.store.load()
+            return self.store.backup(destination)
+        except BaseException as failure:
+            self._reconcile_save_failure(failure)
+            raise
 
     @staticmethod
     def _invalidate(candidate: ComparisonProject) -> None:
