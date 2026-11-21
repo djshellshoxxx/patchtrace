@@ -268,8 +268,31 @@ def test_workflow_has_no_tabs_and_unquoted_colon_values_outside_block_scalars():
         if value in ('|', '>', '|-', '>-'):
             in_block, indent = True, len(match.group(1)) + (2 if line.lstrip().startswith('- ') else 0)
             continue
-        if value and value[0] not in '\'"[{' and (': ' in value or ' #' in value):
-            pytest.fail(f'line {number}: plain scalar with ": " or " #" must be quoted: {line.strip()}')
+        if value and value[0] not in '\'"[{':
+            plain = re.split(r'\s#', value, maxsplit=1)[0].rstrip()
+            if ': ' in plain or plain.endswith(':'):
+                pytest.fail(f'line {number}: plain scalar with ": " must be quoted: {line.strip()}')
+
+
+@pytest.mark.parametrize('line', [
+    '      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0',
+    '      - name: Checkout # readable comment: version',
+])
+def test_workflow_scalar_check_accepts_yaml_comments(monkeypatch, line):
+    monkeypatch.setitem(test_workflow_has_no_tabs_and_unquoted_colon_values_outside_block_scalars.__globals__,
+                        'workflow_lines', lambda: [line])
+    test_workflow_has_no_tabs_and_unquoted_colon_values_outside_block_scalars()
+
+
+@pytest.mark.parametrize('line', [
+    '      - name: Invalid: nested value # comment',
+    '      - name: Invalid: # comment',
+])
+def test_workflow_scalar_check_still_rejects_unquoted_colons(monkeypatch, line):
+    monkeypatch.setitem(test_workflow_has_no_tabs_and_unquoted_colon_values_outside_block_scalars.__globals__,
+                        'workflow_lines', lambda: [line])
+    with pytest.raises(pytest.fail.Exception, match='plain scalar'):
+        test_workflow_has_no_tabs_and_unquoted_colon_values_outside_block_scalars()
 
 
 def test_workflow_pins_the_same_ghidra_and_ghidriff_as_the_backend_workflow():
