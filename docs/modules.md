@@ -1459,3 +1459,14 @@ The [combined PR349 report](engineering/cycle837fe-combined-pr349-20261121.md) a
 ### PR349 Intel and C4 integrated follow-up
 
 [Source, validation and handoff](engineering/cycle837fe-native-c4-20261121.md) retain the Windows identity repair, C4 help/Pages work, actual predecessor native evidence and separate release gates.
+
+### Sigstore verifier tooling hashes
+
+The existing backend verifier's tooling install is scoped by
+`docs/specs/sigstore-tooling-hashes.md` and
+`tools/requirements-sigstore-ci.lock`. It preserves the actual historical
+Sigstore 4.5.0 closure for the Linux CPython 3.12 `vrfy` job, including required
+extras, with ordinary dependency resolution and wheel hashes. Verification
+commands, identities, artifacts and other builder installs remain separate.
+Source contracts live in `tests/test_sigstore_dependency_lock.py`; this adds no
+application module or signature/native acceptance claim.
