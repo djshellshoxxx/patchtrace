@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import sqlite3
+from contextlib import closing
 
 import pytest
 
@@ -18,7 +19,7 @@ def case(tmp_path, empty=False):
     if empty:
         path.write_bytes(b'')
     foreign = tmp_path / 'foreign.sqlite3'
-    with sqlite3.connect(foreign) as db:
+    with closing(sqlite3.connect(foreign)) as db, db:
         db.execute('CREATE TABLE notes (value TEXT)')
         db.execute('INSERT INTO notes VALUES (?)', ('retained analyst record',))
     pair = tmp_path / 'older.dll', tmp_path / 'newer.dll'
@@ -94,6 +95,7 @@ def test_initialization_failure_cannot_unlink_a_replacement(tmp_path, monkeypatc
     class Replaced(sqlite3.Connection):
         def execute(self, statement, *args):
             if statement == 'BEGIN IMMEDIATE' and not expected:
+                self.close()  # Release the authored connection before simulating an external replacement.
                 expected.update(replacement(path, foreign, '-journal'))
                 raise sqlite3.OperationalError('authored initialization failure')
             return super().execute(statement, *args)

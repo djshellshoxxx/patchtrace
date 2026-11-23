@@ -233,7 +233,8 @@ def _creation_file(path: Path) -> os.stat_result | None:
     """A bounded regular candidate without companions, before any SQLite page access."""
     try:
         info = path.lstat()
-        if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_size > MAX_RETRY_DATABASE_BYTES:
+        if (not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or not info.st_ino
+                or info.st_size > MAX_RETRY_DATABASE_BYTES):
             return None
         # Immutable reads ignore companions; never erase possibly retained data or
         # let SQLite recovery modify it during this admission check.
@@ -313,7 +314,7 @@ def _abandoned_creation(path: Path) -> bool:
 
 def _discard_created_database(path: Path, owned: os.stat_result | None) -> None:
     """Best effort cleanup only for an exclusively created file, never an admitted retry."""
-    if owned is None:
+    if owned is None or not owned.st_ino:
         return
     try:
         current = path.lstat()
@@ -449,7 +450,17 @@ class ProjectStore:
                     except FileExistsError:
                         raise ValueError('PT-STORAGE: project database already exists') from None
                     try:
-                        admitted = self.created_database = os.fstat(fd)
+                        owned = self.created_database = os.fstat(fd)
+                        admitted = _creation_file(path)
+                        after = os.fstat(fd)
+                        physical = ('st_dev', 'st_ino', 'st_size', 'st_mtime_ns')
+                        observed = (*physical, 'st_ctime_ns', 'st_mode', 'st_nlink')
+                        # Windows pathname/descriptor ctime can represent different clocks.
+                        # Bind the held inode, then compare each API to its own snapshot.
+                        if (admitted is None or not stat.S_ISREG(owned.st_mode) or owned.st_nlink != 1
+                                or any(getattr(owned, field) != getattr(admitted, field) for field in physical)
+                                or any(getattr(owned, field) != getattr(after, field) for field in observed)):
+                            raise ValueError('PT-STORAGE: project database changed during creation admission')
                     finally:
                         os.close(fd)
                 if not _same_creation_file(path, admitted):
