@@ -351,7 +351,7 @@ def test_refused_thread_start_leaves_runner_usable(qtbot, monkeypatch, worker):
             patch.setattr(threading.Thread, 'start', refuse)
             with pytest.raises(RuntimeError, match="can't start new thread"):
                 if worker == 'task':
-                    submit(local, sink, lambda token, report: 'rejected', channel='refresh')
+                    local.submit('refresh', lambda token, report: 'rejected', sink.result, on_progress=sink.on_progress)
                 else:
                     local.lane('refresh', lambda: pytest.fail('refused lane started'))
 
@@ -368,6 +368,32 @@ def test_refused_thread_start_leaves_runner_usable(qtbot, monkeypatch, worker):
     finally:
         gate.set()
         assert local.shutdown(timeout=5) == []
+
+
+@pytest.mark.parametrize('action', ['deliver', 'replace', 'shutdown'])
+def test_refused_start_queues_only_current_error_on_gui_thread(qtbot, monkeypatch, action):
+    runner, failures = TaskRunner(reraise=True), []
+    def refuse(_thread):
+        raise RuntimeError('sensitive launch detail')
+
+    def failed(error):
+        failures.append((error, threading.current_thread()))
+
+    try:
+        with monkeypatch.context() as patch:
+            patch.setattr(threading.Thread, 'start', refuse)
+            runner.submit('refresh', lambda *_: pytest.fail('refused worker ran'), on_error=failed)
+        assert not failures
+        if action == 'replace':
+            runner.submit('refresh', lambda *_: None)
+        elif action == 'shutdown':
+            runner.shutdown()
+        qtbot.waitUntil(lambda: not runner.busy(), timeout=5000)
+        QApplication.processEvents()
+        expected = [(TaskFailure('RuntimeError'), threading.main_thread())] if action == 'deliver' else []
+        assert failures == expected
+    finally:
+        runner.shutdown()
 
 
 def test_submit_after_shutdown_is_refused():

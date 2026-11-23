@@ -173,3 +173,70 @@ def test_cli_backup_verifies_original_v1_snapshot_with_omitted_default(tmp_path,
     with ProjectService.open(destination) as copied:
         assert copied.project.runs[0].error is None
         assert copied.store.connection.execute('SELECT payload,sha256 FROM current_snapshot').fetchone() == original
+
+
+@pytest.mark.parametrize('phase', ['source-before', 'stage-digest', 'stage-transaction',
+                                   'source-after', 'published-digest', 'published-transaction'])
+def test_sqlite_verification_error_reports_publication_state(tmp_path, capsys, monkeypatch, phase):
+    root, destination = tmp_path / 'source', tmp_path / 'backup'
+    with ProjectService.sample(root) as service:
+        expected = service.project
+    digest = persistence.ProjectStore.snapshot_sha256
+    enter = persistence.ProjectStore.__enter__
+    causes = []
+
+    def needs_failure(store):
+        if phase.startswith('source'):
+            return store.root == root and destination.exists() == (phase == 'source-after')
+        if phase.startswith('stage'):
+            return store.root.name.startswith('.patchtrace-backup-')
+        return store.root == destination
+
+    def query(store):
+        if not needs_failure(store) or phase.endswith('transaction'):
+            return digest(store)
+        # Interrupt the real digest SELECT, then release the injection for reconciliation.
+        store.connection.set_progress_handler(lambda: 1, 1)
+        try:
+            return digest(store)
+        except ValueError as exc:
+            causes.append(exc.__cause__)
+            raise
+        finally:
+            store.connection.set_progress_handler(None, 0)
+
+    def entering(store):
+        result = enter(store)
+        if phase.endswith('transaction') and needs_failure(store):
+            # The first statement after entry is the verifier's real BEGIN.
+            store.connection.set_progress_handler(lambda: 1, 1)
+        return result
+
+    with monkeypatch.context() as patch:
+        patch.setattr(persistence.ProjectStore, 'snapshot_sha256', query)
+        patch.setattr(persistence.ProjectStore, '__enter__', entering)
+        code = cli.main(['project', 'backup', str(root), '--out', str(destination), '--json'])
+    doc = json.loads(capsys.readouterr().out)
+    assert code == 3 and doc['result'] is None and 'PT-STORAGE' in doc['error']
+    if not phase.endswith('transaction'):
+        assert len(causes) == 1 and causes[0].sqlite_errorcode == sqlite3.SQLITE_INTERRUPT
+    published = phase in {'source-after', 'published-digest', 'published-transaction'}
+    assert destination.exists() == published
+    assert not list(tmp_path.glob('.patchtrace-backup-*'))
+    if published:
+        assert 'backup did not verify' in doc['error'] and str(destination) in doc['error']
+        with ProjectService.open(destination) as restored:
+            assert restored.project == expected
+    else:
+        assert 'left at' not in doc['error']
+    with ProjectService.open(root) as reopened:
+        assert reopened.project == expected
+
+
+def test_missing_snapshot_digest_preserves_storage_diagnostic(tmp_path):
+    with ProjectService.sample(tmp_path / 'source') as service:
+        with pytest.raises(ValueError, match='PT-STORAGE: project snapshot is missing'):
+            with service.store.connection:
+                service.store.connection.execute('DELETE FROM current_snapshot')
+                service.store.snapshot_sha256()
+        assert service.store.load(recover_interrupted=False) == service.project

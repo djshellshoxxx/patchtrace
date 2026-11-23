@@ -345,26 +345,21 @@ def _import_json(args: Namespace, cancel: threading.Event) -> int:
 
 # --- backup -------------------------------------------------------------------------------------------------
 
-def _verify_backup(path: Path, source_sha256: str) -> None:
-    """Re-open the copy read-only: integrity check, snapshot hash, artifact and raw hashes, same snapshot."""
-    from .persistence import verify_backup_copy
-    try:
-        verify_backup_copy(path, source_sha256)
-    except (ValueError, OSError) as exc:
-        reason = str(exc).removeprefix('PT-STORAGE: ').removeprefix('PT-SCHEMA: ')
-        raise CliError(RUNTIME, f'PT-STORAGE: backup did not verify and must not be relied on ({reason}); the copy '
-                       f'was left at {path} for inspection') from None
+def _unverified_backup(path: Path, error: Exception) -> CliError:
+    reason = str(error).removeprefix('PT-STORAGE: ').removeprefix('PT-SCHEMA: ')
+    return CliError(RUNTIME, f'PT-STORAGE: backup did not verify and must not be relied on ({reason}); the copy '
+                    f'was left at {path} for inspection')
 
 
 def _backup(args: Namespace, cancel: threading.Event) -> int:
+    from .persistence import backup_destination, verify_backup_copy
     with open_service(args.project) as service:
         try:
-            destination = args.out.resolve()
-            unusable = destination.exists() or destination.is_relative_to(service.root)
+            destination = backup_destination(service.root, args.out)
+        except ValueError as exc:
+            raise CliError(ENVIRONMENT, str(exc)) from None
         except OSError as exc:
             raise _os_error(exc, 'backup destination cannot be checked') from None
-        if unusable:
-            raise CliError(ENVIRONMENT, 'PT-STORAGE: backup destination must be new and outside project')
         try:
             path = service.backup(destination)
         except ValueError as exc:
@@ -372,8 +367,14 @@ def _backup(args: Namespace, cancel: threading.Event) -> int:
         except OSError as exc:
             raise _os_error(exc, 'backup could not be written', RUNTIME) from None
         source = service.project
-        source_sha256 = service.store.snapshot_sha256()
-    _verify_backup(path, source_sha256)
+        try:
+            source_sha256 = service.store.snapshot_sha256()
+        except (ValueError, OSError) as exc:
+            raise _unverified_backup(path, exc) from exc
+    try:
+        verify_backup_copy(path, source_sha256)
+    except (ValueError, OSError) as exc:
+        raise _unverified_backup(path, exc) from exc
     result = {'backup': str(path), 'project_id': source.id, 'revision': source.revision, 'verified': True}
     text = (f'backup: {safe(path, 4000)}\nverified: the copy was re-opened (database integrity, snapshot hash, '
             f'artifact and raw-result hashes) and holds revision {source.revision} of project {source.id}')

@@ -207,6 +207,18 @@ def validate_project(project: ComparisonProject) -> ComparisonProject:
     return project
 
 
+def backup_destination(root: Path, path: Path) -> Path:
+    """Resolve parent aliases while checking the requested destination entry itself."""
+    path = Path(path)
+    destination = path.parent.resolve() / path.name
+    if path.name not in ('', '..') and not destination.is_relative_to(root):
+        try:
+            destination.lstat()
+        except (FileNotFoundError, NotADirectoryError):
+            return destination
+    raise ValueError('PT-STORAGE: backup destination must be new and outside project')
+
+
 def _clear_readonly_and_retry(function, path, _exc):
     # Copied artifacts/raw outputs are read-only; Windows refuses to delete them otherwise.
     os.chmod(path, stat.S_IWRITE | stat.S_IREAD)
@@ -685,7 +697,10 @@ class ProjectStore:
     def snapshot_sha256(self) -> str:
         """Identity of the persisted payload, including its original JSON representation."""
         self._check_open()
-        row = self.connection.execute(verified_backup.SNAPSHOT_SHA).fetchone()
+        try:
+            row = self.connection.execute(verified_backup.SNAPSHOT_SHA).fetchone()
+        except sqlite3.Error as exc:
+            raise ValueError('PT-STORAGE: project snapshot digest cannot be read') from exc
         if row is None:
             raise ValueError('PT-STORAGE: project snapshot is missing')
         return row[0]
@@ -700,9 +715,7 @@ class ProjectStore:
         self._check_open()
         self.load()
         source_sha256 = self.snapshot_sha256()
-        destination = Path(destination).resolve()
-        if destination.exists() or destination.is_relative_to(self.root):
-            raise ValueError('PT-STORAGE: backup destination must be new and outside project')
+        destination = backup_destination(self.root, destination)
         try:
             destination.parent.mkdir(parents=True, exist_ok=True)
             stage = Path(tempfile.mkdtemp(prefix='.patchtrace-backup-', dir=destination.parent))
@@ -756,7 +769,10 @@ def verify_backup_copy(path: Path, expected_sha256: str, *, private_stage: bool 
     """Read-only restoration check. A published project still requires exclusive project ownership."""
     with ProjectStore(path, _backup_verification='staged' if private_stage else 'published') as store:
         # Validate and compare one SQLite read snapshot, even across separate SELECTs.
-        store.connection.execute('BEGIN')
+        try:
+            store.connection.execute('BEGIN')
+        except sqlite3.Error as exc:
+            raise ValueError('PT-STORAGE: backup verification transaction could not start') from exc
         store.load(recover_interrupted=False)
         if store.snapshot_sha256() != expected_sha256:
             raise ValueError('PT-STORAGE: the copied snapshot differs from the source project')

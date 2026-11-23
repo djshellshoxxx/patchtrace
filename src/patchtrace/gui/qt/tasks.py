@@ -235,6 +235,7 @@ class TaskRunner:
                on_result: Callable[[Any], None] | None = None, on_error: Callable[[TaskFailure], None] | None = None,
                on_progress: Callable[[Progress], None] | None = None) -> CancelToken:
         """Start ``fn(token, report)``; the previous task on ``channel`` is cancelled and its result dropped.
+        A launch refusal is queued to ``on_error`` when supplied and otherwise propagates to the caller.
         ``report(stage, done=0, total=None, message='')`` is cheap and may be called in a tight loop."""
         self._require_open()
         generation = self._supersede(channel)
@@ -319,7 +320,15 @@ class TaskRunner:
 
     def _start(self, task: _Task, name: str) -> None:
         thread = threading.Thread(target=_work, args=(task, self._lock, self._threads), name=name, daemon=True)
-        self._start_thread(thread)
+        try:
+            self._start_thread(thread)
+        except (OSError, RuntimeError) as exc:
+            if task.on_error is None:
+                raise
+            # Use normal queued delivery, so cancellation, supersession and shutdown may drop this error.
+            self._running.add(task)
+            _post(_Event('error', task, TaskFailure(type(exc).__name__)))
+            return
         self._running.add(task)
         if task.on_progress:
             self._bridge.timer.start()
