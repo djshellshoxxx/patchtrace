@@ -1,5 +1,9 @@
 ## Current Windows/native recovery checkpoint — 2026-11-21
 
+## November 23 project reliability candidate
+
+See the combined Linux test run, exact main Windows QA and open offline acceptance. [Evidence and integration queue](engineering/project-reliability-20261123.md)
+
 PR351 is actually merged at `3a16290c0fcc4e0c21712fe10474a3ff33fad336`, tree `6001ef506c38930fd590bd827f428b997c3b2797`, after15 executed automatic jobs passed and two release jobs intentionally skipped. Actual ordered ancestry and both publication markers in the subject and body are verified. Linux full QA:24,295 passed/53 skipped/4 xfailed; Windows:24,164 passed/185 skipped/3 xfailed. Counts belong to that qualified source.
 
 The next reviewed code is local `f596471b8909ec8e28e0624041d60f03d520591d`, remote `4202e5e79e2aea6366c75261d74544ea48368ca5`, tree `dffeed541749850ef54a130cec0fa56c0fd2f01c`. It adds independent downloaded-Windows artifact verification, non-PR concurrency isolation, strict upload failure, and original Ghidra ZIP verification before fresh extraction. Local combined selection:449 passed/27 explicit no-PowerShell skips/2 strict CODEX-5 xfails. Automatic code-source native run44901791862 passed all five contracts with one original-ZIP cold miss/save and four verified warm restores. This is not final-record-source or Windows27 acceptance.

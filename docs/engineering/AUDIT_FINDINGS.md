@@ -1,5 +1,9 @@
 # PatchTrace audit findings
 
+## November 23 project reliability candidate
+
+The [defect register and verification evidence](project-reliability-20261123.md#defects-ownership-and-dependency-order) cover database retention, constructor cancellation, SQLite share paths, recent-project settings and repository identity.
+
 ## Current PR349 Intel + C4 follow-up
 
 [Current report](cycle837fe-native-c4-20261121.md) and [ledger](task-ledger.json):tested `6bf79fef` / `dc659c7e`, 1,396 passes/1 CODEX-5xfail, zero failures/errors/ordinary skips, required lint/dependencies/source binding and independent whole-tree review. ExistingPR349 combines fixed Windows identity, five Build environment help mappings and bounded Pages lock/isolation with earlier storage/Search/pinning/cache/frozen work. Exact new-source hosted/native/package gates remain pending;main/release readiness is not claimed.

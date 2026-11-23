@@ -1,4 +1,22 @@
 {
+  "project_reliability_20261123": {
+    "base": "ea16019601486c831941f9bc1a7ba5862a170317",
+    "application_commit": "939d86967b5002d47ca4a597029fd760994ab547",
+    "application_tree": "85cc0282c6da09df23154461a345edb4b29a37d4",
+    "branch": "integration/project-reliability-20261123",
+    "status": "Awaiting integration",
+    "work_items": [
+      "ST-01",
+      "ST-02",
+      "ST-03",
+      "UI-01",
+      "INV-01",
+      "DOC-01",
+      "REC-01"
+    ],
+    "record": "docs/engineering/project-reliability-20261123.md",
+    "release_ready": false
+  },
   "schema": "patchtrace-engineering-task-ledger/1",
   "updated_at": "2026-11-21T13:26:59.272131+00:00",
   "repository": "https://github.com/djshellshoxxx/PatchTrace",

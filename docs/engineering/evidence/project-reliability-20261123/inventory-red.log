@@ -1,0 +1,27 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_ test_repository_spelling_preserves_pr_links_and_stack_without_matching_forks _
+
+graph = (PosixPath('/tmp/pytest-of-agent/pytest-18/test_repository_spelling_prese0/repository'), 'c1ecbc32f0b7464a51b3cc1bff14...8c29fe60189c80b6d5c3226e', 'e79cd0b5206de489329bf0bedfc01b827fabd0c1', 'e847546e997b309ce86290ab964143d85e9d591b', ...)
+
+    def test_repository_spelling_preserves_pr_links_and_stack_without_matching_forks(graph):
+        repo, _, main, candidate, topic, _, unresolved = graph
+        pulls = [{"number": number, "state": "open", "head": {
+            "ref": branch, "sha": sha, "repo": {"full_name": full_name},
+        }, "base": {"sha": main}} for number, branch, sha, full_name in (
+            (139, "topic", topic, "Owner/PatchTrace"),
+            (168, "integration", candidate, "owner/patchtrace"),
+            (7, "topic", topic, "fork/PatchTrace"),
+            (8, "Topic", topic, "Owner/PatchTrace"),
+        )]
+        rows, _ = tool.inventory(tool.Git(repo), main, unresolved, [("topic", topic)], pulls, "OWNER/PatchTrace")
+>       assert rows[0]["pr"] == "139"
+E       AssertionError: assert '-' == '139'
+E
+E         - 139
+E         + -
+
+tests/test_branch_inventory.py:217: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_branch_inventory.py::test_repository_spelling_preserves_pr_links_and_stack_without_matching_forks
+1 failed, 28 deselected in 0.66s

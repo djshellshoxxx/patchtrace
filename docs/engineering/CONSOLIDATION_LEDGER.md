@@ -1,5 +1,9 @@
 # PatchTrace consolidation ledger
 
+## November 23 project reliability candidate
+
+The [branch ledger](evidence/project-reliability-20261123/branches.tsv) and [PR ledger](evidence/project-reliability-20261123/pulls.tsv) record all 377 branch tips and 349 PR heads observed before this cycle published its branch. The [reconciliation methods](evidence/project-reliability-20261123/summary.json) distinguish historical integration and current tree equivalence.
+
 ## Current PR349 Intel + C4 follow-up
 
 [Current report](cycle837fe-native-c4-20261121.md) and [ledger](task-ledger.json):tested `6bf79fef` / `dc659c7e`, 1,396 passes/1 CODEX-5xfail, zero failures/errors/ordinary skips, required lint/dependencies/source binding and independent whole-tree review. ExistingPR349 combines fixed Windows identity, five Build environment help mappings and bounded Pages lock/isolation with earlier storage/Search/pinning/cache/frozen work. Exact new-source hosted/native/package gates remain pending;main/release readiness is not claimed.

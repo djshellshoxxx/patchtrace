@@ -1,0 +1,130 @@
+{
+  "base": "ea16019601486c831941f9bc1a7ba5862a170317",
+  "candidate": "efe85b01e33849dc4fb496503dd980b56f86b934",
+  "upstream_pr": 316,
+  "upstream_source": [
+    "147bd944404a0ba2ccee6b6f90fd40c87d7a2fe6",
+    "e85e7548c4af417be19ca6f315f580bd31ba90b8",
+    "4cc1a364841643a6a4674e0f29efe66e869061d1",
+    "d230705d6030a789b228e3b2445a97a33e6ec7da",
+    "33594e45b6a5230c12c9e80a847cc29849f7011e",
+    "c8eeff1c280423295e7bc7581b08825a451c6015"
+  ],
+  "commits": [
+    [
+      "aa66df9675b1d70ae8ec20060fbc463051c12e35",
+      "test(storage): preserve unknown incomplete-creation schemas and companions [no release]"
+    ],
+    [
+      "803699187e366244bdafe5310573fb6dca7e3f2b",
+      "fix(storage): recycle only verified empty current database schemas [no release]"
+    ],
+    [
+      "86285e79a7eb5bee0e3f0d8f52a13bed72ceb2dc",
+      "test(storage): bind retry and rollback to owned database state [no release]"
+    ],
+    [
+      "b78775ff1e14265bca6d5e0b693234dcaaf09db5",
+      "fix(storage): reuse retry databases in place and retain rollback ownership [no release]"
+    ],
+    [
+      "c5d7fcff36271feb8d3603415af6c3670ccfae82",
+      "Specify creation retry refusal for a foreign SQLite application ID"
+    ],
+    [
+      "f88c5c30817c50d1ba2209c8ddf882c7fef5b630",
+      "Respect existing SQLite application ownership during creation retry"
+    ],
+    [
+      "472a83d656c637f98d09c5116dda13e34a549d7f",
+      "Exercise Windows share names with the SQLite project connection modes"
+    ],
+    [
+      "686ff40d985f43ff0c3c3a86bd66b7e2cc479f6a",
+      "Encode UNC share names in SQLite filenames for project reads and writes"
+    ],
+    [
+      "e05faa3af4d2cad1b9abd59f55082e46587fd38c",
+      "Recover project store constructor cleanup regression coverage"
+    ],
+    [
+      "7207c021b094fac9f3c8c289a14e3f5976fde94c",
+      "Preserve constructor failures through owned cleanup [no release]"
+    ],
+    [
+      "997f5156bcd0e76801a0c776f3c52981676ce231",
+      "Exercise pre-prune backup verification with Windows share names"
+    ],
+    [
+      "efe85b01e33849dc4fb496503dd980b56f86b934",
+      "Use the same SQLite path encoding to verify project backups on shares"
+    ]
+  ],
+  "behavioral_results": [
+    {
+      "id": "first-schema",
+      "red_commit": "aa66df9675b1d70ae8ec20060fbc463051c12e35",
+      "green_commit": "803699187e366244bdafe5310573fb6dca7e3f2b",
+      "red": "20 failed, 3 passed",
+      "green": "23 passed"
+    },
+    {
+      "id": "reuse-rollback",
+      "red_commit": "86285e79a7eb5bee0e3f0d8f52a13bed72ceb2dc",
+      "green_commit": "b78775ff1e14265bca6d5e0b693234dcaaf09db5",
+      "red": "10 failed, 14 deselected",
+      "green": "191 passed in combined suite"
+    },
+    {
+      "id": "foreign-application",
+      "red_commit": "c5d7fcff36271feb8d3603415af6c3670ccfae82",
+      "green_commit": "f88c5c30817c50d1ba2209c8ddf882c7fef5b630",
+      "red": "1 failed",
+      "green": "1 passed"
+    },
+    {
+      "id": "share-uri",
+      "red_commit": "472a83d656c637f98d09c5116dda13e34a549d7f",
+      "green_commit": "686ff40d985f43ff0c3c3a86bd66b7e2cc479f6a",
+      "red": "4 failed, 1 passed",
+      "green": "5 passed"
+    },
+    {
+      "id": "constructor",
+      "red_commit": "e05faa3af4d2cad1b9abd59f55082e46587fd38c",
+      "green_commit": "7207c021b094fac9f3c8c289a14e3f5976fde94c",
+      "red": "25 failed, 16 passed",
+      "green": "41 passed"
+    },
+    {
+      "id": "backup-uri",
+      "red_commit": "997f5156bcd0e76801a0c776f3c52981676ce231",
+      "green_commit": "efe85b01e33849dc4fb496503dd980b56f86b934",
+      "red": "1 failed, 5 passed",
+      "green": "171 passed in combined suite"
+    }
+  ],
+  "logs": {
+    "pt-storage-app-id-green.log": "1 passed, 23 deselected, 1 warning in 0.31s",
+    "pt-storage-app-id-red.log": "1 failed, 23 deselected, 1 warning in 0.45s",
+    "pt-storage-backup-uri-green.log": "171 passed in 2.77s",
+    "pt-storage-backup-uri-red.log": "1 failed, 5 passed in 0.52s",
+    "pt-storage-baseline.log": "25 passed, 1 warning in 0.66s",
+    "pt-storage-broad.log": "275 passed in 8.33s",
+    "pt-storage-constructor-green.log": "41 passed in 0.67s",
+    "pt-storage-constructor-red.log": "25 failed, 16 passed in 0.72s",
+    "pt-storage-final.log": "321 passed in 7.58s",
+    "pt-storage-green.log": "191 passed in 4.83s",
+    "pt-storage-ownership-red.log": "10 failed, 14 deselected, 1 warning in 0.46s",
+    "pt-storage-ruff.log": "All checks passed!",
+    "pt-storage-schema-green.log": "23 passed, 1 warning in 0.33s",
+    "pt-storage-schema-red.log": "20 failed, 3 passed, 1 warning in 0.46s",
+    "pt-storage-uri-green.log": "5 passed, 1 warning in 0.28s",
+    "pt-storage-uri-red.log": "4 failed, 1 passed, 1 warning in 0.37s"
+  },
+  "limits": [
+    "Tests used authored data and real SQLite on Linux. UNC URI parsing used local POSIX files plus Windows path spellings. Native Windows/SMB acceptance remains outstanding.",
+    "A held cooperative project lock does not exclude a noncooperating process replacing a filesystem entry at arbitrary points.",
+    "Repository release status, full CI and Windows native checks are not inferred from this suite."
+  ]
+}

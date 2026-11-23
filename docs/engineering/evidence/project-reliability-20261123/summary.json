@@ -1,0 +1,88 @@
+{
+  "repository": "djshellshoxxx/PatchTrace",
+  "base": "ea16019601486c831941f9bc1a7ba5862a170317",
+  "base_tree": "4a07cd88ded407bef30a8aeb81961e4041822dc2",
+  "branch_pages": [
+    100,
+    100,
+    100,
+    77,
+    0
+  ],
+  "pulls_pages": {
+    "size": 10,
+    "count_nonempty": 35,
+    "last_nonempty": 9,
+    "terminating_page": 36
+  },
+  "branches": 377,
+  "distinct_branch_shas": 376,
+  "pulls": 349,
+  "pull_states": {
+    "closed-unmerged": 88,
+    "merged": 177,
+    "open": 84
+  },
+  "merged_prs_without_merge_commit_on_main": [
+    161,
+    160,
+    146,
+    145
+  ],
+  "checked_at_utc": "2026-11-23T22:21:24.616450+00:00",
+  "branch_classifications": {
+    "review": 143,
+    "integrated": 219,
+    "superseded": 4,
+    "equivalent": 4,
+    "docs-tests": 6,
+    "partial": 1
+  },
+  "pull_head_classifications": {
+    "review": 111,
+    "integrated": 228,
+    "equivalent": 3,
+    "superseded": 3,
+    "docs-tests": 4
+  },
+  "method_counts": {
+    "merge-conflict": 126,
+    "historical-paths": 7,
+    "merged-pr": 42,
+    "ancestry": 170,
+    "nonempty-merge": 14,
+    "review-unchanged": 2,
+    "noop-merge": 3,
+    "docs-tests-delta": 6,
+    "packaging-review": 1,
+    "dated-prompt": 2,
+    "no-single-base": 3,
+    "path-equality": 1
+  },
+  "remaining_distinct_branch_heads": 142,
+  "maximal_unresolved_branch_heads": 86,
+  "open_pr_heads_historically_integrated": 20,
+  "methods": {
+    "ancestry": "Source commit is an ancestor of pinned main.",
+    "merged-pr": "GitHub attests this source tip was merged directly to main and its recorded merge SHA is reachable from pinned main. Applies to squash merges. Current behavior may have changed.",
+    "historical-paths": "Every changed path from the unique merge base matches the donor in mode and final object (including absent files) at the same first-parent main witness descending from that base. The exact delta was present then. Later main can supersede it.",
+    "tree-equality": "The source and main tree objects are identical.",
+    "path-equality": "Every source-changed path from the recorded merge base has the same mode and final object on pinned main, including deletions.",
+    "noop-merge": "A clean three-way Git tree merge yields the exact main tree.",
+    "empty-delta": "The donor and its merge base have identical trees.",
+    "review-unchanged": "A committed independent whole-donor disposition records supersession. Every path it accounted for still matches the reviewed target tree on pinned main.",
+    "dated-prompt": "The sole changed file is an October 30 or November 4 coordinator prompt tied to an old main. Preserve the historical record; current direction and docs/engineering/task-ledger.json supersede it for operation.",
+    "packaging-review": "The complete 11-path donor was previously reviewed. Pinned main retains the recovered concurrency, empty-upload and downloaded-artifact controls. The remaining historical dev/build pins are still unvalidated.",
+    "docs-tests-delta": "A clean synthetic merge changes only docs/tests. The witness is a path count. This establishes textual difference; usefulness and behavior require review.",
+    "nonempty-merge": "A clean synthetic merge changes main. The witness is a path count. Do not infer useful missing behavior from that count.",
+    "merge-conflict": "A synthetic tree merge conflicts; witness is the merge base. Retain for manual comparison.",
+    "no-single-base": "No unique base was available. An empty witness denotes unrelated histories."
+  },
+  "limitations": [
+    "Historical integration does not certify current feature behavior. Living project branches and PRs can change after the captured refs.",
+    "Scope-only earlier reviews never settle the whole branch. Current path counts certify blob/mode checks, not fresh behavioral tests.",
+    "Open GitHub PR merge_sha values can denote synthetic test merges. Only merged state plus reachable recorded merge SHA establishes recorded integration.",
+    "The 130-commit first-parent history was checked for whole historical path matches among textually unresolved branches with a unique merge base. A historical witness is narrower than a current behavior guarantee.",
+    "Categories do not authorize blanket cherry-picking, branch deletion, or release."
+  ]
+}
