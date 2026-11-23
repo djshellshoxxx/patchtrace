@@ -63,9 +63,32 @@ $uninstaller = Join-Path $installDir "Uninstall.exe"
 if (-not (Test-Path $uninstaller -PathType Leaf)) {
     throw "NSIS uninstaller was not installed."
 }
-$remove = Start-Process -FilePath $uninstaller -ArgumentList "/S" -Wait -PassThru
-if ($remove.ExitCode -ne 0) {
-    throw "Uninstaller exited with code $($remove.ExitCode)."
+$settingsRoot = "HKCU:\Software\PatchTrace"
+if ((Get-ItemPropertyValue -LiteralPath $settingsRoot -Name InstallDir) -ne $installDir) {
+    throw "Installer did not register the chosen install directory."
+}
+# Use unique names so cleanup touches only preferences created by this smoke run.
+$sentinel = "InstallerSmoke-" + [guid]::NewGuid().ToString("N")
+$preferences = Join-Path $settingsRoot "PatchTrace\$sentinel"
+try {
+    New-ItemProperty -LiteralPath $settingsRoot -Name $sentinel -Value "keep sibling" -PropertyType String | Out-Null
+    New-Item -Path $preferences -Force | Out-Null
+    New-ItemProperty -LiteralPath $preferences -Name "Preference" -Value "keep nested" -PropertyType String | Out-Null
+    $remove = Start-Process -FilePath $uninstaller -ArgumentList "/S" -Wait -PassThru
+    if ($remove.ExitCode -ne 0) {
+        throw "Uninstaller exited with code $($remove.ExitCode)."
+    }
+    if ((Get-Item -LiteralPath $settingsRoot).GetValueNames() -contains "InstallDir") {
+        throw "Uninstall left the InstallDir registry value behind."
+    }
+    if ((Get-ItemPropertyValue -LiteralPath $settingsRoot -Name $sentinel) -ne "keep sibling" -or
+        (Get-ItemPropertyValue -LiteralPath $preferences -Name "Preference") -ne "keep nested") {
+        throw "Uninstall changed user preferences."
+    }
+}
+finally {
+    Remove-ItemProperty -LiteralPath $settingsRoot -Name $sentinel -ErrorAction SilentlyContinue
+    Remove-Item -LiteralPath $preferences -ErrorAction SilentlyContinue
 }
 if (Test-Path $exe -PathType Leaf) {
     throw "Uninstall left PatchTrace.exe in $installDir."

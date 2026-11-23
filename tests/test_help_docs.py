@@ -93,3 +93,16 @@ def test_troubleshooting_names_every_bundle_and_offline_code():
     codes = set(backend_bundle.CODES) | {'PT-OFFLINE', 'PT-CANCEL'}
     missing = sorted(c for c in codes if f'`{c}`' not in text)
     assert not missing, missing
+
+
+def test_keyboard_help_lists_shortcuts_for_built_panels():
+    from patchtrace.gui.registry import load_manifest
+    from patchtrace.panel_manifest import MANIFEST
+
+    loaded = load_manifest(MANIFEST)
+    assert not loaded.errors
+    expected = {spec.shortcut: spec.title for spec in loaded.specs.values() if spec.shortcut}
+    page = _text(HELP / '49-keyboard-and-command-navigation.md')
+    rows = re.findall(r'^\| `(Ctrl\+Shift\+[A-Z])` \| (.*?) \|$', page, re.MULTILINE)
+    documented = {shortcut: title for shortcut, title in rows if shortcut != 'Ctrl+Shift+P'}
+    assert documented == expected

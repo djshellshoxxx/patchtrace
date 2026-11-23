@@ -135,9 +135,13 @@ publisher authenticity or protection against a concurrent hostile writer.
 
 Run the existing `tools/test_windows_portable.ps1 -Archive <downloaded ZIP>`
 and `tools/test_windows_installer.ps1 -Installer <downloaded Setup.exe>`
-unchanged. They perform portable extraction and frozen startup/CLI checks,
+on these artifacts. They perform portable extraction and frozen startup/CLI checks,
 then installation, runtime checks and non-destructive uninstall with project
-data sentinels. The independent builder-side full frozen CLI smoke remains.
+data sentinels. Uninstall must remove the installer's HKCU Software\PatchTrace
+InstallDir value and Windows Apps registration, while retaining unrelated
+values and the PatchTrace preferences subkey. The Windows smoke checks both
+a sibling value and a nested preference across uninstall.
+The independent builder-side full frozen CLI smoke remains.
 All verification and smoke steps are required, with no failure suppression or
 publication-marker condition. `release` directly needs `windows-validate` in
 addition to every existing dependency, retaining its existing condition and

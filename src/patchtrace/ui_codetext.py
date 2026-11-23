@@ -56,10 +56,15 @@ class CodeHighlighter(QSyntaxHighlighter):
         self._controller = controller
 
     def highlightBlock(self, text: str) -> None:  # noqa: N802 (Qt name)
-        self.setCurrentBlockState(-1)
         controller = self._controller
         try:
-            for span in controller.spans(self._side, self.currentBlock().blockNumber(), text):
+            row = self.currentBlock().blockNumber()
+            first, last = controller._windows[self._side]
+            # New blocks already have state -1. Never assign a state: even the
+            # empty bulk-load callbacks must stay cheap, and state changes cascade.
+            if controller._model is None or controller._failed or not first <= row <= last:
+                return
+            for span in controller.spans(self._side, row, text):
                 self.setFormat(span.start, span.length, controller.format_for(span.style_key))
         except Exception:  # noqa: BLE001 - fail closed: plain text and a notice, never an exception into Qt
             controller.fail()

@@ -13,14 +13,23 @@ $env:GHIDRA_INSTALL_DIR = 'C:\Tools\ghidra_12.0.4_PUBLIC'
 ```
 Setup now discovers an existing dedicated backend environment at `%LOCALAPPDATA%\\PatchTrace-backend\\Scripts\\python.exe` and common Ghidra extraction locations through bounded read-only scans. Unique candidates prefill empty fields; manually configured paths are retained. The **Find existing installations** button rescans. Multiple candidates require selecting an explicit path using Browse. Discovery does not install dependencies or execute Python/Ghidra. Settings must point at that backend python.exe, not PatchTrace.exe, and the unpacked Ghidra directory. Ghidriff symbol-server lookup is disabled by default (the backend supplies `--no-symbols`); enable it in Setup only if intended. Ghidra and extensions are separate processes: use actual OS network controls to enforce an air gap. Research documents the inspected Ghidra target; use setup diagnostics to verify the installed combination. The pinned combination passed the native known-patch workflow; other installed combinations need setup diagnostics and verification. Static PE drivers can be inspected but are never installed or loaded.
 
-Build on Windows from source:
+Build from the repository root on Windows using Python 3.12. The release workflow includes the search and rules extras. To produce Setup.exe, install NSIS 3.13 on the build host. If the compiler is outside its normal location, set `NSIS_COMPILER` to the full path of `makensis.exe`.
+
 ```powershell
-py -3.12 -m pip install -e '.[dev]'
-py -3.12 -m pytest -q
-py -3.12 tools/build_windows.py
-# Install pinned NSIS 3.13, then produce the per-user installer:
-py -3.12 tools/package_windows_installer.py
-# On the Windows build host, verify ZIP and installer outside the checkout:
+py -3.12 -m venv .venv
+$python = '.\.venv\Scripts\python.exe'
+& $python -m pip install --only-binary=:all: -e '.[dev,search,rules]'
+& $python -m pip check
+$env:QT_QPA_PLATFORM = 'offscreen'
+& $python -m pytest -q
+& $python tools/build_windows.py
+& $python tools/package_windows_installer.py
+```
+
+Run the portable and installer smoke scripts in a **disposable Windows test account**. The installer test creates and removes that account’s actual Start menu shortcut and uninstall registration. Use a fresh PowerShell session in the checkout with its `dist` outputs. The scripts expect GitHub Actions’ `RUNNER_TEMP` variable. Create a fresh workspace for them when running locally.
+
+```powershell
+$env:RUNNER_TEMP = (New-Item -ItemType Directory -Path (Join-Path $env:TEMP ([guid]::NewGuid().ToString()))).FullName
 pwsh -File tools/test_windows_portable.ps1
 pwsh -File tools/test_windows_installer.ps1
 ```

@@ -24,9 +24,9 @@ Start with an older and newer version of the same executable, DLL, or driver. Ru
 
 ## Download and first launch
 
-1. Download the Windows x64 ZIP and its `.sha256` file from [Releases](https://github.com/djshellshoxxx/patchtrace/releases). The first published package is [v0.1.0-beta.8](https://github.com/djshellshoxxx/patchtrace/releases/tag/v0.1.0-beta.8).
-2. Extract the **entire ZIP** to a user-writable directory. Keep `PatchTrace.exe`, `_internal`, documentation, and licenses together. Running the executable inside the ZIP or copying only the executable will not work.
-3. Launch `PatchTrace.exe`. The desktop includes Python and Qt, so a separate Python installation is unnecessary for opening projects, exploring the sample, reviewing imported comparisons, or exporting reports.
+1. Choose the Windows x64 per-user installer (`PatchTrace-Windows-x64-Setup.exe`) or the portable ZIP from [Releases](https://github.com/djshellshoxxx/patchtrace/releases). Download the matching `.sha256` and verify it before opening either package.
+2. Run Setup and launch **PatchTrace** from the Start menu. For the portable ZIP, extract the **entire ZIP** to a user-writable directory and keep `PatchTrace.exe`, `_internal`, documentation, and licenses together.
+3. If you selected the portable ZIP, launch the extracted `PatchTrace.exe`. The desktop includes Python and Qt, so a separate Python installation is unnecessary for opening projects, exploring the sample, reviewing imported comparisons, or exporting reports.
 4. Choose **Sample** for a guided first exercise, or **New** to create a comparison project.
 
 The desktop target is Windows 11 x64. The initial input format is PE AMD64, including compatible `.exe`, `.dll`, and `.sys` files. File extensions alone do not determine acceptance: headers and architecture are validated. ARM64, 32-bit x86, ELF, Mach-O, and other formats are outside this beta's supported input contract.
@@ -34,11 +34,12 @@ The desktop target is Windows 11 x64. The initial input format is PE AMD64, incl
 To check the download in PowerShell:
 
 ```powershell
-Get-FileHash '.\PatchTrace-0.1.0-windows-x64.zip' -Algorithm SHA256
-Get-Content '.\PatchTrace-0.1.0-windows-x64.zip.sha256'
+$package = 'PatchTrace-Windows-x64-Setup.exe' # Set this to the downloaded filename
+Get-FileHash -LiteralPath $package -Algorithm SHA256
+Get-Content -LiteralPath "$package.sha256"
 ```
 
-Compare the hash values. The package is a portable, unsigned beta; no installer or elevation is required. Keep projects in their own directories rather than inside the application directory, so replacing the application does not replace your work.
+Compare the hash values. Both Windows packages are unsigned and run under your own account. Keep projects in their own directories rather than inside the application directory, so replacing the application does not replace your work.
 
 ## Try the sample
 
