@@ -4,6 +4,14 @@ The [desktop and installer follow-up](desktop-acceptance-20261123.md) includes t
 
 The integration branch is `integration/project-reliability-20261123`. Its application commit is `939d86967b5002d47ca4a597029fd760994ab547`, based on main `ea16019601486c831941f9bc1a7ba5862a170317`. The published application tree `85cc0282c6da09df23154461a345edb4b29a37d4` equals local integration commit `1f7fdc04b993158daddd44c343171f36121ec87e`. The evidence commit adds these records. Use the pull request for the live head, tested merge commit, reviews and job conclusions.
 
+## Windows project creation retry
+
+ST-04 (P0, persistence worker and independent reviewer) affects the initial PR #360 head `6ffe819e71d48793f8207bd64d7480fbc03e2ef5`. Its hosted Windows Qt job failed all five repetitions of the new-project wizard retry test. The exception was “project database changed during creation admission.” An exclusive descriptor and a pathname can describe the same local Windows file using different change-time semantics. The earlier Linux run passed 24,440 tests. [Failing native Windows job](https://github.com/djshellshoxxx/patchtrace/actions/runs/45280338559/job/138062824659)
+
+The correction recovers the verified hunk from `202bda41ea84784f2871289f36b9f5341c366a80`. Compare the device, file ID, size and modification time across APIs, while retaining change-time and other mutation checks within each API. The tests close authored SQLite handles before simulating a file replacement. A provider that supplies no usable file ID now receives a refusal. An empty placeholder may remain if the creator cannot establish that it owns the file. Existing project data stays in place.
+
+The historical regression failed before the recovery. Two further tests demonstrating the zero-file-ID case failed before its correction. An independent reviewer passed 155 storage and GUI tests on worker source `ac4b1e85bcf2780bb2e986cca3409bd9c856494e`. On the combined tree, 100 checks passed on Linux and the one Windows-only SMB check skipped. The Windows QA workflow now saves early JUnit results for creation, replacement and SMB before running the full suite. Read the corrected head's Windows results before integration. Native SMB acceptance requires a case that actually passed on a share. [Independent review and upstream references](evidence/project-reliability-20261123/windows-creation-source-review.md) · [PR #360 checks](https://github.com/djshellshoxxx/patchtrace/pull/360/checks)
+
 ## Defects, ownership and dependency order
 
 All implementation rows below are awaiting integration into main. “Independently verified” describes the named acceptance check on its recorded source. The coordinator serializes the changes. Workers used separate checkouts.

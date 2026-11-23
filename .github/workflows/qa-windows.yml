@@ -31,6 +31,13 @@ jobs:
       - run: python -m pip check
       - name: protobuf equals the pin and runs the upb backend (SPEC-10b)
         run: python tools/check_protobuf_runtime.py
+      - name: Windows project creation retries and loopback SMB
+        if: runner.os == 'Windows'
+        run: >-
+          python -m pytest -q -rs tests/test_gui_creation_retry.py
+          tests/test_project_creation_stat_views.py
+          tests/test_creation_schema_refusal.py tests/test_creation_replacement_refusal.py
+          tests/test_windows_project_smb.py --junitxml=windows-project-results.xml
       - name: Native pair-publication boundary controls
         run: >-
           python -m pytest -q tests/test_research_qualification_winpairs.py
@@ -75,6 +82,7 @@ jobs:
           name: qa-${{ runner.os }}
           path: |
             pair-publication-results.xml
+            windows-project-results.xml
             qa-results.xml
             qa-leg-result.txt
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
