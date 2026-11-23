@@ -1,0 +1,20 @@
+{
+  "observed_at_utc": "2026-11-23T22:33:38.146480+00:00",
+  "main": "ea16019601486c831941f9bc1a7ba5862a170317",
+  "branch_count": 378,
+  "pr_head_count": 350,
+  "branch_delta": {
+    "added": {
+      "integration/project-reliability-20261123": "6ffe819e71d48793f8207bd64d7480fbc03e2ef5"
+    },
+    "removed": [],
+    "changed": {}
+  },
+  "pr_head_delta": {
+    "added": {
+      "360": "6ffe819e71d48793f8207bd64d7480fbc03e2ef5"
+    },
+    "removed": [],
+    "changed": {}
+  }
+}

@@ -1,5 +1,7 @@
 # Project reliability and release qualification, November 23, 2026
 
+The [desktop and installer follow-up](desktop-acceptance-20261123.md) includes this candidate and records the second and third branch reviews.
+
 The integration branch is `integration/project-reliability-20261123`. Its application commit is `939d86967b5002d47ca4a597029fd760994ab547`, based on main `ea16019601486c831941f9bc1a7ba5862a170317`. The published application tree `85cc0282c6da09df23154461a345edb4b29a37d4` equals local integration commit `1f7fdc04b993158daddd44c343171f36121ec87e`. The evidence commit adds these records. Use the pull request for the live head, tested merge commit, reviews and job conclusions.
 
 ## Defects, ownership and dependency order

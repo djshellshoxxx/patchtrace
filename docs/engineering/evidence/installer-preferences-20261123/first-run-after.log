@@ -1,0 +1,8 @@
+PASS published Setup asset in install and README
+PASS known example asset names shell safe
+PASS CLI Linux runtime location
+PASS registry and Apps uninstall instructions
+PASS docs match pin file
+PASS Windows docs install release extras
+PASS PowerShell smoke scratch and user profile
+PASS self-contained CLI first-run and backup
