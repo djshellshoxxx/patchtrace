@@ -237,10 +237,11 @@ class TaskRunner:
         """Start ``fn(token, report)``; the previous task on ``channel`` is cancelled and its result dropped.
         ``report(stage, done=0, total=None, message='')`` is cheap and may be called in a tight loop."""
         self._require_open()
-        token = self._supersede(channel)
-        generation = self._generation[channel]
+        generation = self._supersede(channel)
+        token = CancelToken()
         task = _Task(channel, generation, token, on_result, on_error, on_progress, fn, False, weakref.ref(self))
         self._start(task, f'pt-task-{channel}')
+        self._tokens[channel] = token
         return token
 
     def cancel(self, channel: str) -> None:
@@ -309,22 +310,25 @@ class TaskRunner:
         if self._closed:
             raise RuntimeError('TaskRunner is shut down')
 
-    def _supersede(self, channel: str) -> CancelToken:
-        previous = self._tokens.get(channel)
+    def _supersede(self, channel: str) -> int:
+        previous = self._tokens.pop(channel, None)
         if previous:
             previous.set()
         self._generation[channel] = self._generation.get(channel, 0) + 1
-        self._tokens[channel] = CancelToken()
-        return self._tokens[channel]
+        return self._generation[channel]
 
     def _start(self, task: _Task, name: str) -> None:
+        thread = threading.Thread(target=_work, args=(task, self._lock, self._threads), name=name, daemon=True)
+        self._start_thread(thread)
         self._running.add(task)
         if task.on_progress:
             self._bridge.timer.start()
-        thread = threading.Thread(target=_work, args=(task, self._lock, self._threads), name=name, daemon=True)
+
+    def _start_thread(self, thread: threading.Thread) -> None:
+        # The worker takes this lock to unregister on exit, even when it finishes immediately.
         with self._lock:
+            thread.start()
             self._threads.add(thread)
-        thread.start()
 
     def _current(self, task: _Task) -> bool:
         return task.generation is None or self._generation.get(task.channel) == task.generation
@@ -402,9 +406,7 @@ class Lane:
         self._latest = CancelToken()
         self._thread = threading.Thread(target=_lane_loop, name=f'pt-lane-{name}', daemon=True,
                                         args=(self._queue, init, close, runner._lock, runner._threads))
-        with runner._lock:
-            runner._threads.add(self._thread)
-        self._thread.start()
+        runner._start_thread(self._thread)
 
     def submit(self, fn: Callable[[Any, CancelToken, Callable], Any],
                on_result: Callable[[Any], None] | None = None, on_error: Callable[[TaskFailure], None] | None = None,

@@ -19,11 +19,13 @@ import stat
 import tempfile
 import unicodedata
 from pathlib import Path
+from typing import Literal
 from uuid import uuid4
 
 from pydantic import ValidationError
 
 from . import verified_backup
+from .directory_publication import publish_directory_no_replace as _publish_no_replace
 from .ingestion import file_fingerprint, safe_path, sha256_file, verify_artifact
 from .models import ComparisonProject, now
 from .sqlite_paths import project_database_uri
@@ -209,19 +211,6 @@ def _clear_readonly_and_retry(function, path, _exc):
     # Copied artifacts/raw outputs are read-only; Windows refuses to delete them otherwise.
     os.chmod(path, stat.S_IWRITE | stat.S_IREAD)
     function(path)
-
-
-def _publish_no_replace(stage: Path, destination: Path) -> None:
-    """Move stage to an absent destination. POSIX os.replace would replace an empty dir."""
-    if os.name == 'nt':
-        os.replace(stage, destination)  # Windows refuses to replace an existing directory.
-        return
-    os.mkdir(destination)  # reservation: fails if anything appeared at destination
-    try:
-        os.rename(stage, destination)
-    except OSError:
-        os.rmdir(destination)
-        raise
 
 
 def _error_location(exc: ValidationError) -> str:
@@ -415,7 +404,10 @@ class ProjectLock:
 
 
 class ProjectStore:
-    def __init__(self, root: Path, create: bool = False):
+    def __init__(self, root: Path, create: bool = False, *,
+                 _backup_verification: Literal['staged', 'published'] | None = None):
+        if create and _backup_verification:
+            raise ValueError('PT-STORAGE: cannot create a project read-only')
         self.root = Path(root).resolve()
         self.closed = False
         self.connection = None
@@ -434,7 +426,8 @@ class ProjectStore:
         if not self.root.is_dir():
             raise ValueError('PT-STORAGE: project path is not a directory' if self.root.exists()
                              else 'PT-STORAGE: project directory does not exist')
-        self.lock = ProjectLock(self.root)
+        if _backup_verification != 'staged':
+            self.lock = ProjectLock(self.root)
         try:
             path = safe_path(self.root, 'project.sqlite3')
             retry = create and path.exists()
@@ -467,7 +460,8 @@ class ProjectStore:
                     raise ValueError('PT-STORAGE: project database changed during creation admission')
             if not create and not path.is_file():
                 raise ValueError('PT-STORAGE: project database is missing')
-            self.connection = sqlite3.connect(project_database_uri(path) + '?mode=rw', uri=True, timeout=5)
+            mode = 'ro' if _backup_verification else 'rw'
+            self.connection = sqlite3.connect(f'{project_database_uri(path)}?mode={mode}', uri=True, timeout=5)
             if create and not _same_creation_file(path, admitted):
                 raise ValueError('PT-STORAGE: project database changed while opening creation')
             self.connection.execute('PRAGMA foreign_keys=ON')
@@ -688,6 +682,14 @@ class ProjectStore:
         except sqlite3.Error as exc:
             raise ValueError('PT-STORAGE: project snapshot cannot be read') from exc
 
+    def snapshot_sha256(self) -> str:
+        """Identity of the persisted payload, including its original JSON representation."""
+        self._check_open()
+        row = self.connection.execute(verified_backup.SNAPSHOT_SHA).fetchone()
+        if row is None:
+            raise ValueError('PT-STORAGE: project snapshot is missing')
+        return row[0]
+
     def history(self) -> list[dict]:
         self._check_open()
         return [dict(sequence=row[0], revision=row[1], created=row[2], sha256=row[3]) for row in
@@ -697,6 +699,7 @@ class ProjectStore:
         """Publish a complete new project copy only after SQLite backup and immutable files succeed."""
         self._check_open()
         self.load()
+        source_sha256 = self.snapshot_sha256()
         destination = Path(destination).resolve()
         if destination.exists() or destination.is_relative_to(self.root):
             raise ValueError('PT-STORAGE: backup destination must be new and outside project')
@@ -721,6 +724,7 @@ class ProjectStore:
                         if candidate.is_symlink():
                             raise ValueError('PT-STORAGE: backup contains a symlink')
                     shutil.copytree(source, stage / name)
+            verify_backup_copy(stage, source_sha256, private_stage=True)
             _publish_no_replace(stage, destination)
         except BaseException as failure:
             try:
@@ -746,3 +750,13 @@ class ProjectStore:
 
     def __exit__(self, *_):
         self.close()
+
+
+def verify_backup_copy(path: Path, expected_sha256: str, *, private_stage: bool = False) -> None:
+    """Read-only restoration check. A published project still requires exclusive project ownership."""
+    with ProjectStore(path, _backup_verification='staged' if private_stage else 'published') as store:
+        # Validate and compare one SQLite read snapshot, even across separate SELECTs.
+        store.connection.execute('BEGIN')
+        store.load(recover_interrupted=False)
+        if store.snapshot_sha256() != expected_sha256:
+            raise ValueError('PT-STORAGE: the copied snapshot differs from the source project')

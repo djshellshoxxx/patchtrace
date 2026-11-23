@@ -330,6 +330,46 @@ def test_submit_off_the_gui_thread_is_refused(runner):
     assert errors == ['TaskRunner must be used on the GUI thread']
 
 
+@pytest.mark.parametrize('worker', ['task', 'lane'])
+def test_refused_thread_start_leaves_runner_usable(qtbot, monkeypatch, worker):
+    local, sink = TaskRunner(reraise=True), Sink()
+    gate, started = threading.Event(), threading.Event()
+
+    def wait_for_release(token, report):
+        started.set()
+        gate.wait(5)
+        return 'other'
+
+    local.submit('other', wait_for_release, sink.result)
+    assert started.wait(5)
+
+    def refuse(_thread):
+        raise RuntimeError("can't start new thread")
+
+    try:
+        with monkeypatch.context() as patch:
+            patch.setattr(threading.Thread, 'start', refuse)
+            with pytest.raises(RuntimeError, match="can't start new thread"):
+                if worker == 'task':
+                    submit(local, sink, lambda token, report: 'rejected', channel='refresh')
+                else:
+                    local.lane('refresh', lambda: pytest.fail('refused lane started'))
+
+        assert local.busy('other') and not local.busy('refresh')
+        assert not local._bridge.timer.isActive()
+        if worker == 'task':
+            local.submit('refresh', lambda token, report: 'retry', sink.result)
+        else:
+            local.lane('refresh', lambda: 'retry').submit(lambda state, token, report: state, sink.result)
+        qtbot.waitUntil(lambda: sink.results == ['retry'], timeout=5000)
+        gate.set()
+        qtbot.waitUntil(lambda: sink.results == ['retry', 'other'], timeout=5000)
+        assert sink.threads == [threading.main_thread()] * 2
+    finally:
+        gate.set()
+        assert local.shutdown(timeout=5) == []
+
+
 def test_submit_after_shutdown_is_refused():
     closed = TaskRunner()
     closed.shutdown()
