@@ -6,18 +6,27 @@ Use `Ctrl+Shift+P` to open the command palette. Search for an action by name, in
 
 The host supplies commands to show or hide, focus, float or dock, and move each available dock panel. Moving supports left, right, top, and bottom areas.
 
-Use these documented framework shortcuts:
+Use these shortcuts in the main window:
 
 | Shortcut | Action |
 | --- | --- |
 | `Ctrl+Shift+P` | Open command palette |
 | `F6` | Focus next workspace region |
 | `Shift+F6` | Focus previous workspace region |
+| `Alt+Left` / `Alt+Right` | Navigate back / forward |
 | `Ctrl+Shift+E` | Engine evidence |
 | `Ctrl+Shift+U` | Unified |
 | `Ctrl+Shift+L` | Leads |
+| `Ctrl+Shift+F` | Search |
+| `Ctrl+Shift+G` | Calls |
+| `Ctrl+Shift+T` | Strings |
+| `Ctrl+Shift+A` | Capabilities |
+| `Ctrl+Shift+B` | Build environment |
+| `Ctrl+Shift+R` | Detection rules |
+| `Ctrl+Shift+K` | KB and CVE |
+| `Ctrl+Shift+X` | Exploitation context |
 
-Other panel shortcuts remain reserved even when their feature is planned. A reserved shortcut does not establish that the panel is available.
+Open Files and Series through **View** or the command palette. The manifest reserves `Ctrl+Shift+H` for the planned Guide panel. To check the panels available in your installation, run `patchtrace panels list`.
 
 Use `Tab` and `Shift+Tab` between controls. Use arrow keys within tables, trees, and option groups. Feature-specific actions such as Enter, Space, and `Ctrl+C` depend on the focused view.
 

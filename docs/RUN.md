@@ -1,6 +1,6 @@
 # First run
 
-Two ways to get a first result without analysing anything real: the built-in sample (GUI) and the CLI on a project you already have. Both work offline.
+The GUI and CLI can each create the built-in sample and reopen it offline.
 
 ## GUI walkthrough
 
@@ -25,7 +25,17 @@ Other entry points: **File overview** gives a preliminary PE comparison (section
 
 ## CLI walkthrough
 
-`python -m patchtrace` (or the packaged executable) with no arguments opens the desktop. With a verb it runs headless and loads no Qt. Verbs: `rank flags correlate cache acquire series secondary intelligence unified intel-tools backend panels`. Run `<verb> --help` for options (verbs with sub-commands, such as `backend status --help`, list them there).
+With the source installation, run `python -m patchtrace --help` for the current command list. With a downloaded package, use its executable in place of `python -m patchtrace`. Running without a command opens the desktop.
+
+To create and verify a first backup, run the following in a directory where `sample-project` and `sample-backup` do not exist. The backup command reopens the copy and checks the database, snapshot and file hashes. Close the project in the GUI before using a CLI command that needs its writer lock.
+
+```text
+python -m patchtrace project sample --project sample-project
+python -m patchtrace project backup sample-project --out sample-backup
+python -m patchtrace project info sample-backup
+```
+
+You can also choose **Open** in the desktop and select the backup directory. The [project CLI guide](help/77-cli-project.md) describes the output and destination rules. Other commands for existing projects include:
 
 ```text
 python -m patchtrace rank PROJECT_DIR --limit 20
