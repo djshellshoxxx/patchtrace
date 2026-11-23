@@ -97,7 +97,11 @@ def test_pin_verify_job_is_ubuntu_pinned_and_uploads_evidence(doc):
     assert job['runs-on'] == 'ubuntu-latest' and job['needs'] == 'pin'
     assert "needs.pin.outputs.verify == 'true'" in job['if'] and 'permissions' not in job
     text = all_run_text(job)
-    assert re.search(r"pip install 'sigstore==\d+\.\d+\.\d+'", text)
+    install = next(s for s in steps(job) if s.get('name') == 'Install the Sigstore client (pinned)')
+    assert install['run'] == (
+        'python -m pip install --require-hashes --only-binary=:all: '
+        '-r tools/requirements-sigstore-ci.lock'
+    )
     assert 'verify_backend_pins.py verify' in text and 'cat pin-verify.json' in text
     up = [s for s in steps(job) if s.get('uses', '').startswith('actions/upload-artifact')]
     assert up and up[0]['if'] == 'always()' and up[0]['with']['name'] == 'pin-verify'
