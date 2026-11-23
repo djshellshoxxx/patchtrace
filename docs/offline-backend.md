@@ -11,11 +11,15 @@ This is the implementation guide for [SPEC-06](specs/offline-backend-installer.m
 5. Click **Diagnose dependencies**, then **Save setup**. Diagnose checks component metadata and Java presence; it does not prove the engines can successfully compare binaries. Run a known compatible binary pair and inspect the results.
 6. The native backend uses the selected JDK through child-process `JAVA_HOME` and `PATH`, leaving system settings unchanged. Ghidriff symbol-server lookup remains disabled unless explicitly enabled by the analyst. Use operating-system firewall controls for a true air gap.
 
+For command-line installation, use `patchtrace runtime inspect-zip` to verify the archive first. Then use `patchtrace runtime install-zip` with the independently obtained SHA-256 digest and `--confirm`. The command prints the installed paths for Setup. See the [CLI runtime guide](help/83-cli-runtime.md) for examples and exit codes.
+
 The imported archive is read-only; a failed or cancelled import leaves existing installations, analyst projects, and preferences intact. If antivirus or power loss strands a hidden staging directory, review and remove that specific directory manually after confirming no installer runs. A stale installation lock must likewise be reviewed, never stolen automatically. No runtime is automatically updated or overwritten.
 
 **Security:** An archive's own file hashes detect corruption, but are not a digital signature. Check the full ZIP SHA-256 from an independent trusted source. Never import untrusted executables simply because the manifest validates.
 
 ## Maintainer: build an offline ZIP from a ready-to-run payload
+
+For the pinned full-runtime build, use the [backend bundle runbook](runbooks/backend-bundle.md). It covers fetching and verifying the pinned inputs and collecting build and acceptance evidence. Follow the steps below when packaging a payload you have already staged.
 
 Before packaging, assemble and verify a **relocatable** portable Windows x64 runtime in a staging directory:
 

@@ -6,6 +6,7 @@ so the host gives every panel Show/Hide, Focus, Float/Dock and Move commands her
 """
 from __future__ import annotations
 
+import re
 from collections.abc import Callable, Iterable, Sequence
 from typing import TYPE_CHECKING
 
@@ -40,7 +41,8 @@ def _walk(actions: Iterable[QAction], trail: str, seen: set[QAction], skip: set[
         if action in seen or action in skip or action.isSeparator():
             continue
         seen.add(action)
-        text = action.text().replace('&', '').strip()
+        # Qt treats a single & as a mnemonic marker and && as one visible ampersand.
+        text = re.sub(r'&(&?)', r'\1', action.text()).strip()
         menu = action.menu()
         if menu is not None:
             yield from _walk(menu.actions(), f'{trail}{text} > ', seen, skip)

@@ -174,19 +174,25 @@ def inventory(
     git: Git, main: str, candidate: str, refs: list[tuple[str, str]], pulls: list[dict],
     repository: str,
 ) -> tuple[list[dict[str, str]], dict[str, Any]]:
+    if not repository.isascii():
+        raise ValueError("repository owner and name must be ASCII")
     if git.read("rev-parse", "--is-shallow-repository").strip() != "false":
         raise ValueError("complete history is required; this repository is shallow")
     main, candidate = git.commit(main), git.commit(candidate)
     main_history = set(git.read("rev-list", main).splitlines())
     candidate_history = set(git.read("rev-list", candidate).splitlines())
     by_branch: dict[str, list[dict]] = {}
+    repository_key = repository.lower()
+    survivor = None
     for pull in pulls:
         head = pull.get("head", {})
         head_repo = head.get("repo") or {}
-        if head_repo.get("full_name") == repository:
-            by_branch.setdefault(head["ref"], []).append(pull)
-    survivor = next((pull for pull in pulls if pull.get("number") == 168 and pull.get("state") == "open"
-                     and (pull.get("head", {}).get("repo") or {}).get("full_name") == repository), None)
+        full_name = head_repo.get("full_name")
+        if not isinstance(full_name, str) or not full_name.isascii() or full_name.lower() != repository_key:
+            continue
+        by_branch.setdefault(head["ref"], []).append(pull)
+        if survivor is None and pull.get("number") == 168 and pull.get("state") == "open":
+            survivor = pull
     survivor_history = set(git.read("rev-list", git.commit(survivor["head"]["sha"])).splitlines()) \
         if survivor else set()
     rows = []

@@ -26,8 +26,14 @@ from pydantic import ValidationError
 from . import verified_backup
 from .ingestion import file_fingerprint, safe_path, sha256_file, verify_artifact
 from .models import ComparisonProject, now
+from .sqlite_paths import project_database_uri
 
 SCHEMA_VERSION = 1
+MAX_RETRY_DATABASE_BYTES = 1024 * 1024
+_CURRENT_SNAPSHOT_SQL = ('CREATE TABLE current_snapshot (singleton INTEGER PRIMARY KEY CHECK(singleton=1), '
+                         'payload TEXT NOT NULL, sha256 TEXT NOT NULL)')
+_HISTORY_SQL = ('CREATE TABLE history (sequence INTEGER PRIMARY KEY AUTOINCREMENT, revision INTEGER NOT NULL, '
+                'created TEXT NOT NULL, payload TEXT NOT NULL, sha256 TEXT NOT NULL)')
 MAX_SNAPSHOT_BYTES = 256 * 1024 * 1024
 HISTORY_KEEP = 100
 HISTORY_MAX_BYTES = 512 * 1024 * 1024
@@ -223,28 +229,99 @@ def _error_location(exc: ValidationError) -> str:
     return '.'.join(str(part) for part in exc.errors()[0]['loc']) or 'root'
 
 
-def _abandoned_creation(path: Path) -> bool:
-    """True for the database a creation leaves when it died before committing its first snapshot.
-
-    The caller holds the exclusive project lock, so no live creator owns the file. A database that holds
-    a snapshot, a history row or any foreign table is never treated as abandoned."""
+def _creation_file(path: Path) -> os.stat_result | None:
+    """A bounded regular candidate without companions, before any SQLite page access."""
     try:
-        if path.stat().st_size == 0:
+        info = path.lstat()
+        if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_size > MAX_RETRY_DATABASE_BYTES:
+            return None
+        # Immutable reads ignore companions; never erase possibly retained data or
+        # let SQLite recovery modify it during this admission check.
+        for suffix in ('-journal', '-wal', '-shm'):
+            try:
+                Path(f'{path}{suffix}').lstat()
+            except FileNotFoundError:
+                continue
+            return None
+        return info
+    except (OSError, ValueError):
+        return None
+
+
+def _same_creation_file(path: Path, expected: os.stat_result) -> bool:
+    current = _creation_file(path)
+    return current is not None and all(getattr(current, field) == getattr(expected, field)
+                                       for field in ('st_dev', 'st_ino', 'st_size', 'st_mtime_ns', 'st_ctime_ns'))
+
+
+def _empty_creation_database(probe: sqlite3.Connection, *, zero_byte: bool = False) -> bool:
+    """Validate the actual connection; temporary limits must not constrain later project snapshots."""
+    steps = 0
+
+    def progress():
+        nonlocal steps
+        steps += 1000
+        return int(steps >= 100_000)
+
+    length = probe.setlimit(sqlite3.SQLITE_LIMIT_LENGTH, MAX_RETRY_DATABASE_BYTES)
+    sql_length = probe.setlimit(sqlite3.SQLITE_LIMIT_SQL_LENGTH, 4096)
+    probe.set_progress_handler(progress, 1000)
+    trusted = None
+    try:
+        trusted = probe.execute('PRAGMA trusted_schema').fetchone()[0]
+        probe.execute('PRAGMA trusted_schema=OFF')
+        if probe.execute('PRAGMA application_id').fetchone()[0] != 0:
+            return False
+        version = probe.execute('PRAGMA user_version').fetchone()[0]
+        schema = probe.execute('SELECT type,name,tbl_name,sql FROM sqlite_schema LIMIT 4').fetchall()
+        if zero_byte and version == 0 and not schema:
             return True
-        probe = sqlite3.connect(path, timeout=5)
+        expected = {('table', 'current_snapshot', 'current_snapshot', _CURRENT_SNAPSHOT_SQL),
+                    ('table', 'history', 'history', _HISTORY_SQL),
+                    ('table', 'sqlite_sequence', 'sqlite_sequence', 'CREATE TABLE sqlite_sequence(name,seq)')}
+        if version != SCHEMA_VERSION or len(schema) != len(expected) or set(schema) != expected:
+            return False
+        if probe.execute('PRAGMA quick_check(1)').fetchall() != [('ok',)]:
+            return False
+        return not probe.execute('SELECT EXISTS(SELECT 1 FROM current_snapshot) '
+                                 'OR EXISTS(SELECT 1 FROM history) '
+                                 'OR EXISTS(SELECT 1 FROM sqlite_sequence)').fetchone()[0]
+    finally:
+        probe.set_progress_handler(None, 0)
+        probe.setlimit(sqlite3.SQLITE_LIMIT_LENGTH, length)
+        probe.setlimit(sqlite3.SQLITE_LIMIT_SQL_LENGTH, sql_length)
+        if trusted is not None:
+            probe.execute('PRAGMA trusted_schema=ON' if trusted else 'PRAGMA trusted_schema=OFF')
+
+
+def _abandoned_creation(path: Path) -> bool:
+    """Read-only eligibility; it does not grant ownership of this pathname for deletion."""
+    try:
+        info = _creation_file(path)
+        if info is None:
+            return False
+        if info.st_size == 0:
+            return True
+        probe = sqlite3.connect(project_database_uri(path.resolve()) + '?mode=ro&immutable=1', uri=True, timeout=0)
         try:
-            if probe.execute('PRAGMA user_version').fetchone()[0] not in (0, SCHEMA_VERSION):
-                return False
-            tables = {row[0] for row in probe.execute("SELECT name FROM sqlite_master WHERE type='table'")
-                      if not row[0].startswith('sqlite_')}
-            if not tables:
-                return True
-            return tables == {'current_snapshot', 'history'} and not probe.execute(
-                'SELECT EXISTS(SELECT 1 FROM current_snapshot) OR EXISTS(SELECT 1 FROM history)').fetchone()[0]
+            return _empty_creation_database(probe)
         finally:
             probe.close()
-    except (sqlite3.Error, OSError):
+    except (sqlite3.Error, OSError, ValueError):
         return False
+
+
+def _discard_created_database(path: Path, owned: os.stat_result | None) -> None:
+    """Best effort cleanup only for an exclusively created file, never an admitted retry."""
+    if owned is None:
+        return
+    try:
+        current = path.lstat()
+        if (stat.S_ISREG(current.st_mode) and current.st_nlink == 1
+                and (current.st_dev, current.st_ino) == (owned.st_dev, owned.st_ino)):
+            path.unlink()
+    except OSError:
+        pass
 
 
 def creation_directory_available(root: Path) -> bool:
@@ -342,6 +419,8 @@ class ProjectStore:
         self.closed = False
         self.connection = None
         self.lock = None
+        self.created_database: os.stat_result | None = None
+        self._creation_transaction = False
         self._verified = {}
         self.project_id: str | None = None  # known after the first load/save; never changes for a database
         self._prune_deferred = False
@@ -355,29 +434,45 @@ class ProjectStore:
             raise ValueError('PT-STORAGE: project path is not a directory' if self.root.exists()
                              else 'PT-STORAGE: project directory does not exist')
         self.lock = ProjectLock(self.root)
-        created_database = False
         try:
             path = safe_path(self.root, 'project.sqlite3')
-            if create and path.exists():
-                if not _abandoned_creation(path):
-                    raise ValueError('PT-STORAGE: project database already exists')
-                for suffix in ('', '-journal', '-wal', '-shm'):  # a killed creation left no snapshot to lose
-                    Path(f'{path}{suffix}').unlink(missing_ok=True)
+            retry = create and path.exists()
+            admitted = None
+            if create:
+                if retry:
+                    admitted = _creation_file(path)
+                    if admitted is None or not _abandoned_creation(path):
+                        raise ValueError('PT-STORAGE: project database already exists')
+                else:
+                    try:
+                        fd = os.open(path, os.O_RDWR | os.O_CREAT | os.O_EXCL | getattr(os, 'O_BINARY', 0), 0o600)
+                    except FileExistsError:
+                        raise ValueError('PT-STORAGE: project database already exists') from None
+                    try:
+                        admitted = self.created_database = os.fstat(fd)
+                    finally:
+                        os.close(fd)
+                if not _same_creation_file(path, admitted):
+                    raise ValueError('PT-STORAGE: project database changed during creation admission')
             if not create and not path.is_file():
                 raise ValueError('PT-STORAGE: project database is missing')
-            self.connection = sqlite3.connect(path, timeout=5)
-            created_database = create
+            self.connection = sqlite3.connect(project_database_uri(path) + '?mode=rw', uri=True, timeout=5)
+            if create and not _same_creation_file(path, admitted):
+                raise ValueError('PT-STORAGE: project database changed while opening creation')
             self.connection.execute('PRAGMA foreign_keys=ON')
             if create:
-                with self.connection:
-                    # Legacy sqlite3 mode does not BEGIN before PRAGMA/DDL; make initialization atomic.
-                    self.connection.execute('BEGIN IMMEDIATE')
+                self.connection.execute('BEGIN IMMEDIATE')
+                if not _empty_creation_database(self.connection, zero_byte=admitted.st_size == 0):
+                    raise ValueError('PT-STORAGE: project database already exists')
+                if admitted.st_size == 0:
                     self.connection.execute(f'PRAGMA user_version={SCHEMA_VERSION}')
-                    self.connection.execute('CREATE TABLE current_snapshot (singleton INTEGER PRIMARY KEY '
-                                            'CHECK(singleton=1), payload TEXT NOT NULL, sha256 TEXT NOT NULL)')
-                    self.connection.execute('CREATE TABLE history (sequence INTEGER PRIMARY KEY AUTOINCREMENT, '
-                                            'revision INTEGER NOT NULL, created TEXT NOT NULL, payload TEXT '
-                                            'NOT NULL, sha256 TEXT NOT NULL)')
+                    self.connection.execute(_CURRENT_SNAPSHOT_SQL)
+                    self.connection.execute(_HISTORY_SQL)
+                if retry:
+                    # First-save failure/close must restore a preexisting zero-byte file too.
+                    self._creation_transaction = True
+                else:
+                    self.connection.commit()
             else:
                 version = self.connection.execute('PRAGMA user_version').fetchone()[0]
                 if version != SCHEMA_VERSION:
@@ -388,13 +483,21 @@ class ProjectStore:
                     raise ValueError('PT-STORAGE: project database contains views or triggers; refusing to open')
                 if self.connection.execute('PRAGMA quick_check').fetchone()[0] != 'ok':
                     raise ValueError('PT-STORAGE: database integrity check failed')
-        except Exception as exc:
-            self.close()
-            if created_database:
-                # Never leave a half-initialized database that blocks retry yet cannot be opened.
-                path.unlink(missing_ok=True)
-            if isinstance(exc, sqlite3.Error):
-                raise ValueError('PT-STORAGE: project database cannot be opened') from exc
+        except BaseException as exc:
+            failure = ValueError('PT-STORAGE: project database cannot be opened') if isinstance(exc, sqlite3.Error) else exc
+            try:
+                try:
+                    if self.connection is not None:
+                        self.connection.close()
+                        self.connection = None
+                    if self.created_database is not None:
+                        _discard_created_database(path, self.created_database)
+                finally:
+                    self.close()
+            except BaseException:
+                failure.add_note('PT-STORAGE: project initialization cleanup failed; resources or files may remain')
+            if failure is not exc:
+                raise failure from exc
             raise
 
     def _check_open(self):
@@ -449,7 +552,9 @@ class ProjectStore:
         self._prune_deferred = False
         try:
             with self.connection:
-                self.connection.execute('BEGIN IMMEDIATE')
+                if not (self._creation_transaction and self.connection.in_transaction):
+                    self.connection.execute('BEGIN IMMEDIATE')
+                self._creation_transaction = False
                 current = self.connection.execute(
                     "SELECT json_extract(payload,'$.id'), json_extract(payload,'$.revision') "
                     'FROM current_snapshot WHERE singleton=1').fetchone()

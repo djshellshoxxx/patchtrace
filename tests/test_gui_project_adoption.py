@@ -3,7 +3,9 @@ from __future__ import annotations
 
 import pytest
 from PySide6.QtCore import QSettings
+from PySide6.QtWidgets import QFileDialog
 
+from patchtrace.gui.qt.commands import action_entries
 from patchtrace.service import ProjectService
 from patchtrace.ui import MainWindow
 
@@ -110,3 +112,61 @@ def test_failed_rollback_render_retains_previous_service_and_reports_diagnostic(
     assert window.settings.value('recent/project') == str(previous.root)
     assert 'Previous project retained' in window.logs.toPlainText()
     closed(candidate)
+
+
+def test_recent_menu_filters_corrupt_settings_before_creating_actions(window, monkeypatch):
+    paths = [f'/data/project {i}' for i in range(10)]
+    stored = [None, '', 7, '/bad\x00path', paths[0], *paths]
+    window.settings.setValue('recent/projects', stored)
+    window.refresh_recent()
+    assert [action.text() for action in window.recent_menu.actions()] == paths[:8]
+    assert window.settings.value('recent/projects') == stored  # reading alone preserves preferences
+    opened = []
+    monkeypatch.setattr(window, 'open_recent', opened.append)
+    window.recent_menu.actions()[1].trigger()
+    assert opened == [paths[1]]
+    window._forget_recent(paths[1])
+    assert window.settings.value('recent/projects') == [paths[0], *paths[2:9]]
+
+
+def test_project_adoption_repairs_mixed_recent_list(window, tmp_path):
+    window.settings.setValue('recent/projects', [42, '/previous', '/previous', ''])
+    service = ProjectService.sample(tmp_path / 'project')
+    window.set_service(service)
+    assert window.settings.value('recent/projects', type=list) == [str(service.root), '/previous']
+
+
+def test_open_project_dialog_uses_default_for_corrupt_last_path(window, monkeypatch):
+    directories = []
+    monkeypatch.setattr(QFileDialog, 'getExistingDirectory',
+                        lambda parent, title, directory: directories.append(directory) or '')
+    window.settings.setValue('recent/project', ['wrong', 'shape'])
+    window.open_project()
+    assert directories == ['']
+
+
+def test_recent_menu_accepts_a_single_legacy_path(window):
+    window.settings.setValue('recent/projects', '/only project')
+    window.refresh_recent()
+    assert [action.text() for action in window.recent_menu.actions()] == ['/only project']
+
+
+def test_recent_project_with_ampersands_keeps_exact_path_in_menu_and_palette(window, monkeypatch):
+    path = '/projects/R&D && QA'
+    window.settings.setValue('recent/projects', [path])
+    window.refresh_recent()
+    action, = window.recent_menu.actions()
+    assert action.text() == '/projects/R&&D &&&& QA'
+    palette_entry, = [item for item in action_entries(window) if item.id == 'action.recent_project']
+    assert palette_entry.title.endswith(' > ' + path)
+    opened = []
+    monkeypatch.setattr(window, 'open_recent', opened.append)
+    palette_entry.run()
+    assert opened == [path]
+
+
+def test_invalid_single_recent_path_never_opens_a_truncated_location(window):
+    window.settings.setValue('recent/projects', '/projectA\x00typo')
+    window.refresh_recent()
+    assert not window.recent_menu.actions()
+    assert not window.recent_menu.isEnabled()
