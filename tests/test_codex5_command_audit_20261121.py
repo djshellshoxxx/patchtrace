@@ -217,7 +217,7 @@ def test_actual_workflow_scan_matches_reviewed_source_census() -> None:
         "live-nvd.yml": (3, 1, 1), "live-rizin.yml": (7, 1, 1),
         "live-unified.yml": (9, 2, 2), "nightly-fuzz.yml": (5, 2, 2),
         "optional-deps.yml": (2, 1, 1), "pages.yml": (3, 1, 0),
-        "pilot-eval.yml": (5, 2, 2), "qa-windows.yml": (36, 4, 4),
+        "pilot-eval.yml": (5, 2, 2), "qa-windows.yml": (37, 4, 4),
         "unified-corpus.yml": (17, 3, 3), "unified-live-gates.yml": (26, 7, 7),
         "winbindex-pairs.yml": (3, 1, 1),
     }
