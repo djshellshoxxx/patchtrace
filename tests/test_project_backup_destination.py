@@ -40,8 +40,9 @@ def test_dangling_backup_leaf_is_refused(entry, source, tmp_path, capsys):
     target = tmp_path / 'absent'
     destination = tmp_path / 'backup'
     directory_link(destination, target)
+    original_target = destination.readlink()
     assert_refused(entry, source, destination, capsys)
-    assert destination.is_symlink() and destination.readlink() == target
+    assert destination.is_symlink() and destination.readlink() == original_target
     assert not target.exists()
     assert not list(tmp_path.glob('.patchtrace-backup-*'))
 
