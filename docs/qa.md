@@ -1,3 +1,7 @@
+## November 23 Windows project retry and backup qualification
+
+The initial Windows run passed the real loopback SMB round-trip and exposed 29 creation or fixture failures. PR #360 corrects the two causes. Its new Windows preflight passed before the full suite. The combined PR #361 passed 997 local checks with one native-only skip. [Combined evidence](engineering/desktop-acceptance-20261123.md) and [backup integrity and release gates](engineering/backup-integrity-20261123.md).
+
 ## Current Windows/native recovery checkpoint — 2026-11-21
 
 ## November 23 project reliability candidate

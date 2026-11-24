@@ -1,4 +1,12 @@
 {
+  "backup_and_desktop_qualification_20261123": {
+    "base": "cca6ce4a0d20725e8a421421cd2e0fddb8313bf7",
+    "branch": "integration/backup-desktop-recovery-20261123",
+    "status": "Awaiting integration",
+    "work_items": ["ST-04", "BK-01", "BK-02", "GUI-03", "QA-01"],
+    "record": "docs/engineering/backup-integrity-20261123.md",
+    "release_ready": false
+  },
   "project_reliability_20261123": {
     "base": "ea16019601486c831941f9bc1a7ba5862a170317",
     "application_commit": "939d86967b5002d47ca4a597029fd760994ab547",

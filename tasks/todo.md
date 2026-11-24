@@ -1,3 +1,7 @@
+## November 23 integration order and remaining acceptance
+
+Qualify PR #360's Windows file-identity repair first and PR #361's installer and desktop changes second. The baseline Windows SMB test passed. Record the newest XML for each candidate. Review staged-backup integrity, exclusive destination publication and desktop task startup on the follow-up candidate. Its scoped directory recovery preserves the hold on the larger PR #316. Manual clean Windows and disconnected runtime acceptance remain open. [Active handoff](../docs/engineering/backup-integrity-20261123.md).
+
 ## Current Windows/native recovery checkpoint — 2026-11-21
 
 ## November 23 project reliability candidate
