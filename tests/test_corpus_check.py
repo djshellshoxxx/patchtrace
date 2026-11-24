@@ -42,6 +42,10 @@ def test_good_card_passes(tmp_path):
     ({'old': {'ref': 'v1', 'commit': 'short'}}, 'old needs'),
     ({'changed_functions': []}, 'must name its changed functions'),
     ({'verification': {'method': 'recalled'}}, 'verification'),
+    ({'id': []}, 'bad id'),
+    ({'license_spdx': []}, 'license_spdx'),
+    ({'kind': {}}, 'kind'),
+    ({'build': {'system': []}}, 'build.system'),
     ({'kind': 'refactor-control', 'cve': [], 'changed_functions': []}, 'semantic_change'),
 ])
 def test_bad_cards_are_flagged(tmp_path, changes, text):
@@ -51,6 +55,90 @@ def test_bad_cards_are_flagged(tmp_path, changes, text):
 
 def test_duplicate_ids_are_flagged(tmp_path):
     assert any('duplicate id' in line for line in corpus_check.check_catalog(write(tmp_path, [good_card(), good_card()])))
+
+
+@pytest.mark.parametrize('second_catalog', [
+    'corpus/catalog/second.json',
+    'tools/calibration/tier_r/catalogue/releases.json',
+    'tools/calibration/tier_r/catalogue/cves.json',
+])
+def test_catalogues_share_card_ids(tmp_path, second_catalog):
+    first = tmp_path / 'corpus/catalog/first.json'
+    second = tmp_path / second_catalog
+    for path, project in ((first, 'alpha'), (second, 'beta')):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps([good_card(project=project)]), encoding='utf-8')
+        assert corpus_check.check_catalog(path) == []
+    findings = corpus_check.check_all(tmp_path, compile_checks=False)
+    assert len(findings) == 1
+    assert all(part in findings[0] for part in ('duplicate id', 'demo-1-to-2', first.name, second.name))
+    second.write_text(json.dumps([good_card(id='other-card', project='beta')]), encoding='utf-8')
+    assert corpus_check.check_all(tmp_path, compile_checks=False) == []
+
+
+def test_card_command_refuses_ambiguous_catalogue_before_build(tmp_path, monkeypatch, capsys):
+    from tools.calibration.tier_r import cli
+
+    root = tmp_path / 'repo'
+    folder = root / 'corpus/catalog'
+    folder.mkdir(parents=True)
+    first, second = folder / 'first.json', folder / 'second.json'
+    first.write_text(json.dumps([good_card(project='alpha')]), encoding='utf-8')
+    second.write_text(json.dumps([good_card(project='beta')]), encoding='utf-8')
+    monkeypatch.setattr(cli, 'REPO', root)
+    assert cli.main(['catalogue-check']) == cli.FINDINGS
+    problems = json.loads(capsys.readouterr().out)['problems']
+    assert len(problems) == 1
+    assert all(part in problems[0] for part in ('duplicate id', 'demo-1-to-2', first.name, second.name))
+    monkeypatch.setattr(cli, 'probe', lambda: None)
+    monkeypatch.setattr(cli.F, 'run_card', lambda *a, **kw: pytest.fail('ambiguous card reached the builder'))
+    assert cli.main(['build-card', 'demo-1-to-2', '--store', str(tmp_path / 'store')]) == cli.USAGE
+    error = json.loads(capsys.readouterr().out)['error']
+    assert all(part in error for part in ('duplicate id', 'demo-1-to-2', first.name, second.name))
+
+    second.write_text(json.dumps([good_card(id='other-card', project='beta')]), encoding='utf-8')
+    assert cli.main(['catalogue-check']) == cli.OK
+    assert json.loads(capsys.readouterr().out)['problems'] == []
+    assert cli._card('demo-1-to-2').project == 'alpha'
+    assert cli._card('other-card').project == 'beta'
+
+
+def test_all_keeps_catalogue_findings_when_clang_is_blocked(tmp_path, monkeypatch, capsys):
+    first = tmp_path / 'corpus/catalog/first.json'
+    first.parent.mkdir(parents=True)
+    second = first.with_name('second.json')
+    for path in (first, second):
+        path.write_text(json.dumps([good_card()]), encoding='utf-8')
+    shutil.copytree(TEMPLATE, tmp_path / 'corpus/ours/demo/tiny')
+    monkeypatch.setenv('PATH', '')
+    assert corpus_check.main(['corpus_check.py', 'all', str(tmp_path)]) == 3
+    lines = capsys.readouterr().out.splitlines()
+    assert 'BLOCKED: clang is not installed' in lines
+    assert any(all(part in line for part in ('duplicate id', first.name, second.name)) for line in lines)
+
+
+def test_card_diagnostics_keep_both_relative_paths(tmp_path, monkeypatch, capsys):
+    from tools.calibration.tier_r import cli
+
+    # Both names fit in a filesystem component. Together with the ID they exceed 500 characters.
+    root = tmp_path / 'checkout'
+    folder = root / 'corpus/catalog'
+    folder.mkdir(parents=True)
+    ident = 'c' * 81
+    paths = [folder / (letter * 205 + '.json') for letter in 'ab']
+    for path in paths:
+        path.write_text(json.dumps([good_card(id=ident)]), encoding='utf-8')
+    monkeypatch.setattr(cli, 'REPO', root)
+    monkeypatch.setattr(cli, 'probe', lambda: None)
+    monkeypatch.setattr(cli.F, 'run_card', lambda *a, **kw: pytest.fail('ambiguous card reached the builder'))
+    assert cli.main(['build-card', ident, '--store', str(tmp_path / 'store')]) == cli.USAGE
+    message = json.loads(capsys.readouterr().out)['error']
+    assert ident in message
+    for path in paths:
+        assert f'{path.relative_to(root).as_posix()}[0]' in message
+    assert root.as_posix() not in message
+    assert corpus_check.main(['corpus_check.py', 'all', str(root)]) == 1
+    assert message in capsys.readouterr().out
 
 
 @needs_clang

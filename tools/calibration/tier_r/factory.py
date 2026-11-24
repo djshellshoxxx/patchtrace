@@ -9,6 +9,8 @@ from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field, replace
 from pathlib import Path
 
+from tools import corpus_check
+
 from .. import corpus
 from . import contracts as C
 from .build import BuildError, BuildResult, BuildSpec, build, select_files
@@ -30,6 +32,10 @@ NOISE_OPT_PAIRS = (('O0', 'O1'), ('O1', 'O2'), ('O2', 'O3'), ('O2', 'Os'))
 
 class FactoryError(RuntimeError):
     pass
+
+
+class DuplicateCardId(C.ContractError):
+    """An ambiguous card selection, with the input locations of both records."""
 
 
 class IdenticalImages(FactoryError):
@@ -254,10 +260,16 @@ def run_card(session: Session, book: C.RecipeBook, card: C.CaseCard, *, method: 
                     notes=notes)
 
 
-def load_card_files(paths: Iterable[Path]) -> list[C.CaseCard]:
+def load_card_files(paths: Iterable[Path], *, root: Path | None = None) -> list[C.CaseCard]:
     cards = []
+    seen: dict[str, str] = {}
     for path in sorted(paths):
-        cards += C.load_cards(Path(path).read_bytes())
+        path = Path(path)
+        for index, card in enumerate(C.load_cards(path.read_bytes())):
+            duplicate = corpus_check.register_card_id(seen, card.id, path, index, root)
+            if duplicate:
+                raise DuplicateCardId(duplicate)
+            cards.append(card)
     return cards
 
 

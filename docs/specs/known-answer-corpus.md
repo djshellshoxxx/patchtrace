@@ -45,6 +45,11 @@ engine (rz-diff, BinDiff, Ghidriff, the future unified engine) can be scored and
 Input files are validated by `tools/corpus_check.py` rules (cards and suites) before use; a card whose project has no recipe
 is reported as `no-recipe`, never built from its free-text notes.
 
+Each case-card ID identifies exactly one record across the I2 and I3 input files. The offline catalogue checks report
+both repository-relative paths and record indices for a repeated ID. Commands that select a card by ID require an
+unambiguous catalogue before use. If clang is unavailable during a later suite check, `corpus_check.py all` prints
+the completed catalogue findings and exits with the existing blocked status (3).
+
 `tier-r-recipe/1` (one entry per project): `project`, `family` (lineage family tag), `upstream_git`, `license_spdx`,
 `license_file`, `kind` (`library`), `sources` (globs relative to the checkout), `exclude`, `include_dirs`, `defines`,
 `copy` (pinned in-tree template -> generated name, e.g. `scripts/pnglibconf.h.prebuilt` -> `pnglibconf.h`), `write`
