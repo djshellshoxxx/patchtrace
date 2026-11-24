@@ -12,6 +12,10 @@ The correction recovers the verified hunk from `202bda41ea84784f2871289f36b9f534
 
 The historical regression failed before the recovery. Two further tests demonstrating the zero-file-ID case failed before its correction. An independent reviewer passed 155 storage and GUI tests on worker source `ac4b1e85bcf2780bb2e986cca3409bd9c856494e`. On the combined tree, 100 checks passed on Linux and the one Windows-only SMB check skipped. The Windows QA workflow now saves early JUnit results for creation, replacement and SMB before running the full suite. Read the corrected head's Windows results before integration. Native SMB acceptance requires a case that actually passed on a share. [Independent review and upstream references](evidence/project-reliability-20261123/windows-creation-source-review.md) · [PR #360 checks](https://github.com/djshellshoxxx/patchtrace/pull/360/checks)
 
+## Windows workflow source census
+
+QA-02 corrects the validation data for the project preflight on parent `76bcca7afe4ade59db2294b86b88de175c8a3172`. The stacked PR #361 Linux suite reported 24,454 passed, 54 skipped, four expected failures and one failed audit. The exact parent reproduced the failure. The YAML gained one pytest invocation, bringing it to 37 run steps. The four pip install commands and the previously recorded four unhashed installs are unchanged. All 20 other audited workflow entries matched their recorded counts. The separate strict expected failure continues to track the outstanding dependency-locking work. With PowerShell available, the command audit, release-gate controls and Windows downloaded-artifact tests returned 235 passed and one expected failure. [Hosted failure](https://github.com/djshellshoxxx/patchtrace/actions/runs/45290296864/job/138097140687)
+
 ## Defects, ownership and dependency order
 
 All implementation rows below are awaiting integration into main. “Independently verified” describes the named acceptance check on its recorded source. The coordinator serializes the changes. Workers used separate checkouts.
