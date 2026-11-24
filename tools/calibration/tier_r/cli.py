@@ -7,14 +7,14 @@ here ships, and no built image is ever executed.
 from __future__ import annotations
 
 import argparse
-import importlib
-import importlib.util
 import json
 import os
 import sys
 import uuid
 from collections.abc import Sequence
 from pathlib import Path
+
+from tools import corpus_check
 
 from .. import vendoring_scan as V
 from ..label import AnnotationLog
@@ -33,7 +33,6 @@ from .toolchain import PROFILE_TOOLS, Blocked, probe
 OK, FINDINGS, USAGE, BLOCKED = 0, 1, 2, 3
 REPO = Path(__file__).resolve().parents[3]
 CATALOGUE = Path(__file__).resolve().parent / 'catalogue'
-CARD_DIRS = (CATALOGUE / 'releases.json', CATALOGUE / 'cves.json')
 
 
 class Usage(Exception):
@@ -76,9 +75,9 @@ def _book() -> C.RecipeBook:
 
 
 def _cards(extra: Sequence[str] = ()) -> list[C.CaseCard]:
-    paths = [p for p in CARD_DIRS if p.is_file()] + [Path(p) for p in extra]
-    paths += sorted((REPO / 'corpus' / 'catalog').glob('*.json'))
-    return F.load_card_files(paths)
+    paths = corpus_check.catalog_paths(REPO)
+    paths.extend(Path(path) for path in extra)
+    return F.load_card_files(paths, root=REPO)
 
 
 def _card(card_id: str) -> C.CaseCard:
@@ -310,24 +309,15 @@ def cmd_schemas(args) -> tuple[int, dict]:
     return OK, {'command': 'schemas', 'status': 'ok', 'written': sorted(written)}
 
 
-def _corpus_check():
-    spec = importlib.util.spec_from_file_location('corpus_check', REPO / 'tools' / 'corpus_check.py')
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
-
-
 def cmd_catalogue_check(args) -> tuple[int, dict]:
-    problems = []
     try:
         book = _book()
         cards = []
-        for path in CARD_DIRS:
-            if path.is_file():
-                cards += C.load_cards(path.read_bytes())
-                problems += [f'{path.name}: {p}' for p in _corpus_check().check_catalog(path)]
+        for path in corpus_check.curated_catalog_paths(REPO):
+            cards += C.load_cards(path.read_bytes())
     except (C.ContractError, OSError) as exc:
         return USAGE, {'command': 'catalogue-check', 'status': 'error', 'error': str(exc)[:400]}
+    problems = corpus_check.check_catalogs(REPO)
     for card in cards:
         recipe = book.get(card.project)
         if recipe is None:
@@ -421,7 +411,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         return int(exc.code or 0)
     try:
         code, doc = args.func(args)
-    except Usage as exc:
+    except (Usage, F.DuplicateCardId) as exc:
         _emit({'command': args.cmd, 'status': 'error', 'error': str(exc)})
         return USAGE
     except Blocked as exc:

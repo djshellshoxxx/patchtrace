@@ -2,7 +2,7 @@
 
 usage: corpus_check.py catalog FILE.json        structural check of case cards (offline)
        corpus_check.py suite DIR                structure + clang syntax check + truth completeness of one suite
-       corpus_check.py all [ROOT]               every corpus/catalog/*.json and corpus/ours/*/*/suite.json
+       corpus_check.py all [ROOT]               curated and found case cards, plus corpus/ours/*/*/suite.json
 Exit status: 0 ok, 1 findings, 3 BLOCKED (clang is needed and missing). Findings are printed one per line.
 
 Dev-only tool (not shipped). Formats and rules: corpus/README.md. Stdlib only; clang is used for syntax checks and
@@ -15,6 +15,7 @@ import re
 import shutil
 import subprocess
 import sys
+from collections.abc import Iterator
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -43,7 +44,28 @@ def _need(condition: bool, findings: list[str], where: str, message: str) -> Non
         findings.append(f'{where}: {message}')
 
 
-def check_catalog(path: Path) -> list[str]:
+def curated_catalog_paths(root: Path) -> list[Path]:
+    folder = root / 'tools/calibration/tier_r/catalogue'
+    return [path for path in (folder / 'releases.json', folder / 'cves.json') if path.is_file()]
+
+
+def catalog_paths(root: Path) -> list[Path]:
+    paths = curated_catalog_paths(root)
+    paths.extend((root / 'corpus/catalog').glob('*.json'))
+    return sorted(paths)
+
+
+def register_card_id(seen: dict[str, str], ident: str, path: Path, index: int, root: Path | None) -> str | None:
+    if root is not None and path.is_relative_to(root):
+        path = path.relative_to(root)
+    location = f'{path.as_posix()}[{index}]'
+    if ident in seen:
+        return f'duplicate id {ident!r} in {seen[ident]} and {location}'
+    seen[ident] = location
+    return None
+
+
+def check_catalog(path: Path, *, seen: dict[str, str] | None = None, root: Path | None = None) -> list[str]:
     findings: list[str] = []
     try:
         cards = json.loads(path.read_text(encoding='utf-8'))
@@ -51,7 +73,8 @@ def check_catalog(path: Path) -> list[str]:
         return [f'{path.name}: unreadable JSON ({exc})']
     if not isinstance(cards, list) or not cards:
         return [f'{path.name}: must be a non-empty JSON array of case cards']
-    seen: set[str] = set()
+    if seen is None:
+        seen = {}
     for index, card in enumerate(cards):
         where = f'{path.name}[{index}]'
         if not isinstance(card, dict):
@@ -60,10 +83,14 @@ def check_catalog(path: Path) -> list[str]:
         _need(card.get('contract') == 'case-card/1', findings, where, "contract must be 'case-card/1'")
         ident = card.get('id', '')
         where = f'{path.name}:{ident or index}'
-        _need(isinstance(ident, str) and ID.fullmatch(ident) is not None, findings, where, 'bad id')
-        _need(ident not in seen, findings, where, 'duplicate id')
-        seen.add(ident)
-        _need(card.get('license_spdx') in SPDX, findings, where,
+        if isinstance(ident, str) and ID.fullmatch(ident):
+            duplicate = register_card_id(seen, ident, path, index, root or path.parent)
+            if duplicate:
+                findings.append(duplicate)
+        else:
+            findings.append(f'{where}: bad id')
+        license_spdx = card.get('license_spdx')
+        _need(isinstance(license_spdx, str) and license_spdx in SPDX, findings, where,
               f"license_spdx must be one of {sorted(SPDX)} (unknown or copyleft = do not use)")
         _need(bool(card.get('license_evidence')), findings, where, 'license_evidence (quote + path/URL) is required')
         _need(str(card.get('upstream_git', '')).startswith('https://'), findings, where, 'upstream_git must be https')
@@ -73,22 +100,24 @@ def check_catalog(path: Path) -> list[str]:
             _need(bool(ok), findings, where, f'{side} needs ref and a 40-hex commit')
         if isinstance(card.get('old'), dict) and isinstance(card.get('new'), dict):
             _need(card['old'].get('commit') != card['new'].get('commit'), findings, where, 'old and new are identical')
-        _need(card.get('kind') in CARD_KINDS, findings, where, f'kind must be one of {sorted(CARD_KINDS)}')
+        kind = card.get('kind')
+        _need(isinstance(kind, str) and kind in CARD_KINDS, findings, where, f'kind must be one of {sorted(CARD_KINDS)}')
         functions = card.get('changed_functions')
         _need(isinstance(functions, list), findings, where, 'changed_functions must be a list (may be empty for controls)')
         if isinstance(functions, list):
             for entry in functions:
                 _need(isinstance(entry, dict) and entry.get('name') and entry.get('file'), findings, where,
                       'each changed function needs name and file')
-            if card.get('kind') in {'cve-fix', 'bounds-only', 'constant-only'}:
+            if kind in ('cve-fix', 'bounds-only', 'constant-only'):
                 _need(bool(functions), findings, where, 'a fix case must name its changed functions')
-            if card.get('kind') in {'refactor-control', 'no-op', 'build-system-only'}:
+            if kind in ('refactor-control', 'no-op', 'build-system-only'):
                 _need(card.get('semantic_change') is False, findings, where,
                       'controls must set "semantic_change": false')
-        if card.get('kind') == 'cve-fix':
+        if kind == 'cve-fix':
             _need(bool(card.get('cve')), findings, where, 'cve-fix needs a cve list')
         build = card.get('build')
-        _need(isinstance(build, dict) and build.get('system') in BUILD_SYSTEMS, findings, where,
+        system = build.get('system') if isinstance(build, dict) else None
+        _need(isinstance(system, str) and system in BUILD_SYSTEMS, findings, where,
               f'build.system must be one of {sorted(BUILD_SYSTEMS)}')
         verification = card.get('verification')
         _need(isinstance(verification, dict) and verification.get('method') and
@@ -264,34 +293,45 @@ def check_suite(directory: Path) -> list[str]:
     return findings
 
 
-def check_all(root: Path = ROOT, *, compile_checks: bool = True) -> list[str]:
+def check_catalogs(root: Path) -> list[str]:
+    seen: dict[str, str] = {}
     findings: list[str] = []
-    for catalog in sorted((root / 'corpus' / 'catalog').glob('*.json')):
-        findings += check_catalog(catalog)
+    for catalog in catalog_paths(root):
+        findings += check_catalog(catalog, seen=seen, root=root)
+    return findings
+
+
+def _all_findings(root: Path, compile_checks: bool) -> Iterator[str]:
+    yield from check_catalogs(root)
     if compile_checks:
         for suite_file in sorted((root / 'corpus' / 'ours').glob('*/*/suite.json')):
-            findings += check_suite(suite_file.parent)
-    return findings
+            yield from check_suite(suite_file.parent)
+
+
+def check_all(root: Path = ROOT, *, compile_checks: bool = True) -> list[str]:
+    return list(_all_findings(root, compile_checks))
 
 
 def main(argv: list[str]) -> int:
     if len(argv) < 2 or argv[1] not in {'catalog', 'suite', 'all'}:
         print(__doc__)
         return 1
+    count = 0
     try:
         if argv[1] == 'catalog':
             findings = check_catalog(Path(argv[2]))
         elif argv[1] == 'suite':
             findings = check_suite(Path(argv[2]))
         else:
-            findings = check_all(Path(argv[2]) if len(argv) > 2 else ROOT)
+            findings = _all_findings(Path(argv[2]) if len(argv) > 2 else ROOT, compile_checks=True)
+        for line in findings:
+            print(line)
+            count += 1
     except Blocked as exc:
         print(f'BLOCKED: {exc}')
         return 3
-    for line in findings:
-        print(line)
-    print(f'{len(findings)} finding(s)')
-    return 1 if findings else 0
+    print(f'{count} finding(s)')
+    return 1 if count else 0
 
 
 if __name__ == '__main__':

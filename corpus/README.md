@@ -10,6 +10,7 @@ never "passed"). One suite: `python tools/corpus_check.py suite corpus/ours/<sui
 
 ## 1. `corpus/catalog/<category>.json`: found open-source cases (`case-card/1`)
 A JSON array of cards. Every fact must be verified by running git (shallow clone into the scratchpad), not recalled.
+Choose an ID unique across all found catalogues and the curated Tier R `releases.json` and `cves.json`.
 ```json
 {"contract": "case-card/1", "id": "zlib-1.3-to-1.3.1", "project": "zlib",
  "upstream_git": "https://github.com/madler/zlib.git",
