@@ -32,6 +32,14 @@ A fresh checkout of the combined source passed all eight independent presentatio
 
 Rerunning all 43 affected modules on the combined source, one module per process, yielded 1,237 passed, two skipped, zero failures and zero errors. The two skips require real Windows junction and SMB behavior. Earlier local invocations that grouped multiple Qt modules were terminated by the host and are excluded from these counts. Repository-wide Ruff, Python dependency checks, the pinned protobuf upb check and whitespace validation passed. [Exact module totals and skip reasons](evidence/backup-integrity-20261123/combined-qa.json) · [Complete JUnit archive](evidence/backup-integrity-20261123/combined-junit.xml.gz)
 
+## Follow-up review of mixed historical branches
+
+The census after the three candidate PRs returned 380 branches and 352 PR heads. All 377 branch tips and 349 PR heads in the baseline remained present at the same SHA. Main still pointed to `ea16019601486c831941f9bc1a7ba5862a170317`.
+
+Two reviewers examined the ordinary desktop, storage, packaging, documentation and CI portions of every one of the 37 mixed branches in the earlier 115-row triage. Each table preserves the source tip, PR, historical base and witness. The second reviewer compared 140 path/object pairs across 49 files. The reviews distinguish code on main from code present only in a pending candidate. They retain separate ownership for #312, #316, #320, #358 and #359. The proposed shared configuration and explicit retry of an incomplete project directory remain separate scope decisions. [Branches 1–19](evidence/backup-integrity-20261123/mixed-branches/01-19/README.md) · [Branches 20–37](evidence/backup-integrity-20261123/mixed-branches/20-37/README.md)
+
+The current GUI contract reserves Alt+Up/Down for difference navigation and caps command-palette results at 50. On both main and the candidate, a real desktop window retained those bindings and a unique search found and invoked item 449 in a 450-item fixture. PR #176 and #289 contained the same two-file patch. Its conflicting keyboard and 400-entry empty palette proposals are superseded for this recovery. [Spec](../specs/gui-framework.md) · [Candidate result](evidence/backup-integrity-20261123/mixed-branches/01-19/362.log)
+
 ## Integration
 
 Qualify #360 before #361, then retarget and qualify this candidate. Use the exact live SHA and publication opt-outs in the actual merge message. Release and deployment require separate authorization. Check the [affected suites](evidence/backup-integrity-20261123/affected-suites.txt), independent reviews and full hosted Windows and Linux results on the final head.
