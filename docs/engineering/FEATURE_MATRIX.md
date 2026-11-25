@@ -1,5 +1,14 @@
 # PatchTrace feature matrix
 
+## November 24 version consumer continuation
+
+The [reviewed version consumer](version-provenance-continuation-20261124.md)
+adds lazy headless source/build observations, bounded Git reads and explicit
+unknown frozen facts. Author verification passed 233 tests with one existing
+opt-in skip; independent review passed 40 with none. Producer integration remains
+separate. Exact published-source hosted QA/package/native qualification and native
+frozen JSON execution are not established here.
+
 ## November 24 combined qualification candidate
 
 The reviewed #358/#359 network and tooling work and #360/#361/#362 project,

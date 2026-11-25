@@ -1858,3 +1858,30 @@ Owner/branch: `codex/patchtrace-linux-frozen-cli-smoke-20261121`; handoff
 - [x] Cap the actual cache file reads, re-check length, preserve SHA-256 verification, legacy file layout and no-limit direct API.
 - [ ] Complete focused tests, full offscreen pytest, whole-tree Ruff, dependency checks, independent source review, and actual Linux/Windows CI on current PR head. None were executed or claimed in the authoring environment.
 - [ ] Resolve any CI failures and merge only with current expected-head guard and required `[no release] [no deploy]` merge text. Keep this scope separate from PR352 and Root837FE's existing integration.
+
+
+## 2026-11-24 Pacific — version/provenance consumer recovery
+
+- [x] Recover the existing bounded headless `version` consumer from PR #320 on
+  isolated PR #364-based source; preserve the donor branch and maintained shared
+  publisher, CLI entry point and registry.
+- [x] Specify the consumer-only contract and register its modules/specification;
+  keep missing packaged metadata explicit as unknown provenance.
+- [x] Pass 225 focused consumer/CLI/doctor/spec tests (one existing opt-in
+  toy-freeze skip), whole-tree Ruff and whitespace checks on the source recorded
+  in `ce0e6d585653baf0dba3922d8e89273a1a742260`.
+- [ ] Complete independent review and exact-head hosted Linux/Windows/full and
+  package gates before a guarded integration. The parent #364's CI does not
+  qualify this added consumer.
+- [ ] Keep packaged-record production and its builder/native acceptance as a
+  separate retained PR #320 slice. No release or deployment is authorized by
+  this consumer's local source tests.
+
+
+- [x] Version consumer follow-up: reject oversized, missing or truncated final
+  Git stdout even when the child reports successful exit. Preserve the 4096-byte
+  limit and shared process supervisor; six failing regression cases now pass,
+  with 233 focused passes and the existing opt-in toy-freeze skip overall.
+- [x] Obtain independent re-review of the completed-output repair on
+  `806ccc4fbe7b26bd854cf64de96bd03bdde36f64`: 40 focused tests passed, zero skips;
+  no remaining consumer-scope blocker. Hosted/full/package qualification remains.

@@ -2485,3 +2485,57 @@ Clean combined source `2a67980cfeb88ad72bf8ad523d2bafc8426e5b7c` passed **1,296 
 Scope: `src/patchtrace/intelligence/csaf/transport.py`, `tests/test_intel_transport.py`, SPEC-35 §D. Previously the sharded/legacy URL-map and cached-body loaders checked `stat().st_size` before unbounded `read_text()` / `read_bytes()`. A concurrent local writer can grow a file after stat, causing a larger-than-permitted body to be read and even returned when its hash matches. The fix caps the actual `open('rb').read(max+1)` calls and rechecks returned length before parsing or hashing; the legacy no-resource-limit API remains unchanged. Two synthetic tests were written first: a stale stat against an actually oversized, matching-hash body and an instrumented URL-index stream forbidding unbounded reads. No live/network calls are made by those tests.
 
 **Verification pending:** actual checked-out red/green test runs, whole-tree Ruff, Linux/Windows hosted QA and independent review were unavailable in the authoring session. Do not claim any of these passed. Require exact-head CI/review before a guarded main merge. No release, deploy or tag.
+
+
+## 2026-11-24 Pacific — isolated version/provenance consumer recovery
+
+Implementation `ce0e6d585653baf0dba3922d8e89273a1a742260` (tree
+`98724ff29191186db90442f87762d46653ff6197`) starts from PR #364 source
+`ef66848d92d9b0d4cd58876cb157a5b609e011c5`. Its three runtime modules are
+byte-identical to retained PR #320 donor
+`6096e64d4e7b8f0ecc6af884f7d220e07790d85a`. The pre-recovery real CLI rejected
+`version --json` with exit 2. The recovered command uses the maintained lazy
+registry, process supervisor and bounded file reader.
+
+The focused offscreen selection (`test_buildinfo`, `test_buildinfo_git_root`,
+`test_version_cli`, `test_version_git_filters`, `test_cli_registry`,
+`test_doctor_cli`, `test_spec_registry`) passed **225 tests, one skip** in 6.13 s.
+The skip is the existing opt-in nightly toy-freeze test. Whole-tree Ruff and
+whitespace checks passed. Tests imported the isolated worktree through explicit
+`PYTHONPATH=src`. Donor Git-root tests were adapted from the separate package
+producer to the consumer APIs; a missing packaged-record control confirms
+unknown build facts without invoking Git or scanning frozen source.
+
+This is source/fixture acceptance. Full repository and exact-head hosted
+Linux/Windows qualification, independent review and native frozen-package
+acceptance remain required. Desktop record production is a separate retained
+slice; current packages without that record report unknown provenance. No
+builder, workflow, release gate, maintained file publisher or existing CLI
+entry point was changed. No analysis target, release or deployment was executed.
+
+
+### Version consumer review correction — completed Git output admission
+
+Independent review of `ce0e6d585653baf0dba3922d8e89273a1a742260` found that
+`buildinfo._git` accepted a retained stdout tail when a quickly completed child
+reported success without an output-limit reason but its final `stdout_total`
+exceeded 4096. The caller now requires raw stdout, an exact match between its
+length and the final total, and the unchanged 4096-byte limit before decoding.
+The shared supervisor is unchanged. `buildinfo.py` therefore differs from the
+retained donor by this consumer-side admission repair; both CLI adapter modules
+remain byte-identical to the donor.
+
+Eight deterministic process-result controls produced **six failures and two
+passes** against the donated implementation. They cover oversized successful
+output, missing/truncated observations, exact-limit acceptance, and refusing an
+oversized commit observation through `git_info`. After the correction the full
+focused consumer/registry/doctor/spec selection passed **233 tests, one existing
+opt-in toy-freeze skip** in 5.75 s. An added-test import-order finding was fixed;
+whole-tree Ruff and whitespace checks pass. These controls inject completed
+`ProcessResult` records and do not execute target or reproduction processes.
+Independent re-review of `806ccc4fbe7b26bd854cf64de96bd03bdde36f64` (tree
+`a4944cc8e52da915e662f32ecf37e92fa99fbb3c`) passed all 40 consumer/root/headless/
+filter cases with zero skips in 3.14 s, plus focused Ruff and the full feature
+whitespace check. The reviewer closed the output-admission finding with no
+remaining consumer-scope blocker. Exact-head hosted/full/package qualification
+remains pending; the retained producer remains a separate scope.

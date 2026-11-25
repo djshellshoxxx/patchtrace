@@ -1,5 +1,14 @@
 # PatchTrace consolidation ledger
 
+## November 24 version consumer continuation
+
+The [current continuation](version-provenance-continuation-20261124.md) and additive
+`version_provenance_continuation_20261124` entry in [the ledger](task-ledger.json)
+record local reviewed consumer `806ccc4f`, retained #320 and base PR #364.
+Historical #358 recapture and fresh #364 receipts remain source-specific; the
+original 147-member ZIP remains unverified. Existing tasks, notes and records are
+preserved. Exact published consumer-source hosted qualification is pending.
+
 ## November 24 combined qualification candidate
 
 The reviewed #358/#359 network and tooling work and #360/#361/#362 project,

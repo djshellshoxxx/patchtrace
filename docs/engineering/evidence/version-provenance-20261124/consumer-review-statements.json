@@ -1,0 +1,124 @@
+{
+  "kind": "patchtrace-version-consumer-review-statements/1",
+  "recorded_for": "version-provenance-continuation-20261124",
+  "evidence_type": "Source-specific statements of tool output observed by the implementing agent, independent reviewer and coordinator; not raw JUnit or saved raw test logs.",
+  "source": {
+    "base_pr": 364,
+    "base_commit": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+    "base_tree": "64e25d3c8ad2a05aae470cfd55dddceb9517797a",
+    "retained_donor_pr": 320,
+    "retained_donor_branch": "integration/exhaustive-patchtrace-consolidation-20261119",
+    "retained_donor_commit": "6096e64d4e7b8f0ecc6af884f7d220e07790d85a",
+    "original_feature_commit": "62b9a3de4d1036a6e4b9bd2618372f4042b15f7f",
+    "initial_consumer_commit": "ce0e6d585653baf0dba3922d8e89273a1a742260",
+    "reviewed_corrected_commit": "806ccc4fbe7b26bd854cf64de96bd03bdde36f64",
+    "reviewed_corrected_tree": "a4944cc8e52da915e662f32ecf37e92fa99fbb3c",
+    "documentation_checkpoint_commit": "cc1a8db8c21651a508abf42e02674ca39407f74c",
+    "documentation_checkpoint_tree": "12c8378ef3fd45eebc3672ec1947f7b4035715af",
+    "checkpoint_scope": "806ccc4f, ce0e6d58 and cc1a8db8 are local checkpoints, not remotely addressable commits. Publication uses a new remote commit on base ef66848d; bind that tree to these runtime/test blobs.",
+    "runtime_test_git_blobs": {
+      "src/patchtrace/buildinfo.py": "cb68ebeb466e31dd442104fde6c2d271fcfaee06",
+      "src/patchtrace/version_cli.py": "440a02e029abf6aa3d45e816f1ff330341a08997",
+      "src/patchtrace/cli_commands/version.py": "4977325a6d4764b2d9a2f5999d77f1d4ca1d3e12",
+      "tests/test_buildinfo.py": "c3256ffe6398740046f196602f9c7474fe02d7fb",
+      "tests/test_buildinfo_git_root.py": "b0f6024fe46f0a46333c943ec37e7a4c9c846148",
+      "tests/test_version_cli.py": "7d15cb162f9a925dce8ac6ae3d92fe931c288f35",
+      "tests/test_version_git_filters.py": "58be87135e376d5441fbfbc0fe99dec9afefa84f"
+    }
+  },
+  "author_verification": {
+    "observer": "review_backup_recovery",
+    "source": "Final corrected consumer runtime and tests frozen in 806ccc4fbe7b26bd854cf64de96bd03bdde36f64.",
+    "environment": "Python 3.12 development environment; QT_QPA_PLATFORM=offscreen; explicit worktree PYTHONPATH=src.",
+    "command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src ../patchtrace/.venv/bin/python -m pytest -q -rs tests/test_buildinfo.py tests/test_buildinfo_git_root.py tests/test_version_cli.py tests/test_version_git_filters.py tests/test_cli_registry.py tests/test_doctor_cli.py tests/test_spec_registry.py",
+    "passed": 233,
+    "skipped": 1,
+    "failed": 0,
+    "errors": 0,
+    "elapsed_seconds": 5.75,
+    "skip": "Existing opt-in nightly toy-freeze control in tests/test_cli_registry.py requires PATCHTRACE_TOY_FREEZE=1.",
+    "other_checks": [
+      "python -m ruff check src tests tools: passed",
+      "git diff --check: passed"
+    ],
+    "raw_junit": null,
+    "raw_saved_test_log": null,
+    "retained_narrative": "../../../qa.md"
+  },
+  "independent_verification": {
+    "observer": "review_installer_preferences",
+    "evidence_origin": "Independent collaboration review statement explicitly confirmed by the reviewer; underlying tool output observed, no JUnit requested and no raw log saved.",
+    "commit": "806ccc4fbe7b26bd854cf64de96bd03bdde36f64",
+    "tree": "a4944cc8e52da915e662f32ecf37e92fa99fbb3c",
+    "selection": [
+      "tests/test_buildinfo.py",
+      "tests/test_buildinfo_git_root.py",
+      "tests/test_version_cli.py",
+      "tests/test_version_git_filters.py"
+    ],
+    "passed": 40,
+    "skipped": 0,
+    "failed": 0,
+    "errors": 0,
+    "elapsed_seconds": 3.14,
+    "observed_summary": "40 passed in 3.14s",
+    "other_checks": [
+      "Focused Ruff: passed",
+      "Whole feature diff --check: passed",
+      "Reviewed head/tree and clean worktree: confirmed"
+    ],
+    "finding_disposition": "The final process-output admission defect is closed. No remaining blocking finding in the reviewed consumer scope.",
+    "raw_junit": null,
+    "raw_saved_test_log": null
+  },
+  "completion_boundary_regression": {
+    "evidence_type": "Deterministic injected ProcessResult unit seam; no subprocess or target-exploitation reproduction.",
+    "donor_defect": "A successful quick process completion could retain only a stdout tail while final stdout_total exceeded 4096; the consumer accepted that tail when reason was null.",
+    "before": {
+      "runtime": "Donated consumer before the correction",
+      "failed": 6,
+      "passed": 2
+    },
+    "after": {
+      "commit": "806ccc4fbe7b26bd854cf64de96bd03bdde36f64",
+      "failed": 0,
+      "passed": 8
+    },
+    "correction": "Require raw stdout to be present, its length to equal stdout_total, and stdout_total <= 4096 before decoding; keep existing returncode/reason checks.",
+    "controls": "Oversized output, retained-tail mismatch, missing raw observation and inconsistent totals are refused; valid observations including exactly 4096 bytes retain behavior; oversized retained HEAD identity is refused.",
+    "shared_process_supervisor_changed": false,
+    "budget_changed": false,
+    "raw_junit": null,
+    "raw_saved_test_log": null
+  },
+  "coordinator_source_cli_observation": {
+    "observer": "root",
+    "evidence_origin": "Coordinator collaboration statement from a source CLI run at cc1a8db8; no raw JSON output file supplied.",
+    "commit": "cc1a8db8c21651a508abf42e02674ca39407f74c",
+    "command": "PYTHONPATH=src ../patchtrace/.venv/bin/python -m patchtrace version --json",
+    "exit_code": 0,
+    "envelope": "enrichment-cli/1",
+    "status": "complete",
+    "result_contract": "build-info/1",
+    "provenance_basis": "source-tree",
+    "git_commit": "cc1a8db8c21651a508abf42e02674ca39407f74c",
+    "dirty": null,
+    "warning": "Source dirty state is not checked because worktree commands may invoke configured filters.",
+    "source_sha256": "a5dae453dfed42d6133644cb51b773744d428c23c3b0aac8db7544ef9e6c0f47",
+    "python": "3.12.14",
+    "qt": "6.12.0"
+  },
+  "frozen_discovery_review": {
+    "observer": "review_installer_preferences via root",
+    "evidence_type": "Static workflow/hook review; no native execution claimed.",
+    "finding": "Registry names() includes version --help automatically. The packaging hook verifies adapter collection; the frozen A1 version --help invocation builds its parser and thereby imports version_cli/buildinfo. Existing Windows and two Linux frozen smoke paths are configured to cover this discovery when run on the new source.",
+    "limitations": "No native frozen version --json/read_info execution is established. Direct consumer controls exercise missing/invalid packaged records and no source/Git fallback."
+  },
+  "limitations": [
+    "Author and reviewer selections overlap and are not a combined test total.",
+    "No raw consumer JUnit or saved test log exists; no synthetic JUnit has been generated.",
+    "Exact-source hosted QA, Qt, Windows/Linux package and native qualification of the later consumer publication remain pending.",
+    "Metadata producer, desktop builders, workflows, release policy and native/manual release gates are excluded.",
+    "No target binary or model-suggested command was executed for the consumer recovery."
+  ]
+}

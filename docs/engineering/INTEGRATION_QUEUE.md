@@ -1,5 +1,14 @@
 # PatchTrace integration queue
 
+## November 24 version consumer continuation
+
+Publish the [reviewed consumer and evidence](version-provenance-continuation-20261124.md)
+on base PR #364 `ef66848d`, binding the published tree to local reviewed runtime/test
+blobs, then qualify that exact new head and obtain final review before guarded
+merge. PR #364 QA/Qt and dependent packaging are pending in the captured snapshot.
+Preserve both opt-out markers, held branches and receipts. Producer/build/workflow/
+release changes remain a separate retained slice.
+
 ## November 24 combined qualification candidate
 
 The reviewed #358/#359 network and tooling work and #360/#361/#362 project,

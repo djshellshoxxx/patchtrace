@@ -1,0 +1,108 @@
+{
+  "kind": "patchtrace-version-continuation-evidence-manifest/1",
+  "immutable_copies": [
+    {
+      "file": "pr358-auxiliary-independent-recapture.zip",
+      "bytes": 466999,
+      "sha256": "e29ff9e332bf75a80b093aeb47d0c02218755ff948ffe3a87d88cc3e75711b5e",
+      "byte_identical_copy": true,
+      "archive_checks": {
+        "crc": "passed",
+        "outer_members": 22,
+        "nested_leaf_members_checked": 46,
+        "leaf_bytes_checked": 5591436,
+        "credential_pattern_findings": 0,
+        "target_binary_member_findings": 0,
+        "screening_limits": "Archive member names/signatures and credential-value patterns; not an authenticity attestation or a comprehensive secret audit."
+      }
+    },
+    {
+      "file": "pr358-independent-auxiliary-review.json",
+      "bytes": 17761,
+      "sha256": "dd2e9f2057ea1bd47dbf6d69e37720425da53f4668e399d050e3a695904ccc07",
+      "byte_identical_copy": true
+    },
+    {
+      "file": "branch-reachability.json",
+      "bytes": 70151,
+      "sha256": "5f6bace0a506c50cf5986122603bd12037c863f96bc4318461715a4df39aa658",
+      "byte_identical_copy": true
+    },
+    {
+      "file": "pr364-auxiliary-independent-review.zip",
+      "bytes": 470081,
+      "sha256": "53500eb24bcb65740df18045f00644ef7ef1b9b636ce4cd28419972f873b8a87",
+      "byte_identical_copy": true,
+      "archive_checks": {
+        "crc": "passed",
+        "outer_members": 23,
+        "nested_leaf_members_checked": 47,
+        "leaf_bytes_checked": 5614261,
+        "credential_pattern_findings": 0,
+        "target_binary_member_findings": 0,
+        "screening_limits": "Archive member names/signatures and credential-value patterns; not an authenticity attestation or a comprehensive secret audit."
+      }
+    },
+    {
+      "file": "pr364-independent-qualification-review.json",
+      "bytes": 17603,
+      "sha256": "a31988e38aa839c71563197fffc16890844e792f65a8eda1718fb98e0fe34c97",
+      "byte_identical_copy": true
+    }
+  ],
+  "consumer_test_artifact_limit": "Consumer verification is preserved as observed-tool-output review statements; no consumer JUnit or raw test log was saved. Existing historical gzip JUnit receipts remain unchanged in ../consolidation-20261124/.",
+  "scope": "Documentation/evidence checkpoint only. Each retained artifact is bound to its recorded source. No target binaries executed and no native workflow rerun for this checkpoint.",
+  "authored_records": [
+    {
+      "file": "consumer-review-statements.json",
+      "bytes": 7265,
+      "sha256": "9872cbb4ea842ef049083f270c93cb1a04424db4f0bf347677c6f52ef5a43b2c"
+    },
+    {
+      "file": "pr364-check-snapshot.json",
+      "bytes": 9838,
+      "sha256": "92b29bb2f885ab9b3288f2777db12e395c1a83d0c34ef5e8d11c1d3e17aa9b65"
+    }
+  ],
+  "source_bindings": {
+    "consumer_review_local_commit": "806ccc4fbe7b26bd854cf64de96bd03bdde36f64",
+    "consumer_review_local_tree": "a4944cc8e52da915e662f32ecf37e92fa99fbb3c",
+    "consumer_published_head": "not yet published at checkpoint; must bind to the runtime/test blobs in consumer-review-statements.json",
+    "pr358_historical_head": "18edf3012a26eaeb037c2b970a252cc14481fba8",
+    "pr364_base_head": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+    "pr364_base_tree": "64e25d3c8ad2a05aae470cfd55dddceb9517797a"
+  },
+  "receipt_integrity": {
+    "pr358_artifacts_verified": 9,
+    "pr358_logs_verified": 11,
+    "pr364_artifacts_verified": 9,
+    "pr364_logs_verified": 11,
+    "unavailable_original_pr358_archive": "147-member original ZIP remains unverified; independent recapture is distinct."
+  },
+  "existing_historical_junit": [
+    {
+      "file": "../consolidation-20261124/integration-census.xml.gz",
+      "bytes": 2978,
+      "sha256": "01db2849ae955ce1b0103035ee3f9545c326d3f2ac54ce03ade0dcdd77dc4ba0",
+      "uncompressed_bytes": 25695,
+      "uncompressed_sha256": "5bd56e1be21a3e52d63c9b385e27413aae9b7a1c6eabb58fe75d1d44d2869e4a",
+      "scope": "Existing historical source-specific JUnit; not consumer tests; unchanged in this checkpoint."
+    },
+    {
+      "file": "../consolidation-20261124/combined-census-independent-review.xml.gz",
+      "bytes": 1920,
+      "sha256": "1ec1c75c61c990e73b9c1edaa6f133fa21e3e6134d99be8a20da84d381a27f90",
+      "uncompressed_bytes": 19662,
+      "uncompressed_sha256": "8af94784c0810861f7c4d7a3fe5ab9eb0fd78f1be96db41b505e617be0bdf487",
+      "scope": "Existing historical source-specific JUnit; not consumer tests; unchanged in this checkpoint."
+    },
+    {
+      "file": "../consolidation-20261124/pr360-independent-review.xml.gz",
+      "bytes": 4271,
+      "sha256": "eefd733a865e73382a98072d1dd439115f92716dec69e6dac21f2787ba21f341",
+      "uncompressed_bytes": 34580,
+      "uncompressed_sha256": "8ab73f491e493975ad1f76a470ecf3146f3ee4e3261d01d5baee7842318210d9",
+      "scope": "Existing historical source-specific JUnit; not consumer tests; unchanged in this checkpoint."
+    }
+  ]
+}

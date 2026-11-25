@@ -1,0 +1,491 @@
+{
+  "artifact_receipts": [
+    {
+      "bytes": 3571,
+      "id": 14989630466,
+      "members": 1,
+      "name": "tier-r-shard-0",
+      "provider_digest_size_crc_verified": true,
+      "run_id": 45540193257,
+      "sha256": "2af21a3649e1c4b745ee5194178c829378cc7d5bb48226dfc67b530b9d58690c",
+      "target_binary_members": 0
+    },
+    {
+      "bytes": 6048,
+      "id": 14989585587,
+      "members": 5,
+      "name": "tier-r-aggregate",
+      "provider_digest_size_crc_verified": true,
+      "run_id": 45540193257,
+      "sha256": "76df33a84d3777635c155dcbecacf03d8ddaeb4ffde2bd6cb315dc144e0eeeac",
+      "target_binary_members": 0
+    },
+    {
+      "bytes": 588,
+      "id": 14989455449,
+      "members": 1,
+      "name": "tier-r-windows-advisory",
+      "provider_digest_size_crc_verified": true,
+      "run_id": 45540193257,
+      "sha256": "67af19ce1b71858d219430aceabbc8da155b1872576b34cdca86444be964da3a",
+      "target_binary_members": 0
+    },
+    {
+      "bytes": 3114,
+      "id": 14989281342,
+      "members": 1,
+      "name": "tier-r-shard-1",
+      "provider_digest_size_crc_verified": true,
+      "run_id": 45540193257,
+      "sha256": "96f12838c269b0e5ba657fa4183a68ac6a4e133a923d415d0e6445038ce24e55",
+      "target_binary_members": 0
+    },
+    {
+      "bytes": 484,
+      "id": 14988289323,
+      "members": 1,
+      "name": "tier-r-plan",
+      "provider_digest_size_crc_verified": true,
+      "run_id": 45540193257,
+      "sha256": "973fe1494b62741fba04397991d16293a0bdc69bf23410050b82a6a6151de554",
+      "target_binary_members": 0
+    },
+    {
+      "bytes": 96549,
+      "id": 14989516045,
+      "members": 7,
+      "name": "native-static-acceptance-patchtrace-seeded-store",
+      "provider_digest_size_crc_verified": true,
+      "run_id": 45540193242,
+      "sha256": "7e9b15e11dc20045b083e8882fecaf08f1f82cbdb4437918df0f2e51592a5dcd",
+      "target_binary_members": 0
+    },
+    {
+      "bytes": 2946,
+      "id": 14988968376,
+      "members": 3,
+      "name": "native-static-acceptance-raw-cache-hit",
+      "provider_digest_size_crc_verified": true,
+      "run_id": 45540193242,
+      "sha256": "ac617d640dfffc57213f698d22f824726e36414cef098e5009efc4d32cc17a73",
+      "target_binary_members": 0
+    },
+    {
+      "bytes": 96530,
+      "id": 14988703337,
+      "members": 7,
+      "name": "native-static-acceptance-patchtrace-seeded-store-no-adjacent-pdb",
+      "provider_digest_size_crc_verified": true,
+      "run_id": 45540193242,
+      "sha256": "b604e8d6a1e14c396b413484364ec7d7d3580cbc3c2a2227a5f0be1078c37319",
+      "target_binary_members": 0
+    },
+    {
+      "bytes": 96748,
+      "id": 14987734913,
+      "members": 7,
+      "name": "native-static-acceptance-patchtrace-clean",
+      "provider_digest_size_crc_verified": true,
+      "run_id": 45540193242,
+      "sha256": "d141809fa83dae740857a8752a3017013966f06a32ab02635f042be94d7aec40",
+      "target_binary_members": 0
+    }
+  ],
+  "conclusion": "Auxiliary evidence integrity and source binding pass. Historical TierR limitations persist unchanged. Overall PR qualification remains pending Linux/Windows full tests, five Qt jobs, package producers and independent artifact consumers.",
+  "contract": "patchtrace-independent-qualification-review/1",
+  "limits": [
+    "Native receipt JVM identity remains unverified for all three positive controls.",
+    "Input binaries were not downloaded or independently rehashed.",
+    "Cache-miss archive fetch path was not exercised in these fresh auxiliary jobs.",
+    "The unavailable original 147-member PR358 ZIP was not verified; the prior recapture and current-run evidence are distinct."
+  ],
+  "log_receipts": [
+    {
+      "bytes": 193075,
+      "checkout": "69a0bf8e2dd97165826bdbb2caa700eb57f41076",
+      "ghidra_cache_hit_and_pinned_digest_verified": true,
+      "job_id": 138956556259,
+      "run_id": 45540193242,
+      "sha256": "3634db4d967e41f4e58bc123f5bd269614c2bcaf1bf4f0abff3e153eba9f598d"
+    },
+    {
+      "bytes": 161261,
+      "checkout": "69a0bf8e2dd97165826bdbb2caa700eb57f41076",
+      "ghidra_cache_hit_and_pinned_digest_verified": true,
+      "job_id": 138956556614,
+      "run_id": 45540193242,
+      "sha256": "80bbe4da00ebfc1c57213b11c329dc02b7952f3c2decae14d4d825ba87ca3ccb"
+    },
+    {
+      "bytes": 154836,
+      "checkout": "69a0bf8e2dd97165826bdbb2caa700eb57f41076",
+      "expected_negative_cached_pdb_collision_observed": true,
+      "ghidra_cache_hit_and_pinned_digest_verified": true,
+      "job_id": 138956556672,
+      "run_id": 45540193242,
+      "sha256": "744f9b58cedca9dbeb746129cfce60f4bcea692f267a648472b8cb38bfd336ca"
+    },
+    {
+      "bytes": 134306,
+      "checkout": "69a0bf8e2dd97165826bdbb2caa700eb57f41076",
+      "ghidra_cache_hit_and_pinned_digest_verified": true,
+      "job_id": 138956556759,
+      "run_id": 45540193242,
+      "sha256": "01faeaff765c2db0b8b974e9f45ce16d771a9403396bdb1a25c7024cca95852a"
+    },
+    {
+      "bytes": 179542,
+      "checkout": "69a0bf8e2dd97165826bdbb2caa700eb57f41076",
+      "ghidra_cache_hit_and_pinned_digest_verified": true,
+      "job_id": 138956556852,
+      "run_id": 45540193242,
+      "sha256": "bb5d9ea1e494ec3bffab195ebbe9b6346ff8fcc0f485eabc6bd265265ffb6dcf"
+    },
+    {
+      "bytes": 31913,
+      "checkout": "69a0bf8e2dd97165826bdbb2caa700eb57f41076",
+      "job_id": 138956556856,
+      "run_id": 45540193257,
+      "sha256": "91555bff54acc7a56716850b03139d719ca507a8f649088f56a09ce895cc068e"
+    },
+    {
+      "bytes": 23003,
+      "checkout": "69a0bf8e2dd97165826bdbb2caa700eb57f41076",
+      "job_id": 138956557099,
+      "optional_probe": "optional-deps: present=rapidfuzz=3.14.6,yara-x=1.21.0,iced-x86=1.21.0 missing=none",
+      "run_id": 45540193209,
+      "sha256": "1760e631dd19b6ee19c7bd416b0976c8a029f98657494cc444aac85b8b8b53d2"
+    },
+    {
+      "bytes": 26792,
+      "checkout": "69a0bf8e2dd97165826bdbb2caa700eb57f41076",
+      "job_id": 138956557508,
+      "optional_probe": "optional-deps: present=rapidfuzz=3.14.6,yara-x=1.21.0,iced-x86=1.21.0 missing=none",
+      "run_id": 45540193209,
+      "sha256": "ccf2a491c7cf64cdf1765831719526763e24c805eaa3e6faa3c692a14ae11156"
+    },
+    {
+      "bytes": 57299,
+      "checkout": "69a0bf8e2dd97165826bdbb2caa700eb57f41076",
+      "job_id": 138956835754,
+      "rizin_cache_hit_and_digest_verified": true,
+      "run_id": 45540193257,
+      "sha256": "8ddd55607407f8fa90974c64b1800ae8f464b315c10136b0f05c5de6eb9636b6"
+    },
+    {
+      "bytes": 56437,
+      "checkout": "69a0bf8e2dd97165826bdbb2caa700eb57f41076",
+      "job_id": 138956835919,
+      "rizin_cache_hit_and_digest_verified": true,
+      "run_id": 45540193257,
+      "sha256": "8d444ae5b66142b550745d77699af9db60fded15731224046c568ae5266c043a"
+    },
+    {
+      "bytes": 42794,
+      "checkout": "69a0bf8e2dd97165826bdbb2caa700eb57f41076",
+      "job_id": 138958966383,
+      "run_id": 45540193257,
+      "sha256": "76a74a32622c017eda0a390afc7c4d0d9da9794b00b55e090703a72c9580946d"
+    }
+  ],
+  "native_positive_controls": [
+    {
+      "completed_stopped_returncode_zero": true,
+      "jvm_identity": "unverified",
+      "mode": "patchtrace-clean",
+      "modified_read_item_bounds_check_present": true,
+      "raw_sha256": "b8c4f7d51f9541d0da7293ee51f2ffc29e75a3d2a7297e3440917a38795ce6c9",
+      "run_id": "881c9893-adeb-4a1a-a735-1d6d5a88d230",
+      "snapshot_and_raw_hashes_verified": true,
+      "snapshot_sha256": "87663bae0bd0a6f2d9ac2d2427fa6e336753d1f58fb367e37e9e1f73b0fb6224"
+    },
+    {
+      "completed_stopped_returncode_zero": true,
+      "jvm_identity": "unverified",
+      "mode": "patchtrace-seeded-store",
+      "modified_read_item_bounds_check_present": true,
+      "raw_sha256": "d5eb89a66acd73d5321c82cbbb4cff4197fd3fab1b078303ce7905478a8b2e07",
+      "run_id": "3bed03b0-2fe7-4089-baae-8423b2c764ce",
+      "snapshot_and_raw_hashes_verified": true,
+      "snapshot_sha256": "25ea1e79e4b0440d253c251835372fb3c92c822ef23cb6fa9a62ad7812716a71"
+    },
+    {
+      "completed_stopped_returncode_zero": true,
+      "jvm_identity": "unverified",
+      "mode": "patchtrace-seeded-store-no-adjacent-pdb",
+      "modified_read_item_bounds_check_present": true,
+      "raw_sha256": "eb45935277d7a5783f02536677b260bb7717db16077ebd0edfd3fc4bb2a910e0",
+      "run_id": "522b2779-2cbc-4cd2-8ca5-f3d669be98ee",
+      "snapshot_and_raw_hashes_verified": true,
+      "snapshot_sha256": "205d3a081c5aa3d8c607c05d1e730bb385b88960d4c7a30a0ecfef1dd6846878"
+    }
+  ],
+  "observed_at": "2026-11-25 03:43:38 UTC",
+  "optional_probes": {
+    "iced-x86": "1.21.0",
+    "linux": "success",
+    "missing": [],
+    "rapidfuzz": "3.14.6",
+    "windows": "success",
+    "yara-x": "1.21.0"
+  },
+  "qa": {
+    "artifact_consumers": "pending; windows-validate, linux-package and linux-smoke were not present in the job list at snapshot",
+    "jobs": [
+      {
+        "conclusion": null,
+        "id": 138956556129,
+        "name": "qa (ubuntu-latest)",
+        "status": "in_progress"
+      },
+      {
+        "conclusion": null,
+        "id": 138956556331,
+        "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+        "status": "in_progress"
+      },
+      {
+        "conclusion": null,
+        "id": 138956556431,
+        "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+        "status": "in_progress"
+      },
+      {
+        "conclusion": null,
+        "id": 138956556521,
+        "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+        "status": "in_progress"
+      },
+      {
+        "conclusion": null,
+        "id": 138956556525,
+        "name": "qa (windows-latest)",
+        "status": "in_progress"
+      },
+      {
+        "conclusion": null,
+        "id": 138956556539,
+        "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+        "status": "in_progress"
+      },
+      {
+        "conclusion": null,
+        "id": 138956556561,
+        "name": "qt-gate (windows-latest, 5, 1/1)",
+        "status": "in_progress"
+      },
+      {
+        "conclusion": "skipped",
+        "id": 138956557652,
+        "name": "release-gate",
+        "status": "completed"
+      }
+    ],
+    "no_artifact_consumer_acceptance_claim": true,
+    "status": "in_progress"
+  },
+  "raw_cache_acceptance": {
+    "both_match_counts": 1,
+    "both_runs_completed": true,
+    "explicit_second_run_cache_reuse": true,
+    "jvm_probe_version": "25.0.5",
+    "raw_sha256": "798753a038c6a2697b22106422d5af8962a94e21166526c73133ea67d2db82c0",
+    "status": "passed"
+  },
+  "reviewer": "patchtrace_checkpoint_review",
+  "runtime_archive_cache": {
+    "all_observed_hit_digests_verified": true,
+    "ghidra_hits": 5,
+    "ghidra_misses": 0,
+    "rizin_hits": 2,
+    "rizin_misses": 0
+  },
+  "scope": "Read-only provider evidence inspection and pure JSON replay; no workflow dispatch, target execution, target-binary download, source edits, or remote mutation.",
+  "source": {
+    "all_11_completed_logs_checkout_merge": true,
+    "base": "44c62cbf94c2d25c0c383eeb0072b7adf2bbb415",
+    "head": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+    "merge_and_head_tree_equal": true,
+    "replay_module_sha256": {
+      "tools/calibration/ci_summary.py": "68716838156fb9eee3ee35a57f913bf3dc9b4983a3d112eb646e16830567c776",
+      "tools/calibration/tier_r/shard.py": "cb8deb0ed3cf6333f9ac00deaa106118ccf1131f4fb6f3f54132b85ed0a79aa9"
+    },
+    "synthetic_merge": "69a0bf8e2dd97165826bdbb2caa700eb57f41076",
+    "tree": "64e25d3c8ad2a05aae470cfd55dddceb9517797a"
+  },
+  "tier_r": {
+    "acceptance": "incomplete: 5/11 engine pairs completed, 6 failed; Windows advisory has no reports. Green workflow does not establish full TierR acceptance.",
+    "aggregate_provenance_summary_exactly_equal_prior_pr358": true,
+    "ci_summary": {
+      "cases": {
+        "ok": 11,
+        "skipped": 1
+      },
+      "contract": "tier-r-ci-summary/1",
+      "engines": [
+        {
+          "attempted": 11,
+          "blocked": 0,
+          "completed": 5,
+          "completion": 0.454545,
+          "engine": "rz-diff",
+          "failed": 6,
+          "strata": [
+            {
+              "attempted": 1,
+              "blocked": 0,
+              "completed": 0,
+              "completion": 0.0,
+              "failed": 1,
+              "stratum": "aa"
+            },
+            {
+              "attempted": 1,
+              "blocked": 0,
+              "completed": 0,
+              "completion": 0.0,
+              "failed": 1,
+              "stratum": "authored"
+            },
+            {
+              "attempted": 2,
+              "blocked": 0,
+              "completed": 2,
+              "completion": 1.0,
+              "failed": 0,
+              "stratum": "cve"
+            },
+            {
+              "attempted": 1,
+              "blocked": 0,
+              "completed": 0,
+              "completion": 0.0,
+              "failed": 1,
+              "stratum": "mutation"
+            },
+            {
+              "attempted": 3,
+              "blocked": 0,
+              "completed": 0,
+              "completion": 0.0,
+              "failed": 3,
+              "stratum": "noise"
+            },
+            {
+              "attempted": 3,
+              "blocked": 0,
+              "completed": 3,
+              "completion": 1.0,
+              "failed": 0,
+              "stratum": "release"
+            }
+          ]
+        }
+      ],
+      "plan_sha256": "7f686fab1934b771a8f6daaedb012e750566fe304a32f7d191e132913f0de608",
+      "reason": null,
+      "report_sha256": "364c87d3a16c6cca92c325eb2f4d593c5e9562561e39b787004c1d6248642b4a",
+      "shards": 2,
+      "status": "warning",
+      "subset": "smoke",
+      "warnings": [
+        "rz-diff: only 5 of 11 pairs completed (below 90%)"
+      ]
+    },
+    "failed_pairs": [
+      {
+        "pair_id": "aa-tiny-v1-O2-rebuild",
+        "reason": "failed: rz-diff reported no functions in the older file, so it compared nothing. rz-diff may not support this file; use another engine for this pair.",
+        "status": "failed",
+        "stratum": "aa"
+      },
+      {
+        "pair_id": "mutation-tiny-v1-cmp-flip-1000-O2",
+        "reason": "failed: rz-diff reported no functions in the older file, so it compared nothing. rz-diff may not support this file; use another engine for this pair.",
+        "status": "failed",
+        "stratum": "mutation"
+      },
+      {
+        "pair_id": "noise-tiny-v1-msvc-free-O0-msvc-free-O1",
+        "reason": "failed: rz-diff reported no functions in the older file, so it compared nothing. rz-diff may not support this file; use another engine for this pair.",
+        "status": "failed",
+        "stratum": "noise"
+      },
+      {
+        "pair_id": "noise-tiny-v1-msvc-free-O2-mingw-gcc-O2",
+        "reason": "failed: rz-diff reported no functions in the older file, so it compared nothing. rz-diff may not support this file; use another engine for this pair.",
+        "status": "failed",
+        "stratum": "noise"
+      },
+      {
+        "pair_id": "noise-tiny-v1-msvc-free-O2-msvc-free-Os",
+        "reason": "failed: rz-diff reported no functions in the older file, so it compared nothing. rz-diff may not support this file; use another engine for this pair.",
+        "status": "failed",
+        "stratum": "noise"
+      },
+      {
+        "pair_id": "ours-_template-tiny-v1-v2-O2",
+        "reason": "failed: rz-diff reported no functions in the older file, so it compared nothing. rz-diff may not support this file; use another engine for this pair.",
+        "status": "failed",
+        "stratum": "authored"
+      }
+    ],
+    "integrity": "passed",
+    "merge_sha256": "4e81b0101c8f2a39621431a2fcd6292e9fd9abf4f2ec964ea12afc2656071b83",
+    "msvc_advisory": "skipped (dispatch only)",
+    "offline_merge_provenance_and_summary_replay": "exact_match",
+    "plan_sha256": "7f686fab1934b771a8f6daaedb012e750566fe304a32f7d191e132913f0de608",
+    "report_sha256": "364c87d3a16c6cca92c325eb2f4d593c5e9562561e39b787004c1d6248642b4a",
+    "reverse_order_aggregate_replay": "exact_match",
+    "skipped_cases": [
+      {
+        "digest": "dbd5810f4e0d35dddbb2ece10499e22f41af77045d6a587ec4143aa12f3ea01f",
+        "id": "card:zlib-typo-fixes-no-code-change-2022-08",
+        "reason": "zlib-typo-fixes-no-code-change-2022-08: old and new build to byte-identical engine images (source-only change); no discriminating pair exists, so none is emitted (it is not an A/A pair either)",
+        "status": "skipped"
+      }
+    ],
+    "windows_advisory": {
+      "cases": 11,
+      "exactly_equal_prior_pr358": true,
+      "reasons": [
+        "exit 1"
+      ],
+      "reports": 0,
+      "shard_sha256": "a2e844681f9baf3f9322aec1e883638e59c1d7cdd23f87135a084961fc7404f1",
+      "statuses": [
+        "findings"
+      ]
+    }
+  },
+  "workflow_status": [
+    {
+      "conclusion": "success",
+      "id": 45540193209,
+      "name": "Optional dependency wheels probe",
+      "status": "completed",
+      "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/45540193209"
+    },
+    {
+      "conclusion": null,
+      "id": 45540193200,
+      "name": "QA and Windows standalone",
+      "status": "in_progress",
+      "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/45540193200"
+    },
+    {
+      "conclusion": "success",
+      "id": 45540193257,
+      "name": "Corpus Tier R (sharded)",
+      "status": "completed",
+      "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/45540193257"
+    },
+    {
+      "conclusion": "success",
+      "id": 45540193242,
+      "name": "Native Windows Ghidriff acceptance",
+      "status": "completed",
+      "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/45540193242"
+    }
+  ]
+}
