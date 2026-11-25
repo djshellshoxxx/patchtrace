@@ -1,0 +1,494 @@
+{
+  "source": "96baaee20f390a3f2a5629de3764d32323bb80e5",
+  "tree": "4343dce701f20d3b6bc591297d1a887bb05cc461",
+  "parent": "8fff682f720af634a05939f3e94a9ca273243cb3",
+  "base": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+  "observed_at": "2026-11-21T14:34:45.086598+00:00",
+  "check_count": 289,
+  "all_passed": true,
+  "changed_paths": [
+    "docs/engineering/bug-hunt/PT-BUG-NET-001.md",
+    "docs/engineering/bug-hunt/PT-BUG-NET-003.md",
+    "docs/engineering/bug-hunt/PT-BUG-OPT-002.json",
+    "docs/engineering/bug-hunt/PT-BUG-OPT-002.md",
+    "docs/engineering/bug-hunt/findings.json",
+    "docs/qa.md",
+    "docs/specs/csaf-cve-interpretation-engine.md",
+    "docs/specs/enrichment-hardening-backlog.md",
+    "src/patchtrace/enrichment/intelligence.py",
+    "src/patchtrace/intelligence/csaf/transport.py",
+    "src/patchtrace/netutil.py",
+    "src/patchtrace/optional_deps.py",
+    "tasks/todo.md",
+    "tests/test_enrichment_intelligence.py",
+    "tests/test_intel_transport.py",
+    "tests/test_netutil_abandoned_cleanup.py",
+    "tests/test_netutil_read_deadline.py",
+    "tests/test_optional_import_recovery.py"
+  ],
+  "unchanged_tracked_entries": 4812,
+  "commit_count": 31,
+  "incoming_groups": [
+    {
+      "label": "netutil354356",
+      "head": "1d475d926314ae116442bfe2b7cd268ad95ea12c",
+      "count": 10,
+      "commits": [
+        "e53bfdeb8b0383ee12340729e20047ff5ddfe62c",
+        "e92a55c5e37c2766510e74210429f68a5f3c73a2",
+        "ef190e6d12cc14d0aaebcd1cc524f741d37fb09f",
+        "523e528090d4de2d5d9c408becb916adef4d0a7a",
+        "db6532710b22e23361cfaebecabd36b92032d159",
+        "a41c7a0d594d1fe26c16da395e6f6f9b33b07eca",
+        "3e0c37bc1a9fcda47df2bdd99bdf8acfd6e1e205",
+        "de96f3b38d14f7ede10dff5b66e551e2413e59c4",
+        "82f518829b7eb44e4449d804e8d25dee5e30b10c",
+        "1d475d926314ae116442bfe2b7cd268ad95ea12c"
+      ]
+    },
+    {
+      "label": "enrichment352",
+      "head": "aa01a50844fed15823c6e03491ce3bc671a5ecfc",
+      "count": 6,
+      "commits": [
+        "5413e4ddc05c21128346109c970c34d74f9efab2",
+        "a1efd07a7f4be7c9cc4689335d059c54a20c1325",
+        "fe73b2ef7a01e890cf3f6da2a045cb19f2aad279",
+        "df63006f2a5f56a218af0912ca58bc1502d45e39",
+        "e3928ab8c8e2deee7bb01b0f857205f68a1abda2",
+        "aa01a50844fed15823c6e03491ce3bc671a5ecfc"
+      ]
+    },
+    {
+      "label": "csaf353",
+      "head": "d0a4bdf439775999340ea760d96a087e032ee6dd",
+      "count": 6,
+      "commits": [
+        "d3628353658ac8b31f9c50b2df7dd6a1df409431",
+        "07488438cd899460f47a148eb340e5533c7a3912",
+        "2fba26edec79a010ca2d3ca89fc8ac274ad16691",
+        "6585f7431dbb7814ad4a1f3454f6a2b86eb34a95",
+        "4c2a741ecac7f10d58a5b46a11cc64db79f065d0",
+        "d0a4bdf439775999340ea760d96a087e032ee6dd"
+      ]
+    },
+    {
+      "label": "optional355",
+      "head": "e2127864cb481026db0157082d688b8a36595e3b",
+      "count": 4,
+      "commits": [
+        "5a1154b4eb237280dcdd60dbe944dbd0edd48ce7",
+        "da6fb2539d8a1a941b7bcbbf7abd7331b24842cc",
+        "acfc75569d5d318a5274195a7fc662090ffa75ad",
+        "e2127864cb481026db0157082d688b8a36595e3b"
+      ]
+    }
+  ],
+  "ordered_integration_stages": [
+    {
+      "commit": "17962c2403a82a67dea256b163a4a44255948682",
+      "tree": "202d6e32048bd2b6d2fa2d080c13834b8df7dbdf",
+      "parents": [
+        "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+        "1d475d926314ae116442bfe2b7cd268ad95ea12c"
+      ],
+      "message": "Integrate reviewed network deadline and cleanup sources [no release] [no deploy]\n\nRetain the exact reviewed source history at 1d475d926314ae116442bfe2b7cd268ad95ea12c on the separately owned network integration. Preserve prior records and every incoming source contribution.\n\nCombined-source focused, independent and exact hosted/full/platform qualification remain required. Existing author draft and publication conditions remain recorded; no main or external ref is moved.\n\n[no release] [no deploy]\n",
+      "raw_commit_sha256": "04406e356ea8eeafe55d2fd80b47c7499150389dc1e332a5f3965f887548856b"
+    },
+    {
+      "commit": "8919d8d9ccdc6df8159bfbe6e8daf677a663df1c",
+      "tree": "5b28c2079d1fd3c35240f51aad2cb64105de788d",
+      "parents": [
+        "17962c2403a82a67dea256b163a4a44255948682",
+        "aa01a50844fed15823c6e03491ce3bc671a5ecfc"
+      ],
+      "message": "Integrate reviewed whole-attempt enrichment deadline recovery [no release] [no deploy]\n\nRetain the exact reviewed source history at aa01a50844fed15823c6e03491ce3bc671a5ecfc on the separately owned network integration. Preserve prior records and every incoming source contribution.\n\nCombined-source focused, independent and exact hosted/full/platform qualification remain required. Existing author draft and publication conditions remain recorded; no main or external ref is moved.\n\n[no release] [no deploy]\n",
+      "raw_commit_sha256": "9a2cf6024dcc83d2043bd3df50f849d65003415937514954a4d3f0b10f75ffd8"
+    },
+    {
+      "commit": "29e9286b24323c905f4b9b847a606ce9102b0e06",
+      "tree": "b87e8052c2f5830fa92b414e94d23daaa73dcba3",
+      "parents": [
+        "8919d8d9ccdc6df8159bfbe6e8daf677a663df1c",
+        "d0a4bdf439775999340ea760d96a087e032ee6dd"
+      ],
+      "message": "Integrate reviewed bounded CSAF cache reads [no release] [no deploy]\n\nRetain the exact reviewed source history at d0a4bdf439775999340ea760d96a087e032ee6dd on the separately owned network integration. Preserve prior records and every incoming source contribution.\n\nCombined-source focused, independent and exact hosted/full/platform qualification remain required. Existing author draft and publication conditions remain recorded; no main or external ref is moved.\n\n[no release] [no deploy]\n",
+      "raw_commit_sha256": "a26a589449b805bba4fb9f6b6c7007ba8973dac12be964760637e85aa9f35397"
+    },
+    {
+      "commit": "8fff682f720af634a05939f3e94a9ca273243cb3",
+      "tree": "d440d1a7cdb550ab1f989ebd73d9cd000208a7cd",
+      "parents": [
+        "29e9286b24323c905f4b9b847a606ce9102b0e06",
+        "e2127864cb481026db0157082d688b8a36595e3b"
+      ],
+      "message": "Integrate reviewed optional import initialization recovery [no release] [no deploy]\n\nRetain the exact reviewed source history at e2127864cb481026db0157082d688b8a36595e3b on the separately owned network integration. Preserve prior records and every incoming source contribution.\n\nCombined-source focused, independent and exact hosted/full/platform qualification remain required. Existing author draft and publication conditions remain recorded; no main or external ref is moved.\n\n[no release] [no deploy]\n",
+      "raw_commit_sha256": "3d4592c26b124b8989e0136a868573feac5c0f439548062d5ab33453d67d8a66"
+    }
+  ],
+  "complete_history": [
+    {
+      "commit": "e53bfdeb8b0383ee12340729e20047ff5ddfe62c",
+      "tree": "67acad44b50f3a561a12467ae5e3c6b2a356089d",
+      "parents": [
+        "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4"
+      ],
+      "message": "test(netutil): reproduce stalled body read exceeding deadline [no release] [no deploy]",
+      "raw_commit_sha256": "940be3936d1b3b51c7aea9bde3c5d59b17316a12011f97169898e2917ccbf9a9"
+    },
+    {
+      "commit": "e92a55c5e37c2766510e74210429f68a5f3c73a2",
+      "tree": "faa2a634c79a25489f5f636e099c263745d9b5f7",
+      "parents": [
+        "e53bfdeb8b0383ee12340729e20047ff5ddfe62c"
+      ],
+      "message": "fix(netutil): enforce body deadline during blocked read [no release] [no deploy]",
+      "raw_commit_sha256": "9dc42586ef7a08814badc039f37d46f7ed9246add3d739c69134cdf95c8811a3"
+    },
+    {
+      "commit": "ef190e6d12cc14d0aaebcd1cc524f741d37fb09f",
+      "tree": "bc86913ddd3d387fcef304329d5f298b82bebd02",
+      "parents": [
+        "e92a55c5e37c2766510e74210429f68a5f3c73a2"
+      ],
+      "message": "fix(netutil): bound native HTTP socket reads to guarantee prompt close [no release] [no deploy]",
+      "raw_commit_sha256": "e61f256c680ebb720c46acb869a0a3a56a07cf93410402b8b1637a13b3d22df2"
+    },
+    {
+      "commit": "523e528090d4de2d5d9c408becb916adef4d0a7a",
+      "tree": "f6f5494c6710f9934cff25d7fd32b4da40f20bd2",
+      "parents": [
+        "ef190e6d12cc14d0aaebcd1cc524f741d37fb09f"
+      ],
+      "message": "test(netutil): require deadline and prompt close for real loopback HTTP [no release] [no deploy]",
+      "raw_commit_sha256": "a50a75874e3913239d69d77c0c3636d4c58ddcefbaca6a4eaacb1407832dd5ac"
+    },
+    {
+      "commit": "db6532710b22e23361cfaebecabd36b92032d159",
+      "tree": "82182ee0d90345496f407481a6215584375358e8",
+      "parents": [
+        "523e528090d4de2d5d9c408becb916adef4d0a7a"
+      ],
+      "message": "docs(bug-hunt): record confirmed HTTP deadline defect and qualification gaps [no release] [no deploy]",
+      "raw_commit_sha256": "30e33bb046097a7bfdba9d3b737cde87514a3c5673cb155597f772c3fe577eba"
+    },
+    {
+      "commit": "a41c7a0d594d1fe26c16da395e6f6f9b33b07eca",
+      "tree": "cb591be1fb4037e709a1586a41983837bb423741",
+      "parents": [
+        "db6532710b22e23361cfaebecabd36b92032d159"
+      ],
+      "message": "docs(bug-hunt): index reproducible network deadline finding [no release] [no deploy]",
+      "raw_commit_sha256": "668822f2dbc2cd6dff0a728d61f574076d280e8061e1aee3e655c047d74dc48a"
+    },
+    {
+      "commit": "3e0c37bc1a9fcda47df2bdd99bdf8acfd6e1e205",
+      "tree": "d5755d49769443167cf2c37dc29853aade861cf2",
+      "parents": [
+        "a41c7a0d594d1fe26c16da395e6f6f9b33b07eca"
+      ],
+      "message": "test(netutil): reproduce abandoned cleanup counter admitting extra workers [no release] [no deploy]",
+      "raw_commit_sha256": "dee7791eea1339792c3fa8a1e3bcb20090e8852da14046dc0362767b4f2cf733"
+    },
+    {
+      "commit": "de96f3b38d14f7ede10dff5b66e551e2413e59c4",
+      "tree": "803754ec4d624d35a8a3ff998151bc8e3de4eb5a",
+      "parents": [
+        "3e0c37bc1a9fcda47df2bdd99bdf8acfd6e1e205"
+      ],
+      "message": "fix(netutil): keep abandoned slot reserved through response cleanup [no release] [no deploy]",
+      "raw_commit_sha256": "96e184c70995149a82400203c980104d41001b747be6c555c55a29bf86f246c4"
+    },
+    {
+      "commit": "82f518829b7eb44e4449d804e8d25dee5e30b10c",
+      "tree": "ff829589cf7ebf470b7bd3a9ea08ec096f490c14",
+      "parents": [
+        "de96f3b38d14f7ede10dff5b66e551e2413e59c4"
+      ],
+      "message": "docs(bug-hunt): record confirmed abandoned cleanup accounting failure [no release] [no deploy]",
+      "raw_commit_sha256": "dd895a91f7b62afdd572e10f69e69e6776ac580761915f3f5bee75151d3ae278"
+    },
+    {
+      "commit": "1d475d926314ae116442bfe2b7cd268ad95ea12c",
+      "tree": "72d30ce1b4ea8ec03b5634a2922d53e0ba7dcb88",
+      "parents": [
+        "82f518829b7eb44e4449d804e8d25dee5e30b10c"
+      ],
+      "message": "docs(bug-hunt): track blocked cleanup-slot fix beside deadline repair [no release] [no deploy]",
+      "raw_commit_sha256": "a21df3bc8b6488d015a5736582f9973504154edb743fa1b9fad1bfd78f84567e"
+    },
+    {
+      "commit": "17962c2403a82a67dea256b163a4a44255948682",
+      "tree": "202d6e32048bd2b6d2fa2d080c13834b8df7dbdf",
+      "parents": [
+        "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+        "1d475d926314ae116442bfe2b7cd268ad95ea12c"
+      ],
+      "message": "Integrate reviewed network deadline and cleanup sources [no release] [no deploy]\n\nRetain the exact reviewed source history at 1d475d926314ae116442bfe2b7cd268ad95ea12c on the separately owned network integration. Preserve prior records and every incoming source contribution.\n\nCombined-source focused, independent and exact hosted/full/platform qualification remain required. Existing author draft and publication conditions remain recorded; no main or external ref is moved.\n\n[no release] [no deploy]\n",
+      "raw_commit_sha256": "04406e356ea8eeafe55d2fd80b47c7499150389dc1e332a5f3965f887548856b"
+    },
+    {
+      "commit": "5413e4ddc05c21128346109c970c34d74f9efab2",
+      "tree": "b1e2b4169f3eee0cdb37c7cedb92b2af2bfccc2e",
+      "parents": [
+        "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4"
+      ],
+      "message": "spec(enrichment): require hard total deadline across stalled network attempts [no release] [no deploy]",
+      "raw_commit_sha256": "cba4fd966f2dcb6c6a8100606d7d61d3bc4c2ef24a9e111e712bb21693328548"
+    },
+    {
+      "commit": "a1efd07a7f4be7c9cc4689335d059c54a20c1325",
+      "tree": "566c1e7c2ca6d088c61e7562f7c32d49b6254f3f",
+      "parents": [
+        "5413e4ddc05c21128346109c970c34d74f9efab2"
+      ],
+      "message": "test(enrichment): reproduce blocked open/read deadline overrun [no release] [no deploy]",
+      "raw_commit_sha256": "237cd87ebb420bbcb3fae6903bd3c6185ba6565697df57209c65f5d298b15916"
+    },
+    {
+      "commit": "fe73b2ef7a01e890cf3f6da2a045cb19f2aad279",
+      "tree": "d6f2a3c52411012d1b4961314c1cb6a860647ec7",
+      "parents": [
+        "a1efd07a7f4be7c9cc4689335d059c54a20c1325"
+      ],
+      "message": "fix(enrichment): bound complete network attempt by wall-clock deadline [no release] [no deploy]",
+      "raw_commit_sha256": "84e3edf809287faab4a9ea4333657b14ac477eafce35f3c009e2609ffb19df6a"
+    },
+    {
+      "commit": "df63006f2a5f56a218af0912ca58bc1502d45e39",
+      "tree": "c5ad7f6f9f067c07432b88c4e64cad43516f56ce",
+      "parents": [
+        "fe73b2ef7a01e890cf3f6da2a045cb19f2aad279"
+      ],
+      "message": "docs(qa): record unverified ACQ-2 deadline repair gates [no release] [no deploy]",
+      "raw_commit_sha256": "0e677e2b4670ea847cfb4c22284e42b34d4a68772ffca49bbfbe80d825013cde"
+    },
+    {
+      "commit": "e3928ab8c8e2deee7bb01b0f857205f68a1abda2",
+      "tree": "ee0a8bdf70b497c0b2d0e5ed5eeca9b9e9f648e1",
+      "parents": [
+        "df63006f2a5f56a218af0912ca58bc1502d45e39"
+      ],
+      "message": "docs(qa): record unverified ACQ-2 deadline repair gates [no release] [no deploy]",
+      "raw_commit_sha256": "c0fa1b916fef19782bf3c4c5fd60584815a2100f42b7b6b4b30d6a85fbf96a5c"
+    },
+    {
+      "commit": "aa01a50844fed15823c6e03491ce3bc671a5ecfc",
+      "tree": "a3f4588f3a21cb257e4d34dd495114a7658b7a08",
+      "parents": [
+        "e3928ab8c8e2deee7bb01b0f857205f68a1abda2"
+      ],
+      "message": "fix(enrichment): validate completed attempt deadline [no release] [no deploy]\n\nCheck explicit cancellation and both existing total deadlines before publishing a completed network attempt. Preserve PR352 ancestry and its stalled-operation tests. Retain the separate netutil cleanup accounting prerequisite unchanged.\n\n[no release] [no deploy]\n",
+      "raw_commit_sha256": "8905a99d33a362992d274eb6c10813512dc7e81e6ce268e735738c699e938e04"
+    },
+    {
+      "commit": "8919d8d9ccdc6df8159bfbe6e8daf677a663df1c",
+      "tree": "5b28c2079d1fd3c35240f51aad2cb64105de788d",
+      "parents": [
+        "17962c2403a82a67dea256b163a4a44255948682",
+        "aa01a50844fed15823c6e03491ce3bc671a5ecfc"
+      ],
+      "message": "Integrate reviewed whole-attempt enrichment deadline recovery [no release] [no deploy]\n\nRetain the exact reviewed source history at aa01a50844fed15823c6e03491ce3bc671a5ecfc on the separately owned network integration. Preserve prior records and every incoming source contribution.\n\nCombined-source focused, independent and exact hosted/full/platform qualification remain required. Existing author draft and publication conditions remain recorded; no main or external ref is moved.\n\n[no release] [no deploy]\n",
+      "raw_commit_sha256": "9a2cf6024dcc83d2043bd3df50f849d65003415937514954a4d3f0b10f75ffd8"
+    },
+    {
+      "commit": "d3628353658ac8b31f9c50b2df7dd6a1df409431",
+      "tree": "3619f048dc8083ef1649629ef4bbac108aec58e0",
+      "parents": [
+        "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4"
+      ],
+      "message": "spec(csaf): make offline cache read caps race-safe [no release] [no deploy]",
+      "raw_commit_sha256": "db4cf23803115265d17fc8fb0038f55257facd75f78e76cda062d012e76261b9"
+    },
+    {
+      "commit": "07488438cd899460f47a148eb340e5533c7a3912",
+      "tree": "72ac6c48522d7eaf7d135a3f3f9660341888ea5a",
+      "parents": [
+        "d3628353658ac8b31f9c50b2df7dd6a1df409431"
+      ],
+      "message": "test(csaf): reproduce stale-size cache read races [no release] [no deploy]",
+      "raw_commit_sha256": "354b6b951b72c5bcf6f00b5c8a68e35e4b3543042b5bacf4b6cdc0e74f8e5659"
+    },
+    {
+      "commit": "2fba26edec79a010ca2d3ca89fc8ac274ad16691",
+      "tree": "1521c1ffdfbb871b261cf2e56ade7d09cb9aa2e2",
+      "parents": [
+        "07488438cd899460f47a148eb340e5533c7a3912"
+      ],
+      "message": "fix(csaf): cap cache index/body reads against size-check races [no release] [no deploy]",
+      "raw_commit_sha256": "316a623269124434a8e605125717171bc1a6d8aae9fc82477af7c7b4051125bc"
+    },
+    {
+      "commit": "6585f7431dbb7814ad4a1f3454f6a2b86eb34a95",
+      "tree": "80d38d3ae3d6b4343fcf1ab72d1b64bb51780f34",
+      "parents": [
+        "2fba26edec79a010ca2d3ca89fc8ac274ad16691"
+      ],
+      "message": "docs(csaf): clarify bounded-read contract with optional limit [no release] [no deploy]",
+      "raw_commit_sha256": "c5056a83531ef55164af08003a37c2d11a3a3af2d76deabb2b896cc6ff0c93b3"
+    },
+    {
+      "commit": "4c2a741ecac7f10d58a5b46a11cc64db79f065d0",
+      "tree": "a802b7b9e5c99009e391ce2d8a2dc60732db1f22",
+      "parents": [
+        "6585f7431dbb7814ad4a1f3454f6a2b86eb34a95"
+      ],
+      "message": "docs(qa): record CSAF cache race tests and outstanding gates [no release] [no deploy]",
+      "raw_commit_sha256": "5a978830a17c1c628d1e5ec0023826d86c00b8a985ac442d8100ced196147652"
+    },
+    {
+      "commit": "d0a4bdf439775999340ea760d96a087e032ee6dd",
+      "tree": "9ccd50655b7456d1f09618e63775c5f68d649d1f",
+      "parents": [
+        "4c2a741ecac7f10d58a5b46a11cc64db79f065d0"
+      ],
+      "message": "docs(qa): record CSAF cache race tests and outstanding gates [no release] [no deploy]",
+      "raw_commit_sha256": "6296a05943717e8b06f0195d10654f250045eb18dee5f27a8e7b2da3770d6c8b"
+    },
+    {
+      "commit": "29e9286b24323c905f4b9b847a606ce9102b0e06",
+      "tree": "b87e8052c2f5830fa92b414e94d23daaa73dcba3",
+      "parents": [
+        "8919d8d9ccdc6df8159bfbe6e8daf677a663df1c",
+        "d0a4bdf439775999340ea760d96a087e032ee6dd"
+      ],
+      "message": "Integrate reviewed bounded CSAF cache reads [no release] [no deploy]\n\nRetain the exact reviewed source history at d0a4bdf439775999340ea760d96a087e032ee6dd on the separately owned network integration. Preserve prior records and every incoming source contribution.\n\nCombined-source focused, independent and exact hosted/full/platform qualification remain required. Existing author draft and publication conditions remain recorded; no main or external ref is moved.\n\n[no release] [no deploy]\n",
+      "raw_commit_sha256": "a26a589449b805bba4fb9f6b6c7007ba8973dac12be964760637e85aa9f35397"
+    },
+    {
+      "commit": "5a1154b4eb237280dcdd60dbe944dbd0edd48ce7",
+      "tree": "808e6eaa8bd14681b449b5e956f3ccb8f8cccdd3",
+      "parents": [
+        "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4"
+      ],
+      "message": "test(optional): reproduce non-ImportError startup failure in each optional module [no release] [no deploy]",
+      "raw_commit_sha256": "e95f1c1a7ce7b4eebd06125aefe5d44451ec6312439dd3ca29f936979c706be2"
+    },
+    {
+      "commit": "da6fb2539d8a1a941b7bcbbf7abd7331b24842cc",
+      "tree": "26d1e189b1501d4d49ae0fcdc55f0166ebf5071f",
+      "parents": [
+        "5a1154b4eb237280dcdd60dbe944dbd0edd48ce7"
+      ],
+      "message": "fix(optional): treat unexpected extension initialization failures as unavailable [no release] [no deploy]",
+      "raw_commit_sha256": "971a367190c5992eb866fc96f2cfa142574649a5ab3786724056667b23bd3f05"
+    },
+    {
+      "commit": "acfc75569d5d318a5274195a7fc662090ffa75ad",
+      "tree": "6c477f95f42a623125b411b84c41593f8a98faf4",
+      "parents": [
+        "da6fb2539d8a1a941b7bcbbf7abd7331b24842cc"
+      ],
+      "message": "docs(bug-hunt): record confirmed optional startup fault and open verification gates [no release] [no deploy]",
+      "raw_commit_sha256": "dbc027d0001db096053c1904a393aa706f03ce25ee5de0c2ae2a51231d01f59d"
+    },
+    {
+      "commit": "e2127864cb481026db0157082d688b8a36595e3b",
+      "tree": "da71960b2edf33f1637c073b0613035843619543",
+      "parents": [
+        "acfc75569d5d318a5274195a7fc662090ffa75ad"
+      ],
+      "message": "docs(bug-hunt): index optional initializer failure [no release] [no deploy]",
+      "raw_commit_sha256": "fcefa4845273f4511ea10a766b23f9d29a52a690c71bb30339a543ada23c3fe4"
+    },
+    {
+      "commit": "8fff682f720af634a05939f3e94a9ca273243cb3",
+      "tree": "d440d1a7cdb550ab1f989ebd73d9cd000208a7cd",
+      "parents": [
+        "29e9286b24323c905f4b9b847a606ce9102b0e06",
+        "e2127864cb481026db0157082d688b8a36595e3b"
+      ],
+      "message": "Integrate reviewed optional import initialization recovery [no release] [no deploy]\n\nRetain the exact reviewed source history at e2127864cb481026db0157082d688b8a36595e3b on the separately owned network integration. Preserve prior records and every incoming source contribution.\n\nCombined-source focused, independent and exact hosted/full/platform qualification remain required. Existing author draft and publication conditions remain recorded; no main or external ref is moved.\n\n[no release] [no deploy]\n",
+      "raw_commit_sha256": "3d4592c26b124b8989e0136a868573feac5c0f439548062d5ab33453d67d8a66"
+    },
+    {
+      "commit": "96baaee20f390a3f2a5629de3764d32323bb80e5",
+      "tree": "4343dce701f20d3b6bc591297d1a887bb05cc461",
+      "parents": [
+        "8fff682f720af634a05939f3e94a9ca273243cb3"
+      ],
+      "message": "Clarify abandoned-call admission threshold [no release] [no deploy]\n\nDocument the existing H9 admission policy and cleanup accounting precisely. Previously admitted concurrent calls can later raise the abandoned count above the threshold; further admission is refused. Preserve the independent observations and original strict-bound failures. Runtime AST, API, policy and existing tests are unchanged.\n\n[no release] [no deploy]\n",
+      "raw_commit_sha256": "2095c3e86a2972194a31dc8c16242cccdd5f1393a7e0105e0ab5f037be48b0ba"
+    }
+  ],
+  "record_reconstructions": [
+    {
+      "stage": "enrichment352",
+      "path": "docs/qa.md",
+      "addition_side": "prefix",
+      "addition_bytes": 1264,
+      "addition_sha256": "55c8da0d313749e5c4de4fe1249ccc3ee864daefde80efc3ffb2a991277cdeb6",
+      "common_sha256": "0be91ba10f46a117bc812f14809606c46f912626ccff5ae94616b1b969bdf1c3",
+      "previous_sha256": "3671c1c529d6a83fd37a03a02c457345164769ca55d09b9d63be3d616ebe80e1",
+      "incoming_sha256": "cc68e2f439a0494ed82a1e4c72b2cb69c843670c27f1b788b1145c5fc6cb236b",
+      "result_sha256": "dfc19dc2a9fe0b107b67316c67be7add37e4fe13ce37f4a5efc58a03b7815901"
+    },
+    {
+      "stage": "enrichment352",
+      "path": "tasks/todo.md",
+      "addition_side": "prefix",
+      "addition_bytes": 831,
+      "addition_sha256": "3f87c23ff7f05b3602b04e90d6d5466da263591258c2646f67592c4b9f5bab13",
+      "common_sha256": "3c4352bd6c94dd6d656e7c37284718fc97ff2f4b512ec4c42980a4e4e02b0da7",
+      "previous_sha256": "990be802739e1456f59dff617437b699b9d689cca7bd5855033389845d80391e",
+      "incoming_sha256": "9d64d652ed7a5479f027bf14b04f54b1a2d09300ea9b57988628cb1172976495",
+      "result_sha256": "ec581a3ef0f90f5c7dc3889b631fbceaec5162787490027b30c3ec71a57033b6"
+    },
+    {
+      "stage": "csaf353",
+      "path": "docs/qa.md",
+      "addition_side": "suffix",
+      "addition_bytes": 1131,
+      "addition_sha256": "709a75212abc30305a0c5b435ccb3ef4a7371e7526fb6aabc3603765264f2e18",
+      "common_sha256": "0be91ba10f46a117bc812f14809606c46f912626ccff5ae94616b1b969bdf1c3",
+      "previous_sha256": "dfc19dc2a9fe0b107b67316c67be7add37e4fe13ce37f4a5efc58a03b7815901",
+      "incoming_sha256": "1a37f0e4c24352f1071bf2a915968bcdbe1cb7cb88aa1429f6bd53b4aa552a69",
+      "result_sha256": "79ba4a57246ba455c92384111d89e5e7c354c520de56faac84eaad18eb2c7751"
+    },
+    {
+      "stage": "csaf353",
+      "path": "tasks/todo.md",
+      "addition_side": "suffix",
+      "addition_bytes": 892,
+      "addition_sha256": "1ec1bcdce5e1b2f7bb15bc9ec6125ebb14f857e5d920bc3737b66116fa9d9ed2",
+      "common_sha256": "3c4352bd6c94dd6d656e7c37284718fc97ff2f4b512ec4c42980a4e4e02b0da7",
+      "previous_sha256": "ec581a3ef0f90f5c7dc3889b631fbceaec5162787490027b30c3ec71a57033b6",
+      "incoming_sha256": "62478caa9b1470879adc78e7e21f5fbd0fdd1d5bb2f10bb64512f6b470c662f1",
+      "result_sha256": "0b7c94fcd53650382cce8289481659c5080487e459bc79852cc8ac8247631ec5"
+    }
+  ],
+  "docstring_only_ast_unchanged": true,
+  "archives": [
+    {
+      "archive": "/workspace/scratch/837fe19aae3a/evidence/network-recovery-integration/network-recovery-integration.zip",
+      "sha256": "0b75faf312ea69e1d895a1ca7c6ff6bfa09104c5ab003b7fb9e87a6878bb98fd",
+      "bytes": 1749533,
+      "members": 68,
+      "manifest_sha256": "48707b8e8b0ccc634df5a15cf90cfef8bb6e12a652cebbc9d6ce068fe41e7039"
+    },
+    {
+      "archive": "/workspace/scratch/837fe19aae3a/evidence/network-recovery-combined-qualification/network-recovery-combined-qualification.zip",
+      "sha256": "c45742011888c485379883cc69c3fab5a90c07f70fdd61d9a2906d4e4a367c94",
+      "bytes": 16513,
+      "members": 15,
+      "manifest_sha256": "ba31cc355c8bec8c27c7f0f929d4af7f3fe2d1b92ad72207d6d1b10f5d592276"
+    }
+  ],
+  "independent_pytest": {
+    "cases": 44,
+    "distinct_cases": 44,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "independent_optional_controls": 9,
+  "root_maintained_result_verified": {
+    "cases": 480,
+    "distinct_cases": 480,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "root_maintained_tests_rerun": false,
+  "full_native_or_external_target_tests": false
+}

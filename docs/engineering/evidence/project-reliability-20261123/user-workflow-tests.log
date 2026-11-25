@@ -1,0 +1,47 @@
+........................................................................ [ 36%]
+........................................................................ [ 73%]
+...........................F.........................                    [100%]
+=================================== FAILURES ===================================
+___________________ test_a_local_unix_socket_is_not_network ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-13/test_a_local_unix_socket_is_no0')
+
+    @pytest.mark.skipif(not hasattr(socket, 'AF_UNIX'), reason='this platform has no AF_UNIX sockets')
+    def test_a_local_unix_socket_is_not_network(tmp_path):
+        path = str(tmp_path / 's')
+>       with socket.socket(socket.AF_UNIX) as server, socket.socket(socket.AF_UNIX) as client:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_network_consent_guard.py:147:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <socket.socket fd=-1, family=0, type=0, proto=0>
+family = <AddressFamily.AF_UNIX: 1>, type = <SocketKind.SOCK_STREAM: 1>
+proto = 0, fileno = None
+
+    def __init__(self, family=-1, type=-1, proto=-1, fileno=None):
+        # For user code address family and type values are IntEnum members, but
+        # for the underlying _socket.socket they're just integers. The
+        # constructor of _socket.socket converts the given argument to an
+        # integer automatically.
+        if fileno is None:
+            if family == -1:
+                family = AF_INET
+            if type == -1:
+                type = SOCK_STREAM
+            if proto == -1:
+                proto = 0
+>       _socket.socket.__init__(self, family, type, proto, fileno)
+E       PermissionError: [Errno 1] Operation not permitted
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/socket.py:233: PermissionError
+=============================== warnings summary ===============================
+tests/test_ui_export_accessibility.py::test_enter_on_browse_and_cancel_keeps_their_actions
+tests/test_ui_export_accessibility.py::test_hide_show_does_not_restore_a_default_for_options
+  /tmp/pt-docs/source/tests/test_ui_export_accessibility.py:35: DeprecationWarning: Function: 'QApplication.setActiveWindow(QWidget *act)' is marked as deprecated, please check the documentation for more information.
+    QApplication.setActiveWindow(dialog)  # offscreen has no window manager to reactivate a hidden window
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_network_consent_guard.py::test_a_local_unix_socket_is_not_network
+1 failed, 196 passed, 2 warnings in 19.26s

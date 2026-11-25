@@ -1,0 +1,37 @@
+{
+  "normal": {
+    "events": [],
+    "messages": [
+      "Backup: /workspace/scratch/eed8744ccd63/pt-ui-backup-evidence/tmpxz4xl4de/normal/patchtrace-backup-20261123-154418"
+    ],
+    "status": "Backup created: /workspace/scratch/eed8744ccd63/pt-ui-backup-evidence/tmpxz4xl4de/normal/patchtrace-backup-20261123-154418",
+    "directory_count": 1,
+    "residual_stage": [],
+    "reopened": "matches source snapshot"
+  },
+  "staging_failure": {
+    "events": [
+      "sample copy unavailable"
+    ],
+    "messages": [
+      "ERROR: sample copy unavailable"
+    ],
+    "status": "sample copy unavailable",
+    "directory_count": 0,
+    "residual_stage": [],
+    "reopened": null
+  },
+  "staged_mismatch": {
+    "events": [
+      "authored staged bytes changed",
+      "PT-STORAGE: immutable input is missing or has changed"
+    ],
+    "messages": [
+      "ERROR: PT-STORAGE: immutable input is missing or has changed"
+    ],
+    "status": "PT-STORAGE: immutable input is missing or has changed",
+    "directory_count": 0,
+    "residual_stage": [],
+    "reopened": null
+  }
+}

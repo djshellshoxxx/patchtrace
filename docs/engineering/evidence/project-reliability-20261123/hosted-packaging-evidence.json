@@ -1,0 +1,2625 @@
+{
+  "head": "ea16019601486c831941f9bc1a7ba5862a170317",
+  "observed_utc": "2026-11-23T22:17:07.460Z",
+  "runs": [
+    {
+      "id": 45216050967,
+      "name": "Live NVD/MSRC probe (advisory)",
+      "event": "schedule",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/45216050967"
+    },
+    {
+      "id": 45196977803,
+      "name": "Live BinDiff acceptance",
+      "event": "schedule",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/45196977803"
+    },
+    {
+      "id": 45186573482,
+      "name": "Corpus Tier R (sharded)",
+      "event": "schedule",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/45186573482"
+    },
+    {
+      "id": 45177141309,
+      "name": "Nightly fuzz (non-gating)",
+      "event": "schedule",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/45177141309"
+    },
+    {
+      "id": 45175291326,
+      "name": "Corpus Tier R (sharded)",
+      "event": "schedule",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/45175291326"
+    },
+    {
+      "id": 45020144491,
+      "name": "Corpus Tier R (sharded)",
+      "event": "schedule",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/45020144491"
+    },
+    {
+      "id": 45017328950,
+      "name": "Nightly fuzz (non-gating)",
+      "event": "schedule",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/45017328950"
+    },
+    {
+      "id": 45016699192,
+      "name": "Corpus Tier R (sharded)",
+      "event": "schedule",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/45016699192"
+    },
+    {
+      "id": 44919714193,
+      "name": "QA and Windows standalone",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714193"
+    },
+    {
+      "id": 44919714141,
+      "name": "Native Windows Ghidriff acceptance",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714141"
+    }
+  ],
+  "jobs": [
+    {
+      "id": 136892880403,
+      "name": "qa (ubuntu-latest)",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "run_id": 44919714193,
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714193/job/136892880403",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m pip check",
+          "conclusion": "success"
+        },
+        {
+          "name": "protobuf equals the pin and runs the upb backend (SPEC-10b)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Native pair-publication boundary controls",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m pytest -q --junitxml=qa-results.xml",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m ruff check src tests tools",
+          "conclusion": "success"
+        },
+        {
+          "name": "BinExport worker memory cap measurement (SPEC-10b U7, non-gating)",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Run python tools/build_windows.py",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Frozen EXE headless smoke (A1-A4) and self-test",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Extract and run portable Windows ZIP outside checkout",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Install pinned NSIS compiler",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Build per-user Windows installer",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Install, launch, and uninstall the setup package",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Record this matrix leg's own result for the release notes",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 136892880571,
+      "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "run_id": 44919714193,
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714193/job/136892880571",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python tools/qt_gate.py --repeat 20 --shard 1/4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 136892880617,
+      "name": "release-gate",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "run_id": 44919714193,
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714193/job/136892880617",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Release gate (every third counted merge)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 136892880628,
+      "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "run_id": 44919714193,
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714193/job/136892880628",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python tools/qt_gate.py --repeat 20 --shard 4/4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 136892880633,
+      "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "run_id": 44919714193,
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714193/job/136892880633",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python tools/qt_gate.py --repeat 20 --shard 3/4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 136892880665,
+      "name": "qa (windows-latest)",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "run_id": 44919714193,
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714193/job/136892880665",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m pip check",
+          "conclusion": "success"
+        },
+        {
+          "name": "protobuf equals the pin and runs the upb backend (SPEC-10b)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Native pair-publication boundary controls",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m pytest -q --junitxml=qa-results.xml",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m ruff check src tests tools",
+          "conclusion": "success"
+        },
+        {
+          "name": "BinExport worker memory cap measurement (SPEC-10b U7, non-gating)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python tools/build_windows.py",
+          "conclusion": "success"
+        },
+        {
+          "name": "Frozen EXE headless smoke (A1-A4) and self-test",
+          "conclusion": "success"
+        },
+        {
+          "name": "Extract and run portable Windows ZIP outside checkout",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install pinned NSIS compiler",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build per-user Windows installer",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install, launch, and uninstall the setup package",
+          "conclusion": "success"
+        },
+        {
+          "name": "Record this matrix leg's own result for the release notes",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 136892880739,
+      "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "run_id": 44919714193,
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714193/job/136892880739",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python tools/qt_gate.py --repeat 20 --shard 2/4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 136892880761,
+      "name": "qt-gate (windows-latest, 5, 1/1)",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "run_id": 44919714193,
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714193/job/136892880761",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python tools/qt_gate.py --repeat 5 --shard 1/1",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 136910859843,
+      "name": "linux-package",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "run_id": 44919714193,
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714193/job/136910859843",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1 libxcb-cursor0 libxkbcommon-x11-0 xvfb",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python tools/check_protobuf_runtime.py",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python tools/build_linux.py",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 136910859852,
+      "name": "windows-validate",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "run_id": 44919714193,
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714193/job/136910859852",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify every downloaded Windows artifact before execution",
+          "conclusion": "success"
+        },
+        {
+          "name": "Extract and run the downloaded portable Windows ZIP",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install, launch, and uninstall the downloaded setup package",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 136911441766,
+      "name": "linux-smoke (ubuntu-22.04)",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "run_id": 44919714193,
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714193/job/136911441766",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1 libfontconfig1 libdbus-1-3 libxkbcommon0 libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-shape0 libxcb-xinerama0 libxcb-xkb1 libxcb-xfixes0 xvfb",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run sha256sum -c PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run tar xzf PatchTrace-0.1.0-linux-x86_64.tar.gz && test -x PatchTrace/PatchTrace",
+          "conclusion": "success"
+        },
+        {
+          "name": "Report unresolved shared libraries of bundled Qt platform plugins",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run QT_QPA_PLATFORM=offscreen PatchTrace/PatchTrace --self-test",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run QT_QPA_PLATFORM=xcb xvfb-run -a PatchTrace/PatchTrace --self-test",
+          "conclusion": "success"
+        },
+        {
+          "name": "Full frozen Linux CLI smoke (CODEX-14)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 136911441777,
+      "name": "linux-smoke (ubuntu-24.04)",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "run_id": 44919714193,
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714193/job/136911441777",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m pip install --only-binary=:all: -e '.[dev,search,rules]'",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1 libfontconfig1 libdbus-1-3 libxkbcommon0 libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-shape0 libxcb-xinerama0 libxcb-xkb1 libxcb-xfixes0 xvfb",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run sha256sum -c PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run tar xzf PatchTrace-0.1.0-linux-x86_64.tar.gz && test -x PatchTrace/PatchTrace",
+          "conclusion": "success"
+        },
+        {
+          "name": "Report unresolved shared libraries of bundled Qt platform plugins",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run QT_QPA_PLATFORM=offscreen PatchTrace/PatchTrace --self-test",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run QT_QPA_PLATFORM=xcb xvfb-run -a PatchTrace/PatchTrace --self-test",
+          "conclusion": "success"
+        },
+        {
+          "name": "Full frozen Linux CLI smoke (CODEX-14)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 136911911408,
+      "name": "release",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "run_id": 44919714193,
+      "status": "completed",
+      "conclusion": "skipped",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714193/job/136911911408",
+      "steps": []
+    }
+  ],
+  "native": [
+    {
+      "id": 136892880706,
+      "name": "native (patchtrace-clean)",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "run_id": 44919714141,
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714141/job/136892880706",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cl /nologo /LD /Od /GS- /Zi tests\\fixtures\\old.c /Fdtests\\fixtures\\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\\fixtures\\old.dll /PDB:tests\\fixtures\\old.pdb",
+          "conclusion": "success"
+        },
+        {
+          "name": "Restore pinned Ghidra archive",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install pinned Ghidra (verify archive before fresh extraction)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'",
+          "conclusion": "success"
+        },
+        {
+          "name": "Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Remove PDBs at the path embedded in the fixture DLLs",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Native raw-output cache hit is byte-identical",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "PatchTrace offline analysis succeeds despite persisted symbol store",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Restore pinned Ghidra archive",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 136892880798,
+      "name": "native (raw-cache-hit)",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "run_id": 44919714141,
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714141/job/136892880798",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cl /nologo /LD /Od /GS- /Zi tests\\fixtures\\old.c /Fdtests\\fixtures\\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\\fixtures\\old.dll /PDB:tests\\fixtures\\old.pdb",
+          "conclusion": "success"
+        },
+        {
+          "name": "Restore pinned Ghidra archive",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install pinned Ghidra (verify archive before fresh extraction)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'",
+          "conclusion": "success"
+        },
+        {
+          "name": "Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Remove PDBs at the path embedded in the fixture DLLs",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Native raw-output cache hit is byte-identical",
+          "conclusion": "success"
+        },
+        {
+          "name": "PatchTrace offline analysis succeeds despite persisted symbol store",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Restore pinned Ghidra archive",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 136892880825,
+      "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "run_id": 44919714141,
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714141/job/136892880825",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cl /nologo /LD /Od /GS- /Zi tests\\fixtures\\old.c /Fdtests\\fixtures\\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\\fixtures\\old.dll /PDB:tests\\fixtures\\old.pdb",
+          "conclusion": "success"
+        },
+        {
+          "name": "Restore pinned Ghidra archive",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install pinned Ghidra (verify archive before fresh extraction)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'",
+          "conclusion": "success"
+        },
+        {
+          "name": "Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Remove PDBs at the path embedded in the fixture DLLs",
+          "conclusion": "success"
+        },
+        {
+          "name": "Native raw-output cache hit is byte-identical",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "PatchTrace offline analysis succeeds despite persisted symbol store",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Restore pinned Ghidra archive",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 136892880876,
+      "name": "native (patchtrace-seeded-store)",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "run_id": 44919714141,
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714141/job/136892880876",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cl /nologo /LD /Od /GS- /Zi tests\\fixtures\\old.c /Fdtests\\fixtures\\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\\fixtures\\old.dll /PDB:tests\\fixtures\\old.pdb",
+          "conclusion": "success"
+        },
+        {
+          "name": "Restore pinned Ghidra archive",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install pinned Ghidra (verify archive before fresh extraction)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'",
+          "conclusion": "success"
+        },
+        {
+          "name": "Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Remove PDBs at the path embedded in the fixture DLLs",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Native raw-output cache hit is byte-identical",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "PatchTrace offline analysis succeeds despite persisted symbol store",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Restore pinned Ghidra archive",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 136892880879,
+      "name": "native (repro-plain-ghidriff)",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "run_id": 44919714141,
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/44919714141/job/136892880879",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cl /nologo /LD /Od /GS- /Zi tests\\fixtures\\old.c /Fdtests\\fixtures\\ /link /DEBUG /INCREMENTAL:NO /OUT:tests\\fixtures\\old.dll /PDB:tests\\fixtures\\old.pdb",
+          "conclusion": "success"
+        },
+        {
+          "name": "Restore pinned Ghidra archive",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install pinned Ghidra (verify archive before fresh extraction)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m pip install -e . 'ghidriff @ git+https://github.com/clearbluejar/ghidriff.git@4f5d895fcbb1eacd65efd81145922c15bb7e741d'",
+          "conclusion": "success"
+        },
+        {
+          "name": "Persist a symbol store in global Ghidra preferences (symbol-enabled plain Ghidriff run)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Reproduce cached-PDB FileExistsError with plain Ghidriff --no-symbols",
+          "conclusion": "success"
+        },
+        {
+          "name": "Remove PDBs at the path embedded in the fixture DLLs",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Native raw-output cache hit is byte-identical",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "PatchTrace offline analysis succeeds despite persisted symbol store",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Restore pinned Ghidra archive",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "comparison": [
+    {
+      "id": 137769931996,
+      "name": "live BinDiff (windows-latest)",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "run_id": 45196977803,
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/45196977803/job/137769931996",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Qt runtime libraries (the pytest-qt plugin imports Qt even for this non-GUI test)",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Run python -m pip install -e .[dev]",
+          "conclusion": "success"
+        },
+        {
+          "name": "Pin digest for the cache key",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830",
+          "conclusion": "success"
+        },
+        {
+          "name": "Provision pinned BinDiff (download + verify + extract; never executes it)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Live BinDiff tests (records passed / failed / blocked)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Live status summary",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 137769938388,
+      "name": "live BinDiff (ubuntu-22.04)",
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "run_id": 45196977803,
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/45196977803/job/137769938388",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Qt runtime libraries (the pytest-qt plugin imports Qt even for this non-GUI test)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m pip install -e .[dev]",
+          "conclusion": "success"
+        },
+        {
+          "name": "Pin digest for the cache key",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830",
+          "conclusion": "success"
+        },
+        {
+          "name": "Provision pinned BinDiff (download + verify + extract; never executes it)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Live BinDiff tests (records passed / failed / blocked)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Live status summary",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 14715790556,
+      "name": "qa-Windows",
+      "size_in_bytes": 431867,
+      "digest": "sha256:810d6ef4199e95895022523bf69fc39565e9652fa6460d2101d594042216086a",
+      "expired": false,
+      "expires_at": "2027-02-19T15:32:25Z"
+    },
+    {
+      "id": 14715269122,
+      "name": "PatchTrace-linux-x86_64",
+      "size_in_bytes": 169985731,
+      "digest": "sha256:30d19402e2480ad64279726ff4050533109424a98d7480b13cf567bfab1951c0",
+      "expired": false,
+      "expires_at": "2027-02-19T15:32:25Z"
+    },
+    {
+      "id": 14715139165,
+      "name": "PatchTrace-windows-x64",
+      "size_in_bytes": 282321198,
+      "digest": "sha256:b32c6500cc60270dcbfbbf4d5f8d86d6a1da7da9074ad2ab7f3eacff7e29da3b",
+      "expired": false,
+      "expires_at": "2027-02-19T15:32:25Z"
+    },
+    {
+      "id": 14714881154,
+      "name": "qa-Linux",
+      "size_in_bytes": 424660,
+      "digest": "sha256:bf72973844c780f72906dec1815143c6524c7ed8c521a644595ff20a4e608f7a",
+      "expired": false,
+      "expires_at": "2027-02-19T15:32:25Z"
+    }
+  ],
+  "bundleRuns": [
+    {
+      "id": 41007128696,
+      "head_sha": "7ac57759f3b9b332eaafb48c82f366566892f1b1",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/41007128696",
+      "conclusion": "failure",
+      "jobs": [
+        {
+          "id": 123904466465,
+          "name": "pin-resolves-and-plan",
+          "conclusion": "success",
+          "failedSteps": []
+        },
+        {
+          "id": 123904967993,
+          "name": "build-windows-full-bundle",
+          "conclusion": "success",
+          "failedSteps": []
+        },
+        {
+          "id": 123904968059,
+          "name": "build-linux-full-bundle",
+          "conclusion": "failure",
+          "failedSteps": [
+            "Build the backend payload (pinned, hash-checked downloads)"
+          ]
+        },
+        {
+          "id": 123904969259,
+          "name": "pin-verify-signatures-and-rebuild",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 123905346503,
+          "name": "accept-linux-no-network-readonly (${{ matrix.os }})",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 123906675909,
+          "name": "accept-windows-no-network-readonly",
+          "conclusion": "failure",
+          "failedSteps": [
+            "Verify sidecar, extract to a hostile path, run acceptance (firewall block with positive control)"
+          ]
+        },
+        {
+          "id": 123907003362,
+          "name": "publish-prerelease-assets",
+          "conclusion": "skipped",
+          "failedSteps": []
+        }
+      ]
+    },
+    {
+      "id": 38686279359,
+      "head_sha": "9fbeba9c067ce86268c58123785b8b6ff9521c2c",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/38686279359",
+      "conclusion": "failure",
+      "jobs": [
+        {
+          "id": 116322886470,
+          "name": "pin-resolves-and-plan",
+          "conclusion": "success",
+          "failedSteps": []
+        },
+        {
+          "id": 116386600394,
+          "name": "build-linux-full-bundle",
+          "conclusion": "failure",
+          "failedSteps": [
+            "Build the backend payload (pinned, hash-checked downloads)"
+          ]
+        },
+        {
+          "id": 116386601914,
+          "name": "build-windows-full-bundle",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116386602092,
+          "name": "accept-windows-no-network-readonly",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116386602433,
+          "name": "pin-verify-signatures-and-rebuild",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116397970523,
+          "name": "accept-linux-no-network-readonly (${{ matrix.os }})",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116397971618,
+          "name": "publish-prerelease-assets",
+          "conclusion": "skipped",
+          "failedSteps": []
+        }
+      ]
+    },
+    {
+      "id": 38676664372,
+      "head_sha": "4f56b9f867bd532f09356c47143f541e1a13a329",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/38676664372",
+      "conclusion": "failure",
+      "jobs": [
+        {
+          "id": 116231737153,
+          "name": "pin-resolves-and-plan",
+          "conclusion": "success",
+          "failedSteps": []
+        },
+        {
+          "id": 116245569118,
+          "name": "build-linux-full-bundle",
+          "conclusion": "failure",
+          "failedSteps": [
+            "Build the backend payload (pinned, hash-checked downloads)"
+          ]
+        },
+        {
+          "id": 116245569172,
+          "name": "build-windows-full-bundle",
+          "conclusion": "success",
+          "failedSteps": []
+        },
+        {
+          "id": 116245570272,
+          "name": "pin-verify-signatures-and-rebuild",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116260759480,
+          "name": "accept-linux-no-network-readonly (${{ matrix.os }})",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116261209710,
+          "name": "accept-windows-no-network-readonly",
+          "conclusion": "failure",
+          "failedSteps": [
+            "Verify sidecar, extract to a hostile path, run acceptance (firewall block with positive control)"
+          ]
+        },
+        {
+          "id": 116322885259,
+          "name": "publish-prerelease-assets",
+          "conclusion": "skipped",
+          "failedSteps": []
+        }
+      ]
+    },
+    {
+      "id": 38661058614,
+      "head_sha": "74dba3994b2e97b520319263dd154d657e43b6bc",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/38661058614",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 116182139706,
+          "name": "pin-resolves-and-plan",
+          "conclusion": "success",
+          "failedSteps": []
+        },
+        {
+          "id": 116182188861,
+          "name": "pin-verify-signatures-and-rebuild",
+          "conclusion": "success",
+          "failedSteps": []
+        },
+        {
+          "id": 116182190270,
+          "name": "build-linux-full-bundle",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116182190668,
+          "name": "accept-windows-no-network-readonly",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116182190680,
+          "name": "accept-linux-no-network-readonly (${{ matrix.os }})",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116182190893,
+          "name": "build-windows-full-bundle",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116182191513,
+          "name": "publish-prerelease-assets",
+          "conclusion": "skipped",
+          "failedSteps": []
+        }
+      ]
+    },
+    {
+      "id": 38661029764,
+      "head_sha": "bf7e936f358a1eb8ea36d86da8a0189793f17cfa",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/38661029764",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 116182046045,
+          "name": "pin-resolves-and-plan",
+          "conclusion": "success",
+          "failedSteps": []
+        },
+        {
+          "id": 116182091312,
+          "name": "pin-verify-signatures-and-rebuild",
+          "conclusion": "success",
+          "failedSteps": []
+        },
+        {
+          "id": 116182093257,
+          "name": "build-linux-full-bundle",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116182093428,
+          "name": "build-windows-full-bundle",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116182093495,
+          "name": "publish-prerelease-assets",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116182093595,
+          "name": "accept-windows-no-network-readonly",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116182093645,
+          "name": "accept-linux-no-network-readonly (${{ matrix.os }})",
+          "conclusion": "skipped",
+          "failedSteps": []
+        }
+      ]
+    },
+    {
+      "id": 38661022664,
+      "head_sha": "f324d7d91c59586d16d2d2169258e0913ae579a1",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/38661022664",
+      "conclusion": "failure",
+      "jobs": []
+    },
+    {
+      "id": 38660893572,
+      "head_sha": "78154a9d0717153c1d959ffef82b37ebb9f10974",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/38660893572",
+      "conclusion": "failure",
+      "jobs": [
+        {
+          "id": 116181596036,
+          "name": "pin-resolves-and-plan",
+          "conclusion": "success",
+          "failedSteps": []
+        },
+        {
+          "id": 116181639903,
+          "name": "pin-verify-signatures-and-rebuild",
+          "conclusion": "failure",
+          "failedSteps": [
+            "Verify the pins (network allowed here only)"
+          ]
+        },
+        {
+          "id": 116181641579,
+          "name": "build-linux-full-bundle",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116181641636,
+          "name": "publish-prerelease-assets",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116181641656,
+          "name": "build-windows-full-bundle",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116181641709,
+          "name": "accept-windows-no-network-readonly",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116181641888,
+          "name": "accept-linux-no-network-readonly (${{ matrix.os }})",
+          "conclusion": "skipped",
+          "failedSteps": []
+        }
+      ]
+    },
+    {
+      "id": 38660818187,
+      "head_sha": "eb66a07b78a7dc44be67a95ea9603b1459402036",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/38660818187",
+      "conclusion": "failure",
+      "jobs": [
+        {
+          "id": 116181357634,
+          "name": "pin-resolves-and-plan",
+          "conclusion": "success",
+          "failedSteps": []
+        },
+        {
+          "id": 116181412418,
+          "name": "pin-verify-signatures-and-rebuild",
+          "conclusion": "failure",
+          "failedSteps": [
+            "Verify the pins (network allowed here only)"
+          ]
+        },
+        {
+          "id": 116181414012,
+          "name": "accept-linux-no-network-readonly (${{ matrix.os }})",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116181414152,
+          "name": "build-linux-full-bundle",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116181414200,
+          "name": "accept-windows-no-network-readonly",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116181414349,
+          "name": "build-windows-full-bundle",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116181414591,
+          "name": "publish-prerelease-assets",
+          "conclusion": "skipped",
+          "failedSteps": []
+        }
+      ]
+    },
+    {
+      "id": 38655055924,
+      "head_sha": "c2070cf8b4e7b0ade76cb000a5805009754eec55",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/38655055924",
+      "conclusion": "failure",
+      "jobs": [
+        {
+          "id": 116162734768,
+          "name": "pin-resolves-and-plan",
+          "conclusion": "success",
+          "failedSteps": []
+        },
+        {
+          "id": 116162785953,
+          "name": "pin-verify-signatures-and-rebuild",
+          "conclusion": "failure",
+          "failedSteps": [
+            "Verify the pins (network allowed here only)"
+          ]
+        },
+        {
+          "id": 116162787611,
+          "name": "build-windows-full-bundle",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116162787715,
+          "name": "build-linux-full-bundle",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116162788380,
+          "name": "accept-windows-no-network-readonly",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116162788962,
+          "name": "publish-prerelease-assets",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116162789681,
+          "name": "accept-linux-no-network-readonly (${{ matrix.os }})",
+          "conclusion": "skipped",
+          "failedSteps": []
+        }
+      ]
+    },
+    {
+      "id": 38650022556,
+      "head_sha": "d156a17ba322e9cee1e4e8f5042e8369e067b382",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/38650022556",
+      "conclusion": "failure",
+      "jobs": [
+        {
+          "id": 116146224043,
+          "name": "pin-resolves-and-plan",
+          "conclusion": "success",
+          "failedSteps": []
+        },
+        {
+          "id": 116146275651,
+          "name": "pin-verify-signatures-and-rebuild",
+          "conclusion": "failure",
+          "failedSteps": [
+            "Verify the pins (network allowed here only)"
+          ]
+        },
+        {
+          "id": 116146277356,
+          "name": "build-windows-full-bundle",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116146277430,
+          "name": "accept-linux-no-network-readonly (${{ matrix.os }})",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116146278028,
+          "name": "accept-windows-no-network-readonly",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116146278079,
+          "name": "build-linux-full-bundle",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116146278096,
+          "name": "publish-prerelease-assets",
+          "conclusion": "skipped",
+          "failedSteps": []
+        }
+      ]
+    },
+    {
+      "id": 38622292405,
+      "head_sha": "fd6cdbaf52837ecbcc33504d40d12bc04abc80a9",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/38622292405",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 116052577452,
+          "name": "pin-resolves-and-plan",
+          "conclusion": "success",
+          "failedSteps": []
+        },
+        {
+          "id": 116052687392,
+          "name": "build-windows-full-bundle",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116052687561,
+          "name": "build-linux-full-bundle",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116052688588,
+          "name": "accept-windows-no-network-readonly",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116052688681,
+          "name": "accept-linux-no-network-readonly (${{ matrix.os }})",
+          "conclusion": "skipped",
+          "failedSteps": []
+        },
+        {
+          "id": 116052689264,
+          "name": "publish-prerelease-assets",
+          "conclusion": "skipped",
+          "failedSteps": []
+        }
+      ]
+    }
+  ],
+  "evidence_limits": "Job conclusions and artifact digests are API metadata. Offline Windows failure and Linux build failure include provider log observations. No new native run or artifact download was performed.",
+  "release_assets": [
+    {
+      "tag": "v0.1.0-beta.1035",
+      "id": 445877110,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256",
+        "PatchTrace-Windows-x64-Portable.zip",
+        "PatchTrace-Windows-x64-Portable.zip.sha256",
+        "PatchTrace-Windows-x64-Setup.exe",
+        "PatchTrace-Windows-x64-Setup.exe.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.991",
+      "id": 438920647,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256",
+        "PatchTrace-Windows-x64-Portable.zip",
+        "PatchTrace-Windows-x64-Portable.zip.sha256",
+        "PatchTrace-Windows-x64-Setup.exe",
+        "PatchTrace-Windows-x64-Setup.exe.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.972",
+      "id": 437553680,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256",
+        "PatchTrace-Windows-x64-Portable.zip",
+        "PatchTrace-Windows-x64-Portable.zip.sha256",
+        "PatchTrace-Windows-x64-Setup.exe",
+        "PatchTrace-Windows-x64-Setup.exe.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.926",
+      "id": 436806798,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256",
+        "PatchTrace-Windows-x64-Portable.zip",
+        "PatchTrace-Windows-x64-Portable.zip.sha256",
+        "PatchTrace-Windows-x64-Setup.exe",
+        "PatchTrace-Windows-x64-Setup.exe.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.907",
+      "id": 436297901,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256",
+        "PatchTrace-Windows-x64-Portable.zip",
+        "PatchTrace-Windows-x64-Portable.zip.sha256",
+        "PatchTrace-Windows-x64-Setup.exe",
+        "PatchTrace-Windows-x64-Setup.exe.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.751",
+      "id": 433106007,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256",
+        "PatchTrace-Windows-x64-Portable.zip",
+        "PatchTrace-Windows-x64-Portable.zip.sha256",
+        "PatchTrace-Windows-x64-Setup.exe",
+        "PatchTrace-Windows-x64-Setup.exe.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.736",
+      "id": 432091145,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256",
+        "PatchTrace-Windows-x64-Portable.zip",
+        "PatchTrace-Windows-x64-Portable.zip.sha256",
+        "PatchTrace-Windows-x64-Setup.exe",
+        "PatchTrace-Windows-x64-Setup.exe.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.698",
+      "id": 430626892,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256",
+        "PatchTrace-Windows-x64-Portable.zip",
+        "PatchTrace-Windows-x64-Portable.zip.sha256",
+        "PatchTrace-Windows-x64-Setup.exe",
+        "PatchTrace-Windows-x64-Setup.exe.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.543",
+      "id": 427504281,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256",
+        "PatchTrace-Windows-x64-Portable.zip",
+        "PatchTrace-Windows-x64-Portable.zip.sha256",
+        "PatchTrace-Windows-x64-Setup.exe",
+        "PatchTrace-Windows-x64-Setup.exe.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.541",
+      "id": 427493634,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256",
+        "PatchTrace-Windows-x64-Portable.zip",
+        "PatchTrace-Windows-x64-Portable.zip.sha256",
+        "PatchTrace-Windows-x64-Setup.exe",
+        "PatchTrace-Windows-x64-Setup.exe.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.505",
+      "id": 419479393,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256",
+        "PatchTrace-Windows-x64-Portable.zip",
+        "PatchTrace-Windows-x64-Portable.zip.sha256",
+        "PatchTrace-Windows-x64-Setup.exe",
+        "PatchTrace-Windows-x64-Setup.exe.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.402",
+      "id": 414951733,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.372",
+      "id": 413789122,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.281",
+      "id": 413380522,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.243",
+      "id": 413282201,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.225",
+      "id": 413061275,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.222",
+      "id": 413004520,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.220",
+      "id": 412982537,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.211",
+      "id": 412930145,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.202",
+      "id": 412678059,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.177",
+      "id": 412580709,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.176",
+      "id": 412566325,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.167",
+      "id": 412499442,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.163",
+      "id": 412489084,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.162",
+      "id": 412488797,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.158",
+      "id": 412482683,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.148",
+      "id": 412449430,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.146",
+      "id": 412434123,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.144",
+      "id": 412418526,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.142",
+      "id": 412408234,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.131",
+      "id": 412334313,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.129",
+      "id": 412328513,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.127",
+      "id": 412316379,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.120",
+      "id": 412291038,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.118",
+      "id": 412287293,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.117",
+      "id": 412284739,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.116",
+      "id": 412284269,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.112",
+      "id": 412278669,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.110",
+      "id": 412272645,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.109",
+      "id": 412271501,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.103",
+      "id": 412251698,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.101",
+      "id": 412255315,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.98",
+      "id": 410574765,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.97",
+      "id": 410574005,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.96",
+      "id": 410570805,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.95",
+      "id": 410570299,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.90",
+      "id": 410298246,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.85",
+      "id": 410252717,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.82",
+      "id": 410242124,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.80",
+      "id": 410186837,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.72",
+      "id": 410154239,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.70",
+      "id": 410148106,
+      "assets": [
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.63",
+      "id": 410104958,
+      "assets": [
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.62",
+      "id": 410104901,
+      "assets": [
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.8",
+      "id": 409562269,
+      "assets": [
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.36",
+      "id": 409673098,
+      "assets": [
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.29",
+      "id": 409666978,
+      "assets": [
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.21",
+      "id": 409656801,
+      "assets": [
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.13",
+      "id": 409650543,
+      "assets": [
+        "PatchTrace-0.1.0-windows-x64.zip",
+        "PatchTrace-0.1.0-windows-x64.zip.sha256"
+      ]
+    }
+  ],
+  "log_observations": [
+    "123906675909: initial positive-control subprocess could not start, PermissionError [WinError 5] Access is denied",
+    "123904968059: jlink failed to start [Errno 13] Permission denied"
+  ],
+  "exact_main_log_extracts": {
+    "win_qa": [
+      "2026-11-21T15:33:31.8822745Z 107 passed, 3 skipped in 3.98s",
+      "2026-11-21T16:33:58.0735681Z 24205 passed, 185 skipped, 3 xfailed, 22 warnings in 3623.65s (1:00:23)"
+    ],
+    "linux_qa": [
+      "2026-11-21T15:33:03.0618239Z 108 passed, 2 skipped in 2.30s",
+      "2026-11-21T16:12:42.9460606Z 24336 passed, 53 skipped, 4 xfailed, 21 warnings in 2377.65s (0:39:37)"
+    ],
+    "win_consumer": [
+      "2026-11-21T16:38:04.5225171Z Verified downloaded artifact SHA-256: PatchTrace-0.1.0-windows-x64.zip AB6E6D5C0A7B4FEED004118EC7AB2294FCDC0E2C1E8131F3AD9157600BF596D1",
+      "2026-11-21T16:38:04.7024295Z Verified downloaded artifact SHA-256: PatchTrace-Windows-x64-Setup.exe C7B3FFD7063C5662DE8C0F9D6F3BFB2AA975CA96FFC5E6AB254A07E73015739A"
+    ]
+  }
+}

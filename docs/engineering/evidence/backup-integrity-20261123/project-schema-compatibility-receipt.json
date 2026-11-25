@@ -1,0 +1,309 @@
+{
+  "historical_replay": {
+    "writer": "8b5ae1e912204bafa422e42db70606a8abbad66f",
+    "reader": "cca6ce4a0d20725e8a421421cd2e0fddb8313bf7",
+    "cases": {
+      "empty": {
+        "before_db_hash": "af9dad8049306b88259bb373de69634c022d21af732affebd3688acdc6947959",
+        "version": 1,
+        "history_count": 1,
+        "id": "abac373e-ed0f-43c5-b439-8d705a058d97",
+        "revision": 0,
+        "runs": 0,
+        "annotations": 0,
+        "matches": 0,
+        "interpretations": 0,
+        "open_differences": [],
+        "restore_path": "empty-restored",
+        "changed_on_source": [
+          ".patchtrace.lock"
+        ],
+        "source_sql_unchanged": true,
+        "restored_model_matches": true,
+        "restored_sql_rows_match": true,
+        "backup_sidecar_differences": []
+      },
+      "populated": {
+        "before_db_hash": "e2ff3ed329d2c40d4e659427a2469af6e4b8abf93ec514be3f58390cfd671831",
+        "version": 1,
+        "history_count": 5,
+        "id": "a2d6e0cb-7967-41f7-a685-7ebcf83ad1b5",
+        "revision": 1,
+        "runs": 1,
+        "annotations": 1,
+        "matches": 4,
+        "interpretations": 1,
+        "open_differences": [],
+        "restore_path": "populated-restored",
+        "changed_on_source": [
+          ".patchtrace.lock"
+        ],
+        "source_sql_unchanged": true,
+        "restored_model_matches": true,
+        "restored_sql_rows_match": true,
+        "backup_sidecar_differences": []
+      }
+    },
+    "unknown": {
+      "db-0": {
+        "result": "PT-SCHEMA: unsupported database version 0",
+        "before_db_hash": "894b9cc42b90c31517fa8cb567f5b576a11eb0961bdead88b66ef7597da13839",
+        "after_db_hash": "894b9cc42b90c31517fa8cb567f5b576a11eb0961bdead88b66ef7597da13839",
+        "changed_files": [
+          ".patchtrace.lock"
+        ]
+      },
+      "db-2": {
+        "result": "PT-SCHEMA: unsupported database version 2",
+        "before_db_hash": "f6bcca8b37c5bc30647ca9b89285082e15205d38bfa4201c631bb45dadaa306a",
+        "after_db_hash": "f6bcca8b37c5bc30647ca9b89285082e15205d38bfa4201c631bb45dadaa306a",
+        "changed_files": [
+          ".patchtrace.lock"
+        ]
+      },
+      "db-99": {
+        "result": "PT-SCHEMA: unsupported database version 99",
+        "before_db_hash": "eb561eff15b6771978b291804189b1080de03a7cc3da364753540b00566aca33",
+        "after_db_hash": "eb561eff15b6771978b291804189b1080de03a7cc3da364753540b00566aca33",
+        "changed_files": [
+          ".patchtrace.lock"
+        ]
+      },
+      "json-version-2": {
+        "result": "PT-SCHEMA: stored project snapshot violates the v1 contract (at schema_version)",
+        "before_db_hash": "a5c9e0fe7004dad7d7c272d2eb30518d029cfb05310b56fa631355801308c377",
+        "after_db_hash": "a5c9e0fe7004dad7d7c272d2eb30518d029cfb05310b56fa631355801308c377",
+        "changed_files": [
+          ".patchtrace.lock"
+        ]
+      },
+      "json-extra": {
+        "result": "PT-SCHEMA: stored project snapshot violates the v1 contract (at future_field)",
+        "before_db_hash": "80bb12764b8d370aab7c0da059e376ebadc20218ef561051fb7e68071e37a1e2",
+        "after_db_hash": "80bb12764b8d370aab7c0da059e376ebadc20218ef561051fb7e68071e37a1e2",
+        "changed_files": [
+          ".patchtrace.lock"
+        ]
+      }
+    }
+  },
+  "historical_backup": {
+    "empty": {
+      "model_fields_preserved": true,
+      "id": "abac373e-ed0f-43c5-b439-8d705a058d97",
+      "revision": 0,
+      "history_rows": 1,
+      "database_unchanged": true,
+      "backup_database_sha256": "7cedcc793de3586d5a5e4048b651041e8f35b8e8e22fc010378a168e00f6ae59",
+      "all_source_and_backup_snapshot_and_history_rows_match": true,
+      "all_source_and_backup_sidecars_match": true,
+      "source_sidecar_count": 2
+    },
+    "populated": {
+      "model_fields_preserved": true,
+      "id": "a2d6e0cb-7967-41f7-a685-7ebcf83ad1b5",
+      "revision": 1,
+      "history_rows": 5,
+      "database_unchanged": true,
+      "backup_database_sha256": "d9abc1ba8ccf1d60965c12c9dd81fd629e9785715d75c75b698fbe354c0ef4b4",
+      "all_source_and_backup_snapshot_and_history_rows_match": true,
+      "all_source_and_backup_sidecars_match": true,
+      "source_sidecar_count": 3
+    }
+  },
+  "future_committed_wal": {
+    "scenario": "Complete SQLite WAL commit of user_version 2, interrupted past commit before orderly close. Native SQLite writer updates a copy of the historical empty fixture. Open with ProjectService.open at current aggregate.",
+    "result": "PT-SCHEMA: unsupported database version 2",
+    "logical_version_after": 2,
+    "before": {
+      ".patchtrace.lock": [
+        4096,
+        "5c2c2b89307a1047763d60758c40366b80e8b7145e8f4e7596b049ae58083376"
+      ],
+      "project.sqlite3": [
+        16384,
+        "886ad47a68f9770c459ee9c0fb5a6d6a6876a674d98a965a185ee52ad16cd7e6"
+      ],
+      "project.sqlite3-shm": [
+        32768,
+        "622d72313b12b90fe487b1e52e39af58e2897e19acfa56da3ce49154e5410d02"
+      ],
+      "project.sqlite3-wal": [
+        4152,
+        "3ad7871e9f8e9583bcd3ebe12c66c51844fa426a0600a4558630f685acec5a6e"
+      ]
+    },
+    "after": {
+      ".patchtrace.lock": [
+        4096,
+        "c0aff1e2914120480b272db665cccbf0922d06f79700ef3ec555d9d7e33aedbe"
+      ],
+      "project.sqlite3": [
+        16384,
+        "377954237c33de213fb8ef8953090029018c3e2565bbb5a5e1cb14748406ba4f"
+      ]
+    }
+  },
+  "baseline_windows": {
+    "run_id": 44919714193,
+    "job_id": 136892880665,
+    "source": "ea16019601486c831941f9bc1a7ba5862a170317",
+    "artifact_id": 14715790556,
+    "artifact_sha256": "810d6ef4199e95895022523bf69fc39565e9652fa6460d2101d594042216086a",
+    "junit_sha256": "3ad1ebac3865223fa5dce6d3198429fd508c8fe5a23b27c0e1dd5b0cec67bc7b",
+    "counts": {
+      "test_models": {
+        "pass": 8,
+        "ft": 0,
+        "skip": 0
+      },
+      "test_service_storage_audit": {
+        "pass": 14,
+        "ft": 0,
+        "skip": 0
+      },
+      "test_service_postcommit_recovery": {
+        "pass": 15,
+        "ft": 0,
+        "skip": 0
+      },
+      "test_history_bound": {
+        "pass": 5,
+        "ft": 0,
+        "skip": 0
+      },
+      "test_creation_schema_refusal": {
+        "pass": 0,
+        "ft": 0,
+        "skip": 0
+      },
+      "test_audit_core": {
+        "pass": 11,
+        "ft": 0,
+        "skip": 0
+      },
+      "test_project_database_uri": {
+        "pass": 0,
+        "ft": 0,
+        "skip": 0
+      },
+      "test_audit116_create_rollback": {
+        "pass": 14,
+        "ft": 0,
+        "skip": 0
+      }
+    },
+    "selected_named_cases": {
+      "test_models.test_schema_version_and_extra_fields_rejected": "pass",
+      "test_service_storage_audit.test_interrupted_creation_leftover_is_recycled_by_the_next_create": "pass",
+      "test_service_storage_audit.test_future_snapshot_fails_with_pt_schema_and_does_not_echo_values[<lambda>0]": "pass",
+      "test_service_storage_audit.test_future_snapshot_fails_with_pt_schema_and_does_not_echo_values[<lambda>1]": "pass",
+      "test_service_postcommit_recovery.test_reconciliation_does_not_recover_running_jobs_or_save_again": "pass",
+      "test_service_postcommit_recovery.test_unreconciled_backup_cannot_recover_running_job_and_reopen_restores_backup": "pass",
+      "test_service_postcommit_recovery.test_healthy_backup_keeps_normal_running_job_recovery": "pass",
+      "test_service_postcommit_recovery.test_backup_recovery_failure_reconciles_before_followup_edit[KeyboardInterrupt]": "pass",
+      "test_service_postcommit_recovery.test_backup_recovery_failure_reconciles_before_followup_edit[SystemExit]": "pass",
+      "test_service_postcommit_recovery.test_backup_recovery_failure_reconciles_before_followup_edit[OSError]": "pass",
+      "test_service_postcommit_recovery.test_backup_recovery_failed_reconciliation_refuses_further_writes": "pass",
+      "test_audit_core.test_save_refuses_older_revision_or_foreign_project": "pass",
+      "test_audit_core.test_backup_refreshes_service_after_interrupted_run_recovery": "pass",
+      "test_audit116_create_rollback.test_failure_preserves_foreign_files_created_during_attempt[ValueError]": "pass",
+      "test_audit116_create_rollback.test_failure_preserves_foreign_files_created_during_attempt[KeyboardInterrupt]": "pass"
+    }
+  },
+  "old_pr360_windows": {
+    "head": "6ffe819e71d48793f8207bd64d7480fbc03e2ef5",
+    "checked_merge": "8135def48fe3fd1b651928f6c6144e08f047619a",
+    "run_id": 45280338559,
+    "job_id": 138062824857,
+    "artifact_id": 14872874311,
+    "archive_sha256": "011436cfcd1ce05dce5b0bff78dab2e6747de3b6d5e6916669f2236a6cb0f440",
+    "junit_sha256": "2a9148230eb595a9d0ed76f81227d3d85636c9066cc3b88a3b3541dabd1ca9db",
+    "counts": {
+      "test_models": {
+        "pass": 8,
+        "failure": 0,
+        "error": 0,
+        "skip": 0
+      },
+      "test_service_storage_audit": {
+        "pass": 13,
+        "failure": 1,
+        "error": 0,
+        "skip": 0
+      },
+      "test_service_postcommit_recovery": {
+        "pass": 15,
+        "failure": 0,
+        "error": 0,
+        "skip": 0
+      },
+      "test_history_bound": {
+        "pass": 5,
+        "failure": 0,
+        "error": 0,
+        "skip": 0
+      },
+      "test_creation_schema_refusal": {
+        "pass": 23,
+        "failure": 0,
+        "error": 0,
+        "skip": 1
+      },
+      "test_audit_core": {
+        "pass": 10,
+        "failure": 1,
+        "error": 0,
+        "skip": 0
+      },
+      "test_project_database_uri": {
+        "pass": 3,
+        "failure": 0,
+        "error": 0,
+        "skip": 3
+      },
+      "test_audit116_create_rollback": {
+        "pass": 12,
+        "failure": 2,
+        "error": 0,
+        "skip": 0
+      }
+    },
+    "relevant_cases": {
+      "test_models.test_schema_version_and_extra_fields_rejected": "pass",
+      "test_service_storage_audit.test_interrupted_creation_leftover_is_recycled_by_the_next_create": "pass",
+      "test_service_storage_audit.test_ctrl_c_during_creation_removes_the_half_initialised_database": "failure",
+      "test_service_storage_audit.test_future_snapshot_fails_with_pt_schema_and_does_not_echo_values[<lambda>0]": "pass",
+      "test_service_storage_audit.test_future_snapshot_fails_with_pt_schema_and_does_not_echo_values[<lambda>1]": "pass",
+      "test_service_postcommit_recovery.test_unreconciled_backup_cannot_recover_running_job_and_reopen_restores_backup": "pass",
+      "test_creation_schema_refusal.test_zero_size_special_file_is_not_a_reusable_database": "skip",
+      "test_audit_core.test_failed_database_initialization_is_atomic_and_retryable": "failure",
+      "test_audit_core.test_save_refuses_older_revision_or_foreign_project": "pass",
+      "test_project_database_uri.test_sqlite_accepts_share_shaped_uri_without_a_network_request[mode=ro&immutable=1]": "skip",
+      "test_project_database_uri.test_sqlite_accepts_share_shaped_uri_without_a_network_request[mode=rw]": "skip",
+      "test_project_database_uri.test_verified_backup_reopens_share_shaped_name_read_only": "skip",
+      "test_audit116_create_rollback.test_failed_create_leaves_no_owned_files_and_retry_works": "failure",
+      "test_audit116_create_rollback.test_cleanup_retains_lock_until_owned_files_are_removed": "failure"
+    }
+  },
+  "linux": {
+    "aggregate_tree": "bcec5a89a5046652f02a9e5c758a95212bf28cbf",
+    "python": "3.12.14",
+    "sqlite": "3.53.1",
+    "pytest": "9.2.0",
+    "passed": 97,
+    "failed": 0,
+    "skipped": 0,
+    "junit_sha256": "0182bd187bff7362977437efb696d92291a2e4f33402838d927aee07a4436a15",
+    "selected_test_modules": [
+      "test_models",
+      "test_service_storage_audit",
+      "test_service_postcommit_recovery",
+      "test_history_bound",
+      "test_creation_schema_refusal",
+      "test_audit_core",
+      "test_project_database_uri",
+      "test_audit116_create_rollback"
+    ]
+  }
+}

@@ -1,0 +1,60 @@
+FFF.                                                                     [100%]
+=================================== FAILURES ===================================
+______ test_recent_menu_filters_corrupt_settings_before_creating_actions _______
+
+window = <patchtrace.ui.MainWindow(0x19eefe70, name="main") at 0x7f37a29668c0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f37a2e92900>
+
+    def test_recent_menu_filters_corrupt_settings_before_creating_actions(window, monkeypatch):
+        paths = [f'/data/project {i}' for i in range(10)]
+        stored = [None, '', 7, '/bad\x00path', paths[0], *paths]
+        window.settings.setValue('recent/projects', stored)
+        window.refresh_recent()
+>       assert [action.text() for action in window.recent_menu.actions()] == paths[:8]
+E       AssertionError: assert ['None', '', ...oject 0', ...] == ['/data/proje...oject 5', ...]
+E
+E         At index 0 diff: 'None' != '/data/project 0'
+E         Left contains 7 more items, first extra item: '/data/project 3'
+E         Use -v to get more diff
+
+tests/test_gui_project_adoption.py:121: AssertionError
+_______________ test_project_adoption_repairs_mixed_recent_list ________________
+
+window = <patchtrace.ui.MainWindow(0x1aef2500, name="main") at 0x7f37a1e76040>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-20/test_project_adoption_repairs_0')
+
+    def test_project_adoption_repairs_mixed_recent_list(window, tmp_path):
+        window.settings.setValue('recent/projects', [42, '/previous', '/previous', ''])
+        service = ProjectService.sample(tmp_path / 'project')
+        window.set_service(service)
+>       assert window.settings.value('recent/projects', type=list) == [str(service.root), '/previous']
+E       AssertionError: assert ['/tmp/pytest...previous', ''] == ['/tmp/pytest..., '/previous']
+E
+E         At index 1 diff: 42 != '/previous'
+E         Left contains 3 more items, first extra item: '/previous'
+E         Use -v to get more diff
+
+tests/test_gui_project_adoption.py:135: AssertionError
+_________ test_open_project_dialog_uses_default_for_corrupt_last_path __________
+
+window = <patchtrace.ui.MainWindow(0x1b6493b0, name="main") at 0x7f37a46ff900>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f37a4928260>
+
+    def test_open_project_dialog_uses_default_for_corrupt_last_path(window, monkeypatch):
+        directories = []
+        monkeypatch.setattr(QFileDialog, 'getExistingDirectory',
+                            lambda parent, title, directory: directories.append(directory) or '')
+        window.settings.setValue('recent/project', ['wrong', 'shape'])
+        window.open_project()
+>       assert directories == ['']
+E       AssertionError: assert [['wrong', 'shape']] == ['']
+E
+E         At index 0 diff: ['wrong', 'shape'] != ''
+E         Use -v to get more diff
+
+tests/test_gui_project_adoption.py:144: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_gui_project_adoption.py::test_recent_menu_filters_corrupt_settings_before_creating_actions
+FAILED tests/test_gui_project_adoption.py::test_project_adoption_repairs_mixed_recent_list
+FAILED tests/test_gui_project_adoption.py::test_open_project_dialog_uses_default_for_corrupt_last_path
+3 failed, 1 passed, 6 deselected in 3.05s

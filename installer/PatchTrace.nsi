@@ -54,7 +54,8 @@ Section "Uninstall"
   SetShellVarContext current
   Delete "$SMPROGRAMS\PatchTrace\PatchTrace.lnk"
   RMDir "$SMPROGRAMS\PatchTrace"
-  DeleteRegKey HKCU "Software\PatchTrace"
+  ; Qt preferences and user-defined values share this registry tree.
+  DeleteRegValue HKCU "Software\PatchTrace" "InstallDir"
   DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\PatchTrace"
   !include "${REPO_ROOT}\dist\PatchTrace-Uninstall.nsh"
 SectionEnd

@@ -1,0 +1,195 @@
+{
+  "schema": "patchtrace/pr-independent-review/1",
+  "reviewer": "codex5_recovery_assessment",
+  "verdict": "BLOCKED_AS_IS",
+  "pull_request": 352,
+  "head": "e3928ab8c8e2deee7bb01b0f857205f68a1abda2",
+  "tree": "ee0a8bdf70b497c0b2d0e5ed5eeca9b9e9f648e1",
+  "base": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+  "merge_base": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+  "unique_commit_count": 5,
+  "complete_changed_path_count": 5,
+  "source_dirty_before": false,
+  "source_dirty_after": false,
+  "source_modified": false,
+  "environment_rebound": false,
+  "remote_mutations": false,
+  "current_records_context_modified": false,
+  "findings": [
+    {
+      "id": "PR352-DEADLINE-COMPLETION",
+      "priority": "P2",
+      "status": "confirmed",
+      "path": "src/patchtrace/enrichment/intelligence.py",
+      "lines": [
+        360,
+        361
+      ],
+      "description": "Completed attempt outcomes are returned without a final wall-deadline check. EOF or close may cross the wall deadline and signal done before the next 100 ms polling check, publishing a success contrary to H9b. This is a completion-boundary gap, not failure of the authored indefinitely blocked-operation repair.",
+      "evidence": "current-independent-boundaries.xml",
+      "failing_controls": [
+        "test_completed_attempt_past_wall_deadline_is_not_published[eof]",
+        "test_completed_attempt_past_wall_deadline_is_not_published[close]"
+      ],
+      "persists_with_exact_pr356_component": true,
+      "expected_behavior": "Capture completion result; preserve explicit-cancel precedence/PT-ENRICH-CANCEL; validate wall and injected logical deadlines before publishing; expired budget yields recoverable PT-ENRICH-NETWORK without response text."
+    },
+    {
+      "id": "PR352-INHERITED-CLEANUP-ACCOUNTING",
+      "priority": "P2",
+      "status": "confirmed inherited dependency limitation",
+      "path": "src/patchtrace/netutil.py",
+      "lines": [
+        62,
+        73
+      ],
+      "description": "The unchanged helper releases an abandoned opener slot before late response cleanup completes; PR352 still calls this helper for inner opening. One blocked close is counted as zero; original PR356 control also counts four as zero.",
+      "evidence": [
+        "current-independent-boundaries.xml",
+        "dependency-parent.xml",
+        "dependency-pr354.xml",
+        "dependency-pr356.xml",
+        "pr352-boundaries-with-pr356-component.xml"
+      ],
+      "introduced_by_pr352": false,
+      "repaired_by_exact_pr356_helper_control": true,
+      "expected_behavior": "Retain the slot through cleanup finally; preserve PR356 ancestry and independent qualification when planning integration."
+    }
+  ],
+  "validation": [
+    {
+      "file": "author-parent-red.xml",
+      "cases": 2,
+      "passed": 0,
+      "failed": 2,
+      "errors": 0,
+      "skipped": 0,
+      "failures": [
+        {
+          "id": "tests.test_enrichment_intelligence::test_stalled_network_step_respects_total_deadline_without_cancel[connect]",
+          "message": "AssertionError: assert (31954.814347066 - 31953.312695161) < 0.9\n +  where 31954.814347066 = <built-in function monotonic>()\n +    where <built-in function monotonic> = <module 'time' (built-in)>.monotonic"
+        },
+        {
+          "id": "tests.test_enrichment_intelligence::test_stalled_network_step_respects_total_deadline_without_cancel[read]",
+          "message": "AssertionError: assert (31956.339585138 - 31954.836591471) < 0.9\n +  where 31956.339585138 = <built-in function monotonic>()\n +    where <built-in function monotonic> = <module 'time' (built-in)>.monotonic"
+        }
+      ]
+    },
+    {
+      "file": "current-independent-boundaries.xml",
+      "cases": 7,
+      "passed": 4,
+      "failed": 3,
+      "errors": 0,
+      "skipped": 0,
+      "failures": [
+        {
+          "id": "evidence.pr352-independent-review.test_review_attempt_boundaries::test_completed_attempt_past_wall_deadline_is_not_published[eof]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "evidence.pr352-independent-review.test_review_attempt_boundaries::test_completed_attempt_past_wall_deadline_is_not_published[close]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "evidence.pr352-independent-review.test_review_attempt_boundaries::test_cancelled_late_opener_cleanup_holds_resource_slot",
+          "message": "AssertionError: late response cleanup still holds one worker/socket\nassert 0 == 1\n +  where 0 = <function abandoned_count at 0x7f10f44fd580>()\n +    where <function abandoned_count at 0x7f10f44fd580> = netutil.abandoned_count"
+        }
+      ]
+    },
+    {
+      "file": "current-maintained.xml",
+      "cases": 168,
+      "passed": 168,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failures": []
+    },
+    {
+      "file": "dependency-parent.xml",
+      "cases": 7,
+      "passed": 3,
+      "failed": 4,
+      "errors": 0,
+      "skipped": 0,
+      "failures": [
+        {
+          "id": "evidence.pr352-independent-review.dependency-source.a41c7a0d594d1fe26c16da395e6f6f9b33b07eca.tests.test_netutil_read_deadline::test_deadline_interrupts_blocked_body_without_cancel_event",
+          "message": "Failed: DID NOT RAISE DeadlineExceeded"
+        },
+        {
+          "id": "evidence.pr352-independent-review.dependency-source.a41c7a0d594d1fe26c16da395e6f6f9b33b07eca.tests.test_netutil_read_deadline::test_deadline_interrupts_blocked_body_even_if_cancel_not_set",
+          "message": "Failed: DID NOT RAISE DeadlineExceeded"
+        },
+        {
+          "id": "evidence.pr352-independent-review.dependency-source.a41c7a0d594d1fe26c16da395e6f6f9b33b07eca.tests.test_netutil_read_deadline::test_completed_read_is_refused_if_deadline_passed_during_call",
+          "message": "Failed: DID NOT RAISE DeadlineExceeded"
+        },
+        {
+          "id": "evidence.pr352-independent-review.dependency-source.1d475d926314ae116442bfe2b7cd268ad95ea12c.tests.test_netutil_abandoned_cleanup::test_abandoned_count_includes_late_response_cleanup",
+          "message": "assert 0 == 4\n +  where 0 = <function abandoned_count at 0x7fbc0965b6a0>()\n +    where <function abandoned_count at 0x7fbc0965b6a0> = netutil.abandoned_count\n +  and   4 = netutil.MAX_ABANDONED"
+        }
+      ]
+    },
+    {
+      "file": "dependency-pr354.xml",
+      "cases": 7,
+      "passed": 6,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0,
+      "failures": [
+        {
+          "id": "evidence.pr352-independent-review.dependency-source.1d475d926314ae116442bfe2b7cd268ad95ea12c.tests.test_netutil_abandoned_cleanup::test_abandoned_count_includes_late_response_cleanup",
+          "message": "assert 0 == 4\n +  where 0 = <function abandoned_count at 0x7fd182a21620>()\n +    where <function abandoned_count at 0x7fd182a21620> = netutil.abandoned_count\n +  and   4 = netutil.MAX_ABANDONED"
+        }
+      ]
+    },
+    {
+      "file": "dependency-pr356.xml",
+      "cases": 7,
+      "passed": 7,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failures": []
+    },
+    {
+      "file": "pr352-boundaries-with-pr356-component.xml",
+      "cases": 7,
+      "passed": 5,
+      "failed": 2,
+      "errors": 0,
+      "skipped": 0,
+      "failures": [
+        {
+          "id": "evidence.pr352-independent-review.test_review_attempt_boundaries::test_completed_attempt_past_wall_deadline_is_not_published[eof]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "evidence.pr352-independent-review.test_review_attempt_boundaries::test_completed_attempt_past_wall_deadline_is_not_published[close]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        }
+      ]
+    }
+  ],
+  "whole_ruff_passed": true,
+  "pip_check_passed": true,
+  "logical_combined_component_qualification_claimed": false,
+  "author_hold_unchanged": true,
+  "merge_approved": false,
+  "release_ready": false,
+  "open_gates": [
+    "Completion-boundary repair and reviewed exact final source",
+    "Explicit qualification and draft/parent/ownership holds captured verbatim",
+    "Full exact-source Linux/Windows hosted QA and applicable native/Qt gates",
+    "Current-main reconciliation; separate main3a relevant-path byte equivalence is not combined-source qualification"
+  ],
+  "limits": [
+    "All executed transport controls used synthetic responses or threading events; no external service requests or localhost server execution",
+    "Five synthetic PR354 tests plus both PR356 tests were replayed; the sixth PR354 real localhost test was preserved but not executed",
+    "No full suite, package/native execution, installs, source/ref/PR/CI/ledger/context mutations",
+    "Counts are separate overlapping runs; no aggregate qualified pass count"
+  ]
+}

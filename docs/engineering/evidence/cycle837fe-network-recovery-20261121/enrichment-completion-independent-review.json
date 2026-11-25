@@ -1,0 +1,214 @@
+{
+  "schema": "patchtrace/enrichment-completion-independent-review/1",
+  "reviewed_at": "2026-11-21T13:53:51.237440+00:00",
+  "head": "aa01a50844fed15823c6e03491ce3bc671a5ecfc",
+  "tree": "a3f4588f3a21cb257e4d34dd495114a7658b7a08",
+  "parent": "e3928ab8c8e2deee7bb01b0f857205f68a1abda2",
+  "verdict": "NARROW_COMPLETION_REPAIR_CLEAR;_INTEGRATION_BLOCKED_BY_INHERITED_NETUTIL",
+  "new_scope_blockers": [],
+  "merge_blockers": [
+    {
+      "finding": "Inherited late-opener cleanup releases its abandoned-work slot before response close finishes.",
+      "source": "src/patchtrace/netutil.py",
+      "inherited_blob": "9fff565fd59d3d3d23a7a9f4e0a894bd742f8432",
+      "independent_result": "One plain failure: abandoned_count()==0 with one blocked cleanup; expected 1.",
+      "disposition": "Root separately owns PR354/356 review, layering and exact integration qualification."
+    }
+  ],
+  "changed_paths": [
+    "docs/specs/enrichment-hardening-backlog.md",
+    "src/patchtrace/enrichment/intelligence.py",
+    "tests/test_enrichment_intelligence.py"
+  ],
+  "semantic_scope": "Retain completed _attempt value, check explicit cancellation first, then both existing inclusive deadlines, then publish the value. All other runtime AST, prior tests and tracked files preserved.",
+  "independent_results": {
+    "parent-independent-controls": {
+      "cases": 24,
+      "passed": 6,
+      "failed": 18,
+      "errors": 0,
+      "skipped": 0,
+      "failures": [
+        {
+          "id": "evidence.enrichment-completion-deadline-independent.test_completion_controls::test_completion_admission_clock_boundary[equal-logical-eof]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "evidence.enrichment-completion-deadline-independent.test_completion_controls::test_completion_admission_clock_boundary[equal-logical-close]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "evidence.enrichment-completion-deadline-independent.test_completion_controls::test_completion_admission_clock_boundary[equal-wall-eof]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "evidence.enrichment-completion-deadline-independent.test_completion_controls::test_completion_admission_clock_boundary[equal-wall-close]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "evidence.enrichment-completion-deadline-independent.test_completion_controls::test_completion_admission_clock_boundary[equal-both-eof]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "evidence.enrichment-completion-deadline-independent.test_completion_controls::test_completion_admission_clock_boundary[equal-both-close]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "evidence.enrichment-completion-deadline-independent.test_completion_controls::test_completion_admission_clock_boundary[after-logical-eof]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "evidence.enrichment-completion-deadline-independent.test_completion_controls::test_completion_admission_clock_boundary[after-logical-close]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "evidence.enrichment-completion-deadline-independent.test_completion_controls::test_completion_admission_clock_boundary[after-wall-eof]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "evidence.enrichment-completion-deadline-independent.test_completion_controls::test_completion_admission_clock_boundary[after-wall-close]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "evidence.enrichment-completion-deadline-independent.test_completion_controls::test_completion_admission_clock_boundary[after-both-eof]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "evidence.enrichment-completion-deadline-independent.test_completion_controls::test_completion_admission_clock_boundary[after-both-close]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "evidence.enrichment-completion-deadline-independent.test_completion_controls::test_explicit_cancel_at_completion_keeps_precedence[neither]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "evidence.enrichment-completion-deadline-independent.test_completion_controls::test_explicit_cancel_at_completion_keeps_precedence[logical]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "evidence.enrichment-completion-deadline-independent.test_completion_controls::test_explicit_cancel_at_completion_keeps_precedence[wall]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "evidence.enrichment-completion-deadline-independent.test_completion_controls::test_explicit_cancel_at_completion_keeps_precedence[both]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "evidence.enrichment-completion-deadline-independent.test_completion_controls::test_partial_fetch_does_not_publish_late_body[logical]",
+          "message": "AssertionError: assert {'CVE-2024-38...T13:51:21Z')}} == {}\n  \n  Left contains 1 more item:\n  {'CVE-2024-38063': {'msrc': RawResponse(provider='msrc',\n                                          cve_id='CVE-2024-38063',\n                                          sha256='66567fc1f38de18564bde517f4b6e40f65d998c1d7717662c0ae15b1cd560370',\n                                          url='https://api.msrc.microsoft.com/sug/v2.0/en-US/vulnerability/CVE-2024-38063',\n[+2 more lines; full report in element text]"
+        },
+        {
+          "id": "evidence.enrichment-completion-deadline-independent.test_completion_controls::test_partial_fetch_does_not_publish_late_body[wall]",
+          "message": "AssertionError: assert {'CVE-2024-38...T13:51:21Z')}} == {}\n  \n  Left contains 1 more item:\n  {'CVE-2024-38063': {'msrc': RawResponse(provider='msrc',\n                                          cve_id='CVE-2024-38063',\n                                          sha256='66567fc1f38de18564bde517f4b6e40f65d998c1d7717662c0ae15b1cd560370',\n                                          url='https://api.msrc.microsoft.com/sug/v2.0/en-US/vulnerability/CVE-2024-38063',\n[+2 more lines; full report in element text]"
+        }
+      ]
+    },
+    "candidate-focused-union": {
+      "cases": 205,
+      "passed": 205,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failures": []
+    },
+    "inherited-cleanup-blocker": {
+      "cases": 1,
+      "passed": 0,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0,
+      "failures": [
+        {
+          "id": "evidence.pr352-independent-review.test_review_attempt_boundaries::test_cancelled_late_opener_cleanup_holds_resource_slot",
+          "message": "AssertionError: late response cleanup still holds one worker/socket\nassert 0 == 1\n +  where 0 = <function abandoned_count at 0x7f53d8cb6fc0>()\n +    where <function abandoned_count at 0x7f53d8cb6fc0> = netutil.abandoned_count"
+        }
+      ]
+    }
+  },
+  "candidate_union_composition": {
+    "maintained": 175,
+    "new_independent_completion_controls": 24,
+    "unchanged_prior_independent_controls": 6,
+    "total_passed": 205
+  },
+  "parent_control_scope": "Exact immutable parent enrichment module substituted in memory; all other runtime bytes equal. This is a component regression control, not a separate checkout or combined-tree qualification.",
+  "author_results_preserved": {
+    "author-parent-new-regressions-red": {
+      "cases": 7,
+      "passed": 1,
+      "failed": 6,
+      "errors": 0,
+      "skipped": 0,
+      "failures": [
+        {
+          "id": "tests.test_enrichment_intelligence::test_completed_attempt_past_total_deadline_is_not_published[logical-eof]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "tests.test_enrichment_intelligence::test_completed_attempt_past_total_deadline_is_not_published[logical-close]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "tests.test_enrichment_intelligence::test_completed_attempt_past_total_deadline_is_not_published[wall-eof]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "tests.test_enrichment_intelligence::test_completed_attempt_past_total_deadline_is_not_published[wall-close]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "tests.test_enrichment_intelligence::test_cancel_at_completion_precedes_total_deadline[False]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        },
+        {
+          "id": "tests.test_enrichment_intelligence::test_cancel_at_completion_precedes_total_deadline[True]",
+          "message": "Failed: DID NOT RAISE EnrichmentError"
+        }
+      ]
+    },
+    "author-repaired-new-regressions-green": {
+      "cases": 7,
+      "passed": 7,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failures": []
+    },
+    "author-frozen-focused-union": {
+      "cases": 181,
+      "passed": 181,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failures": []
+    },
+    "author-frozen-inherited-cleanup-blocker": {
+      "cases": 1,
+      "passed": 0,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0,
+      "failures": [
+        {
+          "id": "evidence.pr352-independent-review.test_review_attempt_boundaries::test_cancelled_late_opener_cleanup_holds_resource_slot",
+          "message": "AssertionError: late response cleanup still holds one worker/socket\nassert 0 == 1\n +  where 0 = <function abandoned_count at 0x7f0570431580>()\n +    where <function abandoned_count at 0x7f0570431580> = netutil.abandoned_count"
+        }
+      ]
+    }
+  },
+  "source_checks": 115,
+  "whole_Ruff_and_pip": "Exact source author receipts verified; not rerun.",
+  "environment": "Existing pages-config-hold-venv Python 3.12.14 with -I/-B explicit source insertion and module path/digest assertions; editable metadata remains bound to repair-pages-config-hold. No install/rebind.",
+  "full_suite_run": false,
+  "native_target_or_external_network_run": false,
+  "hosted_qualification_claimed": false,
+  "source_ref_PR_CI_mutations": false,
+  "merge_eligible": false,
+  "release_ready": false,
+  "remaining": [
+    "Resolve inherited cleanup prerequisite with reviewed ownership and ancestry.",
+    "Qualify the actual final integration tree and applicable full Linux/Windows hosted gates.",
+    "Preserve PR352/354/356 author draft, qualification and ownership holds.",
+    "Do not alter frozen PR357 or transfer its results to this child."
+  ]
+}

@@ -330,16 +330,46 @@ def _cancelled(cancel: threading.Event | None) -> None:
         raise EnrichmentError('PT-ENRICH-CANCEL', 'CVE fetch cancelled', recoverable=True)
 
 
+class _AttemptLimit(threading.Event):
+    """Cancel an owned network attempt on explicit cancellation or its real total deadline.
+
+    The full attempt, including response.close(), runs in the worker. Supervising only a
+    blocking read would leave the caller trying to close a buffered stream concurrently.
+    """
+
+    def __init__(self, cancel: threading.Event | None, deadline: float):
+        super().__init__()
+        self._cancel = cancel
+        self._deadline = deadline
+
+    def is_set(self) -> bool:
+        return (self._cancel is not None and self._cancel.is_set()) or time.monotonic() >= self._deadline
+
+
 def _fetch_one(request, headers, opener, cancel, clock, sleep, now, pacer=None) -> tuple[bytes, str]:
     deadline = None
+    wall_deadline = 0.0
     for attempt in range(1, MAX_ATTEMPTS + 1):
         _cancelled(cancel)
         if pacer is not None:
             pacer.acquire()
         if deadline is None:
             deadline = clock() + TOTAL_TIMEOUT  # the 30 s budget starts at the actual send, not at pacing waits
+            wall_deadline = time.monotonic() + TOTAL_TIMEOUT
         try:
-            return _attempt(request.url, headers, opener, cancel, clock, deadline, now)
+            result = interruptible(partial(_attempt, request.url, headers, opener, cancel, clock, deadline, now),
+                                   _AttemptLimit(cancel, wall_deadline))
+            _cancelled(cancel)
+            if clock() >= deadline or time.monotonic() >= wall_deadline:
+                raise EnrichmentError('PT-ENRICH-NETWORK', 'total timeout exceeded', recoverable=True)
+            return result
+        except Cancelled:
+            if cancel is not None and cancel.is_set():
+                raise EnrichmentError('PT-ENRICH-CANCEL', 'CVE fetch cancelled', recoverable=True) from None
+            raise EnrichmentError('PT-ENRICH-NETWORK', 'total timeout exceeded', recoverable=True) from None
+        except TooManyAbandoned:
+            raise EnrichmentError('PT-ENRICH-NETWORK', 'previous requests still closing',
+                                  recoverable=True) from None
         except _Retry as retry:
             if attempt == MAX_ATTEMPTS:
                 if retry.status == 403:

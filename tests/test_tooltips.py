@@ -327,10 +327,12 @@ def test_disabled_controls_keep_tooltip_and_state_prerequisite(qtbot, settings, 
 
 
 def test_recent_project_actions_use_escaped_template(window):
-    window.settings.setValue('recent/projects', ['/tmp/<b>evil</b>\x00'])
+    path = '/tmp/<b>evil</b>'
+    window.settings.setValue('recent/projects', [path + '\x00', path])
     window.refresh_recent()
-    recent = [a for a in window.recent_menu.actions()]
-    assert recent and '<b>' not in recent[0].toolTip() and '&lt;b&gt;evil' in recent[0].toolTip()
+    [action] = window.recent_menu.actions()
+    assert action.text() == path
+    assert '<b>' not in action.toolTip() and '&lt;b&gt;evil' in action.toolTip()
 
 
 # -- dialogs ---------------------------------------------------------------------------------

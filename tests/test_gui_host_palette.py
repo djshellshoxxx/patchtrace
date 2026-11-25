@@ -275,3 +275,12 @@ def test_the_main_window_menu_and_palette_shortcut_are_registered(main_window, q
 
     assert any(label.startswith('Project > Open') for label in labels_for('Open'))
     assert any('Interpret selection' in label for label in labels_for('Interpret'))
+
+
+def test_palette_removes_mnemonics_and_retains_literal_ampersands(qtbot):
+    window = QMainWindow()
+    qtbot.addWidget(window)
+    menu = window.menuBar().addMenu('&File && tools')
+    menu.addAction('S&ave && close')
+    [entry] = action_entries(window)
+    assert entry.title == 'File & tools > Save & close'

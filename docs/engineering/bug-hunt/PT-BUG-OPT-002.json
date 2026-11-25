@@ -1,0 +1,20 @@
+{
+  "schema": "patchtrace-bug-hunt/1",
+  "id": "PT-BUG-OPT-002",
+  "discovered_on": "2026-11-21",
+  "classification": "CONFIRMED",
+  "severity": "P2",
+  "component": "src/patchtrace/optional_deps.py",
+  "source_commit": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+  "source_blob": "2de1a4a884bdc404f3604641be837b297174e33e",
+  "fix_branch": "fix/optional-import-init-exceptions-20261121-0318",
+  "fix_blob": "b99ebfb1f24bf86123dd244204d80601d8bcb628",
+  "regression_file": "tests/test_optional_import_recovery.py",
+  "local_red": "3 failed",
+  "local_green": "7 passed",
+  "whole_repository_qa": "PENDING",
+  "windows_qa": "PENDING",
+  "independent_review": "PENDING",
+  "merge_status": "UNMERGED",
+  "details": "docs/engineering/bug-hunt/PT-BUG-OPT-002.md"
+}

@@ -1,0 +1,9 @@
+# Windows uninstall and preferences
+
+Main `ea16019601486c831941f9bc1a7ba5862a170317` wrote a single `InstallDir` value to `HKCU\Software\PatchTrace` and recursively deleted that key on uninstall. The desktop's native `QSettings('PatchTrace','PatchTrace')` uses its child `HKCU\Software\PatchTrace\PatchTrace`. The prior uninstaller therefore removed window, path and other preferences. The four historical NSIS blobs accessible through the Git history yielded no existing selective cleanup fix.
+
+Repair `ff25abdb7c0717efd8dda8a21871ed8935321cf9` replaces the parent-key deletion with NSIS `DeleteRegValue` for the installer-owned value. The separate Windows Apps entry remains installer-owned. The existing native smoke now seeds a sibling value and a nested preference using per-run unique names, checks their contents across uninstall, and verifies removal of the actual install-path registration.
+
+**Local evidence.** The new source invariant failed on main. On the candidate, 125 tests passed and 17 PowerShell tests skipped because pwsh was unavailable on this Linux runner. Focused Ruff and Git whitespace checks passed. An independent packaging reviewer read the implementation and PowerShell test, confirmed actual key ownership and checked the six installer-manifest tests on this exact commit. Logs: `nsis-red.log`, `nsis-relevant.log`.
+
+**Native gate.** Both the normal Windows package-builder and independent same-run download consumer already call the smoke script. Each must execute an installer rebuilt from the corrected candidate. Previous Windows runs predate this change. Already distributed uninstallers embed the former behavior; to gain this correction on an existing install, the uninstaller must be replaced by installing a corrected build in the original location. Settings removed by an older uninstaller are not recovered by this fix.

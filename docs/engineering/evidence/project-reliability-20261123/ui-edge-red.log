@@ -1,0 +1,19 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______ test_invalid_single_recent_path_never_opens_a_truncated_location _______
+
+window = <patchtrace.ui.MainWindow(0x418d96c0, name="main") at 0x7f3ae203d8c0>
+
+    def test_invalid_single_recent_path_never_opens_a_truncated_location(window):
+        window.settings.setValue('recent/projects', '/projectA\x00typo')
+        window.refresh_recent()
+>       assert not window.recent_menu.actions()
+E       assert not [<PySide6.QtGui.QAction(0x41b2c8a0 text="/projectA" toolTip="<p style=\"white-space:pre-wrap\">What: Open the recent p...bility: Disabled while a job is running.</p>" menuRole=TextHeuristicRole enabled=true visible=true) at 0x7f3ae249d840>]
+E        +  where [<PySide6.QtGui.QAction(0x41b2c8a0 text="/projectA" toolTip="<p style=\"white-space:pre-wrap\">What: Open the recent p...bility: Disabled while a job is running.</p>" menuRole=TextHeuristicRole enabled=true visible=true) at 0x7f3ae249d840>] = <built-in method actions of PySide6.QtWidgets.QMenu object at 0x7f3ae1cc2f00>()
+E        +    where <built-in method actions of PySide6.QtWidgets.QMenu object at 0x7f3ae1cc2f00> = <PySide6.QtWidgets.QMenu(0x4208c7e0) at 0x7f3ae1cc2f00>.actions
+E        +      where <PySide6.QtWidgets.QMenu(0x4208c7e0) at 0x7f3ae1cc2f00> = <patchtrace.ui.MainWindow(0x418d96c0, name="main") at 0x7f3ae203d8c0>.recent_menu
+
+tests/test_gui_project_adoption.py:171: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_gui_project_adoption.py::test_invalid_single_recent_path_never_opens_a_truncated_location
+1 failed, 11 deselected in 1.50s

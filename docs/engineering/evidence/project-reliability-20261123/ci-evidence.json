@@ -1,0 +1,1393 @@
+{
+  "observed_utc": "2026-11-23",
+  "repository": "djshellshoxxx/PatchTrace",
+  "main": "ea16019601486c831941f9bc1a7ba5862a170317",
+  "prs": [
+    {
+      "number": 359,
+      "head_sha": "173f18d3a6ddd88aaaf514ced71b1be0c3db7954",
+      "base": "codex/patchtrace-network-tooling-recovery-20261121-837fe",
+      "base_at_read": "18edf3012a26eaeb037c2b970a252cc14481fba8",
+      "title": "test(ci): align Sigstore installer invariant with hash-locked workflow [no release] [no deploy]",
+      "draft": true,
+      "state": "open",
+      "merged": false,
+      "synthetic_merge_reported": "0ad5890649120dc55ec69d26f2788ac2e2e7c47d",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/359",
+      "runs": [
+        {
+          "id": 45197121455,
+          "name": "QA and Windows standalone",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 1158,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/45197121455/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/45197121455/logs",
+          "workflow_id": 381129157
+        }
+      ]
+    },
+    {
+      "number": 358,
+      "head_sha": "18edf3012a26eaeb037c2b970a252cc14481fba8",
+      "base": "main",
+      "base_at_read": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "title": "Recover network boundaries and verify tooling dependencies [no release] [no deploy]",
+      "draft": false,
+      "state": "open",
+      "merged": false,
+      "synthetic_merge_reported": "d462c9bfbf8f6e1ccfbb86938a41344d7b094043",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/358",
+      "runs": [
+        {
+          "id": 44926645738,
+          "name": "QA and Windows standalone",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_number": 1157,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44926645738/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44926645738/logs",
+          "workflow_id": 381129157
+        },
+        {
+          "id": 44926645734,
+          "name": "Native Windows Ghidriff acceptance",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 860,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44926645734/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44926645734/logs",
+          "workflow_id": 381129156
+        },
+        {
+          "id": 44926645798,
+          "name": "Corpus Tier R (sharded)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 315,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44926645798/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44926645798/logs",
+          "workflow_id": 384784176
+        },
+        {
+          "id": 44926645728,
+          "name": "Optional dependency wheels probe",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 119,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44926645728/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44926645728/logs",
+          "workflow_id": 384285962
+        }
+      ]
+    },
+    {
+      "number": 357,
+      "head_sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+      "base": "main",
+      "base_at_read": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+      "title": "Recover downloaded Windows validation and verified Ghidra archive reuse [no release] [no deploy]",
+      "draft": false,
+      "state": "closed",
+      "merged": true,
+      "synthetic_merge_reported": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/357",
+      "runs": [
+        {
+          "id": 44910528348,
+          "name": "Native Windows Ghidriff acceptance",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 857,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44910528348/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44910528348/logs",
+          "workflow_id": 381129156
+        },
+        {
+          "id": 44910528283,
+          "name": "QA and Windows standalone",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 1155,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44910528283/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44910528283/logs",
+          "workflow_id": 381129157
+        }
+      ]
+    },
+    {
+      "number": 356,
+      "head_sha": "1d475d926314ae116442bfe2b7cd268ad95ea12c",
+      "base": "fix/netutil-read-deadline-20261121-0318",
+      "base_at_read": "a41c7a0d594d1fe26c16da395e6f6f9b33b07eca",
+      "title": "fix(netutil): hold abandoned slots until late response cleanup ends [no release] [no deploy]",
+      "draft": true,
+      "state": "open",
+      "merged": false,
+      "synthetic_merge_reported": "09ad1f9275dbc8c16e10b89f56bf8b04fee76186",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/356",
+      "runs": [
+        {
+          "id": 44899678576,
+          "name": "Native Windows Ghidriff acceptance",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 855,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44899678576/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44899678576/logs",
+          "workflow_id": 381129156
+        },
+        {
+          "id": 44899678588,
+          "name": "QA and Windows standalone",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_number": 1153,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44899678588/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44899678588/logs",
+          "workflow_id": 381129157
+        }
+      ]
+    },
+    {
+      "number": 355,
+      "head_sha": "e2127864cb481026db0157082d688b8a36595e3b",
+      "base": "main",
+      "base_at_read": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "title": "fix(optional): survive optional extension initialization errors [no release] [no deploy]",
+      "draft": true,
+      "state": "open",
+      "merged": false,
+      "synthetic_merge_reported": "41c069bbfe84b5fb9833d1206347c6ac594ae795",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/355",
+      "runs": [
+        {
+          "id": 44899355519,
+          "name": "Optional dependency wheels probe",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 118,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44899355519/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44899355519/logs",
+          "workflow_id": 384285962
+        },
+        {
+          "id": 44899355529,
+          "name": "Native Windows Ghidriff acceptance",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 854,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44899355529/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44899355529/logs",
+          "workflow_id": 381129156
+        },
+        {
+          "id": 44899355516,
+          "name": "QA and Windows standalone",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 1152,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44899355516/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44899355516/logs",
+          "workflow_id": 381129157
+        }
+      ]
+    },
+    {
+      "number": 354,
+      "head_sha": "a41c7a0d594d1fe26c16da395e6f6f9b33b07eca",
+      "base": "main",
+      "base_at_read": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "title": "fix(netutil): honor body deadlines during blocked HTTP reads [no release] [no deploy]",
+      "draft": true,
+      "state": "open",
+      "merged": false,
+      "synthetic_merge_reported": "e0eaa0a0352d05fb13b332b2012e9119405408c4",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/354",
+      "runs": [
+        {
+          "id": 44899055280,
+          "name": "QA and Windows standalone",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 1151,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44899055280/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44899055280/logs",
+          "workflow_id": 381129157
+        },
+        {
+          "id": 44899055225,
+          "name": "Native Windows Ghidriff acceptance",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 853,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44899055225/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44899055225/logs",
+          "workflow_id": 381129156
+        }
+      ]
+    },
+    {
+      "number": 353,
+      "head_sha": "d0a4bdf439775999340ea760d96a087e032ee6dd",
+      "base": "main",
+      "base_at_read": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "title": "fix(csaf): enforce cache byte limits despite local stat/read races [no release] [no deploy]",
+      "draft": false,
+      "state": "open",
+      "merged": false,
+      "synthetic_merge_reported": "386385f667e312089e6a6de3df5a1716f65d5d5b",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/353",
+      "runs": [
+        {
+          "id": 44899001920,
+          "name": "QA and Windows standalone",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 1150,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44899001920/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44899001920/logs",
+          "workflow_id": 381129157
+        },
+        {
+          "id": 44899001826,
+          "name": "Native Windows Ghidriff acceptance",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 852,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44899001826/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44899001826/logs",
+          "workflow_id": 381129156
+        }
+      ]
+    },
+    {
+      "number": 352,
+      "head_sha": "e3928ab8c8e2deee7bb01b0f857205f68a1abda2",
+      "base": "main",
+      "base_at_read": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "title": "fix(enrichment): enforce hard deadline during stalled network operations [no release] [no deploy]",
+      "draft": false,
+      "state": "open",
+      "merged": false,
+      "synthetic_merge_reported": null,
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/352",
+      "runs": [
+        {
+          "id": 44898650560,
+          "name": "QA and Windows standalone",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 1149,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44898650560/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44898650560/logs",
+          "workflow_id": 381129157
+        },
+        {
+          "id": 44898650509,
+          "name": "Native Windows Ghidriff acceptance",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 849,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44898650509/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44898650509/logs",
+          "workflow_id": 381129156
+        }
+      ]
+    },
+    {
+      "number": 343,
+      "head_sha": "1c60d91ab1d2038ba481d21d58611137f21b8454",
+      "base": "codex/patchtrace-native-cache-receipt-20261120-g37",
+      "base_at_read": "fc641a97846c03ebdbf70b5c8248e5685e4853b2",
+      "title": "test(kbc): retain safe Windows investigation Qt timeout context [no release]",
+      "draft": true,
+      "state": "open",
+      "merged": false,
+      "synthetic_merge_reported": "0419518c466f3aa0f700fad4198e1670c22636f7",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/343",
+      "runs": [
+        {
+          "id": 44810716926,
+          "name": "QA and Windows standalone",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 1135,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44810716926/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44810716926/logs",
+          "workflow_id": 381129157
+        }
+      ]
+    },
+    {
+      "number": 342,
+      "head_sha": "5f34fb57267637b986814ddc81dba11550992fff",
+      "base": "codex/patchtrace-qa-ruff-imports-20261120-g29",
+      "base_at_read": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+      "title": "Repair provenance, UI lifecycle and destination guards; retain native CI diagnostics",
+      "draft": true,
+      "state": "open",
+      "merged": false,
+      "synthetic_merge_reported": "9b2b1b0393010680b6acf125edc69208ca3b0f45",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/342",
+      "runs": [
+        {
+          "id": 44781837860,
+          "name": "Native Windows Ghidriff acceptance",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 824,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44781837860/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44781837860/logs",
+          "workflow_id": 381129156
+        },
+        {
+          "id": 44781837959,
+          "name": "Live intel tools acceptance",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 108,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44781837959/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44781837959/logs",
+          "workflow_id": 384554346
+        },
+        {
+          "id": 44781838172,
+          "name": "QA and Windows standalone",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_number": 1129,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44781838172/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/patchtrace/actions/runs/44781838172/logs",
+          "workflow_id": 381129157
+        }
+      ]
+    }
+  ],
+  "jobs": {
+    "44919714193": [
+      {
+        "id": 136892880403,
+        "name": "qa (ubuntu-latest)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714193/job/136892880403"
+      },
+      {
+        "id": 136892880571,
+        "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714193/job/136892880571"
+      },
+      {
+        "id": 136892880617,
+        "name": "release-gate",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714193/job/136892880617"
+      },
+      {
+        "id": 136892880628,
+        "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714193/job/136892880628"
+      },
+      {
+        "id": 136892880633,
+        "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714193/job/136892880633"
+      },
+      {
+        "id": 136892880665,
+        "name": "qa (windows-latest)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714193/job/136892880665"
+      },
+      {
+        "id": 136892880739,
+        "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714193/job/136892880739"
+      },
+      {
+        "id": 136892880761,
+        "name": "qt-gate (windows-latest, 5, 1/1)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714193/job/136892880761"
+      },
+      {
+        "id": 136910859843,
+        "name": "linux-package",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714193/job/136910859843"
+      },
+      {
+        "id": 136910859852,
+        "name": "windows-validate",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714193/job/136910859852"
+      },
+      {
+        "id": 136911441766,
+        "name": "linux-smoke (ubuntu-22.04)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714193/job/136911441766"
+      },
+      {
+        "id": 136911441777,
+        "name": "linux-smoke (ubuntu-24.04)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714193/job/136911441777"
+      },
+      {
+        "id": 136911911408,
+        "name": "release",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714193/job/136911911408"
+      }
+    ],
+    "44919714141": [
+      {
+        "id": 136892880706,
+        "name": "native (patchtrace-clean)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714141/job/136892880706"
+      },
+      {
+        "id": 136892880798,
+        "name": "native (raw-cache-hit)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714141/job/136892880798"
+      },
+      {
+        "id": 136892880825,
+        "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714141/job/136892880825"
+      },
+      {
+        "id": 136892880876,
+        "name": "native (patchtrace-seeded-store)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714141/job/136892880876"
+      },
+      {
+        "id": 136892880879,
+        "name": "native (repro-plain-ghidriff)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714141/job/136892880879"
+      }
+    ],
+    "45197121455": [
+      {
+        "id": 137770446336,
+        "name": "qa (ubuntu-latest)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/45197121455/job/137770446336"
+      },
+      {
+        "id": 137770446694,
+        "name": "qa (windows-latest)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/45197121455/job/137770446694"
+      },
+      {
+        "id": 137770446729,
+        "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/45197121455/job/137770446729"
+      },
+      {
+        "id": 137770446913,
+        "name": "qt-gate (windows-latest, 5, 1/1)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/45197121455/job/137770446913"
+      },
+      {
+        "id": 137770446962,
+        "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/45197121455/job/137770446962"
+      },
+      {
+        "id": 137770447013,
+        "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/45197121455/job/137770447013"
+      },
+      {
+        "id": 137770447089,
+        "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/45197121455/job/137770447089"
+      },
+      {
+        "id": 137770449884,
+        "name": "release-gate",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/45197121455/job/137770449884"
+      },
+      {
+        "id": 137814612461,
+        "name": "windows-validate",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/45197121455/job/137814612461"
+      },
+      {
+        "id": 137814612510,
+        "name": "linux-package",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/45197121455/job/137814612510"
+      },
+      {
+        "id": 137816314456,
+        "name": "linux-smoke (ubuntu-24.04)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/45197121455/job/137816314456"
+      },
+      {
+        "id": 137816314493,
+        "name": "linux-smoke (ubuntu-22.04)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/45197121455/job/137816314493"
+      },
+      {
+        "id": 137820178290,
+        "name": "release",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/45197121455/job/137820178290"
+      }
+    ],
+    "44926645738": [
+      {
+        "id": 136914079631,
+        "name": "qt-gate (windows-latest, 5, 1/1)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44926645738/job/136914079631"
+      },
+      {
+        "id": 136914079659,
+        "name": "qa (windows-latest)",
+        "conclusion": "failure",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44926645738/job/136914079659"
+      },
+      {
+        "id": 136914079704,
+        "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44926645738/job/136914079704"
+      },
+      {
+        "id": 136914079809,
+        "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44926645738/job/136914079809"
+      },
+      {
+        "id": 136914079826,
+        "name": "qa (ubuntu-latest)",
+        "conclusion": "failure",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44926645738/job/136914079826"
+      },
+      {
+        "id": 136914079829,
+        "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44926645738/job/136914079829"
+      },
+      {
+        "id": 136914079970,
+        "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44926645738/job/136914079970"
+      },
+      {
+        "id": 136914080518,
+        "name": "release-gate",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44926645738/job/136914080518"
+      },
+      {
+        "id": 136931019810,
+        "name": "linux-package",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44926645738/job/136931019810"
+      },
+      {
+        "id": 136931019902,
+        "name": "windows-validate",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44926645738/job/136931019902"
+      },
+      {
+        "id": 136931020076,
+        "name": "release",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44926645738/job/136931020076"
+      },
+      {
+        "id": 136931020367,
+        "name": "linux-smoke",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44926645738/job/136931020367"
+      }
+    ],
+    "44910528283": [
+      {
+        "id": 136865171950,
+        "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44910528283/job/136865171950"
+      },
+      {
+        "id": 136865172018,
+        "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44910528283/job/136865172018"
+      },
+      {
+        "id": 136865172059,
+        "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44910528283/job/136865172059"
+      },
+      {
+        "id": 136865172072,
+        "name": "qt-gate (windows-latest, 5, 1/1)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44910528283/job/136865172072"
+      },
+      {
+        "id": 136865172146,
+        "name": "qa (ubuntu-latest)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44910528283/job/136865172146"
+      },
+      {
+        "id": 136865172148,
+        "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44910528283/job/136865172148"
+      },
+      {
+        "id": 136865172158,
+        "name": "qa (windows-latest)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44910528283/job/136865172158"
+      },
+      {
+        "id": 136865172968,
+        "name": "release-gate",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44910528283/job/136865172968"
+      },
+      {
+        "id": 136888380493,
+        "name": "linux-package",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44910528283/job/136888380493"
+      },
+      {
+        "id": 136888380527,
+        "name": "windows-validate",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44910528283/job/136888380527"
+      },
+      {
+        "id": 136888792650,
+        "name": "linux-smoke (ubuntu-22.04)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44910528283/job/136888792650"
+      },
+      {
+        "id": 136888792729,
+        "name": "linux-smoke (ubuntu-24.04)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44910528283/job/136888792729"
+      },
+      {
+        "id": 136889308090,
+        "name": "release",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44910528283/job/136889308090"
+      }
+    ],
+    "44910528348": [
+      {
+        "id": 136865171976,
+        "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44910528348/job/136865171976"
+      },
+      {
+        "id": 136865172117,
+        "name": "native (raw-cache-hit)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44910528348/job/136865172117"
+      },
+      {
+        "id": 136865172123,
+        "name": "native (repro-plain-ghidriff)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44910528348/job/136865172123"
+      },
+      {
+        "id": 136865172187,
+        "name": "native (patchtrace-clean)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44910528348/job/136865172187"
+      },
+      {
+        "id": 136865172211,
+        "name": "native (patchtrace-seeded-store)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44910528348/job/136865172211"
+      }
+    ],
+    "44810716926": [
+      {
+        "id": 136546262952,
+        "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44810716926/job/136546262952"
+      },
+      {
+        "id": 136546263164,
+        "name": "qa (windows-latest)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44810716926/job/136546263164"
+      },
+      {
+        "id": 136546263234,
+        "name": "qa (ubuntu-latest)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44810716926/job/136546263234"
+      },
+      {
+        "id": 136546263279,
+        "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44810716926/job/136546263279"
+      },
+      {
+        "id": 136546263391,
+        "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44810716926/job/136546263391"
+      },
+      {
+        "id": 136546263476,
+        "name": "qt-gate (windows-latest, 5, 1/1)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44810716926/job/136546263476"
+      },
+      {
+        "id": 136546263500,
+        "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44810716926/job/136546263500"
+      },
+      {
+        "id": 136546265293,
+        "name": "release-gate",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44810716926/job/136546265293"
+      },
+      {
+        "id": 136606995381,
+        "name": "linux-package",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44810716926/job/136606995381"
+      },
+      {
+        "id": 136626004249,
+        "name": "linux-smoke (ubuntu-24.04)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44810716926/job/136626004249"
+      },
+      {
+        "id": 136626004286,
+        "name": "linux-smoke (ubuntu-22.04)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44810716926/job/136626004286"
+      },
+      {
+        "id": 136631114255,
+        "name": "release",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44810716926/job/136631114255"
+      }
+    ],
+    "44781838172": [
+      {
+        "id": 136446430641,
+        "name": "qa (windows-latest)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44781838172/job/136446430641"
+      },
+      {
+        "id": 136446430670,
+        "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44781838172/job/136446430670"
+      },
+      {
+        "id": 136446430717,
+        "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44781838172/job/136446430717"
+      },
+      {
+        "id": 136446430886,
+        "name": "qa (ubuntu-latest)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44781838172/job/136446430886"
+      },
+      {
+        "id": 136446430951,
+        "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44781838172/job/136446430951"
+      },
+      {
+        "id": 136446431186,
+        "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44781838172/job/136446431186"
+      },
+      {
+        "id": 136446431330,
+        "name": "qt-gate (windows-latest, 5, 1/1)",
+        "conclusion": "failure",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44781838172/job/136446431330"
+      },
+      {
+        "id": 136446432857,
+        "name": "release-gate",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44781838172/job/136446432857"
+      },
+      {
+        "id": 136530291902,
+        "name": "linux-package",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44781838172/job/136530291902"
+      },
+      {
+        "id": 136530292916,
+        "name": "linux-smoke",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44781838172/job/136530292916"
+      },
+      {
+        "id": 136530294582,
+        "name": "release",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44781838172/job/136530294582"
+      }
+    ],
+    "44899678588": [
+      {
+        "id": 136832744514,
+        "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899678588/job/136832744514"
+      },
+      {
+        "id": 136832744749,
+        "name": "qt-gate (windows-latest, 5, 1/1)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899678588/job/136832744749"
+      },
+      {
+        "id": 136832744756,
+        "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899678588/job/136832744756"
+      },
+      {
+        "id": 136832744781,
+        "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899678588/job/136832744781"
+      },
+      {
+        "id": 136832744817,
+        "name": "qa (windows-latest)",
+        "conclusion": "failure",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899678588/job/136832744817"
+      },
+      {
+        "id": 136832744833,
+        "name": "qa (ubuntu-latest)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899678588/job/136832744833"
+      },
+      {
+        "id": 136832744873,
+        "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899678588/job/136832744873"
+      },
+      {
+        "id": 136832746045,
+        "name": "release-gate",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899678588/job/136832746045"
+      },
+      {
+        "id": 136862044300,
+        "name": "linux-package",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899678588/job/136862044300"
+      },
+      {
+        "id": 136862044722,
+        "name": "linux-smoke",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899678588/job/136862044722"
+      },
+      {
+        "id": 136862045297,
+        "name": "release",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899678588/job/136862045297"
+      }
+    ],
+    "44899355516": [
+      {
+        "id": 136831810957,
+        "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899355516/job/136831810957"
+      },
+      {
+        "id": 136831811104,
+        "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899355516/job/136831811104"
+      },
+      {
+        "id": 136831811170,
+        "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899355516/job/136831811170"
+      },
+      {
+        "id": 136831811195,
+        "name": "qt-gate (windows-latest, 5, 1/1)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899355516/job/136831811195"
+      },
+      {
+        "id": 136831811220,
+        "name": "qa (windows-latest)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899355516/job/136831811220"
+      },
+      {
+        "id": 136831811230,
+        "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899355516/job/136831811230"
+      },
+      {
+        "id": 136831811400,
+        "name": "qa (ubuntu-latest)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899355516/job/136831811400"
+      },
+      {
+        "id": 136831811853,
+        "name": "release-gate",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899355516/job/136831811853"
+      },
+      {
+        "id": 136861497423,
+        "name": "linux-package",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899355516/job/136861497423"
+      },
+      {
+        "id": 136866320931,
+        "name": "linux-smoke (ubuntu-24.04)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899355516/job/136866320931"
+      },
+      {
+        "id": 136866320952,
+        "name": "linux-smoke (ubuntu-22.04)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899355516/job/136866320952"
+      },
+      {
+        "id": 136868991932,
+        "name": "release",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899355516/job/136868991932"
+      }
+    ],
+    "44899055280": [
+      {
+        "id": 136830852495,
+        "name": "qa (windows-latest)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899055280/job/136830852495"
+      },
+      {
+        "id": 136830852643,
+        "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899055280/job/136830852643"
+      },
+      {
+        "id": 136830852692,
+        "name": "qt-gate (windows-latest, 5, 1/1)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899055280/job/136830852692"
+      },
+      {
+        "id": 136830852752,
+        "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899055280/job/136830852752"
+      },
+      {
+        "id": 136830852791,
+        "name": "qa (ubuntu-latest)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899055280/job/136830852791"
+      },
+      {
+        "id": 136830852795,
+        "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899055280/job/136830852795"
+      },
+      {
+        "id": 136830852814,
+        "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899055280/job/136830852814"
+      },
+      {
+        "id": 136830853541,
+        "name": "release-gate",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899055280/job/136830853541"
+      },
+      {
+        "id": 136851787228,
+        "name": "linux-package",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899055280/job/136851787228"
+      },
+      {
+        "id": 136861771955,
+        "name": "linux-smoke (ubuntu-24.04)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899055280/job/136861771955"
+      },
+      {
+        "id": 136861772008,
+        "name": "linux-smoke (ubuntu-22.04)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899055280/job/136861772008"
+      },
+      {
+        "id": 136866181169,
+        "name": "release",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899055280/job/136866181169"
+      }
+    ],
+    "44899001920": [
+      {
+        "id": 136830687575,
+        "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899001920/job/136830687575"
+      },
+      {
+        "id": 136830687730,
+        "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899001920/job/136830687730"
+      },
+      {
+        "id": 136830687734,
+        "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899001920/job/136830687734"
+      },
+      {
+        "id": 136830687772,
+        "name": "qa (windows-latest)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899001920/job/136830687772"
+      },
+      {
+        "id": 136830687786,
+        "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899001920/job/136830687786"
+      },
+      {
+        "id": 136830687873,
+        "name": "qa (ubuntu-latest)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899001920/job/136830687873"
+      },
+      {
+        "id": 136830687955,
+        "name": "qt-gate (windows-latest, 5, 1/1)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899001920/job/136830687955"
+      },
+      {
+        "id": 136830689085,
+        "name": "release-gate",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899001920/job/136830689085"
+      },
+      {
+        "id": 136851100615,
+        "name": "linux-package",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899001920/job/136851100615"
+      },
+      {
+        "id": 136861882135,
+        "name": "linux-smoke (ubuntu-22.04)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899001920/job/136861882135"
+      },
+      {
+        "id": 136861882166,
+        "name": "linux-smoke (ubuntu-24.04)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899001920/job/136861882166"
+      },
+      {
+        "id": 136866860065,
+        "name": "release",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44899001920/job/136866860065"
+      }
+    ],
+    "44898650560": [
+      {
+        "id": 136829621000,
+        "name": "qa (windows-latest)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44898650560/job/136829621000"
+      },
+      {
+        "id": 136829621146,
+        "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44898650560/job/136829621146"
+      },
+      {
+        "id": 136829621210,
+        "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44898650560/job/136829621210"
+      },
+      {
+        "id": 136829621278,
+        "name": "qt-gate (windows-latest, 5, 1/1)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44898650560/job/136829621278"
+      },
+      {
+        "id": 136829621353,
+        "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44898650560/job/136829621353"
+      },
+      {
+        "id": 136829621382,
+        "name": "qa (ubuntu-latest)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44898650560/job/136829621382"
+      },
+      {
+        "id": 136829621402,
+        "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44898650560/job/136829621402"
+      },
+      {
+        "id": 136829622128,
+        "name": "release-gate",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44898650560/job/136829622128"
+      },
+      {
+        "id": 136846014592,
+        "name": "linux-package",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44898650560/job/136846014592"
+      },
+      {
+        "id": 136855100219,
+        "name": "linux-smoke (ubuntu-22.04)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44898650560/job/136855100219"
+      },
+      {
+        "id": 136855100251,
+        "name": "linux-smoke (ubuntu-24.04)",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44898650560/job/136855100251"
+      },
+      {
+        "id": 136863764805,
+        "name": "release",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44898650560/job/136863764805"
+      }
+    ]
+  },
+  "selected_job_log_evidence": {
+    "137770446336": [
+      "2026-11-23T14:42:47.9805071Z Commit: b8a594ea514ff44cadb5342986c68b1eac6e22ed",
+      "2026-11-23T14:42:48.8461160Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+      "2026-11-23T14:42:59.8592128Z 0ad5890649120dc55ec69d26f2788ac2e2e7c47d",
+      "2026-11-23T14:43:29.5365272Z 108 passed, 2 skipped in 2.27s",
+      "2026-11-23T15:22:43.8322654Z 24368 passed, 53 skipped, 4 xfailed, 21 warnings in 2352.31s (0:39:12)"
+    ],
+    "137770446694": [
+      "2026-11-23T14:42:48.2249168Z Commit: b8a594ea514ff44cadb5342986c68b1eac6e22ed",
+      "2026-11-23T14:42:49.4176505Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+      "2026-11-23T14:43:06.7583544Z 0ad5890649120dc55ec69d26f2788ac2e2e7c47d",
+      "2026-11-23T14:44:02.3577087Z 107 passed, 3 skipped in 3.78s",
+      "2026-11-23T15:46:19.6039865Z 24237 passed, 185 skipped, 3 xfailed, 22 warnings in 3734.62s (1:02:14)"
+    ],
+    "136914079826": [
+      "2026-11-21T16:49:20.4471168Z Commit: b8a594ea514ff44cadb5342986c68b1eac6e22ed",
+      "2026-11-21T16:49:21.2481424Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+      "2026-11-21T16:49:30.5308142Z d462c9bfbf8f6e1ccfbb86938a41344d7b094043",
+      "2026-11-21T16:49:58.0082910Z 108 passed, 2 skipped in 2.65s",
+      "2026-11-21T17:30:25.7869217Z FAILED tests/test_backend_bundle_workflow.py::test_pin_verify_job_is_ubuntu_pinned_and_uploads_evidence - assert None",
+      "2026-11-21T17:30:25.7872434Z 1 failed, 24367 passed, 53 skipped, 4 xfailed, 21 warnings in 2425.83s (0:40:25)"
+    ],
+    "136914079659": [
+      "2026-11-21T16:49:20.4900103Z Commit: b8a594ea514ff44cadb5342986c68b1eac6e22ed",
+      "2026-11-21T16:49:22.6761885Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+      "2026-11-21T16:49:35.2916765Z d462c9bfbf8f6e1ccfbb86938a41344d7b094043",
+      "2026-11-21T16:50:27.0459666Z 107 passed, 3 skipped in 3.92s",
+      "2026-11-21T17:49:56.0261437Z FAILED tests/test_backend_bundle_workflow.py::test_pin_verify_job_is_ubuntu_pinned_and_uploads_evidence - assert None",
+      "2026-11-21T17:49:56.0264865Z 1 failed, 24236 passed, 185 skipped, 3 xfailed, 22 warnings in 3566.34s (0:59:26)"
+    ],
+    "137770446913": [
+      "2026-11-23T14:42:48.4106896Z Commit: b8a594ea514ff44cadb5342986c68b1eac6e22ed",
+      "2026-11-23T14:42:49.4206626Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+      "2026-11-23T14:43:00.1625542Z 0ad5890649120dc55ec69d26f2788ac2e2e7c47d",
+      "2026-11-23T15:38:23.3380831Z 10620 passed, 10 warnings in 3273.98s (0:54:33)"
+    ],
+    "136546263476": [
+      "2026-11-20T21:20:54.4462709Z Commit: b8a594ea514ff44cadb5342986c68b1eac6e22ed",
+      "2026-11-20T21:21:02.4153226Z 0419518c466f3aa0f700fad4198e1670c22636f7",
+      "2026-11-20T22:14:13.5002442Z 10445 passed, 10 warnings in 3141.14s (0:52:21)"
+    ],
+    "136446431330": [
+      "2026-11-20T18:58:50.4945268Z Commit: b8a594ea514ff44cadb5342986c68b1eac6e22ed",
+      "2026-11-20T18:58:58.5309567Z 9b2b1b0393010680b6acf125edc69208ca3b0f45",
+      "2026-11-20T19:51:43.1114220Z FAILED tests/test_ui_kb_investigation.py::test_real_offline_dialog_journey_creates_and_opens_only_new_project[CVE-2099-20001] - pytestqt.exceptions.TimeoutError: waitUntil timed out in 10000 milliseconds",
+      "2026-11-20T19:51:43.1115517Z FAILED tests/test_ui_kb_investigation.py::test_real_offline_dialog_journey_creates_and_opens_only_new_project[KB5099001] - pytestqt.exceptions.TimeoutError: waitUntil timed out in 10000 milliseconds",
+      "2026-11-20T19:51:43.1116342Z 2 failed, 10423 passed, 10 warnings in 3123.06s (0:52:03)",
+      "2026-11-20T19:51:45.2086975Z ##[error]Process completed with exit code 1."
+    ],
+    "136832744817": [
+      "2026-11-21T12:34:37.6870597Z Commit: b8a594ea514ff44cadb5342986c68b1eac6e22ed",
+      "2026-11-21T12:34:38.8323920Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+      "2026-11-21T12:34:46.8157154Z 09ad1f9275dbc8c16e10b89f56bf8b04fee76186",
+      "2026-11-21T12:35:38.5374848Z 107 passed, 3 skipped in 3.71s",
+      "2026-11-21T13:33:41.5573640Z FAILED tests/test_netutil_read_deadline.py::test_real_http_stall_does_not_delay_deadline_or_response_close - TimeoutError: timed out",
+      "2026-11-21T13:33:43.4048781Z 1 failed, 24066 passed, 185 skipped, 2 xfailed, 22 warnings in 3482.29s (0:58:02)",
+      "2026-11-21T13:33:47.9774596Z ##[error]Process completed with exit code 1."
+    ],
+    "136865172146": [
+      "2026-11-21T14:04:42.5939507Z Commit: b8a594ea514ff44cadb5342986c68b1eac6e22ed",
+      "2026-11-21T14:04:43.3739219Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+      "2026-11-21T14:04:49.4885091Z 254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+      "2026-11-21T14:05:18.5829792Z 108 passed, 2 skipped in 2.40s",
+      "2026-11-21T14:43:55.2180029Z 24336 passed, 53 skipped, 4 xfailed, 21 warnings in 2314.64s (0:38:34)"
+    ],
+    "136865172158": [
+      "2026-11-21T14:07:06.2602037Z Commit: b8a594ea514ff44cadb5342986c68b1eac6e22ed",
+      "2026-11-21T14:07:07.3066622Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+      "2026-11-21T14:07:18.3985608Z 254d26e58ef03a03e50c78b5f90c6ef7d9bf9e57",
+      "2026-11-21T14:08:14.5536991Z 107 passed, 3 skipped in 3.40s",
+      "2026-11-21T15:12:03.1859658Z 24205 passed, 185 skipped, 3 xfailed, 22 warnings in 3826.03s (1:03:46)"
+    ],
+    "136892880403": [
+      "2026-11-21T15:32:28.9976722Z Commit: b8a594ea514ff44cadb5342986c68b1eac6e22ed",
+      "2026-11-21T15:32:29.7751162Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+      "2026-11-21T15:32:35.9138507Z ea16019601486c831941f9bc1a7ba5862a170317",
+      "2026-11-21T15:33:03.0618239Z 108 passed, 2 skipped in 2.30s",
+      "2026-11-21T16:12:42.9460606Z 24336 passed, 53 skipped, 4 xfailed, 21 warnings in 2377.65s (0:39:37)"
+    ],
+    "136892880665": [
+      "2026-11-21T15:32:28.8764233Z Commit: b8a594ea514ff44cadb5342986c68b1eac6e22ed",
+      "2026-11-21T15:32:29.8987272Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+      "2026-11-21T15:32:40.5953459Z ea16019601486c831941f9bc1a7ba5862a170317",
+      "2026-11-21T15:33:31.8822745Z 107 passed, 3 skipped in 3.98s",
+      "2026-11-21T16:33:58.0735681Z 24205 passed, 185 skipped, 3 xfailed, 22 warnings in 3623.65s (1:00:23)",
+      "2026-11-21T16:37:21.2325022Z Installer registration, Qt/runtime checks, frozen self-test, non-destructive uninstall passed."
+    ],
+    "136892880761": [
+      "2026-11-21T15:32:29.2054814Z Commit: b8a594ea514ff44cadb5342986c68b1eac6e22ed",
+      "2026-11-21T15:32:29.8541353Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+      "2026-11-21T15:32:37.3233313Z ea16019601486c831941f9bc1a7ba5862a170317",
+      "2026-11-21T16:26:09.8258029Z 10620 passed, 10 warnings in 3172.56s (0:52:52)"
+    ],
+    "136910859852": [
+      "2026-11-21T16:37:39.3301047Z Commit: b8a594ea514ff44cadb5342986c68b1eac6e22ed",
+      "2026-11-21T16:37:40.7442466Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+      "2026-11-21T16:37:52.4149327Z ea16019601486c831941f9bc1a7ba5862a170317",
+      "2026-11-21T16:38:23.7734152Z Installer registration, Qt/runtime checks, frozen self-test, non-destructive uninstall passed."
+    ],
+    "136892880706": [
+      "2026-11-21T15:32:30.4149944Z Commit: b8a594ea514ff44cadb5342986c68b1eac6e22ed",
+      "2026-11-21T15:32:34.5111527Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+      "2026-11-21T15:32:42.9338344Z ea16019601486c831941f9bc1a7ba5862a170317",
+      "2026-11-21T15:33:19.8990198Z   4f5d895fcbb1eacd65efd81145922c15bb7e741d",
+      "2026-11-21T15:33:19.9423815Z   Running command git checkout -q 4f5d895fcbb1eacd65efd81145922c15bb7e741d"
+    ]
+  },
+  "submitted_reviews": {
+    "358": [],
+    "359": []
+  },
+  "combined_statuses": {
+    "ea16019601486c831941f9bc1a7ba5862a170317": {
+      "statuses": []
+    },
+    "173f18d3a6ddd88aaaf514ced71b1be0c3db7954": {
+      "statuses": [
+        {
+          "context": "security/snyk (djshellshoxxx)",
+          "state": "success",
+          "target_url": "https://app.snyk.io/org/djshellshoxxx/pr-checks/92dfb9c3-02c0-47f2-a465-15b13aef0f70"
+        }
+      ]
+    },
+    "18edf3012a26eaeb037c2b970a252cc14481fba8": {
+      "statuses": [
+        {
+          "context": "security/snyk (djshellshoxxx)",
+          "state": "success",
+          "target_url": "https://app.snyk.io/org/djshellshoxxx/pr-checks/894f4024-ac0a-4a3b-a8ba-f6fb588d55c4"
+        }
+      ]
+    }
+  },
+  "comparison": {
+    "main_tree": "4a07cd88ded407bef30a8aeb81961e4041822dc2",
+    "pr359_tree": "8760cc87be24b1274febd4f3404d6a5e2315aa65",
+    "pr358_tree": "6798e06fcc100d430865c2e995471628e055ddb6"
+  }
+}

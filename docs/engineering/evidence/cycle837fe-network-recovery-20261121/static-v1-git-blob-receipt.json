@@ -1,0 +1,150 @@
+{
+  "schema": "patchtrace/network-static-git-blob-upload/1",
+  "static_plan_sha256": "5e4c1c36fc26fb2586020873b5eaf805ec6d73d5dc2fff0c75ba7ba1fa92104c",
+  "inputs": [
+    {
+      "name": "network-recovery-combined-independent.zip",
+      "sha": "f3c2d772e981ed63f01893037f5a6550b03e28e7",
+      "sha256": "42fe3f67ded1a3bd4c2750fb4cbdd61ca55a8ba242bcb6e0e4226f8fe10c891c",
+      "bytes": 5764609
+    },
+    {
+      "name": "pr352-independent-source-review.zip",
+      "sha": "7023871ac505e018f9add1e43519af9ee85e3510",
+      "sha256": "86d451af3770421a60bd0b6e17f2344669c026fec39a9b4a91f8566a56ba55e4",
+      "bytes": 6944304
+    },
+    {
+      "name": "network-recovery-preintegration-coordination.zip",
+      "sha": "8cb5d0cd2b4a86778b9b53d1665d50afb63c1247",
+      "sha256": "32868c8ce2e9c6cc4c8e84a9eff8d2f021365776a0d6d04bab9a4faa62b3d003",
+      "bytes": 65191
+    },
+    {
+      "name": "historical-backend-exit-independent.zip",
+      "sha": "6e90a8d11e80ec2b8a6348b3ebd451715d28b40f",
+      "sha256": "e305c2ea1f2ed309455820170380d2a76a98268437b64625185d208bcf3cbcd5",
+      "bytes": 3610507
+    },
+    {
+      "name": "windows-final-publication-independent.zip",
+      "sha": "661cbe70a5d4fa90c46ab110b6b4a5b34476160e",
+      "sha256": "2ad4aea19e9eeedd6dada1292b8b36937bd0940678407dd5e78f666f9de7bf7e",
+      "bytes": 40536
+    },
+    {
+      "name": "network-code-object-preparation.zip",
+      "sha": "f2915f7c0085f53b18a9480672e488414edb5831",
+      "sha256": "544bb192e9d9a3fb73c748916070d97fd8189ca52ee4e45f622d6709b5d7a352",
+      "bytes": 16230
+    },
+    {
+      "name": "network-combined-review.json",
+      "sha": "851d732ebc1fb86327de925041a1d2a5730da845",
+      "sha256": "6f66cac378808ea40bf7e16802355efa4c001ad81492444b7313071aeb7abd49",
+      "bytes": 8161
+    },
+    {
+      "name": "network-combined-source-proof.json",
+      "sha": "3e91ce565ac31129824e850d1792ab10409b4cbf",
+      "sha256": "f85ecfff940155771d28a2d846c44634de74d54125bf89a1ea23001a09ea0824",
+      "bytes": 25696
+    },
+    {
+      "name": "network-combined-qualification.json",
+      "sha": "8a2783c09f43fa614e144e864e2cdaaebc6eb134",
+      "sha256": "27c18f87a0870e067f8e708346628384724fb2138c19dd2c38e2e26334c4fba9",
+      "bytes": 5268
+    },
+    {
+      "name": "network-integration-source-proof.json",
+      "sha": "b391405d8d0341d8d6d39bb8a6d10fd39d3fd9e1",
+      "sha256": "403da5fe2a0a8bda7b4599f937b3d0cfebc6177ee61bb1345d906d0b85cbe84e",
+      "bytes": 2398
+    },
+    {
+      "name": "network-integration-record.json",
+      "sha": "acd61796c5b1fc289e97227a9102052f970b2c9b",
+      "sha256": "f6346053f90cbfee0a8df4cf3c009a592a0ed184576dd911710aa627202258b4",
+      "bytes": 6984
+    },
+    {
+      "name": "netutil-source-review.json",
+      "sha": "19dc02205490670199e73f12f10f5acafa3aa674",
+      "sha256": "7f06c5c6ebfc912ff49f57dd5feb99c92fe60c0a766d4afbe14f9874be3144a7",
+      "bytes": 13901
+    },
+    {
+      "name": "netutil-boundary-review.json",
+      "sha": "7a2cac46a9aff582403961c05e055275f8ab92f3",
+      "sha256": "d8c18819a097002fbe61112fca91ecf8715ba468a032c6829226818c3320aa38",
+      "bytes": 6345
+    },
+    {
+      "name": "enrichment-completion-independent-review.json",
+      "sha": "4ffdad3cd3ce5e1ca0751679dbd6d3d840a83df6",
+      "sha256": "7fa84aa878b620bcdb5acc74f15683b521abde0ae369858ec45e1ec9cc767e7e",
+      "bytes": 11077
+    },
+    {
+      "name": "enrichment-completion-author-handoff.json",
+      "sha": "705b8da81a912d9cf41bb326d3f1e766d5492e2b",
+      "sha256": "6bd4910b17bb38077ccf49e90f923a4d6283a4405d462d1d78a48817c8e3494f",
+      "bytes": 4059
+    },
+    {
+      "name": "pr352-original-review.json",
+      "sha": "c267cbf6275e4cbc10c04df65fa3782d432ea5b9",
+      "sha256": "3cbc7d27d0e2f65e23eb29f52962bb985e47a87db9cc6e5396050c736c5d9f5b",
+      "bytes": 8881
+    },
+    {
+      "name": "preintegration-coordination-review.json",
+      "sha": "1ef8b3e62795db6c9fd4fedce0bdd57ed01b290b",
+      "sha256": "bab1f2a7bd79071e6e762a4d705c9329b54d584449d5b6ea567c5d68177ef979",
+      "bytes": 40825
+    },
+    {
+      "name": "historical-backend-exit-independent-review.json",
+      "sha": "eb952eb9d7a36d2189a32b05066debe8582b9da6",
+      "sha256": "6b5bb204678b797ba3448689e29ec84d41d73c1b04b4e2a187af7bbdfdc3be58",
+      "bytes": 3906
+    },
+    {
+      "name": "historical-backend-exit-author-review.json",
+      "sha": "c673357aac4347bd4aa4ba6db05d13fa9e644ec8",
+      "sha256": "ef47d6427992e99e0cf34ec56305bbc46f8e2cd6a34416f8f4f9ed55a124220a",
+      "bytes": 6686
+    },
+    {
+      "name": "pr357-publication-independent-review.json",
+      "sha": "7993e27b6e880f2bc63a44da475f6e1941bd3896",
+      "sha256": "12f1b6b9ec7fb484833fa52ccf35462a5c44230cbf68387166ec2a4ff5842d00",
+      "bytes": 21901
+    },
+    {
+      "name": "network-code-object-proof.json",
+      "sha": "a5884fc9af8647694b8b8f680245d1a875b4343d",
+      "sha256": "44bbfd7ce3996bb7b7d26531407ef57baa35a12edd94985009118878bdd9e803",
+      "bytes": 3175
+    },
+    {
+      "name": "network-code-object-mapping.json",
+      "sha": "3a5f8a8edcf95a496026a9111541ca7daafeaac9",
+      "sha256": "4d264a19d80d124f67ccf268396b3d44036dfaee956acb6020ef189202c26fa4",
+      "bytes": 4408
+    },
+    {
+      "name": "network-code-object-checkpoint.json",
+      "sha": "31932c83861143f38e2f1db2dc994bbf3821f897",
+      "sha256": "d6fa19b67eac7a2b5824ca94ccf55b1d3c33ffb7dcfcf4420360e7fc20fe1a48",
+      "bytes": 604
+    }
+  ],
+  "count": 23,
+  "bytes": 16615652,
+  "all_expected_git_blob_ids_match": true,
+  "refs_moved": false,
+  "records_applied": false,
+  "independent_preparation_review": "217 checks CLEAR; evidence/network-prepublication-independent/review.json"
+}

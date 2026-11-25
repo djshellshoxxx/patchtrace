@@ -48,6 +48,18 @@ def test_nsis_installer_script_uses_generated_manifest():
     assert 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\PatchTrace' in script
 
 
+def test_uninstall_removes_only_install_dir_from_shared_settings_key():
+    source = (ROOT / 'installer/PatchTrace.nsi').read_text(encoding='utf-8')
+    uninstall = source.split('Section "Uninstall"', 1)[1].split('SectionEnd', 1)[0]
+    # The key is shared with Qt and can also contain values from previous installs.
+    shared_key = r'Software\PatchTrace'
+    registry_operations = [line.strip() for line in uninstall.splitlines()
+                           if line.strip().startswith(('DeleteRegKey ', 'DeleteRegValue '))]
+    shared_operations = [op for op in registry_operations if shared_key.lower() in op.lower()]
+    assert shared_operations == [f'DeleteRegValue HKCU "{shared_key}" "InstallDir"']
+    assert r'DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\PatchTrace"' in registry_operations
+
+
 def test_nsis_source_paths_are_anchored_to_repository_root():
     script = (ROOT / "installer" / "PatchTrace.nsi").read_text(encoding="utf-8")
     assert '!insertmacro MUI_PAGE_LICENSE "${REPO_ROOT}\\LICENSE"' in script

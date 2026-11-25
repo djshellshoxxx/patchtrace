@@ -1,0 +1,254 @@
+[
+  {
+    "case": "tests/test_backend_progress.py::test_timeout_reports_effective_budget_stage_and_retains_process_receipt",
+    "status": "passed",
+    "time": "0.055",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_backend_progress.py::test_cancelled_process_receipt_does_not_become_timeout",
+    "status": "passed",
+    "time": "0.029",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_gui_tasks.py::test_cancel_drops_a_result_the_worker_still_produces",
+    "status": "passed",
+    "time": "0.706",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_gui_tasks.py::test_final_progress_cancel_drops_the_following_outcome[result]",
+    "status": "passed",
+    "time": "0.627",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_gui_tasks.py::test_final_progress_cancel_drops_the_following_outcome[error]",
+    "status": "passed",
+    "time": "0.632",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_gui_tasks.py::test_close_while_loading_cancels_and_joins[r0]",
+    "status": "passed",
+    "time": "0.615",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_gui_tasks.py::test_close_while_loading_cancels_and_joins[r1]",
+    "status": "passed",
+    "time": "0.630",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_gui_tasks.py::test_close_while_loading_cancels_and_joins[r2]",
+    "status": "passed",
+    "time": "0.621",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_gui_tasks.py::test_close_while_loading_cancels_and_joins[r3]",
+    "status": "passed",
+    "time": "0.614",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_gui_tasks.py::test_close_while_loading_cancels_and_joins[r4]",
+    "status": "passed",
+    "time": "0.658",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_gui_tasks.py::test_project_switch_mid_task_applies_only_the_new_project",
+    "status": "passed",
+    "time": "0.646",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_gui_tasks.py::test_shutdown_with_a_hung_worker_returns_in_time_and_names_it",
+    "status": "passed",
+    "time": "0.814",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_gui_tasks.py::test_shutdown_closes_lane_state_after_the_running_request",
+    "status": "passed",
+    "time": "0.703",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_gui_tasks.py::test_unlisted_legacy_registries_are_joined_at_shutdown[ui-discovery]",
+    "status": "passed",
+    "time": "0.610",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_gui_tasks.py::test_unlisted_legacy_registries_are_joined_at_shutdown[bundle-setup]",
+    "status": "passed",
+    "time": "0.602",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_jobs.py::test_output_tail_is_bounded",
+    "status": "passed",
+    "time": "0.055",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_jobs.py::test_cancel_and_timeout_terminate_children[True]",
+    "status": "passed",
+    "time": "0.067",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_jobs.py::test_cancel_and_timeout_terminate_children[False]",
+    "status": "passed",
+    "time": "2.041",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_jobs.py::test_precancel_does_not_start",
+    "status": "passed",
+    "time": "0.002",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_jobs.py::test_output_limit_stops_process",
+    "status": "passed",
+    "time": "0.014",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_jobs.py::test_windows_containment_failure_fails_closed",
+    "status": "passed",
+    "time": "0.002",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_jobs.py::test_windows_assignment_denial_terminates_suspended_child",
+    "status": "passed",
+    "time": "0.004",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_jobs.py::test_separate_streams_are_independent_and_bounded",
+    "status": "passed",
+    "time": "0.055",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_jobs.py::test_failure_between_spawn_and_supervision_still_kills_the_child",
+    "status": "passed",
+    "time": "0.546",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_jobs.py::test_descendant_holding_the_pipe_is_killed_while_the_exited_leader_is_unreaped",
+    "status": "skipped",
+    "time": "0.000",
+    "reason": "D:\\a\\patchtrace\\patchtrace\\tests\\test_jobs.py:769: POSIX process groups; the probe needs os.waitid"
+  },
+  {
+    "case": "tests/test_jobs.py::test_group_is_signalled_only_before_the_leader_is_reaped_on_stop[timeout]",
+    "status": "skipped",
+    "time": "0.000",
+    "reason": "D:\\a\\patchtrace\\patchtrace\\tests\\test_jobs.py:781: POSIX process groups; the probe needs os.waitid"
+  },
+  {
+    "case": "tests/test_jobs.py::test_group_is_signalled_only_before_the_leader_is_reaped_on_stop[cancelled]",
+    "status": "skipped",
+    "time": "0.000",
+    "reason": "D:\\a\\patchtrace\\patchtrace\\tests\\test_jobs.py:781: POSIX process groups; the probe needs os.waitid"
+  },
+  {
+    "case": "tests/test_jobs_progress.py::test_live_progress_is_supervisor_owned_throttled_immutable_and_final",
+    "status": "passed",
+    "time": "2.212",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_jobs_progress.py::test_quiet_child_has_periodic_progress_and_no_output_timestamp",
+    "status": "passed",
+    "time": "1.231",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_jobs_progress.py::test_final_progress_preserves_stream_totals_and_bounded_utf8_tails[65536]",
+    "status": "passed",
+    "time": "0.061",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_jobs_progress.py::test_final_progress_preserves_stream_totals_and_bounded_utf8_tails[257]",
+    "status": "passed",
+    "time": "0.057",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_jobs_progress.py::test_continuous_output_and_observer_errors_do_not_renew_deadline",
+    "status": "passed",
+    "time": "1.369",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_jobs_progress.py::test_final_observer_error_preserves_child_exit_code",
+    "status": "passed",
+    "time": "0.056",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_jobs_progress.py::test_cancellation_from_observer_still_terminates_descendants",
+    "status": "passed",
+    "time": "1.530",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_jobs_progress.py::test_output_limit_precedes_observer_and_keeps_final_tail_bounded",
+    "status": "passed",
+    "time": "0.072",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_jobs_progress.py::test_precancel_has_zero_timing_and_does_not_invoke_observer",
+    "status": "passed",
+    "time": "0.002",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_jobs_progress.py::test_existing_positional_result_and_no_observer_remain_compatible",
+    "status": "passed",
+    "time": "0.159",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_jobs_progress.py::test_execution_duration_excludes_cleanup_waits",
+    "status": "passed",
+    "time": "0.457",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_jobs_progress.py::test_observer_interrupt_still_cleans_up_running_child",
+    "status": "passed",
+    "time": "1.529",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_jobs_progress.py::test_observer_runs_without_blocking_pipe_reader_lock",
+    "status": "passed",
+    "time": "0.097",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_jobs_windows_launch.py::test_a_failing_kill_tree_still_closes_the_job_handles",
+    "status": "passed",
+    "time": "0.055",
+    "reason": ""
+  },
+  {
+    "case": "tests/test_service_postcommit_recovery.py::test_real_transaction_failure_keeps_prior_snapshot_and_allows_retry",
+    "status": "passed",
+    "time": "0.113",
+    "reason": ""
+  }
+]

@@ -2,6 +2,29 @@
 from __future__ import annotations
 
 
+def project_path_hint(value: object) -> str:
+    """Return a usable path string without probing the filesystem."""
+    return value if isinstance(value, str) and '\x00' not in value else ''
+
+
+def recent_projects(settings, *, newest: str | None = None, forget: str | None = None) -> list[str]:
+    """Read at most eight distinct project paths in most-recent-first order."""
+    paths = [newest] if newest else []
+    # Read the stored type: Qt's conversion to a list can truncate a scalar path at a NUL.
+    stored = settings.value('recent/projects')
+    if isinstance(stored, str):
+        stored = [stored]
+    if not isinstance(stored, list | tuple):
+        return paths
+    for value in stored:
+        path = project_path_hint(value)
+        if path and path != forget and path not in paths:
+            paths.append(path)
+            if len(paths) == 8:
+                break
+    return paths
+
+
 def adopt_project(window, service):
     previous = window.service
     recent_state = {key: window.settings.value(key) for key in ('recent/project', 'recent/projects')}
@@ -10,10 +33,9 @@ def adopt_project(window, service):
             window._stop_inspection()
         window.service = service
         window.refresh()
-        window.settings.setValue('recent/project', str(service.root))
-        recent = window.settings.value('recent/projects', [], type=list)
-        recent = [str(service.root), *[path for path in recent if path != str(service.root)]]
-        window.settings.setValue('recent/projects', recent[:8])
+        current = str(service.root)
+        window.settings.setValue('recent/project', current)
+        window.settings.setValue('recent/projects', recent_projects(window.settings, newest=current))
         window.refresh_recent()
     except BaseException:
         window.service = previous

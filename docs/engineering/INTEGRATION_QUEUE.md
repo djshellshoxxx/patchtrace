@@ -1,5 +1,19 @@
 # PatchTrace integration queue
 
+## November 24 combined qualification candidate
+
+The reviewed #358/#359 network and tooling work and #360/#361/#362 project,
+installer and backup work are combined with main's #363 catalogue fix. Frozen
+implementation: `c6b215c5222e4ec3ed760bc4fc9f92719b18bda8`. All donor histories,
+130 task IDs, 46 notes and retained evidence are preserved. The combined PR's
+live checks and merge state govern promotion; earlier pending-state paragraphs
+remain historical. Read [the current continuation](consolidation-20261124.md)
+for scope, independent reviews, conflict decisions and remaining gates.
+
+## November 23 project reliability candidate
+
+The [project reliability candidate](project-reliability-20261123.md) is based on ea160196. Verify its own checks. PR #359 repairs its separate parent #358. The [CI review](evidence/project-reliability-20261123/CI_REVIEW.md) identifies the exact tested trees for that stack.
+
 ## Current PR349 Intel + C4 follow-up
 
 [Current report](cycle837fe-native-c4-20261121.md) and [ledger](task-ledger.json):tested `6bf79fef` / `dc659c7e`, 1,396 passes/1 CODEX-5xfail, zero failures/errors/ordinary skips, required lint/dependencies/source binding and independent whole-tree review. ExistingPR349 combines fixed Windows identity, five Build environment help mappings and bounded Pages lock/isolation with earlier storage/Search/pinning/cache/frozen work. Exact new-source hosted/native/package gates remain pending;main/release readiness is not claimed.

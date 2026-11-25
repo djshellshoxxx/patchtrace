@@ -1,0 +1,57 @@
+{
+  "schema": "patchtrace/network-record-preservation/1",
+  "source": "9610919d29010d53cf00af3b7c38207ffd84f945",
+  "tree": "3d5e2965ef26235610a08fd8378cac078c6bd9a0",
+  "prior_tasks": 116,
+  "prior_notes": 46,
+  "new_tasks": 14,
+  "prior_task_order_preserved": true,
+  "prior_notes_identical": true,
+  "changed_task_ids": [
+    "837fe-ci-publication-concurrency-recovery",
+    "837fe-codex5-bounded-assessment",
+    "837fe-downloaded-windows-artifact-validation",
+    "837fe-live-ghidra-original-archive-recovery",
+    "codex5-per-command-audit-gap-20261121-95fe"
+  ],
+  "unchanged_prior_tasks": 111,
+  "before_task_states_retained": true,
+  "prefixes": [
+    {
+      "path": "docs/engineering-handoffs/cycle837fe-combined-pr349-20261121.md",
+      "before_bytes": 15276,
+      "before_sha256": "e876922eba3e514c3f8bbbeb10ec8cfb4e15c00793004102f12ba6e332e3d452",
+      "prefix_bytes": 1669,
+      "prefix_sha256": "ab76809ff5126a36342bf91d4dad4460882415af87b4ce4f0d9d62c9b4149000",
+      "after_bytes": 16945,
+      "after_sha256": "b9397d2189a1502c7c224273dede4d01c78ea66d1020c854a7b22810e1f4b8d5",
+      "prior_complete_bytes_preserved_once": true
+    },
+    {
+      "path": "docs/qa.md",
+      "before_bytes": 433733,
+      "before_sha256": "79ba4a57246ba455c92384111d89e5e7c354c520de56faac84eaad18eb2c7751",
+      "prefix_bytes": 1669,
+      "prefix_sha256": "ab76809ff5126a36342bf91d4dad4460882415af87b4ce4f0d9d62c9b4149000",
+      "after_bytes": 435402,
+      "after_sha256": "4303fc2671205fae167e245f2121d9313080d4a9b317dd13340b98e58b58219d",
+      "prior_complete_bytes_preserved_once": true
+    },
+    {
+      "path": "tasks/todo.md",
+      "before_bytes": 266629,
+      "before_sha256": "0b7c94fcd53650382cce8289481659c5080487e459bc79852cc8ac8247631ec5",
+      "prefix_bytes": 1669,
+      "prefix_sha256": "ab76809ff5126a36342bf91d4dad4460882415af87b4ce4f0d9d62c9b4149000",
+      "after_bytes": 268298,
+      "after_sha256": "6b83b53d3828fd7e4d7487fc668bb6bc59349e917b94adbfe43d6707a01bb596",
+      "prior_complete_bytes_preserved_once": true
+    }
+  ],
+  "historical_census": "Original181unmatched/16patch-equivalent unchanged",
+  "planned_final_record_parents": [
+    "9610919d29010d53cf00af3b7c38207ffd84f945",
+    "ea16019601486c831941f9bc1a7ba5862a170317"
+  ],
+  "main_content_already_incorporated": true
+}

@@ -1,0 +1,22 @@
+{
+  "source": "f08632ab81e6ab24fcc34fc994dd2dda2556d267",
+  "tree": "cb959c1bc0189697241ec2a89c9ec22efabceded",
+  "base": "96baaee20f390a3f2a5629de3764d32323bb80e5",
+  "branch": "codex/patchtrace-pilot-tooling-hash-closure-20261121-837fe",
+  "worktree": "/workspace/scratch/837fe19aae3a/repair-pilot-tooling-hash-closure",
+  "source_frozen": true,
+  "ownership_released_for_independent_review": true,
+  "files_changed": 7,
+  "history_commits": 4,
+  "pilot_test_passes": 19,
+  "affected_passes": 236,
+  "strict_C5_xfails": 2,
+  "unexpected_final_failures_errors_skips": 0,
+  "independent_review": "PENDING",
+  "exact_final_integrated_hosted_qualification": "PENDING",
+  "native_or_release_claim": false,
+  "source_proof_sha256": "f1b279e53cf900a717b4283138627a4dbe5076364a63387de716a64975bbb47c",
+  "wheel_verification_sha256": "3b5d932a0e5dbd3fa6a6ff15c88b826665953564c109121a85799d19ca086f9a",
+  "install_qualification_sha256": "15a51d171f920947da0a669eeed249220be361dfbd42efc505e9591948915437",
+  "source_qualification_sha256": "ed7b4f1317b80241e66ad7fbde06d4c8e2983d7395e8f5eaca87cbb01eada517"
+}

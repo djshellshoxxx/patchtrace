@@ -51,7 +51,7 @@ from .backend import BackendConfig, diagnose, parse_env_passthrough, quarantine_
 from .evidence import build_context, resolve_evidence
 from .gui.qt.codediff import clear_selections, compose_selections, row_selection, view_text
 from .gui.qt.host import PanelHost
-from .gui.qt.project_adoption import adopt_project
+from .gui.qt.project_adoption import adopt_project, project_path_hint, recent_projects
 from .gui.qt.theme import DARK
 from .interpretation import interpret, system_prompt
 from .offline_bundle import inspect_offline_bundle, install_offline_bundle
@@ -1857,14 +1857,14 @@ class MainWindow(QMainWindow):
 
     def refresh_recent(self):
         self.recent_menu.clear()
-        for path in self.settings.value('recent/projects', [], type=list):
-            action = self._action(str(path), lambda checked=False, p=path: self.open_recent(p))
+        for path in recent_projects(self.settings):
+            action = self._action(path.replace('&', '&&'), lambda checked=False, p=path: self.open_recent(p))
             apply_tooltip(action, 'action.recent_project', path=path)
             self.recent_menu.addAction(action)
         self.recent_menu.setEnabled(bool(self.recent_menu.actions()))
 
     def _forget_recent(self, path):
-        recent = [p for p in self.settings.value('recent/projects', [], type=list) if p != str(path)]
+        recent = recent_projects(self.settings, forget=str(path))
         self.settings.setValue('recent/projects', recent)
         self.refresh_recent()
 
@@ -1933,7 +1933,8 @@ class MainWindow(QMainWindow):
         self.investigation_dialog().exec()
 
     def open_project(self):
-        path = QFileDialog.getExistingDirectory(self, 'Open PatchTrace project', self.settings.value('recent/project', ''))
+        directory = project_path_hint(self.settings.value('recent/project'))
+        path = QFileDialog.getExistingDirectory(self, 'Open PatchTrace project', directory)
         if path:
             self._guard(lambda: self.set_service(ProjectService.open(Path(path))))
 

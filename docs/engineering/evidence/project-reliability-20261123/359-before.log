@@ -1,0 +1,22 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+__________ test_pin_verify_job_is_ubuntu_pinned_and_uploads_evidence ___________
+
+doc = {'name': 'Backend bundle (zero-download full build)', True: {'workflow_dispatch': {'inputs': {'version': {'description...: {'contents': 'read'}, 'concurrency': {'group': 'backend-bundle-${{ github.ref }}', 'cancel-in-progress': False}, ...}
+
+    def test_pin_verify_job_is_ubuntu_pinned_and_uploads_evidence(doc):
+        for name in ('workflow_dispatch', 'workflow_call'):
+            assert {'pin_verify', 'sigstore_identity', 'sigstore_issuer', 'gpg_fingerprint'} <= set(triggers(doc)[name]['inputs'])
+        job = doc['jobs']['vrfy']
+        assert job['runs-on'] == 'ubuntu-latest' and job['needs'] == 'pin'
+        assert "needs.pin.outputs.verify == 'true'" in job['if'] and 'permissions' not in job
+        text = all_run_text(job)
+>       assert re.search(r"pip install 'sigstore==\d+\.\d+\.\d+'", text)
+E       assert None
+E        +  where None = <function search at 0x7f2f5e9bd9e0>("pip install 'sigstore==\\d+\\.\\d+\\.\\d+'", '\n\npython -m pip install --require-hashes --only-binary=:all: -r tools/requirements-sigstore-ci.lock\npython tools/v...t "$IN_FPR"\n\nif [ -f pin-verify.json ]; then cat pin-verify.json; else echo "no pin-verify.json was written"; fi\n\n')
+E        +    where <function search at 0x7f2f5e9bd9e0> = re.search
+
+tests/test_backend_bundle_workflow.py:100: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_backend_bundle_workflow.py::test_pin_verify_job_is_ubuntu_pinned_and_uploads_evidence
+1 failed in 0.50s

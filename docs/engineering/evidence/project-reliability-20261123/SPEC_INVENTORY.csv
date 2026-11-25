@@ -1,0 +1,141 @@
+spec_path,document_title,documented_alias,historical_document_status,status_source,file_inventory_sha
+docs/specs/DOCKABLE-WORKSPACE-SPEC.md,Dockable workspace proposal,SPEC-DW-01 (proposed; cite by path),draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/INDEX.md,Spec index,INDEX,n/a,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/REGISTRY.md,Spec registry,REGISTRY,n/a,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/accessibility-baseline.md,"Accessibility, keyboard, DPI and localization baseline (SPEC-45)",SPEC-45,draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/acquisition.md,SPEC-08: Binary acquisition (Phase 3a),SPEC-08,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/ai-provider-interpretation.md,AI provider and interpretation contract (SPEC-41),SPEC-41,draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/anchor-fabric.md,Anchor fabric (SPEC-48),SPEC-48,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/app-settings.md,App settings and persistence contract (SPEC-43),SPEC-43,draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/architecture.md,"PatchTrace beta architecture (SPEC-01, schema v1)",SPEC-01,built,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/bindiff-adapter.md,SPEC-10: BinExport / BinDiff adapter (Phase 3c),SPEC-10,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/bindiff-execution.md,"SPEC-29: Real BinDiff execution (Phase C, step C4)",SPEC-29,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/binexport-producer-ghidra-host.md,BinExport2 producer and Ghidra host boundary (SPEC-49),SPEC-49,draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/binexport2-support.md,"SPEC-10b: BinExport2 support (Phase C, step C3)",SPEC-10b,built,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/buildenv-header-help.md,Build environment table header help,SPEC-BUILDENV-HEADER-HELP-01 (proposed; cite by path),Registration only,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/byte-representations.md,"Raw byte representations (SPEC-26 requirement B, Hex / Binary / Base64)",SPEC-26-B,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/calibration-corpus-and-model.md,"SPEC-28 (proposed number): Calibration corpus, model pipeline and numeric-confidence gate (plan step C9)",SPEC-39 (proposed; collision),draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/ci-action-pinning.md,Direct GitHub Actions source pinning,SPEC-CI-ACTIONS-01 (proposed; cite by path),Registration only,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/ci-pip-command-audit.md,Workflow pip command audit,SPEC-CI-PIP-AUDIT-01 (proposed; cite by path),Registration only,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/cli-profile-doctor-runtime.md,"CLI configuration, health and offline-runtime verbs: `patchtrace profile`, `patchtrace doctor`, `patchtrace runtime`",none assigned (cite by path),partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/cli-project-compare.md,"Headless project lifecycle and single-pair comparison: `patchtrace project`, `patchtrace compare`",none assigned (cite by path),partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/cli-umbrella.md,CLI umbrella contract (SPEC-44),SPEC-44,draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/completeness-audit.md,Specification and implementation completeness audit,none (audit; cite by path),n/a,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/csaf-cve-interpretation-engine.md,Microsoft CSAF CVE Interpretation Engine (SPEC-28),SPEC-35 (renamed),partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/diaphora-optional-engine.md,SPEC-DA-01: Optional Diaphora comparison technique for PatchTrace,SPEC-DA-01,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/enrichment-hardening-backlog.md,SPEC-07h: Enrichment hardening backlog (P1 items of the 2026-10-14 audit),SPEC-07h,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/enrichment.md,"SPEC-07: Phase 2 enrichment — change signals, ranking, WIL, CVE context, cache",SPEC-07,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/ghidriff-launcher-symbols.md,PatchTrace-owned Ghidriff launcher and symbol policy (SPEC-53),SPEC-53,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/ghidriff-timeout-progress.md,Ghidriff timeout and progress diagnostics (SPEC-01a),SPEC-01a,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/gui-framework.md,"GUI framework: panel registry, projection, anchors, theme, tooltips and CLI extensions (SPEC-54)",SPEC-54,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/gui-preflight-inspection.md,Immediate next-build GUI and preliminary PE inspection requirements (SPEC-26 proposal),"SPEC-26 (parent; parts A, C, E)",partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/kb-cve-correlation-and-acquisition.md,"SPEC-31: Microsoft KB ↔ CVE Correlation, Verified Binary Pair Resolution, and Patch Investigation",SPEC-34,approved,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/kb-cve/31-A-contracts-identity.md,"SPEC-31-A: Canonical Contracts, Identity, Provenance and Compatibility",KBC-A (SPEC-34),approved,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/kb-cve/31-B-msrc-reverse-index.md,"SPEC-31-B: MSRC Sources, KB Reverse Index, Coverage and Product-Scoped Remediation",KBC-B (SPEC-34),approved,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/kb-cve/31-C-product-build-pairs.md,"SPEC-31-C: Product/Build Lineage, Supersedence and Pair Resolution",KBC-C (SPEC-34),approved,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/kb-cve/31-D-acquisition-packages.md,"SPEC-31-D: Verified Acquisition, Delta Recovery and Offline Package Safety",KBC-D (SPEC-34),approved,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/kb-cve/31-E-evidence-intent.md,"SPEC-31-E: Correlation Evidence Graph, Patch-Intent Rules, Confounders and Calibration",KBC-E (SPEC-34),approved,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/kb-cve/31-F-workflow-ui-persistence.md,"SPEC-31-F: Transactional Workflow, Desktop/CLI Integration, Recovery and Migrations",KBC-F (SPEC-34),approved,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/kb-cve/31-G-components-discovery.md,"SPEC-31-G: Component Identification, Filename Evidence and Discovery Without Guesswork",KBC-G (SPEC-34),approved,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/kb-cve/31-H-tests-release.md,"SPEC-31-H: Test Corpus, Quality Gates, PR Ownership and Failure Reproduction",KBC-H (SPEC-34),approved,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/kb-cve/README.md,SPEC-31 Implementation Addenda: Developer Handoff Index,SPEC-34 (index),approved,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/kb-patch-search-and-pair-resolution.md,"SPEC-32: KB Patch Search, CVE Resolution, and Verified Binary Pair Selection",SPEC-37,approved,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/kb-patch-search-contract-blueprint.md,"SPEC-32E: Python Contract Blueprint, Result Shapes, and Integration Examples",KPS-E (SPEC-37),approved,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/kb-patch-search-pair-lifecycle.md,"SPEC-32B: Verified Binary Pair Eligibility, Session Storage, and Crash Recovery",KPS-B (SPEC-37),approved,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/kb-patch-search-qa-and-fixtures.md,"SPEC-32D: Test Corpus, Acceptance Gates, and Failure-Injection Protocol",KPS-D (SPEC-37),approved,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/kb-patch-search-source-adapters.md,SPEC-32A: Microsoft Patch Search Data Sources and Correlation Contracts,KPS-A (SPEC-37),approved,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/kb-patch-search-ui-cli-contract.md,"SPEC-32C: Patch Search GUI, CLI and Public Interface Contract",KPS-C (SPEC-37),approved,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/kb/adapter-binding-spec.md,"Binding the K8 adapters, the engine adapter and the KEV link-up to production (KBF-06)",SPEC-KB,draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/kb/advisory-revision-and-snapshot-identity-spec.md,"Advisory revisions, snapshot identity, staleness and cache keys (KBF-03)",SPEC-KB,draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/kb/beta-budgets-help-and-acceptance-spec.md,"KB / CVE / search / leads beta: budgets, limits, help text and acceptance gates (KBF-09)",SPEC-KB,draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/kb/cve-to-function-matching-spec.md,"From a CVE to candidate functions: anchors, hypotheses, ordering, false-positive control, confidence display (KBF-04)",SPEC-KB,draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/kb/leads-dock-lifecycle-spec.md,"Leads dock lifecycle: states, prepare / rank / publish phases, cancel (KBF-07)",SPEC-KB,draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/kb/live-acquisition-spec.md,"KB live acquisition: consent hosts, request plans, caching and the L1 probe (KBF-01)",SPEC-KB,draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/kb/search-anchors-bridge-spec.md,`patchtrace search --anchors-from CVE`: wiring the S10 anchor bridge (KBF-05),SPEC-KB,draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/kb/store-threading-spec.md,"Store threading: owner-thread-only project store, worker hand-off, KB workspace (KBF-08)",SPEC-KB,draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/kb/vendor-feeds-and-source-matrix-spec.md,"Vendor feeds, source lineage, CSAF import validation and the OSV decision (KBF-02)",SPEC-KB,draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/kev-exploitation-context.md,KEV exploitation context (SPEC-46),SPEC-46,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/known-answer-corpus.md,"SPEC-32: Known-answer corpus factory (Tier R, dev-only)",SPEC-32,partial,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/live-intel-probe-diagnostics.md,Live Intel version-probe diagnostic contract,SPEC-CI-INTEL-PROBES-01 (proposed; cite by path),Registration only,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/manual-corrections-exchange.md,Manual corrections and review state from the command line: `corrections-exchange/1`,none assigned (cite by path),implemented,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/multi-engine-evidence-calibration.md,SPEC-27: Cross-engine evidence fusion and calibration,SPEC-27,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/multi-engine-evidence-panel.md,"SPEC-28: Multi-engine evidence panel (Phase C, step C6)",SPEC-38 (proposed; collision),partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/multi-engine-orchestration.md,"SPEC-28: Multi-engine orchestration (Phase C: C0, C1, C2, C5)",SPEC-28,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/network-egress-privacy.md,"Network egress, consent and privacy statement (SPEC-42)",SPEC-42,draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/non-goals.md,Non-goals and recorded decisions (SPEC-55),SPEC-55,draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/nway.md,SPEC-09: N-way build comparison (Phase 3b),SPEC-09,built,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/offline-backend-installer.md,SPEC-06: Verified offline backend bundle and installer,SPEC-06,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/pages-build-isolation-and-hashes.md,Pages build isolation and dependency hashes,SPEC-CI-PAGES-ISOLATION-01 (proposed; cite by path),Registration only,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/pages-deployment-control.md,Pages deployment control,SPEC-CI-PAGES-01 (proposed; cite by path),Registration only,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/panels/README.md,Panel specs,SPEC-54 (panels),n/a,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/panels/graph-inspection.md,"Calls panel: DOT export, call-site reveal and minimap (SPEC-26 slice)",SPEC-47,built,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/panels/related.md,Related-evidence panel (FAB-6),SPEC-54,proposed,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/patch-intent-localization-engine.md,Patch Intent Localization and Triage Engine (SPEC-30),SPEC-30,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/pe-overview.md,"PE overview (SPEC-26 requirement D, backend stream)",SPEC-26-D,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/pe-version-authenticode.md,"PE version resource, manifest and Authenticode verification without execution (SPEC-51; SPEC-26 D2)",SPEC-51,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/BUNDLE-acceptance-isolation-spec.md,"BUNDLE acceptance: isolation, network denial, read-only tree and evidence",,No registry or index status,File only,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/BUNDLE-import-inspector-and-consent-spec.md,"BUNDLE import path: offline ZIP inspector, private per-user install and the consent dialog",,No registry or index status,File only,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/BUNDLE-integration-plan.md,BUNDLE: one-download full build (app + private Python/JDK/Ghidra/Ghidriff payload),unregistered,plan for build,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/BUNDLE-licence-notices-and-source-offer-spec.md,"BUNDLE licence obligations: policy gate, NOTICE.txt, LICENSES tree, THIRD-PARTY.json and the written source offer",,No registry or index status,File only,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/BUNDLE-payload-strip-jlink-size-spec.md,"BUNDLE payload: strip rules, jlink runtime, FID databases, size budgets, split parts and the PT-BUNDLE code table",,No registry or index status,File only,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/BUNDLE-pin-digest-and-upgrade-spec.md,"BUNDLE pin file, digest sources and the pin upgrade procedure",,No registry or index status,File only,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/BUNDLE-release-checklist.md,BUNDLE release checklist: Windows alpha acceptance and prerelease rules,,No registry or index status,File only,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/BUNDLE-reproducibility-spec.md,"BUNDLE reproducibility: what is deterministic, what is not, and the double-build check",,No registry or index status,File only,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/BUNDLE-runtime-policy-spec.md,"BUNDLE runtime policy: symbol servers off, per-analysis bounds, isolated child environment",,No registry or index status,File only,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/BUNDLE-source-tarball-canonical-form-spec.md,"BUNDLE Ghidriff source tarball: canonical form, digests and the content fallback",,No registry or index status,File only,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/BUNDLE-wheelhouse-and-pyghidra-spec.md,"BUNDLE wheelhouse: hash-locked, index-free installation and the PyGhidra 3.0.2 versus 3.1.0 decision",,No registry or index status,File only,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/CAP-integration-plan.md,CAP integration plan: capa capability deltas on matched function pairs,unregistered,Program E phase E-1 research plan,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/DIE-integration-plan.md,"DIE integration plan: build-environment fingerprint, delta and noise attribution (Detect It Easy `diec` 3.21 plus PatchTrace PE facts)",unregistered,Program E E-1 research plan,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/E6-test-performance-beta-plan.md,"E-6 plan: final feature audit, bug check, scripted beta, performance, Windows smoke",unregistered,plan,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/FAB-integration-plan.md,"FAB integration plan: anchor fabric for cross-feature links (Program E, track FAB)",unregistered,research plan and FAB-0 card,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/GDE-integration-plan.md,"GDE integration plan: deterministic guided-RE teacher (`guide/`, contract `guide-lesson/1`)",GDE (unnumbered),deferred,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/GUI-integration-plan.md,"GUI integration plan: panel registry, shared widgets and threading for the single main window (Program E, track GUI)",unregistered,research plan,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/KB-integration-plan.md,KB integration plan: one KB -> CVE -> product -> binaries workflow (track KB),unregistered,Program E research plan,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/KB2-source-facts.md,KB2: external source facts and synthetic fixtures for the KB workflow,unregistered,research output,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/KEV-integration-plan.md,KEV integration plan: CISA Known Exploited Vulnerabilities as an explained exploitation-context channel,unregistered,2026-10-14: slices K0,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/LBL-DATA-integration-plan.md,"LBL-DATA integration plan: training data path, corpus-growth admission, train.py hardening, pre-lock checklist",,No registry or index status,File only,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/LBL-integration-plan.md,"LBL integration plan: label training (Tier R completion, evaluation harness, training run, honest scope, Tier W runner)",unregistered,-,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/OUTSTANDING-specs-ledger.md,Outstanding specs ledger (program E),unregistered,2026-10-14,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/PIL-integration-plan.md,"PIL integration plan: patch-intent localization (SPEC-30 a-d), CSAF remainders and the Leads panel",unregistered,-,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/README.md,Program E integration plans,unregistered,-,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/WB1-integration-plan.md,"WB1 integration plan: unified indexed search (""find anything"": SQLite FTS5 + RapidFuzz + QCompleter)",unregistered,-,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/WB2-integration-plan.md,"WB2 integration plan: call graph / XREF explorer (research output, 2026-10-14; plan only, no code)",unregistered,-,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/WB3-integration-plan.md,WB3 integration plan: pair-aware strings on the built FLOSS adapter,unregistered,E-1 research plan,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/WBQ-integration-plan.md,"WBQ integration plan: quick wins (code colours and token marks, PE build facts, symbol names)",unregistered,research plan plus built slices,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/program-e/YRX-integration-plan.md,YRX integration plan: analyst-reviewed discoveries to tested YARA-X rules,unregistered,E-1 research plan,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/qbindiff-inspired-matching.md,SPEC-QB-01: Configurable graph-aware function matching,SPEC-QB-01,draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/qbindiff-modular-integration.md,SPEC-QB-02: Build-safe modular integration and release gates,SPEC-QB-02,draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/radiff2-inspired-comparison.md,SPEC-RD-01 — radiff2-inspired multi-layer binary comparison,SPEC-RD-01,draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/radiff2-modular-integration.md,"SPEC-RD-02 — radiff2 build-safe integration, dependency and CI contract",SPEC-RD-02,draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/report-export-contract-v2.md,Report and export contract v2 (SPEC-50),SPEC-50,draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/runtime-discovery.md,Local runtime discovery (SPEC-05),SPEC-05,built,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/schemas.md,Normalized schemas (SPEC-02),SPEC-02,built,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/secondary-engine.md,SPEC-11: Secondary engine — Rizin rz-diff (Phase 3d),SPEC-11,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/series-window.md,"SPEC-09b: N-way Series window and per-hop ranking (Phase C, item C7)",SPEC-09b,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/three-tool-evidence-adapters.md,SPEC-29 — Three-tool patch investigation adapters,SPEC-36 (renamed),partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/tier-w-local-corpus.md,"SPEC-33: Tier W local-only Windows calibration corpus (Winbindex pairs, public-PDB labels)",SPEC-33,partial,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/ui.md,Desktop workflow (SPEC-04),SPEC-04,built,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/unified-engine/00-decisions.md,"SPEC-31 / 00 Decisions, conflicts and open USER questions (unified binary-diff engine)",SPEC-31/00,draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/unified-engine/01-architecture.md,"SPEC-31 / 01 Architecture: layers, modules, import DAG, processes, data flow",SPEC-31/01,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/unified-engine/02-data-model.md,"SPEC-31 / 02 Data model: contracts, storage, keys, limits (contract freeze)",SPEC-31/02,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/unified-engine/03-extraction.md,"SPEC-31 / 03 Extraction: ProgramIR from Ghidra (GZF reuse first), ingest, PE tables",SPEC-31/03,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/unified-engine/04-matching-pipeline.md,"SPEC-31 / 04 L1 matching pipeline: pass ladder, propagation, residual alignment",SPEC-31/04,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/unified-engine/05-fusion-and-noise.md,"SPEC-31 / 05 Fusion (independence components, evidence classes, decisions) and L2 noise control (proof tiers)",SPEC-31/05,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/unified-engine/06-adapters.md,SPEC-31 / 06 Adapters: external engines and stored outputs as evidence sources,SPEC-31/06,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/unified-engine/07-ui-and-cli.md,SPEC-31 / 07 UI (one comparison window) and CLI,SPEC-31/07,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/unified-engine/08-evaluation.md,"SPEC-31 / 08 Evaluation: gates, corpora, parity harness, tests, performance",SPEC-31/08,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/unified-engine/09-licensing.md,"SPEC-31 / 09 Licensing: per technique source, licence, reuse method, notices",SPEC-31/09,draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/unified-engine/10-amendments.md,SPEC-31 / 10 Amendments to existing specs (so none is left contradicted),SPEC-31/10,draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/unified-engine/11-review-log.md,SPEC-31 / 11 Independent review log (2026-10-14),SPEC-31/11,n/a,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/unified-engine/12-features2-proposal.md,"SPEC-31 / 12 Proposal: `features/2` with families U and F (amendment A-07, proposal only)",SPEC-31/12,proposal,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/unified-engine/13-remaining-work-plan.md,"SPEC-31 / 13 Remaining work plan: slices UE-R1..UE-R13 (integration, live gates, residual features)",SPEC-31/13,plan,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/unified-engine/README.md,"SPEC-31: Unified binary-diff engine (derived, one window)",SPEC-31,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/verification.md,"Requirements, acceptance and audit (SPEC-03)",SPEC-03,built,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/windows-acceptance-and-milestone-builds.md,Windows acceptance and milestone builds,SPEC-40 (proposed; unnumbered),draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/windows-release-signing-policy.md,Windows release and code-signing policy (SPEC-52),SPEC-52,draft,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/workbench/01-search-fts5-rapidfuzz.md,PT-WB-01: Advanced Investigation Search (SQLite FTS5 + optional RapidFuzz),PT-WB-01,approved,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/workbench/02-networkx-callgraph.md,PT-WB-02: Interactive Call Graph and Cross-Reference Explorer (NetworkX),PT-WB-02,approved,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/workbench/03-floss-strings.md,PT-WB-03: FLOSS Versioned String Extraction and Side-by-Side Investigation,PT-WB-03,approved,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/workbench/04-quickwins.md,"PT-WB-QW: Additional Very-Low-Effort, High-Value Integrations",PT-WB-04,draft,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/workbench/README.md,PatchTrace Workbench: Three Reusable Integrations and Easy-Win Addenda,PT-WB (index),approved,INDEX,ea16019601486c831941f9bc1a7ba5862a170317
+docs/specs/yara-x-rule-workflow.md,YARA-X rule workflow (SPEC-47),SPEC-47,partial,REGISTRY,ea16019601486c831941f9bc1a7ba5862a170317

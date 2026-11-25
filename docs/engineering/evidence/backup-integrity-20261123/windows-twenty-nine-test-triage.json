@@ -1,0 +1,183 @@
+{
+  "old_tested_merge": "8135def48fe3fd1b651928f6c6144e08f047619a",
+  "old_head": "6ffe819e71d48793f8207bd64d7480fbc03e2ef5",
+  "old_native_job": 138062824857,
+  "current_head": "76bcca7afe4ade59db2294b86b88de175c8a3172",
+  "local_environment": "Linux; real SQLite; injected differing stable handle/path ctime. Does not emulate Windows sharing restrictions.",
+  "tests": [
+    {
+      "test": "tests.test_audit116_create_rollback::test_failed_create_leaves_no_owned_files_and_retry_works",
+      "observed": "ValueError",
+      "group": "Fresh creation refused during pathname/descriptor comparison",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_audit116_create_rollback::test_cleanup_retains_lock_until_owned_files_are_removed",
+      "observed": "ValueError",
+      "group": "Fresh creation refused during pathname/descriptor comparison",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_audit_core::test_failed_database_initialization_is_atomic_and_retryable",
+      "observed": "ValueError",
+      "group": "Fresh creation refused during pathname/descriptor comparison",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_creation_replacement_refusal::test_replacement_after_admission_preserves_database_and_companions[current-empty-]",
+      "observed": "PermissionError",
+      "group": "Fixture kept SQLite handle open during authored replacement",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_creation_replacement_refusal::test_replacement_after_admission_preserves_database_and_companions[current-empty--journal]",
+      "observed": "PermissionError",
+      "group": "Fixture kept SQLite handle open during authored replacement",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_creation_replacement_refusal::test_replacement_after_admission_preserves_database_and_companions[current-empty--wal]",
+      "observed": "PermissionError",
+      "group": "Fixture kept SQLite handle open during authored replacement",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_creation_replacement_refusal::test_replacement_after_admission_preserves_database_and_companions[current-empty--shm]",
+      "observed": "PermissionError",
+      "group": "Fixture kept SQLite handle open during authored replacement",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_creation_replacement_refusal::test_replacement_after_admission_preserves_database_and_companions[zero-byte-]",
+      "observed": "PermissionError",
+      "group": "Fixture kept SQLite handle open during authored replacement",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_creation_replacement_refusal::test_replacement_after_admission_preserves_database_and_companions[zero-byte--journal]",
+      "observed": "PermissionError",
+      "group": "Fixture kept SQLite handle open during authored replacement",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_creation_replacement_refusal::test_replacement_after_admission_preserves_database_and_companions[zero-byte--wal]",
+      "observed": "PermissionError",
+      "group": "Fixture kept SQLite handle open during authored replacement",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_creation_replacement_refusal::test_replacement_after_admission_preserves_database_and_companions[zero-byte--shm]",
+      "observed": "PermissionError",
+      "group": "Fixture kept SQLite handle open during authored replacement",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_creation_replacement_refusal::test_replacement_at_connection_open_preserves_database_and_companions[]",
+      "observed": "PermissionError",
+      "group": "Fixture kept SQLite handle open during authored replacement",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_creation_replacement_refusal::test_replacement_at_connection_open_preserves_database_and_companions[-journal]",
+      "observed": "PermissionError",
+      "group": "Fixture kept SQLite handle open during authored replacement",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_creation_replacement_refusal::test_replacement_at_connection_open_preserves_database_and_companions[-wal]",
+      "observed": "PermissionError",
+      "group": "Fixture kept SQLite handle open during authored replacement",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_creation_replacement_refusal::test_replacement_at_connection_open_preserves_database_and_companions[-shm]",
+      "observed": "PermissionError",
+      "group": "Fixture kept SQLite handle open during authored replacement",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_creation_replacement_refusal::test_initialization_failure_cannot_unlink_a_replacement",
+      "observed": "PermissionError",
+      "group": "Fixture kept SQLite handle open during authored replacement",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_creation_replacement_refusal::test_new_creation_cannot_claim_a_replacement_at_connection_open",
+      "observed": "assert {}",
+      "group": "Fresh creation refused before replacement callback",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_gui_creation_retry::test_new_wizard_retries_after_real_failed_creation",
+      "observed": "ValueError",
+      "group": "Fresh creation refused during pathname/descriptor comparison",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_project_cli::test_a_refused_second_input_exits_2_and_leaves_no_partial_project[not-a-pe]",
+      "observed": "AssertionError",
+      "group": "Fresh creation refused before CLI could report expected input error",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_project_cli::test_a_refused_second_input_exits_2_and_leaves_no_partial_project[not-amd64]",
+      "observed": "AssertionError",
+      "group": "Fresh creation refused before CLI could report expected input error",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_project_cli::test_a_refused_second_input_exits_2_and_leaves_no_partial_project[missing-file]",
+      "observed": "AssertionError",
+      "group": "Fresh creation refused before CLI could report expected input error",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_project_cli::test_a_refused_first_input_exits_2_and_leaves_no_partial_project[missing-file]",
+      "observed": "AssertionError",
+      "group": "Fresh creation refused before CLI could report expected input error",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_project_cli::test_a_refused_first_input_exits_2_and_leaves_no_partial_project[not-a-pe]",
+      "observed": "AssertionError",
+      "group": "Fresh creation refused before CLI could report expected input error",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_project_cli::test_a_refused_first_input_exits_2_and_leaves_no_partial_project[a-directory]",
+      "observed": "AssertionError",
+      "group": "Fresh creation refused before CLI could report expected input error",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_project_store_constructor_cleanup::test_initialization_stop_keeps_create_and_retry_ownership[new-keyboard]",
+      "observed": "ValueError",
+      "group": "Fresh creation refused during pathname/descriptor comparison",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_project_store_constructor_cleanup::test_initialization_stop_keeps_create_and_retry_ownership[new-exit]",
+      "observed": "ValueError",
+      "group": "Fresh creation refused during pathname/descriptor comparison",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_project_store_constructor_cleanup::test_initialization_stop_keeps_create_and_retry_ownership[new-neutral]",
+      "observed": "ValueError",
+      "group": "Fresh creation refused during pathname/descriptor comparison",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_project_store_constructor_cleanup::test_initialization_stop_keeps_create_and_retry_ownership[new-sqlite]",
+      "observed": "ValueError",
+      "group": "Fresh creation refused during pathname/descriptor comparison",
+      "current_local_replay": "passed"
+    },
+    {
+      "test": "tests.test_service_storage_audit::test_ctrl_c_during_creation_removes_the_half_initialised_database",
+      "observed": "ValueError",
+      "group": "Fresh creation refused during pathname/descriptor comparison",
+      "current_local_replay": "passed"
+    }
+  ]
+}

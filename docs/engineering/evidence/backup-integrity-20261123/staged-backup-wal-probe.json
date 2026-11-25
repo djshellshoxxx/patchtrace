@@ -1,0 +1,55 @@
+{
+  "delete": {
+    "source_companions_at_backup": {},
+    "published_service_companions": {},
+    "published_cli_companions": {},
+    "private_lock_published": false,
+    "published_journal_mode": "delete",
+    "quick_check": "ok",
+    "service_restore": {
+      "restored_model": true,
+      "restored_sql": true,
+      "mode_on_reopen": "delete"
+    },
+    "cli_restore": {
+      "restored_model": true,
+      "restored_sql": true,
+      "mode_on_reopen": "delete"
+    },
+    "history_rows": 6,
+    "sidecar_count": 3,
+    "cli_result": true,
+    "cli_exit": 0
+  },
+  "wal": {
+    "source_companions_at_backup": {
+      "project.sqlite3-shm": 32768,
+      "project.sqlite3-wal": 49472
+    },
+    "published_service_companions": {
+      "project.sqlite3-shm": 32768,
+      "project.sqlite3-wal": 0
+    },
+    "published_cli_companions": {
+      "project.sqlite3-shm": 32768,
+      "project.sqlite3-wal": 0
+    },
+    "private_lock_published": false,
+    "published_journal_mode": "wal",
+    "quick_check": "ok",
+    "service_restore": {
+      "restored_model": true,
+      "restored_sql": true,
+      "mode_on_reopen": "wal"
+    },
+    "cli_restore": {
+      "restored_model": true,
+      "restored_sql": true,
+      "mode_on_reopen": "wal"
+    },
+    "history_rows": 6,
+    "sidecar_count": 3,
+    "cli_result": true,
+    "cli_exit": 0
+  }
+}

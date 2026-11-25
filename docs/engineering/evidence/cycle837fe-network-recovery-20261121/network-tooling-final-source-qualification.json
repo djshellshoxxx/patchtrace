@@ -1,0 +1,163 @@
+{
+  "schema": "patchtrace/network-tooling-combined-local-qualification/1",
+  "observed_at": "2026-11-21T15:52:59.354185+00:00",
+  "source": "9610919d29010d53cf00af3b7c38207ffd84f945",
+  "tree": "3d5e2965ef26235610a08fd8378cac078c6bd9a0",
+  "base": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+  "selectors": [
+    "tests/test_netutil_read_deadline.py",
+    "tests/test_netutil_abandoned_cleanup.py",
+    "tests/test_cancel_latency.py",
+    "tests/test_providers_transport.py",
+    "tests/test_kev_transport.py",
+    "tests/test_intel_transport.py",
+    "tests/test_csaf_redirect_integrity.py",
+    "tests/test_enrichment_intelligence.py",
+    "tests/test_optional_import_recovery.py",
+    "tests/test_optional_deps.py",
+    "tests/test_search_capability.py",
+    "tests/test_search_fuzzy.py",
+    "tests/test_search_synergy.py",
+    "tests/test_doctor_cli.py",
+    "tests/test_intel_offline_cache.py",
+    "tests/test_intel_discovery.py",
+    "tests/test_spec_registry.py",
+    "tests/test_pilot_eval_metrics.py",
+    "tests/test_pilot_eval_gate.py",
+    "tests/test_pilot_dependency_lock.py",
+    "tests/test_codex5_command_audit_20261121.py",
+    "tests/test_codex_pkg_workflows.py",
+    "tests/test_site_dependency_lock.py",
+    "tests/test_pilot_properties.py::test_localization_is_idempotent_and_ignores_the_clock",
+    "tests/test_sigstore_dependency_lock.py",
+    "tests/test_verify_backend_pins.py"
+  ],
+  "maintained": {
+    "label": "maintained",
+    "source": "9610919d29010d53cf00af3b7c38207ffd84f945",
+    "tree": "3d5e2965ef26235610a08fd8378cac078c6bd9a0",
+    "argv": [
+      "/workspace/scratch/837fe19aae3a/pilot-tooling-source-validation-venv/bin/python",
+      "-I",
+      "-B",
+      "/workspace/scratch/837fe19aae3a/evidence/network-tooling-final-source-qualification/pytest-bootstrap.py",
+      "/workspace/scratch/837fe19aae3a/PatchTrace-network-recovery-followup",
+      "/workspace/scratch/837fe19aae3a/evidence/network-tooling-final-source-qualification/source-binding.json",
+      "-q",
+      "tests/test_netutil_read_deadline.py",
+      "tests/test_netutil_abandoned_cleanup.py",
+      "tests/test_cancel_latency.py",
+      "tests/test_providers_transport.py",
+      "tests/test_kev_transport.py",
+      "tests/test_intel_transport.py",
+      "tests/test_csaf_redirect_integrity.py",
+      "tests/test_enrichment_intelligence.py",
+      "tests/test_optional_import_recovery.py",
+      "tests/test_optional_deps.py",
+      "tests/test_search_capability.py",
+      "tests/test_search_fuzzy.py",
+      "tests/test_search_synergy.py",
+      "tests/test_doctor_cli.py",
+      "tests/test_intel_offline_cache.py",
+      "tests/test_intel_discovery.py",
+      "tests/test_spec_registry.py",
+      "tests/test_pilot_eval_metrics.py",
+      "tests/test_pilot_eval_gate.py",
+      "tests/test_pilot_dependency_lock.py",
+      "tests/test_codex5_command_audit_20261121.py",
+      "tests/test_codex_pkg_workflows.py",
+      "tests/test_site_dependency_lock.py",
+      "tests/test_pilot_properties.py::test_localization_is_idempotent_and_ignores_the_clock",
+      "tests/test_sigstore_dependency_lock.py",
+      "tests/test_verify_backend_pins.py",
+      "-p",
+      "no:cacheprovider",
+      "--rootdir=/workspace/scratch/837fe19aae3a/PatchTrace-network-recovery-followup",
+      "--basetemp=/workspace/scratch/837fe19aae3a/evidence/network-tooling-final-source-qualification/tmp/maintained",
+      "--junitxml=/workspace/scratch/837fe19aae3a/evidence/network-tooling-final-source-qualification/maintained.xml"
+    ],
+    "cwd": "/workspace/scratch/837fe19aae3a/PatchTrace-network-recovery-followup",
+    "started_at": "2026-11-21T15:52:35.460027+00:00",
+    "seconds": 23.31764963099704,
+    "exit_code": 0,
+    "source_after": {
+      "head": "9610919d29010d53cf00af3b7c38207ffd84f945",
+      "tree": "3d5e2965ef26235610a08fd8378cac078c6bd9a0",
+      "status": ""
+    },
+    "junit": {
+      "cases": 656,
+      "passed": 654,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xfailed": 2
+    }
+  },
+  "tooling": [
+    {
+      "label": "whole-ruff",
+      "source": "9610919d29010d53cf00af3b7c38207ffd84f945",
+      "tree": "3d5e2965ef26235610a08fd8378cac078c6bd9a0",
+      "argv": [
+        "/workspace/scratch/837fe19aae3a/pilot-tooling-source-validation-venv/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "ruff",
+        "check",
+        "--no-cache",
+        "src",
+        "tests",
+        "tools"
+      ],
+      "cwd": "/workspace/scratch/837fe19aae3a/PatchTrace-network-recovery-followup",
+      "started_at": "2026-11-21T15:52:58.794396+00:00",
+      "seconds": 0.21461953099787934,
+      "exit_code": 0,
+      "source_after": {
+        "head": "9610919d29010d53cf00af3b7c38207ffd84f945",
+        "tree": "3d5e2965ef26235610a08fd8378cac078c6bd9a0",
+        "status": ""
+      }
+    },
+    {
+      "label": "pip-check",
+      "source": "9610919d29010d53cf00af3b7c38207ffd84f945",
+      "tree": "3d5e2965ef26235610a08fd8378cac078c6bd9a0",
+      "argv": [
+        "/workspace/scratch/837fe19aae3a/pilot-tooling-source-validation-venv/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "cwd": "/workspace/scratch/837fe19aae3a/PatchTrace-network-recovery-followup",
+      "started_at": "2026-11-21T15:52:59.021965+00:00",
+      "seconds": 0.3160375439983909,
+      "exit_code": 0,
+      "source_after": {
+        "head": "9610919d29010d53cf00af3b7c38207ffd84f945",
+        "tree": "3d5e2965ef26235610a08fd8378cac078c6bd9a0",
+        "status": ""
+      }
+    }
+  ],
+  "expected_failures": [
+    "tests.test_codex5_command_audit_20261121::test_all_explicit_workflow_pip_installs_are_protected",
+    "tests.test_codex_pkg_workflows::test_pip_downloads_require_hashes"
+  ],
+  "source_before_and_after_exact_and_clean": true,
+  "environment_rebound_or_installed": false,
+  "scope": "Maintained source tests using authored loopback, fake transport, local files and registry fixtures only",
+  "full_suite_run": false,
+  "native_or_windows_claim": false,
+  "separate_source_counts_not_aggregated": true,
+  "remaining_gates": [
+    "Independent combined-source review",
+    "Final records and actual-main ancestry reconciliation",
+    "Exact final-source hosted full Linux and Windows QA and all applicable platform/native jobs",
+    "Fresh current-head/main/ownership/approval guards before expected-head REST merge"
+  ]
+}

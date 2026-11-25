@@ -65,9 +65,8 @@ The layout is stored in OS settings (`layout/schema`, `layout/state` capped at 6
 | Alt+Left / Alt+Right | Navigate back / forward |
 | F6 / Shift+F6 | Next / previous panel region |
 | Ctrl+Shift+P | Command palette |
-| Ctrl+Shift+E, U, L, F, G, T, A, B, R, K, X (built) | Engine evidence, Unified, Leads, Search, Calls, Strings, Capabilities, Build environment, Detection rules, KB and CVE, Exploitation context |
-| Ctrl+Shift+H (reserved, Guide not built) | Guide |
-| Ctrl+Shift+F, G, T, A, B, R, K, X, H (planned) | reserved for the planned panels above |
+
+For panel shortcuts and their availability, see the [keyboard navigation reference](../help/49-keyboard-and-command-navigation.md).
 
 The main-window keys are literals in `src/patchtrace/ui.py`; `gui/shortcuts.py` lists them as reserved so a panel cannot claim one. Menus have no Alt-letter mnemonics yet (SPEC-45 audit).
 

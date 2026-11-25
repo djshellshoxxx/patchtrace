@@ -32,6 +32,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from .ingestion import file_fingerprint, safe_path
+from .sqlite_paths import project_database_uri
 
 BACKUP_DIR = 'backups'
 SNAPSHOT_SHA = 'SELECT sha256 FROM current_snapshot WHERE singleton=1'
@@ -121,7 +122,7 @@ def _fingerprint_once(path: Path) -> _Version | None:
 
 
 def _open_read_only(path: Path) -> sqlite3.Connection:
-    return sqlite3.connect(f'{Path(path).as_uri()}?mode=ro', uri=True, timeout=5)
+    return sqlite3.connect(f'{project_database_uri(Path(path))}?mode=ro', uri=True, timeout=5)
 
 
 def _answers(db: sqlite3.Connection, queries: Sequence[str]) -> list[list[tuple]]:

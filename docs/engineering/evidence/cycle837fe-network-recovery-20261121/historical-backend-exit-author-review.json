@@ -1,0 +1,116 @@
+{
+  "schema": "patchtrace/historical-branch-review/1",
+  "branch": "fix/backend-exit-diagnostics",
+  "classification": "SUPERSEDED",
+  "whole_branch_accounting_complete": true,
+  "donor_head": "bc00a6912dde57482a301bf64ef6fbc3f324cb92",
+  "donor_tree": "ca7b3bf15c27588560eb09c31802b58be5d7c12b",
+  "comparison_head": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+  "comparison_tree": "4a07cd88ded407bef30a8aeb81961e4041822dc2",
+  "merge_base": "736332cf63d3c7927f5c17f4aea5150f624bf957",
+  "unique_nonmerge_commits": 6,
+  "unique_merge_commits": 1,
+  "net_changed_paths": 6,
+  "all_parent_historical_paths": 13,
+  "inherited_merge_input_only_paths": 7,
+  "missing_compatible_contribution_found": false,
+  "source_disposition": "Retain current classifier integration, expanded fixed hints and stronger isolation; no code port needed",
+  "semantic_proof": "All original classifier AST retained after removing one later cached-symbol branch; all three original regression definitions (8 cases) AST-identical; specification/module/QA paragraph retained",
+  "validation": [
+    {
+      "file": "historical-tests-before-fix.xml",
+      "cases": 8,
+      "passed": 0,
+      "failed": 8,
+      "errors": 0,
+      "skipped": 0,
+      "failures": [
+        {
+          "id": "tests.test_jobs::test_exit_diagnostics_identify_common_failures_without_echoing_raw_logs[java.lang.IllegalArgumentException: Path element starting with '.' is not permitted-dot-prefixed]",
+          "message": "ImportError: cannot import name 'describe_backend_exit' from 'patchtrace.diagnostics' (/workspace/scratch/837fe19aae3a/review-historical-backend-exit-before-fix/src/patchtrace/diagnostics.py)"
+        },
+        {
+          "id": "tests.test_jobs::test_exit_diagnostics_identify_common_failures_without_echoing_raw_logs[java.lang.UnsupportedClassVersionError: class file version-JDK]",
+          "message": "ImportError: cannot import name 'describe_backend_exit' from 'patchtrace.diagnostics' (/workspace/scratch/837fe19aae3a/review-historical-backend-exit-before-fix/src/patchtrace/diagnostics.py)"
+        },
+        {
+          "id": "tests.test_jobs::test_exit_diagnostics_identify_common_failures_without_echoing_raw_logs[ModuleNotFoundError: No module named 'ghidriff'-Ghidriff installation]",
+          "message": "ImportError: cannot import name 'describe_backend_exit' from 'patchtrace.diagnostics' (/workspace/scratch/837fe19aae3a/review-historical-backend-exit-before-fix/src/patchtrace/diagnostics.py)"
+        },
+        {
+          "id": "tests.test_jobs::test_exit_diagnostics_identify_common_failures_without_echoing_raw_logs[java.lang.OutOfMemoryError: Java heap space-memory]",
+          "message": "ImportError: cannot import name 'describe_backend_exit' from 'patchtrace.diagnostics' (/workspace/scratch/837fe19aae3a/review-historical-backend-exit-before-fix/src/patchtrace/diagnostics.py)"
+        },
+        {
+          "id": "tests.test_jobs::test_exit_diagnostics_identify_common_failures_without_echoing_raw_logs[OSError: No space left on device-disk space]",
+          "message": "ImportError: cannot import name 'describe_backend_exit' from 'patchtrace.diagnostics' (/workspace/scratch/837fe19aae3a/review-historical-backend-exit-before-fix/src/patchtrace/diagnostics.py)"
+        },
+        {
+          "id": "tests.test_jobs::test_exit_diagnostics_identify_common_failures_without_echoing_raw_logs[java.nio.file.AccessDeniedException: C:/work-permissions]",
+          "message": "ImportError: cannot import name 'describe_backend_exit' from 'patchtrace.diagnostics' (/workspace/scratch/837fe19aae3a/review-historical-backend-exit-before-fix/src/patchtrace/diagnostics.py)"
+        },
+        {
+          "id": "tests.test_jobs::test_unknown_exit_diagnostics_keep_original_status_code",
+          "message": "ImportError: cannot import name 'describe_backend_exit' from 'patchtrace.diagnostics' (/workspace/scratch/837fe19aae3a/review-historical-backend-exit-before-fix/src/patchtrace/diagnostics.py)"
+        },
+        {
+          "id": "tests.test_jobs::test_nonzero_backend_exit_preserves_classified_error_and_log",
+          "message": "AssertionError: assert 'JDK' in 'PT-BACKEND: ghidriff exited with code 7; inspect analysis.log'\n +  where 'PT-BACKEND: ghidriff exited with code 7; inspect analysis.log' = AnalysisRun(schema_version=1, id='c790f0d2-3dfe-44c5-a341-2980fa9af7cb', created='2026-11-21T13:57:27.629733+00:00', s...: 'unverified'}, raw_path=None, raw_sha256=None, error='PT-BACKEND: ghidriff exited with code 7; inspect analysis.log').error"
+        }
+      ]
+    },
+    {
+      "file": "maintained-current-tests.xml",
+      "cases": 10,
+      "passed": 10,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failures": []
+    },
+    {
+      "file": "original-donor-tests.xml",
+      "cases": 8,
+      "passed": 8,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failures": []
+    },
+    {
+      "file": "original-tests-current-source.xml",
+      "cases": 8,
+      "passed": 7,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0,
+      "failures": [
+        {
+          "id": "tests.test_jobs::test_nonzero_backend_exit_preserves_classified_error_and_log",
+          "message": "AssertionError: assert 'JDK' in 'PT-BACKEND: ghidriff exited with code 1; Ghidriff installation is missing from the selected external Python environment; inspect analysis.log'\n[+1 more line; full report in element text]"
+        }
+      ]
+    }
+  ],
+  "failure_disposition": {
+    "historical-tests-before-fix.xml": "Eight intentional actual-source failures: missing classifier in seven pure cases and generic backend error in the integration case",
+    "original-tests-current-source.xml": "Seven pass; one obsolete donor fixture fails because current isolated -I Python refuses cwd package loading. Maintained fixture explicitly executes the same authored fake script and the unchanged assertion passes. Original failure/log retained."
+  },
+  "hosted_acceptance_claimed": false,
+  "native_acceptance_claimed": false,
+  "real_target_execution": false,
+  "new_full_suite_run": false,
+  "environment_rebound": false,
+  "source_or_existing_refs_modified": false,
+  "pr_ci_automation_mutations": false,
+  "all_review_checkouts_clean": true,
+  "historical_census": {
+    "unmatched": 181,
+    "patch_equivalent": 16,
+    "unchanged": true,
+    "remaining_work_recounted": false
+  },
+  "deletion_authorized": false,
+  "release_ready_claimed": false,
+  "next_action": "Independent review of this complete named branch disposition; root may later add a scoped authoritative record. Preserve refs, original tests and all wider qualification gates."
+}

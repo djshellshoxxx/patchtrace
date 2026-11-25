@@ -1,0 +1,60 @@
+{
+  "source": "0f1bd044685e05b710ef6702a1c6c319edc1c8cd",
+  "tree": "dfc9d87d4817d219055fe487aac6b4d9f62332b3",
+  "linux_tests": {
+    "passed": 64,
+    "deselected": 88,
+    "junit_sha256": "774c853bf7a5f6d0e8fa80c0b80225fc5b190386df8b7ffb572ca936977a5582"
+  },
+  "sql_failures": {
+    "public_sha": {
+      "exit": 3,
+      "error": "PT-STORAGE: backup did not verify and must not be relied on (project snapshot digest cannot be read); the copy was left at <destination> for inspection",
+      "path_named": true,
+      "copy_retained": true,
+      "verified": null
+    },
+    "public_begin": {
+      "exit": 3,
+      "error": "PT-STORAGE: backup did not verify and must not be relied on (backup verification transaction could not start); the copy was left at <destination> for inspection",
+      "path_named": true,
+      "copy_retained": true,
+      "verified": null
+    },
+    "source_sha_after_publication": {
+      "exit": 3,
+      "error": "PT-STORAGE: backup did not verify and must not be relied on (project snapshot digest cannot be read); the copy was left at <destination> for inspection",
+      "path_named": true,
+      "copy_retained": true,
+      "verified": null
+    }
+  },
+  "integrity": {
+    "actual_earliest_writer": {
+      "old_snapshot_hash": "653c934af9a058c5f87522b3425ecf749a5f555f471ccf6b3fc7a5586b614ee5",
+      "copied_original_exact": true
+    },
+    "stage": {
+      "reported": "PT-STORAGE: the copied snapshot differs from the source project",
+      "staging_and_destination_absent": true,
+      "changed_sha": "7693fced88db1cf3289fe015250d64bcabbdf3790431fa12c6fce188bcb0e06e"
+    },
+    "public": {
+      "cli_exit": 3,
+      "rejected_with_copy_path": true,
+      "published_copy_retained": true,
+      "changed_sha": "7693fced88db1cf3289fe015250d64bcabbdf3790431fa12c6fce188bcb0e06e"
+    },
+    "old_omitted_default": {
+      "cli_verified": true,
+      "identical_raw_and_sha": true,
+      "reserialization_would_differ": true,
+      "persisted_sha": "a21b0d085fe760bd72d11bdb97e4ccb429888161346c790a910974ea31ef92af"
+    },
+    "concurrent_wal": {
+      "interleaved_commit_after_verifier_validated": true,
+      "both_selects_saw_same_sqlite_snapshot": true,
+      "fresh_verification_rejected_concurrent_value": true
+    }
+  }
+}

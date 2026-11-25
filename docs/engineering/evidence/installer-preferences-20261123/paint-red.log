@@ -1,0 +1,30 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____________ test_bulk_load_skips_span_dispatch_outside_the_window _____________
+
+controller = <patchtrace.ui_codetext.CodeTextController(0x13c65850) at 0x7f9036836c40>
+panes = (<PySide6.QtWidgets.QPlainTextEdit(0x134ac6f0) at 0x7f90363afa00>, <PySide6.QtWidgets.QPlainTextEdit(0x13c06c10) at 0x7f90363afa40>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f903745f290>
+
+    def test_bulk_load_skips_span_dispatch_outside_the_window(controller, panes, monkeypatch):
+        controller.configure(True, True)
+        visited = []
+        spans = controller.spans
+
+        def record(side, row, text):
+            visited.append((side, row))
+            return spans(side, row, text)
+
+        monkeypatch.setattr(controller, 'spans', record)
+        text = '\n'.join(body(3000))
+        load(controller, panes, PairText(text, text))
+        assert visited
+>       assert all(controller._windows[side][0] <= row <= controller._windows[side][1]
+                   for side, row in visited)
+E       assert False
+E        +  where False = all(<generator object test_bulk_load_skips_span_dispatch_outside_the_window.<locals>.<genexpr> at 0x7f903642e0a0>)
+
+tests/test_ui_codetext.py:156: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_ui_codetext.py::test_bulk_load_skips_span_dispatch_outside_the_window
+1 failed, 34 deselected in 0.71s
