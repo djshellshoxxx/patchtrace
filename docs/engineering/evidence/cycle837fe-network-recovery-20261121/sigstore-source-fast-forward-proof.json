@@ -1,0 +1,28 @@
+{
+  "observed_at": "2026-11-21T15:52:33.222576+00:00",
+  "before": "f08632ab81e6ab24fcc34fc994dd2dda2556d267",
+  "after": "9610919d29010d53cf00af3b7c38207ffd84f945",
+  "tree": "3d5e2965ef26235610a08fd8378cac078c6bd9a0",
+  "method": "Guarded fast-forward of owned local integration branch",
+  "retained_three_commits": [
+    "456db4b6bd3b7f6c845a39f629f15bdc4f9fb513",
+    "e88b6985db2d84b6f9f9e3553ba8c0e7b72ee9e4",
+    "9610919d29010d53cf00af3b7c38207ffd84f945"
+  ],
+  "changed_paths": [
+    ".github/workflows/backend-bundle.yml",
+    "docs/modules.md",
+    "docs/specs/REGISTRY.md",
+    "docs/specs/sigstore-tooling-hashes.md",
+    "tests/test_codex5_command_audit_20261121.py",
+    "tests/test_sigstore_dependency_lock.py",
+    "tools/requirements-sigstore-ci.lock"
+  ],
+  "runtime_and_ledger_qa_todo_blobs_unchanged": true,
+  "independent_review_sha256": "6182bb5e31714177922a4db3a8c24758efd9c6793c59d682b1df7ffeb71998cb",
+  "independent_archive_sha256": "81a7e43597b9100c7b41a0a4ebcb477db8511d7f222a589faa1e5821140959b3",
+  "all_failures_preserved": true,
+  "source_clean": true,
+  "remote_ref_moved": false,
+  "combined_final_source_qualification": "Pending immediate single deduplicated bounded selection; full remains hosted"
+}

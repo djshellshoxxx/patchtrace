@@ -1,0 +1,55 @@
+{
+  "schema": "patchtrace/network-integration-final-source/1",
+  "observed_at": "2026-11-21T14:29:49.946257+00:00",
+  "base": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+  "source": "96baaee20f390a3f2a5629de3764d32323bb80e5",
+  "tree": "4343dce701f20d3b6bc591297d1a887bb05cc461",
+  "unique_commits_above_base": 31,
+  "changed_paths": [
+    "docs/engineering/bug-hunt/PT-BUG-NET-001.md",
+    "docs/engineering/bug-hunt/PT-BUG-NET-003.md",
+    "docs/engineering/bug-hunt/PT-BUG-OPT-002.json",
+    "docs/engineering/bug-hunt/PT-BUG-OPT-002.md",
+    "docs/engineering/bug-hunt/findings.json",
+    "docs/qa.md",
+    "docs/specs/csaf-cve-interpretation-engine.md",
+    "docs/specs/enrichment-hardening-backlog.md",
+    "src/patchtrace/enrichment/intelligence.py",
+    "src/patchtrace/intelligence/csaf/transport.py",
+    "src/patchtrace/netutil.py",
+    "src/patchtrace/optional_deps.py",
+    "tasks/todo.md",
+    "tests/test_enrichment_intelligence.py",
+    "tests/test_intel_transport.py",
+    "tests/test_netutil_abandoned_cleanup.py",
+    "tests/test_netutil_read_deadline.py",
+    "tests/test_optional_import_recovery.py"
+  ],
+  "integrated_original_sources": [
+    "1d475d926314ae116442bfe2b7cd268ad95ea12c",
+    "aa01a50844fed15823c6e03491ce3bc671a5ecfc",
+    "d0a4bdf439775999340ea760d96a087e032ee6dd",
+    "e2127864cb481026db0157082d688b8a36595e3b"
+  ],
+  "root_integration_commits": [
+    "17962c2403a82a67dea256b163a4a44255948682",
+    "8919d8d9ccdc6df8159bfbe6e8daf677a663df1c",
+    "29e9286b24323c905f4b9b847a606ce9102b0e06",
+    "8fff682f720af634a05939f3e94a9ca273243cb3",
+    "96baaee20f390a3f2a5629de3764d32323bb80e5"
+  ],
+  "record_conflicts": [
+    "docs/qa.md",
+    "tasks/todo.md"
+  ],
+  "findings_index_conflict": false,
+  "record_resolution": "Exact incoming aa01 prefix plus complete previous source; later353 suffix retained. Complete d60 spans remain once.",
+  "initial_preparation_guard_failure": "Preserved. Incorrect suffix-only assumption stopped before aa01 merge; first356 integration commit retained.",
+  "final_child": "Docstring clarification only; runtime AST unchanged; both prior strict-bound control failures preserved by the boundary review.",
+  "source_clean": true,
+  "remote_ref_mutations": false,
+  "main_mutation": false,
+  "pr357_source_changed": false,
+  "full_hosted_platform_native_qualification": "PENDING for final candidate",
+  "release_ready": false
+}

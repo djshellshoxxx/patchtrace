@@ -19,15 +19,23 @@ import stat
 import tempfile
 import unicodedata
 from pathlib import Path
+from typing import Literal
 from uuid import uuid4
 
 from pydantic import ValidationError
 
 from . import verified_backup
+from .directory_publication import publish_directory_no_replace as _publish_no_replace
 from .ingestion import file_fingerprint, safe_path, sha256_file, verify_artifact
 from .models import ComparisonProject, now
+from .sqlite_paths import project_database_uri
 
 SCHEMA_VERSION = 1
+MAX_RETRY_DATABASE_BYTES = 1024 * 1024
+_CURRENT_SNAPSHOT_SQL = ('CREATE TABLE current_snapshot (singleton INTEGER PRIMARY KEY CHECK(singleton=1), '
+                         'payload TEXT NOT NULL, sha256 TEXT NOT NULL)')
+_HISTORY_SQL = ('CREATE TABLE history (sequence INTEGER PRIMARY KEY AUTOINCREMENT, revision INTEGER NOT NULL, '
+                'created TEXT NOT NULL, payload TEXT NOT NULL, sha256 TEXT NOT NULL)')
 MAX_SNAPSHOT_BYTES = 256 * 1024 * 1024
 HISTORY_KEEP = 100
 HISTORY_MAX_BYTES = 512 * 1024 * 1024
@@ -199,23 +207,22 @@ def validate_project(project: ComparisonProject) -> ComparisonProject:
     return project
 
 
+def backup_destination(root: Path, path: Path) -> Path:
+    """Resolve parent aliases while checking the requested destination entry itself."""
+    path = Path(path)
+    destination = path.parent.resolve() / path.name
+    if path.name not in ('', '..') and not destination.is_relative_to(root):
+        try:
+            destination.lstat()
+        except (FileNotFoundError, NotADirectoryError):
+            return destination
+    raise ValueError('PT-STORAGE: backup destination must be new and outside project')
+
+
 def _clear_readonly_and_retry(function, path, _exc):
     # Copied artifacts/raw outputs are read-only; Windows refuses to delete them otherwise.
     os.chmod(path, stat.S_IWRITE | stat.S_IREAD)
     function(path)
-
-
-def _publish_no_replace(stage: Path, destination: Path) -> None:
-    """Move stage to an absent destination. POSIX os.replace would replace an empty dir."""
-    if os.name == 'nt':
-        os.replace(stage, destination)  # Windows refuses to replace an existing directory.
-        return
-    os.mkdir(destination)  # reservation: fails if anything appeared at destination
-    try:
-        os.rename(stage, destination)
-    except OSError:
-        os.rmdir(destination)
-        raise
 
 
 def _error_location(exc: ValidationError) -> str:
@@ -223,28 +230,100 @@ def _error_location(exc: ValidationError) -> str:
     return '.'.join(str(part) for part in exc.errors()[0]['loc']) or 'root'
 
 
-def _abandoned_creation(path: Path) -> bool:
-    """True for the database a creation leaves when it died before committing its first snapshot.
-
-    The caller holds the exclusive project lock, so no live creator owns the file. A database that holds
-    a snapshot, a history row or any foreign table is never treated as abandoned."""
+def _creation_file(path: Path) -> os.stat_result | None:
+    """A bounded regular candidate without companions, before any SQLite page access."""
     try:
-        if path.stat().st_size == 0:
+        info = path.lstat()
+        if (not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or not info.st_ino
+                or info.st_size > MAX_RETRY_DATABASE_BYTES):
+            return None
+        # Immutable reads ignore companions; never erase possibly retained data or
+        # let SQLite recovery modify it during this admission check.
+        for suffix in ('-journal', '-wal', '-shm'):
+            try:
+                Path(f'{path}{suffix}').lstat()
+            except FileNotFoundError:
+                continue
+            return None
+        return info
+    except (OSError, ValueError):
+        return None
+
+
+def _same_creation_file(path: Path, expected: os.stat_result) -> bool:
+    current = _creation_file(path)
+    return current is not None and all(getattr(current, field) == getattr(expected, field)
+                                       for field in ('st_dev', 'st_ino', 'st_size', 'st_mtime_ns', 'st_ctime_ns'))
+
+
+def _empty_creation_database(probe: sqlite3.Connection, *, zero_byte: bool = False) -> bool:
+    """Validate the actual connection; temporary limits must not constrain later project snapshots."""
+    steps = 0
+
+    def progress():
+        nonlocal steps
+        steps += 1000
+        return int(steps >= 100_000)
+
+    length = probe.setlimit(sqlite3.SQLITE_LIMIT_LENGTH, MAX_RETRY_DATABASE_BYTES)
+    sql_length = probe.setlimit(sqlite3.SQLITE_LIMIT_SQL_LENGTH, 4096)
+    probe.set_progress_handler(progress, 1000)
+    trusted = None
+    try:
+        trusted = probe.execute('PRAGMA trusted_schema').fetchone()[0]
+        probe.execute('PRAGMA trusted_schema=OFF')
+        if probe.execute('PRAGMA application_id').fetchone()[0] != 0:
+            return False
+        version = probe.execute('PRAGMA user_version').fetchone()[0]
+        schema = probe.execute('SELECT type,name,tbl_name,sql FROM sqlite_schema LIMIT 4').fetchall()
+        if zero_byte and version == 0 and not schema:
             return True
-        probe = sqlite3.connect(path, timeout=5)
+        expected = {('table', 'current_snapshot', 'current_snapshot', _CURRENT_SNAPSHOT_SQL),
+                    ('table', 'history', 'history', _HISTORY_SQL),
+                    ('table', 'sqlite_sequence', 'sqlite_sequence', 'CREATE TABLE sqlite_sequence(name,seq)')}
+        if version != SCHEMA_VERSION or len(schema) != len(expected) or set(schema) != expected:
+            return False
+        if probe.execute('PRAGMA quick_check(1)').fetchall() != [('ok',)]:
+            return False
+        return not probe.execute('SELECT EXISTS(SELECT 1 FROM current_snapshot) '
+                                 'OR EXISTS(SELECT 1 FROM history) '
+                                 'OR EXISTS(SELECT 1 FROM sqlite_sequence)').fetchone()[0]
+    finally:
+        probe.set_progress_handler(None, 0)
+        probe.setlimit(sqlite3.SQLITE_LIMIT_LENGTH, length)
+        probe.setlimit(sqlite3.SQLITE_LIMIT_SQL_LENGTH, sql_length)
+        if trusted is not None:
+            probe.execute('PRAGMA trusted_schema=ON' if trusted else 'PRAGMA trusted_schema=OFF')
+
+
+def _abandoned_creation(path: Path) -> bool:
+    """Read-only eligibility; it does not grant ownership of this pathname for deletion."""
+    try:
+        info = _creation_file(path)
+        if info is None:
+            return False
+        if info.st_size == 0:
+            return True
+        probe = sqlite3.connect(project_database_uri(path.resolve()) + '?mode=ro&immutable=1', uri=True, timeout=0)
         try:
-            if probe.execute('PRAGMA user_version').fetchone()[0] not in (0, SCHEMA_VERSION):
-                return False
-            tables = {row[0] for row in probe.execute("SELECT name FROM sqlite_master WHERE type='table'")
-                      if not row[0].startswith('sqlite_')}
-            if not tables:
-                return True
-            return tables == {'current_snapshot', 'history'} and not probe.execute(
-                'SELECT EXISTS(SELECT 1 FROM current_snapshot) OR EXISTS(SELECT 1 FROM history)').fetchone()[0]
+            return _empty_creation_database(probe)
         finally:
             probe.close()
-    except (sqlite3.Error, OSError):
+    except (sqlite3.Error, OSError, ValueError):
         return False
+
+
+def _discard_created_database(path: Path, owned: os.stat_result | None) -> None:
+    """Best effort cleanup only for an exclusively created file, never an admitted retry."""
+    if owned is None or not owned.st_ino:
+        return
+    try:
+        current = path.lstat()
+        if (stat.S_ISREG(current.st_mode) and current.st_nlink == 1
+                and (current.st_dev, current.st_ino) == (owned.st_dev, owned.st_ino)):
+            path.unlink()
+    except OSError:
+        pass
 
 
 def creation_directory_available(root: Path) -> bool:
@@ -337,11 +416,16 @@ class ProjectLock:
 
 
 class ProjectStore:
-    def __init__(self, root: Path, create: bool = False):
+    def __init__(self, root: Path, create: bool = False, *,
+                 _backup_verification: Literal['staged', 'published'] | None = None):
+        if create and _backup_verification:
+            raise ValueError('PT-STORAGE: cannot create a project read-only')
         self.root = Path(root).resolve()
         self.closed = False
         self.connection = None
         self.lock = None
+        self.created_database: os.stat_result | None = None
+        self._creation_transaction = False
         self._verified = {}
         self.project_id: str | None = None  # known after the first load/save; never changes for a database
         self._prune_deferred = False
@@ -354,30 +438,58 @@ class ProjectStore:
         if not self.root.is_dir():
             raise ValueError('PT-STORAGE: project path is not a directory' if self.root.exists()
                              else 'PT-STORAGE: project directory does not exist')
-        self.lock = ProjectLock(self.root)
-        created_database = False
+        if _backup_verification != 'staged':
+            self.lock = ProjectLock(self.root)
         try:
             path = safe_path(self.root, 'project.sqlite3')
-            if create and path.exists():
-                if not _abandoned_creation(path):
-                    raise ValueError('PT-STORAGE: project database already exists')
-                for suffix in ('', '-journal', '-wal', '-shm'):  # a killed creation left no snapshot to lose
-                    Path(f'{path}{suffix}').unlink(missing_ok=True)
+            retry = create and path.exists()
+            admitted = None
+            if create:
+                if retry:
+                    admitted = _creation_file(path)
+                    if admitted is None or not _abandoned_creation(path):
+                        raise ValueError('PT-STORAGE: project database already exists')
+                else:
+                    try:
+                        fd = os.open(path, os.O_RDWR | os.O_CREAT | os.O_EXCL | getattr(os, 'O_BINARY', 0), 0o600)
+                    except FileExistsError:
+                        raise ValueError('PT-STORAGE: project database already exists') from None
+                    try:
+                        owned = self.created_database = os.fstat(fd)
+                        admitted = _creation_file(path)
+                        after = os.fstat(fd)
+                        physical = ('st_dev', 'st_ino', 'st_size', 'st_mtime_ns')
+                        observed = (*physical, 'st_ctime_ns', 'st_mode', 'st_nlink')
+                        # Windows pathname/descriptor ctime can represent different clocks.
+                        # Bind the held inode, then compare each API to its own snapshot.
+                        if (admitted is None or not stat.S_ISREG(owned.st_mode) or owned.st_nlink != 1
+                                or any(getattr(owned, field) != getattr(admitted, field) for field in physical)
+                                or any(getattr(owned, field) != getattr(after, field) for field in observed)):
+                            raise ValueError('PT-STORAGE: project database changed during creation admission')
+                    finally:
+                        os.close(fd)
+                if not _same_creation_file(path, admitted):
+                    raise ValueError('PT-STORAGE: project database changed during creation admission')
             if not create and not path.is_file():
                 raise ValueError('PT-STORAGE: project database is missing')
-            self.connection = sqlite3.connect(path, timeout=5)
-            created_database = create
+            mode = 'ro' if _backup_verification else 'rw'
+            self.connection = sqlite3.connect(f'{project_database_uri(path)}?mode={mode}', uri=True, timeout=5)
+            if create and not _same_creation_file(path, admitted):
+                raise ValueError('PT-STORAGE: project database changed while opening creation')
             self.connection.execute('PRAGMA foreign_keys=ON')
             if create:
-                with self.connection:
-                    # Legacy sqlite3 mode does not BEGIN before PRAGMA/DDL; make initialization atomic.
-                    self.connection.execute('BEGIN IMMEDIATE')
+                self.connection.execute('BEGIN IMMEDIATE')
+                if not _empty_creation_database(self.connection, zero_byte=admitted.st_size == 0):
+                    raise ValueError('PT-STORAGE: project database already exists')
+                if admitted.st_size == 0:
                     self.connection.execute(f'PRAGMA user_version={SCHEMA_VERSION}')
-                    self.connection.execute('CREATE TABLE current_snapshot (singleton INTEGER PRIMARY KEY '
-                                            'CHECK(singleton=1), payload TEXT NOT NULL, sha256 TEXT NOT NULL)')
-                    self.connection.execute('CREATE TABLE history (sequence INTEGER PRIMARY KEY AUTOINCREMENT, '
-                                            'revision INTEGER NOT NULL, created TEXT NOT NULL, payload TEXT '
-                                            'NOT NULL, sha256 TEXT NOT NULL)')
+                    self.connection.execute(_CURRENT_SNAPSHOT_SQL)
+                    self.connection.execute(_HISTORY_SQL)
+                if retry:
+                    # First-save failure/close must restore a preexisting zero-byte file too.
+                    self._creation_transaction = True
+                else:
+                    self.connection.commit()
             else:
                 version = self.connection.execute('PRAGMA user_version').fetchone()[0]
                 if version != SCHEMA_VERSION:
@@ -388,13 +500,21 @@ class ProjectStore:
                     raise ValueError('PT-STORAGE: project database contains views or triggers; refusing to open')
                 if self.connection.execute('PRAGMA quick_check').fetchone()[0] != 'ok':
                     raise ValueError('PT-STORAGE: database integrity check failed')
-        except Exception as exc:
-            self.close()
-            if created_database:
-                # Never leave a half-initialized database that blocks retry yet cannot be opened.
-                path.unlink(missing_ok=True)
-            if isinstance(exc, sqlite3.Error):
-                raise ValueError('PT-STORAGE: project database cannot be opened') from exc
+        except BaseException as exc:
+            failure = ValueError('PT-STORAGE: project database cannot be opened') if isinstance(exc, sqlite3.Error) else exc
+            try:
+                try:
+                    if self.connection is not None:
+                        self.connection.close()
+                        self.connection = None
+                    if self.created_database is not None:
+                        _discard_created_database(path, self.created_database)
+                finally:
+                    self.close()
+            except BaseException:
+                failure.add_note('PT-STORAGE: project initialization cleanup failed; resources or files may remain')
+            if failure is not exc:
+                raise failure from exc
             raise
 
     def _check_open(self):
@@ -449,7 +569,9 @@ class ProjectStore:
         self._prune_deferred = False
         try:
             with self.connection:
-                self.connection.execute('BEGIN IMMEDIATE')
+                if not (self._creation_transaction and self.connection.in_transaction):
+                    self.connection.execute('BEGIN IMMEDIATE')
+                self._creation_transaction = False
                 current = self.connection.execute(
                     "SELECT json_extract(payload,'$.id'), json_extract(payload,'$.revision') "
                     'FROM current_snapshot WHERE singleton=1').fetchone()
@@ -572,6 +694,17 @@ class ProjectStore:
         except sqlite3.Error as exc:
             raise ValueError('PT-STORAGE: project snapshot cannot be read') from exc
 
+    def snapshot_sha256(self) -> str:
+        """Identity of the persisted payload, including its original JSON representation."""
+        self._check_open()
+        try:
+            row = self.connection.execute(verified_backup.SNAPSHOT_SHA).fetchone()
+        except sqlite3.Error as exc:
+            raise ValueError('PT-STORAGE: project snapshot digest cannot be read') from exc
+        if row is None:
+            raise ValueError('PT-STORAGE: project snapshot is missing')
+        return row[0]
+
     def history(self) -> list[dict]:
         self._check_open()
         return [dict(sequence=row[0], revision=row[1], created=row[2], sha256=row[3]) for row in
@@ -581,9 +714,8 @@ class ProjectStore:
         """Publish a complete new project copy only after SQLite backup and immutable files succeed."""
         self._check_open()
         self.load()
-        destination = Path(destination).resolve()
-        if destination.exists() or destination.is_relative_to(self.root):
-            raise ValueError('PT-STORAGE: backup destination must be new and outside project')
+        source_sha256 = self.snapshot_sha256()
+        destination = backup_destination(self.root, destination)
         try:
             destination.parent.mkdir(parents=True, exist_ok=True)
             stage = Path(tempfile.mkdtemp(prefix='.patchtrace-backup-', dir=destination.parent))
@@ -605,6 +737,7 @@ class ProjectStore:
                         if candidate.is_symlink():
                             raise ValueError('PT-STORAGE: backup contains a symlink')
                     shutil.copytree(source, stage / name)
+            verify_backup_copy(stage, source_sha256, private_stage=True)
             _publish_no_replace(stage, destination)
         except BaseException as failure:
             try:
@@ -630,3 +763,16 @@ class ProjectStore:
 
     def __exit__(self, *_):
         self.close()
+
+
+def verify_backup_copy(path: Path, expected_sha256: str, *, private_stage: bool = False) -> None:
+    """Read-only restoration check. A published project still requires exclusive project ownership."""
+    with ProjectStore(path, _backup_verification='staged' if private_stage else 'published') as store:
+        # Validate and compare one SQLite read snapshot, even across separate SELECTs.
+        try:
+            store.connection.execute('BEGIN')
+        except sqlite3.Error as exc:
+            raise ValueError('PT-STORAGE: backup verification transaction could not start') from exc
+        store.load(recover_interrupted=False)
+        if store.snapshot_sha256() != expected_sha256:
+            raise ValueError('PT-STORAGE: the copied snapshot differs from the source project')

@@ -1,0 +1,93 @@
+{
+  "schema": "patchtrace/network-actual-git-object-proof/1",
+  "commits": [
+    {
+      "local": "aa01a50844fed15823c6e03491ce3bc671a5ecfc",
+      "remote": "5e4f9090b0a5c1c8a1aa2bfe4bb706356cfdaefb",
+      "tree": "a3f4588f3a21cb257e4d34dd495114a7658b7a08",
+      "parents": [
+        "e3928ab8c8e2deee7bb01b0f857205f68a1abda2"
+      ],
+      "complete_tree_equal": true,
+      "diff_empty": true,
+      "title_and_body_holds": true,
+      "message_exact": true,
+      "only_allowed_difference": null
+    },
+    {
+      "local": "17962c2403a82a67dea256b163a4a44255948682",
+      "remote": "0fb401a0c86e92b13eaa49c023f6f8d77a4c78d5",
+      "tree": "202d6e32048bd2b6d2fa2d080c13834b8df7dbdf",
+      "parents": [
+        "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+        "1d475d926314ae116442bfe2b7cd268ad95ea12c"
+      ],
+      "complete_tree_equal": true,
+      "diff_empty": true,
+      "title_and_body_holds": true,
+      "message_exact": true,
+      "only_allowed_difference": null
+    },
+    {
+      "local": "8919d8d9ccdc6df8159bfbe6e8daf677a663df1c",
+      "remote": "fb2a3bc857532fdfbcec809c83d7c525e9577de6",
+      "tree": "5b28c2079d1fd3c35240f51aad2cb64105de788d",
+      "parents": [
+        "0fb401a0c86e92b13eaa49c023f6f8d77a4c78d5",
+        "5e4f9090b0a5c1c8a1aa2bfe4bb706356cfdaefb"
+      ],
+      "complete_tree_equal": true,
+      "diff_empty": true,
+      "title_and_body_holds": true,
+      "message_exact": true,
+      "only_allowed_difference": null
+    },
+    {
+      "local": "29e9286b24323c905f4b9b847a606ce9102b0e06",
+      "remote": "d0e7aacb71554a83a5af9706d34b95988c6ed589",
+      "tree": "b87e8052c2f5830fa92b414e94d23daaa73dcba3",
+      "parents": [
+        "fb2a3bc857532fdfbcec809c83d7c525e9577de6",
+        "d0a4bdf439775999340ea760d96a087e032ee6dd"
+      ],
+      "complete_tree_equal": true,
+      "diff_empty": true,
+      "title_and_body_holds": true,
+      "message_exact": true,
+      "only_allowed_difference": null
+    },
+    {
+      "local": "8fff682f720af634a05939f3e94a9ca273243cb3",
+      "remote": "37a1df96c9b8d84c51aaf965725b4ea2beab9199",
+      "tree": "d440d1a7cdb550ab1f989ebd73d9cd000208a7cd",
+      "parents": [
+        "d0e7aacb71554a83a5af9706d34b95988c6ed589",
+        "e2127864cb481026db0157082d688b8a36595e3b"
+      ],
+      "complete_tree_equal": true,
+      "diff_empty": true,
+      "title_and_body_holds": true,
+      "message_exact": true,
+      "only_allowed_difference": null
+    },
+    {
+      "local": "96baaee20f390a3f2a5629de3764d32323bb80e5",
+      "remote": "00da7e1d5d13f16acba6f6eb54d00f0167e5c62e",
+      "tree": "4343dce701f20d3b6bc591297d1a887bb05cc461",
+      "parents": [
+        "37a1df96c9b8d84c51aaf965725b4ea2beab9199"
+      ],
+      "complete_tree_equal": true,
+      "diff_empty": true,
+      "title_and_body_holds": true,
+      "message_exact": true,
+      "only_allowed_difference": null
+    }
+  ],
+  "candidate_source": "96baaee20f390a3f2a5629de3764d32323bb80e5",
+  "candidate_tree": "4343dce701f20d3b6bc591297d1a887bb05cc461",
+  "candidate_remote_equivalent": "00da7e1d5d13f16acba6f6eb54d00f0167e5c62e",
+  "source_unchanged": true,
+  "remote_ref_moved": false,
+  "pr_created": false
+}

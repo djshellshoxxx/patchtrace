@@ -1,0 +1,22 @@
+{
+  "observed_at": "2026-11-23T22:44:40.324942+00:00",
+  "main": "ea16019601486c831941f9bc1a7ba5862a170317",
+  "branches": 379,
+  "pull_request_heads": 351,
+  "branch_delta": {
+    "added": {
+      "integration/installer-preferences-20261123": "c60f4ecc425294be368009b0711cafb803117cb6",
+      "integration/project-reliability-20261123": "6ffe819e71d48793f8207bd64d7480fbc03e2ef5"
+    },
+    "removed": [],
+    "moved": {}
+  },
+  "pr_head_delta": {
+    "added": {
+      "360": "6ffe819e71d48793f8207bd64d7480fbc03e2ef5",
+      "361": "c60f4ecc425294be368009b0711cafb803117cb6"
+    },
+    "removed": [],
+    "moved": {}
+  }
+}

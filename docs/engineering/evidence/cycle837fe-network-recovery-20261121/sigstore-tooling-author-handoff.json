@@ -1,0 +1,139 @@
+{
+  "schema": "sigstore-tooling-hash-closure-handoff/1",
+  "sealed_source": "9610919d29010d53cf00af3b7c38207ffd84f945",
+  "tree": "3d5e2965ef26235610a08fd8378cac078c6bd9a0",
+  "base": "f08632ab81e6ab24fcc34fc994dd2dda2556d267",
+  "branch": "codex/patchtrace-sigstore-tooling-hash-closure-20261121-837fe",
+  "worktree": "/workspace/scratch/837fe19aae3a/repair-sigstore-tooling-hash-closure",
+  "source_frozen": true,
+  "changed_paths": [
+    ".github/workflows/backend-bundle.yml",
+    "docs/modules.md",
+    "docs/specs/REGISTRY.md",
+    "docs/specs/sigstore-tooling-hashes.md",
+    "tests/test_codex5_command_audit_20261121.py",
+    "tests/test_sigstore_dependency_lock.py",
+    "tools/requirements-sigstore-ci.lock"
+  ],
+  "source_commit_order": [
+    "456db4b6bd3b7f6c845a39f629f15bdc4f9fb513",
+    "e88b6985db2d84b6f9f9e3553ba8c0e7b72ee9e4",
+    "9610919d29010d53cf00af3b7c38207ffd84f945"
+  ],
+  "historical_baseline": {
+    "run_id": 38661029764,
+    "job_id": 116182091312,
+    "source": "bf7e936f358a1eb8ea36d86da8a0189793f17cfa",
+    "tool_version": "4.5.0"
+  },
+  "all31_versions_and_filenames_preserved": true,
+  "active_edges": 41,
+  "requested_extras": {
+    "pydantic": [
+      "email"
+    ]
+  },
+  "preinstall_artifact_verification": {
+    "verified": 31,
+    "official_downloads": 30,
+    "exact_retained_pygments_reuse": 1,
+    "embedded_metadata_and_tags_checked": true
+  },
+  "install_cases": [
+    {
+      "case": "positive",
+      "exit": 0,
+      "initial_distribution_count": 0,
+      "final_distribution_count": 31
+    },
+    {
+      "case": "wrong-root-hash",
+      "exit": 1,
+      "initial_distribution_count": 0,
+      "final_distribution_count": 0
+    },
+    {
+      "case": "missing-transitive-entry",
+      "exit": 1,
+      "initial_distribution_count": 0,
+      "final_distribution_count": 0
+    },
+    {
+      "case": "missing-extra-transitive-hash",
+      "exit": 1,
+      "initial_distribution_count": 0,
+      "final_distribution_count": 0
+    }
+  ],
+  "official_index": "https://pypi.org/simple",
+  "resolver_suppressed": false,
+  "hash_mode_bypassed": false,
+  "index_disabled": false,
+  "clean_positive_pip_check_exit": 0,
+  "all31_pip_report_identities_match": true,
+  "parent_red": {
+    "source": "e88b6985db2d84b6f9f9e3553ba8c0e7b72ee9e4",
+    "actual_parent_data_source": "f08632ab81e6ab24fcc34fc994dd2dda2556d267",
+    "collected_cases": 4,
+    "failed": 3,
+    "passed": 1,
+    "errors": 0,
+    "skipped": 0
+  },
+  "final_source_tests": {
+    "cases": 267,
+    "passed": 265,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "xfailed": 2
+  },
+  "whole_ruff_exit": 0,
+  "source_pip_check_exit": 0,
+  "cli_smoke": {
+    "options": [
+      "--help",
+      "--version"
+    ],
+    "exits": [
+      0,
+      0
+    ],
+    "network_attempts": []
+  },
+  "before_census": {
+    "source": "f08632ab81e6ab24fcc34fc994dd2dda2556d267",
+    "workflows": 21,
+    "run_scalars": 203,
+    "installing_jobs": 38,
+    "install_commands": 42,
+    "protected": 2,
+    "unprotected": 40
+  },
+  "after_census": {
+    "source": "9610919d29010d53cf00af3b7c38207ffd84f945",
+    "workflows": 21,
+    "run_scalars": 203,
+    "installing_jobs": 38,
+    "install_commands": 42,
+    "protected": 3,
+    "unprotected": 39
+  },
+  "both_broad_strict_c5_gates_unchanged": true,
+  "other_workflow_bytes_unchanged": true,
+  "application_source_changed": false,
+  "existing_environment_rebound": false,
+  "errors_retained": [
+    "initial-probe-errors.json",
+    "source-evidence-harness-failure.json",
+    "source-qualification.stderr.log",
+    "bundle-builder-initial-failure.json"
+  ],
+  "signing_or_identity_or_user_artifact_verification": false,
+  "ci_dispatch_publish_remote_ref_change": false,
+  "full_suite_or_hosted_or_native_acceptance": false,
+  "release_ready": false,
+  "independent_review": "pending",
+  "wider_c5_open": true,
+  "frozen_at": "2026-11-21T15:33:06.746116+00:00"
+}

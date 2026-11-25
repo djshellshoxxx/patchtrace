@@ -328,6 +328,113 @@ def test_fetch_remains_fail_fast():
     assert len(opener.calls) == 1
 
 
+@pytest.mark.parametrize('phase', ('connect', 'read'))
+def test_stalled_network_step_respects_total_deadline_without_cancel(monkeypatch, phase):
+    """An idle socket step must not hold the request past its total timeout (ACQ-2)."""
+    import time
+
+    from patchtrace import netutil
+
+    release = threading.Event()
+    closed = threading.Event()
+
+    class Blocked(Resp):
+        def read(self, size):
+            if phase == 'read':
+                release.wait(1.5)
+            return super().read(size)
+
+        def close(self):
+            super().close()
+            closed.set()
+
+    response = Blocked()
+
+    def opener(url, headers, timeout):
+        if phase == 'connect':
+            release.wait(1.5)
+        return response
+
+    monkeypatch.setattr(it, 'TOTAL_TIMEOUT', 0.12)
+    plan = it.plan_requests([CVE], ('msrc',))
+    started = time.monotonic()
+    try:
+        with pytest.raises(EnrichmentError) as exc:
+            it.fetch(plan, it.FetchConsent.for_plan(plan), opener=opener)
+        assert exc.value.code == 'PT-ENRICH-NETWORK'
+        assert time.monotonic() - started < 0.9
+    finally:
+        release.set()
+    assert closed.wait(2.0)
+    until = time.monotonic() + 2.0
+    while netutil.abandoned_count() and time.monotonic() < until:
+        time.sleep(0.01)
+    assert netutil.abandoned_count() == 0
+
+
+@pytest.mark.parametrize('phase', ('eof', 'close'))
+@pytest.mark.parametrize('expired_clock', ('logical', 'wall'))
+def test_completed_attempt_past_total_deadline_is_not_published(monkeypatch, phase, expired_clock):
+    """Completion between polling checks must still pass both total-deadline checks."""
+    logical, wall = Clock(), Clock()
+    monkeypatch.setattr(it.time, 'monotonic', wall)
+    monkeypatch.setattr(it, 'TOTAL_TIMEOUT', 1.0)
+    expiring = logical if expired_clock == 'logical' else wall
+
+    class Completed(Resp):
+        def read(self, size):
+            if phase == 'eof':
+                expiring.t = 2.0
+            return super().read(size)
+
+        def close(self):
+            super().close()
+            if phase == 'close':
+                expiring.t = 2.0
+
+    response = Completed(body=b'')
+    with pytest.raises(EnrichmentError) as exc:
+        run(Opener(response), providers=('msrc',), clock=logical)
+    assert code(exc) == 'PT-ENRICH-NETWORK' and exc.value.recoverable
+    assert response.closed
+
+
+@pytest.mark.parametrize('expired', (False, True))
+def test_cancel_at_completion_precedes_total_deadline(monkeypatch, expired):
+    logical, wall = Clock(), Clock()
+    cancel = threading.Event()
+    monkeypatch.setattr(it.time, 'monotonic', wall)
+    monkeypatch.setattr(it, 'TOTAL_TIMEOUT', 1.0)
+
+    class Completed(Resp):
+        def close(self):
+            super().close()
+            if expired:
+                logical.t = wall.t = 2.0
+            cancel.set()
+
+    response = Completed(body=b'')
+    with pytest.raises(EnrichmentError) as exc:
+        run(Opener(response), providers=('msrc',), clock=logical, cancel=cancel)
+    assert code(exc) == 'PT-ENRICH-CANCEL' and exc.value.recoverable
+    assert response.closed
+
+
+def test_completed_attempt_before_both_deadlines_still_succeeds(monkeypatch):
+    logical, wall = Clock(), Clock()
+    monkeypatch.setattr(it.time, 'monotonic', wall)
+    monkeypatch.setattr(it, 'TOTAL_TIMEOUT', 1.0)
+
+    class Completed(Resp):
+        def close(self):
+            super().close()
+            logical.t = wall.t = 0.5
+
+    response = Completed()
+    result = run(Opener(response), providers=('msrc',), clock=logical)
+    assert result[CVE]['msrc'].body == BODY and response.closed
+
+
 def test_slow_drip_response_stops_at_the_total_deadline(monkeypatch):
     import time
 

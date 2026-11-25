@@ -1,0 +1,1398 @@
+{
+  "schema": "patchtrace/sigstore-tooling-hash-closure-independent/1",
+  "reviewer": "/root/codex1_independent_review",
+  "observed_at": "2026-11-21T15:51:14.477603+00:00",
+  "verdict": "CLEAR for the one existing backend-bundle vrfy tooling installer and reviewed source integration",
+  "blockers": [],
+  "source": "9610919d29010d53cf00af3b7c38207ffd84f945",
+  "tree": "3d5e2965ef26235610a08fd8378cac078c6bd9a0",
+  "comparison_base": "f08632ab81e6ab24fcc34fc994dd2dda2556d267",
+  "actual_direct_parent": "e88b6985db2d84b6f9f9e3553ba8c0e7b72ee9e4",
+  "worktree": "/workspace/scratch/837fe19aae3a/repair-sigstore-tooling-hash-closure",
+  "source_clean_before_and_after": true,
+  "source_history": [
+    {
+      "commit": "456db4b6bd3b7f6c845a39f629f15bdc4f9fb513",
+      "tree": "7c502a70fa9611fc6d0811dadb99558d1cfc0845",
+      "parents": [
+        "f08632ab81e6ab24fcc34fc994dd2dda2556d267"
+      ],
+      "subject": "Specify the Sigstore tooling hash closure [no release] [no deploy]",
+      "body": "\nRecord the unchanged historical 31-package Linux CPython 3.12 baseline, required email extra, ordinary resolver and bounded verification contract before implementation.\n\n[no release] [no deploy]\n",
+      "paths": [
+        "docs/modules.md",
+        "docs/specs/REGISTRY.md",
+        "docs/specs/sigstore-tooling-hashes.md"
+      ]
+    },
+    {
+      "commit": "e88b6985db2d84b6f9f9e3553ba8c0e7b72ee9e4",
+      "tree": "e51e1b8c9eda536c41d426e43a69ab6db34e72c9",
+      "parents": [
+        "456db4b6bd3b7f6c845a39f629f15bdc4f9fb513"
+      ],
+      "subject": "Assert the Sigstore closure before implementation [no release] [no deploy]",
+      "body": "\nCollect parent-source assertions for the absent complete lock, unprotected normal-resolver installer and unchanged verifier workflow.\n\n[no release] [no deploy]\n",
+      "paths": [
+        "tests/test_sigstore_dependency_lock.py"
+      ]
+    },
+    {
+      "commit": "9610919d29010d53cf00af3b7c38207ffd84f945",
+      "tree": "3d5e2965ef26235610a08fd8378cac078c6bd9a0",
+      "parents": [
+        "e88b6985db2d84b6f9f9e3553ba8c0e7b72ee9e4"
+      ],
+      "subject": "Hash the existing Sigstore verifier toolchain [no release] [no deploy]",
+      "body": "\nUse the verified historical 31-wheel Linux CPython 3.12 closure for the one existing Sigstore 4.5.0 install. Keep the ordinary resolver, required email extra and all verifier workflow behavior. Update only the positive command census expectation; both broad strict CODEX-5 gates remain open.\n\n[no release] [no deploy]\n",
+      "paths": [
+        ".github/workflows/backend-bundle.yml",
+        "tests/test_codex5_command_audit_20261121.py",
+        "tools/requirements-sigstore-ci.lock"
+      ]
+    }
+  ],
+  "changed_paths": [
+    ".github/workflows/backend-bundle.yml",
+    "docs/modules.md",
+    "docs/specs/REGISTRY.md",
+    "docs/specs/sigstore-tooling-hashes.md",
+    "tests/test_codex5_command_audit_20261121.py",
+    "tests/test_sigstore_dependency_lock.py",
+    "tools/requirements-sigstore-ci.lock"
+  ],
+  "unchanged_tracked_entries": 4829,
+  "mechanical_checks": {
+    "archive_baseline_wheels_extra_closure": 786,
+    "source_history_census_author_receipts": 84,
+    "total_final_checks": 870,
+    "all_final_checks_passed": true,
+    "earlier_attempts_not_added_to_final_count": true
+  },
+  "historical_baseline": {
+    "run_id": 38661029764,
+    "job_id": 116182091312,
+    "source": "bf7e936f358a1eb8ea36d86da8a0189793f17cfa",
+    "tool_version": "4.5.0"
+  },
+  "historical_observation_proof": "historical-baseline-proof.json",
+  "historical_local_git_object_limit": "bf7e is not in the local object database; no fresh Git fetch was performed. Immutable official API/job-log/checkout/workflow snapshots support the baseline.",
+  "selected_versions": {
+    "annotated-types": "0.8.0",
+    "certifi": "2026.7.22",
+    "cffi": "2.1.1",
+    "charset-normalizer": "3.5.2",
+    "cryptography": "50.0.2",
+    "dnspython": "2.9.0",
+    "email-validator": "2.3.0",
+    "id": "1.6.1",
+    "idna": "3.20",
+    "markdown-it-py": "4.2.0",
+    "mdurl": "0.1.2",
+    "platformdirs": "4.13.0",
+    "pyasn1": "0.6.4",
+    "pycparser": "3.11",
+    "pydantic": "2.14.1",
+    "pydantic-core": "2.50.1",
+    "pygments": "2.21.0",
+    "pyjwt": "2.15.1",
+    "pyopenssl": "26.4.0",
+    "requests": "2.34.2",
+    "rfc3161-client": "1.0.9",
+    "rfc8785": "0.1.4",
+    "rich": "15.0.0",
+    "securesystemslib": "1.5.1",
+    "sigstore": "4.5.0",
+    "sigstore-models": "0.0.6",
+    "sigstore-rekor-types": "0.0.18",
+    "tuf": "7.0.1",
+    "typing-extensions": "4.16.0",
+    "typing-inspection": "0.4.4",
+    "urllib3": "2.8.0"
+  },
+  "actual_artifacts": [
+    {
+      "name": "annotated-types",
+      "version": "0.8.0",
+      "filename": "annotated_types-0.8.0-py3-none-any.whl",
+      "bytes": 13427,
+      "sha256": "f072f4d804ea359e4eaf198b1af7a8b0943881a87f31bb764f8bf219bb9419e0",
+      "source_url": "https://files.pythonhosted.org/packages/99/91/8acff4f5e50511b911bbccb72b8628a49c68ce14148cd9f6431094859a90/annotated_types-0.8.0-py3-none-any.whl",
+      "metadata_sha256": "614985b278f601b8ef863f82783b991cc3ada4b89f592eb71c7c48c5f2ef2298",
+      "registry_sha256": "a6e8e5b10c8fd2f596bba53e015cd37f6279fb5cec26ce0c5e9968625be4fefa",
+      "requires_python": ">=3.10",
+      "requires_dist": [],
+      "tags": [
+        "py3-none-any"
+      ],
+      "provided_extras": []
+    },
+    {
+      "name": "certifi",
+      "version": "2026.7.22",
+      "filename": "certifi-2026.7.22-py3-none-any.whl",
+      "bytes": 136983,
+      "sha256": "62f22742b58a1a33014a2b6b706588a8d7e2a88ae7bd1a6ebe8c992928483775",
+      "source_url": "https://files.pythonhosted.org/packages/0b/a7/71ac2cff56fec219ed242bb11b8efb69fcc4bec75db06fb7bfe35de520e6/certifi-2026.7.22-py3-none-any.whl",
+      "metadata_sha256": "ef5af1638fbb23676ac3c5777dfcfc2cd9c348fe4172ed5ba3d277655b248090",
+      "registry_sha256": "dd1ab0ac7a41dae4e0d50a07c568028664267d38d654ed68907eecc06b251bf2",
+      "requires_python": ">=3.7",
+      "requires_dist": [],
+      "tags": [
+        "py3-none-any"
+      ],
+      "provided_extras": []
+    },
+    {
+      "name": "cffi",
+      "version": "2.1.1",
+      "filename": "cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "bytes": 221822,
+      "sha256": "c1453022f490d2459a11819d83ad1d586e9ff65a12ac3e705ffebd46d3685dcf",
+      "source_url": "https://files.pythonhosted.org/packages/b1/db/dceb9dd5b231e1da801793f8acc9f3c52a7e1afe40bb1aae37e02b0faad5/cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "metadata_sha256": "558bafb9093a8e790175d9ecff9688382981d744877dad86fd6770db0f4dc918",
+      "registry_sha256": "2255e530e3f80593a354e3d84a29966924d0e10309d1e3a6d50f845ab7d8df66",
+      "requires_python": ">=3.10",
+      "requires_dist": [
+        "pycparser; implementation_name != \"PyPy\""
+      ],
+      "tags": [
+        "cp312-cp312-manylinux2014_x86_64",
+        "cp312-cp312-manylinux_2_17_x86_64"
+      ],
+      "provided_extras": []
+    },
+    {
+      "name": "charset-normalizer",
+      "version": "3.5.2",
+      "filename": "charset_normalizer-3.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+      "bytes": 257601,
+      "sha256": "3d31298449090ab8d47b7b1b2a555ff73cac7ed438a08b7ac160980c7ebed649",
+      "source_url": "https://files.pythonhosted.org/packages/7f/c5/38806a25ab5e65fc178f39affeda20858efafede2fce1ffc2556cfc9fe73/charset_normalizer-3.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+      "metadata_sha256": "89ce6362bb7be88558f4be99a98f5d1b4da93d19cd0323e5ee0bac05cf883dfb",
+      "registry_sha256": "9fda300857ae6a0486b4cd2d2fec7817ed2d45657249a6dfc0c2bbd1a44267b6",
+      "requires_python": ">=3.7",
+      "requires_dist": [],
+      "tags": [
+        "cp312-cp312-manylinux2014_x86_64",
+        "cp312-cp312-manylinux_2_17_x86_64",
+        "cp312-cp312-manylinux_2_28_x86_64"
+      ],
+      "provided_extras": [
+        "unicode-backport"
+      ]
+    },
+    {
+      "name": "cryptography",
+      "version": "50.0.2",
+      "filename": "cryptography-50.0.2-cp311-abi3-manylinux_2_34_x86_64.whl",
+      "bytes": 4752576,
+      "sha256": "9dab55f57c74c3cad24c323bacbbd04be4705ba6eb0d92e920b1fc4837ed5079",
+      "source_url": "https://files.pythonhosted.org/packages/d3/69/2c833a049475e0a3444e94c7d0aca0aa51d166374a449b09e92ac98138de/cryptography-50.0.2-cp311-abi3-manylinux_2_34_x86_64.whl",
+      "metadata_sha256": "047cfc71226409de4318b360aef15c63a2adf609731e3dcf7fe932f14ea042ee",
+      "registry_sha256": "7423990cc0948676ef47a71ea62a476ece4c76245e6bebd1c3a71f03c4ffc0f4",
+      "requires_python": ">=3.9, !=3.9.0, !=3.9.1",
+      "requires_dist": [
+        "cffi>=2.0.0 ; platform_python_implementation != 'PyPy'",
+        "typing-extensions>=4.13.2 ; python_full_version < '3.11'",
+        "bcrypt>=3.1.5 ; extra == 'ssh'"
+      ],
+      "tags": [
+        "cp311-abi3-manylinux_2_34_x86_64"
+      ],
+      "provided_extras": [
+        "ssh"
+      ]
+    },
+    {
+      "name": "dnspython",
+      "version": "2.9.0",
+      "filename": "dnspython-2.9.0-py3-none-any.whl",
+      "bytes": 354822,
+      "sha256": "9a4aedb833c3c1b49214d04d44d3032ab7a9135f7c1d29a549b4ff78fd82fda9",
+      "source_url": "https://files.pythonhosted.org/packages/10/02/cdcc9b7c051786a103c3b09e1003a82fa0c66bcb91ffbdabcfbf7b4163b9/dnspython-2.9.0-py3-none-any.whl",
+      "metadata_sha256": "d25dbd09b39758cd5cebe518701012a6278731986cd384fc4a7f25e78f7de929",
+      "registry_sha256": "55d63687109158f28b9621e0c06b06d1c0412b5ed323ae64b037a8287988cbfc",
+      "requires_python": ">=3.11",
+      "requires_dist": [
+        "black>=26.5 ; extra == 'dev'",
+        "coverage>=7.15 ; extra == 'dev'",
+        "hypercorn>=0.18.0 ; extra == 'dev'",
+        "pyright>=1.1.411 ; extra == 'dev'",
+        "pytest>=9.1 ; extra == 'dev'",
+        "pytest-cov>=7.1 ; extra == 'dev'",
+        "quart-trio>=0.12.0 ; extra == 'dev'",
+        "ruff>=0.16.0 ; extra == 'dev'",
+        "sphinx>=9.1.0 ; python_full_version >= '3.12' and extra == 'dev'",
+        "sphinx-rtd-theme>=3.1.0 ; python_full_version >= '3.12' and extra == 'dev'",
+        "trustme>=1.2.1 ; extra == 'dev'",
+        "ty>=0.0.85 ; extra == 'dev'",
+        "cryptography>=50 ; extra == 'dnssec'",
+        "httpcore2>=2.13 ; extra == 'doh'",
+        "httpx2>=2.13 ; extra == 'doh'",
+        "h2>=4.4 ; extra == 'doh'",
+        "aioquic>=1.3.0 ; extra == 'doq'",
+        "idna>=3.20 ; extra == 'idna'",
+        "trio>=0.34 ; extra == 'trio'",
+        "wmi>=1.5.1 ; sys_platform == 'win32' and extra == 'wmi'"
+      ],
+      "tags": [
+        "py3-none-any"
+      ],
+      "provided_extras": [
+        "dev",
+        "dnssec",
+        "doh",
+        "doq",
+        "idna",
+        "trio",
+        "wmi"
+      ]
+    },
+    {
+      "name": "email-validator",
+      "version": "2.3.0",
+      "filename": "email_validator-2.3.0-py3-none-any.whl",
+      "bytes": 35604,
+      "sha256": "80f13f623413e6b197ae73bb10bf4eb0908faf509ad8362c5edeb0be7fd450b4",
+      "source_url": "https://files.pythonhosted.org/packages/de/15/545e2b6cf2e3be84bc1ed85613edd75b8aea69807a71c26f4ca6a9258e82/email_validator-2.3.0-py3-none-any.whl",
+      "metadata_sha256": "2a97b81eefcd856bc80b0346f47fa2d800b9a438bf8f9231ae00fe931d5c9fbc",
+      "registry_sha256": "07b0acfa6c90050e403adc868f3821bafd0da33182042b2ae07959505f4b87c5",
+      "requires_python": ">=3.8",
+      "requires_dist": [
+        "dnspython>=2.0.0",
+        "idna>=2.0.0"
+      ],
+      "tags": [
+        "py3-none-any"
+      ],
+      "provided_extras": []
+    },
+    {
+      "name": "id",
+      "version": "1.6.1",
+      "filename": "id-1.6.1-py3-none-any.whl",
+      "bytes": 14689,
+      "sha256": "f5ec41ed2629a508f5d0988eda142e190c9c6da971100612c4de9ad9f9b237ca",
+      "source_url": "https://files.pythonhosted.org/packages/42/77/de194443bf38daed9452139e960c632b0ef9f9a5dd9ce605fdf18ca9f1b1/id-1.6.1-py3-none-any.whl",
+      "metadata_sha256": "5df85d87132487ef5ec3f6e7484595df23c6b088b97eb7eff35447d56c7cba24",
+      "registry_sha256": "3d8c26713f148b982542d953758b0dcd63e46308ca038ba3e0e02154f3c0bc67",
+      "requires_python": ">=3.9",
+      "requires_dist": [
+        "urllib3 >= 2, < 3",
+        "build ; extra == \"dev\"",
+        "bump >= 1.3.2 ; extra == \"dev\"",
+        "id[test, lint] ; extra == \"dev\"",
+        "bandit ; extra == \"lint\"",
+        "interrogate ; extra == \"lint\"",
+        "mypy ; extra == \"lint\"",
+        "ruff < 0.14.15 ; extra == \"lint\"",
+        "pytest ; extra == \"test\"",
+        "pytest-cov ; extra == \"test\"",
+        "pretend ; extra == \"test\"",
+        "coverage[toml] ; extra == \"test\""
+      ],
+      "tags": [
+        "py3-none-any"
+      ],
+      "provided_extras": [
+        "dev",
+        "lint",
+        "test"
+      ]
+    },
+    {
+      "name": "idna",
+      "version": "3.20",
+      "filename": "idna-3.20-py3-none-any.whl",
+      "bytes": 69583,
+      "sha256": "ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c",
+      "source_url": "https://files.pythonhosted.org/packages/58/a2/bb081bab032533a855d44de1d56f8e8426114ff1ba5d1f07a438a0a654f8/idna-3.20-py3-none-any.whl",
+      "metadata_sha256": "dbd8c14c1e4ca1e0c9824a6dbc7cbbf78884f38eb52d91148cd3025f671e4b85",
+      "registry_sha256": "e7cbd26e23ce60f6cb3a151d2adf3b1b087bb8f10ac2d9d6db70fdccbf3bb041",
+      "requires_python": ">=3.9",
+      "requires_dist": [
+        "ruff >= 0.16.0 ; extra == \"all\"",
+        "mypy >= 1.11.2 ; extra == \"all\"",
+        "ty >= 0.0.37 ; extra == \"all\"",
+        "pytest >= 8.3.2 ; extra == \"all\"",
+        "hypothesis >= 6.141.1 ; extra == \"all\"",
+        "coverage >= 7.10.0 ; extra == \"all\""
+      ],
+      "tags": [
+        "py3-none-any"
+      ],
+      "provided_extras": [
+        "all"
+      ]
+    },
+    {
+      "name": "markdown-it-py",
+      "version": "4.2.0",
+      "filename": "markdown_it_py-4.2.0-py3-none-any.whl",
+      "bytes": 91687,
+      "sha256": "9f7ebbcd14fe59494226453aed97c1070d83f8d24b6fc3a3bcf9a38092641c4a",
+      "source_url": "https://files.pythonhosted.org/packages/b3/81/4da04ced5a082363ecfa159c010d200ecbd959ae410c10c0264a38cac0f5/markdown_it_py-4.2.0-py3-none-any.whl",
+      "metadata_sha256": "72c36ff516755443b1ecb61e17b2567a990230b49a504b0eb0c42d5f82448a9c",
+      "registry_sha256": "56acd4cd7db9eb0925d9343585ce445fc5a6c8fee51d6bde77fb54313eff1a5a",
+      "requires_python": ">=3.10",
+      "requires_dist": [
+        "mdurl~=0.1",
+        "psutil ; extra == \"benchmarking\"",
+        "pytest ; extra == \"benchmarking\"",
+        "pytest-benchmark ; extra == \"benchmarking\"",
+        "commonmark~=0.9 ; extra == \"compare\"",
+        "markdown~=3.4 ; extra == \"compare\"",
+        "mistletoe~=1.0 ; extra == \"compare\"",
+        "mistune~=3.0 ; extra == \"compare\"",
+        "panflute~=2.3 ; extra == \"compare\"",
+        "markdown-it-pyrs ; extra == \"compare\"",
+        "linkify-it-py>=1,<3 ; extra == \"linkify\"",
+        "mdit-py-plugins>=0.5.0 ; extra == \"plugins\"",
+        "gprof2dot ; extra == \"profiling\"",
+        "mdit-py-plugins>=0.5.0 ; extra == \"rtd\"",
+        "myst-parser ; extra == \"rtd\"",
+        "pyyaml ; extra == \"rtd\"",
+        "sphinx ; extra == \"rtd\"",
+        "sphinx-copybutton ; extra == \"rtd\"",
+        "sphinx-design ; extra == \"rtd\"",
+        "sphinx-book-theme~=1.0 ; extra == \"rtd\"",
+        "jupyter_sphinx ; extra == \"rtd\"",
+        "ipykernel ; extra == \"rtd\"",
+        "coverage ; extra == \"testing\"",
+        "pytest ; extra == \"testing\"",
+        "pytest-cov ; extra == \"testing\"",
+        "pytest-regressions ; extra == \"testing\"",
+        "pytest-timeout ; extra == \"testing\"",
+        "requests ; extra == \"testing\""
+      ],
+      "tags": [
+        "py3-none-any"
+      ],
+      "provided_extras": [
+        "benchmarking",
+        "compare",
+        "linkify",
+        "plugins",
+        "profiling",
+        "rtd",
+        "testing"
+      ]
+    },
+    {
+      "name": "mdurl",
+      "version": "0.1.2",
+      "filename": "mdurl-0.1.2-py3-none-any.whl",
+      "bytes": 9979,
+      "sha256": "84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8",
+      "source_url": "https://files.pythonhosted.org/packages/b3/38/89ba8ad64ae25be8de66a6d463314cf1eb366222074cfda9ee839c56a4b4/mdurl-0.1.2-py3-none-any.whl",
+      "metadata_sha256": "b53b29d48f499367053fda3c81e7ce27d2558380ebbf83e66023b02eb7ddd25d",
+      "registry_sha256": "c7baac0b363d92cf55f1f3a313f4bb0564bff27343e6a0a4e9d7ff03afc8a6c7",
+      "requires_python": ">=3.7",
+      "requires_dist": [],
+      "tags": [
+        "py3-none-any"
+      ],
+      "provided_extras": []
+    },
+    {
+      "name": "platformdirs",
+      "version": "4.13.0",
+      "filename": "platformdirs-4.13.0-py3-none-any.whl",
+      "bytes": 32724,
+      "sha256": "3dbcf4cd708f21cf876c4eaa90e58412bc4f033d87143f41b1493ff77c25b7e1",
+      "source_url": "https://files.pythonhosted.org/packages/8d/15/1633010b26e88e872c93b67c0b6c5e174fb74cb6fb5c1472b4d51d4a8f22/platformdirs-4.13.0-py3-none-any.whl",
+      "metadata_sha256": "b41f474d5fb53a7de4a4a79c08f13c3a8cc675fe2c5522be8ce1b063e695dc7d",
+      "registry_sha256": "3e2797bb734b5a1fad700d58a908abd28736f7603e88948bf7f25a5fa9bbc60a",
+      "requires_python": ">=3.11",
+      "requires_dist": [],
+      "tags": [
+        "py3-none-any"
+      ],
+      "provided_extras": []
+    },
+    {
+      "name": "pyasn1",
+      "version": "0.6.4",
+      "filename": "pyasn1-0.6.4-py3-none-any.whl",
+      "bytes": 84410,
+      "sha256": "deda9277cfd454080ec40b207fb6df82206a3a2688735233cdcd8d3d565f088b",
+      "source_url": "https://files.pythonhosted.org/packages/9a/3b/6163796d69c3977d1e4287bea4a6979161cbbdd170ebb430511e8e1999ce/pyasn1-0.6.4-py3-none-any.whl",
+      "metadata_sha256": "a092d99fad1e3744d6aa26eef2598e8ee2343ea403137ca73d06dccef19d70e2",
+      "registry_sha256": "0739a8dde8bf08a1f86d789388c864562ad3d584d350476592975c44ccc7081e",
+      "requires_python": ">=3.8",
+      "requires_dist": [],
+      "tags": [
+        "py3-none-any"
+      ],
+      "provided_extras": []
+    },
+    {
+      "name": "pycparser",
+      "version": "3.11",
+      "filename": "pycparser-3.11-py3-none-any.whl",
+      "bytes": 51178,
+      "sha256": "51d5a8ba2be0bbe440b99d2112604c95bbbc3c2748a64260186c541e1729cd80",
+      "source_url": "https://files.pythonhosted.org/packages/90/11/0e6f11117525ff0eec40ebac3d313376f102df93ca44ad9e893ee85e4f89/pycparser-3.11-py3-none-any.whl",
+      "metadata_sha256": "e3a74c846648bb55f4f907284b745e2003b87b96d9c9d17a8a50cf37804541c9",
+      "registry_sha256": "f3711214301b5595f24eb4fe232a70836a6187ab4a93e895d0307006456ed41a",
+      "requires_python": ">=3.10",
+      "requires_dist": [],
+      "tags": [
+        "py3-none-any"
+      ],
+      "provided_extras": []
+    },
+    {
+      "name": "pydantic",
+      "version": "2.14.1",
+      "filename": "pydantic-2.14.1-py3-none-any.whl",
+      "bytes": 488106,
+      "sha256": "9195d967ec791692a04438115466764fb8b9a27b31f14a760437694f40d6b454",
+      "source_url": "https://files.pythonhosted.org/packages/35/ea/a56b9fe5066f3537b7882f77e9c5dfb26d8c2eefdaed9b5fc73d57b4dc22/pydantic-2.14.1-py3-none-any.whl",
+      "metadata_sha256": "4d4c8e8d5e6a27d5208f0d7949f25628e6747133034969d4d1399b1ad5394036",
+      "registry_sha256": "c76da264910a91e83467261a0a58dad9520c883f8120ff75ed0463ecda2b0069",
+      "requires_python": ">=3.10",
+      "requires_dist": [
+        "annotated-types>=0.6.0",
+        "pydantic-core==2.50.1",
+        "typing-extensions>=4.16.0",
+        "typing-inspection>=0.4.4",
+        "email-validator>=2.0.0; extra == 'email'",
+        "tzdata; (platform_system == 'Windows') and extra == 'timezone'"
+      ],
+      "tags": [
+        "py3-none-any"
+      ],
+      "provided_extras": [
+        "email",
+        "timezone"
+      ]
+    },
+    {
+      "name": "pydantic-core",
+      "version": "2.50.1",
+      "filename": "pydantic_core-2.50.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "bytes": 2160157,
+      "sha256": "93ba4e9d8210d941c200431a56b2c0400b131865947903937ed3ec5404307d2e",
+      "source_url": "https://files.pythonhosted.org/packages/90/24/48cd98388e4ac2c08d0800af36d15413db15e20387f1038123a2c86cb2f6/pydantic_core-2.50.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "metadata_sha256": "ae6817764b603fa2300cd31b9566ecc33476df46163c4150fffc353121a166f2",
+      "registry_sha256": "8c11cbaca313a8e8b98bc4a3e19e42c0cb7c48888bacd427ff0553e5ee6700a4",
+      "requires_python": ">=3.10",
+      "requires_dist": [
+        "typing-extensions>=4.16.0"
+      ],
+      "tags": [
+        "cp312-cp312-manylinux2014_x86_64",
+        "cp312-cp312-manylinux_2_17_x86_64"
+      ],
+      "provided_extras": []
+    },
+    {
+      "name": "pygments",
+      "version": "2.21.0",
+      "filename": "pygments-2.21.0-py3-none-any.whl",
+      "bytes": 1250147,
+      "sha256": "2363c69b61c4a97c838da3b130dcd6468f4848992b21a82f2a63ec34377137d9",
+      "source_url": "https://files.pythonhosted.org/packages/71/46/17f022dd3e953bf20a04a028a21ec746d942f8d2af30fa0f124fa0e6a684/pygments-2.21.0-py3-none-any.whl",
+      "metadata_sha256": "1dde075570136774c706bf0009183a793fe0ee262e4a5590cc6eff8453eedd43",
+      "registry_sha256": "330104a10adc8a587e3f98f4e207557125ca0c1d489e129334da5acb2b813a03",
+      "requires_python": ">=3.9",
+      "requires_dist": [
+        "colorama>=0.4.6; extra == 'windows-terminal'"
+      ],
+      "tags": [
+        "py3-none-any"
+      ],
+      "provided_extras": [
+        "plugins",
+        "windows-terminal"
+      ]
+    },
+    {
+      "name": "pyjwt",
+      "version": "2.15.1",
+      "filename": "pyjwt-2.15.1-py3-none-any.whl",
+      "bytes": 33860,
+      "sha256": "42d59d631f7768a1028a64c7ff581a9bf7519804daf91fc5b6c56e30eec5e193",
+      "source_url": "https://files.pythonhosted.org/packages/50/ca/44de4e75f8aadc457f0634be3b542815078ded46dca30efb960edeecad6e/pyjwt-2.15.1-py3-none-any.whl",
+      "metadata_sha256": "1ea0c9f139b8c928276b3628af165955f6f764491448a6ad8f103cdcbb382da3",
+      "registry_sha256": "f13089db8caff0efbdec85ab5c3fa281a3cc76d5b708c74fab427c98e1f29a0d",
+      "requires_python": ">=3.9",
+      "requires_dist": [
+        "typing_extensions>=4.0; python_version < \"3.11\"",
+        "cryptography>=3.4.0; extra == \"crypto\""
+      ],
+      "tags": [
+        "py3-none-any"
+      ],
+      "provided_extras": [
+        "crypto"
+      ]
+    },
+    {
+      "name": "pyopenssl",
+      "version": "26.4.0",
+      "filename": "pyopenssl-26.4.0-py3-none-any.whl",
+      "bytes": 56026,
+      "sha256": "f0eb0cb2d581d3ad2b9c489468485e7f2ab6727d08401bcf9d824c3caddf3c1c",
+      "source_url": "https://files.pythonhosted.org/packages/51/ad/2cf6d3fa2fae5c79e1ed9960c0d42badd0f94d81dd12b50604cdc839e648/pyopenssl-26.4.0-py3-none-any.whl",
+      "metadata_sha256": "caa9a9adf6c7307dc4ba4ec8379e9c2c9c194873ec562ef609d6b49fb64e3113",
+      "registry_sha256": "065319346d47c6d9f401e228d17b5fb82d6bc695ad18154286da3912d6122981",
+      "requires_python": ">=3.9",
+      "requires_dist": [
+        "cryptography<51,>=49.0.0",
+        "typing-extensions>=4.9; python_version < \"3.13\"",
+        "pytest-rerunfailures; extra == \"test\"",
+        "pretend; extra == \"test\"",
+        "pytest>=3.0.1; extra == \"test\"",
+        "sphinx!=5.2.0,!=5.2.0.post0,!=7.2.5; extra == \"docs\"",
+        "sphinx_rtd_theme; extra == \"docs\""
+      ],
+      "tags": [
+        "py3-none-any"
+      ],
+      "provided_extras": [
+        "test",
+        "docs"
+      ]
+    },
+    {
+      "name": "requests",
+      "version": "2.34.2",
+      "filename": "requests-2.34.2-py3-none-any.whl",
+      "bytes": 73075,
+      "sha256": "2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0",
+      "source_url": "https://files.pythonhosted.org/packages/a0/f4/c67b0b3f1b9245e8d266f0f112c500d50e5b4e83cb6f3b71b6528104182a/requests-2.34.2-py3-none-any.whl",
+      "metadata_sha256": "8c384ba3e979480faae2859d3c5e6c1276dd2c3616e322e124d52c8cfc556f27",
+      "registry_sha256": "8622e50ffd295ed759ec793f2a009172a4ed0204bbc5e948de23111bc3d2aeae",
+      "requires_python": ">=3.10",
+      "requires_dist": [
+        "charset_normalizer<4,>=2",
+        "idna<4,>=2.5",
+        "urllib3<3,>=1.26",
+        "certifi>=2023.5.7",
+        "PySocks!=1.5.7,>=1.5.6; extra == \"socks\"",
+        "chardet<8,>=3.0.2; extra == \"use-chardet-on-py3\""
+      ],
+      "tags": [
+        "py3-none-any"
+      ],
+      "provided_extras": [
+        "security",
+        "socks",
+        "use-chardet-on-py3"
+      ]
+    },
+    {
+      "name": "rfc3161-client",
+      "version": "1.0.9",
+      "filename": "rfc3161_client-1.0.9-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "bytes": 2415566,
+      "sha256": "fac3f440a507555e684dc5daba75e33dc08f0f45fdefa48448f19001233a6b21",
+      "source_url": "https://files.pythonhosted.org/packages/11/ae/19139fee184916065705d660bad203b676dc40b449afff36f79818c59c4f/rfc3161_client-1.0.9-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "metadata_sha256": "422194bfd587158c826d990282605a62c58cc7008d0f031ba4614d951d85c75d",
+      "registry_sha256": "c723188227f5ab4ab1e1fb261280b6e46869f13796b7f33e80853cd036a69e6b",
+      "requires_python": ">=3.9",
+      "requires_dist": [
+        "cryptography>=43"
+      ],
+      "tags": [
+        "cp39-abi3-manylinux2014_x86_64",
+        "cp39-abi3-manylinux_2_17_x86_64"
+      ],
+      "provided_extras": []
+    },
+    {
+      "name": "rfc8785",
+      "version": "0.1.4",
+      "filename": "rfc8785-0.1.4-py3-none-any.whl",
+      "bytes": 9240,
+      "sha256": "520d690b448ecf0703691c76e1a34a24ddcd4fc5bc41d589cb7c58ec651bcd48",
+      "source_url": "https://files.pythonhosted.org/packages/4d/78/119878110660b2ad709888c8a1614fce7e2fab39080ab960656dc8605bf6/rfc8785-0.1.4-py3-none-any.whl",
+      "metadata_sha256": "9dfbf420c8c18077dd7697ec12fe2838b5901683573ae128df2d3403330f7aa9",
+      "registry_sha256": "eab7c92b5b9d82953497a77fdb97930e92a8303dddb1866a7f31911eb2a77e69",
+      "requires_python": ">=3.8",
+      "requires_dist": [
+        "rfc8785[doc,test,lint] ; extra == \"dev\"",
+        "build ; extra == \"dev\"",
+        "pdoc ; extra == \"doc\"",
+        "ruff ~= 0.3 ; extra == \"lint\"",
+        "mypy >= 1.0 ; extra == \"lint\"",
+        "interrogate ; extra == \"lint\"",
+        "pytest ; extra == \"test\"",
+        "pytest-cov ; extra == \"test\"",
+        "coverage ; extra == \"test\""
+      ],
+      "tags": [
+        "py3-none-any"
+      ],
+      "provided_extras": [
+        "dev",
+        "doc",
+        "lint",
+        "test"
+      ]
+    },
+    {
+      "name": "rich",
+      "version": "15.0.0",
+      "filename": "rich-15.0.0-py3-none-any.whl",
+      "bytes": 310654,
+      "sha256": "33bd4ef74232fb73fe9279a257718407f169c09b78a87ad3d296f548e27de0bb",
+      "source_url": "https://files.pythonhosted.org/packages/82/3b/64d4899d73f91ba49a8c18a8ff3f0ea8f1c1d75481760df8c68ef5235bf5/rich-15.0.0-py3-none-any.whl",
+      "metadata_sha256": "fad34fc603fac4481bf81f8dd629492fc302c0ec31909c86644751512afb2e3b",
+      "registry_sha256": "455015cb0b237a24819d91236152ad0e71b2be39a83cbe6afa0e29ea8aafa550",
+      "requires_python": ">=3.9.0",
+      "requires_dist": [
+        "ipywidgets (>=7.5.1,<9) ; extra == \"jupyter\"",
+        "markdown-it-py (>=2.2.0)",
+        "pygments (>=2.13.0,<3.0.0)"
+      ],
+      "tags": [
+        "py3-none-any"
+      ],
+      "provided_extras": [
+        "jupyter"
+      ]
+    },
+    {
+      "name": "securesystemslib",
+      "version": "1.5.1",
+      "filename": "securesystemslib-1.5.1-py3-none-any.whl",
+      "bytes": 876390,
+      "sha256": "ada8bdf817da29ece4ba91654f6a162ce7cfbadbc3ae3f840f7313f9d22675de",
+      "source_url": "https://files.pythonhosted.org/packages/38/fc/c71335a5046d46bf3b761a8c7fa092b40a7721429a5613538f0a28ae80a6/securesystemslib-1.5.1-py3-none-any.whl",
+      "metadata_sha256": "8201bcae1e4ff2f66b5e588ddb00542d1294dd5173d3e5178b8f4ce510feb50c",
+      "registry_sha256": "bd8677f5f3af7bf597e0a455eeb09535cb501b0f27ddc855684919693cc5ada0",
+      "requires_python": "~=3.10",
+      "requires_dist": [
+        "boto3; extra == 'awskms'",
+        "botocore; extra == 'awskms'",
+        "cryptography>=40.0.0; extra == 'awskms'",
+        "azure-identity; extra == 'azurekms'",
+        "azure-keyvault-keys; extra == 'azurekms'",
+        "cryptography>=40.0.0; extra == 'azurekms'",
+        "cryptography>=48.0.0; extra == 'crypto'",
+        "cryptography>=48.0.0; extra == 'gcpkms'",
+        "google-cloud-kms>=3.11.0; extra == 'gcpkms'",
+        "cryptography>=40.0.0; extra == 'hsm'",
+        "python-pkcs11; extra == 'hsm'",
+        "pyspx>=0.5.0; extra == 'pyspx'",
+        "sigstore<5,>=4; extra == 'sigstore'",
+        "cryptography>=48.0.0; extra == 'tkey'",
+        "keylet>=0.6.0; extra == 'tkey'",
+        "cryptography>=40.0.0; extra == 'vault'",
+        "hvac; extra == 'vault'"
+      ],
+      "tags": [
+        "py3-none-any"
+      ],
+      "provided_extras": [
+        "awskms",
+        "azurekms",
+        "crypto",
+        "gcpkms",
+        "hsm",
+        "pyspx",
+        "sigstore",
+        "tkey",
+        "vault"
+      ]
+    },
+    {
+      "name": "sigstore",
+      "version": "4.5.0",
+      "filename": "sigstore-4.5.0-py3-none-any.whl",
+      "bytes": 111724,
+      "sha256": "f045b207f2e12605cf775ec38e89c5eda625d71ffa7830477db65e47ec2bc8b2",
+      "source_url": "https://files.pythonhosted.org/packages/bf/7f/51dc313c06dd3ec6c5b308e334492cfdea0b02c9184a0da7b2db8c2a30a1/sigstore-4.5.0-py3-none-any.whl",
+      "metadata_sha256": "8d451aee6b8ae1cc22659f576d5df4a35ae3a3f2f6c12f6bf9eb37a1e405c47a",
+      "registry_sha256": "6a3eb9bdaeb6bbf5d92f7ec87b3d0a7dfec4f780d23c8a77e120488c468e97a2",
+      "requires_python": ">=3.10",
+      "requires_dist": [
+        "cryptography >= 42",
+        "id >= 1.1.0",
+        "importlib_resources ~= 5.7; python_version < '3.11'",
+        "pyasn1 ~= 0.6",
+        "pydantic >= 2,< 3",
+        "pyjwt >= 2.1",
+        "pyOpenSSL >= 23.0.0",
+        "requests",
+        "rich >= 13,< 16",
+        "rfc8785 ~= 0.1.2",
+        "rfc3161-client >= 1.0.3,< 1.1.0",
+        "sigstore-models == 0.0.6",
+        "sigstore-rekor-types == 0.0.18",
+        "tuf >= 6, < 8",
+        "platformdirs ~= 4.2"
+      ],
+      "tags": [
+        "py3-none-any"
+      ],
+      "provided_extras": []
+    },
+    {
+      "name": "sigstore-models",
+      "version": "0.0.6",
+      "filename": "sigstore_models-0.0.6-py3-none-any.whl",
+      "bytes": 13213,
+      "sha256": "5201a68f4d7d0f8bec1e2f4378eb646b084c52609a4e31db8c385095fff68b2e",
+      "source_url": "https://files.pythonhosted.org/packages/12/dc/7a19864a7bc9f43121ab459e12768ab0080590e3e1b60a29b2f2eb01fb85/sigstore_models-0.0.6-py3-none-any.whl",
+      "metadata_sha256": "0292e8e8b9ccf597a52220a8d3ba5997b527f850fe3d52392deb022c42173f3b",
+      "registry_sha256": "e8406514e590c3176831b48d4e6f8d77ff1ed900a3eb58744648232eb91153f4",
+      "requires_python": ">=3.10",
+      "requires_dist": [
+        "pydantic>=2.12",
+        "typing-extensions>=4.14.1"
+      ],
+      "tags": [
+        "py3-none-any"
+      ],
+      "provided_extras": []
+    },
+    {
+      "name": "sigstore-rekor-types",
+      "version": "0.0.18",
+      "filename": "sigstore_rekor_types-0.0.18-py3-none-any.whl",
+      "bytes": 20610,
+      "sha256": "b62bf38c5b1a62bc0d7fe0ee51a0709e49311d137c7880c329882a8f4b2d1d78",
+      "source_url": "https://files.pythonhosted.org/packages/45/7c/f0b4e19fd424df4cc964f5d454e1d814fd2dc3b386342e6040441024318f/sigstore_rekor_types-0.0.18-py3-none-any.whl",
+      "metadata_sha256": "acd103ce32eecfb9ee209d10e68d509e60ec7b8e9b8a0332858f7eeb6f2b17a5",
+      "registry_sha256": "0348636fa4955ce37b7f80cd1a722dddecef96083e7c6919377f6d80367c4e0f",
+      "requires_python": ">=3.8",
+      "requires_dist": [
+        "pydantic[email]<3,>=2",
+        "typing-extensions; python_version < \"3.9\"",
+        "pdoc<16.0,>=14.2; extra == \"doc\"",
+        "ruff<0.7.5; extra == \"lint\"",
+        "mypy>=1.0; extra == \"lint\"",
+        "datamodel-code-generator>=0.25.2; extra == \"codegen\"",
+        "sigstore-rekor-types[lint]; extra == \"codegen\"",
+        "sigstore-rekor-types[codegen,doc,lint]; extra == \"dev\"",
+        "build; extra == \"dev\""
+      ],
+      "tags": [
+        "py3-none-any"
+      ],
+      "provided_extras": [
+        "doc",
+        "lint",
+        "codegen",
+        "dev"
+      ]
+    },
+    {
+      "name": "tuf",
+      "version": "7.0.1",
+      "filename": "tuf-7.0.1-py3-none-any.whl",
+      "bytes": 56253,
+      "sha256": "d30434bda6e079ab303fb30d1b3006d939a10ca34783b1573d61cd9b802fa45c",
+      "source_url": "https://files.pythonhosted.org/packages/a2/10/171e306e4a19ff980b9029ce5a523881e34bc6a2a52750fb1853f49f0fb9/tuf-7.0.1-py3-none-any.whl",
+      "metadata_sha256": "528e5e373529ce419a34dc3fdf988442b1a7aa2c65706ba2dbadd7a017a5b6d3",
+      "registry_sha256": "0f3a53cdf627da3ff67f0be656e04a0e0c5c0eda663f0425c3fb1be73dbaabb9",
+      "requires_python": ">=3.10",
+      "requires_dist": [
+        "securesystemslib~=1.0",
+        "urllib3~=2.0"
+      ],
+      "tags": [
+        "py3-none-any"
+      ],
+      "provided_extras": []
+    },
+    {
+      "name": "typing-extensions",
+      "version": "4.16.0",
+      "filename": "typing_extensions-4.16.0-py3-none-any.whl",
+      "bytes": 45571,
+      "sha256": "481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8",
+      "source_url": "https://files.pythonhosted.org/packages/49/d3/b8441a820a491ddfc024b0b0cf0393375b75ea13866d9c66727e54c2fc80/typing_extensions-4.16.0-py3-none-any.whl",
+      "metadata_sha256": "b05084ca1d50879865178d9fff9fabeab61bdfb1f361bfbde95421ffc8f9be46",
+      "registry_sha256": "2140da00d62dde967f52d0be0ae28444f1d6a3fe603f52c83c23988c32122d5a",
+      "requires_python": ">=3.9",
+      "requires_dist": [],
+      "tags": [
+        "py3-none-any"
+      ],
+      "provided_extras": []
+    },
+    {
+      "name": "typing-inspection",
+      "version": "0.4.4",
+      "filename": "typing_inspection-0.4.4-py3-none-any.whl",
+      "bytes": 14750,
+      "sha256": "65b8397ba37ccbce054456aaccddfc91e6e3083c92824df348d96ca832f3f147",
+      "source_url": "https://files.pythonhosted.org/packages/67/81/4add07e5172b7ac40d8ed5ff580409a7801a4fe26d529bdd915401dabfbe/typing_inspection-0.4.4-py3-none-any.whl",
+      "metadata_sha256": "bad3d9e6342ef6750cf5128ec942327b8bebdce0b6e4d6f67cb15b27ae5118da",
+      "registry_sha256": "b37c398e1a0a3a97af35dcfb754e0e1f725f56d5f391d029ab90d3969d0e9583",
+      "requires_python": ">=3.10",
+      "requires_dist": [
+        "typing-extensions>=4.15.0"
+      ],
+      "tags": [
+        "py3-none-any"
+      ],
+      "provided_extras": []
+    },
+    {
+      "name": "urllib3",
+      "version": "2.8.0",
+      "filename": "urllib3-2.8.0-py3-none-any.whl",
+      "bytes": 135717,
+      "sha256": "0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3",
+      "source_url": "https://files.pythonhosted.org/packages/92/9d/c4e665119135114480843e7ab388fa94d8480650450e6f8e26b70d323a4c/urllib3-2.8.0-py3-none-any.whl",
+      "metadata_sha256": "10898c620e8007c030e07fa5622b68358a43010025dfbd78a1cb797699de2bb4",
+      "registry_sha256": "5315e7401db3cacccd0c2ce5daf81f752a9cc3614b18c37f2b79930b7159ce2f",
+      "requires_python": ">=3.10",
+      "requires_dist": [
+        "brotli>=1.2.0; (platform_python_implementation == 'CPython') and extra == 'brotli'",
+        "brotlicffi>=1.2.0.0; (platform_python_implementation != 'CPython') and extra == 'brotli'",
+        "h2<5,>=4; extra == 'h2'",
+        "pysocks!=1.5.7,<2.0,>=1.5.6; extra == 'socks'",
+        "backports-zstd>=1.0.0; (python_version < '3.14') and extra == 'zstd'"
+      ],
+      "tags": [
+        "py3-none-any"
+      ],
+      "provided_extras": [
+        "brotli",
+        "h2",
+        "socks",
+        "zstd"
+      ]
+    }
+  ],
+  "native_tagged_wheels": [
+    "cffi",
+    "charset-normalizer",
+    "cryptography",
+    "pydantic-core",
+    "rfc3161-client"
+  ],
+  "universal_wheels": 26,
+  "dependency_closure": {
+    "reachable_packages": 31,
+    "active_edges": 41,
+    "requested_extras": {
+      "pydantic": [
+        "email"
+      ]
+    },
+    "active_edge_records": [
+      {
+        "from": "cffi",
+        "to": "pycparser",
+        "requirement": "pycparser; implementation_name != \"PyPy\""
+      },
+      {
+        "from": "cryptography",
+        "to": "cffi",
+        "requirement": "cffi>=2.0.0; platform_python_implementation != \"PyPy\""
+      },
+      {
+        "from": "email-validator",
+        "to": "dnspython",
+        "requirement": "dnspython>=2.0.0"
+      },
+      {
+        "from": "email-validator",
+        "to": "idna",
+        "requirement": "idna>=2.0.0"
+      },
+      {
+        "from": "id",
+        "to": "urllib3",
+        "requirement": "urllib3<3,>=2"
+      },
+      {
+        "from": "markdown-it-py",
+        "to": "mdurl",
+        "requirement": "mdurl~=0.1"
+      },
+      {
+        "from": "pydantic",
+        "to": "annotated-types",
+        "requirement": "annotated-types>=0.6.0"
+      },
+      {
+        "from": "pydantic",
+        "to": "email-validator",
+        "requirement": "email-validator>=2.0.0; extra == \"email\""
+      },
+      {
+        "from": "pydantic",
+        "to": "pydantic-core",
+        "requirement": "pydantic-core==2.50.1"
+      },
+      {
+        "from": "pydantic",
+        "to": "typing-extensions",
+        "requirement": "typing-extensions>=4.16.0"
+      },
+      {
+        "from": "pydantic",
+        "to": "typing-inspection",
+        "requirement": "typing-inspection>=0.4.4"
+      },
+      {
+        "from": "pydantic-core",
+        "to": "typing-extensions",
+        "requirement": "typing-extensions>=4.16.0"
+      },
+      {
+        "from": "pyopenssl",
+        "to": "cryptography",
+        "requirement": "cryptography<51,>=49.0.0"
+      },
+      {
+        "from": "pyopenssl",
+        "to": "typing-extensions",
+        "requirement": "typing-extensions>=4.9; python_version < \"3.13\""
+      },
+      {
+        "from": "requests",
+        "to": "certifi",
+        "requirement": "certifi>=2023.5.7"
+      },
+      {
+        "from": "requests",
+        "to": "charset-normalizer",
+        "requirement": "charset_normalizer<4,>=2"
+      },
+      {
+        "from": "requests",
+        "to": "idna",
+        "requirement": "idna<4,>=2.5"
+      },
+      {
+        "from": "requests",
+        "to": "urllib3",
+        "requirement": "urllib3<3,>=1.26"
+      },
+      {
+        "from": "rfc3161-client",
+        "to": "cryptography",
+        "requirement": "cryptography>=43"
+      },
+      {
+        "from": "rich",
+        "to": "markdown-it-py",
+        "requirement": "markdown-it-py>=2.2.0"
+      },
+      {
+        "from": "rich",
+        "to": "pygments",
+        "requirement": "pygments<3.0.0,>=2.13.0"
+      },
+      {
+        "from": "sigstore",
+        "to": "cryptography",
+        "requirement": "cryptography>=42"
+      },
+      {
+        "from": "sigstore",
+        "to": "id",
+        "requirement": "id>=1.1.0"
+      },
+      {
+        "from": "sigstore",
+        "to": "platformdirs",
+        "requirement": "platformdirs~=4.2"
+      },
+      {
+        "from": "sigstore",
+        "to": "pyasn1",
+        "requirement": "pyasn1~=0.6"
+      },
+      {
+        "from": "sigstore",
+        "to": "pydantic",
+        "requirement": "pydantic<3,>=2"
+      },
+      {
+        "from": "sigstore",
+        "to": "pyjwt",
+        "requirement": "pyjwt>=2.1"
+      },
+      {
+        "from": "sigstore",
+        "to": "pyopenssl",
+        "requirement": "pyOpenSSL>=23.0.0"
+      },
+      {
+        "from": "sigstore",
+        "to": "requests",
+        "requirement": "requests"
+      },
+      {
+        "from": "sigstore",
+        "to": "rfc3161-client",
+        "requirement": "rfc3161-client<1.1.0,>=1.0.3"
+      },
+      {
+        "from": "sigstore",
+        "to": "rfc8785",
+        "requirement": "rfc8785~=0.1.2"
+      },
+      {
+        "from": "sigstore",
+        "to": "rich",
+        "requirement": "rich<16,>=13"
+      },
+      {
+        "from": "sigstore",
+        "to": "sigstore-models",
+        "requirement": "sigstore-models==0.0.6"
+      },
+      {
+        "from": "sigstore",
+        "to": "sigstore-rekor-types",
+        "requirement": "sigstore-rekor-types==0.0.18"
+      },
+      {
+        "from": "sigstore",
+        "to": "tuf",
+        "requirement": "tuf<8,>=6"
+      },
+      {
+        "from": "sigstore-models",
+        "to": "pydantic",
+        "requirement": "pydantic>=2.12"
+      },
+      {
+        "from": "sigstore-models",
+        "to": "typing-extensions",
+        "requirement": "typing-extensions>=4.14.1"
+      },
+      {
+        "from": "sigstore-rekor-types",
+        "to": "pydantic",
+        "requirement": "pydantic[email]<3,>=2"
+      },
+      {
+        "from": "tuf",
+        "to": "securesystemslib",
+        "requirement": "securesystemslib~=1.0"
+      },
+      {
+        "from": "tuf",
+        "to": "urllib3",
+        "requirement": "urllib3~=2.0"
+      },
+      {
+        "from": "typing-inspection",
+        "to": "typing-extensions",
+        "requirement": "typing-extensions>=4.15.0"
+      }
+    ],
+    "tested_marker_patches": [
+      "3.12.0",
+      "3.12.14",
+      "3.12.15"
+    ],
+    "pydantic_email_propagation_verified": true,
+    "pydantic_tooling_version": "2.14.1"
+  },
+  "author_official_index_evidence_verified": {
+    "fresh_exact31_install": true,
+    "pip_check": "passed",
+    "normal_resolver": true,
+    "index": "https://pypi.org/simple",
+    "all31_report_hashes_filenames_versions_verified": true,
+    "three_fresh_refusals_preserved": true,
+    "original_metadata_assessment_pending_fields_remain_historical": true
+  },
+  "independent_resolver_controls": {
+    "fresh_empty_environments": 5,
+    "positive_installs": 1,
+    "exact_distributions_after": {
+      "annotated-types": "0.8.0",
+      "certifi": "2026.7.22",
+      "cffi": "2.1.1",
+      "charset-normalizer": "3.5.2",
+      "cryptography": "50.0.2",
+      "dnspython": "2.9.0",
+      "email-validator": "2.3.0",
+      "id": "1.6.1",
+      "idna": "3.20",
+      "markdown-it-py": "4.2.0",
+      "mdurl": "0.1.2",
+      "platformdirs": "4.13.0",
+      "pyasn1": "0.6.4",
+      "pycparser": "3.11",
+      "pydantic": "2.14.1",
+      "pydantic-core": "2.50.1",
+      "pygments": "2.21.0",
+      "pyjwt": "2.15.1",
+      "pyopenssl": "26.4.0",
+      "requests": "2.34.2",
+      "rfc3161-client": "1.0.9",
+      "rfc8785": "0.1.4",
+      "rich": "15.0.0",
+      "securesystemslib": "1.5.1",
+      "sigstore": "4.5.0",
+      "sigstore-models": "0.0.6",
+      "sigstore-rekor-types": "0.0.18",
+      "tuf": "7.0.1",
+      "typing-extensions": "4.16.0",
+      "typing-inspection": "0.4.4",
+      "urllib3": "2.8.0"
+    },
+    "pip_check": "passed",
+    "normal_resolver_and_required_hashes": true,
+    "expected_refusals": [
+      "wrong Sigstore root hash",
+      "omitted mdurl ordinary-transitive entry",
+      "present email-validator extra-transitive pin with no hash",
+      "omitted email-validator extra-transitive entry"
+    ],
+    "all31_verified_wheels_available_in_every_case": true,
+    "all_negative_environments_remained_empty": true,
+    "local_wheelhouse_no_index": true,
+    "new_downloads": false,
+    "no_deps_or_hash_bypass_used": false,
+    "inherited_PIP_variables_removed": true,
+    "PIP_CONFIG_FILE": "/dev/null",
+    "bootstrap_pip_version": "25.0.1",
+    "actual_environment": {
+      "implementation_name": "cpython",
+      "implementation_version": "3.12.14",
+      "os_name": "posix",
+      "platform_machine": "x86_64",
+      "platform_release": "6.18.57",
+      "platform_system": "Linux",
+      "platform_version": "#1 SMP Tue Oct 20 21:56:04 UTC 2026",
+      "python_full_version": "3.12.14",
+      "platform_python_implementation": "CPython",
+      "python_version": "3.12",
+      "sys_platform": "linux"
+    },
+    "official_index_repeated_by_reviewer": false
+  },
+  "independent_source_tests": {
+    "counts": {
+      "cases": 267,
+      "passed": 265,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xfailed": 2
+    },
+    "distinct_cases": 267,
+    "seconds": 2.208572417999676,
+    "source_bound_with_I_and_B": true,
+    "tooling": "Read-only previously independently installed seven-package pilot toolchain",
+    "application_dependency_scope": {
+      "version": "2.14.2",
+      "path": "/workspace/scratch/patchtrace-95fe-c3/venv/lib/python3.12/site-packages/pydantic/__init__.py"
+    },
+    "sigstore_install_environment_is_separate": true,
+    "verifier_tests": "Existing hermetic fixtures use local tiny Git repositories and fake network/signature functions; no real signature or user-artifact verification"
+  },
+  "independent_cli_smoke": {
+    "options_only": [
+      "--help",
+      "--version"
+    ],
+    "actual_version": "4.5.0",
+    "exit_codes": [
+      0,
+      0
+    ],
+    "fresh31_environment": true,
+    "python_network_process_and_file_open_audit_guard": true,
+    "guard_refusal_selfcheck": true,
+    "outbound_DNS_connect_send_attempts": 0,
+    "blocked_import_time_IPv6_capability_socket_constructions": 2,
+    "constructor_caller": "urllib3.util.connection._has_ipv6; one per invocation, denied before socket creation",
+    "inherited_credentials_passed": false,
+    "file_reads_outside_allowed_package_stdlib_smoke_roots": 0,
+    "signing_identity_or_artifact_verification": false,
+    "native_acceptance_claim": false,
+    "audit_hook_scope_disclosed": "Python audit events; no OS-wide network namespace claim"
+  },
+  "census": {
+    "parent_f086": {
+      "workflows": 21,
+      "run_scalars": 203,
+      "installing_jobs": 38,
+      "commands": 42,
+      "protected": 2,
+      "unprotected": 40
+    },
+    "candidate_961": {
+      "workflows": 21,
+      "run_scalars": 203,
+      "installing_jobs": 38,
+      "commands": 42,
+      "protected": 3,
+      "unprotected": 39
+    }
+  },
+  "broad_strict_C5_gate_AST_and_decorators_unchanged": [
+    {
+      "path": "tests/test_codex5_command_audit_20261121.py",
+      "name": "test_all_explicit_workflow_pip_installs_are_protected",
+      "decorators": [
+        "pytest.mark.xfail(strict=True, raises=UnprotectedPipInstalls, reason='CODEX-5: repository-wide hashed wheel closure still open')"
+      ],
+      "ast_sha256": "80fe77ea087d58072df2afff7d7c0ecc1273e3e680f7abc7be5e10d80fb342b2"
+    },
+    {
+      "path": "tests/test_codex_pkg_workflows.py",
+      "name": "test_pip_downloads_require_hashes",
+      "decorators": [
+        "pytest.mark.xfail(strict=True, reason='CODEX-5')"
+      ],
+      "ast_sha256": "f901fc2239a9fab8ac5d56d7515d356a173f9a66581c397984cd0ba3e6ec90d1"
+    }
+  ],
+  "author_history_preserved": {
+    "test_stage_parent_red": {
+      "cases": 4,
+      "passed": 1,
+      "failed": 3,
+      "errors": 0,
+      "ordinary_skips": 0
+    },
+    "final_source_tests": {
+      "cases": 267,
+      "passed": 265,
+      "xfailed": 2,
+      "failed": 0,
+      "errors": 0
+    },
+    "evidence_issues": [
+      "wrong-workdir initial file probe",
+      "run_index AttributeError after passing test/Ruff/pip commands",
+      "raw-SHA bundle export and ensuing absent-file error; original missing command output limitation plus exact-command reproduction retained"
+    ],
+    "source_changed_to_fix_evidence_helpers": false
+  },
+  "reviewer_setup_and_assertion_corrections_retained": [
+    {
+      "path": "retained-reviewer-errors/initial-later-command-assumption/finding.json",
+      "details": {
+        "kind": "reviewer-literal-expectation-error",
+        "actual_candidate_source_changed": false,
+        "checks_before_failure": 459,
+        "failed_check": "later different 4.4.0 run remains separately retained",
+        "incorrect_expected_literal": "python -m pip install 'sigstore==4.4.0'",
+        "actual_retained_command": "python -m pip install --only-binary=:all: sigstore==4.4.0",
+        "actual_retained_success": "Successfully installed includes sigstore-4.4.0",
+        "correction": "Match the actual complete command and successful installed version; the later run remains excluded from the 4.5.0 baseline."
+      }
+    },
+    {
+      "path": "retained-reviewer-errors/source-proof-syntax/finding.json",
+      "details": {
+        "kind": "reviewer-evidence-script-syntax-error",
+        "error": "Unmatched closing parenthesis in the review census function",
+        "source_checks_executed": false,
+        "correction": "Remove the extra closing parenthesis; no repository source or tests changed."
+      }
+    },
+    {
+      "path": "retained-reviewer-errors/source-proof-syntax-unclosed/finding.json",
+      "details": {
+        "kind": "second-reviewer-evidence-script-syntax-error",
+        "error": "Missing final closing parenthesis in parent-red receipt assertion",
+        "compile_check_exit": 1,
+        "execution_exit": 1,
+        "source_checks_executed": false,
+        "candidate_source_changed": false,
+        "correction": "Close the check call; preserve both failed syntax versions and their raw outputs."
+      }
+    },
+    {
+      "path": "retained-reviewer-errors/source-test-missing-temp-parent/finding.json",
+      "details": {
+        "kind": "reviewer-fixture-directory-setup-error",
+        "source": "9610919d29010d53cf00af3b7c38207ffd84f945",
+        "original_counts": {
+          "passed": 248,
+          "xfailed": 2,
+          "errors": 17,
+          "cases": 267
+        },
+        "all_errors": "FileNotFoundError when pytest creates basetemp because its parent review tmp directory did not exist",
+        "correction": "Create the reviewer-owned basetemp parent before pytest; repeat the same bounded selector set on unchanged frozen source.",
+        "candidate_source_or_assertions_changed": false
+      }
+    },
+    {
+      "path": "retained-reviewer-errors/strict-cli-constructor-classification/finding.json",
+      "details": {
+        "kind": "reviewer-overbroad-zero-audit-events-assertion",
+        "actual_cli_exit_code": 0,
+        "unexpected_wrapper_exit_code": 1,
+        "observed_blocked_event": "socket.__new__",
+        "reason": "The strict deny-all guard also blocks import-time socket construction, not only outbound operations. Retained urllib3/util/connection.py defines an import-time _has_ipv6 loopback-capability probe.",
+        "followup": "Keep all network/process/file denials unchanged; capture exact caller stack and distinguish this blocked local-capability construction from DNS/connect/send attempts. Repeat only help/version smoke, without source or install changes.",
+        "original_smoke_directory": "cli-smoke/"
+      }
+    }
+  ],
+  "reviewer_read_probes_retained": [
+    "intake.json",
+    "historical-object-probe.json"
+  ],
+  "parent_field_clarification": "Author source-proof.json uses parent for comparison base f086; actual direct parent is e88b6985, explicitly verified here and in source-history.json.",
+  "remaining_limits": [
+    "Other 39 explicit workflow installs and both broader strict CODEX-5 gates remain open",
+    "Only this Linux x86_64 Python 3.12 tooling installer is closed; other Python/architecture/Windows or application closures are not claimed",
+    "Final integrated-source hosted/full-suite and applicable platform/package/native qualification remain separate",
+    "Signing, identity, TUF or user-artifact verification was not performed and is outside this dependency-only review",
+    "The separate advisory manual pilot workflow remains unexecuted/access-blocked, not an automatic applicable gate or a pilot-accuracy claim",
+    "Interpreter, bootstrap pip and runner image are disclosed rather than artifact-locked",
+    "Root retains integration/publication/main authority; no release readiness claim"
+  ],
+  "preservation": {
+    "pilot_workflow_and_lock": true,
+    "verifier_commands_identities_and_artifacts": true,
+    "other_workflow_semantics_and_action_pins": true,
+    "runtime_and_app_dependencies": true,
+    "prior_42_1_41_and_42_2_40_history": true,
+    "original_181_16_census": true
+  },
+  "mutations": {
+    "candidate_source": false,
+    "existing_environments": false,
+    "refs_PRs_CI_main": false,
+    "new_reviewer_environments_and_evidence_only": true
+  },
+  "portable_retention": [
+    {
+      "path": "inputs/author-sigstore-tooling-hash-closure-repair.zip",
+      "original": "/workspace/scratch/837fe19aae3a/sigstore-tooling-hash-closure-repair.zip",
+      "bytes": 15871715,
+      "sha256": "0d15cd6dd0fc3183eb41948055c00a02751dcb3c63416a412e6b4e3620c2cb8a"
+    },
+    {
+      "path": "inputs/prior-pilot-artifact-proof.json",
+      "original": "/workspace/scratch/837fe19aae3a/evidence/pilot-tooling-hash-closure-independent/artifact-proof.json",
+      "bytes": 14624,
+      "sha256": "654539c7eee5de32a1cf45a204d7b3f8a76e1d187618d7fd812e50326baebb3b"
+    },
+    {
+      "path": "inputs/prior-pilot-review.json",
+      "original": "/workspace/scratch/837fe19aae3a/evidence/pilot-tooling-hash-closure-independent/review.json",
+      "bytes": 19401,
+      "sha256": "3ff787c68538f82028dbd86f01b2eb52b3812736153bb827e4a9de4e641d96c8"
+    },
+    {
+      "path": "inputs/prior-pilot-archive-receipt.json",
+      "original": "/workspace/scratch/837fe19aae3a/evidence/pilot-tooling-hash-closure-independent/archive-receipt.json",
+      "bytes": 617,
+      "sha256": "1cc6c6217fd9e247e51ea8b031a6d0fede5da5493fc61a8ffa4d3bba407d2aef"
+    }
+  ],
+  "portable_archive": "sigstore-tooling-hash-closure-independent.zip",
+  "archive_exclusions": {
+    "_environments": "Disposable installation environments; commands, empty/installed state and reports retained",
+    "tmp": "Disposable pytest/cache fixtures; all logs/XML and bindings retained",
+    "verified-wheelhouse": "All exact wheels are already retained in nested author archive wheelhouse/",
+    "archive_receipt": "Outer receipt excluded to avoid circular self-hashes"
+  }
+}

@@ -1099,8 +1099,13 @@ class EvidenceController(ControllerBase):
             except Exception:  # noqa: BLE001 - an engine that cannot be probed is simply not offered
                 return {}
 
-        self.probe_token = self.tasks.submit('evidence.probe', work, on_result=self._probes_ready)
+        self.probe_token = self.tasks.submit('evidence.probe', work, self._probes_ready, self._probe_failed)
         self.panel.set_run_status('Probing engines (no binary is touched)...')
+
+    def _probe_failed(self, failure) -> None:
+        self.probe_token = None
+        self.probed = False
+        self.panel.set_run_status(f'Engine probe could not run ({failure.text}). Use Probe engines to retry.')
 
     def _probes_ready(self, found: dict) -> None:
         self.probe_token = None

@@ -53,7 +53,7 @@ Stable IDs are independent of filenames. Public interfaces in SPEC-01 and schema
 |---|---|---|---|---|
 | contracts | models.py | Versioned validated artifact/project/run/function/match/evidence/context/finding/job/export records | pydantic | Pure data; schema and invariant tests |
 | ingestion | ingestion.py | inspect_artifact and immutable copies; PE AMD64 validation | contracts | Disk staging; synthetic PE fixtures |
-| persistence | persistence.py | create/load/save project, lock, backups, revision history | contracts | SQLite connection confined to its creating thread; temp roots |
+| persistence | persistence.py, sqlite_paths.py, directory_publication.py | create/load/save project, lock, backups, revision history | contracts | SQLite connection confined to its creating thread; temp roots |
 | normalization | normalization.py | normalize_ghidriff, preserve unavailable fields; A-32 (2026-11-18): two-pass validate-then-emit, a function repeated with identical content across distinct `modified` pairs abstains per connected 1:N/N:1/N:M group (one-sided non-manual `ambiguous` rows with `upstream_one_to_many`, `is_abstention`) instead of rejecting the document; exact pair repeats, conflicting content, one-sided-plus-paired and planted reserved keys still reject | contracts, enrichment.identity | Pure conversion; upstream JSON fixtures; `tests/test_normalization_one_to_many.py`, `test_unified_ghidriff_one_to_many.py`, `test_evalcore_ghidriff_one_to_many.py` |
 | alignment | alignment.py | Bounded line alignment and hunks; large-input fallback | contracts | Pure lines; unequal/empty fixtures |
 | offline bundle | offline_bundle.py | Strict inventory verifier, checksum-bounded ZIP inspection, transactional per-user extraction and deterministic producer | stdlib | Synthetic ZIP, traversal, tampering, cancel, rollback, Qt import tests |
@@ -1079,6 +1079,12 @@ R5 contract notes: no persisted contract changed. Deviations from the card, all 
 ### [PIL-D1:eval-core]
 | pilot evaluation | tools/calibration/pilot/{contracts,metrics,ablation,gate,report}.py | tie-aware metrics, LOCO arm catalogue, G-PIL gate over lineage bootstrap, single-use locked run, deterministic report | calibration bootstrap, run_locked_test | core built; arm runner, case loader and CLI wait for LBL M2/M5 |
 
+The advisory pilot CI tooling closure is defined by
+`docs/specs/pilot-evaluation-tooling-hashes.md` and
+`tools/calibration/pilot/requirements-ci.lock`. It protects only the first
+pytest/Hypothesis install; the separate editable application install and
+evaluation semantics remain unchanged.
+
 ### [PIL-C2:read-model]
 | leads read model | src/patchtrace/pilot/read_model.py | Qt-free state resolution L0-L8, context choices, precomputed lead rows, banners, filter | pilot.report, store, review | built; ui_leads.py and the dock wait for the GUI panel registry |
 ### [WBQ-S6-S9:qt-modules]
@@ -1453,3 +1459,14 @@ The [combined PR349 report](engineering/cycle837fe-combined-pr349-20261121.md) a
 ### PR349 Intel and C4 integrated follow-up
 
 [Source, validation and handoff](engineering/cycle837fe-native-c4-20261121.md) retain the Windows identity repair, C4 help/Pages work, actual predecessor native evidence and separate release gates.
+
+### Sigstore verifier tooling hashes
+
+The existing backend verifier's tooling install is scoped by
+`docs/specs/sigstore-tooling-hashes.md` and
+`tools/requirements-sigstore-ci.lock`. It preserves the actual historical
+Sigstore 4.5.0 closure for the Linux CPython 3.12 `vrfy` job, including required
+extras, with ordinary dependency resolution and wheel hashes. Verification
+commands, identities, artifacts and other builder installs remain separate.
+Source contracts live in `tests/test_sigstore_dependency_lock.py`; this adds no
+application module or signature/native acceptance claim.

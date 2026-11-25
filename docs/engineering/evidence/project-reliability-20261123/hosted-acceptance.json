@@ -1,0 +1,316 @@
+{
+  "repo": "djshellshoxxx/PatchTrace",
+  "base_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+  "main_runs": [
+    {
+      "name": "Live NVD/MSRC probe (advisory)",
+      "id": 45216050967,
+      "status": "completed",
+      "result": "success",
+      "sha": "ea16019601486c831941f9bc1a7ba5862a170317"
+    },
+    {
+      "name": "Live BinDiff acceptance",
+      "id": 45196977803,
+      "status": "completed",
+      "result": "success",
+      "sha": "ea16019601486c831941f9bc1a7ba5862a170317"
+    },
+    {
+      "name": "Corpus Tier R (sharded)",
+      "id": 45186573482,
+      "status": "completed",
+      "result": "success",
+      "sha": "ea16019601486c831941f9bc1a7ba5862a170317"
+    },
+    {
+      "name": "Nightly fuzz (non-gating)",
+      "id": 45177141309,
+      "status": "completed",
+      "result": "success",
+      "sha": "ea16019601486c831941f9bc1a7ba5862a170317"
+    },
+    {
+      "name": "Corpus Tier R (sharded)",
+      "id": 45175291326,
+      "status": "completed",
+      "result": "success",
+      "sha": "ea16019601486c831941f9bc1a7ba5862a170317"
+    },
+    {
+      "name": "Corpus Tier R (sharded)",
+      "id": 45020144491,
+      "status": "completed",
+      "result": "success",
+      "sha": "ea16019601486c831941f9bc1a7ba5862a170317"
+    },
+    {
+      "name": "Nightly fuzz (non-gating)",
+      "id": 45017328950,
+      "status": "completed",
+      "result": "success",
+      "sha": "ea16019601486c831941f9bc1a7ba5862a170317"
+    },
+    {
+      "name": "Corpus Tier R (sharded)",
+      "id": 45016699192,
+      "status": "completed",
+      "result": "success",
+      "sha": "ea16019601486c831941f9bc1a7ba5862a170317"
+    },
+    {
+      "name": "QA and Windows standalone",
+      "id": 44919714193,
+      "status": "completed",
+      "result": "success",
+      "sha": "ea16019601486c831941f9bc1a7ba5862a170317"
+    },
+    {
+      "name": "Native Windows Ghidriff acceptance",
+      "id": 44919714141,
+      "status": "completed",
+      "result": "success",
+      "sha": "ea16019601486c831941f9bc1a7ba5862a170317"
+    }
+  ],
+  "verified_jobs": [
+    {
+      "run": 45196977803,
+      "name": "live BinDiff (windows-latest)",
+      "id": 137769931996,
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "result": "success",
+      "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/45196977803/job/137769931996"
+    },
+    {
+      "run": 45196977803,
+      "name": "live BinDiff (ubuntu-22.04)",
+      "id": 137769938388,
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "result": "success",
+      "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/45196977803/job/137769938388"
+    },
+    {
+      "run": 44919714193,
+      "name": "qa (ubuntu-latest)",
+      "id": 136892880403,
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "result": "success",
+      "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714193/job/136892880403"
+    },
+    {
+      "run": 44919714193,
+      "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+      "id": 136892880571,
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "result": "success",
+      "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714193/job/136892880571"
+    },
+    {
+      "run": 44919714193,
+      "name": "release-gate",
+      "id": 136892880617,
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "result": "success",
+      "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714193/job/136892880617"
+    },
+    {
+      "run": 44919714193,
+      "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+      "id": 136892880628,
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "result": "success",
+      "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714193/job/136892880628"
+    },
+    {
+      "run": 44919714193,
+      "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+      "id": 136892880633,
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "result": "success",
+      "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714193/job/136892880633"
+    },
+    {
+      "run": 44919714193,
+      "name": "qa (windows-latest)",
+      "id": 136892880665,
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "result": "success",
+      "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714193/job/136892880665"
+    },
+    {
+      "run": 44919714193,
+      "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+      "id": 136892880739,
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "result": "success",
+      "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714193/job/136892880739"
+    },
+    {
+      "run": 44919714193,
+      "name": "qt-gate (windows-latest, 5, 1/1)",
+      "id": 136892880761,
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "result": "success",
+      "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714193/job/136892880761"
+    },
+    {
+      "run": 44919714193,
+      "name": "linux-package",
+      "id": 136910859843,
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "result": "success",
+      "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714193/job/136910859843"
+    },
+    {
+      "run": 44919714193,
+      "name": "windows-validate",
+      "id": 136910859852,
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "result": "success",
+      "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714193/job/136910859852"
+    },
+    {
+      "run": 44919714193,
+      "name": "linux-smoke (ubuntu-22.04)",
+      "id": 136911441766,
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "result": "success",
+      "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714193/job/136911441766"
+    },
+    {
+      "run": 44919714193,
+      "name": "linux-smoke (ubuntu-24.04)",
+      "id": 136911441777,
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "result": "success",
+      "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714193/job/136911441777"
+    },
+    {
+      "run": 44919714193,
+      "name": "release",
+      "id": 136911911408,
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "result": "skipped",
+      "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714193/job/136911911408"
+    },
+    {
+      "run": 44919714141,
+      "name": "native (patchtrace-clean)",
+      "id": 136892880706,
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "result": "success",
+      "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714141/job/136892880706"
+    },
+    {
+      "run": 44919714141,
+      "name": "native (raw-cache-hit)",
+      "id": 136892880798,
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "result": "success",
+      "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714141/job/136892880798"
+    },
+    {
+      "run": 44919714141,
+      "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+      "id": 136892880825,
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "result": "success",
+      "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714141/job/136892880825"
+    },
+    {
+      "run": 44919714141,
+      "name": "native (patchtrace-seeded-store)",
+      "id": 136892880876,
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "result": "success",
+      "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714141/job/136892880876"
+    },
+    {
+      "run": 44919714141,
+      "name": "native (repro-plain-ghidriff)",
+      "id": 136892880879,
+      "head_sha": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "result": "success",
+      "url": "https://github.com/djshellshoxxx/PatchTrace/actions/runs/44919714141/job/136892880879"
+    }
+  ],
+  "latest_prerelease_in_listing": {
+    "tag": "v0.1.0-beta.1035",
+    "target": "1836eb120571bb3c3a09fd3014447498621e2103",
+    "release_url": "https://github.com/djshellshoxxx/patchtrace/releases/tag/v0.1.0-beta.1035",
+    "published": "2026-11-15T07:13:33Z",
+    "assets": [
+      {
+        "name": "PatchTrace-0.1.0-linux-x86_64.tar.gz",
+        "digest": "sha256:080024048d1ab6415cee92835bff94b38a2c27d6d4d64886768b1842673902d0",
+        "bytes": 96377841
+      },
+      {
+        "name": "PatchTrace-0.1.0-linux-x86_64.tar.gz.sha256",
+        "digest": "sha256:227af4e8fb53dbf68b9f22936c5ada3924590479b5f6761f410164f1088b095a",
+        "bytes": 103
+      },
+      {
+        "name": "PatchTrace-0.1.0-windows-x64.zip",
+        "digest": "sha256:7bf09441099a8be1f0d94d80dc570b07ff96357faaa73da4addf0e9dc157194f",
+        "bytes": 67862266
+      },
+      {
+        "name": "PatchTrace-0.1.0-windows-x64.zip.sha256",
+        "digest": "sha256:e28a4a04945a71f7d07dec339c78ecd63c46eb5a10e2eb227559abe8c5668c10",
+        "bytes": 99
+      },
+      {
+        "name": "PatchTrace-Windows-x64-Portable.zip",
+        "digest": "sha256:7bf09441099a8be1f0d94d80dc570b07ff96357faaa73da4addf0e9dc157194f",
+        "bytes": 67862266
+      },
+      {
+        "name": "PatchTrace-Windows-x64-Portable.zip.sha256",
+        "digest": "sha256:478d88ecb43581ecd0254f998b539d733bcce4d00547c7e57b196b1c6c104d96",
+        "bytes": 102
+      },
+      {
+        "name": "PatchTrace-Windows-x64-Setup.exe",
+        "digest": "sha256:2afe6d14c1a74e3e14ffcdd101093bef56f2976f78575846ad846bfd3207a680",
+        "bytes": 66506432
+      },
+      {
+        "name": "PatchTrace-Windows-x64-Setup.exe.sha256",
+        "digest": "sha256:9b4f43d9b4164e7bdda03afc77aeb2e89a8d9b692505684d02b33cec88025a24",
+        "bytes": 99
+      }
+    ]
+  },
+  "log_evidence": {
+    "windows_bindiff": [
+      "2026-11-23T14:43:31.6346009Z | bindiff.json | bindiff | blocked | no_network: Linux-only check (unshare -rn); Windows network behaviour is live-only (manual) |"
+    ],
+    "linux_bindiff": [
+      "2026-11-23T14:42:59.4216740Z | bindiff.json | bindiff | passed | all live checks passed |"
+    ],
+    "main_linux": [
+      "2026-11-21T15:33:03.0618239Z 108 passed, 2 skipped in 2.30s",
+      "2026-11-21T16:12:42.9460606Z 24336 passed, 53 skipped, 4 xfailed, 21 warnings in 2377.65s (0:39:37)"
+    ],
+    "main_windows": [
+      "2026-11-21T15:33:31.8822745Z 107 passed, 3 skipped in 3.98s",
+      "2026-11-21T16:33:58.0735681Z 24205 passed, 185 skipped, 3 xfailed, 22 warnings in 3623.65s (1:00:23)"
+    ],
+    "main_windows_packaging": [
+      "2026-11-21T16:38:04.5225171Z Verified downloaded artifact SHA-256: PatchTrace-0.1.0-windows-x64.zip AB6E6D5C0A7B4FEED004118EC7AB2294FCDC0E2C1E8131F3AD9157600BF596D1",
+      "2026-11-21T16:38:04.7024295Z Verified downloaded artifact SHA-256: PatchTrace-Windows-x64-Setup.exe C7B3FFD7063C5662DE8C0F9D6F3BFB2AA975CA96FFC5E6AB254A07E73015739A",
+      "2026-11-21T16:38:14.8688218Z Portable checksum, clean extraction, Qt plugin, dependencies, and frozen executable smoke passed.",
+      "2026-11-21T16:38:23.7734152Z Installer registration, Qt/runtime checks, frozen self-test, non-destructive uninstall passed."
+    ],
+    "windows_ghidriff": {
+      "job": 136892880706,
+      "artifact_id": 14713745094,
+      "java": "Temurin 25.0.5-8.0",
+      "ghidra": "12.0.4",
+      "python": "3.12.10",
+      "ghidriff": "4f5d895fcbb1eacd65efd81145922c15bb7e741d"
+    }
+  }
+}

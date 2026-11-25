@@ -1,4 +1,4 @@
-"""Downloaded-package job contract and its exact checksum step on inert authored files.
+"""Windows project preflight, downloaded-package job contract and exact artifact checksum step.
 
 These fixtures never extract or execute their artifact bytes. Native portable/installer
 acceptance belongs to the separate hosted Windows job, not these source/fixture checks.
@@ -18,6 +18,24 @@ ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = ROOT / ".github" / "workflows" / "qa-windows.yml"
 ARTIFACTS = ("PatchTrace-0.1.0-windows-x64.zip", "PatchTrace-Windows-x64-Setup.exe")
 MEMBERS = tuple(member for name in ARTIFACTS for member in (name, name + ".sha256"))
+
+
+def test_windows_project_preflight_runs_before_full_qa_and_reports_skips():
+    steps = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))["jobs"]["qa"]["steps"]
+    report = "windows-project-results.xml"
+    full = next(i for i, step in enumerate(steps) if "--junitxml=qa-results.xml" in step.get("run", ""))
+    early = [step for step in steps[:full] if f"--junitxml={report}" in step.get("run", "").split()]
+    assert len(early) == 1, "Missing focused Windows project results before full QA"
+    preflight = early[0]
+    assert preflight["if"] == "runner.os == 'Windows'"
+    assert not preflight.get("continue-on-error", False)
+    assert "PATCHTRACE_REQUIRE_WINDOWS_SMB" not in preflight.get("env", {})
+    assert {"-rs", "tests/test_creation_schema_refusal.py", "tests/test_creation_replacement_refusal.py",
+            "tests/test_gui_creation_retry.py", "tests/test_project_creation_stat_views.py",
+            "tests/test_windows_project_smb.py"} <= set(preflight["run"].split())
+    upload = next(step for step in steps if step.get("with", {}).get("name") == "qa-${{ runner.os }}")
+    assert upload["if"] == "always()"
+    assert report in upload["with"]["path"].splitlines()
 
 
 def validation_job() -> dict:

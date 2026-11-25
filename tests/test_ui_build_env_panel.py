@@ -198,6 +198,35 @@ def test_a_failing_worker_shows_an_error_by_class_only(qtbot):
     assert status(controller)[0] == 'error' and 'secret' not in status(controller)[1]
 
 
+def test_reread_thread_refusal_shows_error_and_allows_retry(qtbot, monkeypatch):
+    calls = []
+    def reader(*_):
+        calls.append(True)
+        return Outcome(None, None, cancelled=True)
+    def refuse(_thread):
+        raise RuntimeError('sensitive launch detail')
+
+    controller, shell, _ = start(qtbot, reader)
+    try:
+        settle(qtbot, controller)
+        with monkeypatch.context() as patch:
+            patch.setattr(threading.Thread, 'start', refuse)
+            with qtbot.captureExceptions() as escaped:
+                controller.buttons['reread'].click()
+            assert not escaped
+        settle(qtbot, controller)
+        assert calls == [True] and status(controller)[0] == 'error'
+        assert 'sensitive' not in status(controller)[1]
+        retry = controller.view.action_button('retry')
+        assert retry.isVisibleTo(controller.widget())
+        retry.click()
+        settle(qtbot, controller)
+        assert calls == [True, True]
+    finally:
+        controller.shutdown()
+        shell.tasks.shutdown()
+
+
 def test_setup_says_how_without_downloading(qtbot, pairs):
     controller, shell, _ = start(qtbot, reading(Outcome(*pairs['plain'])))
     settle(qtbot, controller)

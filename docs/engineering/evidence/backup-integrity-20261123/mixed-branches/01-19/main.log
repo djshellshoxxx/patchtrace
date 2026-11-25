@@ -1,0 +1,5 @@
+QMainWindow::saveState(): 'objectName' not set for QDockWidget(0x1afd13f0) 0x1b00f820
+actual_window difference_navigation= [1, -1]  header.focusPolicy= 0 sort_column_after_click= 0 source_entries= 106 visible_palette= 50
+.450_entries empty= 50  broad= 50  narrow= 1  ran= [449]
+.
+2 passed in 1.63s

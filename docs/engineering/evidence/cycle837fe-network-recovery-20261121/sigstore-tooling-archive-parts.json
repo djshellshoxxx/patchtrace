@@ -1,0 +1,30 @@
+{
+  "schema": "patchtrace/split-evidence-archive/1",
+  "original_archive_name": "sigstore-tooling-hash-closure-independent.zip",
+  "original_archive_bytes": 16865753,
+  "original_archive_sha256": "81a7e43597b9100c7b41a0a4ebcb477db8511d7f222a589faa1e5821140959b3",
+  "original_archive_members": 145,
+  "parts": [
+    {
+      "name": "sigstore-independent.zip.part01",
+      "offset": 0,
+      "bytes": 9999999,
+      "sha256": "a5fc8dc881988f15031cf0ecd3d5d19898f3529be56f5b395729ab075c51d624",
+      "git_blob": "e8a32433c7409dff55c2a755b8b23ca654d4099c",
+      "base64_offset": 0,
+      "base64_bytes": 13333332
+    },
+    {
+      "name": "sigstore-independent.zip.part02",
+      "offset": 9999999,
+      "bytes": 6865754,
+      "sha256": "c6fd81df495846f874d7ebefdd3873cf62cc0e3d79d8f49cdb05270f498020a2",
+      "git_blob": "a97cbe021782bbf86d5c84dc4f7ada43b8c90343",
+      "base64_offset": 13333332,
+      "base64_bytes": 9154340
+    }
+  ],
+  "reassemble_with": "reassemble-sigstore-evidence.py",
+  "reason": "Base64 request exceeded the 16 MiB transport limit; exact segments preserve sealed bytes without repacking.",
+  "original_archive_unchanged": true
+}

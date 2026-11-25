@@ -1,0 +1,8 @@
+FAIL published Setup asset in install and README
+FAIL known example asset names shell safe
+FAIL CLI Linux runtime location
+FAIL registry and Apps uninstall instructions
+FAIL docs match pin file
+FAIL Windows docs install release extras
+FAIL PowerShell smoke scratch and user profile
+FAIL self-contained CLI first-run and backup

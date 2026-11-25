@@ -1,0 +1,69 @@
+{
+  "implementation_commit": "c6b215c5222e4ec3ed760bc4fc9f92719b18bda8",
+  "independent_reviews": [
+    {
+      "scope": "project reliability PR360",
+      "source": "ca95a7d045f3fa44551934680fa90c2af00370e5",
+      "passed": 230,
+      "skipped": 0,
+      "blockers": [],
+      "junit": "pr360-independent-review.xml.gz"
+    },
+    {
+      "scope": "installer and desktop PR361",
+      "source": "457444c682a1bf7e5166030c065f0365ad2c6976",
+      "passed": 256,
+      "skipped": 0,
+      "blockers": []
+    },
+    {
+      "scope": "backup and worker recovery PR362",
+      "source": "47478d563bc91529446b4b1d1f461f01ececb245",
+      "passed": 249,
+      "skipped": 1,
+      "skip_reason": "requires native Windows junction creation",
+      "blockers": []
+    },
+    {
+      "scope": "corrected network/tooling PR358/359",
+      "source": "173f18d3a6ddd88aaaf514ced71b1be0c3db7954",
+      "passed": 109,
+      "skipped": 0,
+      "blockers": []
+    },
+    {
+      "scope": "combined records and census",
+      "source": "c6b215c5222e4ec3ed760bc4fc9f92719b18bda8",
+      "passed": 103,
+      "xfailed": 1,
+      "blockers": [],
+      "junit": "combined-census-independent-review.xml.gz"
+    }
+  ],
+  "author_integration_tests": {
+    "passed": 141,
+    "skipped": 4,
+    "xfailed": 1,
+    "skip_reason": "Clang unavailable for four compiler-backed corpus checks",
+    "junit": "integration-census.xml.gz"
+  },
+  "preserved_records": {
+    "task_ids": 130,
+    "notes": 46,
+    "desktop_evidence_blobs": 95,
+    "network_evidence_blobs": 70,
+    "mismatches": 0
+  },
+  "workflow_census": {
+    "workflows": 21,
+    "run_steps": 204,
+    "installs": 42,
+    "protected": 3,
+    "unprotected": 39
+  },
+  "limits": [
+    "Review runs have different source identities and must not be aggregated into a combined acceptance total.",
+    "Native Windows acceptance derives from hosted jobs, not Linux/offscreen controls.",
+    "Full combined-source hosted qualification is required."
+  ]
+}

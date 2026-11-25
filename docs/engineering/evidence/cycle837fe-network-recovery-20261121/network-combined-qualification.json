@@ -1,0 +1,140 @@
+{
+  "schema": "patchtrace/network-combined-local-qualification/1",
+  "observed_at": "2026-11-21T14:27:37.199758+00:00",
+  "source": "96baaee20f390a3f2a5629de3764d32323bb80e5",
+  "tree": "4343dce701f20d3b6bc591297d1a887bb05cc461",
+  "base": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+  "selectors": [
+    "tests/test_netutil_read_deadline.py",
+    "tests/test_netutil_abandoned_cleanup.py",
+    "tests/test_cancel_latency.py",
+    "tests/test_providers_transport.py",
+    "tests/test_kev_transport.py",
+    "tests/test_intel_transport.py",
+    "tests/test_csaf_redirect_integrity.py",
+    "tests/test_enrichment_intelligence.py",
+    "tests/test_optional_import_recovery.py",
+    "tests/test_optional_deps.py",
+    "tests/test_search_capability.py",
+    "tests/test_search_fuzzy.py",
+    "tests/test_search_synergy.py",
+    "tests/test_doctor_cli.py",
+    "tests/test_intel_offline_cache.py",
+    "tests/test_intel_discovery.py",
+    "tests/test_spec_registry.py"
+  ],
+  "maintained": {
+    "label": "maintained",
+    "source": "96baaee20f390a3f2a5629de3764d32323bb80e5",
+    "tree": "4343dce701f20d3b6bc591297d1a887bb05cc461",
+    "argv": [
+      "/workspace/scratch/837fe19aae3a/windows-recovery-followup-venv/bin/python",
+      "-I",
+      "-B",
+      "/workspace/scratch/837fe19aae3a/evidence/network-recovery-combined-qualification/pytest-bootstrap.py",
+      "/workspace/scratch/837fe19aae3a/PatchTrace-network-recovery-followup",
+      "/workspace/scratch/837fe19aae3a/evidence/network-recovery-combined-qualification/source-binding.json",
+      "-q",
+      "tests/test_netutil_read_deadline.py",
+      "tests/test_netutil_abandoned_cleanup.py",
+      "tests/test_cancel_latency.py",
+      "tests/test_providers_transport.py",
+      "tests/test_kev_transport.py",
+      "tests/test_intel_transport.py",
+      "tests/test_csaf_redirect_integrity.py",
+      "tests/test_enrichment_intelligence.py",
+      "tests/test_optional_import_recovery.py",
+      "tests/test_optional_deps.py",
+      "tests/test_search_capability.py",
+      "tests/test_search_fuzzy.py",
+      "tests/test_search_synergy.py",
+      "tests/test_doctor_cli.py",
+      "tests/test_intel_offline_cache.py",
+      "tests/test_intel_discovery.py",
+      "tests/test_spec_registry.py",
+      "-p",
+      "no:cacheprovider",
+      "--rootdir=/workspace/scratch/837fe19aae3a/PatchTrace-network-recovery-followup",
+      "--basetemp=/workspace/scratch/837fe19aae3a/evidence/network-recovery-combined-qualification/tmp/maintained",
+      "--junitxml=/workspace/scratch/837fe19aae3a/evidence/network-recovery-combined-qualification/maintained.xml"
+    ],
+    "cwd": "/workspace/scratch/837fe19aae3a/PatchTrace-network-recovery-followup",
+    "started_at": "2026-11-21T14:27:16.947737+00:00",
+    "seconds": 19.72816356900148,
+    "exit_code": 0,
+    "source_after": {
+      "head": "96baaee20f390a3f2a5629de3764d32323bb80e5",
+      "tree": "4343dce701f20d3b6bc591297d1a887bb05cc461",
+      "status": ""
+    },
+    "junit": {
+      "cases": 480,
+      "passed": 480,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "tooling": [
+    {
+      "label": "whole-ruff",
+      "source": "96baaee20f390a3f2a5629de3764d32323bb80e5",
+      "tree": "4343dce701f20d3b6bc591297d1a887bb05cc461",
+      "argv": [
+        "/workspace/scratch/837fe19aae3a/windows-recovery-followup-venv/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "ruff",
+        "check",
+        "--no-cache",
+        "src",
+        "tests",
+        "tools"
+      ],
+      "cwd": "/workspace/scratch/837fe19aae3a/PatchTrace-network-recovery-followup",
+      "started_at": "2026-11-21T14:27:36.691290+00:00",
+      "seconds": 0.21563777599658351,
+      "exit_code": 0,
+      "source_after": {
+        "head": "96baaee20f390a3f2a5629de3764d32323bb80e5",
+        "tree": "4343dce701f20d3b6bc591297d1a887bb05cc461",
+        "status": ""
+      }
+    },
+    {
+      "label": "pip-check",
+      "source": "96baaee20f390a3f2a5629de3764d32323bb80e5",
+      "tree": "4343dce701f20d3b6bc591297d1a887bb05cc461",
+      "argv": [
+        "/workspace/scratch/837fe19aae3a/windows-recovery-followup-venv/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "cwd": "/workspace/scratch/837fe19aae3a/PatchTrace-network-recovery-followup",
+      "started_at": "2026-11-21T14:27:36.921974+00:00",
+      "seconds": 0.2645848329993896,
+      "exit_code": 0,
+      "source_after": {
+        "head": "96baaee20f390a3f2a5629de3764d32323bb80e5",
+        "tree": "4343dce701f20d3b6bc591297d1a887bb05cc461",
+        "status": ""
+      }
+    }
+  ],
+  "source_before_and_after_exact_and_clean": true,
+  "environment_rebound_or_installed": false,
+  "scope": "Maintained source tests using authored loopback, fake transport, local files and registry fixtures only",
+  "full_suite_run": false,
+  "native_or_windows_claim": false,
+  "separate_source_counts_not_aggregated": true,
+  "remaining_gates": [
+    "Independent combined-source review",
+    "Final records and actual-main ancestry reconciliation",
+    "Exact final-source hosted full Linux and Windows QA and all applicable platform/native jobs",
+    "Fresh current-head/main/ownership/approval guards before expected-head REST merge"
+  ]
+}

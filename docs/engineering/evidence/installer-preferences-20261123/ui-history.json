@@ -1,0 +1,503 @@
+{
+  "main": "ea16019601486c831941f9bc1a7ba5862a170317",
+  "candidate": "a20bae8dd83ef77640cd55344190acd734b7e151",
+  "branches": {
+    "codex/analyst-accessibility-20261109": {
+      "head": "b90a2cd49fa4ba71050a378abc753fe8c90733fd",
+      "base": "882d1ca0b4190bccddb6ce1f66b46c4db856703b",
+      "donor_changed_paths": [
+        {
+          "path": "docs/help/01-start-here.md",
+          "donor_blob": "0cb3992889f3d0234a1d4383405b3bd5711969e0",
+          "main_blob": "8473f19266ceecb96b95f2c063bda507f80b05ce"
+        },
+        {
+          "path": "docs/help/03-explore-the-sample.md",
+          "donor_blob": "e5ffc7fa3c1c1f9de957e0d98e738eaffb18d2ea",
+          "main_blob": "aac0f4c8c8b64dda22128b7718d49cf0529893ec"
+        },
+        {
+          "path": "docs/help/07-navigate-the-workspace.md",
+          "donor_blob": "e6ddb9fa0b83d4b2c6055804c36f83fded4fc5cc",
+          "main_blob": "e6ddb9fa0b83d4b2c6055804c36f83fded4fc5cc"
+        },
+        {
+          "path": "docs/help/19-review-findings-and-record-conclusions.md",
+          "donor_blob": "7ca6bbfbfa50661494ca41e471587333369b71d9",
+          "main_blob": "7ca6bbfbfa50661494ca41e471587333369b71d9"
+        },
+        {
+          "path": "docs/help/33-files-panel.md",
+          "donor_blob": "0477ae8189c37d2d88687a7a3e45a48c99ac1a15",
+          "main_blob": "0477ae8189c37d2d88687a7a3e45a48c99ac1a15"
+        },
+        {
+          "path": "docs/help/47-preview-and-export-reports.md",
+          "donor_blob": "2ec5e45788f5afc7fbf9521b3a70bdb6c0369b76",
+          "main_blob": "2ec5e45788f5afc7fbf9521b3a70bdb6c0369b76"
+        },
+        {
+          "path": "docs/help/49-keyboard-and-command-navigation.md",
+          "donor_blob": "a4672b3f0a56f3f2d45c30b0e25753fea4a1bf81",
+          "main_blob": "a4672b3f0a56f3f2d45c30b0e25753fea4a1bf81"
+        },
+        {
+          "path": "docs/help/52-troubleshooting.md",
+          "donor_blob": "9ddabe2f0074e9054a793b7f1c660a6b92e31396",
+          "main_blob": "9ddabe2f0074e9054a793b7f1c660a6b92e31396"
+        },
+        {
+          "path": "docs/plans/analyst-accessibility-20261109.md",
+          "donor_blob": "795f7e43690a1ba905c88d6f10dfbe6f2f5156af",
+          "main_blob": null
+        },
+        {
+          "path": "docs/qa.md",
+          "donor_blob": "2dce7720fd8448e7c655863fbd2c97226197e38e",
+          "main_blob": "69129a60e748e8a88b587c2b33da91f29222e9e2"
+        },
+        {
+          "path": "docs/qa/analyst-accessibility-20261109/checksums.json",
+          "donor_blob": "f79047c17c4edb0480a6b31cc20bb201516a8e7f",
+          "main_blob": null
+        },
+        {
+          "path": "docs/qa/analyst-accessibility-20261109/desktop-self-test.log",
+          "donor_blob": "0eb991c036c2f91a3027157b70d817784effcbdf",
+          "main_blob": null
+        },
+        {
+          "path": "docs/qa/analyst-accessibility-20261109/full-parallel-incomplete.log",
+          "donor_blob": "8824ee95c2d2d49411a35963b7176167a81ff81d",
+          "main_blob": null
+        },
+        {
+          "path": "docs/qa/analyst-accessibility-20261109/full-serial-timeout.log",
+          "donor_blob": "cef218e0451b05959cfba157947706c03cdf35cb",
+          "main_blob": null
+        },
+        {
+          "path": "docs/qa/analyst-accessibility-20261109/gui.log",
+          "donor_blob": "e4c4ce04e5dce61bebb6f67efb9577fb7c973b57",
+          "main_blob": null
+        },
+        {
+          "path": "docs/qa/analyst-accessibility-20261109/help-spec.log",
+          "donor_blob": "fa534084668d1beea09d2a0d453b5078ebfc6a6f",
+          "main_blob": null
+        },
+        {
+          "path": "docs/specs/accessibility-baseline.md",
+          "donor_blob": "9c83004a0a22a0de9ef158e13f34124f52d484ae",
+          "main_blob": "9c83004a0a22a0de9ef158e13f34124f52d484ae"
+        },
+        {
+          "path": "docs/specs/gui-framework.md",
+          "donor_blob": "e9ae776537925a2ba5026ed48eeed675a97aafc3",
+          "main_blob": "84e4fc8af657104dbc54a640d470ecc99cb42688"
+        },
+        {
+          "path": "docs/user-guide.md",
+          "donor_blob": "b64b4e38fb9821ad92b340696f3f8ae7a621948b",
+          "main_blob": "b64b4e38fb9821ad92b340696f3f8ae7a621948b"
+        },
+        {
+          "path": "src/patchtrace/ui_export_v2.py",
+          "donor_blob": "70bff1f31f4d00db5956ec7518ad110dd15a3940",
+          "main_blob": "70bff1f31f4d00db5956ec7518ad110dd15a3940"
+        },
+        {
+          "path": "src/patchtrace/ui_inspection.py",
+          "donor_blob": "44fd767876daa2a44ed2ba69a8f6d3f0ac8865fa",
+          "main_blob": "533b04da31cf23b39e32c426657d5e637cdf531e"
+        },
+        {
+          "path": "tasks/todo.md",
+          "donor_blob": "bbbb603900e3b7bfc0326683dc0638c9b65fc90d",
+          "main_blob": "74b9b2a2dfdcaa0cf5888c94872fe8bdf5b7361e"
+        },
+        {
+          "path": "tests/test_files_announcements.py",
+          "donor_blob": "d20143bcb77eb1fb1f7747f451b9d95579e336a5",
+          "main_blob": "4bca653582af7008e2cd1014f7136a0e1a79603a"
+        },
+        {
+          "path": "tests/test_ui_export_accessibility.py",
+          "donor_blob": "049d4be426b42ecc3ae54d9b90b32962e104e84a",
+          "main_blob": "049d4be426b42ecc3ae54d9b90b32962e104e84a"
+        },
+        {
+          "path": "tests/test_ui_export_v2.py",
+          "donor_blob": "bb1111fbd93a14afaf82efbfaa17c225905a691c",
+          "main_blob": "bb1111fbd93a14afaf82efbfaa17c225905a691c"
+        }
+      ],
+      "disposition": "Integrated and superseded",
+      "replacement_commit": "45997cfc997b06996a982705e6cd60dc73a8fae1",
+      "notes": "Later worker and focus tests in bdc929ebd3c6aaa2563c758936beb315a10eeea0 preserve donor functionality. Incomplete historical test logs are archival only.",
+      "additional_unmerged_ancestor_heads": []
+    },
+    "codex/patchtrace-buildenv-header-help-20261121-a1": {
+      "head": "09f07582d8d9017fe2be080605120b5c4cfd0b91",
+      "base": "11f51c105bf63946f59373ae605b937c4fee607a",
+      "donor_changed_paths": [
+        {
+          "path": "docs/engineering-handoffs/buildenv-header-help-20261121-a1.md",
+          "donor_blob": "22372bdcbc9701b8851eb306e8f841452e1a14af",
+          "main_blob": null
+        },
+        {
+          "path": "docs/engineering/evidence/buildenv-header-help-20261121-a1.json",
+          "donor_blob": "456afb247b2d25f40ab81d7247ed888c00101374",
+          "main_blob": null
+        },
+        {
+          "path": "docs/engineering/task-ledger.json",
+          "donor_blob": "8aed5e7dd565172a903fc735ddf0120f75fe8421",
+          "main_blob": "e14737f8a0b85bde4e600915f680574ca703fa79"
+        },
+        {
+          "path": "docs/qa.md",
+          "donor_blob": "0cdb8469483fd9e37acefcf9a8825535b516a163",
+          "main_blob": "69129a60e748e8a88b587c2b33da91f29222e9e2"
+        },
+        {
+          "path": "docs/specs/program-e/DIE-integration-plan.md",
+          "donor_blob": "b3e15fff7d8ae117745a5c164b51f416dabfda12",
+          "main_blob": "645a47b4818450da35b0289e996163e48f2993b4"
+        },
+        {
+          "path": "src/patchtrace/buildenv/panel_model.py",
+          "donor_blob": "c0d9af1e0d3618cfea829d9a19eadbe8a011fa27",
+          "main_blob": "b1385854dfed0bf3fa2d31ee0277eacd3a0aefbf"
+        },
+        {
+          "path": "src/patchtrace/buildenv/tooltip_entries.py",
+          "donor_blob": "ff5c8819a4d92d13ad38a9a13021552c0594dc82",
+          "main_blob": "f3b71c3e60c62c5adfad8f8cc237022acf77a843"
+        },
+        {
+          "path": "tests/test_buildenv_header_help_20261121.py",
+          "donor_blob": "04e5e05d0d99cb84c12457ce857cc4c03c9da602",
+          "main_blob": null
+        }
+      ],
+      "disposition": "Superseded",
+      "replacement_commit": "a601d75e75770e0f7922167893872fbaf099c075",
+      "notes": "All five tooltip roles passed the original donor tests on current main. Original wording and qualification history remain on donor.",
+      "additional_unmerged_ancestor_heads": []
+    },
+    "chatgpt/help-docs-1": {
+      "head": "e5bee6fe157c90a40f2d9f458768e2169ce123e5",
+      "base": "a423d3d580d898e4398990b0790fd41d18dea246",
+      "donor_changed_paths": [
+        {
+          "path": "docs/help/01-start-here.md",
+          "donor_blob": "5a142dcb918164dfd6c34d4d2fde55a633171732",
+          "main_blob": "8473f19266ceecb96b95f2c063bda507f80b05ce"
+        },
+        {
+          "path": "docs/help/02-projects.md",
+          "donor_blob": "3d6b69828a496524bf056c8bf4c8f7b2aee18d7d",
+          "main_blob": null
+        },
+        {
+          "path": "docs/help/03-run-comparison.md",
+          "donor_blob": "749f9e4861b2e5d9ffe404157728f5d0072d6189",
+          "main_blob": null
+        },
+        {
+          "path": "docs/help/04-import-comparison.md",
+          "donor_blob": "eec0356a7d9b7c3cbfbbefe361f1ba2b3595a18c",
+          "main_blob": null
+        },
+        {
+          "path": "docs/help/05-code-and-bytes.md",
+          "donor_blob": "ae5a726c5e56dfd2c4b3107c1d5961c4fb13df8b",
+          "main_blob": null
+        },
+        {
+          "path": "docs/help/06-evidence-panel.md",
+          "donor_blob": "2a4a76afcaf9fd340713cf615db7bfef34a7cd3c",
+          "main_blob": null
+        },
+        {
+          "path": "docs/help/07-unified-panel.md",
+          "donor_blob": "e9d040d76390cd2fac86d6618aee440024aad46f",
+          "main_blob": null
+        },
+        {
+          "path": "docs/help/08-search-panel.md",
+          "donor_blob": "5000836dead4f00c5259f9d7f79e24d289ae9238",
+          "main_blob": null
+        },
+        {
+          "path": "docs/help/09-graph-panel.md",
+          "donor_blob": "d3746659cd5a0cd1699ea7a2fa8810b2c2bb33e0",
+          "main_blob": null
+        },
+        {
+          "path": "docs/help/10-strings-panel.md",
+          "donor_blob": "0082c643abf6f307bbdde00a37ee3f487d8f14b8",
+          "main_blob": null
+        },
+        {
+          "path": "docs/help/11-capabilities-panel.md",
+          "donor_blob": "b8c17fe4e5b4886674469d1ab6bf71636e399870",
+          "main_blob": null
+        },
+        {
+          "path": "docs/help/12-build-environment-panel.md",
+          "donor_blob": "8fec60112a587af8f02df700c9abe67172473e45",
+          "main_blob": null
+        },
+        {
+          "path": "docs/help/13-rules-panel.md",
+          "donor_blob": "d03ab6ea79d2df6f922a9de3c74e7a9c0b8ac948",
+          "main_blob": null
+        },
+        {
+          "path": "docs/help/14-kb-panel.md",
+          "donor_blob": "2342e724f4ddf4197ea6e9a0f88b439055fe25bb",
+          "main_blob": null
+        },
+        {
+          "path": "docs/help/15-kev-panel.md",
+          "donor_blob": "ab514cc616bd06c4080ae8bdbce49d84bb4a4dc9",
+          "main_blob": null
+        },
+        {
+          "path": "docs/help/16-leads-panel.md",
+          "donor_blob": "0ae96ab2e978300e4b35c553d4e10382937ba0ba",
+          "main_blob": null
+        },
+        {
+          "path": "docs/help/17-series-panel.md",
+          "donor_blob": "f31c904017a6df9342b51cd06eab464758772406",
+          "main_blob": null
+        },
+        {
+          "path": "docs/help/18-files-panel.md",
+          "donor_blob": "6bbb5d0571a58699d5cbde420f72aedbe02ad654",
+          "main_blob": null
+        },
+        {
+          "path": "docs/help/19-guide-panel.md",
+          "donor_blob": "2ba1c11e870a35845fd6aaadf06f8f79b33bcef6",
+          "main_blob": null
+        },
+        {
+          "path": "docs/help/20-states-and-remedies.md",
+          "donor_blob": "db6929c91e3d67f5682716c5dd771b72edd0897e",
+          "main_blob": null
+        },
+        {
+          "path": "docs/help/21-layout-and-shortcuts.md",
+          "donor_blob": "4bbb90abbecf2c9e678bd2620d52838af4b3850c",
+          "main_blob": null
+        },
+        {
+          "path": "docs/help/22-privacy-and-consent.md",
+          "donor_blob": "fe45135549169c8fc2adbf6e7a373e1117ef5524",
+          "main_blob": null
+        },
+        {
+          "path": "docs/help/23-offline-backend.md",
+          "donor_blob": "6f7a339c44665e1dce2b4a1070c78bdbd141e8c9",
+          "main_blob": null
+        },
+        {
+          "path": "docs/help/24-external-tools.md",
+          "donor_blob": "f5df89e21d09f46a09e3b2acf105ab8f6032e3f8",
+          "main_blob": null
+        },
+        {
+          "path": "docs/help/25-reading-confidence.md",
+          "donor_blob": "a5c04d046deae94aecd8c571f39acb4908c92592",
+          "main_blob": null
+        }
+      ],
+      "disposition": "Superseded with a documentation correction",
+      "replacement_commit": "ad6dd7bb5763df9aa478bc8220df9246c5da8970",
+      "notes": "Current docs cover all 25 donor topics. a20bae8dd83ef77640cd55344190acd734b7e151 corrects the missing or contradictory current keyboard reference.",
+      "additional_unmerged_ancestor_heads": []
+    }
+  },
+  "help_topics": [
+    {
+      "donor": "docs/help/01-start-here.md",
+      "current": [
+        "docs/help/01-start-here.md",
+        "docs/help/03-explore-the-sample.md"
+      ]
+    },
+    {
+      "donor": "docs/help/02-projects.md",
+      "current": [
+        "docs/help/04-create-a-comparison-project.md",
+        "docs/help/10-save-reopen-and-back-up.md"
+      ]
+    },
+    {
+      "donor": "docs/help/03-run-comparison.md",
+      "current": [
+        "docs/help/05-run-a-comparison.md",
+        "docs/help/11-configure-the-analysis-backend.md"
+      ]
+    },
+    {
+      "donor": "docs/help/04-import-comparison.md",
+      "current": [
+        "docs/help/06-import-ghidriff-results.md"
+      ]
+    },
+    {
+      "donor": "docs/help/05-code-and-bytes.md",
+      "current": [
+        "docs/help/08-read-paired-code.md",
+        "docs/help/46-read-hex-binary-and-base64.md"
+      ]
+    },
+    {
+      "donor": "docs/help/06-evidence-panel.md",
+      "current": [
+        "docs/help/21-engine-evidence-panel.md"
+      ]
+    },
+    {
+      "donor": "docs/help/07-unified-panel.md",
+      "current": [
+        "docs/help/22-unified-panel.md"
+      ]
+    },
+    {
+      "donor": "docs/help/08-search-panel.md",
+      "current": [
+        "docs/help/23-search-panel.md"
+      ]
+    },
+    {
+      "donor": "docs/help/09-graph-panel.md",
+      "current": [
+        "docs/help/24-call-graph-panel.md"
+      ]
+    },
+    {
+      "donor": "docs/help/10-strings-panel.md",
+      "current": [
+        "docs/help/25-strings-panel.md"
+      ]
+    },
+    {
+      "donor": "docs/help/11-capabilities-panel.md",
+      "current": [
+        "docs/help/26-capabilities-panel.md"
+      ]
+    },
+    {
+      "donor": "docs/help/12-build-environment-panel.md",
+      "current": [
+        "docs/help/27-build-environment-panel.md"
+      ]
+    },
+    {
+      "donor": "docs/help/13-rules-panel.md",
+      "current": [
+        "docs/help/28-detection-rules-panel.md"
+      ]
+    },
+    {
+      "donor": "docs/help/14-kb-panel.md",
+      "current": [
+        "docs/help/29-kb-and-cve-investigation-panel.md"
+      ]
+    },
+    {
+      "donor": "docs/help/15-kev-panel.md",
+      "current": [
+        "docs/help/30-kev-context-panel.md"
+      ]
+    },
+    {
+      "donor": "docs/help/16-leads-panel.md",
+      "current": [
+        "docs/help/31-leads-panel.md"
+      ]
+    },
+    {
+      "donor": "docs/help/17-series-panel.md",
+      "current": [
+        "docs/help/32-series-panel.md"
+      ]
+    },
+    {
+      "donor": "docs/help/18-files-panel.md",
+      "current": [
+        "docs/help/33-files-panel.md"
+      ]
+    },
+    {
+      "donor": "docs/help/19-guide-panel.md",
+      "current": [
+        "docs/help/34-guide-panel.md"
+      ]
+    },
+    {
+      "donor": "docs/help/20-states-and-remedies.md",
+      "current": [
+        "docs/help/38-stale-results.md",
+        "docs/help/39-partial-and-missing-evidence.md",
+        "docs/help/40-blocked-and-unsupported-states.md",
+        "docs/help/41-idle-loading-and-ready-states.md",
+        "docs/help/42-errors-retries-and-cancellation.md",
+        "docs/help/43-limits-truncation-and-empty-results.md"
+      ]
+    },
+    {
+      "donor": "docs/help/21-layout-and-shortcuts.md",
+      "current": [
+        "docs/help/49-keyboard-and-command-navigation.md",
+        "docs/help/50-panel-layout-and-recovery.md"
+      ]
+    },
+    {
+      "donor": "docs/help/22-privacy-and-consent.md",
+      "current": [
+        "docs/help/16-local-data-and-privacy.md",
+        "docs/help/17-network-use-and-consent.md"
+      ]
+    },
+    {
+      "donor": "docs/help/23-offline-backend.md",
+      "current": [
+        "docs/help/13-install-an-offline-backend-bundle.md"
+      ]
+    },
+    {
+      "donor": "docs/help/24-external-tools.md",
+      "current": [
+        "docs/help/11-configure-the-analysis-backend.md",
+        "docs/help/12-find-existing-runtime-installations.md",
+        "docs/help/44-configure-secondary-engines.md"
+      ]
+    },
+    {
+      "donor": "docs/help/25-reading-confidence.md",
+      "current": [
+        "docs/help/35-attention-ranking-and-change-signals.md",
+        "docs/help/36-read-calibration-and-confidence-labels.md"
+      ]
+    }
+  ],
+  "verification": {
+    "offscreen_qt_donor_and_current_on_main": {
+      "passed": 69,
+      "qt_deprecation_warnings": 2
+    },
+    "documentation_tests_candidate": {
+      "passed": 215,
+      "initial_new_regression": "failed eight missing built shortcut mappings"
+    },
+    "native_windows": "unverified"
+  }
+}

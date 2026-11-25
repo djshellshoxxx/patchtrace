@@ -600,6 +600,30 @@ def test_backup_never_overwrites_and_never_writes_into_the_project(sample, tmp_p
     assert tree(sample) == before and list(existing.iterdir()) == []
 
 
+def test_cli_does_not_verify_a_published_backup_held_by_another_session(sample, tmp_path, capsys, monkeypatch):
+    backup = ProjectService.backup
+    held = []
+
+    def another_session_opens(service, destination):
+        path = backup(service, destination)
+        held.append(ProjectStore(path))
+        return path
+
+    monkeypatch.setattr(ProjectService, 'backup', another_session_opens)
+    destination = tmp_path / 'claimed'
+    try:
+        code, doc, _ = jrun(['project', 'backup', sample, '--out', destination], capsys)
+        assert len(held) == 1
+        assert code == 3 and 'backup did not verify' in doc['error']
+        assert 'locked' in doc['error'] and str(destination) in doc['error']
+        assert held[0].load(recover_interrupted=False).id
+    finally:
+        for store in held:
+            store.close()
+    with ProjectService.open(destination) as restored:
+        assert restored.project.id
+
+
 def test_a_backup_that_does_not_verify_exits_3_and_names_the_copy(sample, tmp_path, capsys, monkeypatch):
     real = ProjectStore.backup
 

@@ -1,0 +1,47 @@
+{
+  "main": "ea16019601486c831941f9bc1a7ba5862a170317",
+  "parent": "76bcca7afe4ade59db2294b86b88de175c8a3172",
+  "pr361_head": "cca6ce4a0d20725e8a421421cd2e0fddb8313bf7",
+  "hosted_merge": "52ed728d36340555371632e62b9ad7f6625297d2",
+  "hosted_job": 138097140687,
+  "workflow_tree": "bd4466890c940cdcaa5a6497dcd96cd79b34bcd1",
+  "census_source_blob": "7ceeb974acd81bbdbf2c671abe7424926b977355",
+  "parser_blob": "ec868e949d5f15db3450d4c25827702a82c39d26",
+  "workflow_count": 21,
+  "counts_all": {
+    "ea16019601486c831941f9bc1a7ba5862a170317": [
+      203,
+      42,
+      41
+    ],
+    "76bcca7afe4ade59db2294b86b88de175c8a3172": [
+      204,
+      42,
+      41
+    ]
+  },
+  "qa_windows_counts": {
+    "ea16019601486c831941f9bc1a7ba5862a170317": [
+      36,
+      4,
+      4
+    ],
+    "76bcca7afe4ade59db2294b86b88de175c8a3172": [
+      37,
+      4,
+      4
+    ]
+  },
+  "qa_install_command_and_marker_sequence_equal": true,
+  "entire_repository_install_command_and_marker_sequence_equal": true,
+  "other_workflows_byte_equal": true,
+  "entire_workflow_mapping_equal_after_removing_new_step_and_junit_path": true,
+  "added_step": {
+    "name": "Windows project creation retries and loopback SMB",
+    "if": "runner.os == 'Windows'",
+    "run": "python -m pytest -q -rs tests/test_gui_creation_retry.py tests/test_project_creation_stat_views.py tests/test_creation_schema_refusal.py tests/test_creation_replacement_refusal.py tests/test_windows_project_smb.py --junitxml=windows-project-results.xml"
+  },
+  "added_artifact_path": "windows-project-results.xml",
+  "isolation_red": "1 failed in 0.43s",
+  "isolation_one_test_expectation_preview": "103 passed, 1 xfailed in 0.73s"
+}

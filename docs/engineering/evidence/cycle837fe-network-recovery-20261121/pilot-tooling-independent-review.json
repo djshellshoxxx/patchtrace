@@ -1,0 +1,460 @@
+{
+  "schema": "patchtrace/pilot-tooling-hash-closure-independent/1",
+  "reviewer": "/root/codex1_independent_review",
+  "observed_at": "2026-11-21T15:15:24.861280+00:00",
+  "verdict": "CLEAR for the bounded first pilot-tooling installer and reviewed source integration",
+  "blockers": [],
+  "source": "f08632ab81e6ab24fcc34fc994dd2dda2556d267",
+  "tree": "cb959c1bc0189697241ec2a89c9ec22efabceded",
+  "base": "96baaee20f390a3f2a5629de3764d32323bb80e5",
+  "worktree": "/workspace/scratch/837fe19aae3a/repair-pilot-tooling-hash-closure",
+  "clean_before_and_after": true,
+  "scope": "First Linux CPython 3.12 pilot tooling install only; no application/runtime/evaluation change",
+  "source_history": [
+    {
+      "commit": "cd11919b47df46b2b9826da1daf0d1fa4e39af5b",
+      "tree": "69960ef2811df6edd21f6c719cb62a1c5c585725",
+      "parents": [
+        "96baaee20f390a3f2a5629de3764d32323bb80e5"
+      ],
+      "subject": "Specify bounded pilot tooling hash closure [no release] [no deploy]",
+      "body": "\n[no release] [no deploy]\n\nSelect the seven Linux Python3.12 tooling versions resolved by successful main3a QA as a new pilot baseline. Protect only the first bootstrap command; retain the separate editable install and broader CODEX-5 gates. Require wheel-byte/metadata verification, a normal resolver and fresh-environment refusal controls before qualification.\n",
+      "paths": [
+        "docs/modules.md",
+        "docs/specs/REGISTRY.md",
+        "docs/specs/pilot-evaluation-tooling-hashes.md"
+      ]
+    },
+    {
+      "commit": "1177902b2204314c201900a8def6b7ca69a83515",
+      "tree": "eb6670fb6a568d91193e8969a3f72a605cfc653c",
+      "parents": [
+        "cd11919b47df46b2b9826da1daf0d1fa4e39af5b"
+      ],
+      "subject": "Require complete hashed pilot bootstrap inputs [no release] [no deploy]",
+      "body": "\n[no release] [no deploy]\n\nAdd collected regression assertions for the reviewed seven-package Linux tooling closure and normal-resolver hash requirement. Preserve the separate editable install, existing pilot evaluation commands and advisory workflow scope. These tests precede the lock/workflow implementation.\n",
+      "paths": [
+        "tests/test_pilot_dependency_lock.py"
+      ]
+    },
+    {
+      "commit": "1dcb9729e00ba1197861f801b83e7d414d38950b",
+      "tree": "9aef9c69c4ba34f04c55db7ca45427113cb2c68e",
+      "parents": [
+        "1177902b2204314c201900a8def6b7ca69a83515"
+      ],
+      "subject": "Hash lock the complete pilot tooling bootstrap [no release] [no deploy]",
+      "body": "\n[no release] [no deploy]\n\nProtect only the first pilot-eval install with the seven reviewed Linux CPython3.12 wheel versions and SHA256 values from successful mainQA. Preserve normal dependency resolution and the separate editable application install, all evaluation/report behavior, and both broad strict CODEX-5 gates. Adjust the positive command census only for this newly protected command.\n",
+      "paths": [
+        ".github/workflows/pilot-eval.yml",
+        "tests/test_codex5_command_audit_20261121.py",
+        "tools/calibration/pilot/requirements-ci.lock"
+      ]
+    },
+    {
+      "commit": "f08632ab81e6ab24fcc34fc994dd2dda2556d267",
+      "tree": "cb959c1bc0189697241ec2a89c9ec22efabceded",
+      "parents": [
+        "1dcb9729e00ba1197861f801b83e7d414d38950b"
+      ],
+      "subject": "Quote the hashed pilot install YAML scalar [no release] [no deploy]",
+      "body": "\n[no release] [no deploy]\n\nThe collected contract tests correctly rejected colon-space in the unquoted --only-binary=:all: argument. Preserve the original quoted scalar style around the exact same installer argv. Retain the first candidate and four hard-failure records; no audit logic, assertions or installed artifact versions change.\n",
+      "paths": [
+        ".github/workflows/pilot-eval.yml"
+      ]
+    }
+  ],
+  "changed_paths": [
+    ".github/workflows/pilot-eval.yml",
+    "docs/modules.md",
+    "docs/specs/REGISTRY.md",
+    "docs/specs/pilot-evaluation-tooling-hashes.md",
+    "tests/test_codex5_command_audit_20261121.py",
+    "tests/test_pilot_dependency_lock.py",
+    "tools/calibration/pilot/requirements-ci.lock"
+  ],
+  "unchanged_tracked_entries": 4826,
+  "mechanical_checks": {
+    "archive_wheel_metadata": 237,
+    "source_history_census": 61,
+    "total": 298,
+    "all_passed": true
+  },
+  "accepted_version_baseline": {
+    "source": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+    "run": 44906524287,
+    "job": 136853186420,
+    "versions": {
+      "pytest": "9.2.0",
+      "hypothesis": "6.170.17",
+      "sortedcontainers": "2.4.0",
+      "iniconfig": "2.3.1",
+      "packaging": "26.3",
+      "pluggy": "1.7.0",
+      "pygments": "2.21.0"
+    }
+  },
+  "actual_wheels": [
+    {
+      "name": "pytest",
+      "version": "9.2.0",
+      "filename": "pytest-9.2.0-py3-none-any.whl",
+      "bytes": 411776,
+      "sha256": "07acdcf88ec174f907dc01af70bf52d49b014bbab03faeeade31c96b18c2e588",
+      "metadata_sha256": "006823d1759e40b4546ff4296945eda3f0692e799f724bb235edd0512d42eead",
+      "registry_sha256": "9bfb2ab87f53ac4e1770fb14b2431e5a4a1db5d8bd39189f441b92d8b59e94cc",
+      "source_url": "https://files.pythonhosted.org/packages/51/39/1f5d8c8877a0fa327db959c19341d4be61660de1ab6b7391f9eb805bcd67/pytest-9.2.0-py3-none-any.whl",
+      "requires_python": ">=3.10",
+      "requires_dist": [
+        "colorama>=0.4; sys_platform == \"win32\"",
+        "exceptiongroup>=1; python_version < \"3.11\"",
+        "iniconfig>=2",
+        "packaging>=24",
+        "pluggy<2,>=1.6",
+        "pygments>=2.15",
+        "tomli>=2; python_version < \"3.11\"",
+        "argcomplete; extra == \"dev\"",
+        "asynctest; python_version < \"3.11\" and extra == \"dev\"",
+        "attrs>=23.1; extra == \"dev\"",
+        "coverage>=7.5; extra == \"dev\"",
+        "hypothesis>=6.75; extra == \"dev\"",
+        "mock; extra == \"dev\"",
+        "numpy>=1.26; extra == \"dev\"",
+        "pexpect>=4.9; extra == \"dev\"",
+        "pytest-xdist>=3.5; extra == \"dev\"",
+        "pyyaml; extra == \"dev\"",
+        "requests; extra == \"dev\"",
+        "setuptools; extra == \"dev\"",
+        "xmlschema; extra == \"dev\""
+      ],
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "iniconfig",
+      "version": "2.3.1",
+      "filename": "iniconfig-2.3.1-py3-none-any.whl",
+      "bytes": 7552,
+      "sha256": "9121e2c1fdb355232495be3194c8dfe87ccc2d5dee45947b78e68f499790d7a7",
+      "metadata_sha256": "47c2c35d936f5c649d8074c6464719a42966a67b5cebad01e3e5784cf090cfb6",
+      "registry_sha256": "ab4d5df71d2a4f01a0eb418d7809bb22dca3293991a369309f068c07c1471557",
+      "source_url": "https://files.pythonhosted.org/packages/56/43/4ca9e49d27a1fcf6bece6f6aec0ea46bb9112489b93d4b688fb415457bdb/iniconfig-2.3.1-py3-none-any.whl",
+      "requires_python": ">=3.10",
+      "requires_dist": [],
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "packaging",
+      "version": "26.3",
+      "filename": "packaging-26.3-py3-none-any.whl",
+      "bytes": 129956,
+      "sha256": "d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c",
+      "metadata_sha256": "70fdb89fc4d4a9a043bf7372b8972bcc883fddff34ab55e9cf80d73875384763",
+      "registry_sha256": "4f190d2f0b312b3086058cee64ab4333bf3ce67fb78b4c2bdb43899049b29f4d",
+      "source_url": "https://files.pythonhosted.org/packages/63/34/ba1c580383c9eada3711951fef0795c80b829a078d72188184bcab9dd527/packaging-26.3-py3-none-any.whl",
+      "requires_python": ">=3.9",
+      "requires_dist": [],
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "pluggy",
+      "version": "1.7.0",
+      "filename": "pluggy-1.7.0-py3-none-any.whl",
+      "bytes": 27082,
+      "sha256": "7dd7b0d8832ba3cb632c306926ded123429211b83641b35dc5c41ad2d34f9bec",
+      "metadata_sha256": "20ac8237e37f1d6e7e75500cd663015177ba80c1a1a595ff6bae18a539ff8a2c",
+      "registry_sha256": "9e8f441bba8382eabf6febf386a5b9610cfe0c16b60b96e7b4b1831bd6d96361",
+      "source_url": "https://files.pythonhosted.org/packages/40/9e/2b38731e0fc536806f16490e1a12d7f0dc2a1235aa8cc07bcc75416a7daa/pluggy-1.7.0-py3-none-any.whl",
+      "requires_python": ">=3.10",
+      "requires_dist": [],
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "pygments",
+      "version": "2.21.0",
+      "filename": "pygments-2.21.0-py3-none-any.whl",
+      "bytes": 1250147,
+      "sha256": "2363c69b61c4a97c838da3b130dcd6468f4848992b21a82f2a63ec34377137d9",
+      "metadata_sha256": "1dde075570136774c706bf0009183a793fe0ee262e4a5590cc6eff8453eedd43",
+      "registry_sha256": "330104a10adc8a587e3f98f4e207557125ca0c1d489e129334da5acb2b813a03",
+      "source_url": "https://files.pythonhosted.org/packages/71/46/17f022dd3e953bf20a04a028a21ec746d942f8d2af30fa0f124fa0e6a684/pygments-2.21.0-py3-none-any.whl",
+      "requires_python": ">=3.9",
+      "requires_dist": [
+        "colorama>=0.4.6; extra == 'windows-terminal'"
+      ],
+      "tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "name": "hypothesis",
+      "version": "6.170.17",
+      "filename": "hypothesis-6.170.17-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "bytes": 1169964,
+      "sha256": "fd5f7feb13c275bb4672c5ef651ab6df1cb4a054c54d14aa44e578274241587a",
+      "metadata_sha256": "645b099ac6a691396a7edea134ee9086577c3dcbb58431f3a8a5fdb350267da4",
+      "registry_sha256": "b1088843d37bb6912fab079b83ab3e5ac85ebbb4fef9b9c9576d8ad672663ba4",
+      "source_url": "https://files.pythonhosted.org/packages/c6/c0/e464032ee87a05410f5349f8d66d9e89bb0ba1426fcb8b152328be91165b/hypothesis-6.170.17-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "requires_python": ">=3.11",
+      "requires_dist": [
+        "sortedcontainers>=2.1.0,<3.0.0",
+        "black>=20.8b0 ; extra == 'all'",
+        "click>=7.0 ; extra == 'all'",
+        "crosshair-tool>=0.0.113 ; extra == 'all'",
+        "django>=5.2 ; extra == 'all'",
+        "dpcontracts>=0.4 ; extra == 'all'",
+        "hypothesis-crosshair>=0.0.32 ; extra == 'all'",
+        "lark>=0.10.1 ; extra == 'all'",
+        "libcst>=0.3.16 ; extra == 'all'",
+        "numpy>=1.23.2 ; extra == 'all'",
+        "pandas>=1.5 ; extra == 'all'",
+        "pytest>=4.6 ; extra == 'all'",
+        "python-dateutil>=1.4 ; extra == 'all'",
+        "pytz>=2014.1 ; extra == 'all'",
+        "redis>=3.0.0 ; extra == 'all'",
+        "rich>=9.0.0 ; extra == 'all'",
+        "tzdata>=2026.6 ; (sys_platform == 'emscripten' and extra == 'all') or (sys_platform == 'win32' and extra == 'all')",
+        "watchdog>=4.0.0 ; extra == 'all'",
+        "click>=7.0 ; extra == 'cli'",
+        "black>=20.8b0 ; extra == 'cli'",
+        "rich>=9.0.0 ; extra == 'cli'",
+        "libcst>=0.3.16 ; extra == 'codemods'",
+        "hypothesis-crosshair>=0.0.32 ; extra == 'crosshair'",
+        "crosshair-tool>=0.0.113 ; extra == 'crosshair'",
+        "python-dateutil>=1.4 ; extra == 'dateutil'",
+        "django>=5.2 ; extra == 'django'",
+        "dpcontracts>=0.4 ; extra == 'dpcontracts'",
+        "black>=20.8b0 ; extra == 'ghostwriter'",
+        "lark>=0.10.1 ; extra == 'lark'",
+        "numpy>=1.23.2 ; extra == 'numpy'",
+        "pandas>=1.5 ; extra == 'pandas'",
+        "pytest>=4.6 ; extra == 'pytest'",
+        "pytz>=2014.1 ; extra == 'pytz'",
+        "redis>=3.0.0 ; extra == 'redis'",
+        "watchdog>=4.0.0 ; extra == 'watchdog'",
+        "tzdata>=2026.6 ; (sys_platform == 'emscripten' and extra == 'zoneinfo') or (sys_platform == 'win32' and extra == 'zoneinfo')"
+      ],
+      "tags": [
+        "cp312-cp312-manylinux2014_x86_64",
+        "cp312-cp312-manylinux_2_17_x86_64"
+      ]
+    },
+    {
+      "name": "sortedcontainers",
+      "version": "2.4.0",
+      "filename": "sortedcontainers-2.4.0-py2.py3-none-any.whl",
+      "bytes": 29575,
+      "sha256": "a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0",
+      "metadata_sha256": "eedf115109e215001e904da0882851beae50b03c0b0161a8b9e74b7cfd679473",
+      "registry_sha256": "4e0cd7bf62c28a94d9236338cdd4d918aef53a344c6765756ebfe054de14930b",
+      "source_url": "https://files.pythonhosted.org/packages/32/46/9cb0e58b2deb7f82b84065f37f3bffeb12413f947f9388e4cac22c4621ce/sortedcontainers-2.4.0-py2.py3-none-any.whl",
+      "requires_python": "",
+      "requires_dist": [],
+      "tags": [
+        "py2-none-any",
+        "py3-none-any"
+      ]
+    }
+  ],
+  "active_dependency_edges": [
+    {
+      "from": "pytest",
+      "to": "iniconfig",
+      "requirement": "iniconfig>=2",
+      "version": "2.3.1"
+    },
+    {
+      "from": "pytest",
+      "to": "packaging",
+      "requirement": "packaging>=24",
+      "version": "26.3"
+    },
+    {
+      "from": "pytest",
+      "to": "pluggy",
+      "requirement": "pluggy<2,>=1.6",
+      "version": "1.7.0"
+    },
+    {
+      "from": "pytest",
+      "to": "pygments",
+      "requirement": "pygments>=2.15",
+      "version": "2.21.0"
+    },
+    {
+      "from": "hypothesis",
+      "to": "sortedcontainers",
+      "requirement": "sortedcontainers>=2.1.0,<3.0.0",
+      "version": "2.4.0"
+    }
+  ],
+  "wheel_target": "Linux x86_64 CPython 3.12, no extras",
+  "fresh_resolver_checks": {
+    "environments": 5,
+    "started_with_no_distributions": true,
+    "positive_installs": 1,
+    "exact_installed_versions": {
+      "pytest": "9.2.0",
+      "iniconfig": "2.3.1",
+      "packaging": "26.3",
+      "pluggy": "1.7.0",
+      "pygments": "2.21.0",
+      "hypothesis": "6.170.17",
+      "sortedcontainers": "2.4.0"
+    },
+    "positive_pip_check_passed": true,
+    "expected_refusals": [
+      "present sortedcontainers==2.4.0 entry with its hash removed",
+      "omitted sortedcontainers entry with the actual wheel still available",
+      "wrong sortedcontainers hash",
+      "wrong Hypothesis hash"
+    ],
+    "negative_environments_remained_empty": true,
+    "all_seven_verified_wheels_available_in_every_case": true,
+    "normal_resolver_enabled": true,
+    "require_hashes_enabled": true,
+    "dependency_or_hash_bypass_used": false,
+    "PIP_environment_cleared_and_config_disabled": true,
+    "local_wheelhouse_no_index": true,
+    "new_downloads": false,
+    "bootstrap_pip_version": "25.0.1",
+    "interpreter": "CPython 3.12.14",
+    "bootstrap_and_runner_are_not_artifact_locked": true
+  },
+  "independent_source_tests": {
+    "counts": {
+      "cases": 261,
+      "passed": 259,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xfailed": 2
+    },
+    "distinct_cases": 261,
+    "seconds": 3.1361948249978013,
+    "seven_tooling_distributions_and_imports_bound_to_fresh_environment": true,
+    "application_dependencies": "Existing trusted application packages appended to sys.path only; no editable install or .pth rebind performed",
+    "unchanged_report_writer": "not-evaluated; exact preregistration hash, empty arms and placeholder corpus/tool identities preserved",
+    "ordinary_warnings_in_output": 0
+  },
+  "prior_author_test_history_retained_separately": {
+    "1177902b_parent_test_stage": {
+      "passed": 1,
+      "failed": 3,
+      "errors": 0,
+      "skips": 0,
+      "collected": 4
+    },
+    "1dcb9729_initial_affected": {
+      "passed": 233,
+      "failed": 4,
+      "xfailed": 1,
+      "errors": 0,
+      "cases": 238
+    },
+    "1dcb9729_pilot_selection": {
+      "passed": 19
+    },
+    "f08632ab_final_affected": {
+      "passed": 236,
+      "xfailed": 2,
+      "errors": 0,
+      "failed": 0,
+      "cases": 238
+    },
+    "f08632ab_pilot_selection": {
+      "passed": 19
+    },
+    "typed_gate_treated_initial_parser_defect_as_hard_failure": true,
+    "initial_failures_not_transferred_or_aggregated_into_final_success": true,
+    "new_test_bytes_identical_to_original_test_stage": true,
+    "author_final_whole_tree_ruff_and_pip_receipts_verified": true
+  },
+  "census": {
+    "before_96": {
+      "workflows": 21,
+      "run_scalars": 203,
+      "installing_jobs": 38,
+      "commands": 42,
+      "protected": 1,
+      "unprotected": 41
+    },
+    "after_f086": {
+      "workflows": 21,
+      "run_scalars": 203,
+      "installing_jobs": 38,
+      "commands": 42,
+      "protected": 2,
+      "unprotected": 40
+    }
+  },
+  "strict_C5_gate_asts_unchanged": [
+    {
+      "path": "tests/test_codex5_command_audit_20261121.py",
+      "name": "test_all_explicit_workflow_pip_installs_are_protected",
+      "decorators": [
+        "pytest.mark.xfail(strict=True, raises=UnprotectedPipInstalls, reason='CODEX-5: repository-wide hashed wheel closure still open')"
+      ],
+      "ast_sha256": "80fe77ea087d58072df2afff7d7c0ecc1273e3e680f7abc7be5e10d80fb342b2"
+    },
+    {
+      "path": "tests/test_codex_pkg_workflows.py",
+      "name": "test_pip_downloads_require_hashes",
+      "decorators": [
+        "pytest.mark.xfail(strict=True, reason='CODEX-5')"
+      ],
+      "ast_sha256": "f901fc2239a9fab8ac5d56d7515d356a173f9a66581c397984cd0ba3e6ec90d1"
+    }
+  ],
+  "historical_scope": {
+    "available_actions_history_at_preflight": "36 manual runs, including 24 successes; zero available pilot-evaluation runs. No claim about deleted/inaccessible history.",
+    "new_explicit_baseline_not_a_historical_pilot_success": true,
+    "older_ae69_200_run_census_untouched": true,
+    "historical_181_unmatched_and_16_patch_equivalent_census_unchanged": true
+  },
+  "remaining_gates": [
+    "Separate editable application installation and its build/runtime dependency closure",
+    "40 still-unprotected explicit workflow installers and both broad strict CODEX-5 gates",
+    "Full final integrated-source hosted Linux/Windows qualification and applicable native/package/platform acceptance",
+    "Actual locked-data pilot evaluation; report writer remains not-evaluated",
+    "Interpreter, pip bootstrap, runner reproducibility and hosted index availability",
+    "Release readiness and root-controlled publication/merge decisions"
+  ],
+  "mutations": {
+    "candidate_source": false,
+    "existing_environments": false,
+    "root_network_worktree": false,
+    "PR357": false,
+    "refs_PRs_CI": false,
+    "new_review_environments_only": true
+  },
+  "reviewer_unexpected_errors_or_failures": [],
+  "portable_retention": [
+    {
+      "path": "inputs/author-pilot-tooling-hash-closure-repair.zip",
+      "original": "/workspace/scratch/837fe19aae3a/evidence/pilot-tooling-hash-closure-repair/pilot-tooling-hash-closure-repair.zip",
+      "bytes": 4554783,
+      "sha256": "a3ec5c23c4139ee8ba809c5fc070d48b8caa8beac44e7db545f794212ae64cd3"
+    },
+    {
+      "path": "inputs/c5-pilot-independent-preflight.zip",
+      "original": "/workspace/scratch/837fe19aae3a/evidence/c5-pilot-independent-preflight/c5-pilot-independent-preflight.zip",
+      "bytes": 676496,
+      "sha256": "82252252c0101277252acee3248dd892e7c5dde943fadddc3e5426bfe29de8c5"
+    }
+  ],
+  "portable_archive": "pilot-tooling-hash-closure-independent.zip",
+  "archive_exclusions": {
+    "_environments": "Disposable five environments; exact command, configuration and installation-state receipts included",
+    "tmp": "Disposable pytest/Hypothesis cache and fixture directories; raw outputs/XML and source bindings included",
+    "verified-wheelhouse": "Exact same seven wheels are retained once in inputs/author-pilot-tooling-hash-closure-repair.zip under wheelhouse/",
+    "outer_archive_and_receipt": "Avoid circular self-hashing; manifest covers every payload, receipt identifies final ZIP"
+  }
+}

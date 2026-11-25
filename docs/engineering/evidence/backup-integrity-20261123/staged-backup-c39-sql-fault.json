@@ -1,0 +1,7 @@
+{
+  "code": 3,
+  "error": "OperationalError: interrupted",
+  "copy_retained": true,
+  "error_mentions_copy": false,
+  "error_tagged": false
+}

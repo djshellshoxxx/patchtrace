@@ -1,0 +1,141 @@
+{
+  "schema": "patchtrace/netutil-354-356-bounded-independent-review/1",
+  "reviewed_at": "2026-11-21T13:58:55.291725+00:00",
+  "scope": "Five-worker inert concurrency observation and HTTP socket-shortening boundaries only; original root regressions and consumer union not repeated.",
+  "head": "1d475d926314ae116442bfe2b7cd268ad95ea12c",
+  "tree": "72d30ce1b4ea8ec03b5634a2922d53e0ba7dcb88",
+  "netutil_blob": "60b7e113607d88c26fe7cbcb772969c5af4619e4",
+  "baseline": "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+  "baseline_blob": "9fff565fd59d3d3d23a7a9f4e0a894bd742f8432",
+  "verdict": "NO_NEW_PR356_BLOCKER_IN_BOUNDED_SCOPE;INHERITED_STRICT_DOCSTRING_LIMITATION_CONFIRMED",
+  "new_source_blockers": [],
+  "inherited_observation": {
+    "five_pre_admitted_calls_can_all_become_abandoned": true,
+    "count_observed_on_both_sources": 5,
+    "MAX_ABANDONED": 4,
+    "later_admission_refused_on_both": true,
+    "all_workers_released_and_count_zero_on_both": true,
+    "introduced_by_356": false,
+    "admission_and_cancellation_code_unchanged": true,
+    "strict_docstring_cap_satisfied": false,
+    "normative_H9_interpretation": "The wording describes a threshold after which new calls fail; it does not reserve slots for already admitted concurrent requests. Observed behavior satisfies later-admission throttling, not a global simultaneous-abandonment ceiling.",
+    "disposition": "Retain/document the inherited docstring-versus-admission distinction. A stronger global reservation bound would require an explicit separate contract/implementation decision; this review does not silently add it as a PR356 merge gate."
+  },
+  "socket_controls": {
+    "passed": 13,
+    "new_failures": 0,
+    "coverage": [
+      "Never extends finite existing timeout, including zero/nonblocking and shorter sub-millisecond values.",
+      "Unbounded or longer known HTTP socket timeout is shortened, respecting existing 1ms floor.",
+      "Unknown transport is neither inspected through private attributes nor mutated.",
+      "Known HTTPResponse without an accessible raw socket remains unchanged."
+    ],
+    "same_shorten_function_on354and356": true,
+    "real_socket_or_network_used": false
+  },
+  "cleanup_error_case": "Original test_cancelled_call_slot_released_after_failing_cleanup already covers this; root owns its execution and it was not duplicated here.",
+  "outcomes": {
+    "base902-concurrent-cap": {
+      "passed": 0,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0,
+      "failure_details": [
+        {
+          "name": "test_five_pre_admitted_calls_against_strict_helper_docstring_cap",
+          "message": "AssertionError: strict helper docstring cap exceeded by previously admitted concurrent calls\nassert 5 <= 4\n +  where 5 = <function abandoned_count at 0x7f02e792aca0>()\n +    where <function abandoned_count at 0x7f02e792aca0> = netutil.abandoned_count\n +  and   4 = netutil.MAX_ABANDONED"
+        }
+      ]
+    },
+    "pr356-concurrent-cap": {
+      "passed": 0,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0,
+      "failure_details": [
+        {
+          "name": "test_five_pre_admitted_calls_against_strict_helper_docstring_cap",
+          "message": "AssertionError: strict helper docstring cap exceeded by previously admitted concurrent calls\nassert 5 <= 4\n +  where 5 = <function abandoned_count at 0x7fa407e72d40>()\n +    where <function abandoned_count at 0x7fa407e72d40> = netutil.abandoned_count\n +  and   4 = netutil.MAX_ABANDONED"
+        }
+      ]
+    },
+    "pr356-timeout-boundaries": {
+      "passed": 13,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failure_details": []
+    }
+  },
+  "observations": {
+    "base902-concurrent-cap": {
+      "source_label": "base902-concurrent-cap",
+      "docstring_cap": 4,
+      "admitted_workers": 5,
+      "abandoned_before_cancel": 0,
+      "caller_outcomes": [
+        "Cancelled",
+        "Cancelled",
+        "Cancelled",
+        "Cancelled",
+        "Cancelled"
+      ],
+      "abandoned_after_cancel": 5,
+      "later_admission_refused": true,
+      "after_release_abandoned": 0,
+      "workers_alive_after_release": 0
+    },
+    "pr356-concurrent-cap": {
+      "source_label": "pr356-concurrent-cap",
+      "docstring_cap": 4,
+      "admitted_workers": 5,
+      "abandoned_before_cancel": 0,
+      "caller_outcomes": [
+        "Cancelled",
+        "Cancelled",
+        "Cancelled",
+        "Cancelled",
+        "Cancelled"
+      ],
+      "abandoned_after_cancel": 5,
+      "later_admission_refused": true,
+      "after_release_abandoned": 0,
+      "workers_alive_after_release": 0
+    }
+  },
+  "mechanical_checks": 25,
+  "checks": [
+    "baseline snapshot exact Git bytes",
+    "356 snapshot exact Git bytes",
+    "356 complete tree",
+    "strict helper docstring unchanged",
+    "all admission statements unchanged",
+    "post-worker cancellation accounting unchanged",
+    "socket shortening same on354and356",
+    "normative H9 spec unchanged from902",
+    "H9 explicitly describes subsequent admission failure",
+    "original cleanup error case already exists",
+    "base902-concurrent-cap exact outcomes",
+    "base902-concurrent-cap immutable isolated binding",
+    "pr356-concurrent-cap exact outcomes",
+    "pr356-concurrent-cap immutable isolated binding",
+    "pr356-timeout-boundaries exact outcomes",
+    "pr356-timeout-boundaries immutable isolated binding",
+    "base902-concurrent-cap five admitted before any cancellation",
+    "base902-concurrent-cap five cancellations observed",
+    "base902-concurrent-cap threshold throttles later calls",
+    "base902-concurrent-cap no remaining worker or counter leak",
+    "pr356-concurrent-cap five admitted before any cancellation",
+    "pr356-concurrent-cap five cancellations observed",
+    "pr356-concurrent-cap threshold throttles later calls",
+    "pr356-concurrent-cap no remaining worker or counter leak",
+    "protected author checkout remains clean"
+  ],
+  "at_most_five_synthetic_call_workers_per_invocation": true,
+  "source_ref_PR_CI_mutations": false,
+  "environment_installs_or_rebinds": false,
+  "full_native_external_network_runs": false,
+  "full_source_qualification_claimed": false,
+  "merge_approval": false,
+  "remaining": "Root owns full history/consumer review, exact-source stacked qualification and author ownership reconciliation."
+}

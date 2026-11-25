@@ -1,0 +1,1090 @@
+{
+  "schema": "patchtrace/sealed-main-evidence-independent-audit/1",
+  "completed_at": "2026-11-21T15:02:01.816944+00:00",
+  "verdict": "clear",
+  "scope": "Read-only audit of sealed main3a automatic post-merge QA and publication holds. Does not qualify PR357.",
+  "source": {
+    "head": "3a16290c0fcc4e0c21712fe10474a3ff33fad336",
+    "tree": "6001ef506c38930fd590bd827f428b997c3b2797",
+    "ordered_parents": [
+      "9023761a4066ac1c50c127ac09d0ba5f56cdc9e4",
+      "d6679abc6dfddbadce0391c8d18289f7f96338d6"
+    ]
+  },
+  "parent_archive": {
+    "path": "/workspace/scratch/837fe19aae3a/evidence/main-3a16290-publication-holds/main-3a16290-postmerge-evidence.zip",
+    "bytes": 3679987,
+    "sha256": "14180b596d46a22319bd07c9afc79bac7bcbc5e09819f4097f074da140d1d0a1",
+    "manifest_sha256": "5b28af58583c93897f7695684c30a9a8c74eaa3c3ec768ab94297d39d7c5af1e",
+    "qualification_sha256": "012039fd73085d30e61dd79bf47024988980df3929956ab360dd4917dbab905d",
+    "external_receipt_sha256": "c65d4837e8cfd0a7415fd9f2e937b2b680189a80b7aee6df5a370cea95d29614",
+    "members": 91,
+    "payloads": 90
+  },
+  "nested_pages_archive": {
+    "sha256": "1b9cec5fed0b85fe85caf95181f14b4a1a09c7f75fb0e25c5e6685059a6031c9",
+    "bytes": 1511254,
+    "members": 11,
+    "site_artifact_id": 14709361319,
+    "site_artifact_sha256": "05ddfa1ef706a548101d6e2a6aabffbf349243f53e0a44dcc4c04b674c32b79d"
+  },
+  "snapshot004_sha256": "e472597adeb243cfc0a2b5ef35c34dee3e9b085463a052c38737aea587765907",
+  "check_count": 213,
+  "failure_count": 0,
+  "checks": [
+    {
+      "name": "Parent ZIP exact size and SHA256",
+      "passed": true
+    },
+    {
+      "name": "Parent manifest exact hash and embedded bytes",
+      "passed": true
+    },
+    {
+      "name": "Parent ZIP CRC",
+      "passed": true
+    },
+    {
+      "name": "Parent ZIP complete inventory",
+      "passed": true
+    },
+    {
+      "name": "Parent member POST_MAIN_README.md",
+      "passed": true
+    },
+    {
+      "name": "Parent member README.md",
+      "passed": true
+    },
+    {
+      "name": "Parent member actual-merge-pr351.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifact-14709361319.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14710099824/original.zip",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14710099824/pair-publication-results.xml",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14710099824/qa-leg-result.txt",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14710099824/qa-results.xml",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14711281365/original.zip",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14711281365/pair-publication-results.xml",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14711281365/qa-leg-result.txt",
+      "passed": true
+    },
+    {
+      "name": "Parent member artifacts/14711281365/qa-results.xml",
+      "passed": true
+    },
+    {
+      "name": "Parent member final-job-records.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member final-run-44906524287.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member final-run-44906524308.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member final-source-run-release-guard.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member initial-source-and-runs.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-001.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-002.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-003.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-004.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-005.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-006.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-007.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-008.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-009.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-010.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-011.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-012.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-013.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-014.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-015.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-016.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-017.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-018.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-019.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-020.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-021.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-022.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member jobs-snapshot-023.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member linux-frozen-smoke-completion.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member linux-full-completion.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member linux-package-completion.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member logs/136853186206.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member logs/136853186409.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member logs/136853186420.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member logs/136853186439.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member logs/136853186469.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member logs/136853186471.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member logs/136853186511.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member logs/136853186517.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member logs/136878394950.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member logs/136878984231.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member logs/136878984521.log",
+      "passed": true
+    },
+    {
+      "name": "Parent member observer-lease-extension-20261121T1331Z.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member pages-completion-README.md",
+      "passed": true
+    },
+    {
+      "name": "Parent member pages-completion-archive-receipt.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member pages-completion-evidence-manifest.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member pages-completion-main-3a.zip",
+      "passed": true
+    },
+    {
+      "name": "Parent member pages-hold-completion.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member pinned-workflow-sources.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member post-main-qualification.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member prior-publication-failure-pointer.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member qa-artifact-linux-14710099824.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member qa-artifact-windows-14711281365.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member qt-completion-136853186409.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member qt-completion-136853186439.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member qt-completion-136853186471.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member qt-completion-136853186511.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member qt-completion-136853186517.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member qt-five-completion.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member queue-and-discovery-20261121T1316Z.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member raw-job-136853186206.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member raw-job-136853186409.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member raw-job-136853186420.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member raw-job-136853186439.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member raw-job-136853186469.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member raw-job-136853186471.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member raw-job-136853186511.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member raw-job-136853186517.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member raw-job-136878394950.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member raw-job-136878984231.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member raw-job-136878984521.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member release-baseline-comparison.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member release-baseline-main902.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member release-gate-completion.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member release-hold-completion.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member run-discovery-20261121T1305Z.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member run-discovery-20261121T1343Z.json",
+      "passed": true
+    },
+    {
+      "name": "Parent member windows-producer-completion.json",
+      "passed": true
+    },
+    {
+      "name": "External archive receipt identities",
+      "passed": true
+    },
+    {
+      "name": "Qualification exact SHA256",
+      "passed": true
+    },
+    {
+      "name": "Final API source/tree/ordered parents",
+      "passed": true
+    },
+    {
+      "name": "Final main ref/source summary identities",
+      "passed": true
+    },
+    {
+      "name": "Both holds in actual subject and body",
+      "passed": true
+    },
+    {
+      "name": "Actual PR351 merge receipt",
+      "passed": true
+    },
+    {
+      "name": "Only two actual discovered source runs",
+      "passed": true
+    },
+    {
+      "name": "Fourteen actual jobs,12 successful and2 skipped",
+      "passed": true
+    },
+    {
+      "name": "Actual skip job IDs",
+      "passed": true
+    },
+    {
+      "name": "44906524308: completed exact-source push",
+      "passed": true
+    },
+    {
+      "name": "44906524287: completed exact-source push",
+      "passed": true
+    },
+    {
+      "name": "136853186206: exact raw log binding",
+      "passed": true
+    },
+    {
+      "name": "136853186206: actual checkout",
+      "passed": true
+    },
+    {
+      "name": "136853186409: exact raw log binding",
+      "passed": true
+    },
+    {
+      "name": "136853186409: actual checkout",
+      "passed": true
+    },
+    {
+      "name": "136853186420: exact raw log binding",
+      "passed": true
+    },
+    {
+      "name": "136853186420: actual checkout",
+      "passed": true
+    },
+    {
+      "name": "136853186439: exact raw log binding",
+      "passed": true
+    },
+    {
+      "name": "136853186439: actual checkout",
+      "passed": true
+    },
+    {
+      "name": "136853186469: exact raw log binding",
+      "passed": true
+    },
+    {
+      "name": "136853186469: actual checkout",
+      "passed": true
+    },
+    {
+      "name": "136853186471: exact raw log binding",
+      "passed": true
+    },
+    {
+      "name": "136853186471: actual checkout",
+      "passed": true
+    },
+    {
+      "name": "136853186511: exact raw log binding",
+      "passed": true
+    },
+    {
+      "name": "136853186511: actual checkout",
+      "passed": true
+    },
+    {
+      "name": "136853186517: exact raw log binding",
+      "passed": true
+    },
+    {
+      "name": "136853186517: actual checkout",
+      "passed": true
+    },
+    {
+      "name": "136878394950: exact raw log binding",
+      "passed": true
+    },
+    {
+      "name": "136878394950: actual checkout",
+      "passed": true
+    },
+    {
+      "name": "136878984231: exact raw log binding",
+      "passed": true
+    },
+    {
+      "name": "136878984231: actual checkout",
+      "passed": true
+    },
+    {
+      "name": "136878984521: exact raw log binding",
+      "passed": true
+    },
+    {
+      "name": "136878984521: actual checkout",
+      "passed": true
+    },
+    {
+      "name": "136880181515: skipped without execution",
+      "passed": true
+    },
+    {
+      "name": "136853186416: exact raw log binding",
+      "passed": true
+    },
+    {
+      "name": "136853186416: actual checkout",
+      "passed": true
+    },
+    {
+      "name": "136862103266: skipped without execution",
+      "passed": true
+    },
+    {
+      "name": "All12 executed logs present",
+      "passed": true
+    },
+    {
+      "name": "Summary actual run/job inventory",
+      "passed": true
+    },
+    {
+      "name": "Ten required QA jobs successful",
+      "passed": true
+    },
+    {
+      "name": "Linux: one full pytest summary",
+      "passed": true
+    },
+    {
+      "name": "Linux: full stdout counts",
+      "passed": true
+    },
+    {
+      "name": "Linux: QA artifact identity and digest",
+      "passed": true
+    },
+    {
+      "name": "Linux: hosted upload digest agrees",
+      "passed": true
+    },
+    {
+      "name": "Linux: JUnit artifact member pair-publication-results.xml",
+      "passed": true
+    },
+    {
+      "name": "Linux: JUnit artifact member qa-results.xml",
+      "passed": true
+    },
+    {
+      "name": "Linux: JUnit artifact member qa-leg-result.txt",
+      "passed": true
+    },
+    {
+      "name": "Linux: exact parsed JUnit qa-results.xml",
+      "passed": true
+    },
+    {
+      "name": "Linux: JUnit/full count reconciliation",
+      "passed": true
+    },
+    {
+      "name": "Linux: exact parsed JUnit pair-publication-results.xml",
+      "passed": true
+    },
+    {
+      "name": "Linux: boundary independently counted",
+      "passed": true
+    },
+    {
+      "name": "Windows: one full pytest summary",
+      "passed": true
+    },
+    {
+      "name": "Windows: full stdout counts",
+      "passed": true
+    },
+    {
+      "name": "Windows: QA artifact identity and digest",
+      "passed": true
+    },
+    {
+      "name": "Windows: hosted upload digest agrees",
+      "passed": true
+    },
+    {
+      "name": "Windows: JUnit artifact member pair-publication-results.xml",
+      "passed": true
+    },
+    {
+      "name": "Windows: JUnit artifact member qa-results.xml",
+      "passed": true
+    },
+    {
+      "name": "Windows: JUnit artifact member qa-leg-result.txt",
+      "passed": true
+    },
+    {
+      "name": "Windows: exact parsed JUnit qa-results.xml",
+      "passed": true
+    },
+    {
+      "name": "Windows: JUnit/full count reconciliation",
+      "passed": true
+    },
+    {
+      "name": "Windows: exact parsed JUnit pair-publication-results.xml",
+      "passed": true
+    },
+    {
+      "name": "Windows: boundary independently counted",
+      "passed": true
+    },
+    {
+      "name": "All7 platform expected failures remain open",
+      "passed": true
+    },
+    {
+      "name": "All five Qt jobs/count mapping",
+      "passed": true
+    },
+    {
+      "name": "136853186511: Qt stdout independently parsed",
+      "passed": true
+    },
+    {
+      "name": "136853186517: Qt stdout independently parsed",
+      "passed": true
+    },
+    {
+      "name": "136853186409: Qt stdout independently parsed",
+      "passed": true
+    },
+    {
+      "name": "136853186471: Qt stdout independently parsed",
+      "passed": true
+    },
+    {
+      "name": "136853186439: Qt stdout independently parsed",
+      "passed": true
+    },
+    {
+      "name": "Windows frozen actual64PASS0FAIL",
+      "passed": true
+    },
+    {
+      "name": "Windows portable_smoke",
+      "passed": true
+    },
+    {
+      "name": "Windows installer_smoke",
+      "passed": true
+    },
+    {
+      "name": "Windows installer checksum",
+      "passed": true
+    },
+    {
+      "name": "Windows executed step Run python tools/build_windows.py",
+      "passed": true
+    },
+    {
+      "name": "Windows executed step Frozen EXE headless smoke (A1-A4) and self-test",
+      "passed": true
+    },
+    {
+      "name": "Windows executed step Extract and run portable Windows ZIP outside checkout",
+      "passed": true
+    },
+    {
+      "name": "Windows executed step Install pinned NSIS compiler",
+      "passed": true
+    },
+    {
+      "name": "Windows executed step Build per-user Windows installer",
+      "passed": true
+    },
+    {
+      "name": "Windows executed step Install, launch, and uninstall the setup package",
+      "passed": true
+    },
+    {
+      "name": "14711321319: product source/digest/API/upload binding",
+      "passed": true
+    },
+    {
+      "name": "14711490994: product source/digest/API/upload binding",
+      "passed": true
+    },
+    {
+      "name": "Large products not claimed locally downloaded",
+      "passed": true
+    },
+    {
+      "name": "Both Ubuntu frozen jobs",
+      "passed": true
+    },
+    {
+      "name": "136878984231: actual frozen64PASS0FAIL",
+      "passed": true
+    },
+    {
+      "name": "136878984231: actual same artifact download/digest",
+      "passed": true
+    },
+    {
+      "name": "136878984231: tar checksum and executable extraction",
+      "passed": true
+    },
+    {
+      "name": "136878984231: offscreen/XCB/fullCLI success",
+      "passed": true
+    },
+    {
+      "name": "136878984521: actual frozen64PASS0FAIL",
+      "passed": true
+    },
+    {
+      "name": "136878984521: actual same artifact download/digest",
+      "passed": true
+    },
+    {
+      "name": "136878984521: tar checksum and executable extraction",
+      "passed": true
+    },
+    {
+      "name": "136878984521: offscreen/XCB/fullCLI success",
+      "passed": true
+    },
+    {
+      "name": "Actual release gate true5 separately successful",
+      "passed": true
+    },
+    {
+      "name": "Actual release136880181515 skipped",
+      "passed": true
+    },
+    {
+      "name": "Actual no-release condition preserved",
+      "passed": true
+    },
+    {
+      "name": "Nested original Pages archive unchanged",
+      "passed": true
+    },
+    {
+      "name": "Nested Pages CRC/inventory",
+      "passed": true
+    },
+    {
+      "name": "Pages member actual-merge-pr351.json",
+      "passed": true
+    },
+    {
+      "name": "Pages member artifact-14709361319.json",
+      "passed": true
+    },
+    {
+      "name": "Pages member artifacts/14709361319/original.zip",
+      "passed": true
+    },
+    {
+      "name": "Pages member final-run-44906524308.json",
+      "passed": true
+    },
+    {
+      "name": "Pages member initial-source-and-runs.json",
+      "passed": true
+    },
+    {
+      "name": "Pages member logs/136853186416.log",
+      "passed": true
+    },
+    {
+      "name": "Pages member pages-completion-README.md",
+      "passed": true
+    },
+    {
+      "name": "Pages member pages-hold-completion.json",
+      "passed": true
+    },
+    {
+      "name": "Pages member pinned-workflow-sources.json",
+      "passed": true
+    },
+    {
+      "name": "Pages member raw-job-136853186416.json",
+      "passed": true
+    },
+    {
+      "name": "Original Pages site artifact hash/length/source",
+      "passed": true
+    },
+    {
+      "name": "Site artifact ZIP CRC/inventory",
+      "passed": true
+    },
+    {
+      "name": "Site payload artifact.tar",
+      "passed": true
+    },
+    {
+      "name": "Pages raw log retained once in nested archive",
+      "passed": true
+    },
+    {
+      "name": "Actual configure skip/upload success/build success",
+      "passed": true
+    },
+    {
+      "name": "Actual Pages deploy skipped with successful build",
+      "passed": true
+    },
+    {
+      "name": "Pages site248pass1skip and uploaded artifact digest",
+      "passed": true
+    },
+    {
+      "name": "No-deploy condition retained in Pages source",
+      "passed": true
+    },
+    {
+      "name": "Original snapshot004 immutable queued cut",
+      "passed": true
+    },
+    {
+      "name": "Release baseline exact copied hash",
+      "passed": true
+    },
+    {
+      "name": "Fresh59-release identity list unchanged",
+      "passed": true
+    },
+    {
+      "name": "No API-visible release published after main3a merge",
+      "passed": true
+    },
+    {
+      "name": "Prior902 Pages failure remains explicit",
+      "passed": true
+    }
+  ],
+  "full_platform_counts": [
+    {
+      "platform": "Linux",
+      "passed": 24295,
+      "skipped": 53,
+      "xfailed": 4,
+      "warnings": 21,
+      "seconds": 2241.64
+    },
+    {
+      "platform": "Windows",
+      "passed": 24164,
+      "skipped": 185,
+      "xfailed": 3,
+      "warnings": 22,
+      "seconds": 3524.95
+    }
+  ],
+  "qt_counts": [
+    {
+      "job_id": 136853186511,
+      "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+      "passed": 8460,
+      "warnings": 0
+    },
+    {
+      "job_id": 136853186517,
+      "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+      "passed": 9840,
+      "warnings": 0
+    },
+    {
+      "job_id": 136853186409,
+      "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+      "passed": 10860,
+      "warnings": 0
+    },
+    {
+      "job_id": 136853186471,
+      "name": "qt-gate (windows-latest, 5, 1/1)",
+      "passed": 10620,
+      "warnings": 10
+    },
+    {
+      "job_id": 136853186439,
+      "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+      "passed": 13320,
+      "warnings": 40
+    }
+  ],
+  "parsed_junit": [
+    {
+      "platform": "Linux",
+      "artifact_id": 14710099824,
+      "path": "qa-results.xml",
+      "test_cases": 24352,
+      "failures": 0,
+      "errors": 0,
+      "skipped_including_xfails": 57,
+      "xfails": [
+        {
+          "id": "tests.test_codex5_command_audit_20261121::test_all_explicit_workflow_pip_installs_are_protected",
+          "type": "pytest.xfail",
+          "message": "CODEX-5: repository-wide hashed wheel closure still open"
+        },
+        {
+          "id": "tests.test_codex_pkg_workflows::test_pip_downloads_require_hashes",
+          "type": "pytest.xfail",
+          "message": "CODEX-5"
+        },
+        {
+          "id": "tests.test_tier_w_symbols::test_live_llvm_pdbutil_agrees_with_the_stdlib_reader",
+          "type": "pytest.xfail",
+          "message": "BLOCKED: llvm-pdbutil is not installed on this runner"
+        },
+        {
+          "id": "tests.test_tier_w_symbols::test_live_ghidra_export_runs_or_records_blocked",
+          "type": "pytest.xfail",
+          "message": "BLOCKED: no --ghidra-dir given"
+        }
+      ]
+    },
+    {
+      "platform": "Linux",
+      "artifact_id": 14710099824,
+      "path": "pair-publication-results.xml",
+      "test_cases": 110,
+      "failures": 0,
+      "errors": 0,
+      "skipped_including_xfails": 2,
+      "xfails": []
+    },
+    {
+      "platform": "Windows",
+      "artifact_id": 14711281365,
+      "path": "qa-results.xml",
+      "test_cases": 24352,
+      "failures": 0,
+      "errors": 0,
+      "skipped_including_xfails": 188,
+      "xfails": [
+        {
+          "id": "tests.test_codex5_command_audit_20261121::test_all_explicit_workflow_pip_installs_are_protected",
+          "type": "pytest.xfail",
+          "message": "CODEX-5: repository-wide hashed wheel closure still open"
+        },
+        {
+          "id": "tests.test_codex_pkg_workflows::test_pip_downloads_require_hashes",
+          "type": "pytest.xfail",
+          "message": "CODEX-5"
+        },
+        {
+          "id": "tests.test_tier_w_symbols::test_live_ghidra_export_runs_or_records_blocked",
+          "type": "pytest.xfail",
+          "message": "BLOCKED: no --ghidra-dir given"
+        }
+      ]
+    },
+    {
+      "platform": "Windows",
+      "artifact_id": 14711281365,
+      "path": "pair-publication-results.xml",
+      "test_cases": 110,
+      "failures": 0,
+      "errors": 0,
+      "skipped_including_xfails": 3,
+      "xfails": []
+    }
+  ],
+  "expected_failure_records": [
+    {
+      "platform": "Linux",
+      "artifact_id": 14710099824,
+      "id": "tests.test_codex5_command_audit_20261121::test_all_explicit_workflow_pip_installs_are_protected",
+      "type": "pytest.xfail",
+      "message": "CODEX-5: repository-wide hashed wheel closure still open"
+    },
+    {
+      "platform": "Linux",
+      "artifact_id": 14710099824,
+      "id": "tests.test_codex_pkg_workflows::test_pip_downloads_require_hashes",
+      "type": "pytest.xfail",
+      "message": "CODEX-5"
+    },
+    {
+      "platform": "Linux",
+      "artifact_id": 14710099824,
+      "id": "tests.test_tier_w_symbols::test_live_llvm_pdbutil_agrees_with_the_stdlib_reader",
+      "type": "pytest.xfail",
+      "message": "BLOCKED: llvm-pdbutil is not installed on this runner"
+    },
+    {
+      "platform": "Linux",
+      "artifact_id": 14710099824,
+      "id": "tests.test_tier_w_symbols::test_live_ghidra_export_runs_or_records_blocked",
+      "type": "pytest.xfail",
+      "message": "BLOCKED: no --ghidra-dir given"
+    },
+    {
+      "platform": "Windows",
+      "artifact_id": 14711281365,
+      "id": "tests.test_codex5_command_audit_20261121::test_all_explicit_workflow_pip_installs_are_protected",
+      "type": "pytest.xfail",
+      "message": "CODEX-5: repository-wide hashed wheel closure still open"
+    },
+    {
+      "platform": "Windows",
+      "artifact_id": 14711281365,
+      "id": "tests.test_codex_pkg_workflows::test_pip_downloads_require_hashes",
+      "type": "pytest.xfail",
+      "message": "CODEX-5"
+    },
+    {
+      "platform": "Windows",
+      "artifact_id": 14711281365,
+      "id": "tests.test_tier_w_symbols::test_live_ghidra_export_runs_or_records_blocked",
+      "type": "pytest.xfail",
+      "message": "BLOCKED: no --ghidra-dir given"
+    }
+  ],
+  "actual_jobs": {
+    "count": 14,
+    "executed_success": 12,
+    "publication_skips": [
+      136880181515,
+      136862103266
+    ]
+  },
+  "release_identity_comparison": {
+    "current_count": 59,
+    "baseline_count": 59,
+    "unchanged": true,
+    "scope": "Compared retained API-visible release identity fields; release asset byte equality is not asserted."
+  },
+  "limitations": [
+    "No fresh API query or run triggered by this review. Exact source identity is checked against retained API/log records.",
+    "Large Windows/Linux product binaries are not present; their metadata and actual hosted producer/consumer checksum/runtime receipts are checked.",
+    "Seven platform expected-failure records remain open. No native coverage or Windows27 results transfer from later PR357."
+  ],
+  "network_reads": false,
+  "product_test_or_native_execution": false,
+  "source_ref_CI_or_parent_evidence_changes": false
+}

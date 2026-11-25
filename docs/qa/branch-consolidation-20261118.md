@@ -54,6 +54,8 @@ successful generation so failures preserve the previous report.
    are residual review leads; overlapping, reverted and evolved changes can
    remain in those sets without representing missing features.
 5. Group known stack intermediates by proven ancestry to a surviving open PR.
+   Match GitHub owner and repository names without regard to ASCII letter case.
+   Branch names and commit identities remain exact, and forks have distinct owners.
    Record narrowly reviewed ports separately, tied to their exact source and
    candidate SHA. A changed head invalidates those scoped review receipts.
 6. Retain every branch. The existing seven TSV columns remain compatible with

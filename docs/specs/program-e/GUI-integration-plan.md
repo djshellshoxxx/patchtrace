@@ -231,7 +231,7 @@ State copy (ASCII, plain text): no-project "Open a project to use {title}."; idl
 | Python `threading.Thread` + GUI-owned bridge `QObject` | 181 us | a late emit into a deleted bridge raises RuntimeError (caught); nothing to destroy; teardown x20: 0 stuck threads | chosen; a QThread executor with the same API is the fallback if Windows CI shows a non-Qt-thread problem [U] |
 
 Rules:
-1. `TaskRunner.submit(channel, fn, on_result, on_error, on_progress)` with `fn(token, report) -> R`, pure with respect to Qt, the project service and SQLite; inputs are immutable snapshots built on the GUI thread.
+1. `TaskRunner.submit(channel, fn, on_result, on_error, on_progress)` with `fn(token, report) -> R`, pure with respect to Qt, the project service and SQLite; inputs are immutable snapshots built on the GUI thread. If the operating system refuses thread startup, queue a class-only `TaskFailure` to the supplied `on_error` on the GUI thread. A later cancellation, replacement or shutdown suppresses that delivery. Without an error handler, propagate the startup exception to the caller. A refused ordinary worker or serial lane must leave shutdown and retry usable.
 2. One generation per channel: submit bumps it and sets the previous token; the bridge slot (a bound method on a queued connection, never a lambda) drops older generations.
 3. Results are applied, and anything persisted is written, only in GUI-thread callbacks; a callback exception becomes a status line (re-raised in tests). Worker exceptions cross as `TaskFailure(exception class)` only.
 4. Progress is throttled to 10 Hz, latest wins, final always. [M] 100,000 unthrottled emits took 3.2 s to drain and delayed a 10 ms GUI timer by up to 98 ms.

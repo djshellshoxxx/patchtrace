@@ -1,0 +1,136 @@
+{
+  "captured_main": "44c62cbf94c2d25c0c383eeb0072b7adf2bbb415",
+  "implementation_commit": "c6b215c5222e4ec3ed760bc4fc9f92719b18bda8",
+  "prs": [
+    {
+      "number": 358,
+      "title": "Recover network boundaries and verify tooling dependencies [no release] [no deploy]",
+      "state": "open",
+      "draft": false,
+      "head": "18edf3012a26eaeb037c2b970a252cc14481fba8",
+      "head_ref": "codex/patchtrace-network-tooling-recovery-20261121-837fe",
+      "base": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "base_ref": "main",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/358"
+    },
+    {
+      "number": 359,
+      "title": "test(ci): align Sigstore installer invariant with hash-locked workflow [no release] [no deploy]",
+      "state": "open",
+      "draft": true,
+      "head": "173f18d3a6ddd88aaaf514ced71b1be0c3db7954",
+      "head_ref": "fix/patchtrace-sigstore-static-test-20261123",
+      "base": "18edf3012a26eaeb037c2b970a252cc14481fba8",
+      "base_ref": "codex/patchtrace-network-tooling-recovery-20261121-837fe",
+      "merge_sha": "0ad5890649120dc55ec69d26f2788ac2e2e7c47d",
+      "mergeable": true,
+      "updated": "2026-11-23T14:42:36Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/359"
+    },
+    {
+      "number": 360,
+      "title": "Preserve SQLite projects during creation retries and correct recent-project settings [no release] [no deploy]",
+      "state": "open",
+      "draft": true,
+      "head": "ca95a7d045f3fa44551934680fa90c2af00370e5",
+      "head_ref": "integration/project-reliability-20261123",
+      "base": "ea16019601486c831941f9bc1a7ba5862a170317",
+      "base_ref": "main",
+      "merge_sha": "e9ef189cdc5f6a764a63010fc9556cc2e13d0c41",
+      "mergeable": true,
+      "updated": "2026-11-24T00:41:55Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/360"
+    },
+    {
+      "number": 361,
+      "title": "Preserve Windows preferences on uninstall and recover desktop usability fixes [no release] [no deploy]",
+      "state": "open",
+      "draft": true,
+      "head": "457444c682a1bf7e5166030c065f0365ad2c6976",
+      "head_ref": "integration/installer-preferences-20261123",
+      "base": "ca95a7d045f3fa44551934680fa90c2af00370e5",
+      "base_ref": "integration/project-reliability-20261123",
+      "merge_sha": "ad71390f2aa3636d98c33aa8a652d8d8b4efb46f",
+      "mergeable": true,
+      "updated": "2026-11-24T00:41:56Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/361"
+    },
+    {
+      "number": 362,
+      "title": "Verify project backups before publication and recover from desktop worker startup failures [no release] [no deploy]",
+      "state": "open",
+      "draft": true,
+      "head": "47478d563bc91529446b4b1d1f461f01ececb245",
+      "head_ref": "integration/backup-desktop-recovery-20261123",
+      "base": "457444c682a1bf7e5166030c065f0365ad2c6976",
+      "base_ref": "integration/installer-preferences-20261123",
+      "merge_sha": "91071c13b2d189cc7882b401d075e7b3068741a4",
+      "mergeable": true,
+      "updated": "2026-11-24T02:24:17Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/pull/362"
+    }
+  ],
+  "runs": [
+    {
+      "id": 45299124712,
+      "name": "QA and Windows standalone",
+      "status": "completed",
+      "conclusion": "success",
+      "event": "pull_request",
+      "head_sha": "ca95a7d045f3fa44551934680fa90c2af00370e5",
+      "head_branch": "integration/project-reliability-20261123",
+      "created_at": "2026-11-24T00:40:52Z",
+      "updated_at": "2026-11-24T02:46:47Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/45299124712"
+    },
+    {
+      "id": 45299137664,
+      "name": "QA and Windows standalone",
+      "status": "completed",
+      "conclusion": "success",
+      "event": "pull_request",
+      "head_sha": "457444c682a1bf7e5166030c065f0365ad2c6976",
+      "head_branch": "integration/installer-preferences-20261123",
+      "created_at": "2026-11-24T00:40:58Z",
+      "updated_at": "2026-11-24T03:35:17Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/45299137664"
+    },
+    {
+      "id": 45311828312,
+      "name": "QA and Windows standalone",
+      "status": "completed",
+      "conclusion": "success",
+      "event": "pull_request",
+      "head_sha": "47478d563bc91529446b4b1d1f461f01ececb245",
+      "head_branch": "integration/backup-desktop-recovery-20261123",
+      "created_at": "2026-11-24T02:21:58Z",
+      "updated_at": "2026-11-24T04:15:09Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/45311828312"
+    },
+    {
+      "id": 45197121455,
+      "name": "QA and Windows standalone",
+      "status": "completed",
+      "conclusion": "success",
+      "event": "pull_request",
+      "head_sha": "173f18d3a6ddd88aaaf514ced71b1be0c3db7954",
+      "head_branch": "fix/patchtrace-sigstore-static-test-20261123",
+      "created_at": "2026-11-23T14:42:43Z",
+      "updated_at": "2026-11-23T15:58:31Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/45197121455"
+    },
+    {
+      "id": 45311828435,
+      "name": "Native Windows Ghidriff acceptance",
+      "status": "completed",
+      "conclusion": "success",
+      "event": "pull_request",
+      "head_sha": "47478d563bc91529446b4b1d1f461f01ececb245",
+      "head_branch": "integration/backup-desktop-recovery-20261123",
+      "created_at": "2026-11-24T02:21:58Z",
+      "updated_at": "2026-11-24T02:51:58Z",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/45311828435"
+    }
+  ],
+  "scope": "These successful runs qualify the donor heads only. The final combined head requires fresh applicable hosted qualification."
+}

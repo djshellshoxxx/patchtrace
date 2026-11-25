@@ -96,3 +96,14 @@ Verify affected tests, whole-tree Ruff, pip consistency and exact source binding
 in a dedicated environment. Full-suite and independent review evidence remain
 separate from hosted/native qualification; no main, release, deploy or remote
 ref mutation is authorized by this contract.
+
+## November 24 combined-source census
+
+The integration of the reviewed project-reliability and network/tooling stacks
+retains the Windows project preflight and the pilot and Sigstore hash-locked
+installers together. The combined positive census is 21 workflows, 204 actual
+run scalars and 42 explicit installs: three protected commands and 39 commands
+without the audited boundary. The Windows QA workflow has 37 run scalars and
+four unprotected installs; the pilot workflow has five run scalars, two installs
+and one unprotected install. Preserve both strict repository-wide CODEX-5
+expected failures and the historical source-specific counts above.

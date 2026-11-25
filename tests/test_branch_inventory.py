@@ -203,6 +203,31 @@ def test_intermediate_is_not_integrated_merely_because_surviving_pr_contains_it(
     assert rows[0]["delete_safe"] == "no"
 
 
+def test_repository_spelling_preserves_pr_links_and_stack_without_matching_forks(graph):
+    repo, _, main, candidate, topic, _, unresolved = graph
+    pulls = [{"number": number, "state": "open", "head": {
+        "ref": branch, "sha": sha, "repo": {"full_name": full_name},
+    }, "base": {"sha": main}} for number, branch, sha, full_name in (
+        (139, "topic", topic, "Owner/PatchTrace"),
+        (168, "integration", candidate, "owner/patchtrace"),
+        (7, "topic", topic, "fork/PatchTrace"),
+        (8, "Topic", topic, "Owner/PatchTrace"),
+    )]
+    rows, _ = tool.inventory(tool.Git(repo), main, unresolved, [("topic", topic)], pulls, "OWNER/PatchTrace")
+    assert rows[0]["pr"] == "139"
+    assert rows[0]["category"] == "contained-in-retained-unmerged-branch"
+    assert json.loads(rows[0]["note"])["retained_unmerged_stack"]["tip"] == candidate
+
+
+def test_non_ascii_repository_cannot_alias_ascii_owner(graph):
+    repo, _, main, candidate, topic, *_ = graph
+    pulls = [{"number": 139, "state": "open", "head": {
+        "ref": "topic", "sha": topic, "repo": {"full_name": "Keeper/PatchTrace"},
+    }, "base": {"sha": main}}]
+    with pytest.raises(ValueError, match="ASCII"):
+        tool.inventory(tool.Git(repo), main, candidate, [("topic", topic)], pulls, "Keeper/PatchTrace")
+
+
 @pytest.mark.parametrize("shape", [
     "duplicate-header", "extra-cell", "missing-cell", "missing-tip-header",
     "blank-tip", "blank-branch",

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import subprocess
 import sys
+import threading
 
 import pytest
 from qt_support import join_gui_threads, main_window, settings  # noqa: F401
@@ -93,6 +94,27 @@ def test_a_project_change_does_not_probe_engines_until_asked(main_window, qtbot)
     controller.start_probe()  # the explicit action
     qtbot.waitUntil(lambda: controller.probe_token is None, timeout=5000)
     assert calls == [1]
+
+
+def test_probe_thread_refusal_clears_token_and_permits_retry(main_window, qtbot, monkeypatch):
+    controller = main_window.panels.controller('evidence')
+    calls = []
+    controller.probe = lambda _token: calls.append(True) or {}
+    controller.project_changed(controller.port.key())
+    def refuse(_thread):
+        raise RuntimeError('sensitive launch detail')
+
+    with monkeypatch.context() as patch:
+        patch.setattr(threading.Thread, 'start', refuse)
+        with qtbot.captureExceptions() as escaped:
+            controller.panel.probe_button.click()
+        assert not escaped
+    qtbot.waitUntil(lambda: controller.probe_token is None, timeout=5000)
+    assert not calls and not controller.probed
+    assert 'could not' in controller.panel.run_status.text() and 'sensitive' not in controller.panel.run_status.text()
+    controller.panel.probe_button.click()
+    qtbot.waitUntil(lambda: controller.probe_token is None, timeout=5000)
+    assert calls == [True]
 
 
 def test_evidence_state_changes_announce_once_through_the_host_shell(main_window, monkeypatch):

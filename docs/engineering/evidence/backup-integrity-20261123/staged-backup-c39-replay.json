@@ -1,0 +1,27 @@
+{
+  "actual_earliest_writer": {
+    "old_snapshot_hash": "653c934af9a058c5f87522b3425ecf749a5f555f471ccf6b3fc7a5586b614ee5",
+    "copied_original_exact": true
+  },
+  "stage": {
+    "reported": "PT-STORAGE: the copied snapshot differs from the source project",
+    "staging_and_destination_absent": true,
+    "changed_sha": "7693fced88db1cf3289fe015250d64bcabbdf3790431fa12c6fce188bcb0e06e"
+  },
+  "public": {
+    "rejected_with_copy_path": true,
+    "published_copy_retained": true,
+    "changed_sha": "7693fced88db1cf3289fe015250d64bcabbdf3790431fa12c6fce188bcb0e06e"
+  },
+  "old_omitted_default": {
+    "cli_verified": true,
+    "identical_raw_and_sha": true,
+    "reserialization_would_differ": true,
+    "persisted_sha": "a21b0d085fe760bd72d11bdb97e4ccb429888161346c790a910974ea31ef92af"
+  },
+  "concurrent_wal": {
+    "interleaved_commit_after_verifier_validated": true,
+    "both_selects_saw_same_sqlite_snapshot": true,
+    "fresh_verification_rejected_concurrent_value": true
+  }
+}
