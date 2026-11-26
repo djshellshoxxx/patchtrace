@@ -111,6 +111,7 @@ Every verb is also listed by `patchtrace --help`. Each page gives the verb's sub
 - [`compare`](78-cli-compare.md) - run the primary Ghidriff analysis for one project pair
 - [`profile`](81-cli-profile.md) - list, check, store and delete analysis profiles
 - [`doctor`](82-cli-doctor.md) - health report of the installation (starts no program)
+- [`version`](84-cli-version.md) - package version and available source or build identity
 
 - [Offline runtime CLI](83-cli-runtime.md)
 

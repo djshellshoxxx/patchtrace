@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import shutil
 import subprocess
 import threading
@@ -166,6 +167,55 @@ def test_git_observes_real_commit_without_claiming_cleanliness_and_ignores_git_d
     assert got['commit'] == expected and got['dirty'] is None
     (tmp_path / 'untracked').write_text('two')
     assert b.git_info(tmp_path)['dirty'] is None
+
+
+def test_git_probe_sanitizes_environment_and_preserves_fixed_supervisor_bounds(tmp_path, monkeypatch):
+    for name in ('GH_TOKEN', 'OPENAI_API_KEY', 'ANTHROPIC_API_KEY', 'AWS_SECRET_ACCESS_KEY',
+                 'HTTPS_PROXY', 'LD_PRELOAD', 'JAVA_TOOL_OPTIONS', 'PYTHONSTARTUP',
+                 'GIT_DIR', 'GIT_CONFIG_COUNT', 'XDG_CONFIG_HOME'):
+        monkeypatch.setenv(name, 'pt-sentinel-' + name)
+    monkeypatch.setenv('PATH', os.pathsep.join(['/usr/bin', '/bin']))
+    observed = []
+
+    def run(argv, **kwargs):
+        observed.append((argv, kwargs))
+        return jobs.ProcessResult(0, 'ignored', log_bytes=b'v0.1.0\n', stdout_total=7)
+
+    monkeypatch.setattr(jobs, 'run_process', run)
+    assert b._git(tmp_path, '/authored/git', threading.Event(), 'describe', '--always', '--tags') == 'v0.1.0'
+    assert len(observed) == 1
+    argv, kwargs = observed[0]
+    assert argv == ['/authored/git', '--no-pager', '-c', 'core.fsmonitor=false',
+                    'describe', '--always', '--tags']
+    assert kwargs['cwd'] == tmp_path and kwargs['timeout_seconds'] == 3
+    assert kwargs['max_output_bytes'] == b.MAX_GIT_BYTES and kwargs['separate_streams'] is True
+    env = kwargs['env']
+    controlled = {'GIT_OPTIONAL_LOCKS', 'GIT_TERMINAL_PROMPT', 'GIT_CONFIG_NOSYSTEM',
+                  'GIT_CONFIG_GLOBAL'}
+    assert set(env).issubset(controlled | set(b._GIT_INHERITED_ENV))
+    assert env['PATH'] == os.pathsep.join(['/usr/bin', '/bin'])
+    assert {key: env[key] for key in controlled} == {
+        'GIT_OPTIONAL_LOCKS': '0', 'GIT_TERMINAL_PROMPT': '0',
+        'GIT_CONFIG_NOSYSTEM': '1', 'GIT_CONFIG_GLOBAL': os.devnull,
+    }
+    assert not any('pt-sentinel' in value for value in env.values())
+
+
+def test_git_env_allowlist_retains_platform_essentials_not_sensitive_overrides():
+    base = {'Path': 'C:\\\\Git\\\\cmd', 'PATHEXT': '.COM;.EXE', 'SystemRoot': 'C:\\\\Windows',
+            'HOME': '/home/example', 'LANG': 'C.UTF-8',
+            'OPENAI_API_KEY': 'pt-sentinel-key', 'LD_PRELOAD': 'pt-sentinel-inject',
+            'GIT_CONFIG_COUNT': '999', 'http_proxy': 'pt-sentinel-proxy'}
+    env = b._git_env(base)
+    assert all(env[name] == base[name] for name in ('Path', 'PATHEXT', 'SystemRoot', 'HOME', 'LANG'))
+    assert not any('pt-sentinel' in value for value in env.values())
+    assert env['GIT_CONFIG_GLOBAL'] == os.devnull
+
+
+def test_git_refuses_relative_executable_before_a_child_launch(tmp_path, monkeypatch):
+    monkeypatch.setattr(b.shutil, 'which', lambda name: './git')
+    monkeypatch.setattr(b, '_git', lambda *args: pytest.fail('relative Git executable must not run'))
+    assert b.git_info(tmp_path) == {'commit': 'unknown', 'describe': 'unknown', 'dirty': None}
 
 
 def test_git_missing_description_cannot_imply_clean_and_moving_head_refuses(tmp_path, monkeypatch):

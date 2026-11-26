@@ -12,9 +12,19 @@ installed dependency versions, frozen state, and available build/source facts.
 It writes no project, starts no analysis tool and makes no network request.
 Source installations may invoke the installed Git executable through the existing
 bounded process supervisor: fixed read-only arguments, at most three seconds and
-4096 stdout bytes per call, no shell, no Git environment overrides, optional locks
+4096 stdout bytes per call, no shell, no inherited Git environment overrides, optional locks
 disabled and fsmonitor disabled. Only `rev-parse` root/HEAD observations and
-`describe --always --tags` object/ref queries run. The observed top-level path
+`describe --always --tags` object/ref queries run. The Git executable must resolve to an absolute
+path; a relative candidate is refused so the changed working directory cannot select a planted Git.
+The child inherits only PATH, PATHEXT, SystemRoot, WINDIR, COMSPEC, TEMP, TMP, TMPDIR,
+HOME, HOMEDRIVE, HOMEPATH, USERPROFILE, LANG, LC_ALL and LC_CTYPE (case-insensitive names).
+All other inherited settings—including provider credentials, proxies, loader hooks, Python
+hooks and GIT_* overrides—are excluded. GIT_OPTIONAL_LOCKS=0, GIT_TERMINAL_PROMPT=0,
+GIT_CONFIG_NOSYSTEM=1 and GIT_CONFIG_GLOBAL=os.devnull are the only controlled additions.
+No hard memory cap is claimed for the Git probe: an unqualified RLIMIT_AS would risk
+breaking native Git, particularly on Windows. Each fixed read-only command instead has a
+three-second process deadline and a 4096-byte total stdout cap; those bounds are not a
+memory-allocation guarantee. Native memory qualification remains separate. The observed top-level path
 must equal the selected ordinary source root before and after the ref queries;
 an enclosing repository is not attributed to an unrelated nested source tree.
 Root identity must remain unchanged, and legitimate Git worktrees are supported.
