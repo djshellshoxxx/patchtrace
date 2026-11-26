@@ -14,6 +14,7 @@ import shutil
 import stat
 import sys
 import time
+from collections.abc import Mapping
 from datetime import datetime
 from pathlib import Path
 from threading import Event
@@ -33,6 +34,13 @@ MAX_SOURCE_BYTES = 128 * 1024 * 1024
 MAX_BUILD_BYTES = 16 * 1024
 MAX_GIT_BYTES = 4096
 SOURCE_SECONDS = 10
+
+# Only execution/path and locale essentials reach the read-only Git probe. In particular,
+# provider credentials, proxies, dynamic-loader hooks, Git options and Python hooks do not.
+_GIT_INHERITED_ENV = frozenset({
+    'PATH', 'PATHEXT', 'SYSTEMROOT', 'WINDIR', 'COMSPEC', 'TEMP', 'TMP', 'TMPDIR',
+    'HOME', 'HOMEDRIVE', 'HOMEPATH', 'USERPROFILE', 'LANG', 'LC_ALL', 'LC_CTYPE',
+})
 
 
 class BuildInfoError(ValueError):
@@ -116,12 +124,19 @@ def source_sha256(src_root: Path, *, cancel: Event | None = None) -> str:
     return digest.hexdigest()
 
 
+def _git_env(environ: Mapping[str, str] | None = None) -> dict[str, str]:
+    """Minimum inherited environment for local, read-only Git metadata observations."""
+    source = os.environ if environ is None else environ
+    env = {key: value for key, value in source.items() if key.upper() in _GIT_INHERITED_ENV}
+    env.update(GIT_OPTIONAL_LOCKS='0', GIT_TERMINAL_PROMPT='0', GIT_CONFIG_NOSYSTEM='1',
+               GIT_CONFIG_GLOBAL=os.devnull)
+    return env
+
+
 def _git(repo_root: Path, executable: str, cancel: Event, *args: str) -> str | None:
     from .jobs import run_process
     _checkpoint(cancel)
-    env = {key: value for key, value in os.environ.items() if not key.upper().startswith('GIT_')}
-    env.update(GIT_OPTIONAL_LOCKS='0', GIT_TERMINAL_PROMPT='0', GIT_CONFIG_NOSYSTEM='1',
-               GIT_CONFIG_GLOBAL=os.devnull)
+    env = _git_env()
     result = run_process([executable, '--no-pager', '-c', 'core.fsmonitor=false', *args],
                          cwd=repo_root, env=env, cancel=cancel, timeout_seconds=3,
                          log_limit=MAX_GIT_BYTES, stderr_limit=MAX_GIT_BYTES,
@@ -144,7 +159,8 @@ def git_info(repo_root: Path, *, cancel: Event | None = None) -> dict:
     _checkpoint(cancel)
     unknown = {'commit': UNKNOWN, 'describe': UNKNOWN, 'dirty': None}
     executable = shutil.which('git')
-    if not executable:
+    # A relative resolution could execute a repository-controlled file after cwd changes.
+    if not executable or not os.path.isabs(executable):
         return unknown
     try:
         repo_root = Path(os.path.abspath(repo_root))

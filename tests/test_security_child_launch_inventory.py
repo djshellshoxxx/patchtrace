@@ -16,6 +16,7 @@ from typing import NamedTuple
 
 import pytest
 
+from patchtrace import buildinfo
 from patchtrace.backend import BackendConfig, build_child_env
 from patchtrace.intelligence.tools import process
 from patchtrace.rules import runner as rules_runner
@@ -44,11 +45,13 @@ EXTRACTOR_JVM = 'exempt:docs/specs/unified-engine/03-extraction.md#NO memory_lim
 # recorded on claude/autonomous-finish-20261104), so it is exempt under the architecture rule until then.
 GHIDRIFF_8 = NO_INVENTED_CAP
 GHIDRA_ENV = "backend_module._environment(cfg, work / 'ghidra-settings')"
+GIT_PROBE_MEMORY = 'exempt:docs/specs/version-provenance.md#No hard memory cap is claimed for the Git probe'
 
 INVENTORY: dict[str, Site] = {
     'backend.py::_java_version': Site('_environment(config)', 'tail-only:java -version probe', JVM, True),
     'backend.py::_probe_backend': Site('_environment(config)', 'tail-only:15 s import probe, 16 KiB tail',
                                        NO_INVENTED_CAP, True),
+    'buildinfo.py::_git': Site('_git_env()', 'max_output_bytes', GIT_PROBE_MEMORY, False),
     'backend.py::run_comparison': Site('_environment(config, ghidra_settings)', 'check_output-files', GHIDRIFF_8,
                                        True),
     # env is built by the caller with `process.tool_env`; memory is forwarded through **kwargs when configured
@@ -297,6 +300,7 @@ def _base() -> dict[str, str]:
 
 def _builders(tmp_path: Path):
     exe, cfg = tmp_path / 'tool', BackendConfig(python_executable='/py', ghidra_dir=str(tmp_path))
+    yield 'version-git', lambda base: buildinfo._git_env(base)
     yield 'rules-worker', lambda base: rules_runner.worker_env(base)
     yield 'binexport-worker', lambda base: binexport_run.worker_env(base)
     for windows in (False, True):
