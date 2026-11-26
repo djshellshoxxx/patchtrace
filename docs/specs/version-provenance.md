@@ -1,11 +1,12 @@
 # Headless version and source observations
 
-Status: consumer recovery candidate, 2026-11-24 Pacific. Selected source:
+Status: consumer recovery plus desktop producer continuation, 2026-11-26 Pacific. Selected source:
 `6096e64d4e7b8f0ecc6af884f7d220e07790d85a` (retained PR #320), including its
 reviewed Git-root and no-worktree-filter corrections. The original feature came
 from `62b9a3de4d1036a6e4b9bd2618372f4042b15f7f`. This additive contract uses the
-current lazy CLI registry and maintained bounded file reader. It leaves settings,
-doctor, builders, Windows version resources and publication policy unchanged.
+current lazy CLI registry and maintained bounded file reader. The producer amendment
+below adds build records to the existing desktop builders. Settings, doctor,
+Windows version-resource formats and publication policy retain their contracts.
 
 `patchtrace version [--json]` reads the current package version, Python and
 installed dependency versions, frozen state, and available build/source facts.
@@ -58,9 +59,9 @@ python, pyinstaller (string/null), pyside6 (string/null), built_utc (UTC ISO
 timestamp/null), frozen (true). Version must match the running package. Missing
 or invalid metadata leaves build facts unknown and produces a warning. Neither
 case fabricates source provenance by hashing a frozen extraction directory.
-This recovery provides the consumer only. The current desktop builders do not
-produce this record, so their frozen installations will report unknown build
-facts until the separately retained producer is integrated and qualified.
+The initial recovery provided the consumer. The producer amendment below adds
+record generation and execution checks to the existing desktop builders;
+published packages require qualification on their actual build platform.
 
 The result adds `contract: build-info/1` and a provenance basis (`source-tree` or
 `packaged-record`) around the historical fields. It uses `enrichment-cli/1`:
@@ -68,6 +69,49 @@ exit 0/status complete for the available observations, even when some optional
 facts are unknown; warnings state why. Exit 5 means cancellation, and malformed
 CLI input keeps exit 2. Text goes through the existing terminal escaping layer.
 No Qt import is allowed in discovery or execution.
+
+## Desktop build producer continuation (2026-11-26)
+
+Recover only `tools/package_buildinfo.py`, its focused tests and the builder
+integration from retained PR #320, commit
+`6096e64d4e7b8f0ecc6af884f7d220e07790d85a`. Before PyInstaller runs, the helper
+verifies that the imported observer belongs to the selected source root and
+records the bounded source digest, Git object/ref observations, actual
+Python/PyInstaller/PySide versions and a UTC timestamp. It validates the exact
+existing record contract. Missing Git remains unknown and cleanliness stays
+null. Missing source identity or dependency metadata refuses the build; CI
+environment variables never substitute for an observed Git commit.
+
+After freezing, recompute the source digest and Git observations and refuse
+detected changes. Publish the prepared bytes exclusively to
+`_internal/patchtrace/build-info.json` through the existing anchored, no-link
+publisher. Both package directories must already exist. Existing records,
+links, changed roots or invalid records refuse publication. Install before the
+file inventory is generated so both archive formats include the record.
+Archive labels and Windows resource fields keep their existing contracts;
+the record's version is the runtime package version. When an observed Git
+commit is available, the Windows resource commit must agree before freezing.
+
+Before archiving, run only the freshly built application's absolute executable
+path with `version --json`, through the existing process supervisor: 30 seconds,
+16 KiB total stdout and 4 KiB retained stderr. Use the Git probe's documented
+platform/path/locale environment allow-list and controlled Git settings, with
+`QT_QPA_PLATFORM=offscreen`; do not forward credentials, proxy settings or
+loader/Python hooks. No hard memory cap is claimed for this native package
+probe; the process and output bounds are not a memory-allocation guarantee.
+The completed result must contain raw stdout whose length exactly equals the
+reported byte total and does not exceed the cap, even after a quick exit.
+Strict JSON must contain the complete version envelope, packaged-record basis,
+no warnings and exactly the prepared fields with their declared types.
+Missing or changed metadata, source fallback, malformed or truncated output,
+timeout, output overflow and nonzero exit all prevent archiving.
+
+The before/after comparison detects changes without locking a mutable source
+tree throughout freezing. This record does not attest compiled bytecode, sign
+packages or establish authenticity. Helper tests and authored subprocesses are
+portable controls; native Windows and Linux package production and consumption
+remain required. Existing full frozen smoke, dependency, accuracy and release
+gates remain unchanged. No analysis target or downloaded sample is executed.
 
 ## Acceptance and remaining work
 
@@ -78,8 +122,9 @@ unknown frozen facts, lazy headless CLI discovery, the standard output envelope
 and cancellation. They use authored files and temporary Git repositories; they
 are not native packaged-build or release evidence.
 
-The producer (`tools/package_buildinfo.py` and builder integration) remains a
-separate retained PR #320 slice. This consumer does not establish a frozen
-executable's source identity without an admitted record, sign artifacts, attest
-compiled bytecode or authorize publication. Exact-source hosted Linux/Windows
-QA and existing package gates remain required for integration.
+The producer and builder wiring require source-change refusal, exclusive record
+publication, strict frozen-response equality, final-output completeness and
+archive-order regressions. A consumer without an admitted record still reports
+unknown build identity. Exact-source hosted Linux/Windows QA, actual package
+production and independent downloaded-artifact gates remain required before
+integration. Signing, manual acceptance and release publication remain separate.

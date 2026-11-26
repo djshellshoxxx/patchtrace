@@ -10,6 +10,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import check_windows_exe  # noqa: E402
+import package_buildinfo  # noqa: E402
 import windows_icon  # noqa: E402
 import windows_version_info  # noqa: E402
 
@@ -75,9 +76,13 @@ def main(argv=None):
         raise SystemExit('Build on Windows: PyInstaller cannot cross-compile the Windows runtime.')
     root = Path(__file__).resolve().parents[1]
     require_upb_protobuf()
+    build_record = package_buildinfo.prepare_record(root)
     # Validate metadata before any build work; shared archive-version parsing stays unchanged.
     try:
         fields = windows_version_info.fields_for_build(args.version, root=root)
+        observed_commit = json.loads(build_record)['git_commit']
+        if observed_commit != 'unknown' and fields.commit != observed_commit:
+            raise ValueError('PT-BUILD: Windows version resource conflicts with the observed source commit')
     except ValueError as exc:
         raise SystemExit(str(exc)) from exc
     resources = root / 'build' / 'windows-resources'
@@ -86,6 +91,7 @@ def main(argv=None):
     icon.write_bytes(windows_icon.pack_ico(windows_icon.render_frames()))
     subprocess.run(pyinstaller_command(root, icon, version_file), cwd=root, check=True)
     package = root / 'dist' / 'PatchTrace'
+    package_buildinfo.install_record(root, package, build_record)
     shutil.copy2(root / 'LICENSE', package / 'LICENSE.txt')
     shutil.copy2(root / 'README.md', package / 'README.md')
     shutil.copytree(root / 'docs', package / 'docs', dirs_exist_ok=True)
@@ -161,6 +167,7 @@ def main(argv=None):
                          capture_output=True, text=True)
     if cli.returncode != 0 or 'usage:' not in cli.stdout:
         raise RuntimeError(f'Frozen CLI smoke failed ({cli.returncode}): {cli.stderr[-500:]}')
+    package_buildinfo.check_frozen_record(package / 'PatchTrace.exe', build_record, cwd=root)
     archive = Path(shutil.make_archive(str(root / 'dist' / f'PatchTrace-{args.version}-windows-x64'),
                                      'zip', root_dir=root / 'dist', base_dir='PatchTrace'))
     archive.with_suffix('.zip.sha256').write_bytes(f'{sha256_file(archive)}  {archive.name}\n'.encode('ascii'))
