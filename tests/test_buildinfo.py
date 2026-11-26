@@ -179,7 +179,7 @@ def test_git_probe_sanitizes_environment_and_preserves_fixed_supervisor_bounds(t
 
     def run(argv, **kwargs):
         observed.append((argv, kwargs))
-        return jobs.ProcessResult(0, 'ignored', log_bytes=b'v0.1.0\\n', stdout_total=7)
+        return jobs.ProcessResult(0, 'ignored', log_bytes=b'v0.1.0\n', stdout_total=7)
 
     monkeypatch.setattr(jobs, 'run_process', run)
     assert b._git(tmp_path, '/authored/git', threading.Event(), 'describe', '--always', '--tags') == 'v0.1.0'
