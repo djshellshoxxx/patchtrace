@@ -1,0 +1,8 @@
+rz-diff 0.9.1 @ linux-x86-64
+commit: c3a90e9226d977f58f4e9c75f78fa6b07afe13c7
+archive_sha256: 9102249a9f0b6319c5334a2e5cf8d9cc3f2035e1d3def027c41f6a90f647e8cf
+older_fixture_sha256: 53709752726f511616f75f4cae9898fac81788b3eb0d6a4eea5af2d571d6aeb8
+newer_fixture_sha256: 91a7231618c676e1555b5cb4b9638dcb3f1d2ffd8b4b30c88168a3d0d4d62581
+rzdiff_output_sha256_forward_and_reverse: 81c04c8e6eeb7b5fec85c0913395a5a5c727181f966fc997f36af32e90db1653
+command: rz-diff -C -j -t functions <older> <newer>
+live_rzdiff_check: passed, mocked=false, match_count=4
