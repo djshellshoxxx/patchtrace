@@ -1,5 +1,14 @@
 # PatchTrace branch inventory
 
+## November 24 version consumer continuation
+
+The [consumer continuation](version-provenance-continuation-20261124.md) records
+local reviewed source `806ccc4f` from retained #320, based on PR #364 `ef66848d`.
+The census has 382 refs: 171 in main, 182 in the candidate; the 11-ref difference
+includes its own new ref and 10 previous branch heads. Ancestry does not establish
+semantic closure. Broader #312/#316/#320 scopes and held branches remain preserved;
+exact published consumer-source hosted checks are pending.
+
 ## November 24 combined qualification candidate
 
 The reviewed #358/#359 network and tooling work and #360/#361/#362 project,

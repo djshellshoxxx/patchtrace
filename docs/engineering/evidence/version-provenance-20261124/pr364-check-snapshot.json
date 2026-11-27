@@ -1,0 +1,271 @@
+{
+  "kind": "patchtrace-pr364-check-snapshot/1",
+  "observed_utc": "2026-11-25T03:44:26Z",
+  "observation": "Read-only GitHub REST metadata snapshot; subsequent state is governed by the live pull request.",
+  "pull_request": {
+    "number": 364,
+    "url": "https://github.com/djshellshoxxx/patchtrace/pull/364",
+    "state": "open",
+    "merged": false,
+    "head_ref": "integration/patchtrace-consolidated-20261124-7de6",
+    "head_sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+    "head_tree": "64e25d3c8ad2a05aae470cfd55dddceb9517797a",
+    "base_ref": "main",
+    "base_sha": "44c62cbf94c2d25c0c383eeb0072b7adf2bbb415",
+    "synthetic_merge_sha": "69a0bf8e2dd97165826bdbb2caa700eb57f41076"
+  },
+  "runs": [
+    {
+      "id": 45540193209,
+      "name": "Optional dependency wheels probe",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/45540193209",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+      "attempt": 1,
+      "created_at": "2026-11-25T03:28:15Z",
+      "updated_at": "2026-11-25T03:31:36Z",
+      "jobs": [
+        {
+          "id": 138956557099,
+          "name": "probe (ubuntu-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "head_sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+          "started_at": "2026-11-25T03:28:34Z",
+          "completed_at": "2026-11-25T03:28:53Z"
+        },
+        {
+          "id": 138956557508,
+          "name": "probe (windows-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "head_sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+          "started_at": "2026-11-25T03:30:51Z",
+          "completed_at": "2026-11-25T03:31:35Z"
+        }
+      ]
+    },
+    {
+      "id": 45540193200,
+      "name": "QA and Windows standalone",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/45540193200",
+      "event": "pull_request",
+      "status": "in_progress",
+      "conclusion": null,
+      "head_sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+      "attempt": 1,
+      "created_at": "2026-11-25T03:28:15Z",
+      "updated_at": "2026-11-25T03:33:59Z",
+      "jobs": [
+        {
+          "id": 138956556129,
+          "name": "qa (ubuntu-latest)",
+          "status": "in_progress",
+          "conclusion": null,
+          "head_sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+          "started_at": "2026-11-25T03:32:04Z",
+          "completed_at": null
+        },
+        {
+          "id": 138956556331,
+          "name": "qt-gate (ubuntu-latest, 20, 4/4)",
+          "status": "in_progress",
+          "conclusion": null,
+          "head_sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+          "started_at": "2026-11-25T03:33:10Z",
+          "completed_at": null
+        },
+        {
+          "id": 138956556431,
+          "name": "qt-gate (ubuntu-latest, 20, 3/4)",
+          "status": "in_progress",
+          "conclusion": null,
+          "head_sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+          "started_at": "2026-11-25T03:32:24Z",
+          "completed_at": null
+        },
+        {
+          "id": 138956556521,
+          "name": "qt-gate (ubuntu-latest, 20, 1/4)",
+          "status": "in_progress",
+          "conclusion": null,
+          "head_sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+          "started_at": "2026-11-25T03:33:29Z",
+          "completed_at": null
+        },
+        {
+          "id": 138956556525,
+          "name": "qa (windows-latest)",
+          "status": "in_progress",
+          "conclusion": null,
+          "head_sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+          "started_at": "2026-11-25T03:33:58Z",
+          "completed_at": null
+        },
+        {
+          "id": 138956556539,
+          "name": "qt-gate (ubuntu-latest, 20, 2/4)",
+          "status": "in_progress",
+          "conclusion": null,
+          "head_sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+          "started_at": "2026-11-25T03:33:45Z",
+          "completed_at": null
+        },
+        {
+          "id": 138956556561,
+          "name": "qt-gate (windows-latest, 5, 1/1)",
+          "status": "in_progress",
+          "conclusion": null,
+          "head_sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+          "started_at": "2026-11-25T03:32:48Z",
+          "completed_at": null
+        },
+        {
+          "id": 138956557652,
+          "name": "release-gate",
+          "status": "completed",
+          "conclusion": "skipped",
+          "head_sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+          "started_at": "2026-11-25T03:28:16Z",
+          "completed_at": "2026-11-25T03:28:16Z"
+        }
+      ]
+    },
+    {
+      "id": 45540193257,
+      "name": "Corpus Tier R (sharded)",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/45540193257",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+      "attempt": 1,
+      "created_at": "2026-11-25T03:28:15Z",
+      "updated_at": "2026-11-25T03:35:16Z",
+      "jobs": [
+        {
+          "id": 138956556400,
+          "name": "plan",
+          "status": "completed",
+          "conclusion": "success",
+          "head_sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+          "started_at": "2026-11-25T03:28:40Z",
+          "completed_at": "2026-11-25T03:29:03Z"
+        },
+        {
+          "id": 138956556856,
+          "name": "windows advisory (smoke)",
+          "status": "completed",
+          "conclusion": "success",
+          "head_sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+          "started_at": "2026-11-25T03:31:29Z",
+          "completed_at": "2026-11-25T03:32:18Z"
+        },
+        {
+          "id": 138956558546,
+          "name": "msvc cl advisory (windows-2022)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "head_sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+          "started_at": "2026-11-25T03:28:16Z",
+          "completed_at": "2026-11-25T03:28:16Z"
+        },
+        {
+          "id": 138956835754,
+          "name": "shard 0 of 2",
+          "status": "completed",
+          "conclusion": "success",
+          "head_sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+          "started_at": "2026-11-25T03:31:33Z",
+          "completed_at": "2026-11-25T03:34:15Z"
+        },
+        {
+          "id": 138956835919,
+          "name": "shard 1 of 2",
+          "status": "completed",
+          "conclusion": "success",
+          "head_sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+          "started_at": "2026-11-25T03:32:23Z",
+          "completed_at": "2026-11-25T03:34:36Z"
+        },
+        {
+          "id": 138958966383,
+          "name": "merge",
+          "status": "completed",
+          "conclusion": "success",
+          "head_sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+          "started_at": "2026-11-25T03:34:47Z",
+          "completed_at": "2026-11-25T03:35:16Z"
+        }
+      ]
+    },
+    {
+      "id": 45540193242,
+      "name": "Native Windows Ghidriff acceptance",
+      "url": "https://github.com/djshellshoxxx/patchtrace/actions/runs/45540193242",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+      "attempt": 1,
+      "created_at": "2026-11-25T03:28:15Z",
+      "updated_at": "2026-11-25T03:37:25Z",
+      "jobs": [
+        {
+          "id": 138956556259,
+          "name": "native (patchtrace-seeded-store-no-adjacent-pdb)",
+          "status": "completed",
+          "conclusion": "success",
+          "head_sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+          "started_at": "2026-11-25T03:28:58Z",
+          "completed_at": "2026-11-25T03:33:28Z"
+        },
+        {
+          "id": 138956556614,
+          "name": "native (patchtrace-clean)",
+          "status": "completed",
+          "conclusion": "success",
+          "head_sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+          "started_at": "2026-11-25T03:29:44Z",
+          "completed_at": "2026-11-25T03:33:45Z"
+        },
+        {
+          "id": 138956556672,
+          "name": "native (repro-plain-ghidriff)",
+          "status": "completed",
+          "conclusion": "success",
+          "head_sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+          "started_at": "2026-11-25T03:30:15Z",
+          "completed_at": "2026-11-25T03:33:50Z"
+        },
+        {
+          "id": 138956556759,
+          "name": "native (raw-cache-hit)",
+          "status": "completed",
+          "conclusion": "success",
+          "head_sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+          "started_at": "2026-11-25T03:31:14Z",
+          "completed_at": "2026-11-25T03:35:14Z"
+        },
+        {
+          "id": 138956556852,
+          "name": "native (patchtrace-seeded-store)",
+          "status": "completed",
+          "conclusion": "success",
+          "head_sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+          "started_at": "2026-11-25T03:32:06Z",
+          "completed_at": "2026-11-25T03:37:25Z"
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "This snapshot binds to PR364 head ef66848d92d9b0d4cd58876cb157a5b609e011c5; it does not qualify the later version consumer source.",
+    "QA, Qt repetition and dependent package/frozen-consumer validation are incomplete in this snapshot.",
+    "A successful Tier R workflow conclusion does not establish all corpus pairs completed or any accuracy result.",
+    "Native Ghidriff acceptance is distinct from native execution of the frozen version JSON/read_info path.",
+    "No release, deployment, tag or merge is established by this snapshot."
+  ]
+}

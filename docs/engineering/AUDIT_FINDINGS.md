@@ -1,5 +1,14 @@
 # PatchTrace audit findings
 
+## November 24 version consumer continuation
+
+The [consumer review](version-provenance-continuation-20261124.md) closes retained
+stdout-tail admission: final raw presence, length and total checks keep the cap.
+Eight controls changed from six failures/two passes to eight passes; independent
+review found no remaining consumer blocker. Historical and fresh Tier R evidence
+retains 5/11 pairs, six failures and eleven Windows advisory findings. No new-source
+hosted or full Tier R acceptance is asserted.
+
 ## November 24 combined qualification candidate
 
 The reviewed #358/#359 network and tooling work and #360/#361/#362 project,

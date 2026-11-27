@@ -1,0 +1,2370 @@
+{
+  "base": "44c62cbf94c2d25c0c383eeb0072b7adf2bbb415",
+  "candidate": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+  "branch_count": 382,
+  "contained_in_main": 171,
+  "contained_in_candidate": 182,
+  "newly_contained": [
+    {
+      "branch": "codex/patchtrace-csaf-cache-read-limits-20261121-assistant",
+      "sha": "d0a4bdf439775999340ea760d96a087e032ee6dd",
+      "in_main": false,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-enrichment-hard-deadline-20261121-assistant",
+      "sha": "e3928ab8c8e2deee7bb01b0f857205f68a1abda2",
+      "in_main": false,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-network-tooling-recovery-20261121-837fe",
+      "sha": "18edf3012a26eaeb037c2b970a252cc14481fba8",
+      "in_main": false,
+      "in_candidate": true
+    },
+    {
+      "branch": "fix/netutil-abandoned-cleanup-cap-20261121-0318",
+      "sha": "1d475d926314ae116442bfe2b7cd268ad95ea12c",
+      "in_main": false,
+      "in_candidate": true
+    },
+    {
+      "branch": "fix/netutil-read-deadline-20261121-0318",
+      "sha": "a41c7a0d594d1fe26c16da395e6f6f9b33b07eca",
+      "in_main": false,
+      "in_candidate": true
+    },
+    {
+      "branch": "fix/optional-import-init-exceptions-20261121-0318",
+      "sha": "e2127864cb481026db0157082d688b8a36595e3b",
+      "in_main": false,
+      "in_candidate": true
+    },
+    {
+      "branch": "fix/patchtrace-sigstore-static-test-20261123",
+      "sha": "173f18d3a6ddd88aaaf514ced71b1be0c3db7954",
+      "in_main": false,
+      "in_candidate": true
+    },
+    {
+      "branch": "integration/backup-desktop-recovery-20261123",
+      "sha": "47478d563bc91529446b4b1d1f461f01ececb245",
+      "in_main": false,
+      "in_candidate": true
+    },
+    {
+      "branch": "integration/installer-preferences-20261123",
+      "sha": "457444c682a1bf7e5166030c065f0365ad2c6976",
+      "in_main": false,
+      "in_candidate": true
+    },
+    {
+      "branch": "integration/patchtrace-consolidated-20261124-7de6",
+      "sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+      "in_main": false,
+      "in_candidate": true
+    },
+    {
+      "branch": "integration/project-reliability-20261123",
+      "sha": "ca95a7d045f3fa44551934680fa90c2af00370e5",
+      "in_main": false,
+      "in_candidate": true
+    }
+  ],
+  "rows": [
+    {
+      "branch": "access-test-noprefix",
+      "sha": "726a371ab34d4589b0456d059865ade6b82fac88",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "audit/ai-reports",
+      "sha": "dd6402b9c00d5aae79f152f4fe5ce0fa8597dc24",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "audit/core",
+      "sha": "fae13b2ed3043ddce00bbf387e386e93e7b3ee06",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "audit/desktop",
+      "sha": "4d5e48ab7df30f6318a8f3177b37ac98741e2b1f",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "audit/enrichment",
+      "sha": "cbc5b079ad2c8cdea4ec161b1afe9ac554b8ed39",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "audit/integration",
+      "sha": "f6505928d8264343caa33f878deb253626752944",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "audit/kb-correlation-20261107",
+      "sha": "c760e6ccea0d3e4df04bf76e58139d9a7fc9e9e6",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "audit/random-boundaries-20261105",
+      "sha": "802b5b1bb5f5e64118256e75414b7ca74ad61fcc",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "audit/random-invariants-20261105",
+      "sha": "7716e2b02feaa04e59dce302c1c6cacbe800634b",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "audit/random-lifecycle-20261105",
+      "sha": "f2b7d1786f60df27b0228f247aab9a00bd7c1078",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "audit/runtime",
+      "sha": "9f32a6ecbd056249373b82bc1e814bd938da8c70",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "audit/trust-boundaries-20261107",
+      "sha": "d75c0490aa0109e3a983c5e6baea2cea1855f956",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "automation/api-funded-persistent-codex-20261103",
+      "sha": "6fe6c4b1be060eb6e9d5208a68f0d68e1082b59c",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "automation/parallel-api-eight-agents-20261103",
+      "sha": "f8050a1fef23b71fd3a02b216c5035bcac3f4889",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "automation/patchtrace-api-agent-pilot-20261103",
+      "sha": "def36c822a80c77ae94b8e9a77da6f1ee9de1160",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "chatgpt/corpus-1",
+      "sha": "b7a0f0a45d2de1462367d877b7386091b4d275ce",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "chatgpt/deferred-audit-fixes-1",
+      "sha": "2174837f3172c3ff2a3c676da106f42b55648a70",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "chatgpt/ghidriff-sequential-lock-fix-20261017",
+      "sha": "f6b7545bcc7a161440ab7119233c204510571370",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "chatgpt/help-docs-1",
+      "sha": "e5bee6fe157c90a40f2d9f458768e2169ce123e5",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "chatgpt/java-probe-boundaries-20261016",
+      "sha": "09bb4519d7d8e9ff8f40abcba7e11cb297d8b61e",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "chatgpt/java-probe-ci-fix-20261016",
+      "sha": "0254841e3e635ed717e35abcf83021f001d7df29",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "chatgpt/java-probe-qa-fix-20261016",
+      "sha": "89500e12068656fa1958443ef634064effcbc40b",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "chatgpt/kb-fixtures-1",
+      "sha": "781b36fb60e775ce01bf0c114e6a17b609fdb475",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "chatgpt/lbl30-prereg-guard-20261016",
+      "sha": "6ae2c079e6cafa2b7bd5396cac443cd34ba7138a",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "chatgpt/lbl31-coff-quoted-rip-20261016",
+      "sha": "6e71bfabbf5ef75449b46981e9e822f7e555a6bf",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "chatgpt/lbl31-coff-symbol-mask-20261016",
+      "sha": "9622704d5c751d55700c4b642111131a7135d139",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "chatgpt/lbl31-output-persistence-20261015",
+      "sha": "2019a37fa65fc37f4758469143c2daadc07e0098",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "chatgpt/lbl31-windows-qa-fixes-20261016-a",
+      "sha": "ddb2ff077a21c1f0053ba8079564f6f86c3e155f",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "chatgpt/lbl32-card-controls-20261016",
+      "sha": "9513bc05229dd7a8460fc229d7420154d61498db",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "chatgpt/lbl32-recipe-aa-noise-20261016",
+      "sha": "eaa30013794a9bd0fedc9ec34bbe374d6db0cfc9",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "chatgpt/merge-first-handoff-20261016",
+      "sha": "19153f10780e783bc931739dd26db97d8eaf2b92",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "chatgpt/nway-external-note-qa-20261016",
+      "sha": "8c7288276d3e49b7794b7fd80db4b02d5891cf00",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "chatgpt/panels-1",
+      "sha": "cfd7cfff52f4f9b8b1264e8b7d70ef1bbef2d63f",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "chatgpt/patchwatch-reuse-roadmap-20261026",
+      "sha": "4eabf8dff2c4094681da70c7bd85ecd0da5aed9f",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "chatgpt/r5-calibration-research-20261030",
+      "sha": "4d9d9051aea87319847a0b321a14d37b95cb8abd",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "chatgpt/semantic-analysis-r3-20261030",
+      "sha": "2698b9a04d33b2d04f49c1ab737636539c6ef6f7",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "chatgpt/ue-r3-retain-decompiled-20261016",
+      "sha": "ebbd621d4f557905892aee5f7cf8cb7b0e2addc2",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "chatgpt/ue-r7-p15-unresolved-20261016-a",
+      "sha": "292dc3953dd2b8f157752d12251aff68b6e5bda5",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "chatgpt/ue-r7-strict-worker-report-20261016-a",
+      "sha": "9c5f9a42b499133b842b14b9619bf8390010e1ff",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "chatgpt/unified-fixture-collection-fix-20261016",
+      "sha": "941c617b6854291e2448cad6d7d5710a24a8543d",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "chatgpt/unified-fixtures-1",
+      "sha": "161a88345efc6484f4d7809fc6963a0193bd0057",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "chatgpt/unified-sort-perf-qa-20261016",
+      "sha": "27b0a48bb8007f504b4a127a099136a6ea5c00b7",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/access-test-1791773355",
+      "sha": "726a371ab34d4589b0456d059865ade6b82fac88",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/affectionate-galileo-bqd3tw",
+      "sha": "b29351d41060f8e9330fc9673457d835e188f993",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/audit-beta",
+      "sha": "c93ff945b9b523abe0b829247137105788a5ea27",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/autonomous-finish-20261104",
+      "sha": "ad4c49282a65d17d2ef23dfcc03e82be065c9021",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/awesome-ramanujan-o3pxx3-ci",
+      "sha": "0bf1f8309e8425ba34199657009d3055215336f1",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/awesome-ramanujan-o3pxx3-hostile",
+      "sha": "077b04e681ac74b20c0ff8bf367aa720c277f2d2",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "claude/awesome-ramanujan-o3pxx3-win1",
+      "sha": "7ac57759f3b9b332eaafb48c82f366566892f1b1",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/bugfix-kbc-20261029",
+      "sha": "653f384d1ca60b7e943bd658698e0989d826b696",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "claude/bugfix-kev-acq-20261029",
+      "sha": "fbe58d800da27aff2544c6a478f0a591ff7dad3b",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "claude/bugfix-rules-cg-20261029",
+      "sha": "78d48cf80bf9a8c698e604dc1ce58e8aecedca45",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/bugfix-rules-cg-rest-20261111",
+      "sha": "67b2bc456c59a510b854b0cdd9e85ed29d00b17d",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/bugfix-search-pilot-20261111",
+      "sha": "d1f7d9aa64b28c8a8ca0a1065bb88e1e2f15b7f0",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/bugfix-strings-pe-20261029",
+      "sha": "7ae041e79e419159299c32df98b8e69ab176e859",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "claude/bundle-license-gate",
+      "sha": "d3617acf9af7834582b4962a8c149969a7d55a22",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/clever-clarke-s4nhi6",
+      "sha": "502402684b0d0aa35d7719bb5a3467de035982bc",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/compassionate-goldberg-5uuqks",
+      "sha": "198eb21e8813b28de361422cfe3c002bdb9e3970",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/fix-deadline-test",
+      "sha": "22ff025a7710d07d7ad74be2c8f7cc0b4db0daf7",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/funny-feynman-d2m0b5",
+      "sha": "770c11f40ef70e11dfeb3fbc2f5646cc2b4b97b9",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/gallant-knuth-8gxuzd",
+      "sha": "f249edc8ee70ae003a1478eae5418d85ed629d87",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/instance-b-features",
+      "sha": "9237c2601c0f25d306b51883875c339bab8ed82b",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/instance-c-research",
+      "sha": "6f767ccef8ebfffd1d2373c5124d8a961dc54b41",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/instance-d-gui",
+      "sha": "2fa113889d1ffee6b68496993d3b3b6ebb0ba035",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "claude/java-version-retry-integration",
+      "sha": "45fa67ad7e924cb4e2df1cd487c04a2c0ddab381",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "claude/jolly-fermi-eghaxy",
+      "sha": "99f8328ce89d02f200cf9fbc5852d9801761af28",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "claude/live-harness-infra-20261111",
+      "sha": "c59ccada97b649366af808a6d83bb465078c9011",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/live-proof-20261111",
+      "sha": "18efb7ef6d196775645f195552a32ad08e277459",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/modest-hamilton-kz2gta",
+      "sha": "280bf05856eb60f4ddb0d58210616f65a3735816",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/patchtrace-cli-dotpath-spec-er6hha",
+      "sha": "62b9a3de4d1036a6e4b9bd2618372f4042b15f7f",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/patchtrace-features",
+      "sha": "66e9adc50fb118c04e5e24eacd0c221ca483a130",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/patchtrace-haiku-agent-motpbx",
+      "sha": "cbabc09e9df8a8190c769164ef0fae44f9c5cb1b",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/patchtrace-kbf04-fp-tests-20261118",
+      "sha": "16ab88b0626ef05700c4199e926103932312e5c7",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "claude/patchtrace-multi-worker-consolidate-24ct7v",
+      "sha": "ca10acb506fbf61db8142a836acfbd1e50a2aeb3",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/patchtrace-search-anchors-circularity-20261118",
+      "sha": "f6ef1528c15b2281ee7b6f32625d02a5211c926d",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "claude/patchtraces-consolidation-trngn0",
+      "sha": "faddea300daf4058d38d24ff04a270be6f3d832b",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "claude/quirky-curie-n5pxf5",
+      "sha": "a5593fa58b2ead6ecf6adfe045db242232cd52a3",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "claude/serene-heisenberg-2y5kz6",
+      "sha": "7ed5cebfdaee4dc508b0cc739e86c18c1ff34a97",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/sleepy-fermi-cli-parity-1",
+      "sha": "cf50b4e8725cb1291ac6150667f2e136f023aff3",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "claude/sleepy-fermi-kbc-1",
+      "sha": "53f5dd2611b38e3f69f8d72c3ca7cf73e9e896ab",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "claude/sleepy-fermi-na-rzdiff-ownership",
+      "sha": "aacb984e9d627be051ca8c8c3b88d5ceca0ff505",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "claude/sleepy-fermi-rq-l1-runner",
+      "sha": "e88d748cf9846e04c0c81449976f530519da83a9",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "claude/sleepy-fermi-security-1",
+      "sha": "1d5a022d2840c5c071ccece503664c8c961d63f1",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "claude/sleepy-fermi-test-reliability",
+      "sha": "37d9e47ca202b33f737b15f7af724649db8c3e15",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "claude/sleepy-fermi-y3z4yj",
+      "sha": "160a60e838742b21f70effedb8e7bb48886d9266",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/spec53-diagnose-launcher",
+      "sha": "a00fcc14ea11751ce5ca05271e2be32d06dd4535",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/symbol-policy-isolated-settings",
+      "sha": "5db597257decc219db520c0dab8369b4d4e2ea5e",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/ws-a-20261104",
+      "sha": "dabba4aea4ba0fa19e71ede05ce4fb8ab6741942",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/ws-a2-ci-speed-20261104",
+      "sha": "bef720fdd50c0ab7c93a10955b3e5ec7d2a5f992",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/ws-bc-20261104",
+      "sha": "e1193c8896e009930dae4edec974d9795876f0e0",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/ws-i-20261104",
+      "sha": "b03a77b8a2fe9e4fa65fbe43889e06f4e68180e9",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "claude/ws-p-20261104",
+      "sha": "597a8b106491cd587cedf1273ee5ef6d56d71508",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/advisory-read-bounds-20261118",
+      "sha": "a4061979547ef88855fbdb085228a42c3be21603",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/agent-skills-spec56-20261014",
+      "sha": "4467d1f3c6e113a7da808a67e8dee9d4aa5083d8",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/analyst-accessibility-20261109",
+      "sha": "b90a2cd49fa4ba71050a378abc753fe8c90733fd",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/asm-lexer-performance-20261119",
+      "sha": "4c96c483295e8a43ea58ab8c5689f8c9eb40de4d",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/audit-1",
+      "sha": "c2070cf8b4e7b0ade76cb000a5805009754eec55",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/audit-2",
+      "sha": "08b12f1b279d917736cfc17d4b8e447c8f552616",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/autonomous-checkpoint-20261102-0945",
+      "sha": "d038ddea43182b8709afd447140dc74fded487c5",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/autonomous-checkpoint-20261102-1020",
+      "sha": "c13d3257c88140c23fb585a8a59a4dce81e81928",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/autonomous-consolidation-20261120-2bad",
+      "sha": "39c38a02f126963fc03827fa49741255590227ad",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/autonomous-reconcile-20261101",
+      "sha": "0130bf81e2fe3154f30af7b68a0e6ab197946040",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/codespaces-cs1-20261109",
+      "sha": "a5f049cd777d3d885ec8e1572f94ea8935c9cbb6",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/consolidate-backup-stability-20261102",
+      "sha": "f1a55c4cf21ddb0dea243bd417b74f86caaed142",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/consolidate-prereg-prefix-20261102",
+      "sha": "9b9452b4677ee3809a6e0f43d49567a8d15602e6",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/consolidate-replay-schema-20261102",
+      "sha": "ca411e77f43a9fd95ca5e0bcc7d2b58071ccae37",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/consolidated-reviewed-20261102",
+      "sha": "6e82fd70f315b99c6798a42c9061a1424a02933e",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/consolidation-audit-20261104",
+      "sha": "fbd9595351bf50217402b7a62b3e057de79f45f0",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/consolidation-cve-reviewed-20261118",
+      "sha": "d8c02caea407f6d323eecd636735849c1eb31a2d",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/consolidation-evidence-20261102",
+      "sha": "44c320e37b84a38259f13fa8f0f444b542b96f2c",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/consolidation-integrity-20261103",
+      "sha": "b58bb53debcb3323e5d8d634e09397cb7e02965f",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/consolidation-reviewed-20261118",
+      "sha": "121ffb0bcdd6af4f24e5035389d4709dffddf263",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/coordinator-rule-repairs-20261031",
+      "sha": "798e11ef345ed7a7a65508a466eaf77ee85ef77c",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/corpus-integrity-20261116",
+      "sha": "6a5b6f2609604fe34a8da9cf347c713b21578834",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/corpus-output-main-20261101",
+      "sha": "874e9a267fdc589a796ce573f2958e1aa84ea0f6",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/deep-review-consolidation-20261030",
+      "sha": "95e09548a82202ae4cfd9380522f36513da87a66",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/essential-combined-verification-20261030",
+      "sha": "a7f13e13ffb512f8e9621753a0ae162d78942f3b",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/essential-integration-20261029",
+      "sha": "5ed624e91468c410f2cf738ed4e36c2be3e0201d",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/essential-project-safety-20261031",
+      "sha": "c3868d8335a8f32f676905032dc1a6d0e9f22fd6",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/fix-pr110-ci-gates-20261029",
+      "sha": "c0d1c38aee74461969ff0a8b4d61179c3dbb9b0b",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/gt01-extraction-recovery-20261030",
+      "sha": "d76d23372acef4049115e9ae176acbeb538a82e5",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/gui-bounded-ambiguous-candidates-20261029",
+      "sha": "3287cb3d36052bd6e44420f631ed033baf939d64",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/identity-main-repair-20261101",
+      "sha": "4eebea4a5389af16bffe32a2bf9285c406d95fb1",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/java-version-retry-20261015",
+      "sha": "8ee61c623fa37c5a219f912cf7870bfeddcb1f70",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/kb-explicit-filename-selection-20261104",
+      "sha": "761b6b885f00143597c74f0457b1165a144fbdd4",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/kb-fixture-contract-repairs-20261030",
+      "sha": "a4d1e6a38c34d1952584aa65d7f5f908c45547b3",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/manifest-dtd-reviewed-20261118",
+      "sha": "23fbe4a54880319f62f40f3196794f85b6cdaec5",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/manual-correction-completeness-20261104",
+      "sha": "65f979a163a88ec5b32b3eb4173fa4a50ee9c920",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/master-foundation-scope-20261118-4a7",
+      "sha": "88b0b52281dd314aa72f93819145a73135618bc4",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/maximum-completion-20261119-4c8d",
+      "sha": "3862cb5de3256efec8f6392a3b6fb4d9e600c377",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/msrc-mixed-format-revision-20261102",
+      "sha": "e1b79e048d3963d747bc9f07448b039a250180ed",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/msrc-reconcile-integration-20261102",
+      "sha": "56374f867594dd923383c91ea71970cb7d24d173",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/parser-test-cpu-budget-20261104",
+      "sha": "cb204f7625d4de496642926bbda37d07e2888131",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/patchtrace-acquire-destination-symlink-20261120-g30",
+      "sha": "20d3bb173c9f6d65a144fe26ebed8f22e3c79a00",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/patchtrace-acquire-poststage-destination-20261120-g31",
+      "sha": "e22ab7dfbb440d635b5829bde1fec4ee2c149c8d",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/patchtrace-acquire-window-anchor-20261120-g25",
+      "sha": "c02e316a906ecf1b06cfc78129b50f6474dfb4ee",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-acquire-windows-junction-20261120-g32",
+      "sha": "ae67122c69f05715afa622b7e4050b73ca155967",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/patchtrace-advisory-held-input-20261120-g24",
+      "sha": "e08cc251814f53336db1eaf6bdbbe758f014502e",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-advisory-lead-type-20261120-g40",
+      "sha": "371b067068da3c4898ebb7b6eae5d0dd13ebea00",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-base-body-gap-20261120-g22",
+      "sha": "543b0a6f1dd2e2ce2b53a7790b7e32ed77dcbd8f",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-beta",
+      "sha": "c7937246a5bf3f1a09c7d121c0d438088b02040c",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-buildenv-header-help-20261121-a1",
+      "sha": "09f07582d8d9017fe2be080605120b5c4cfd0b91",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/patchtrace-candidate-component-type-20261120-g41",
+      "sha": "67f7e08ea9bee61653f8ab5ad66048d3e7141810",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-checkpoint-20261119-81e4",
+      "sha": "bdc929ebd3c6aaa2563c758936beb315a10eeea0",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-codex5-per-command-audit-20261121",
+      "sha": "d6679abc6dfddbadce0391c8d18289f7f96338d6",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-codex6-cache-hit-fixture-tests-20261121",
+      "sha": "d2507b1415fd0917fcda6b9f26565d0467d7b9ba",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-completion-20261119-81e4",
+      "sha": "f2458aae22ea6177be64cfc2fb439a79950f00ff",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-corpus-archive-integrity-20261121",
+      "sha": "658cc814aa74d1eaebf0d7e6dd4553d06aaef0eb",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-csaf-cache-read-limits-20261121-assistant",
+      "sha": "d0a4bdf439775999340ea760d96a087e032ee6dd",
+      "in_main": false,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-csv-crosscolumn-review-20261120-g36",
+      "sha": "f48d25eb22e019bda9f3f258ae8208e85ad45f19",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-csv-fixture-escape-20261120-g35",
+      "sha": "09af21b0419fe06cce6fdd031355e274e6deb5d0",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-csv-formula-prefix-20261120-g33",
+      "sha": "f196443ce59c740fe022875ffc00e71349c15dc8",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/patchtrace-csv-formula-prefix-20261120-g34",
+      "sha": "599e1ee1bc7bec095b4e6fa28d5cfc25c4d6f7df",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-enrichment-hard-deadline-20261121-assistant",
+      "sha": "e3928ab8c8e2deee7bb01b0f857205f68a1abda2",
+      "in_main": false,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-followup-20261120-4c8d",
+      "sha": "4dfc0e494313b199fce35999109fe6b3e6d899b3",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-hosted-qa-fixture-20261120-g28",
+      "sha": "a5c6ff87ececcaffce01404f723aac455ee17e0c",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-index-gap-isolation-20261120-g21",
+      "sha": "1d5b647265ae66a5f241c5cc41c4972354fd0675",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-index-source-identity-20261120-audit1",
+      "sha": "bddc09b47be68a6c52df6ac09a37862f2f9ccb3f",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-integration-20261121-2bad",
+      "sha": "6b6fcd3597a604212032ffc453477aeb6edc69ff",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-inventory-tip-oid-20261120",
+      "sha": "a63a20b2a272d53a09422222050080823fc3c664",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-inventory-tsv-shape-20261120",
+      "sha": "eaae7e504f8b43051f0c0d6d57c314d37c66d7ff",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-investigation-destination-junction-20261120-g39",
+      "sha": "fc2c038ad1c21ddfcdfb5cd943307c3195d631ec",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-linux-frozen-cli-smoke-20261121",
+      "sha": "e4854b66ae37024d734e22ae978dedca90a7f3f7",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-native-cache-receipt-20261120-g37",
+      "sha": "fc641a97846c03ebdbf70b5c8248e5685e4853b2",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-network-tooling-recovery-20261121-837fe",
+      "sha": "18edf3012a26eaeb037c2b970a252cc14481fba8",
+      "in_main": false,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-newer-source-ambiguity-20261120-g27",
+      "sha": "9897ae5b70cee209787d1ebb1902031c186667ec",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-offline-directory-race-20261120-g18",
+      "sha": "e4b7c74ca4846c222a95dff6dad270a3d440a898",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-offline-held-admission-20261120-g17",
+      "sha": "0d55516788a8de8244b5599a83b4413757d6c1be",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-offline-import-regular-source-20261120-g23",
+      "sha": "7e56c5ee01232d4809448153b0a5cb6759a7051a",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-offline-index-read-budget-20261120-g16",
+      "sha": "755adf55330d69cd83cf32076d923d9992489595",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-older-source-ambiguity-20261120-g26",
+      "sha": "30a9c9dab2449919941fd397f6442ae8cd225111",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-pr-snapshot-json-strict-20261120",
+      "sha": "e2385c22c0397a547b15b2fbca9f0c07dc4ac199",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-pr345-346-unique-recovery-20261120",
+      "sha": "b461ac64eb9beb74449ce2b18b6795a2af34a02a",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-qa-ruff-imports-20261120-g29",
+      "sha": "6c8b33b851a22fb16d39b31693922359cd34ad12",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-stabilization-20261119",
+      "sha": "c4ace2088ce8dc9ce78a0bf3036b81096accbdb5",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/patchtrace-verified-integration-20261120-g30",
+      "sha": "5f34fb57267637b986814ddc81dba11550992fff",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-winbindex-body-gap-20261120-g19",
+      "sha": "e428a5bdb21e9d3501e08166b9c1c673e3842193",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-winbindex-container-gap-20261120-g20",
+      "sha": "3359c846f8608522b90225dbcdab2c66a8754afe",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-windows-native-recovery-20261121-837fe",
+      "sha": "d60ac40daf767fe6a93ae152feb21235f6e75e0b",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/patchtrace-windows-qt-timeout-evidence-20261120-g38",
+      "sha": "1c60d91ab1d2038ba481d21d58611137f21b8454",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/pilot-current-evidence-reviewed-20261118",
+      "sha": "b41d6631e679ad2777d248fa087ea71582a5bf63",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/post-consolidation-20261116",
+      "sha": "2d330075fbe00209fbe096ee29b60dcfd0e347b4",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/pr110-ci-repairs-20261029",
+      "sha": "bb42828d05b775c59b73a7bbd02c0113b9b9bb3b",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/pr110-kb-arch-scope-20261029",
+      "sha": "40e02daf93c8e13a94b74f5b80d86c1680fea7ad",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/pr110-persistence-feedback-20261029",
+      "sha": "3e9cedb012b4c82da3b0e5f9bc977ecd7313b64c",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/pr110-qa-wbjson-diaphora-help-20261029",
+      "sha": "aba4c2001a6b093f7f8cdc8b0ac20ab074ed57b8",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/pr111-bounded-nav-into-integration-20261029",
+      "sha": "025300f8e169556f84b6a8cfed20413e0a26b019",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/primary-environment-20261118",
+      "sha": "09b032f205f4ffa1838bef56007ebdb7a2308420",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/project-safe-export-20261101",
+      "sha": "e90254424c26ecd00e4c10c3c638e76d11b35841",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/pw01-kb-inventory-20261118",
+      "sha": "2b697222b34359bb46adc90aad69fd0a12708601",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/pw01-retained-source-pages-20261118",
+      "sha": "58fc130631f602b6e907bb054d30c21d810551d4",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/r1-ground-truth-research-20261030",
+      "sha": "10856edf05afae8166291f09fb3ead92f297360d",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/r1-receipt-publication-20261031",
+      "sha": "8c9eafc79b007a963453d8edf6cb40c804c9bc3d",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/r2-unified-matching-research-20261030",
+      "sha": "b3ceb8b30d7a83da5e22c231c3b8c28179246816",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/raw-alignment-reviewed-20261118",
+      "sha": "3c9d3f074481b2f609330fa49ab9019eb6637849",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/real-msrc-adapter-20261101",
+      "sha": "d99cd7712b76e9e42661ef0b268417d7ca322d3e",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/receipt-parent-race-20261101",
+      "sha": "2fdac2ea9042985ac3c98545d38ac3461d00f4cc",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/release-integration-20261116",
+      "sha": "95db052a11cce162d2d633cae805f28119f783a1",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/release-qualification-reviewed-20261118",
+      "sha": "573829f33c84e9b2d53ba51ebd7f699e39f406fe",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/repair-openai-agent-20261104",
+      "sha": "f019606665a740dc252e745913924debf73adc48",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/rzdiff-164-investigation",
+      "sha": "20ef68eaab59a2941bd2fb0db918eee36107c75f",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/saved-search-reviewed-20261118",
+      "sha": "26558cd0723aa5fa6d883f2935ad3c43cef94a86",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/semantic-proof-reconciliation-20261031",
+      "sha": "745e93426a16e0a91a961b6e0bbcb71be69f2a7e",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/storage-integrity-20261101",
+      "sha": "9911af4d9130b81b1875f82179e03e0a89e89794",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "codex/strings-export-publication-20261118",
+      "sha": "92a411bf02fc8beb00b7a148e39db2bf68efa061",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/t9-qa-20261020",
+      "sha": "ecc4f2054c00dc2b324bb71134595c48dc4b6a18",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/tier-w-fetch-20261015",
+      "sha": "5b7b2591e616e8c28c05c7070661b33e2ca0435c",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/training-prereg-identity-20261101",
+      "sha": "dfe8f421db390ccd3158393a60205fa5dd25df0b",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/verified-followup-integration-20261118",
+      "sha": "f2b6827fc6270b96fb241b0722f2878de5a17361",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/windows-branding-reconcile-20261030",
+      "sha": "8f4c4a2e0021d424d403317c6780b6db026ad76b",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "codex/windows-setup-installer-20261017",
+      "sha": "9c5fe67bd10a5d1342440bb8ea6a524cca3ce1f2",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "consolidate/docs-20261104",
+      "sha": "ed70e6ddac449a42f843f1c60aa878416ab31727",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "consolidate/kb-fixtures-20261104",
+      "sha": "820d70744dff58ef484299791d073b2e712f0524",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "consolidate/research-r7-20261104",
+      "sha": "552c29453c5de93e22c65e47ad4187ded91e993a",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "consolidate/rules-callgraph-20261104",
+      "sha": "7b3fcbaca88256971eafd55b8fb8fe9f44634a9e",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "consolidate/test-stability-20261104",
+      "sha": "64e8374d5d3ae97a719a2bb3ac800497c50892af",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "consolidation/desktop-keyboard-accessibility-20261116",
+      "sha": "45997cfc997b06996a982705e6cd60dc73a8fae1",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "consolidation/patchtrace-20261120-95fe",
+      "sha": "c07774ecf5a3f7337834f95a9a4c51c8ec5fad44",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "consolidation/patchtrace-continuation-20261119",
+      "sha": "f851d74d134a09cb9b12013d2c1adba1fde0c24f",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "consolidation/patchtrace-reviewed-20261119",
+      "sha": "8d130aefe1be6e737cff1d90d2a5b1658d60a3a6",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "docs/claude-autonomous-alpha-handoff-20261013",
+      "sha": "1038d3f13f214d55c28ceeb51c1c13c9b43b1d3f",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "docs/codespaces-plan-20261107",
+      "sha": "c3536288ee3745826be814afb4d8fd07a53c526b",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "docs/csaf-patch-intelligence-specs",
+      "sha": "24244831ec443fa19555586835e71da6dd4aac98",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "docs/diaphora-optional-engine-20261014",
+      "sha": "b75ac57d85c75e8d61c61af8d104119bb1c65587",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "docs/dockable-workspace-spec-20261030",
+      "sha": "6a1e3ce348a7e5f67bbabfe388315812cc830b03",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "docs/findings-20261107",
+      "sha": "9d72402cc3fd884203c7a759f714fd0a4bd2c51f",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "docs/handoff-20261107",
+      "sha": "39db34c5beaaf16cc60fec30f084acfde4035316",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "docs/kbc-live-probe-result-20261107",
+      "sha": "c21d0ab8471ac1a541eb6d2ff929cce1fb34a2fd",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "docs/nway-matches",
+      "sha": "f748cc48ea07b9af189d967979aa078610550eea",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "docs/post-consolidation-gap-analysis-20261030",
+      "sha": "61b5c2bade71a8cec58ca9e1514141f4508b7c79",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "docs/r8-reconciliation-20261106",
+      "sha": "5e1e19828b3801a2f0f7d50b4250ff9a273264ef",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "docs/ranking-reuse-20261105",
+      "sha": "bc52940fb32d5b5f6d1a58a860062ec60d423d1e",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "docs/readme-and-wiki",
+      "sha": "ad8fbe9f2f041653760c02e9d18a91a66dd11c39",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "docs/refresh-accuracy-handoff-20261109",
+      "sha": "2e408e3c24c2efad6144bf8953d639edcf9fc489",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "docs/research-reconciliation-20261105",
+      "sha": "febc9de57e61162da12fb1cc9280aef9b3ec2a99",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "docs/research-tools-execution-plan-20261106",
+      "sha": "40da817650498eb7b87502016d2be90062467c50",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "docs/semantic-ghidra-roadmap",
+      "sha": "8b9ebc01bb221a60ee65838dfdafd59d66e15f5d",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "docs/sonar235-package-path-20261105",
+      "sha": "c30f11fb6f94ab3325e3bf6252326004f792294d",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "docs/spec-31-kb-cve-correlation-20261014",
+      "sha": "9088bf0e2e452c5d792f2a9e6e879f417e9fc120",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "docs/spec-32-kb-patch-search-20261014",
+      "sha": "d0ceb56f30f81f881f1f25fb4d1dba772ff476b9",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "docs/specs-plan",
+      "sha": "a5194581396b67395a0ae8453d73eec5ab024e54",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "docs/workbench-search-graph-floss-20261014",
+      "sha": "af15701d13b516662a36f20a00ece01b8462160f",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "evidence/patchtrace-pr349-initial-ci-20261121-95fe",
+      "sha": "566c43cd1647697cc770ea0cb92a0fb130015ec9",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "feat/acquisition",
+      "sha": "293362a2d8cee7d5cc373439436945888b3b805a",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "feat/acquisition-gui",
+      "sha": "7ae34d8fa26a6b6c8b7acf40f5c16d99643151ce",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "feat/alpha-ui-integration",
+      "sha": "c7ed1d90a890afa9eb67c238f9f52f458db96432",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "feat/artifact-bytes-seam",
+      "sha": "91b35d09afd29e9c78169a3b095d9ea3be6c31b1",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "feat/byte-representations",
+      "sha": "303bc452d0bb6cd46ee67f731f64ec951e1ee215",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "feat/diffscore-workflow-20261107",
+      "sha": "a3aa53744006845e782c154ca6b51eb4ffcb6e1e",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "feat/enrichment-cache",
+      "sha": "0368fd9b5453ab50166c08cf8dfc493e57b0ee52",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "feat/enrichment-contracts",
+      "sha": "010d809d2581d3a8ed8208e83325ba29f91b2419",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "feat/enrichment-cve",
+      "sha": "49bf245583d040a8b29d80daee8666d8c7f7b8d4",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "feat/enrichment-signals",
+      "sha": "e96441a1a90478d5b06e7b0d9b4320695a2018ed",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "feat/enrichment-wil",
+      "sha": "9a6999a0e644ef03670d10fc0b08524345c6c709",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "feat/local-runtime-discovery",
+      "sha": "b9198705ab4c144746214c1e42c15b6098063009",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "feat/nway",
+      "sha": "44d431788bcc55429a033049ed997fa33c92289b",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "feat/pe-overview",
+      "sha": "4b78a6d3c0015a5fd46d557cde6cc8f0a583795b",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "feat/phase2-finish",
+      "sha": "86afe3f6563b71e1fff5ed56a907f29c6703b96e",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "feat/phase3-batch",
+      "sha": "3581b520207b464b35a7baa39d188fb4f2a08cf1",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "feat/profiles",
+      "sha": "d21b5917a66041cb1ffa4f46931e551e55f3165a",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "feat/raw-cache",
+      "sha": "28bc476713fc9b77b876cfc8f5454760ea23d4e0",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "feat/rq-engine-adapters-20261107",
+      "sha": "b561ed60db9e9bed77b37faa76d875c93e7f3364",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "feat/rq-parity-20261107",
+      "sha": "f8806bb7210793efdc8d0e2f8848c3452afd5d69",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "feat/secondary",
+      "sha": "b932ae1a1c8916aeac7be2d49ce27c24717f2846",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "feat/tooltip-registry",
+      "sha": "0a3843ea2abe37d42ff0291d621fa9a7c9744bbc",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "feat/verified-offline-runtime-bundle",
+      "sha": "1724503d01be7aee13cb43a3a7a28b8a9ff54ece",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "feat/winpairs-workflow-20261107",
+      "sha": "2e43d3f4d7ee6327f1f95e20c5f5b505bcd8b624",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "feature/alpha-file-overview-20261013",
+      "sha": "476016590be5cd1315613759af18ff61c7c27851",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "feature/current-project-investigation-20261105",
+      "sha": "ef70e0bdf02a202cf7ce4780da37bba8ed63fafd",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "feature/evidence-reconciliation-confidence",
+      "sha": "ddda35f40b94c145b2a9a9b68509b4ddb76a090a",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "feature/gui-inspection-preview",
+      "sha": "8b94227a81b71841c65783c775f704a538d35710",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "fix/backend-exit-diagnostics",
+      "sha": "bc00a6912dde57482a301bf64ef6fbc3f324cb92",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "fix/catalogue-unique-card-ids-20261123",
+      "sha": "dadff40ab6b42db066bd634cd8709c836fefa63d",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "fix/codetext-budget-wave3",
+      "sha": "c7fb422c750f1d0e5591277b91492874afd79af7",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "fix/codex-cloud-secret-preflight-20261103",
+      "sha": "bd3dbcae9254853f534b735864c0709f6766ced3",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "fix/explicit-offline-symbol-policy",
+      "sha": "2e6618762ab6e15e5be0be60aec3fb8f56af44f3",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "fix/ghidra-dot-paths",
+      "sha": "5c3b1df94c0d2a908bb0459caceb336912527555",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "fix/ghidriff-timeout-progress-20261106",
+      "sha": "7e5d981935e2f8190790de90c2cc261834f9b519",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "fix/isolate-ghidra-scratch",
+      "sha": "7ea7272311271a540a188e5d0de6d3aaa8864611",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "fix/netutil-abandoned-cleanup-cap-20261121-0318",
+      "sha": "1d475d926314ae116442bfe2b7cd268ad95ea12c",
+      "in_main": false,
+      "in_candidate": true
+    },
+    {
+      "branch": "fix/netutil-read-deadline-20261121-0318",
+      "sha": "a41c7a0d594d1fe26c16da395e6f6f9b33b07eca",
+      "in_main": false,
+      "in_candidate": true
+    },
+    {
+      "branch": "fix/optional-import-init-exceptions-20261121-0318",
+      "sha": "e2127864cb481026db0157082d688b8a36595e3b",
+      "in_main": false,
+      "in_candidate": true
+    },
+    {
+      "branch": "fix/patchtrace-sigstore-static-test-20261123",
+      "sha": "173f18d3a6ddd88aaaf514ced71b1be0c3db7954",
+      "in_main": false,
+      "in_candidate": true
+    },
+    {
+      "branch": "fix/pe-inspection-row-tooltips-20261013",
+      "sha": "0182a8035d64071fc88b5f299edc3ef3760946b5",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "fix/pr110-ci-regressions-20261029",
+      "sha": "979ddfad860c95ceabeb5b670b771900b5617098",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "fix/pr205-partial-pe-inspect-20261106",
+      "sha": "cce47934dfc4184bc33df63b712e188e9bca25ac",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "fix/pr205-review-contracts-20261106",
+      "sha": "4f3e62c4f130227b6ff1201f798b3f449ab89c60",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "fix/pr205-ui-seam-help-extraction-20261106",
+      "sha": "a53c7d1bd360f2dbc3c75ead8da8e978cbb4c314",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "fix/remediation-53088704-982db3",
+      "sha": "15370a0bf690ea65f49d1f6cc67c40f73fd3d77c",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "fix/remediation-a58defa8-139db0",
+      "sha": "6d9c06c2d82cb778712cf2e3c963b63c6363f7c9",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "fix/remediation-b1ab7332-a8fac4",
+      "sha": "3feec96f6546e755061a458ce0dc6e8ee0fab640",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "fix/windows-posix-mingw-workflow-20261115",
+      "sha": "3b3ad32f60df9fd6994e25a8920cfb335cc3d602",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "haiku/cli-help-suppress-20261027",
+      "sha": "37940b706f117f9786109433aed7751eca4e52a6",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "haiku/phase2-handoff-import-20261027",
+      "sha": "4522030ff3ff76d720a5efc33953aaa5e5837398",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "haiku/skills-manifest-import-20261027",
+      "sha": "039b0ef8a5d0cb5136aca72be5c65d11867c19af",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "integrate/autonomous-20261105",
+      "sha": "3d6c37e665bd3039aa374dbb58e1dde4e8dd7d0e",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "integrate/calibration-prereg-20261105",
+      "sha": "57f95e09d8a924b8469490cfa08387b849065179",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "integrate/calibration-replay-20261105",
+      "sha": "f8ed23564166f1952512ae004543c91e85c4a6ee",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "integrate/continuation-20261106",
+      "sha": "37b771300053e8872febead1fc384fea9126ae90",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "integrate/gui-inspection-20261105",
+      "sha": "3fa22c611697d7593755c329fd762bfb47b39b84",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "integrate/independent-wave4-20261105",
+      "sha": "6e9f4524776abb95a7da7f4f49de01483a2c5330",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "integrate/kb-20261105",
+      "sha": "75c01a29ea791a2a5859d18d54f8e6db06f255b8",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "integrate/kb-investigation-20261105",
+      "sha": "bdbfd7dc45083dd7439f4591f17724b6de651412",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "integrate/merge-readiness-20261106",
+      "sha": "f393bb68ddc11eabb95a6598aa6f86650bd9aa37",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "integrate/native-controls-20261105",
+      "sha": "a0f417466da80ddc18ee05cc31b8d3492e7cb98b",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "integrate/project-adoption-20261105",
+      "sha": "1c97defacd54a593a8ecdcda2b9c11c85b073791",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "integrate/recovery-forward-wave3-20261106",
+      "sha": "a1ed8c9167529fbf855d7dc088132379ee385cf4",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "integrate/rules-20261105",
+      "sha": "c849d0087b7dbb647d887a2501259a87c79579f4",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "integrate/secondary-prep-20261105",
+      "sha": "b6b5bf6c65611f50b9fa6524ce980a0ff07511ee",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "integrate/swarm-followups-20261105",
+      "sha": "c6691ab1ca143930f746f5c5087d3f492fd544d1",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "integrate/swarm-qualified-20261105",
+      "sha": "4e9f1d5d71cf1f193fb7ed500daf852e5156304f",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "integrate/swarm-wave3-20261105",
+      "sha": "a0e2c80eda74b70be370bf5f6a93424365230b89",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "integration/backup-desktop-recovery-20261123",
+      "sha": "47478d563bc91529446b4b1d1f461f01ececb245",
+      "in_main": false,
+      "in_candidate": true
+    },
+    {
+      "branch": "integration/controlled-consolidation-20261030",
+      "sha": "f18687fd035b67961c1072af84f8c2b3442979e0",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "integration/exhaustive-patchtrace-consolidation-20261119",
+      "sha": "6096e64d4e7b8f0ecc6af884f7d220e07790d85a",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "integration/installer-preferences-20261123",
+      "sha": "457444c682a1bf7e5166030c065f0365ad2c6976",
+      "in_main": false,
+      "in_candidate": true
+    },
+    {
+      "branch": "integration/kb-fixtures-pr69-20261030",
+      "sha": "2fcd627e52a6d784d5c2e5b4ea8105e90b8589b3",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "integration/patchtrace-20261121-95fe-c3",
+      "sha": "ae69f1e65d7c4564ec5b0e6d7a80119193fabc4e",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "integration/patchtrace-20261121-95fe-c4",
+      "sha": "f928a0cef29eac2b603d390c40fb86448111b91b",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "integration/patchtrace-consolidated-20261124-7de6",
+      "sha": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+      "in_main": false,
+      "in_candidate": true
+    },
+    {
+      "branch": "integration/project-reliability-20261123",
+      "sha": "ca95a7d045f3fa44551934680fa90c2af00370e5",
+      "in_main": false,
+      "in_candidate": true
+    },
+    {
+      "branch": "main",
+      "sha": "44c62cbf94c2d25c0c383eeb0072b7adf2bbb415",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "qualify/native-cli-seeding-20261105",
+      "sha": "8fae317bcac6cb125956965cd3ebbb39e9f9bbd2",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "qualify/native-controls-20261105",
+      "sha": "dc3bf773fead3f10d3e825d56ccf035741f29c28",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "qualify/native-provision-20261105",
+      "sha": "c50ab287de13982b132716d67f9e5fabe22799cb",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "qualify/offline-tooling-20261105",
+      "sha": "c3370578086cbfda7b971a031d173b82e860a1f5",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "repair/gt01-consolidated-native-evidence-20261030",
+      "sha": "c04ad725551fe8daa139b37aa2cdf46d6d161b65",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "repair/gt01-native-identical-controls-20261030",
+      "sha": "fb91cff6d91c77a2c539c896b670d81180dcc637",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "repair/gt01-unified-live-gates-20261030",
+      "sha": "ca1a36c0caea44a9225e487f3ba7b0828c90a567",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "repair/kb-ui-import-boundary-20261105",
+      "sha": "226ac7e514fd90ddb71ec7e3d295bb4aa5bc06b6",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "repair/native-input-open-20261105",
+      "sha": "0526d546a247f47411b088ac083d6f1fe1e10781",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "repair/native-normalizer-wave3-20261105",
+      "sha": "cf9cefff88b71dbae6af9131b8f59a1fbb82c894",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "repair/native-source-identity-20261105",
+      "sha": "c3be348b544b5022b3f92858923d6d890538aa53",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "repair/normalizer-address-identity-20261105",
+      "sha": "631b5e919699e722e0ce3e3dee11b29c9c40ce10",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "repair/parity-parser-budget-20261105",
+      "sha": "c923039bd311449d8c97bee8ed09e97b339b6653",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "repair/pr205-main-reconciliation-20261106",
+      "sha": "96e8e085cb95f2b75bd75b63c8ede436e2152499",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "repair/pr205-qualification-20261106",
+      "sha": "4465a0492367d08f324e80b290a594791921691c",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "repair/project-create-rollback-20261105",
+      "sha": "2a3639adde50585dd7ac6dbcb029f085ac0856c6",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "repair/rzdiff-native-callback-size-20261103",
+      "sha": "edab7d916970144b33c98384834369773e5b0e62",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "repair/rzdiff-native-red-control-20261103",
+      "sha": "b304034e3c310528f7e0a3206eda48c94e0a6873",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "repair/rzdiff-producer-ownership",
+      "sha": "4d66af5577e6f6ad8f6e21440f6fe4187e0c8fe5",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "repair/streamed-series-recovery-20261105",
+      "sha": "20a60f9d12d75b8df9d4f70f96a0fd27bd038331",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "repair/subprocess-venv-20261106",
+      "sha": "c804e4d94430368c0eafe1da899493a8cf6520aa",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "repair/unified-ci-20261105",
+      "sha": "b5f6e1381dfbe98ccc71d1e126a6fd02fc95aa81",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "repair/unified-support-evidence-20261105",
+      "sha": "95749419783e6be7548be613e1000113497c6d2a",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "repair/verified-bytes-20261105",
+      "sha": "e5f9302e20ee37e8e3323a8d8b177fd8b0649e6a",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "repair/winbindex-metadata-budget-20261105",
+      "sha": "64eb58ece2f44914e8f94135ab1caefbb5a83f6b",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "repair/wizard-lock-retry-20261105",
+      "sha": "38be184cda6fbe6f79a6f265b04e2efc6a2688dd",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "repair/workflow-fragment-20261105",
+      "sha": "1229ca3bba6bc099d040c279ed9ebc8b91ae913e",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "research/additional-reuse-claude-20261103",
+      "sha": "be4a58ff7d8facc57e99faac9c743cb8d60b36f4",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "research/kbc-live-probe-20261106",
+      "sha": "3839f3b62c923a80340c40c44855305890604f78",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "research/l1-join-corpus-20261107",
+      "sha": "ca3572e7d7a5cf78d45732c18af7ebfe4922d350",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "research/qualification-tools-rq00-rq01-20261106",
+      "sha": "941c0da4431f682537e99aa230df0da04013b4e1",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "research/r4-vulnerability-correlation-20261030",
+      "sha": "ff570bdd784d02f745e4ad21d8aa7b4f1f776344",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "research/r6-final-integration-engineering-notes-20261030",
+      "sha": "3010f289dbb46a1db62218a35cca03420090e306",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "research/r7-advanced-binary-analysis-20261030",
+      "sha": "c9d1aab6a78847ce1632fe833d15af2e3b9c6e9b",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "research/r8-deep-uncertainty-20261030",
+      "sha": "12dd4f2b41b468b0eb566bd502219daa821012df",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "research/windows-candidates-gaps-20261107",
+      "sha": "1f11a43ba1904e5c6c9d5d4f261fa606347da6ca",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "research/windows-candidates-github-20261107",
+      "sha": "35d7e3c980c0e04c7b6319bfd8fc6c7898c31226",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "research/windows-candidates-sources-20261107",
+      "sha": "740961828e22ca8048cd881f21ef9c028955ab73",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "research/windows-pair-candidates-20261107",
+      "sha": "e5e783f6b8ffae83341092f5915ba02b9856ecc1",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "research/windows-pins-20261107",
+      "sha": "ac826a2efe428de7dbf290aa5894a2d357d7da0c",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "resume/desktop-index-refresh-20261106",
+      "sha": "c9cea0671442a6051b068acfb69d17aabcf674ae",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "resume/kb-acquire-lifecycle-20261106",
+      "sha": "b8bda98452b2f742ad55064aa2e1452700658a33",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "security/offline-bundle-no-overwrite-20261013",
+      "sha": "a39cab81de3e0eeadf57e6255d2fe3e131b3294a",
+      "in_main": false,
+      "in_candidate": false
+    },
+    {
+      "branch": "test/advisory-acceptance-20261105",
+      "sha": "69c705d052e6b6fb3c96ea49062d6a207829c1b8",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "test/product-acceptance-20261106",
+      "sha": "81825ee9638454737d3fb7efa3e6c73b8f3eb105",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "test/recovery-diagnostics-20261106",
+      "sha": "064f1c0075a4cfe5ec1eba2f9a04d3f1058ecf0c",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "work/calibration-invariants-20261105",
+      "sha": "a6948be8049591247f0bc19a601645b85bc03eb7",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "work/candidate-correlation-20261105",
+      "sha": "fee7c3664a2050aed30a3c3d43ea28c0c3621ee3",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "work/consented-winbindex-refresh-20261105",
+      "sha": "83320a32c7249f92a1d7ba708c8fc8e12e4aa15c",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "work/investigation-accessibility-20261105",
+      "sha": "b5d4bceabdc34f520120d9dc336d975768e20483",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "work/investigation-candidates-20261105",
+      "sha": "bf3661966785a971f484b6339af81274278d1434",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "work/online-adapter-20261105",
+      "sha": "e14b4445fd0705e2ecffa1bc4842ab73bce373e9",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "work/online-investigation-20261105",
+      "sha": "bf46954ef2c6c9a278d9b78f5b4274242e617e09",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "work/pe-parser-security-20261105",
+      "sha": "8975c517af22aca0c0f90eb931b8a06ab18687b5",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "work/persistence-security-20261105",
+      "sha": "1a1e1951c55cdef46ff248145031639674ce1c63",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "work/product-start-20261106",
+      "sha": "0b7d858149db0c88ffcf8f3e6ba474d99f39afeb",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "work/product-start-wave3",
+      "sha": "7e7a52ebf4de1529cfc5da7274820a5e955126fc",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "work/winbindex-publication-20261105",
+      "sha": "2afe874d6be17a4596d3955b71b493d5e0e4ed00",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "work/windows-package-preflight-20261105",
+      "sha": "93b4b9a80d31c97659269429e0b680c9218fdf70",
+      "in_main": true,
+      "in_candidate": true
+    },
+    {
+      "branch": "worker/patchtrace-cli-help-20261104",
+      "sha": "81a9fb28f30630e2fd168422dc4672af3a34aa52",
+      "in_main": true,
+      "in_candidate": true
+    }
+  ],
+  "scope": "Reachability only; not semantic equivalence or feature acceptance. Captured local remote-tracking refs after fresh initial clone and named candidate fetch. Symbolic remote HEAD excluded by full ref metadata."
+}

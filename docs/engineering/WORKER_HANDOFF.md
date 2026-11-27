@@ -1,5 +1,15 @@
 # PatchTrace worker handoff
 
+## November 24 version consumer continuation
+
+Resume from the [consumer continuation](version-provenance-continuation-20261124.md)
+and [evidence manifest](evidence/version-provenance-20261124/manifest.json).
+Local runtime/tests were independently approved at `806ccc4f`; local `cc1a8db8`
+only recorded that result. New records preserve historical and fresh auxiliary
+evidence. Root owns stacked publication, exact-source hosted gates and guarded
+merge. Bind published blobs to the local review receipt; native frozen JSON
+execution and producer integration remain unestablished/separate work.
+
 ## November 24 combined qualification candidate
 
 The reviewed #358/#359 network and tooling work and #360/#361/#362 project,

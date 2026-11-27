@@ -11884,5 +11884,53 @@
     "report": "docs/engineering/consolidation-20261124.md",
     "release_authorized": false,
     "deploy_authorized": false
+  },
+  "version_provenance_continuation_20261124": {
+    "report": "docs/engineering/version-provenance-continuation-20261124.md",
+    "evidence_manifest": "docs/engineering/evidence/version-provenance-20261124/manifest.json",
+    "base_pr": 364,
+    "base_commit": "ef66848d92d9b0d4cd58876cb157a5b609e011c5",
+    "base_tree": "64e25d3c8ad2a05aae470cfd55dddceb9517797a",
+    "retained_donor_pr": 320,
+    "retained_donor_commit": "6096e64d4e7b8f0ecc6af884f7d220e07790d85a",
+    "original_feature_commit": "62b9a3de4d1036a6e4b9bd2618372f4042b15f7f",
+    "local_reviewed_consumer_commit": "806ccc4fbe7b26bd854cf64de96bd03bdde36f64",
+    "local_reviewed_consumer_tree": "a4944cc8e52da915e662f32ecf37e92fa99fbb3c",
+    "local_previous_documentation_checkpoint": "cc1a8db8c21651a508abf42e02674ca39407f74c",
+    "publication_binding": "Local checkpoints are not remotely addressable. Bind the new published tree to runtime/test blob identities in the consumer review statement; hosted checks must use the new published head.",
+    "local_acceptance": {
+      "author_passed": 233,
+      "author_skipped": 1,
+      "reviewer_passed": 40,
+      "reviewer_skipped": 0,
+      "consumer_scope_blockers": 0,
+      "counts_overlap": true,
+      "receipt_kind": "observed-tool-output review statements; no raw JUnit or saved log"
+    },
+    "closed_donor_finding": "Incomplete final Git output admission: six failing/two passing controls before correction, all eight pass after; supervisor and bounds unchanged.",
+    "producer_status": "Retained separately; no producer, builder, workflow or release-policy changes.",
+    "base_pr_hosted_snapshot_utc": "2026-11-25T03:44:26Z",
+    "base_pr_runs": {
+      "qa_windows_standalone": 45540193200,
+      "native_windows_ghidriff": 45540193242,
+      "optional_dependency_probes": 45540193209,
+      "corpus_tier_r": 45540193257
+    },
+    "base_pr_hosted_state": "Native, optional and Tier R workflows successful; QA/Qt and dependent package/frozen-consumer qualification pending at snapshot. Tier R remains 5/11, six failures and eleven Windows advisory findings/zero reports.",
+    "consumer_publication_state": "Locally reviewed consumer plus evidence checkpoint; exact published-source hosted/full/package/native qualification remains pending.",
+    "ancestry_receipt": {
+      "refs": 382,
+      "contained_in_main": 171,
+      "contained_in_candidate": 182,
+      "newly_contained_refs": 11,
+      "previous_branch_heads_newly_contained": 10,
+      "candidate_own_new_ref_included": true,
+      "semantic_closure_claimed": false
+    },
+    "historical_auxiliary_status": "Nine artifacts and eleven logs independently recaptured; unavailable original 147-member PR358 ZIP remains unverified. Fresh PR364 auxiliary evidence retained separately.",
+    "prior_records": "All prior top-level values, 130 task objects/order, 46 notes and historical evidence preserved; earlier observations are unchanged.",
+    "current_state_authority": "Live published pull request checks, blocking reviews, expected-head merge result and verified main ancestry.",
+    "release_authorized": false,
+    "deploy_authorized": false
   }
 }

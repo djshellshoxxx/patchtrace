@@ -1,0 +1,479 @@
+{
+  "kind": "independent-pr358-auxiliary-recapture/1",
+  "head": "18edf3012a26eaeb037c2b970a252cc14481fba8",
+  "observed_test_merge": "d462c9bfbf8f6e1ccfbb86938a41344d7b094043",
+  "old_checkpoint": {
+    "filename": "pr358-completed-auxiliary-checkpoint.zip",
+    "claimed_sha256": "7e365fffe9d574520d993cc12c2956026afad14ffc0f794c2e9a2ddfb46d3875",
+    "availability": "not found; exact original archive remains unverified"
+  },
+  "artifacts": [
+    {
+      "id": 14716595580,
+      "name": "tier-r-aggregate",
+      "run_id": 44926645798,
+      "sha256": "379b4f3c3be22371755cda0e162c8ee6625c1bafeab90f8fb7a98a0ebf616f01",
+      "bytes": 6048,
+      "members": [
+        "ci-summary.json",
+        "tier-r-merge.json",
+        "tier-r-aggregate.json",
+        "ci-summary.md",
+        "tier-r-report.md"
+      ],
+      "checks": {
+        "digest": true,
+        "size": true,
+        "crc": true,
+        "source_head": true
+      }
+    },
+    {
+      "id": 14716490671,
+      "name": "tier-r-plan",
+      "run_id": 44926645798,
+      "sha256": "544a89e753be6db96c920c9bfbc5e28e6166ce490acf4c86feeb4b07ca920016",
+      "bytes": 484,
+      "members": [
+        "plan.json"
+      ],
+      "checks": {
+        "digest": true,
+        "size": true,
+        "crc": true,
+        "source_head": true
+      }
+    },
+    {
+      "id": 14716256081,
+      "name": "tier-r-shard-1",
+      "run_id": 44926645798,
+      "sha256": "d93f8ae8b61e792e10da7dff3508e0154892f3f6cad0f92e12fa841c444171ea",
+      "bytes": 3114,
+      "members": [
+        "shard-1.json"
+      ],
+      "checks": {
+        "digest": true,
+        "size": true,
+        "crc": true,
+        "source_head": true
+      }
+    },
+    {
+      "id": 14715772711,
+      "name": "tier-r-windows-advisory",
+      "run_id": 44926645798,
+      "sha256": "991c7ff0f08cf9acebf0347d1218b5a6ffbb9b66d8078ceda966237099ac3006",
+      "bytes": 588,
+      "members": [
+        "shard-0.json"
+      ],
+      "checks": {
+        "digest": true,
+        "size": true,
+        "crc": true,
+        "source_head": true
+      }
+    },
+    {
+      "id": 14715667692,
+      "name": "tier-r-shard-0",
+      "run_id": 44926645798,
+      "sha256": "0bdbe41f556fb2532fbb22146963caef596c2d58f96a0d7417cbf70113b7957b",
+      "bytes": 3571,
+      "members": [
+        "shard-0.json"
+      ],
+      "checks": {
+        "digest": true,
+        "size": true,
+        "crc": true,
+        "source_head": true
+      }
+    },
+    {
+      "id": 14716745141,
+      "name": "native-static-acceptance-raw-cache-hit",
+      "run_id": 44926645734,
+      "sha256": "14eec9c01057d192cad6f7cd33a607fe3c1939bb35cdaed09aebd7255521ee50",
+      "bytes": 2935,
+      "members": [
+        "live-cache-diagnostics/first.json",
+        "live-cache-diagnostics/second.json",
+        "live-cache-diagnostics/result.json"
+      ],
+      "checks": {
+        "digest": true,
+        "size": true,
+        "crc": true,
+        "source_head": true
+      }
+    },
+    {
+      "id": 14716740422,
+      "name": "native-static-acceptance-patchtrace-seeded-store",
+      "run_id": 44926645734,
+      "sha256": "7ac9931dad897af9bb6796988f7bd3470cdd916b78fa3a9fd63703765d0a59e3",
+      "bytes": 96576,
+      "members": [
+        "live-project/runs/44e5e630-f030-429d-8ad4-8a68a9671657/analysis.log",
+        "live-project/runs/44e5e630-f030-429d-8ad4-8a68a9671657/backend-execution.json",
+        "live-project/runs/44e5e630-f030-429d-8ad4-8a68a9671657/raw/ca9bac222f210005b34bdf1c5335bcde214c1e51694151540a0a204a0381f072.bin-95a51ec7150c3c0e551ce9f2c335077a597c42f43974f35bd2de8a48be21b252.bin.ghidriff.md",
+        "live-project/runs/44e5e630-f030-429d-8ad4-8a68a9671657/raw/ghidriff.log",
+        "live-project/runs/44e5e630-f030-429d-8ad4-8a68a9671657/raw/json/ca9bac222f210005b34bdf1c5335bcde214c1e51694151540a0a204a0381f072.bin-95a51ec7150c3c0e551ce9f2c335077a597c42f43974f35bd2de8a48be21b252.bin.ghidriff.json",
+        "live-project/runs/44e5e630-f030-429d-8ad4-8a68a9671657/raw/json/ca9bac222f210005b34bdf1c5335bcde214c1e51694151540a0a204a0381f072.bin-95a51ec7150c3c0e551ce9f2c335077a597c42f43974f35bd2de8a48be21b252.bin.ghidriff.matches.json",
+        "live-project/project.sqlite3"
+      ],
+      "checks": {
+        "digest": true,
+        "size": true,
+        "crc": true,
+        "source_head": true
+      }
+    },
+    {
+      "id": 14716121926,
+      "name": "native-static-acceptance-patchtrace-seeded-store-no-adjacent-pdb",
+      "run_id": 44926645734,
+      "sha256": "0e4065f1e99355f3dd6434a9ec55a305e5b6cb7bd00c9a8abae6f91757c4930c",
+      "bytes": 96504,
+      "members": [
+        "live-project/runs/64289579-d4dc-4d52-99cf-5f5907c7fd23/backend-execution.json",
+        "live-project/runs/64289579-d4dc-4d52-99cf-5f5907c7fd23/analysis.log",
+        "live-project/runs/64289579-d4dc-4d52-99cf-5f5907c7fd23/raw/43c305ba62ca75bbcb6bbbb42156ed78e1cc3a677e9c8773c2c41369ebdbc211.bin-4396d36a293dfa4f88f98564731875110f41c13fd276c9c2db00d27f6dc37857.bin.ghidriff.md",
+        "live-project/runs/64289579-d4dc-4d52-99cf-5f5907c7fd23/raw/ghidriff.log",
+        "live-project/runs/64289579-d4dc-4d52-99cf-5f5907c7fd23/raw/json/43c305ba62ca75bbcb6bbbb42156ed78e1cc3a677e9c8773c2c41369ebdbc211.bin-4396d36a293dfa4f88f98564731875110f41c13fd276c9c2db00d27f6dc37857.bin.ghidriff.json",
+        "live-project/runs/64289579-d4dc-4d52-99cf-5f5907c7fd23/raw/json/43c305ba62ca75bbcb6bbbb42156ed78e1cc3a677e9c8773c2c41369ebdbc211.bin-4396d36a293dfa4f88f98564731875110f41c13fd276c9c2db00d27f6dc37857.bin.ghidriff.matches.json",
+        "live-project/project.sqlite3"
+      ],
+      "checks": {
+        "digest": true,
+        "size": true,
+        "crc": true,
+        "source_head": true
+      }
+    },
+    {
+      "id": 14715793204,
+      "name": "native-static-acceptance-patchtrace-clean",
+      "run_id": 44926645734,
+      "sha256": "10d06e8260d2010cfe295a299535af04d5d099c36763bef672cc68667952a5f8",
+      "bytes": 96757,
+      "members": [
+        "live-project/runs/14edf2cf-65b9-433a-9317-458142bce48e/analysis.log",
+        "live-project/runs/14edf2cf-65b9-433a-9317-458142bce48e/raw/fa6d82cc3c6ecc8ccc53eb8334880cc64390ab33eb04cb3dd7c947cc1ff82488.bin-7ea9d94b7c2e9437b270fa7755521fc3937f56781b4c22b5413cc8f7ba10fa6e.bin.ghidriff.md",
+        "live-project/runs/14edf2cf-65b9-433a-9317-458142bce48e/backend-execution.json",
+        "live-project/runs/14edf2cf-65b9-433a-9317-458142bce48e/raw/ghidriff.log",
+        "live-project/runs/14edf2cf-65b9-433a-9317-458142bce48e/raw/json/fa6d82cc3c6ecc8ccc53eb8334880cc64390ab33eb04cb3dd7c947cc1ff82488.bin-7ea9d94b7c2e9437b270fa7755521fc3937f56781b4c22b5413cc8f7ba10fa6e.bin.ghidriff.json",
+        "live-project/runs/14edf2cf-65b9-433a-9317-458142bce48e/raw/json/fa6d82cc3c6ecc8ccc53eb8334880cc64390ab33eb04cb3dd7c947cc1ff82488.bin-7ea9d94b7c2e9437b270fa7755521fc3937f56781b4c22b5413cc8f7ba10fa6e.bin.ghidriff.matches.json",
+        "live-project/project.sqlite3"
+      ],
+      "checks": {
+        "digest": true,
+        "size": true,
+        "crc": true,
+        "source_head": true
+      }
+    }
+  ],
+  "logs": [
+    {
+      "file": "job-136914079298.log",
+      "sha256": "af37207b741208560085c6d4454dbb2c23de36759fd71d8931880723ef5b4a82",
+      "bytes": 190343,
+      "checkout_sha": "d462c9bfbf8f6e1ccfbb86938a41344d7b094043"
+    },
+    {
+      "file": "job-136914079301.log",
+      "sha256": "f3012430dd1fad3ade4a003e9344c442bf049d9adaba71af2288ef563e53f820",
+      "bytes": 23006,
+      "checkout_sha": "d462c9bfbf8f6e1ccfbb86938a41344d7b094043"
+    },
+    {
+      "file": "job-136914079545.log",
+      "sha256": "45dca0b42f038b6388b33b6a9c0bcafc54667d833fbfa70e64fd717af004d836",
+      "bytes": 26223,
+      "checkout_sha": "d462c9bfbf8f6e1ccfbb86938a41344d7b094043"
+    },
+    {
+      "file": "job-136914079579.log",
+      "sha256": "c419b6236a630beac8d4a0eff26ad3ff4c781a929994f261a2f9f31be35d5a24",
+      "bytes": 178744,
+      "checkout_sha": "d462c9bfbf8f6e1ccfbb86938a41344d7b094043"
+    },
+    {
+      "file": "job-136914079601.log",
+      "sha256": "5171f20941adb69df6e77d7f554e609699c7a4fad21f04b2e7c7a607ed0bf07c",
+      "bytes": 135363,
+      "checkout_sha": "d462c9bfbf8f6e1ccfbb86938a41344d7b094043"
+    },
+    {
+      "file": "job-136914079737.log",
+      "sha256": "ac3b8e878fe75dedb1df64df0363d3dfecda32b8b67db1cab4f000da4720ff54",
+      "bytes": 161270,
+      "checkout_sha": "d462c9bfbf8f6e1ccfbb86938a41344d7b094043"
+    },
+    {
+      "file": "job-136914079839.log",
+      "sha256": "f473bd95821e8301d043c57fc4b927e4acef1b7e954a8730c02b9772cccae688",
+      "bytes": 154567,
+      "checkout_sha": "d462c9bfbf8f6e1ccfbb86938a41344d7b094043"
+    },
+    {
+      "file": "job-136914079874.log",
+      "sha256": "19649fd422e0827c9b9a053313907d36cd58d5b3ee7d470bb3ca744ac74377d2",
+      "bytes": 33545,
+      "checkout_sha": "d462c9bfbf8f6e1ccfbb86938a41344d7b094043"
+    },
+    {
+      "file": "job-136914464426.log",
+      "sha256": "3536ca5e382487e59e0929e509f01b4fbc0721fb36371b7bdaf464806dbaf010",
+      "bytes": 56004,
+      "checkout_sha": "d462c9bfbf8f6e1ccfbb86938a41344d7b094043"
+    },
+    {
+      "file": "job-136914464585.log",
+      "sha256": "4d459913f22fce1fef0b08d41aae5c04fdc94b896f09320f2ba8f79f4ff4ad44",
+      "bytes": 57102,
+      "checkout_sha": "d462c9bfbf8f6e1ccfbb86938a41344d7b094043"
+    },
+    {
+      "file": "job-136915742409.log",
+      "sha256": "ebb418460b2e563ebb6633c689957961e3dbe41ce09577ad3c7521a262f97a6a",
+      "bytes": 42792,
+      "checkout_sha": "d462c9bfbf8f6e1ccfbb86938a41344d7b094043"
+    }
+  ],
+  "limits": [
+    "Evidence replay only; no analysis target binaries downloaded or executed; no native workflow rerun.",
+    "This recaptures underlying public workflow artifacts; it does not reconstruct or certify the missing original 147-member checkpoint ZIP.",
+    "Donor evidence does not qualify current PR364 source."
+  ],
+  "tier_r": {
+    "pure_remerge_matches_published_aggregate": true,
+    "pure_remerge_matches_published_provenance": true,
+    "summary_replay_matches": true,
+    "reversed_shard_order_same_report": true,
+    "plan_sha256": "7f686fab1934b771a8f6daaedb012e750566fe304a32f7d191e132913f0de608",
+    "report_sha256": "364c87d3a16c6cca92c325eb2f4d593c5e9562561e39b787004c1d6248642b4a",
+    "merge_sha256": "4e81b0101c8f2a39621431a2fcd6292e9fd9abf4f2ec964ea12afc2656071b83",
+    "ci_summary": {
+      "cases": {
+        "ok": 11,
+        "skipped": 1
+      },
+      "contract": "tier-r-ci-summary/1",
+      "engines": [
+        {
+          "attempted": 11,
+          "blocked": 0,
+          "completed": 5,
+          "completion": 0.454545,
+          "engine": "rz-diff",
+          "failed": 6,
+          "strata": [
+            {
+              "attempted": 1,
+              "blocked": 0,
+              "completed": 0,
+              "completion": 0.0,
+              "failed": 1,
+              "stratum": "aa"
+            },
+            {
+              "attempted": 1,
+              "blocked": 0,
+              "completed": 0,
+              "completion": 0.0,
+              "failed": 1,
+              "stratum": "authored"
+            },
+            {
+              "attempted": 2,
+              "blocked": 0,
+              "completed": 2,
+              "completion": 1.0,
+              "failed": 0,
+              "stratum": "cve"
+            },
+            {
+              "attempted": 1,
+              "blocked": 0,
+              "completed": 0,
+              "completion": 0.0,
+              "failed": 1,
+              "stratum": "mutation"
+            },
+            {
+              "attempted": 3,
+              "blocked": 0,
+              "completed": 0,
+              "completion": 0.0,
+              "failed": 3,
+              "stratum": "noise"
+            },
+            {
+              "attempted": 3,
+              "blocked": 0,
+              "completed": 3,
+              "completion": 1.0,
+              "failed": 0,
+              "stratum": "release"
+            }
+          ]
+        }
+      ],
+      "plan_sha256": "7f686fab1934b771a8f6daaedb012e750566fe304a32f7d191e132913f0de608",
+      "reason": null,
+      "report_sha256": "364c87d3a16c6cca92c325eb2f4d593c5e9562561e39b787004c1d6248642b4a",
+      "shards": 2,
+      "status": "warning",
+      "subset": "smoke",
+      "warnings": [
+        "rz-diff: only 5 of 11 pairs completed (below 90%)"
+      ]
+    },
+    "pair_outcomes": [
+      {
+        "id": "aa-tiny-v1-O2-rebuild",
+        "status": "failed",
+        "reason": "failed: rz-diff reported no functions in the older file, so it compared nothing. rz-diff may not support this file; use another engine for this pair.",
+        "stratum": "aa"
+      },
+      {
+        "id": "mutation-tiny-v1-cmp-flip-1000-O2",
+        "status": "failed",
+        "reason": "failed: rz-diff reported no functions in the older file, so it compared nothing. rz-diff may not support this file; use another engine for this pair.",
+        "stratum": "mutation"
+      },
+      {
+        "id": "noise-tiny-v1-msvc-free-O0-msvc-free-O1",
+        "status": "failed",
+        "reason": "failed: rz-diff reported no functions in the older file, so it compared nothing. rz-diff may not support this file; use another engine for this pair.",
+        "stratum": "noise"
+      },
+      {
+        "id": "noise-tiny-v1-msvc-free-O2-mingw-gcc-O2",
+        "status": "failed",
+        "reason": "failed: rz-diff reported no functions in the older file, so it compared nothing. rz-diff may not support this file; use another engine for this pair.",
+        "stratum": "noise"
+      },
+      {
+        "id": "noise-tiny-v1-msvc-free-O2-msvc-free-Os",
+        "status": "failed",
+        "reason": "failed: rz-diff reported no functions in the older file, so it compared nothing. rz-diff may not support this file; use another engine for this pair.",
+        "stratum": "noise"
+      },
+      {
+        "id": "ours-_template-tiny-v1-v2-O2",
+        "status": "failed",
+        "reason": "failed: rz-diff reported no functions in the older file, so it compared nothing. rz-diff may not support this file; use another engine for this pair.",
+        "stratum": "authored"
+      },
+      {
+        "id": "zlib-deflateprime-bits-range-check-O2",
+        "status": "ok",
+        "reason": null,
+        "stratum": "cve"
+      },
+      {
+        "id": "zlib-gzwrite-nonblocking-overflow-cve-2026-85091-O2",
+        "status": "ok",
+        "reason": null,
+        "stratum": "cve"
+      },
+      {
+        "id": "zlib-v1.3-to-v1.3.1-O2",
+        "status": "ok",
+        "reason": null,
+        "stratum": "release"
+      },
+      {
+        "id": "zlib-v1.3.1-to-v1.3.1.2-O2",
+        "status": "ok",
+        "reason": null,
+        "stratum": "release"
+      },
+      {
+        "id": "zlib-v1.3.1.2-to-v1.3.2-O2",
+        "status": "ok",
+        "reason": null,
+        "stratum": "release"
+      }
+    ],
+    "windows_advisory": {
+      "sha256": "a2e844681f9baf3f9322aec1e883638e59c1d7cdd23f87135a084961fc7404f1",
+      "outcomes": {
+        "findings": 11
+      },
+      "reasons": [
+        "exit 1"
+      ],
+      "reports": 0
+    },
+    "msvc": "skipped dispatch-only job",
+    "ghidriff_in_tier_r": "not requested; native separate workflow only"
+  },
+  "native": {
+    "positive_controls": [
+      {
+        "artifact": "native-static-acceptance-patchtrace-clean.zip",
+        "snapshot_and_raw_digests_match": true,
+        "status": "completed",
+        "known_patch_control": true,
+        "receipt_returncode": 0,
+        "java_runtime_version": "unverified"
+      },
+      {
+        "artifact": "native-static-acceptance-patchtrace-seeded-store-no-adjacent-pdb.zip",
+        "snapshot_and_raw_digests_match": true,
+        "status": "completed",
+        "known_patch_control": true,
+        "receipt_returncode": 0,
+        "java_runtime_version": "unverified"
+      },
+      {
+        "artifact": "native-static-acceptance-patchtrace-seeded-store.zip",
+        "snapshot_and_raw_digests_match": true,
+        "status": "completed",
+        "known_patch_control": true,
+        "receipt_returncode": 0,
+        "java_runtime_version": "unverified"
+      }
+    ],
+    "raw_cache": {
+      "acceptance": "passed",
+      "matching_raw_sha256": "7d43dd9fb8b04b8e6b66bbc6eb118c93661910bd1dfd4334aaaef1091b75efb8",
+      "matching_count": 1,
+      "explicit_reuse": true
+    },
+    "expected_negative_cached_pdb": "FileExistsError with symbol-is-already-downloaded text confirmed in job136914079839",
+    "archive_cache_hits": 5,
+    "archive_cache_misses": 0,
+    "hash_before_extraction_in_all_five_logs": true,
+    "positive_control_jvm_identity": "unverified in all three stored run records"
+  },
+  "optional_imports": [
+    {
+      "job": "job-136914079301",
+      "summary": "optional-deps: present=rapidfuzz=3.14.6,yara-x=1.21.0,iced-x86=1.21.0 missing=none"
+    },
+    {
+      "job": "job-136914079545",
+      "summary": "optional-deps: present=rapidfuzz=3.14.6,yara-x=1.21.0,iced-x86=1.21.0 missing=none"
+    }
+  ],
+  "integrity_verdict": "pass for independently recaptured underlying nine artifacts and eleven job logs, with explicit TierR/native limits retained",
+  "qualification_requirements": [
+    "PR364 exact-head required QA/native/optional checks must complete and their evidence be checked.",
+    "Compare new TierR JSON with the preserved warning/failed/findings outcomes; workflow success alone is insufficient.",
+    "Record the missing original checkpoint ZIP as unrecovered, superseded for underlying evidence review by this independently verified recapture."
+  ],
+  "tested_merge_tree": "6798e06fcc100d430865c2e995471628e055ddb6",
+  "tested_merge_parents": [
+    "ea16019601486c831941f9bc1a7ba5862a170317",
+    "18edf3012a26eaeb037c2b970a252cc14481fba8"
+  ],
+  "tested_merge_and_head_trees_equal": true
+}
