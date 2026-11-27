@@ -1,8 +1,10 @@
 """Headless smoke of the frozen desktop executable (Windows and Linux acceptance).
 
-usage: frozen_smoke.py PATH_TO_PatchTrace_EXECUTABLE
+usage: frozen_smoke.py PATH_TO_PatchTrace_EXECUTABLE [--version-only]
 
 Checks (each prints PASS/FAIL; any FAIL gives exit 1):
+  V1  the delivered build record matches bounded `version --json` with no warnings (frozen only).
+      --version-only runs just V1 using the standard-library host interpreter and reviewed source checkout.
   A1  every command answers --help with exit 0 and `usage:` on stdout
   A2  unknown command exits 2 without a traceback
   A3  missing project exits 2 with a message, no traceback, no Qt
@@ -108,7 +110,43 @@ def path_cases(base: Path) -> list[tuple[str, Path]]:
             ('onedrive-style', base / 'OneDrive - Contoso Ltd' / 'PatchTrace'), ('long-200', long_dir)]
 
 
-def run_checks(launcher: Sequence[str], *, frozen: bool, emit: Callable[[str], None] = print) -> list[str]:
+def version_checks(launcher: Sequence[str], *, check: Callable[..., None],
+                   emit: Callable[[str], None] = print) -> bool:
+    """Check delivered bytes through the existing bounded producer/consumer contract."""
+    from patchtrace import buildinfo
+
+    if __package__:
+        from . import package_buildinfo
+    else:
+        import package_buildinfo
+
+    label = 'V1 packaged version matches the delivered build record'
+    try:
+        if len(launcher) != 1:
+            raise ValueError('frozen version acceptance requires one executable')
+        # Keep lexical paths: resolving links here would bypass the reader's refusal.
+        executable = Path(os.path.abspath(launcher[0]))
+        package = executable.parent
+        anchor = buildinfo.owned.directory_anchor(package)
+        path = package / '_internal' / buildinfo.BUILD_INFO_RELATIVE
+        raw = buildinfo.owned.read_bytes(path, maximum=buildinfo.MAX_BUILD_BYTES, anchor=anchor)
+        package_buildinfo.check_frozen_record(executable, raw, cwd=package)
+        buildinfo.owned.verify_anchor(anchor)
+        if buildinfo.owned.read_bytes(path, maximum=buildinfo.MAX_BUILD_BYTES, anchor=anchor) != raw:
+            raise ValueError('delivered build record changed during the version observation')
+        record = json.loads(raw)  # Already strictly validated by check_frozen_record.
+    except (OSError, ValueError, RuntimeError) as exc:
+        check(label, False, str(exc))
+        return False
+    check(label, True)
+    emit(f'VERSION git_commit={record["git_commit"]} source_sha256={record["source_sha256"]}')
+    return True
+
+
+def run_checks(launcher: Sequence[str], *, frozen: bool, emit: Callable[[str], None] = print,
+               version_only: bool = False) -> list[str]:
+    if version_only and not frozen:
+        raise ValueError('version-only acceptance requires a frozen executable')
     failures: list[str] = []
 
     def check(label: str, ok: bool, detail: str = '') -> None:
@@ -116,6 +154,10 @@ def run_checks(launcher: Sequence[str], *, frozen: bool, emit: Callable[[str], N
         if not ok:
             failures.append(f'{label}: {detail[-400:]}')
 
+    if frozen and not version_checks(launcher, check=check, emit=emit):
+        return failures
+    if version_only:
+        return failures
     for command in COMMANDS:
         r = run(launcher, command, '--help')
         check(f'A1 {command} --help', r.returncode == 0 and 'usage:' in r.stdout, f'rc={r.returncode} {r.stderr}')
@@ -316,11 +358,12 @@ def unified_checks(launcher: Sequence[str], *, frozen: bool, check: Callable[...
 
 
 def main() -> int:
-    if len(sys.argv) != 2:
+    version_only = len(sys.argv) == 3 and sys.argv[2] == '--version-only'
+    if len(sys.argv) != 2 and not version_only:
         print(__doc__)
         return 2
-    exe = str(Path(sys.argv[1]).resolve())
-    failures = run_checks([exe], frozen=True)
+    exe = os.path.abspath(sys.argv[1])
+    failures = run_checks([exe], frozen=True, version_only=version_only)
     if failures:
         print('\n'.join(failures), file=sys.stderr)
         return 1

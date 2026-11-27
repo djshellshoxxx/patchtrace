@@ -50,6 +50,12 @@ try {
     if ($cli.ExitCode -ne 0) {
         throw "Extracted portable executable failed CLI smoke: $($cli.ExitCode)"
     }
+    # Host-only source path; the checker excludes Python overrides from the EXE.
+    $env:PYTHONPATH = Join-Path (Split-Path $PSScriptRoot -Parent) "src"
+    & python -S (Join-Path $PSScriptRoot "frozen_smoke.py") $exe --version-only
+    if ($LASTEXITCODE -ne 0) {
+        throw "Extracted portable executable failed packaged version verification: $LASTEXITCODE"
+    }
 }
 finally {
     $env:QT_QPA_PLATFORM = $priorQpa
@@ -57,4 +63,4 @@ finally {
     $env:PYTHONPATH = $priorPythonPath
     Remove-Item -LiteralPath $extraction -Recurse -Force -ErrorAction SilentlyContinue
 }
-Write-Host "Portable checksum, clean extraction, Qt plugin, dependencies, and frozen executable smoke passed."
+Write-Host "Portable checksum, clean extraction, Qt plugin, dependencies, frozen smoke, and packaged version passed."

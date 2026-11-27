@@ -140,6 +140,11 @@ jobs:
             }
             Write-Host "Verified downloaded artifact SHA-256: $artifactName $actualDigest"
           }
+      # The version checker uses only stdlib source with -S. Keep application
+      # dependencies absent so downloaded-package acceptance stays independent.
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.12'
       - name: Extract and run the downloaded portable Windows ZIP
         shell: pwsh
         run: ./tools/test_windows_portable.ps1 -Archive dist/PatchTrace-0.1.0-windows-x64.zip

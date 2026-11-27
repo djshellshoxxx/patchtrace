@@ -1,3 +1,15 @@
+## November 27 current-source feature continuation
+
+- [x] Verify current main includes #365/#366 and preserve #367 producer ancestry.
+- [x] Add and independently review extracted/installed packaged-version checks.
+- [x] Preserve checksum dominance and no app/dev dependencies on the independent Windows consumer.
+- [ ] Complete actual Linux frozen and final-source hosted full/Windows/Qt/package qualification.
+- [ ] Perform guarded main merge after all applicable gates pass; keep release/deploy holds.
+- [ ] Continue the narrow LBL-32 planner, then PW-01 and current-evidence pilot gaps.
+
+[Plan and branch decisions](../docs/engineering/feature-continuation-20261127.md).
+Older pending-state entries below are source-specific history; check live heads.
+
 ## November 24 consolidated-source continuation
 
 - [x] Recover and independently review #360, #361 and #362; preserve #363 on main.

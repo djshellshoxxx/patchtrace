@@ -1,3 +1,14 @@
+## November 27 packaged version acceptance
+
+The delivered-record checker passed 219 focused checks with one existing opt-in
+toy-freeze skip; source CLI acceptance passed 35 checks. Independent review found
+no blocker and passed 79 checks with 17 explicit no-PowerShell skips. Selections
+overlap and are not additive totals. Windows wiring/package/release controls
+passed 135 checks with those same 17 unavailable-PowerShell fixtures. Native
+frozen and final hosted qualification remain pending. See the [current
+continuation](engineering/feature-continuation-20261127.md). Historical evidence
+follows unchanged.
+
 ## November 24 consolidated-source verification
 
 The five-PR continuation preserves current main and all donor histories. Scoped

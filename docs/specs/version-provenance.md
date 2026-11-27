@@ -1,11 +1,12 @@
 # Headless version and source observations
 
-Status: consumer recovery candidate, 2026-11-24 Pacific. Selected source:
+Status: consumer recovery plus desktop producer continuation, 2026-11-26 Pacific. Selected source:
 `6096e64d4e7b8f0ecc6af884f7d220e07790d85a` (retained PR #320), including its
 reviewed Git-root and no-worktree-filter corrections. The original feature came
 from `62b9a3de4d1036a6e4b9bd2618372f4042b15f7f`. This additive contract uses the
-current lazy CLI registry and maintained bounded file reader. It leaves settings,
-doctor, builders, Windows version resources and publication policy unchanged.
+current lazy CLI registry and maintained bounded file reader. The producer amendment
+below adds build records to the existing desktop builders. Settings, doctor,
+Windows version-resource formats and publication policy retain their contracts.
 
 `patchtrace version [--json]` reads the current package version, Python and
 installed dependency versions, frozen state, and available build/source facts.
@@ -58,9 +59,9 @@ python, pyinstaller (string/null), pyside6 (string/null), built_utc (UTC ISO
 timestamp/null), frozen (true). Version must match the running package. Missing
 or invalid metadata leaves build facts unknown and produces a warning. Neither
 case fabricates source provenance by hashing a frozen extraction directory.
-This recovery provides the consumer only. The current desktop builders do not
-produce this record, so their frozen installations will report unknown build
-facts until the separately retained producer is integrated and qualified.
+The initial recovery provided the consumer. The producer amendment below adds
+record generation and execution checks to the existing desktop builders;
+published packages require qualification on their actual build platform.
 
 The result adds `contract: build-info/1` and a provenance basis (`source-tree` or
 `packaged-record`) around the historical fields. It uses `enrichment-cli/1`:
@@ -68,6 +69,81 @@ exit 0/status complete for the available observations, even when some optional
 facts are unknown; warnings state why. Exit 5 means cancellation, and malformed
 CLI input keeps exit 2. Text goes through the existing terminal escaping layer.
 No Qt import is allowed in discovery or execution.
+
+## Desktop build producer continuation (2026-11-26)
+
+Recover only `tools/package_buildinfo.py`, its focused tests and the builder
+integration from retained PR #320, commit
+`6096e64d4e7b8f0ecc6af884f7d220e07790d85a`. Before PyInstaller runs, the helper
+verifies that the imported observer belongs to the selected source root and
+records the bounded source digest, Git object/ref observations, actual
+Python/PyInstaller/PySide versions and a UTC timestamp. It validates the exact
+existing record contract. Missing Git remains unknown and cleanliness stays
+null. Missing source identity or dependency metadata refuses the build; CI
+environment variables never substitute for an observed Git commit.
+
+After freezing, recompute the source digest and Git observations and refuse
+detected changes. Publish the prepared bytes exclusively to
+`_internal/patchtrace/build-info.json` through the existing anchored, no-link
+publisher. Both package directories must already exist. Existing records,
+links, changed roots or invalid records refuse publication. Install before the
+file inventory is generated so both archive formats include the record.
+Archive labels and Windows resource fields keep their existing contracts;
+the record's version is the runtime package version. When an observed Git
+commit is available, the Windows resource commit must agree before freezing.
+
+Before archiving, run only the freshly built application's absolute executable
+path with `version --json`, through the existing process supervisor: 30 seconds,
+16 KiB total stdout and 4 KiB retained stderr. Use the Git probe's documented
+platform/path/locale environment allow-list and controlled Git settings, with
+`QT_QPA_PLATFORM=offscreen`; do not forward credentials, proxy settings or
+loader/Python hooks. No hard memory cap is claimed for this native package
+probe; the process and output bounds are not a memory-allocation guarantee.
+The completed result must contain raw stdout whose length exactly equals the
+reported byte total and does not exceed the cap, even after a quick exit.
+Strict JSON must contain the complete version envelope, packaged-record basis,
+no warnings and exactly the prepared fields with their declared types.
+Missing or changed metadata, source fallback, malformed or truncated output,
+timeout, output overflow and nonzero exit all prevent archiving.
+
+The before/after comparison detects changes without locking a mutable source
+tree throughout freezing. This record does not attest compiled bytecode, sign
+packages or establish authenticity. Helper tests and authored subprocesses are
+portable controls; native Windows and Linux package production and consumption
+remain required. Existing full frozen smoke, dependency, accuracy and release
+gates remain unchanged. No analysis target or downloaded sample is executed.
+
+## Extracted and installed package acceptance (2026-11-27)
+
+The frozen smoke checks the delivered package's version record before its other
+commands. It reads `_internal/patchtrace/build-info.json` relative to the selected
+executable through the same anchored, no-link, 16 KiB reader, then reuses the
+producer's bounded `version --json` verification against those exact bytes. The
+child runs from the delivered package directory. Missing, invalid, oversized or
+linked metadata, a changed package root, an incomplete response, any warning or
+a mismatch fails acceptance. Recheck the package anchor and record after the
+child exits; a detected package or record change fails acceptance. This is an
+observation, not an atomic snapshot across the child lifetime.
+
+`tools/frozen_smoke.py EXECUTABLE --version-only` runs only this check, allowing
+the portable ZIP and installed Windows consumers to check their own extracted
+or installed executable. Full frozen smoke includes the same check. A source
+CLI run is never credited as frozen version acceptance. Archive checksums must
+still be verified before executing downloaded code; this check does not replace
+that admission. On success, print the admitted Git commit and source digest so
+native job evidence can be bound to its actual checkout and delivered record.
+This mode needs only the standard-library host interpreter and the reviewed
+source checkout, and runs under `python -S`. It installs no application or
+development dependencies into the independent Windows artifact-consumer job.
+The shared response parser uses the existing duplicate-key and nonfinite-value
+refusal hooks; floating-point literals are also rejected because this exact
+version contract has no numeric fields. The checker source path is never
+forwarded to the frozen child through its restricted environment.
+
+Authored records, injected process results and authored local consumer scripts
+exercise refusal and integration controls only. They are not native frozen
+package evidence. Source observation, compiled-bytecode identity, authenticity,
+signing and release qualification retain their distinct existing boundaries.
 
 ## Acceptance and remaining work
 
@@ -78,8 +154,9 @@ unknown frozen facts, lazy headless CLI discovery, the standard output envelope
 and cancellation. They use authored files and temporary Git repositories; they
 are not native packaged-build or release evidence.
 
-The producer (`tools/package_buildinfo.py` and builder integration) remains a
-separate retained PR #320 slice. This consumer does not establish a frozen
-executable's source identity without an admitted record, sign artifacts, attest
-compiled bytecode or authorize publication. Exact-source hosted Linux/Windows
-QA and existing package gates remain required for integration.
+The producer and builder wiring require source-change refusal, exclusive record
+publication, strict frozen-response equality, final-output completeness and
+archive-order regressions. A consumer without an admitted record still reports
+unknown build identity. Exact-source hosted Linux/Windows QA, actual package
+production and independent downloaded-artifact gates remain required before
+integration. Signing, manual acceptance and release publication remain separate.

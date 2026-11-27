@@ -48,15 +48,26 @@ if (-not (Test-Path $nsisNotice -PathType Leaf)) {
 }
 
 $previousQpa = $env:QT_QPA_PLATFORM
+$priorPythonHome = $env:PYTHONHOME
+$priorPythonPath = $env:PYTHONPATH
 try {
     $env:QT_QPA_PLATFORM = "offscreen"
+    $env:PYTHONHOME = ""
+    $env:PYTHONPATH = ""
     $smoke = Start-Process -FilePath $exe -ArgumentList @("--self-test") -WorkingDirectory $installDir -Wait -PassThru
     if ($smoke.ExitCode -ne 0) {
         throw "Installed frozen application self-test exited with code $($smoke.ExitCode)."
     }
+    $env:PYTHONPATH = Join-Path (Split-Path $PSScriptRoot -Parent) "src"
+    & python -S (Join-Path $PSScriptRoot "frozen_smoke.py") $exe --version-only
+    if ($LASTEXITCODE -ne 0) {
+        throw "Installed frozen application failed packaged version verification: $LASTEXITCODE"
+    }
 }
 finally {
     $env:QT_QPA_PLATFORM = $previousQpa
+    $env:PYTHONHOME = $priorPythonHome
+    $env:PYTHONPATH = $priorPythonPath
 }
 
 $uninstaller = Join-Path $installDir "Uninstall.exe"
@@ -106,4 +117,4 @@ if (-not (Test-Path $projectData -PathType Leaf)) {
     throw "Uninstall removed user project data outside the application directory."
 }
 Remove-Item -LiteralPath $installDir -Recurse -Force
-Write-Host "Installer registration, Qt/runtime checks, frozen self-test, non-destructive uninstall passed."
+Write-Host "Installer registration, Qt/runtime, frozen self-test, packaged version, non-destructive uninstall passed."
