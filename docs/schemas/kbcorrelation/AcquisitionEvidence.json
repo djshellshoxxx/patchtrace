@@ -36,6 +36,17 @@
         },
         "proposal": {
           "$ref": "#/$defs/PairProposal"
+        },
+        "replay": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IndexReplay"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -461,6 +472,153 @@
       "title": "IndexEntry",
       "type": "object"
     },
+    "IndexReplay": {
+      "additionalProperties": false,
+      "properties": {
+        "conversion_rejected": {
+          "maximum": 67108864,
+          "minimum": 0,
+          "title": "Conversion Rejected",
+          "type": "integer"
+        },
+        "inputs": {
+          "$ref": "#/$defs/ResolverInputs"
+        },
+        "lineage_count": {
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Lineage Count",
+          "type": "integer"
+        },
+        "lineage_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Lineage Sha256",
+          "type": "string"
+        },
+        "mapping_count": {
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Mapping Count",
+          "type": "integer"
+        },
+        "mapping_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Mapping Sha256",
+          "type": "string"
+        },
+        "newer": {
+          "$ref": "#/$defs/SourceMembership"
+        },
+        "older": {
+          "$ref": "#/$defs/SourceMembership"
+        },
+        "parser_skipped": {
+          "maximum": 67108864,
+          "minimum": 0,
+          "title": "Parser Skipped",
+          "type": "integer"
+        },
+        "parser_skipped_bodies": {
+          "maximum": 67108864,
+          "minimum": 0,
+          "title": "Parser Skipped Bodies",
+          "type": "integer"
+        },
+        "replay_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Replay Version",
+          "type": "integer"
+        },
+        "resolution_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Resolution Sha256",
+          "type": "string"
+        },
+        "selected_pair_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Selected Pair Id",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/IndexSource"
+        }
+      },
+      "required": [
+        "source",
+        "inputs",
+        "mapping_sha256",
+        "mapping_count",
+        "lineage_sha256",
+        "lineage_count",
+        "parser_skipped",
+        "parser_skipped_bodies",
+        "conversion_rejected",
+        "resolution_sha256",
+        "selected_pair_id",
+        "older",
+        "newer"
+      ],
+      "title": "IndexReplay",
+      "type": "object"
+    },
+    "IndexSource": {
+      "additionalProperties": false,
+      "properties": {
+        "byte_count": {
+          "maximum": 67108864,
+          "minimum": 1,
+          "title": "Byte Count",
+          "type": "integer"
+        },
+        "compressed": {
+          "title": "Compressed",
+          "type": "boolean"
+        },
+        "data_date": {
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "title": "Data Date",
+          "type": "string"
+        },
+        "file_name": {
+          "pattern": "^[a-z0-9._-]{1,128}$",
+          "title": "File Name",
+          "type": "string"
+        },
+        "lineage_version": {
+          "const": "kbc-lineage/1",
+          "default": "kbc-lineage/1",
+          "title": "Lineage Version",
+          "type": "string"
+        },
+        "parser_version": {
+          "const": "winbindex-rows/1",
+          "default": "winbindex-rows/1",
+          "title": "Parser Version",
+          "type": "string"
+        },
+        "resolver_version": {
+          "const": "kbc-resolver/1",
+          "default": "kbc-resolver/1",
+          "title": "Resolver Version",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sha256",
+        "byte_count",
+        "file_name",
+        "data_date",
+        "compressed"
+      ],
+      "title": "IndexSource",
+      "type": "object"
+    },
     "PairProposal": {
       "additionalProperties": false,
       "description": "A proposed older/newer pair. Three orthogonal proofs (bytes, lineage, fix boundary) plus reason codes; the\ngrade is derived from them and never exceeds what they support.",
@@ -601,6 +759,275 @@
       ],
       "title": "PairProposal",
       "type": "object"
+    },
+    "ProductRef": {
+      "additionalProperties": false,
+      "properties": {
+        "doc_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Doc Id",
+          "type": "string"
+        },
+        "product_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Product Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "doc_id",
+        "product_id"
+      ],
+      "title": "ProductRef",
+      "type": "object"
+    },
+    "ProductScope": {
+      "additionalProperties": false,
+      "properties": {
+        "alias_catalog_version": {
+          "minimum": 0,
+          "title": "Alias Catalog Version",
+          "type": "integer"
+        },
+        "architecture": {
+          "enum": [
+            "amd64",
+            "arm64",
+            "x86",
+            "unknown"
+          ],
+          "title": "Architecture",
+          "type": "string"
+        },
+        "build": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Build"
+        },
+        "channel": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Channel"
+        },
+        "contract": {
+          "const": "kbcorrelation/1",
+          "default": "kbcorrelation/1",
+          "title": "Contract",
+          "type": "string"
+        },
+        "display_name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Display Name",
+          "type": "string"
+        },
+        "edition": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Edition"
+        },
+        "family": {
+          "enum": [
+            "windows-client",
+            "windows-server",
+            "other",
+            "unknown"
+          ],
+          "title": "Family",
+          "type": "string"
+        },
+        "mapping": {
+          "enum": [
+            "verified",
+            "candidate",
+            "unknown",
+            "conflicted"
+          ],
+          "title": "Mapping",
+          "type": "string"
+        },
+        "release": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Release"
+        },
+        "scope_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Scope Id",
+          "type": "string"
+        },
+        "source_product_ids": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ProductRef"
+          },
+          "title": "Source Product Ids",
+          "type": "array"
+        },
+        "winbindex_key": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Winbindex Key"
+        }
+      },
+      "required": [
+        "scope_id",
+        "family",
+        "architecture",
+        "display_name",
+        "mapping",
+        "alias_catalog_version"
+      ],
+      "title": "ProductScope",
+      "type": "object"
+    },
+    "ResolverInputs": {
+      "additionalProperties": false,
+      "properties": {
+        "fixed_build": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{1,6}\\.[0-9]{1,6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Fixed Build"
+        },
+        "kb": {
+          "pattern": "^KB[0-9]{4,10}$",
+          "title": "Kb",
+          "type": "string"
+        },
+        "limit": {
+          "default": 1000,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "same_class_only": {
+          "default": true,
+          "title": "Same Class Only",
+          "type": "boolean"
+        },
+        "scope": {
+          "$ref": "#/$defs/ProductScope"
+        },
+        "tier": {
+          "default": "C",
+          "enum": [
+            "A",
+            "B",
+            "C",
+            "D",
+            "E"
+          ],
+          "title": "Tier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scope",
+        "kb",
+        "fixed_build"
+      ],
+      "title": "ResolverInputs",
+      "type": "object"
+    },
+    "SourceMembership": {
+      "additionalProperties": false,
+      "properties": {
+        "kb": {
+          "anyOf": [
+            {
+              "pattern": "^KB[0-9]{4,10}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Kb"
+        },
+        "record_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Record Sha256",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "source_version_key": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,39}$",
+          "title": "Source Version Key",
+          "type": "string"
+        },
+        "version_key": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,39}$",
+          "title": "Version Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sha256",
+        "version_key",
+        "source_version_key",
+        "kb",
+        "record_sha256"
+      ],
+      "title": "SourceMembership",
+      "type": "object"
     }
   },
   "$id": "https://patchtrace.local/schemas/kbcorrelation/1/AcquisitionEvidence.json",
@@ -628,8 +1055,11 @@
       "type": "string"
     },
     "evidence_version": {
-      "const": 1,
       "default": 1,
+      "enum": [
+        1,
+        2
+      ],
       "title": "Evidence Version",
       "type": "integer"
     },

@@ -47,6 +47,14 @@ def index_keys(winbindex_key: str) -> tuple[str, ...]:
 
 
 @dataclass(frozen=True)
+class PairMembership:
+    """The actual resolver endpoints before their source membership is reduced to binary refs."""
+    pair_id: str
+    older: IndexRow
+    newer: IndexRow
+
+
+@dataclass(frozen=True)
 class Resolution:
     """Candidate pairs for one file and one KB. No pair and a blocker means the index cannot answer, not "no change"."""
     kb: str
@@ -61,6 +69,7 @@ class Resolution:
     skipped_rows: int
     truncated: bool = False
     ambiguous: bool = False
+    memberships: tuple[PairMembership, ...] = ()
 
 
 def binary_ref(row: IndexRow) -> BinaryRef:
@@ -181,6 +190,7 @@ def resolve(rows: Sequence[IndexRow], *, kb: str, scope: ProductScope, file_name
                           skipped_rows)
         return _empty(kb, file_name, scope, scope.winbindex_key, ('NO_NEWER',), NOT_IN_INDEX, skipped_rows)
     pairs: dict[str, PairProposal] = {}
+    memberships: dict[str, PairMembership] = {}
     ambiguous = change.reason in ('variants', 'order-unverified')
     targets = sorted({r.sha256: r for r in reversed(change.target_rows)}.values(),
                      key=lambda row: (_AVAILABILITY_ORDER[row.availability], order.position(row)))
@@ -194,6 +204,7 @@ def resolve(rows: Sequence[IndexRow], *, kb: str, scope: ProductScope, file_name
             pair = propose_index_pair(older, target, scope_id=scope.scope_id, intervening=between,
                                       fixed_build=fixed_build, skipped_rows=skipped_rows, tier=tier)
             pairs.setdefault(pair.pair_id, pair)
+            memberships.setdefault(pair.pair_id, PairMembership(pair.pair_id, older, target))
     ordered = sorted(pairs.values(), key=lambda p: rank_key(p, change.state))
     blockers = () if ordered else ('INDEX_GAP',) if truncated else ('NO_OLDER',)
     note = '' if ordered or truncated else reason_text('NO_OLDER')
@@ -202,4 +213,5 @@ def resolve(rows: Sequence[IndexRow], *, kb: str, scope: ProductScope, file_name
         if not ordered:
             note = 'Pair enumeration is truncated; no predecessor conclusion can be drawn from the evaluated rows.'
     return Resolution(kb, file_name, scope.scope_id, scope.winbindex_key, change.state, change.last_changed_in,
-                      tuple(ordered[:limit]), blockers, note, skipped_rows, truncated, ambiguous)
+                      tuple(ordered[:limit]), blockers, note, skipped_rows, truncated, ambiguous,
+                      tuple(memberships[pair.pair_id] for pair in ordered[:limit]))

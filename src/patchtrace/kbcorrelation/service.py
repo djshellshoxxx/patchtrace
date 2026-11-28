@@ -44,6 +44,14 @@ from .contracts import (
 from .export import EXTENSIONS, to_json, to_markdown
 from .ids import KbSyntaxError, normalise_cve, normalise_kb_edge
 from .index import Lookup, ReverseIndex
+from .index_replay import (
+    MAX_CAPTURE_BYTES,
+    MAX_REPLAY_ROWS,
+    CapturedIndex,
+    ResolverInputs,
+    capture_replay,
+    verify_replay,
+)
 from .leads import CARD_KEV, ExploitationLookup, NullExploitation, kev_source_of, kev_text
 from .limits import MAX_SEARCH_MONTHS
 from .lineage import IndexRow
@@ -101,6 +109,8 @@ class ProjectAccess(ProjectPort, Protocol):
     def open_project(self, directory: str) -> str: ...
 
     def list_rows(self, project_id: str, kind: str) -> Mapping[str, bytes]: ...
+
+    def replay_acquisition(self, project_id: str, evidence_id: str) -> dict: ...
 
 
 @dataclass(frozen=True)
@@ -542,14 +552,16 @@ class KbService:
                   'reason': reason}
         return Outcome(4, 'unavailable', result, text)
 
-    def _resolve_pairs(self, investigation: str, product: str | None, files: Iterable[str]):
+    def _resolve_pairs(self, investigation: str, product: str | None, files: Iterable[str], *,
+                       _file_index=None, _captures: dict | None = None):
         """``(revision, resolutions, skipped_rows, files_without_record)``, or ``(revision, Outcome)`` when the
         offline file index cannot answer. Read-only: the investigation is not advanced."""
         try:
             names = [comp.normalise_name(f) for f in files]
         except ValueError as exc:
             raise _fail('PT-KBC-INPUT', str(exc)) from None
-        file_index = self.env.file_index(self.root) if self.env.file_index else None
+        file_index = _file_index if _file_index is not None else (
+            self.env.file_index(self.root) if self.env.file_index else None)
         with self._open() as ws:
             rev = self._get(ws, investigation)
             index = self._checked_index(ws, rev)
@@ -579,14 +591,32 @@ class KbService:
             return rev, self._unanswered(rev, 'no file name', TEXT_KB7)
         covered = scope.family != 'windows-server' and scope.winbindex_key is not None
         found, skipped, missing = [], 0, []
+        captured_bytes = captured_rows = 0
         for name in chosen:  # the index is consulted only where it can answer; the resolver states why otherwise
-            rows, gap = file_index.rows(name, scope.winbindex_key) if covered else ((), 0)
+            snapshot = None
+            capture = getattr(file_index, 'capture', None)
+            if covered and _captures is not None and callable(capture):
+                snapshot = capture(name)
+                if snapshot is not None and not isinstance(snapshot, CapturedIndex):
+                    raise _fail('PT-KBC-SOURCE', 'the file index returned an invalid original-source snapshot')
+                if snapshot is not None:
+                    captured_bytes += len(snapshot.raw)
+                    captured_rows += len(snapshot.mappings) + len(snapshot.rows)
+                    if captured_bytes > MAX_CAPTURE_BYTES or captured_rows > MAX_REPLAY_ROWS:
+                        raise _fail('PT-KBC-LIMIT', 'the acquisition source captures exceed their aggregate byte/row budget')
+                rows, gap = (snapshot.rows, snapshot.gap) if snapshot is not None else ((), 0)
+            else:
+                rows, gap = file_index.rows(name, scope.winbindex_key) if covered else ((), 0)
             if covered and not rows and not gap:
                 missing.append(name)
                 continue
             skipped = max(skipped, gap)
-            found += [resolver.resolve(rows, kb=kb, scope=scope, file_name=name, fixed_build=fixed,
-                                       skipped_rows=gap) for kb, fixed in kbs.items()]
+            for kb, fixed in kbs.items():
+                resolved = resolver.resolve(rows, kb=kb, scope=scope, file_name=name, fixed_build=fixed,
+                                            skipped_rows=gap)
+                found.append(resolved)
+                if snapshot is not None:
+                    _captures[(name, kb)] = (snapshot, ResolverInputs(scope=scope, kb=kb, fixed_build=fixed), resolved)
         return rev, found, skipped, missing
 
     @staticmethod
@@ -691,7 +721,9 @@ class KbService:
         owner = self._acquire_owner(investigation)
         if expected_revision is not None and owner[0] != expected_revision:
             raise _fail('PT-KBC-STALE', 'the investigation changed after preview; review the acquisition again')
-        got = self._resolve_pairs(investigation, product, files)
+        file_index = self.env.file_index(self.root)
+        captures = {}
+        got = self._resolve_pairs(investigation, product, files, _file_index=file_index, _captures=captures)
         if isinstance(got[1], Outcome):
             return got[1]
         rev, found, _, _ = got
@@ -699,14 +731,27 @@ class KbService:
         if pair is None:
             return Outcome(4, 'unavailable', result, 'There is no pair candidate to acquire; see "kb pairs".')
         result['pair'] = self._pair_dict(pair)
-        # The resolver window names the newer body, not just its binary hash.
-        # Preserve older legacy selection until exact predecessor membership is captured.
-        target = target_row_membership(pair)
-        rows = self.env.file_index(self.root).rows_for(pair.older.basename, '')
-        older_row = row_for(rows, pair.older.sha256, pair.older.basename, require_unique=True)
-        newer_row = row_for(rows, pair.newer.sha256, pair.newer.basename, target=target)
+        selected = [item for item in captures.values() if pair in item[2].pairs]
+        replay, snapshot = None, None
+        if selected:
+            if len(selected) != 1:
+                raise _fail('PT-KBC-SOURCE', 'the selected pair has ambiguous original resolver inputs')
+            snapshot, inputs, resolved = selected[0]
+            try:
+                replay = capture_replay(snapshot, inputs, resolved, pair)
+                verify_replay(snapshot, replay, pair)
+                older_row = snapshot.entry_for(replay.older).model_dump(mode='json')
+                newer_row = snapshot.entry_for(replay.newer).model_dump(mode='json')
+            except ValueError:
+                raise _fail('PT-KBC-INPUT', 'the selected pair has ambiguous or unreproducible source membership') from None
+        else:
+            # Legacy injected adapters have no original source; keep their strict ambiguity refusal.
+            target = target_row_membership(pair)
+            rows = file_index.rows_for(pair.older.basename, '')
+            older_row = row_for(rows, pair.older.sha256, pair.older.basename, require_unique=True)
+            newer_row = row_for(rows, pair.newer.sha256, pair.newer.basename, target=target)
         try:
-            plan = build_plan(pair, older_row, newer_row, self.env.acquirer)
+            plan = build_plan(pair, older_row, newer_row, self.env.acquirer, replay=replay)
             result['plan'] = plan.as_dict()
             verify_consent(plan, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline)
         except KbcStoreError as exc:
@@ -735,6 +780,12 @@ class KbService:
                                         _acquired=(rev, plan, downloads))
 
             check_current()
+            if snapshot is not None:
+                retain = getattr(file_index, 'retain', None)
+                if not callable(retain):
+                    raise _fail('PT-KBC-UNSUPPORTED', 'the file index cannot retain its approved original source')
+                retain(snapshot)
+                check_current()
             done = run_acquire(
                 plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts,
                 consent_plan=consent_plan, offline=offline, cancel=cancel, import_pair=import_current,
@@ -751,6 +802,26 @@ class KbService:
                                                                'scope_id': rev.selected_scope_id,
                                                                'downloads': list(done.downloads)}},
                        done.outcome.text, done.outcome.warnings, done.outcome.error)
+
+    def replay_acquisition(self, project_dir: str, evidence_id: str) -> Outcome:
+        """Read only the selected project's retained source; no workspace, advisory or network access."""
+        if not isinstance(evidence_id, str) or len(evidence_id) != 64 or any(
+                char not in '0123456789abcdef' for char in evidence_id):
+            raise _fail('PT-KBC-INPUT', 'an acquisition evidence ID must be the complete lowercase SHA-256')
+        port = self.env.project(None, '')
+        replay = getattr(port, 'replay_acquisition', None)
+        if not callable(replay):
+            raise _fail('PT-KBC-UNSUPPORTED', 'this project adapter cannot replay retained acquisition sources')
+        project_id = port.open_project(project_dir)
+        result = replay(project_id, evidence_id)
+        if result['state'] == 'unavailable':
+            return Outcome(4, 'unavailable', result, result['reason'])
+        text = (f'Retained Winbindex source {result["source_sha256"]} reproduced '
+                f'pair {result["source_pair_id"]}.\n'
+                f'{result["mapping_count"]} normalized rows, {result["lineage_count"]} lineage rows; '
+                f'{result["skipped_rows"]} rejected source units retained in the replay.\n'
+                'This reproduces the recorded index claims and resolver choice; source authenticity is unchanged.')
+        return Outcome(0, 'complete', result, text)
 
     # ------------------------------------------------------------------------------------------ import-pair
 

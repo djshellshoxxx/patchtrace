@@ -1,3 +1,14 @@
+## November 27 retained Winbindex replay completion
+
+Original source retention and offline resolver replay are implemented and
+independently reviewed. Author lane: 616 passed / one native Windows skip; root
+independent lane: 74 passed / zero skipped. These overlap. After normal integration
+with inventory head `f301d54b`, the combined exact source `ea80552e` passed 2,408
+cases / three native Windows skips across 92 modules plus independent controls.
+Schema drift, whole-tree Ruff and whitespace checks passed. No live provider or
+target was executed. Exact-head hosted full/native/package gates remain open.
+[Plan, original failures and evidence](engineering/winbindex-replay-recovery-20261127.md).
+
 ## PW-01 full-application gate attempt (2026-11-27)
 
 The clean integrated inventory source reached 41% of full offscreen pytest before SIGKILL (-9), after 930.203 seconds. No failure marker was reported before termination; no final summary exists. The signal origin is unestablished and this gate remains incomplete. The earlier attempt hit ENOSPC in its verification harness. Exact source/command/progress/memory evidence is retained in `docs/engineering/evidence/inventory-recovery-20261127/`; see the full explanation in `docs/engineering/inventory-recovery-20261127.md`. Current-head hosted/native qualification is still required.

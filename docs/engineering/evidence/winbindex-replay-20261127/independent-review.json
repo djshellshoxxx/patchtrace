@@ -1,0 +1,30 @@
+{
+  "reviewer": "/root",
+  "reviewed_head": "8912e034ed9d15d1fb2daeabab5d3dc1518b4e28",
+  "decision": "approved for integration, no blocking findings",
+  "independent_cases": 74,
+  "additional_cases": 8,
+  "failures": 0,
+  "skipped": 0,
+  "scope": [
+    "complete original bytes and input/result identity",
+    "held source and owned immutable publication",
+    "consent and project/journal admission ordering",
+    "source membership and copy ambiguity",
+    "legacy byte identity and unsupported future versions",
+    "offline backup replay and missing-source refusal"
+  ],
+  "combined_head": "ea80552ed094a874a68f6aa0979a2b73a3dece89",
+  "combined_tree": "8b90c6cfefa0808b8b5fee90d92c1a0a1cfb6aa4",
+  "inventory_parent": "f301d54b2d38b93c41c2215aebb8a73fb719dbcf",
+  "combined_passed": 2408,
+  "combined_skipped": 3,
+  "remaining": [
+    "exact-head hosted full and native/platform/package gates"
+  ],
+  "limits": [
+    "injected transports and authored PE/index data",
+    "no target execution",
+    "no live provider or authorship/accuracy qualification"
+  ]
+}

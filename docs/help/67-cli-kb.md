@@ -18,6 +18,7 @@ patchtrace kb import-pair ...   # compare two files you hold: create and attach 
 patchtrace kb plan ...          # preview what a file-index pair needs; makes no request
 patchtrace kb leads ...         # group the changed functions by CVE (run "rank" first)
 patchtrace kb acquire ...       # download, verify and compare a file-index pair (needs consent)
+patchtrace kb acquisition replay --help # reproduce retained Winbindex source selection offline
 ```
 
 Check the product and architecture before you read an association. An advisory mention, a vendor remediation statement and a disputed applicability are different things.
@@ -39,6 +40,36 @@ used by `patchtrace kev`). Search JSON includes CVE-level status, listing date,
 snapshot identity and catalogue provenance. No catalogue means not loaded;
 absence from a loaded snapshot says nothing about exploitation. KEV does not
 change advisory edges or the order of functions.
+
+## Replay an acquisition's original index
+
+New acquisitions from a saved Winbindex record keep the complete original index
+bytes with the project. To reproduce the parser inputs and the resolver's exact
+older/newer source-body selection, use the `evidence_id` returned in the
+acquisition result:
+
+```text
+patchtrace kb acquisition replay --project "PATH/TO/PROJECT" --evidence EVIDENCE_ID --json
+```
+
+Supply the complete 64-character lowercase evidence ID. Replay uses the
+project's retained bytes and recorded product/KB inputs. It works from a project
+backup without the original workspace, makes no request, executes no target and
+does not alter the investigation or source evidence. The result identifies the
+source SHA-256, selected pair, both original body pointers and rejected source
+units. A successful replay reproduces the recorded index claims; it does not
+establish Microsoft authorship, signature validity or vulnerability attribution.
+
+| Exit | Meaning |
+| --- | --- |
+| 0 | The complete retained input and selected pair reproduce exactly. |
+| 2 | The ID or arguments are invalid, or this build cannot read the recorded processing version. |
+| 3 | Required evidence is missing, damaged, belongs to another project pair or does not reproduce. |
+| 4 | This historical acquisition did not retain original raw input and cannot be replayed. |
+
+Replaying a historical normalized-only acquisition never substitutes today's
+Winbindex data. If an interrupted attachment still has its retained source, the
+existing `kb attach --repair` operation can finish publication before replay.
 
 Desktop equivalent: the [KB and CVE panel](29-kb-and-cve-investigation-panel.md).
 

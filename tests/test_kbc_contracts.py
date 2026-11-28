@@ -431,8 +431,11 @@ def test_domain_modules_import_no_qt_network_or_database(path):
                 # Acquisition sidecars bind the existing publisher only at the composition root.
                 nodes = [n for n in ast.walk(ast.parse(path.read_text(encoding='utf-8')))
                          if isinstance(n, ast.ImportFrom) and n.level == 2 and n.module == 'owned_publication']
-                expected = [('OwnedPublicationError', None), ('directory_anchor', None), ('publish_bytes', None)]
-                assert all([(a.name, a.asname) for a in n.names] == expected for n in nodes)
+                expected = {
+                    (('OwnedPublicationError', None), ('directory_anchor', None), ('publish_bytes', None)),
+                    (('OwnedPublicationError', None), ('directory_anchor', None), ('read_bytes', None)),
+                }
+                assert all(tuple((a.name, a.asname) for a in n.names) in expected for n in nodes)
             else:
                 assert top in sibling_ok, f'{path.name} imports sibling {module}'
         # `.x` inside kbcorrelation is fine
@@ -448,6 +451,23 @@ def test_init_is_empty_and_ports_and_ids_import_no_sibling():
     assert (PKG / '__init__.py').read_text(encoding='utf-8') == ''
     for name in ('ports.py', 'ids.py', 'limits.py', 'errors.py'):
         assert not [m for lvl, m in _imports(PKG / name) if lvl == 2], name
+
+
+@pytest.mark.parametrize('imports,allowed', [
+    ('OwnedPublicationError, directory_anchor, publish_bytes', True),
+    ('OwnedPublicationError, directory_anchor, read_bytes', True),
+    ('OwnedPublicationError, directory_anchor, read_bytes as unchecked', False),
+    ('OwnedPublicationError, directory_anchor, read_bytes, os', False),
+    ('*', False),
+])
+def test_raw_replay_publication_binding_remains_exact(tmp_path, imports, allowed):
+    path = tmp_path / 'wiring.py'
+    path.write_text(f'from ..owned_publication import {imports}\n', encoding='utf-8')
+    if allowed:
+        test_domain_modules_import_no_qt_network_or_database(path)
+    else:
+        with pytest.raises(AssertionError):
+            test_domain_modules_import_no_qt_network_or_database(path)
 
 
 @pytest.mark.parametrize('name,module,allowed', [

@@ -573,7 +573,10 @@ class ProjectAttachment:
                 code='PT-KBC-STATE', message='there is no such attach operation'),))
         state, body = found
         try:
-            self._acquisition(body, op_id=op_id)  # validate optional evidence before any resume mutation
+            evidence = self._acquisition(body, op_id=op_id)  # validate optional evidence before any resume mutation
+            continuing = state != 'done' or (body['link_state'] == 'context-pending' and context)
+            if continuing and evidence is not None and evidence.source.replay is not None:
+                self.project.validate_acquisition_source(evidence.as_bytes(), project_id=body.get('project_id'))
             if state == 'done':
                 if body['link_state'] == 'context-pending' and context:
                     body = self._attach_context(op_id, body, context)
@@ -652,7 +655,9 @@ class ProjectAttachment:
             'revision': request.revision.model_dump(mode='json'), 'base': request.revision.revision,
             'cas_created': False, 'cas_final': False, 'project_id': None, 'project_revision': None,
             'link_state': None, 'interrupted': False}
-        self._acquisition(body, op_id=op_id)
+        evidence = self._acquisition(body, op_id=op_id)
+        if evidence is not None and evidence.source.replay is not None:
+            self.project.validate_acquisition_source(evidence.as_bytes())
         self.ws.journal_put(op_id, 'intent', body)
 
     def _create(self, op_id: str, body: dict) -> dict:

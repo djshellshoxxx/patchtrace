@@ -28,6 +28,7 @@ from typing import Any
 from .card_provenance import FIELDS, CardFactRef
 from .components import normalise_name
 from .contracts import Arch, CveCard
+from .index_replay import CapturedIndex, IndexSource, ReplayLimitError
 from .lineage import IndexRow, index_rows
 from .pairs import LocalFile
 from .service import Env, KbService
@@ -44,7 +45,8 @@ class WorkspaceFileIndex:
     (the date is the record's data date; the newest record of a name wins). Never fetches."""
 
     def __init__(self, root: Path):
-        self.directory = Path(root) / INDEX_DIR
+        self.root = Path(root)
+        self.directory = self.root / INDEX_DIR
 
     def _check_directory(self) -> None:
         if self.directory.is_symlink() or self.directory.is_junction():
@@ -75,17 +77,12 @@ class WorkspaceFileIndex:
         self._check_directory()
         return self.directory.is_dir() and any(INDEX_RECORD.fullmatch(p.name) for p in self.directory.iterdir())
 
-    def _read_rows(self, file_name: str) -> tuple[list[dict], int]:
-        """Return mappings and rejected source units from one record read.
-
-        The rejection count travels with its rows, never through shared
-        adapter state that another read can change before conversion.
-        """
-        from ..acquisition.contracts import AcquisitionError
-        from ..acquisition.winbindex import MAX_COMPRESSED, parse_rows
+    def _read_record(self, file_name: str) -> tuple[bytes, str, bool] | None:
+        """Admit and hold one bounded original record, without changing source-selection semantics."""
+        from ..acquisition.winbindex import MAX_COMPRESSED
         found = self._record(file_name)
         if found is None:
-            return [], 0
+            return None
         path, date, compressed = found
         try:
             # A path-size probe can become stale between stat and read. Read no more
@@ -101,19 +98,56 @@ class WorkspaceFileIndex:
                 raw = handle.read(MAX_COMPRESSED + 1)
             if len(raw) > MAX_COMPRESSED:
                 raise KbcStoreError('PT-KBC-LIMIT', 'a Winbindex record in the workspace exceeds its size limit')
-            parsed = parse_rows(raw, file_name, date, compressed=compressed)
         except OSError as exc:
             if exc.errno == errno.ELOOP:
                 raise KbcStoreError('PT-KBC-SOURCE', 'the Winbindex record changed into an alias') from None
             if exc.errno == errno.EISDIR:
                 raise KbcStoreError('PT-KBC-SOURCE', 'the opened Winbindex record is not regular') from None
             raise KbcStoreError('PT-KBC-INPUT', 'a Winbindex record in the workspace cannot be read') from None
+        return raw, date, compressed
+
+    def _read_rows(self, file_name: str) -> tuple[list[dict], int]:
+        """Return mappings and all rejected source units from the same held record read."""
+        from ..acquisition.contracts import AcquisitionError
+        from ..acquisition.winbindex import parse_rows
+        found = self._read_record(file_name)
+        if found is None:
+            return [], 0
+        raw, date, compressed = found
+        try:
+            parsed = parse_rows(raw, file_name, date, compressed=compressed)
         except AcquisitionError as exc:
             raise KbcStoreError('PT-KBC-SOURCE', f'a Winbindex record in the workspace is unusable: {exc.message}'
                                 ) from None
         # Count malformed SHA entries and unreadable version/KB bodies only
         # for this same held record. Lineage conversion may add later rejects.
         return [row.as_mapping() for row in parsed.rows], parsed.skipped + parsed.skipped_bodies
+
+    def capture(self, file_name: str) -> CapturedIndex | None:
+        """One immutable raw snapshot supplies resolution and both acquisition endpoint selections."""
+        found = self._read_record(file_name)
+        if found is None:
+            return None
+        raw, date, compressed = found
+        return capture_winbindex(raw, file_name=file_name, data_date=date, compressed=compressed)
+
+    def retain(self, snapshot: CapturedIndex) -> None:
+        """Publish only an already captured and consented source; never reread the mutable index."""
+        from ..owned_publication import OwnedPublicationError, directory_anchor, publish_bytes
+        from .index_replay import MAX_RAW_BYTES
+        try:
+            snapshot.source.check_bytes(snapshot.raw)
+
+            def identical(prior):
+                if prior != snapshot.raw:
+                    raise KbcStoreError('PT-KBC-VERIFY', 'the retained Winbindex object holds different bytes')
+
+            publish_bytes(self.root / snapshot.source.workspace_path, snapshot.raw, validate_existing=identical,
+                          maximum=MAX_RAW_BYTES, anchor=directory_anchor(self.root))
+        except ValueError:
+            raise KbcStoreError('PT-KBC-VERIFY', 'the captured Winbindex bytes no longer match their identity') from None
+        except (OSError, OwnedPublicationError, NotImplementedError):
+            raise KbcStoreError('PT-KBC-STORAGE', 'the original Winbindex source cannot be retained') from None
 
     def rows_for(self, file_name: str, winbindex_key: str) -> list[dict]:
         """Every row of the file's record; downstream timeline chooses the version key."""
@@ -128,6 +162,44 @@ class WorkspaceFileIndex:
         mappings, skipped = self._read_rows(file_name)
         rows, rejected = index_rows(mappings, file_name=file_name)
         return rows, skipped + rejected
+
+
+def capture_winbindex(raw: bytes, *, file_name: str, data_date: str, compressed: bool) -> CapturedIndex:
+    """Production parser boundary used identically for initial capture and offline replay."""
+    from ..acquisition.contracts import AcquisitionError
+    from ..acquisition.winbindex import MAX_COMPRESSED, parse_rows
+    try:
+        if len(raw) > MAX_COMPRESSED:
+            raise ReplayLimitError('the Winbindex source exceeds its 64 MiB byte limit')
+        parsed = parse_rows(raw, file_name, data_date, compressed=compressed)
+        return CapturedIndex.from_rows(raw, file_name=file_name, data_date=data_date, compressed=compressed,
+                                       mappings=[row.as_mapping() for row in parsed.rows], skipped=parsed.skipped,
+                                       skipped_bodies=parsed.skipped_bodies)
+    except ReplayLimitError as exc:
+        raise KbcStoreError('PT-KBC-LIMIT', str(exc)) from None
+    except AcquisitionError as exc:
+        raise KbcStoreError('PT-KBC-LIMIT' if exc.code == 'PT-ACQ-LIMIT' else 'PT-KBC-SOURCE',
+                            'the retained Winbindex source is not usable') from None
+    except ValueError:
+        raise KbcStoreError('PT-KBC-SOURCE', 'the retained Winbindex rows cannot be captured completely') from None
+
+
+def _read_index_source(root: Path, source: IndexSource, *, project: bool, missing_ok: bool = False) -> bytes | None:
+    from ..owned_publication import OwnedPublicationError, directory_anchor, read_bytes
+    from .index_replay import MAX_RAW_BYTES
+    try:
+        return read_bytes(root / (source.relative_path if project else source.workspace_path),
+                          maximum=MAX_RAW_BYTES, validate=source.check_bytes, anchor=directory_anchor(root))
+    except FileNotFoundError:
+        if missing_ok:
+            return None
+        raise KbcStoreError('PT-KBC-STORAGE', 'the retained original Winbindex source is unavailable') from None
+    except ValueError:
+        raise KbcStoreError('PT-KBC-VERIFY', 'the retained original Winbindex bytes do not match their identity'
+                            ) from None
+    except (OSError, OwnedPublicationError, NotImplementedError):
+        raise KbcStoreError('PT-KBC-STORAGE', 'the retained original Winbindex source cannot be read with ownership'
+                            ) from None
 
 
 def save_winbindex_record(root: Path, source: Path, file_name: str, data_date: str) -> dict:
@@ -348,7 +420,7 @@ class RealProjectPort:
 
     @staticmethod
     def _owned_acquisition(service, project_id: str, body: bytes):
-        from .acquisition_evidence import read_evidence
+        from .acquisition_evidence import UnsupportedEvidenceError, read_evidence
         try:
             evidence = read_evidence(body)
             sides = {a.side: a.sha256 for a in service.project.artifacts}
@@ -357,6 +429,8 @@ class RealProjectPort:
                     sides.get('older'), sides.get('newer')):
                 raise ValueError('acquisition evidence belongs to another project pair')
             return evidence
+        except UnsupportedEvidenceError as exc:
+            raise KbcStoreError('PT-KBC-UNSUPPORTED', str(exc)) from None
         except (ValueError, TypeError):
             raise KbcStoreError('PT-KBC-VERIFY', 'the acquisition row has invalid identity or ownership') from None
 
@@ -364,12 +438,23 @@ class RealProjectPort:
         from ..owned_publication import OwnedPublicationError, directory_anchor, publish_bytes
         from ..service import ProjectService
         from .acquisition_evidence import MAX_EVIDENCE_BYTES
+        from .index_replay import MAX_RAW_BYTES
         try:
             root = self._directory(project_id)
             anchor = directory_anchor(root)
             with ProjectService.open(root, maintenance=False) as service:
                 evidence = self._owned_acquisition(service, project_id, body)
                 data = evidence.as_bytes()
+                if evidence.source.replay is not None:
+                    source = evidence.source.replay.source
+                    raw = self._acquisition_raw(evidence, project_root=root)
+
+                    def same_source(prior):
+                        if prior != raw:
+                            raise KbcStoreError('PT-KBC-VERIFY', 'the project Winbindex object holds different bytes')
+
+                    publish_bytes(root / source.relative_path, raw, validate_existing=same_source,
+                                  maximum=MAX_RAW_BYTES, anchor=anchor)
 
                 def identical(prior):
                     if prior != data:
@@ -380,6 +465,81 @@ class RealProjectPort:
         except (OwnedPublicationError, NotImplementedError):
             raise KbcStoreError('PT-KBC-STORAGE', 'the acquisition sidecar cannot preserve publication ownership'
                                 ) from None
+
+    def _acquisition_raw(self, evidence, *, project_root: Path | None = None) -> bytes:
+        source = evidence.source.replay.source
+        if project_root is not None:
+            saved = _read_index_source(project_root, source, project=True, missing_ok=True)
+            if saved is not None:
+                return saved
+        if self._workspace is None:
+            raise KbcStoreError('PT-KBC-STORAGE', 'the retained original Winbindex source is unavailable')
+        return _read_index_source(self._workspace.root, source, project=False)
+
+    def validate_acquisition_source(self, body: bytes, *, project_id: str | None = None) -> None:
+        from ..service import ProjectService
+        from .acquisition_evidence import read_evidence
+        try:
+            evidence = read_evidence(body)
+        except ValueError:
+            raise KbcStoreError('PT-KBC-VERIFY', 'the acquisition source has invalid evidence identity') from None
+        if evidence.source.replay is not None:
+            root = self._directory(project_id) if project_id is not None else None
+            if root is not None:
+                with ProjectService.open(root, maintenance=False) as service:
+                    self._owned_acquisition(service, project_id, body)
+            self._reproduce_acquisition(evidence, self._acquisition_raw(evidence, project_root=root))
+
+    @staticmethod
+    def _reproduce_acquisition(evidence, raw: bytes):
+        from .index_replay import verify_replay
+        manifest = evidence.source.replay
+        source = manifest.source
+        snapshot = capture_winbindex(raw, file_name=source.file_name, data_date=source.data_date,
+                                     compressed=source.compressed)
+        try:
+            result = verify_replay(snapshot, manifest, evidence.source.proposal)
+            if (snapshot.entry_for(manifest.older), snapshot.entry_for(manifest.newer)) != (
+                    evidence.source.older, evidence.source.newer):
+                raise ValueError('normalized delivery entries differ from their original source')
+            return result
+        except ValueError:
+            raise KbcStoreError('PT-KBC-VERIFY', 'the retained source cannot reproduce the approved acquisition'
+                                ) from None
+
+    def replay_acquisition(self, project_id: str, evidence_id: str) -> dict:
+        from ..owned_publication import OwnedPublicationError, directory_anchor, read_bytes
+        from ..service import ProjectService
+        from .acquisition_evidence import MAX_EVIDENCE_BYTES
+        if not isinstance(evidence_id, str) or not re.fullmatch(r'[0-9a-f]{64}', evidence_id):
+            raise KbcStoreError('PT-KBC-INPUT', 'an acquisition evidence ID must be the complete lowercase SHA-256')
+        root = self._directory(project_id)
+        try:
+            body = read_bytes(root / 'kb' / 'acquisitions' / f'{evidence_id}.json', maximum=MAX_EVIDENCE_BYTES,
+                              anchor=directory_anchor(root))
+        except (OSError, OwnedPublicationError, NotImplementedError):
+            raise KbcStoreError('PT-KBC-STORAGE', 'the retained acquisition evidence is unavailable or unreadable'
+                                ) from None
+        with ProjectService.open(root, maintenance=False) as service:
+            evidence = self._owned_acquisition(service, project_id, body)
+            if evidence.evidence_id != evidence_id:
+                raise KbcStoreError('PT-KBC-VERIFY', 'the acquisition sidecar does not match the selected evidence ID')
+            base = {'contract': 'kbcorrelation/1', 'evidence_id': evidence.evidence_id,
+                    'source_pair_id': evidence.source.proposal.pair_id}
+            if evidence.source.replay is None:
+                return {**base, 'state': 'unavailable',
+                        'reason': 'Original Winbindex bytes and resolver membership were not retained '
+                                  'for this historical acquisition.'}
+            manifest = evidence.source.replay
+            raw = _read_index_source(root, manifest.source, project=True)
+            result = self._reproduce_acquisition(evidence, raw)
+            return {**base, 'state': 'reproduced', 'source_sha256': manifest.source.sha256,
+                    'source_bytes': manifest.source.byte_count, 'file_name': manifest.source.file_name,
+                    'data_date': manifest.source.data_date, 'mapping_count': manifest.mapping_count,
+                    'lineage_count': manifest.lineage_count, 'skipped_rows': result.skipped_rows,
+                    'resolution_sha256': manifest.resolution_sha256,
+                    'older': {**manifest.older.model_dump(mode='json'), 'pointer': manifest.older.pointer},
+                    'newer': {**manifest.newer.model_dump(mode='json'), 'pointer': manifest.newer.pointer}}
 
     def put_row(self, project_id: str, kind: str, key: str, body: bytes) -> None:
         from ..enrichment.storage import EnrichmentStore, Guard
@@ -451,6 +611,12 @@ class SnapshotProjectPort:
 
     def write_acquisition_sidecar(self, project_id: str, body: bytes) -> None:
         raise KbcStoreError('PT-KBC-UNSUPPORTED', 'a project snapshot is read-only')
+
+    def validate_acquisition_source(self, body: bytes, *, project_id: str | None = None) -> None:
+        raise KbcStoreError('PT-KBC-UNSUPPORTED', 'a project snapshot has no retained raw-source access')
+
+    def replay_acquisition(self, project_id: str, evidence_id: str) -> dict:
+        raise KbcStoreError('PT-KBC-UNSUPPORTED', 'a project snapshot has no retained raw-source access')
 
     def put_row(self, project_id: str, kind: str, key: str, body: bytes) -> None:
         raise KbcStoreError('PT-KBC-UNSUPPORTED', 'a project snapshot is read-only')

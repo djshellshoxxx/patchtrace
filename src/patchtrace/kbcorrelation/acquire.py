@@ -27,6 +27,7 @@ from .acquisition_evidence import (
     plan_digest,
 )
 from .contracts import PairProposal
+from .index_replay import IndexReplay
 from .pairs import blocking_text
 from .store import KbcStoreError
 
@@ -62,7 +63,7 @@ class AcquirePort(Protocol):
 
 @dataclass(frozen=True)
 class AcquirePlan:
-    """What a consented acquisition would request; v2 also binds the complete source snapshot."""
+    """Consent binds normalized source metadata (v2), and complete retained index replay when available (v3)."""
     plan_sha: str
     pair_id: str
     older_sha: str
@@ -146,7 +147,7 @@ def _acquisition_error(exc: Exception) -> KbcStoreError | None:
 
 
 def build_plan(pair: PairProposal, older_row: Mapping[str, Any], newer_row: Mapping[str, Any],
-               port: AcquirePort) -> AcquirePlan:
+               port: AcquirePort, *, replay: IndexReplay | None = None) -> AcquirePlan:
     """Pure. A blocked pair, or a row that is not the pair's build, is refused before anything is planned."""
     if pair.grade == 'X':
         raise KbcStoreError('PT-KBC-UNSUPPORTED', blocking_text(pair) or 'This pair is blocked.')
@@ -154,7 +155,7 @@ def build_plan(pair: PairProposal, older_row: Mapping[str, Any], newer_row: Mapp
         if row.get('sha256') != ref.sha256:
             raise KbcStoreError('PT-KBC-INPUT', 'an index row is not the pair build it was given for')
     try:
-        source = capture_source(pair, older_row, newer_row)
+        source = capture_source(pair, older_row, newer_row, replay=replay)
         planned = port.plan(source.older.model_dump(mode='json'), source.newer.model_dump(mode='json'))
     except EvidenceLimitError as exc:
         raise KbcStoreError('PT-KBC-LIMIT', str(exc)) from None
@@ -215,7 +216,7 @@ def acquire_pair(plan: AcquirePlan, older_row: Mapping[str, Any], newer_row: Map
     """
     verify_consent(plan, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline)
     try:
-        unchanged = capture_source(plan.source.proposal, older_row, newer_row) == plan.source
+        unchanged = capture_source(plan.source.proposal, older_row, newer_row, replay=plan.source.replay) == plan.source
     except ValueError:
         unchanged = False
     if not unchanged:
