@@ -65,11 +65,12 @@ NO_COUNTS = 'no counts available'
 NO_FITS = 'none assessed'
 
 _INPUT_WORDS = MappingProxyType({
+    'project_revision': 'the project revision',
     'older_sha256': 'the older file', 'newer_sha256': 'the newer file', 'ghidriff_run_id': 'the Ghidriff run',
     'raw_sha256': 'the Ghidriff output', 'unified_result_id': 'the unified result',
     'secondary_set_ids': 'the second-engine results', 'tool_keys': 'the tool results',
     'advisory_facts_ids': 'the advisories', 'kev_snapshot_id': 'the CISA KEV snapshot',
-    'kb_link_digest': 'the knowledge-base links', 'asserted_gates': 'the assumed applicability',
+    'kb_link_digest': 'the retained KB context', 'asserted_gates': 'the assumed applicability',
     'lexicon_digest': 'the CWE vocabulary', 'rules_digest': 'the rule table', 'pilot_rules_digest': 'the expected-change table',
     'origins_digest': 'the evidence origins', 'tiers_version': 'the ranking rules', 'config_digest': 'the settings'})
 

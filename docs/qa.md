@@ -1,3 +1,38 @@
+## November 27 desktop independent pairing correction
+
+Combined desktop/Pilot/evidence/inspection/graph/Strings verification at `e8692010`
+passed **738 tests without skips**. Independent persisted/reopened review then
+reproduced a valid location belonging to a different pairing changing the display
+before refusal (**1 failed, 1 passed**). The action now requires current pairing
+ownership before the existing shared location validator and presentation changes.
+The corrective signal, independent boundary and actual-window accessibility lane
+passed **27 tests without skips**. Original failures and exact scope remain in
+[the recovery record](engineering/desktop-context-recovery-20261127.md). Independent
+corrective review, current-head hosted and native accessibility gates remain open.
+
+## November 27 desktop accessible names and identifiers
+
+Actual-window regressions reproduced five failures before naming integration;
+the partial fix left two genuine control/identifier gaps. All are repaired in the
+126-pass helper/state/layout/window lane with no skips. Existing explicit names,
+label announcements and dock restoration object names are preserved; generated
+names and automation identifiers distinguish repeated controls within each actual
+Qt window. This is offscreen property acceptance, not native screen-reader proof.
+[Plan, original failures and scope](engineering/desktop-context-recovery-20261127.md).
+
+## November 27 stored signal navigation recovery
+
+Twelve stored/reopened navigation regressions failed before the live validation
+boundary, while three valid controls passed. The repaired action plus current
+enrichment desktop and tooltip lanes pass 37 checks without skips. Unsupported
+representations and stale/foreign locations preserve the current mode/cursor;
+valid address zero still navigates. Final combined/independent/platform gates
+remain pending. [Plan and evidence](engineering/desktop-context-recovery-20261127.md).
+
+## Pilot final affected qualification (2026-11-27)
+
+Both independently reproduced admission/display-ownership defects are corrected and the implementation is approved at `30ca3f90`. After the common packaging follow-up merge, the complete affected 50-module selection passed **2,070 tests, zero skips**. See `docs/engineering/pilot-recovery-20261127.md` and its retained final command/log. Current-head full application, hosted/native/platform acceptance and guarded merge remain open.
+
 ## Packaged-version qualification correction (2026-11-27)
 
 The full local offscreen run at `aa8967e895b88a553df4fb14f7429ed64cca0db6` ended with pytest return code `-9` (SIGKILL) after 681.821 seconds and 5,147 reported cases. Its signal origin is unestablished; this is an incomplete gate, not a full-suite pass. The one reported failure was reproduced in isolation: `test_full_linux_frozen_smoke_preserves_both_qt_modes` expected an obsolete literal call spelling after the CLI acquired `--version-only`.
@@ -2556,3 +2591,69 @@ filter cases with zero skips in 3.14 s, plus focused Ruff and the full feature
 whitespace check. The reviewer closed the output-admission finding with no
 remaining consumer-scope blocker. Exact-head hosted/full/package qualification
 remains pending; the retained producer remains a separate scope.
+
+## Pilot storage recovery — 2026-11-28
+
+The isolated Pilot continuation established 10 failed/10 passed authored storage
+controls before code changes, then 84 passing focused/adjacent controls after
+bounded advisory reads and successful-creation staging ownership. See
+`engineering/pilot-recovery-20261127.md` for source, commands and remaining gates.
+No live-provider, native Windows or target-execution claim is made.
+
+## Pilot current-input freshness recovery — 2026-11-28
+
+The new current-store regressions failed 34 cases and passed 10 on storage-slice
+source `c2cb06de23d48ba0c7c9973ed3541b62ada6e7cc`. Shared owner-thread freshness now
+checks production reads/publication, CLI history, desktop action-time navigation
+and report/2 omissions. An incomplete source transfer initially omitted the
+unchanged desktop rendering method (58 failed/199 passed); restoring that method
+exactly resolved the integration failure. The complete focused selection then
+passed 257 cases with no skips in 32.43 s. Ruff and whitespace passed. Logs and
+commands are recorded in `engineering/pilot-recovery-20261127.md`; the failed
+intermediate run is preserved. Retained CVRF integration and full/platform gates
+remain pending.
+
+## Pilot retained CVRF integration — 2026-11-28
+
+Spec-first context/current-input/port controls produced 60 failures and 57 passes
+on `9c187dd9c1fb91ecd5f53e0c969839f644ee62e5`, including the real authored KB route
+returning no advisory and stale retained context remaining current. The final
+reviewed donor bridge was selectively composed with current ownership, saved-scope
+and source-admission seams. The focused retained-context/key selection passed
+152 cases, including all additional metadata-byte and SQLite storage-class guards.
+The complete affected Pilot/Leads/report/advisory/KB contract selection then passed
+2,058 cases, no skips, in 110.45 s. Whole-tree Ruff and whitespace passed. Counts
+overlap earlier slices. Existing shared storage/admission and newer CSAF transport
+remain unchanged. Evidence and commands: `engineering/pilot-recovery-20261127.md`.
+Independent review and full/native/hosted acceptance remain open with the integration
+owner; no live source retrieval, target execution or remote writes were performed.
+
+## Pilot review correction: retained JSON — 2026-11-27 America/Vancouver
+
+Independent review of `f7337f5f5cbb6f27bddbd8d7756f0381d3f526cb` found duplicate
+JSON members accepted by permissive row/model decoding. The unchanged reviewer
+controls plus maintained root/nested/escaped-member controls produced 6 failures
+and 7 passes before the bridge began strict validation of its original bounded
+body. The focused retained-context/current-input/report selection then passed
+148 tests, no skips, in 13.69 s; targeted Ruff and whitespace passed. Existing
+shared enrichment storage is unchanged; refusal preserves original row bytes and
+checksum. Evidence is recorded in `engineering/pilot-recovery-20261127.md`.
+The independent asynchronous desktop model/receipt finding remains open and
+publication is held until its correction and re-review.
+
+## Pilot review correction: displayed model ownership — 2026-11-27 America/Vancouver
+
+The independent deferred-build regression and maintained action/receipt/late-row
+controls failed seven cases on `fe36e09fe5010ac4ac49268f67f511864faa71b8`; a separate
+late-build-after-failed-reload control also failed. The controller now binds
+navigation to the displayed assessment and its loaded receipt, refuses unmatched
+or unavailable ownership, and drops callbacks belonging to earlier views. The
+fresh replacement receipt stays current, copying remains available, and navigation
+resumes when its model arrives. The focused UI and current-input suites passed
+130 tests, no skips, in 17.00 s. Whole-tree Ruff, whitespace and seven preserved
+common-module checks passed. Full commands and raw log names are recorded in
+`engineering/pilot-recovery-20261127.md`. Independent UI re-review and root's
+full/platform gates remain pending; strict JSON has independent approval.
+
+Desktop corrective review at `47465823` is independently approved: 27 tests
+passed without skips in 22.73 seconds. Exact-head hosted/native gates remain open.

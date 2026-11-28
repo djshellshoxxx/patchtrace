@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="2" time="1.891" timestamp="2026-11-27T17:30:04.442710-08:00" hostname="56e89409ebf3"><testcase classname="desktop-context-independent-review" name="test_stored_signal_cannot_borrow_a_valid_location_from_another_pairing" time="1.297"><failure message="AssertionError: foreign pairing changed representation before refusal&#10;assert 0 == 1&#10; +  where 0 = &lt;built-in method currentIndex of PySide6.QtWidgets.QComboBox object at 0x7f3a1792e900&gt;()&#10; +    where &lt;built-in method currentIndex of PySide6.QtWidgets.QComboBox object at 0x7f3a1792e900&gt; = &lt;PySide6.QtWidgets.QComboBox(0x2cf14550, name=&quot;viewer.mode&quot;) at 0x7f3a1792e900&gt;.currentIndex&#10;[+1 more line; full report in element text]">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-124/test_stored_signal_cannot_borr0')
+qtbot = &lt;pytestqt.qtbot.QtBot object at 0x7f3a1810f770&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f3a1810fa10&gt;
+
+    def test_stored_signal_cannot_borrow_a_valid_location_from_another_pairing(tmp_path, qtbot, monkeypatch):
+        window, signal_id, _location, _errors, _revealed = _window(tmp_path, qtbot, monkeypatch)
+        selected = window.current_match().id
+        result = pipeline.run(window.project)
+        foreign = next(function for match in result.views.matches if match.match_id != selected
+                       for function in match.newer if function.code)
+        location = SourceLocation(side=foreign.side, artifact_id=foreign.artifact_id, run_id=foreign.run_id,
+                                  function_id=foreign.id, representation='decompiled', start_line=1, end_line=1,
+                                  excerpt_sha256=identity.excerpt_sha256(foreign.code[:1]), address=foreign.address)
+        assert views.validate_location(window.project, location).id == foreign.id
+        signal_sets = []
+        for item in result.signal_sets:
+            if item.match_id == selected:
+                item = item.model_copy(update={'signals': tuple(signal.model_copy(update={'locations': (location,)})
+                                                                if signal.signal_id == signal_id else signal
+                                                                for signal in item.signals)})
+            signal_sets.append(item)
+        pipeline.publish(EnrichmentStore(window.service.store), window.project,
+                         replace(result, signal_sets=tuple(signal_sets)))
+        root = window.service.root
+        window.close()
+        reopened = MainWindow(ProjectService.open(root),
+                              QSettings(str(tmp_path / 'independent.ini'), QSettings.Format.IniFormat))
+        qtbot.addWidget(reopened)
+        reopened.show()
+        errors = []
+        monkeypatch.setattr(reopened, 'show_error', errors.append)
+        try:
+            target = next(reopened.navigator.item(index) for index in range(reopened.navigator.count())
+                          if reopened.navigator.item(index).data(Qt.ItemDataRole.UserRole) == selected)
+            reopened.navigator.setCurrentItem(target)
+            assert reopened.current_match().id == selected
+            assert foreign.id not in {function.id for function in reopened.current_match().older + reopened.current_match().newer}
+            reopened.mode.setCurrentIndex(1)
+            before = {side: (pane.textCursor().position(), pane.textCursor().anchor())
+                      for side, pane in reopened.views.items()}
+            reopened.jump_signal(_item(reopened, signal_id))
+&gt;           assert reopened.mode.currentIndex() == 1, 'foreign pairing changed representation before refusal'
+E           AssertionError: foreign pairing changed representation before refusal
+E           assert 0 == 1
+E            +  where 0 = &lt;built-in method currentIndex of PySide6.QtWidgets.QComboBox object at 0x7f3a1792e900&gt;()
+E            +    where &lt;built-in method currentIndex of PySide6.QtWidgets.QComboBox object at 0x7f3a1792e900&gt; = &lt;PySide6.QtWidgets.QComboBox(0x2cf14550, name="viewer.mode") at 0x7f3a1792e900&gt;.currentIndex
+E            +      where &lt;PySide6.QtWidgets.QComboBox(0x2cf14550, name="viewer.mode") at 0x7f3a1792e900&gt; = &lt;patchtrace.ui.MainWindow(0x2cb33df0, name="main") at 0x7f3a181f5340&gt;.mode
+
+../desktop-context-independent-review.py:55: AssertionError</failure></testcase><testcase classname="desktop-context-independent-review" name="test_dock_identity_is_per_window_and_keeps_surviving_bars_stable" time="0.002" /></testsuite></testsuites>

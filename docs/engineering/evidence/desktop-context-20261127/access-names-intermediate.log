@@ -1,0 +1,32 @@
+FF......                                                                 [100%]
+=================================== FAILURES ===================================
+___________ test_every_interactive_control_of_the_window_has_a_name ____________
+
+main_window = <patchtrace.ui.MainWindow(0x2e92a140, name="main") at 0x7f92c0911d00>
+
+    def test_every_interactive_control_of_the_window_has_a_name(main_window):
+        widgets = shown(main_window)
+        unnamed = Counter(problem for problem in a11y_audit(main_window) if problem.endswith('no accessible name'))
+        exempt = qt_clear_buttons(widgets)
+        assert exempt, 'the navigator and findings search fields have Qt clear buttons'
+>       assert not unnamed - Counter(exempt), sorted(unnamed - Counter(exempt))
+E       AssertionError: ['QHeaderView#?: no accessible name', 'QLineEdit#?: no accessible name', 'QListView#?: no accessible name']
+E       assert not (Counter({'QHeaderView#?: no accessible name': 9, 'QToolButton#?: no accessible name': 2, 'QListView#?: no accessible name': 1, 'QLineEdit#?: no accessible name': 1}) - Counter({'QToolButton#?: no accessible name': 2}))
+E        +  where Counter({'QToolButton#?: no accessible name': 2}) = Counter(['QToolButton#?: no accessible name', 'QToolButton#?: no accessible name'])
+
+tests/test_gui_a11y_window.py:43: AssertionError
+_____________ test_accessible_identifiers_are_unique_in_the_window _____________
+
+main_window = <patchtrace.ui.MainWindow(0x2f019c60, name="main") at 0x7f92bc70d900>
+
+    def test_accessible_identifiers_are_unique_in_the_window(main_window):
+        ids = Counter(widget.accessibleIdentifier() for widget in shown(main_window) if widget.accessibleIdentifier())
+        assert len(ids) > 100
+>       assert not {identifier: count for identifier, count in ids.items() if count > 1}
+E       AssertionError: assert not {'evidence.engine_check': 2, 'unified.code_copy': 2, 'search.state_retry': 2, 'search.state_copy': 2, ...}
+
+tests/test_gui_a11y_window.py:49: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_gui_a11y_window.py::test_every_interactive_control_of_the_window_has_a_name
+FAILED tests/test_gui_a11y_window.py::test_accessible_identifiers_are_unique_in_the_window
+2 failed, 6 passed in 3.94s

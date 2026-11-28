@@ -1,0 +1,83 @@
+FFF..FF.                                                                 [100%]
+=================================== FAILURES ===================================
+___________ test_every_interactive_control_of_the_window_has_a_name ____________
+
+main_window = <patchtrace.ui.MainWindow(0x3a8dd4e0, name="main") at 0x7f67598b1340>
+
+    def test_every_interactive_control_of_the_window_has_a_name(main_window):
+        widgets = shown(main_window)
+        unnamed = Counter(problem for problem in a11y_audit(main_window) if problem.endswith('no accessible name'))
+        exempt = qt_clear_buttons(widgets)
+        assert exempt, 'the navigator and findings search fields have Qt clear buttons'
+>       assert not unnamed - Counter(exempt), sorted(unnamed - Counter(exempt))
+E       AssertionError: ['QComboBox#findings.note_target: no accessible name', 'QComboBox#findings.review_filter: no accessible name', 'QCombo....mode: no accessible name', 'QComboBox#viewer.raw_scope: no accessible name', 'QHeaderView#?: no accessible name', ...]
+E       assert not (Counter({'QListView#?: no accessible name': 11, 'QHeaderView#?: no accessible name': 9, 'QToolButton#?: no accessible ...ope: no accessible name': 1, 'QLineEdit#viewer.raw_goto: no accessible name': 1, 'QLineEdit#?: no accessible name': 1}) - Counter({'QToolButton#?: no accessible name': 2}))
+E        +  where Counter({'QToolButton#?: no accessible name': 2}) = Counter(['QToolButton#?: no accessible name', 'QToolButton#?: no accessible name'])
+
+tests/test_gui_a11y_window.py:43: AssertionError
+_____________ test_accessible_identifiers_are_unique_in_the_window _____________
+
+main_window = <patchtrace.ui.MainWindow(0x3afde760, name="main") at 0x7f67563183c0>
+
+    def test_accessible_identifiers_are_unique_in_the_window(main_window):
+        ids = Counter(widget.accessibleIdentifier() for widget in shown(main_window) if widget.accessibleIdentifier())
+        assert len(ids) > 100
+>       assert not {identifier: count for identifier, count in ids.items() if count > 1}
+E       AssertionError: assert not {'panels.dock_tabs': 5, 'gui.notice': 2, 'gui.notice_details': 2, 'gui.notice_dismiss': 2, ...}
+
+tests/test_gui_a11y_window.py:49: AssertionError
+_____________________ test_names_are_unique_among_siblings _____________________
+
+main_window = <patchtrace.ui.MainWindow(0x3b15b0f0, name="main") at 0x7f67564e5e00>
+
+    def test_names_are_unique_among_siblings(main_window):
+        clashes = []
+        for parent in shown(main_window):
+            names = Counter(_name(child) for child in parent.children()
+                            if isinstance(child, QWidget) and not child.isWindow() and _name(child).strip())
+            clashes += [f'{parent.objectName() or type(parent).__name__}: {name!r} x{count}'
+                        for name, count in names.items() if count > 1]
+>       assert not clashes, clashes
+E       AssertionError: ["main: 'Panel tabs' x5"]
+E       assert not ["main: 'Panel tabs' x5"]
+
+tests/test_gui_a11y_window.py:64: AssertionError
+____________ test_apply_tip_keeps_a_preset_name_and_names_the_popup ____________
+
+qtbot = <pytestqt.qtbot.QtBot object at 0x7f6759428f20>
+
+    def test_apply_tip_keeps_a_preset_name_and_names_the_popup(qtbot):
+        combo = QComboBox()
+        qtbot.addWidget(combo)
+        combo.setAccessibleName('Preset name')
+        tips.apply_tip(combo, 'findings.review_filter')
+        assert combo.accessibleName() == 'Preset name'
+>       assert combo.view().accessibleName() == 'Preset name options'
+E       AssertionError: assert '' == 'Preset name options'
+E         
+E         - Preset name options
+
+tests/test_gui_a11y_window.py:88: AssertionError
+_____ test_apply_tip_names_an_unnamed_control_its_popup_and_its_line_edit ______
+
+qtbot = <pytestqt.qtbot.QtBot object at 0x7f67571bf3b0>
+
+    def test_apply_tip_names_an_unnamed_control_its_popup_and_its_line_edit(qtbot):
+        combo = QComboBox()
+        combo.setEditable(True)
+        qtbot.addWidget(combo)
+        tips.apply_tip(combo, 'findings.note_target')
+        name = NAMES['findings.note_target']
+>       assert combo.accessibleName() == name and combo.view().accessibleName() == popup_name(name)
+E       AssertionError: assert ('' == 'Analyst note target'
+E         
+E         - Analyst note target)
+
+tests/test_gui_a11y_window.py:97: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_gui_a11y_window.py::test_every_interactive_control_of_the_window_has_a_name
+FAILED tests/test_gui_a11y_window.py::test_accessible_identifiers_are_unique_in_the_window
+FAILED tests/test_gui_a11y_window.py::test_names_are_unique_among_siblings - ...
+FAILED tests/test_gui_a11y_window.py::test_apply_tip_keeps_a_preset_name_and_names_the_popup
+FAILED tests/test_gui_a11y_window.py::test_apply_tip_names_an_unnamed_control_its_popup_and_its_line_edit
+5 failed, 3 passed in 3.70s

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="8" time="3.868" timestamp="2026-11-27T17:16:40.920602-08:00" hostname="56e89409ebf3"><testcase classname="tests.test_gui_a11y_window" name="test_every_interactive_control_of_the_window_has_a_name" time="2.215"><failure message="AssertionError: ['QHeaderView#?: no accessible name', 'QLineEdit#?: no accessible name', 'QListView#?: no accessible name']&#10;assert not (Counter({'QHeaderView#?: no accessible name': 9, 'QToolButton#?: no accessible name': 2, 'QListView#?: no accessible name': 1, 'QLineEdit#?: no accessible name': 1}) - Counter({'QToolButton#?: no accessible name': 2}))&#10;[+1 more line; full report in element text]">main_window = &lt;patchtrace.ui.MainWindow(0x2e92a140, name="main") at 0x7f92c0911d00&gt;
+
+    def test_every_interactive_control_of_the_window_has_a_name(main_window):
+        widgets = shown(main_window)
+        unnamed = Counter(problem for problem in a11y_audit(main_window) if problem.endswith('no accessible name'))
+        exempt = qt_clear_buttons(widgets)
+        assert exempt, 'the navigator and findings search fields have Qt clear buttons'
+&gt;       assert not unnamed - Counter(exempt), sorted(unnamed - Counter(exempt))
+E       AssertionError: ['QHeaderView#?: no accessible name', 'QLineEdit#?: no accessible name', 'QListView#?: no accessible name']
+E       assert not (Counter({'QHeaderView#?: no accessible name': 9, 'QToolButton#?: no accessible name': 2, 'QListView#?: no accessible name': 1, 'QLineEdit#?: no accessible name': 1}) - Counter({'QToolButton#?: no accessible name': 2}))
+E        +  where Counter({'QToolButton#?: no accessible name': 2}) = Counter(['QToolButton#?: no accessible name', 'QToolButton#?: no accessible name'])
+
+tests/test_gui_a11y_window.py:43: AssertionError</failure></testcase><testcase classname="tests.test_gui_a11y_window" name="test_accessible_identifiers_are_unique_in_the_window" time="0.589"><failure message="AssertionError: assert not {'evidence.engine_check': 2, 'unified.code_copy': 2, 'search.state_retry': 2, 'search.state_copy': 2, ...}">main_window = &lt;patchtrace.ui.MainWindow(0x2f019c60, name="main") at 0x7f92bc70d900&gt;
+
+    def test_accessible_identifiers_are_unique_in_the_window(main_window):
+        ids = Counter(widget.accessibleIdentifier() for widget in shown(main_window) if widget.accessibleIdentifier())
+        assert len(ids) &gt; 100
+&gt;       assert not {identifier: count for identifier, count in ids.items() if count &gt; 1}
+E       AssertionError: assert not {'evidence.engine_check': 2, 'unified.code_copy': 2, 'search.state_retry': 2, 'search.state_copy': 2, ...}
+
+tests/test_gui_a11y_window.py:49: AssertionError</failure></testcase><testcase classname="tests.test_gui_a11y_window" name="test_names_are_unique_among_siblings" time="0.477" /><testcase classname="tests.test_gui_a11y_window" name="test_every_name_has_a_registered_tip_and_follows_the_naming_rules" time="0.001" /><testcase classname="tests.test_gui_a11y_window" name="test_popup_names_stay_within_the_limit" time="0.000" /><testcase classname="tests.test_gui_a11y_window" name="test_apply_tip_keeps_a_preset_name_and_names_the_popup" time="0.102" /><testcase classname="tests.test_gui_a11y_window" name="test_apply_tip_names_an_unnamed_control_its_popup_and_its_line_edit" time="0.096" /><testcase classname="tests.test_gui_a11y_window" name="test_apply_tip_names_nothing_outside_the_table_and_never_a_label" time="0.089" /></testsuite></testsuites>

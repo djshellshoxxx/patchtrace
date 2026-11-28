@@ -58,6 +58,22 @@ Timestamps, display preferences and absolute paths are never hashed. Existing pr
 
 `SourceLocation`: `side`, `artifact_id`, `run_id`, `function_id`, `representation` (`decompiled|assembly|metadata`), `start_line`, `end_line` (1-based inclusive, `end >= start`), `excerpt_sha256` (SHA-256 of the exact UTF-8 lines joined by `\n`), optional `address` (int ≥ 0; 0 is valid; null = unknown). Before navigation or save, `validate_location(project, loc)` checks artifact/run/function ownership, side, line bounds and excerpt hash. Implemented as `views.validate_location(project_or_run_view, loc)` (`PT-ENRICH-OWNERSHIP` / `PT-ENRICH-STALE`; SPEC-07h Phase D amendment).
 
+### Desktop signal activation, 2026-11-27 (P2-NAV-1)
+
+Each activation of a stored signal must validate its current SourceLocation with
+`views.validate_location` before changing the display mode, cursor or selection.
+Its function, run, artifact and side must also belong to the currently selected
+pairing; a valid location elsewhere in the same project/run cannot be borrowed.
+The current signal action supports decompiled text only; assembly and metadata
+locations are explicitly unavailable through this action and must not be
+substituted with decompiled text. Unknown or mismatched function/run/artifact/side/
+address and stale line/excerpt bindings leave the existing view untouched and
+produce a plain diagnosis bounded to 300 characters. Address zero is valid.
+Successful activation retains the existing representation switch and line reveal.
+Every activation rechecks current project evidence; no previously successful
+navigation certifies a later one. This boundary changes no score, persisted
+signal, interpretation or project record.
+
 ## 5. B1 change signals (`signals.py`)
 
 Input: `MatchView` (immutable): pairing id, match id, category, older/newer function views (id, artifact id, run id, code lines, assembly lines or None), diff hunks from `alignment.diff_hunks`. Detectors only inspect lines inside changed hunks plus a bounded 6-line window of context for linkage.

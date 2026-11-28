@@ -76,6 +76,7 @@ from .ui_job_events import JobEventRelay
 from .ui_persistence import commit_and_report
 from .ui_profiles import PROFILE_SETTING, profiles_dir, selected_profile
 from .ui_raw_alignment import RawAlignmentController, build_raw_navigation
+from .ui_signal_navigation import reveal_signal_location
 from .ui_symbols import SymbolChoice, config_kwargs, configured_symbol_mode, effective_profile_symbol_mode
 from .ui_timeout import TimeoutChoice
 
@@ -2352,10 +2353,7 @@ class MainWindow(QMainWindow):
                        if s.signal_id == current.data(Qt.ItemDataRole.UserRole)), None)
         if signal is None:
             return
-        location = signal.locations[0]
-        if self.mode.currentIndex() != 0:
-            self.mode.setCurrentIndex(0)  # rebuilds the text-mode offsets that raw modes empty
-        self.reveal_lines(location.function_id, location.start_line, location.end_line)
+        reveal_signal_location(self, signal.locations[0])
 
     def reveal_lines(self, function_id, start_line, end_line):
         """Select original lines of a function in its pane (the function id fixes the side); the pane, or None."""

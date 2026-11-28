@@ -86,9 +86,23 @@ def place_default(window: QMainWindow, dock: PanelDock, groups: Mapping[str, Pan
 
 
 def name_tab_bars(window: QMainWindow) -> None:
-    """Qt creates the dock tab bars itself and leaves them unnamed, which UI Automation reads as nothing."""
-    for bar in window.findChildren(QTabBar):
-        if bar.parent() is window and bar.objectName() != TAB_BAR_NAME and not bar.objectName().startswith('qt_'):
-            bar.setObjectName(TAB_BAR_NAME)
-            bar.setAccessibleName('Panel tabs')
-            apply_tip(bar, TAB_BAR_NAME)
+    """Qt creates the dock tab bars itself and leaves them unnamed, which UI Automation reads as nothing. Every bar
+    keeps the objectName `panels.dock_tabs`; its accessible id and name are numbered in creation order ("Panel tabs",
+    "Panel tabs 2", ...) so that both stay unique in the window, and a bar keeps its number once given."""
+    bars = [bar for bar in window.findChildren(QTabBar)
+            if bar.parent() is window and not bar.objectName().startswith('qt_')]
+    taken = {bar.accessibleIdentifier() for bar in bars if bar.objectName() == TAB_BAR_NAME}
+    number = 1
+    for bar in bars:
+        if bar.objectName() == TAB_BAR_NAME:
+            continue
+        while _tab_bar_id(number) in taken:
+            number += 1
+        taken.add(_tab_bar_id(number))
+        bar.setObjectName(TAB_BAR_NAME)
+        bar.setAccessibleName('Panel tabs' if number == 1 else f'Panel tabs {number}')
+        apply_tip(bar, TAB_BAR_NAME, name=_tab_bar_id(number))
+
+
+def _tab_bar_id(number: int) -> str:
+    return TAB_BAR_NAME if number == 1 else f'{TAB_BAR_NAME}.{number}'
