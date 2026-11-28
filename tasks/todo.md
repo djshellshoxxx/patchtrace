@@ -1929,3 +1929,8 @@ Owner/branch: `codex/patchtrace-linux-frozen-cli-smoke-20261121`; handoff
 - [x] Obtain independent re-review of the completed-output repair on
   `806ccc4fbe7b26bd854cf64de96bd03bdde36f64`: 40 focused tests passed, zero skips;
   no remaining consumer-scope blocker. Hosted/full/package qualification remains.
+
+
+- [x] LBL-31: correct stale parent workflow census; retain the original failure,
+  139 passing affected tests and unchanged strict dependency-closure xfail.
+- [ ] Requalify the corrected LBL-31 PR head with hosted full/platform gates.

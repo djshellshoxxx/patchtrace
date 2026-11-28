@@ -173,3 +173,20 @@ After retaining the controls in the repository, explicit fixture re-export impor
 resolved five Ruff F811 import/style findings without changing assertions. The
 retained independent module passed all **10 tests, zero skipped**, in 3.07 seconds.
 The complete required Ruff selection (`src tests tools`) and whitespace check pass.
+
+
+## Parent workflow census correction, November 27 (America/Vancouver)
+
+The source census in `test_codex5_command_audit_20261121.py` still expected
+19 run scalars and six pip invocations after this branch added its training
+handoff. The actual parent workflow has 23 run scalars, seven pip invocations
+and seven outside the three protected install invocations. The unchanged test
+failed once against publication tree `3e0bdaaa9da6e91b1643850c4950a3fd1d3aa000`.
+Only this explicit census tuple was corrected. Protected-invocation assertions
+and strict dependency-closure expected failures remain unchanged.
+
+The affected audit, CI-summary and training-workflow lane passed **139 tests,
+one existing strict expected failure**, in 5.80 seconds; required Ruff passed.
+Original failure and final log/XML remain in the evidence folder. This changes
+no runtime or workflow command, and does not replace the pending exact-head
+hosted full/platform and explicitly enabled training-journey gates.

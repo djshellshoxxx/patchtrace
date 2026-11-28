@@ -210,7 +210,7 @@ def test_missing_yaml_dependency_is_an_import_failure(monkeypatch: pytest.Monkey
 def test_actual_workflow_scan_matches_reviewed_source_census() -> None:
     expected = {
         "backend-bundle.yml": (26, 3, 2), "codex-cloud.yml": (1, 0, 0),
-        "corpus-tier-r.yml": (19, 6, 6), "diff-and-score.yml": (6, 1, 1),
+        "corpus-tier-r.yml": (23, 7, 7), "diff-and-score.yml": (6, 1, 1),
         "live-backend.yml": (8, 1, 1), "live-bindiff.yml": (6, 1, 1),
         "live-capa.yml": (5, 1, 1), "live-intel-tools.yml": (10, 2, 2),
         "live-kbc.yml": (3, 1, 1), "live-kev.yml": (3, 1, 1),

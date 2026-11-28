@@ -2604,3 +2604,12 @@ filter cases with zero skips in 3.14 s, plus focused Ruff and the full feature
 whitespace check. The reviewer closed the output-admission finding with no
 remaining consumer-scope blocker. Exact-head hosted/full/package qualification
 remains pending; the retained producer remains a separate scope.
+
+
+### LBL-31 parent workflow census correction — November 27, 2026
+
+Corrected only the stale corpus workflow source census to `(23, 7, 7)`;
+protected invocations and strict dependency-closure expected failures remain.
+Original failing control retained; affected audit/CI-summary/workflow selection
+passed 139 tests with one unchanged strict xfail. Required Ruff passed.
+See `engineering/tier-r-transfer-recovery-20261128.md`. Hosted gates remain.
