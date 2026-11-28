@@ -1,3 +1,14 @@
+## November 27 callgraph layout completion
+
+- [x] Audit current panel against unmerged donor and specify the minimal closure.
+- [x] Recover and test bounded pure layered layout with cancellation and deadline.
+- [x] Add bounded route rendering to the existing shared canvas.
+- [x] Integrate the current query worker, font metrics and diagram-only fallback.
+- [x] Complete independent source review: 349 passes, no blocking findings.
+- [ ] Complete final current-head hosted, native and frozen-package qualification.
+
+See [layout recovery evidence](../docs/engineering/callgraph-layout-recovery-20261127.md).
+
 ## Packaged-version gate follow-up (2026-11-27)
 
 The reported stale packaging assertion is repaired and its affected125-test lane passes. Local full-suite execution was terminated by SIGKILL and is not qualified; require fresh current-head Linux/Windows/Qt/package acceptance on PR #369 before guarded merge. See the corresponding docs/qa.md entry.

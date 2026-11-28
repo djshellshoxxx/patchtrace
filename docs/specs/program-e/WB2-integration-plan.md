@@ -189,6 +189,14 @@ A scratch prototype of A1-A3 over the repo's real `normalize_ghidriff` reproduce
 - **Performance budget** (5x slack in CI; "50k nodes" means the index and table, never a drawn scene): snapshot at 250k claims <= 1.5 s and +120 MiB [inf; CSR core measured 0.22-0.35 s]; neighbourhood query <= 20 ms; closure count <= 300 ms; path <= 100 ms (bidirectional); delta for 5,000 pairs <= 1.0 s [inf]; table first paint <= 200 ms, filter <= 100 ms, sort <= 150 ms, `data()` calls <= 7 x visible cells x 1.2 + 20 independent of rows (asserted at 10k and 100k); layout 500 nodes <= 100 ms, 2,000 <= 400 ms; canvas frame <= 16 ms at 500 items; no 50k scene is ever built.
 
 ## 9. Slice plan
+
+**G6 implementation amendment, 2026-11-27:**
+[`panels/graph-layout.md`](../panels/graph-layout.md) defines the bounded layered
+layout and current panel/canvas integration. It replaces the earlier proposed DFS
+edge reversal, label-based ties and separate minimap with direction-preserving
+routes, identifier-based ties and the existing inspection minimap. It adds bounded
+raw-input admission, checked cancellation, an enforced deadline and diagram-only
+failure semantics. Existing graph truncation and `more` evidence remain unchanged.
 | id | scope | exclusive files | deps | tier (reason) | size | acceptance gate | fallback |
 |---|---|---|---|---|---|---|---|
 | G0 | synthetic fixtures + builder | `tests/callgraph_fixtures.py`, `tests/fixtures/callgraph/*`, `tests/test_callgraph_fixtures.py` | none | haiku (data from a shape table) | S | every fixture passes `normalize_ghidriff` + strict JSON; `svc`, hostile, ambiguous, no-`matches`, count-suffix, cycle+hub | sonnet |

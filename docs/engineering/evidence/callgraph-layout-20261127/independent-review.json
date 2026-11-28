@@ -1,0 +1,50 @@
+{
+  "reviewer": "/root/feature_audit",
+  "time_utc": "2026-11-28T01:00:24.836299+00:00",
+  "head": "4448f4a9b7acf98a740453277d404bab7d6fdf49",
+  "tree": "1cb55fb75cc32546a4a2bd9ffc340b6d8f92533a",
+  "worktree_clean": true,
+  "decision": "approve reviewed source for integration; native and hosted gates remain separate",
+  "blocking_findings": [],
+  "lanes": [
+    {
+      "tests": 139,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "name": "independent-affected",
+      "junit": "/workspace/scratch/e3f205d85f15/layout-evidence/independent-affected.xml",
+      "seconds": 5.602
+    },
+    {
+      "tests": 32,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "name": "independent-controls",
+      "junit": "/workspace/scratch/e3f205d85f15/layout-evidence/independent-controls.xml",
+      "seconds": 0.688
+    },
+    {
+      "tests": 178,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "name": "independent-preservation",
+      "junit": "/workspace/scratch/e3f205d85f15/layout-evidence/independent-preservation.xml",
+      "seconds": 11.488
+    }
+  ],
+  "total_disjoint_tests": 349,
+  "whole_tree_ruff": "passed: src tests tools",
+  "git_diff_check": "passed",
+  "extra_controls": "/workspace/scratch/e3f205d85f15/test_layout_independent_review.py",
+  "extra_controls_sha256": "3f482941e5bc3346926fb3ed193e470a58921b02979ed627025e9addc4c3c9c9",
+  "render_inspected": "/workspace/scratch/e3f205d85f15/layout-evidence/independent-panel.png",
+  "native_limits": [
+    "Linux Qt offscreen only",
+    "No Windows timing/DPI/UI Automation qualification",
+    "No frozen-package or hosted CI acceptance from this review",
+    "No native helper, target execution, live fetch, remote writes or source mutations"
+  ]
+}

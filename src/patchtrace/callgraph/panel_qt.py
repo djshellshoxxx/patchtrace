@@ -30,6 +30,7 @@ from ..gui.graph_view import GraphEdgeView, GraphNodeView, GraphTooLargeError
 from ..gui.qt.canvas import GraphCanvas
 from ..gui.qt.docks import ControllerBase
 from ..gui.qt.labels import PlainLabel, SafeTextView
+from ..gui.qt.metrics import MetricsWatcher
 from ..gui.qt.state_view import StateView
 from ..gui.qt.table import ROW_ROLE, VirtualTable
 from ..gui.registry import PanelContext
@@ -51,6 +52,7 @@ from .call_sites import (
     function_code,
 )
 from .export_json import write_export
+from .layout import NODE_H, NODE_W
 from .limits import GraphError
 from .minimap_qt import MinimapWidget
 from .tooltip_entries import TEMPLATES, TIPS
@@ -327,6 +329,8 @@ class CallsController(ControllerBase):
         self.tree_index: TreeIndex | None = None
         self.loading = False
         self._wire()
+        self._diagram_metrics = MetricsWatcher(panel.canvas)
+        self._diagram_metrics.changed.connect(self._rescale_diagram)
         self._render()
 
     # ---- wiring ------------------------------------------------------------------------------------
@@ -494,7 +498,7 @@ class CallsController(ControllerBase):
         if data is None or seed is None:
             return
         spec = self._spec(seed)
-        self.flags -= {'not-in-set', 'no-lists', 'too-large'}
+        self.flags -= {'not-in-set', 'no-lists', 'too-large', 'cancelled'}
         self.loading = True
         self._render()
         self.tasks.submit('graph-query', lambda token, _report: pd.query(data, spec, token),
@@ -504,6 +508,12 @@ class CallsController(ControllerBase):
         if not self._current(epoch):
             return
         self.loading = False
+        if self.port.key() != self.key:
+            self.stale_reason = 'the project changed while the call diagram was prepared'
+            return self._render()
+        if isinstance(result, pd.Failure) and result.code == 'PT-GRAPH-CANCEL':
+            self.flags.add('cancelled')
+            return self._render()
         self.found = None
         if isinstance(result, pd.Failure):
             self.error = (result.code, result.message)
@@ -559,21 +569,35 @@ class CallsController(ControllerBase):
     def _fill_diagram(self, found: pd.Neighbourhood) -> None:
         panel = self.panel
         from .view_model import STATE_TEXT
-        place = pd.positions(found)
-        layer = pd.layers(found)
-        nodes = [GraphNodeView(n.id, n.label, *place.get(n.id, (0.0, 0.0)),
-                               chip='info' if n.id == found.focus_id else 'plain',
-                               description=f'{n.kind}, layer {layer.get(n.id, 0)}') for n in found.view.nodes]
-        edges = [GraphEdgeView(e.src, e.dst, 'call') for e in found.view.edges]
-        try:
-            panel.canvas.set_graph(nodes, edges)
-            panel.minimap.set_points({n.key: (n.x, n.y) for n in nodes}, found.focus_id)
-            panel.diagram_note.setText('')
-        except GraphTooLargeError:
-            panel.diagram_note.setText(STATE_TEXT['E11'].format(n=f'{len(nodes):,}'))
-            self.flags.add('too-large')
+        self.flags.discard('too-large')
+        panel.diagram_note.setText(pd.diagram_notice(found))
+        diagram = found.diagram
+        if isinstance(diagram, pd.Failure):
+            panel.canvas.set_graph([], [])
+            panel.minimap.clear()
+        else:
+            width, height = panel.canvas.node_dimensions()
+            sx, sy = width / NODE_W, height / NODE_H
+            source = {n.id: n for n in found.view.nodes}
+            nodes = [GraphNodeView(n.id, source[n.id].label, (n.x + n.w / 2) * sx, (n.y + n.h / 2) * sy,
+                                   chip='info' if n.id == found.focus_id else 'plain',
+                                   description=f'{source[n.id].kind}, layer {n.layer}') for n in diagram.nodes]
+            edges = [GraphEdgeView(e.src, e.dst, e.kind, tuple((x * sx, y * sy) for x, y in e.points))
+                     for e in diagram.edges]
+            try:
+                panel.canvas.set_graph(nodes, edges)
+                panel.minimap.set_points({n.key: (n.x, n.y) for n in nodes}, found.focus_id)
+            except GraphTooLargeError:
+                panel.canvas.set_graph([], [])
+                panel.minimap.clear()
+                panel.diagram_note.setText(STATE_TEXT['E11'].format(n=f'{len(nodes):,}'))
+                self.flags.add('too-large')
         panel.diagram_note.setVisible(bool(panel.diagram_note.full_text()))
         self._sync_minimap()
+
+    def _rescale_diagram(self, _metrics) -> None:
+        if self.found is not None:
+            self._fill_diagram(self.found)
 
     def _clear_views(self, keep_changes: bool = False) -> None:
         panel = self.panel

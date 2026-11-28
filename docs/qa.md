@@ -1,3 +1,18 @@
+## November 27 bounded callgraph layout recovery
+
+The new pure layout lane first failed with two missing-module collection errors;
+after selective recovery and bounded-work controls it passes 57 tests without
+skips. The route port/rendering lane first failed 19 tests, then passed 100 new and
+existing canvas/isolation checks without skips. Worker/panel regressions first
+failed 13 tests; after integration, the focused lane passes 63 and the complete
+affected callgraph/canvas/task lane passes **674**, with no skips (overlapping
+selections, not additive). Whole-tree Ruff and whitespace checks pass. Independent
+review of exact source `4448f4a9` passed 349 distinct controls without failures
+or skips and found no blocker (overlaps the author lane). The committed review
+records include offscreen rendering, stale-worker and geometry controls.
+Current-head combined/native qualification remains pending. See
+[the source-specific plan and evidence](engineering/callgraph-layout-recovery-20261127.md).
+
 ## Packaged-version qualification correction (2026-11-27)
 
 The full local offscreen run at `aa8967e895b88a553df4fb14f7429ed64cca0db6` ended with pytest return code `-9` (SIGKILL) after 681.821 seconds and 5,147 reported cases. Its signal origin is unestablished; this is an incomplete gate, not a full-suite pass. The one reported failure was reproduced in isolation: `test_full_linux_frozen_smoke_preserves_both_qt_modes` expected an obsolete literal call spelling after the CLI acquired `--version-only`.

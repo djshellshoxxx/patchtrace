@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
+from math import isfinite
 
 from .registry import GRAPH_EDGES, GRAPH_EDGES_MAX, GRAPH_NODES, GRAPH_NODES_MAX
 from .state import CHIP_TOKENS
@@ -19,6 +20,7 @@ ZOOM_MAX = 8.0
 MARK_BELOW = 0.15   # below this zoom a node is a mark
 LABEL_FROM = 0.5    # from this zoom a node shows its label; between the two it is a box
 ANTIALIAS_ITEM_LIMIT = 200
+MAX_ROUTE_POINTS = 16
 DIRECTIONS = ('left', 'right', 'up', 'down')
 
 
@@ -59,6 +61,22 @@ class GraphEdgeView:
     source: str
     target: str
     kind: str = ''
+    points: tuple[tuple[float, float], ...] = ()
+
+    def __post_init__(self) -> None:
+        """Routes are small immutable values; an empty route retains straight-line rendering."""
+        if not isinstance(self.points, tuple) or self.points and not 2 <= len(self.points) <= MAX_ROUTE_POINTS:
+            raise ValueError('a graph route needs an immutable tuple of 2 to 16 points, or no points')
+        for point in self.points:
+            if not isinstance(point, tuple) or len(point) != 2:
+                raise ValueError('a graph route point needs an immutable coordinate pair')
+            for value in point:
+                try:
+                    valid = type(value) in (int, float) and isfinite(value)
+                except OverflowError:
+                    valid = False
+                if not valid:
+                    raise ValueError('graph route coordinates must be finite numbers')
 
 
 def check_ceilings(max_nodes: int, max_edges: int) -> None:
