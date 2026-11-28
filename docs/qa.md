@@ -1,3 +1,51 @@
+## November 27 LBL-31 independent managed-handoff review
+
+Runtime `ee2210bb` was independently reviewed with no blocker. Ten extra consumer,
+exact-credit, linked-path and actual-exit controls plus the affected transport,
+shard, workflow and CI modules passed **198 tests, zero skips**. The existing
+producer, managed output store and training implementation remain unchanged.
+See `docs/engineering/tier-r-transfer-recovery-20261128.md` for original failures,
+retained logs and limits. Exact publication-head hosted/native/full qualification
+and explicit hosted `train=true` smoke acceptance remain open.
+
+## LBL-31 complete local handoff and unlocked smoke wiring (2026-11-28)
+
+The affected selection passed **496 tests, zero skipped** after the new workflow
+and actual CLI/report journey controls. The first broad run exposed one stale
+upload-path assertion; its replacement checks every restricted artifact path.
+A final destination-ancestor control exposed and fixed creation through a linked
+parent before refusal; the final-source transport/shard/CI lane passed **149 tests,
+zero skipped**. Whole-tree Ruff and whitespace passed. The six broad-lane legacy
+warnings are confined to existing explicit legacy fixtures. Exact low-data training
+exit `1` is retained and accepted only as a verified minimum-lineage halt, with
+all gates still insufficient-data. Independent/full/platform and actual hosted
+artifact/producer/smoke-report qualification remain pending. Evidence and limits:
+`docs/engineering/tier-r-transfer-recovery-20261128.md`.
+
+## LBL-31 shard and managed merge handoff (2026-11-28)
+
+After 29 baseline and 4 additional admission/coverage failures, the transport,
+shard, merge and adjacent completion/outcome selection passed **383 tests, zero
+skipped**. Targeted Ruff and whitespace passed. Actual evaluator CLI controls use
+authored providers; they establish exact retained-byte transfer and report
+ownership, not native engine or accuracy acceptance. Workflow and unlocked
+training/report execution remain in progress. Details and raw log locations:
+`docs/engineering/tier-r-transfer-recovery-20261128.md`.
+
+## LBL-31 bounded transfer foundation (2026-11-28)
+
+The new managed artifact exporter/verifier passed **170 focused and adjacent tests,
+zero skipped** after retained red controls for the missing handoff, changed data,
+foreign credit ownership and manifest preflight. Three expected legacy warnings
+belong to existing negative tests; new transport uses verified managed credit.
+Targeted Ruff and whitespace passed. Shard/merge/workflow integration is still in
+progress; no hosted/native/training-accuracy acceptance is claimed. Evidence:
+`docs/engineering/tier-r-transfer-recovery-20261128.md`.
+
+## Recipe controls and truthful shard outcomes (2026-11-27)
+
+The four implementation slices are complete and independently reviewed; the combined Tier R/calibration selection passed **847 tests with 11 skips**. Three optional scikit-learn reference checks subsequently passed in the verified primary runtime; eight native-toolchain checks remain blocked. Whole-tree Ruff passed. See `docs/engineering/recipe-controls-recovery-20261127.md` for the plan, observed red/green controls and exact scope. Full/current-head hosted acceptance and guarded merge remain pending; card planning is not native recipe or accuracy qualification.
+
 ## Packaged-version qualification correction (2026-11-27)
 
 The full local offscreen run at `aa8967e895b88a553df4fb14f7429ed64cca0db6` ended with pytest return code `-9` (SIGKILL) after 681.821 seconds and 5,147 reported cases. Its signal origin is unestablished; this is an incomplete gate, not a full-suite pass. The one reported failure was reproduced in isolation: `test_full_linux_frozen_smoke_preserves_both_qt_modes` expected an obsolete literal call spelling after the CLI acquired `--version-only`.
@@ -2556,3 +2604,12 @@ filter cases with zero skips in 3.14 s, plus focused Ruff and the full feature
 whitespace check. The reviewer closed the output-admission finding with no
 remaining consumer-scope blocker. Exact-head hosted/full/package qualification
 remains pending; the retained producer remains a separate scope.
+
+
+### LBL-31 parent workflow census correction — November 27, 2026
+
+Corrected only the stale corpus workflow source census to `(23, 7, 7)`;
+protected invocations and strict dependency-closure expected failures remain.
+Original failing control retained; affected audit/CI-summary/workflow selection
+passed 139 tests with one unchanged strict xfail. Required Ruff passed.
+See `engineering/tier-r-transfer-recovery-20261128.md`. Hosted gates remain.

@@ -1,0 +1,37 @@
+.F                                                                       [100%]
+=================================== FAILURES ===================================
+_ test_changed_destination_evidence_cannot_receive_a_completed_manifest[valid-other-credit] _
+
+produced = (PosixPath('/tmp/pytest-of-agent/pytest-86/test_changed_destination_evide1/store'), PosixPath('/tmp/pytest-of-agent/py...rd': 0, 'of': 1, 'seed': 1, ...}, PosixPath('/tmp/pytest-of-agent/pytest-86/test_changed_destination_evide1/artifact'))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f29ee21b470>
+changed = 'valid-other-credit'
+
+    @pytest.mark.parametrize('changed', ['label', 'valid-other-credit'])
+    def test_changed_destination_evidence_cannot_receive_a_completed_manifest(produced, monkeypatch, changed):
+        real_finalize = OS.OutputStore.finalize
+    
+        def change_after_completion(store, reports):
+            real_finalize(store, reports)
+            if changed == 'label':
+                path = store.folder.parent / 'labels' / f'{LABELS.pair_id}.json'
+                path.write_bytes(b'{}')
+            else:
+                path = store.folder / OS.CREDIT_FILE
+                document = json.loads(path.read_bytes())
+                report = document['reports'][0]
+                report['notes'].append('authored unrelated owner')
+                report['report_sha256'] = digest(report, 'report_sha256')
+                for row in document['outputs']:
+                    row['report_sha256'] = report['report_sha256']
+                path.write_bytes(canonical_json(document))
+                assert OS.read_credited_outputs(store.folder)  # Valid locally, foreign to the shard.
+    
+        monkeypatch.setattr(OS.OutputStore, 'finalize', change_after_completion)
+>       with pytest.raises(transfer().ArtifactError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ArtifactError
+
+tests/test_tier_r_training_artifacts.py:183: Failed
+=========================== short test summary info ============================
+FAILED tests/test_tier_r_training_artifacts.py::test_changed_destination_evidence_cannot_receive_a_completed_manifest[valid-other-credit]
+1 failed, 1 passed, 29 deselected in 1.16s

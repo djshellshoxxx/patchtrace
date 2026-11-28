@@ -1,0 +1,703 @@
+FFFFFFFFFFFFFFFFFFFFF                                                    [100%]
+=================================== FAILURES ===================================
+__ test_training_requires_explicit_boolean_dispatch_and_both_successful_jobs ___
+
+    def test_training_requires_explicit_boolean_dispatch_and_both_successful_jobs():
+        document = workflow()
+>       opt = document[True]['workflow_dispatch']['inputs']['train']
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'train'
+
+tests/test_tier_r_training_workflow.py:32: KeyError
+____ test_shard_upload_has_only_the_completed_root_and_keeps_managed_marker ____
+
+    def test_shard_upload_has_only_the_completed_root_and_keeps_managed_marker():
+        job = workflow()['jobs']['shard']
+        run = next(step for step in job['steps'] if step.get('name') == 'Run shard')
+>       assert '--collect-artifacts' in run['run']
+E       assert '--collect-artifacts' in 'python -m tools.calibration.tier_r.shard run-shard --shard "${{ matrix.shard }}" --of "${{ matrix.of }}" --seed "$SEE...256 "${{ matrix.plan }}" --cases "$SHARD_CASES" --engines "$ENGINES" --subset "$SUBSET" --out shard-out --timeout 1800'
+
+tests/test_tier_r_training_workflow.py:46: AssertionError
+____ test_merge_keeps_shard_roots_and_publishes_only_verified_consolidation ____
+
+    def test_merge_keeps_shard_roots_and_publishes_only_verified_consolidation():
+        job = workflow()['jobs']['merge']
+>       download = next(step for step in job['steps'] if step.get('with', {}).get('pattern') == 'tier-r-training-*')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       StopIteration
+
+tests/test_tier_r_training_workflow.py:58: StopIteration
+_ test_training_verifies_before_consumption_and_has_no_lock_or_preregistration_input _
+
+    def test_training_verifies_before_consumption_and_has_no_lock_or_preregistration_input():
+>       job = workflow()['jobs']['train']
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'train'
+
+tests/test_tier_r_training_workflow.py:83: KeyError
+_ test_existing_training_cli_yields_a_verified_unlocked_insufficient_data_report _
+
+trained = ({'command': 'run', 'gates': {'G0': 'insufficient-data', 'G1': 'insufficient-data', 'G2': 'insufficient-data', 'G3': '...est builds of open-source code; says nothing about Windows system files.', 'contract': 'calibration-report/1', ...}, 1)
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-96/test_existing_training_cli_yie0')
+capsys = <_pytest.capture.CaptureFixture object at 0x7f54b194d850>
+
+    def test_existing_training_cli_yields_a_verified_unlocked_insufficient_data_report(trained, tmp_path, capsys):
+        summary, report, code = trained
+>       result = transfer().verify_smoke_result(summary, report, code)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'verify_smoke_result'
+
+tests/test_tier_r_training_workflow.py:115: AttributeError
+___ test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[leak] ___
+
+trained = ({'command': 'run', 'gates': {'G0': 'insufficient-data', 'G1': 'insufficient-data', 'G2': 'insufficient-data', 'G3': '...est builds of open-source code; says nothing about Windows system files.', 'contract': 'calibration-report/1', ...}, 1)
+damage = 'leak'
+
+    @pytest.mark.parametrize('damage', ['leak', 'unknown-halt', 'missing-halt', 'mismatched-summary', 'gate-status',
+                                         'locked', 'preregistered', 'full-config', 'wrong-origin', 'wrong-key',
+                                         'wrong-report-digest', 'exit-zero', 'exit-usage', 'exit-blocked'])
+    def test_smoke_result_check_never_masks_failure_or_uses_a_stale_report(trained, damage):
+        summary, report, code = copy.deepcopy(trained)
+        if damage in ('leak', 'unknown-halt'):
+            summary['halt'].append('PT-KA-LEAK: authored refusal' if damage == 'leak' else 'unexpected processing failure')
+        elif damage == 'missing-halt':
+            summary.pop('halt')
+        elif damage == 'mismatched-summary':
+            summary['report_sha256'] = 'e' * 64
+        elif damage == 'gate-status':
+            summary['gates']['G1'] = 'pass'
+        elif damage == 'locked':
+            report['prereg_sha256'] = 'f' * 64
+        elif damage == 'preregistered':
+            report['dataset']['preregistered'] = True
+        elif damage == 'full-config':
+            report['dataset']['config'] = train.TrainConfig().as_dict()
+        elif damage == 'wrong-origin':
+            report['dataset']['origin'] = 'rows'
+        elif damage == 'wrong-key':
+            summary['train_key'] = 'f' * 64
+        elif damage.startswith('exit-'):
+            code = {'exit-zero': 0, 'exit-usage': 2, 'exit-blocked': 3}[damage]
+        else:
+            report['tool_git'] = 'unrelated'
+        if damage in ('locked', 'preregistered', 'full-config', 'wrong-origin'):
+            report['report_sha256'] = digest(report, 'report_sha256')
+            summary['report_sha256'] = report['report_sha256']
+        with pytest.raises(transfer().ArtifactError):
+>           transfer().verify_smoke_result(summary, report, code)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'verify_smoke_result'
+
+tests/test_tier_r_training_workflow.py:162: AttributeError
+_ test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[unknown-halt] _
+
+trained = ({'command': 'run', 'gates': {'G0': 'insufficient-data', 'G1': 'insufficient-data', 'G2': 'insufficient-data', 'G3': '...est builds of open-source code; says nothing about Windows system files.', 'contract': 'calibration-report/1', ...}, 1)
+damage = 'unknown-halt'
+
+    @pytest.mark.parametrize('damage', ['leak', 'unknown-halt', 'missing-halt', 'mismatched-summary', 'gate-status',
+                                         'locked', 'preregistered', 'full-config', 'wrong-origin', 'wrong-key',
+                                         'wrong-report-digest', 'exit-zero', 'exit-usage', 'exit-blocked'])
+    def test_smoke_result_check_never_masks_failure_or_uses_a_stale_report(trained, damage):
+        summary, report, code = copy.deepcopy(trained)
+        if damage in ('leak', 'unknown-halt'):
+            summary['halt'].append('PT-KA-LEAK: authored refusal' if damage == 'leak' else 'unexpected processing failure')
+        elif damage == 'missing-halt':
+            summary.pop('halt')
+        elif damage == 'mismatched-summary':
+            summary['report_sha256'] = 'e' * 64
+        elif damage == 'gate-status':
+            summary['gates']['G1'] = 'pass'
+        elif damage == 'locked':
+            report['prereg_sha256'] = 'f' * 64
+        elif damage == 'preregistered':
+            report['dataset']['preregistered'] = True
+        elif damage == 'full-config':
+            report['dataset']['config'] = train.TrainConfig().as_dict()
+        elif damage == 'wrong-origin':
+            report['dataset']['origin'] = 'rows'
+        elif damage == 'wrong-key':
+            summary['train_key'] = 'f' * 64
+        elif damage.startswith('exit-'):
+            code = {'exit-zero': 0, 'exit-usage': 2, 'exit-blocked': 3}[damage]
+        else:
+            report['tool_git'] = 'unrelated'
+        if damage in ('locked', 'preregistered', 'full-config', 'wrong-origin'):
+            report['report_sha256'] = digest(report, 'report_sha256')
+            summary['report_sha256'] = report['report_sha256']
+        with pytest.raises(transfer().ArtifactError):
+>           transfer().verify_smoke_result(summary, report, code)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'verify_smoke_result'
+
+tests/test_tier_r_training_workflow.py:162: AttributeError
+_ test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[missing-halt] _
+
+trained = ({'command': 'run', 'gates': {'G0': 'insufficient-data', 'G1': 'insufficient-data', 'G2': 'insufficient-data', 'G3': '...est builds of open-source code; says nothing about Windows system files.', 'contract': 'calibration-report/1', ...}, 1)
+damage = 'missing-halt'
+
+    @pytest.mark.parametrize('damage', ['leak', 'unknown-halt', 'missing-halt', 'mismatched-summary', 'gate-status',
+                                         'locked', 'preregistered', 'full-config', 'wrong-origin', 'wrong-key',
+                                         'wrong-report-digest', 'exit-zero', 'exit-usage', 'exit-blocked'])
+    def test_smoke_result_check_never_masks_failure_or_uses_a_stale_report(trained, damage):
+        summary, report, code = copy.deepcopy(trained)
+        if damage in ('leak', 'unknown-halt'):
+            summary['halt'].append('PT-KA-LEAK: authored refusal' if damage == 'leak' else 'unexpected processing failure')
+        elif damage == 'missing-halt':
+            summary.pop('halt')
+        elif damage == 'mismatched-summary':
+            summary['report_sha256'] = 'e' * 64
+        elif damage == 'gate-status':
+            summary['gates']['G1'] = 'pass'
+        elif damage == 'locked':
+            report['prereg_sha256'] = 'f' * 64
+        elif damage == 'preregistered':
+            report['dataset']['preregistered'] = True
+        elif damage == 'full-config':
+            report['dataset']['config'] = train.TrainConfig().as_dict()
+        elif damage == 'wrong-origin':
+            report['dataset']['origin'] = 'rows'
+        elif damage == 'wrong-key':
+            summary['train_key'] = 'f' * 64
+        elif damage.startswith('exit-'):
+            code = {'exit-zero': 0, 'exit-usage': 2, 'exit-blocked': 3}[damage]
+        else:
+            report['tool_git'] = 'unrelated'
+        if damage in ('locked', 'preregistered', 'full-config', 'wrong-origin'):
+            report['report_sha256'] = digest(report, 'report_sha256')
+            summary['report_sha256'] = report['report_sha256']
+        with pytest.raises(transfer().ArtifactError):
+>           transfer().verify_smoke_result(summary, report, code)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'verify_smoke_result'
+
+tests/test_tier_r_training_workflow.py:162: AttributeError
+_ test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[mismatched-summary] _
+
+trained = ({'command': 'run', 'gates': {'G0': 'insufficient-data', 'G1': 'insufficient-data', 'G2': 'insufficient-data', 'G3': '...est builds of open-source code; says nothing about Windows system files.', 'contract': 'calibration-report/1', ...}, 1)
+damage = 'mismatched-summary'
+
+    @pytest.mark.parametrize('damage', ['leak', 'unknown-halt', 'missing-halt', 'mismatched-summary', 'gate-status',
+                                         'locked', 'preregistered', 'full-config', 'wrong-origin', 'wrong-key',
+                                         'wrong-report-digest', 'exit-zero', 'exit-usage', 'exit-blocked'])
+    def test_smoke_result_check_never_masks_failure_or_uses_a_stale_report(trained, damage):
+        summary, report, code = copy.deepcopy(trained)
+        if damage in ('leak', 'unknown-halt'):
+            summary['halt'].append('PT-KA-LEAK: authored refusal' if damage == 'leak' else 'unexpected processing failure')
+        elif damage == 'missing-halt':
+            summary.pop('halt')
+        elif damage == 'mismatched-summary':
+            summary['report_sha256'] = 'e' * 64
+        elif damage == 'gate-status':
+            summary['gates']['G1'] = 'pass'
+        elif damage == 'locked':
+            report['prereg_sha256'] = 'f' * 64
+        elif damage == 'preregistered':
+            report['dataset']['preregistered'] = True
+        elif damage == 'full-config':
+            report['dataset']['config'] = train.TrainConfig().as_dict()
+        elif damage == 'wrong-origin':
+            report['dataset']['origin'] = 'rows'
+        elif damage == 'wrong-key':
+            summary['train_key'] = 'f' * 64
+        elif damage.startswith('exit-'):
+            code = {'exit-zero': 0, 'exit-usage': 2, 'exit-blocked': 3}[damage]
+        else:
+            report['tool_git'] = 'unrelated'
+        if damage in ('locked', 'preregistered', 'full-config', 'wrong-origin'):
+            report['report_sha256'] = digest(report, 'report_sha256')
+            summary['report_sha256'] = report['report_sha256']
+        with pytest.raises(transfer().ArtifactError):
+>           transfer().verify_smoke_result(summary, report, code)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'verify_smoke_result'
+
+tests/test_tier_r_training_workflow.py:162: AttributeError
+_ test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[gate-status] _
+
+trained = ({'command': 'run', 'gates': {'G0': 'insufficient-data', 'G1': 'insufficient-data', 'G2': 'insufficient-data', 'G3': '...est builds of open-source code; says nothing about Windows system files.', 'contract': 'calibration-report/1', ...}, 1)
+damage = 'gate-status'
+
+    @pytest.mark.parametrize('damage', ['leak', 'unknown-halt', 'missing-halt', 'mismatched-summary', 'gate-status',
+                                         'locked', 'preregistered', 'full-config', 'wrong-origin', 'wrong-key',
+                                         'wrong-report-digest', 'exit-zero', 'exit-usage', 'exit-blocked'])
+    def test_smoke_result_check_never_masks_failure_or_uses_a_stale_report(trained, damage):
+        summary, report, code = copy.deepcopy(trained)
+        if damage in ('leak', 'unknown-halt'):
+            summary['halt'].append('PT-KA-LEAK: authored refusal' if damage == 'leak' else 'unexpected processing failure')
+        elif damage == 'missing-halt':
+            summary.pop('halt')
+        elif damage == 'mismatched-summary':
+            summary['report_sha256'] = 'e' * 64
+        elif damage == 'gate-status':
+            summary['gates']['G1'] = 'pass'
+        elif damage == 'locked':
+            report['prereg_sha256'] = 'f' * 64
+        elif damage == 'preregistered':
+            report['dataset']['preregistered'] = True
+        elif damage == 'full-config':
+            report['dataset']['config'] = train.TrainConfig().as_dict()
+        elif damage == 'wrong-origin':
+            report['dataset']['origin'] = 'rows'
+        elif damage == 'wrong-key':
+            summary['train_key'] = 'f' * 64
+        elif damage.startswith('exit-'):
+            code = {'exit-zero': 0, 'exit-usage': 2, 'exit-blocked': 3}[damage]
+        else:
+            report['tool_git'] = 'unrelated'
+        if damage in ('locked', 'preregistered', 'full-config', 'wrong-origin'):
+            report['report_sha256'] = digest(report, 'report_sha256')
+            summary['report_sha256'] = report['report_sha256']
+        with pytest.raises(transfer().ArtifactError):
+>           transfer().verify_smoke_result(summary, report, code)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'verify_smoke_result'
+
+tests/test_tier_r_training_workflow.py:162: AttributeError
+__ test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[locked] __
+
+trained = ({'command': 'run', 'gates': {'G0': 'insufficient-data', 'G1': 'insufficient-data', 'G2': 'insufficient-data', 'G3': '...est builds of open-source code; says nothing about Windows system files.', 'contract': 'calibration-report/1', ...}, 1)
+damage = 'locked'
+
+    @pytest.mark.parametrize('damage', ['leak', 'unknown-halt', 'missing-halt', 'mismatched-summary', 'gate-status',
+                                         'locked', 'preregistered', 'full-config', 'wrong-origin', 'wrong-key',
+                                         'wrong-report-digest', 'exit-zero', 'exit-usage', 'exit-blocked'])
+    def test_smoke_result_check_never_masks_failure_or_uses_a_stale_report(trained, damage):
+        summary, report, code = copy.deepcopy(trained)
+        if damage in ('leak', 'unknown-halt'):
+            summary['halt'].append('PT-KA-LEAK: authored refusal' if damage == 'leak' else 'unexpected processing failure')
+        elif damage == 'missing-halt':
+            summary.pop('halt')
+        elif damage == 'mismatched-summary':
+            summary['report_sha256'] = 'e' * 64
+        elif damage == 'gate-status':
+            summary['gates']['G1'] = 'pass'
+        elif damage == 'locked':
+            report['prereg_sha256'] = 'f' * 64
+        elif damage == 'preregistered':
+            report['dataset']['preregistered'] = True
+        elif damage == 'full-config':
+            report['dataset']['config'] = train.TrainConfig().as_dict()
+        elif damage == 'wrong-origin':
+            report['dataset']['origin'] = 'rows'
+        elif damage == 'wrong-key':
+            summary['train_key'] = 'f' * 64
+        elif damage.startswith('exit-'):
+            code = {'exit-zero': 0, 'exit-usage': 2, 'exit-blocked': 3}[damage]
+        else:
+            report['tool_git'] = 'unrelated'
+        if damage in ('locked', 'preregistered', 'full-config', 'wrong-origin'):
+            report['report_sha256'] = digest(report, 'report_sha256')
+            summary['report_sha256'] = report['report_sha256']
+        with pytest.raises(transfer().ArtifactError):
+>           transfer().verify_smoke_result(summary, report, code)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'verify_smoke_result'
+
+tests/test_tier_r_training_workflow.py:162: AttributeError
+_ test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[preregistered] _
+
+trained = ({'command': 'run', 'gates': {'G0': 'insufficient-data', 'G1': 'insufficient-data', 'G2': 'insufficient-data', 'G3': '...est builds of open-source code; says nothing about Windows system files.', 'contract': 'calibration-report/1', ...}, 1)
+damage = 'preregistered'
+
+    @pytest.mark.parametrize('damage', ['leak', 'unknown-halt', 'missing-halt', 'mismatched-summary', 'gate-status',
+                                         'locked', 'preregistered', 'full-config', 'wrong-origin', 'wrong-key',
+                                         'wrong-report-digest', 'exit-zero', 'exit-usage', 'exit-blocked'])
+    def test_smoke_result_check_never_masks_failure_or_uses_a_stale_report(trained, damage):
+        summary, report, code = copy.deepcopy(trained)
+        if damage in ('leak', 'unknown-halt'):
+            summary['halt'].append('PT-KA-LEAK: authored refusal' if damage == 'leak' else 'unexpected processing failure')
+        elif damage == 'missing-halt':
+            summary.pop('halt')
+        elif damage == 'mismatched-summary':
+            summary['report_sha256'] = 'e' * 64
+        elif damage == 'gate-status':
+            summary['gates']['G1'] = 'pass'
+        elif damage == 'locked':
+            report['prereg_sha256'] = 'f' * 64
+        elif damage == 'preregistered':
+            report['dataset']['preregistered'] = True
+        elif damage == 'full-config':
+            report['dataset']['config'] = train.TrainConfig().as_dict()
+        elif damage == 'wrong-origin':
+            report['dataset']['origin'] = 'rows'
+        elif damage == 'wrong-key':
+            summary['train_key'] = 'f' * 64
+        elif damage.startswith('exit-'):
+            code = {'exit-zero': 0, 'exit-usage': 2, 'exit-blocked': 3}[damage]
+        else:
+            report['tool_git'] = 'unrelated'
+        if damage in ('locked', 'preregistered', 'full-config', 'wrong-origin'):
+            report['report_sha256'] = digest(report, 'report_sha256')
+            summary['report_sha256'] = report['report_sha256']
+        with pytest.raises(transfer().ArtifactError):
+>           transfer().verify_smoke_result(summary, report, code)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'verify_smoke_result'
+
+tests/test_tier_r_training_workflow.py:162: AttributeError
+_ test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[full-config] _
+
+trained = ({'command': 'run', 'gates': {'G0': 'insufficient-data', 'G1': 'insufficient-data', 'G2': 'insufficient-data', 'G3': '...est builds of open-source code; says nothing about Windows system files.', 'contract': 'calibration-report/1', ...}, 1)
+damage = 'full-config'
+
+    @pytest.mark.parametrize('damage', ['leak', 'unknown-halt', 'missing-halt', 'mismatched-summary', 'gate-status',
+                                         'locked', 'preregistered', 'full-config', 'wrong-origin', 'wrong-key',
+                                         'wrong-report-digest', 'exit-zero', 'exit-usage', 'exit-blocked'])
+    def test_smoke_result_check_never_masks_failure_or_uses_a_stale_report(trained, damage):
+        summary, report, code = copy.deepcopy(trained)
+        if damage in ('leak', 'unknown-halt'):
+            summary['halt'].append('PT-KA-LEAK: authored refusal' if damage == 'leak' else 'unexpected processing failure')
+        elif damage == 'missing-halt':
+            summary.pop('halt')
+        elif damage == 'mismatched-summary':
+            summary['report_sha256'] = 'e' * 64
+        elif damage == 'gate-status':
+            summary['gates']['G1'] = 'pass'
+        elif damage == 'locked':
+            report['prereg_sha256'] = 'f' * 64
+        elif damage == 'preregistered':
+            report['dataset']['preregistered'] = True
+        elif damage == 'full-config':
+            report['dataset']['config'] = train.TrainConfig().as_dict()
+        elif damage == 'wrong-origin':
+            report['dataset']['origin'] = 'rows'
+        elif damage == 'wrong-key':
+            summary['train_key'] = 'f' * 64
+        elif damage.startswith('exit-'):
+            code = {'exit-zero': 0, 'exit-usage': 2, 'exit-blocked': 3}[damage]
+        else:
+            report['tool_git'] = 'unrelated'
+        if damage in ('locked', 'preregistered', 'full-config', 'wrong-origin'):
+            report['report_sha256'] = digest(report, 'report_sha256')
+            summary['report_sha256'] = report['report_sha256']
+        with pytest.raises(transfer().ArtifactError):
+>           transfer().verify_smoke_result(summary, report, code)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'verify_smoke_result'
+
+tests/test_tier_r_training_workflow.py:162: AttributeError
+_ test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[wrong-origin] _
+
+trained = ({'command': 'run', 'gates': {'G0': 'insufficient-data', 'G1': 'insufficient-data', 'G2': 'insufficient-data', 'G3': '...est builds of open-source code; says nothing about Windows system files.', 'contract': 'calibration-report/1', ...}, 1)
+damage = 'wrong-origin'
+
+    @pytest.mark.parametrize('damage', ['leak', 'unknown-halt', 'missing-halt', 'mismatched-summary', 'gate-status',
+                                         'locked', 'preregistered', 'full-config', 'wrong-origin', 'wrong-key',
+                                         'wrong-report-digest', 'exit-zero', 'exit-usage', 'exit-blocked'])
+    def test_smoke_result_check_never_masks_failure_or_uses_a_stale_report(trained, damage):
+        summary, report, code = copy.deepcopy(trained)
+        if damage in ('leak', 'unknown-halt'):
+            summary['halt'].append('PT-KA-LEAK: authored refusal' if damage == 'leak' else 'unexpected processing failure')
+        elif damage == 'missing-halt':
+            summary.pop('halt')
+        elif damage == 'mismatched-summary':
+            summary['report_sha256'] = 'e' * 64
+        elif damage == 'gate-status':
+            summary['gates']['G1'] = 'pass'
+        elif damage == 'locked':
+            report['prereg_sha256'] = 'f' * 64
+        elif damage == 'preregistered':
+            report['dataset']['preregistered'] = True
+        elif damage == 'full-config':
+            report['dataset']['config'] = train.TrainConfig().as_dict()
+        elif damage == 'wrong-origin':
+            report['dataset']['origin'] = 'rows'
+        elif damage == 'wrong-key':
+            summary['train_key'] = 'f' * 64
+        elif damage.startswith('exit-'):
+            code = {'exit-zero': 0, 'exit-usage': 2, 'exit-blocked': 3}[damage]
+        else:
+            report['tool_git'] = 'unrelated'
+        if damage in ('locked', 'preregistered', 'full-config', 'wrong-origin'):
+            report['report_sha256'] = digest(report, 'report_sha256')
+            summary['report_sha256'] = report['report_sha256']
+        with pytest.raises(transfer().ArtifactError):
+>           transfer().verify_smoke_result(summary, report, code)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'verify_smoke_result'
+
+tests/test_tier_r_training_workflow.py:162: AttributeError
+_ test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[wrong-key] _
+
+trained = ({'command': 'run', 'gates': {'G0': 'insufficient-data', 'G1': 'insufficient-data', 'G2': 'insufficient-data', 'G3': '...est builds of open-source code; says nothing about Windows system files.', 'contract': 'calibration-report/1', ...}, 1)
+damage = 'wrong-key'
+
+    @pytest.mark.parametrize('damage', ['leak', 'unknown-halt', 'missing-halt', 'mismatched-summary', 'gate-status',
+                                         'locked', 'preregistered', 'full-config', 'wrong-origin', 'wrong-key',
+                                         'wrong-report-digest', 'exit-zero', 'exit-usage', 'exit-blocked'])
+    def test_smoke_result_check_never_masks_failure_or_uses_a_stale_report(trained, damage):
+        summary, report, code = copy.deepcopy(trained)
+        if damage in ('leak', 'unknown-halt'):
+            summary['halt'].append('PT-KA-LEAK: authored refusal' if damage == 'leak' else 'unexpected processing failure')
+        elif damage == 'missing-halt':
+            summary.pop('halt')
+        elif damage == 'mismatched-summary':
+            summary['report_sha256'] = 'e' * 64
+        elif damage == 'gate-status':
+            summary['gates']['G1'] = 'pass'
+        elif damage == 'locked':
+            report['prereg_sha256'] = 'f' * 64
+        elif damage == 'preregistered':
+            report['dataset']['preregistered'] = True
+        elif damage == 'full-config':
+            report['dataset']['config'] = train.TrainConfig().as_dict()
+        elif damage == 'wrong-origin':
+            report['dataset']['origin'] = 'rows'
+        elif damage == 'wrong-key':
+            summary['train_key'] = 'f' * 64
+        elif damage.startswith('exit-'):
+            code = {'exit-zero': 0, 'exit-usage': 2, 'exit-blocked': 3}[damage]
+        else:
+            report['tool_git'] = 'unrelated'
+        if damage in ('locked', 'preregistered', 'full-config', 'wrong-origin'):
+            report['report_sha256'] = digest(report, 'report_sha256')
+            summary['report_sha256'] = report['report_sha256']
+        with pytest.raises(transfer().ArtifactError):
+>           transfer().verify_smoke_result(summary, report, code)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'verify_smoke_result'
+
+tests/test_tier_r_training_workflow.py:162: AttributeError
+_ test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[wrong-report-digest] _
+
+trained = ({'command': 'run', 'gates': {'G0': 'insufficient-data', 'G1': 'insufficient-data', 'G2': 'insufficient-data', 'G3': '...est builds of open-source code; says nothing about Windows system files.', 'contract': 'calibration-report/1', ...}, 1)
+damage = 'wrong-report-digest'
+
+    @pytest.mark.parametrize('damage', ['leak', 'unknown-halt', 'missing-halt', 'mismatched-summary', 'gate-status',
+                                         'locked', 'preregistered', 'full-config', 'wrong-origin', 'wrong-key',
+                                         'wrong-report-digest', 'exit-zero', 'exit-usage', 'exit-blocked'])
+    def test_smoke_result_check_never_masks_failure_or_uses_a_stale_report(trained, damage):
+        summary, report, code = copy.deepcopy(trained)
+        if damage in ('leak', 'unknown-halt'):
+            summary['halt'].append('PT-KA-LEAK: authored refusal' if damage == 'leak' else 'unexpected processing failure')
+        elif damage == 'missing-halt':
+            summary.pop('halt')
+        elif damage == 'mismatched-summary':
+            summary['report_sha256'] = 'e' * 64
+        elif damage == 'gate-status':
+            summary['gates']['G1'] = 'pass'
+        elif damage == 'locked':
+            report['prereg_sha256'] = 'f' * 64
+        elif damage == 'preregistered':
+            report['dataset']['preregistered'] = True
+        elif damage == 'full-config':
+            report['dataset']['config'] = train.TrainConfig().as_dict()
+        elif damage == 'wrong-origin':
+            report['dataset']['origin'] = 'rows'
+        elif damage == 'wrong-key':
+            summary['train_key'] = 'f' * 64
+        elif damage.startswith('exit-'):
+            code = {'exit-zero': 0, 'exit-usage': 2, 'exit-blocked': 3}[damage]
+        else:
+            report['tool_git'] = 'unrelated'
+        if damage in ('locked', 'preregistered', 'full-config', 'wrong-origin'):
+            report['report_sha256'] = digest(report, 'report_sha256')
+            summary['report_sha256'] = report['report_sha256']
+        with pytest.raises(transfer().ArtifactError):
+>           transfer().verify_smoke_result(summary, report, code)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'verify_smoke_result'
+
+tests/test_tier_r_training_workflow.py:162: AttributeError
+_ test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[exit-zero] _
+
+trained = ({'command': 'run', 'gates': {'G0': 'insufficient-data', 'G1': 'insufficient-data', 'G2': 'insufficient-data', 'G3': '...est builds of open-source code; says nothing about Windows system files.', 'contract': 'calibration-report/1', ...}, 1)
+damage = 'exit-zero'
+
+    @pytest.mark.parametrize('damage', ['leak', 'unknown-halt', 'missing-halt', 'mismatched-summary', 'gate-status',
+                                         'locked', 'preregistered', 'full-config', 'wrong-origin', 'wrong-key',
+                                         'wrong-report-digest', 'exit-zero', 'exit-usage', 'exit-blocked'])
+    def test_smoke_result_check_never_masks_failure_or_uses_a_stale_report(trained, damage):
+        summary, report, code = copy.deepcopy(trained)
+        if damage in ('leak', 'unknown-halt'):
+            summary['halt'].append('PT-KA-LEAK: authored refusal' if damage == 'leak' else 'unexpected processing failure')
+        elif damage == 'missing-halt':
+            summary.pop('halt')
+        elif damage == 'mismatched-summary':
+            summary['report_sha256'] = 'e' * 64
+        elif damage == 'gate-status':
+            summary['gates']['G1'] = 'pass'
+        elif damage == 'locked':
+            report['prereg_sha256'] = 'f' * 64
+        elif damage == 'preregistered':
+            report['dataset']['preregistered'] = True
+        elif damage == 'full-config':
+            report['dataset']['config'] = train.TrainConfig().as_dict()
+        elif damage == 'wrong-origin':
+            report['dataset']['origin'] = 'rows'
+        elif damage == 'wrong-key':
+            summary['train_key'] = 'f' * 64
+        elif damage.startswith('exit-'):
+            code = {'exit-zero': 0, 'exit-usage': 2, 'exit-blocked': 3}[damage]
+        else:
+            report['tool_git'] = 'unrelated'
+        if damage in ('locked', 'preregistered', 'full-config', 'wrong-origin'):
+            report['report_sha256'] = digest(report, 'report_sha256')
+            summary['report_sha256'] = report['report_sha256']
+        with pytest.raises(transfer().ArtifactError):
+>           transfer().verify_smoke_result(summary, report, code)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'verify_smoke_result'
+
+tests/test_tier_r_training_workflow.py:162: AttributeError
+_ test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[exit-usage] _
+
+trained = ({'command': 'run', 'gates': {'G0': 'insufficient-data', 'G1': 'insufficient-data', 'G2': 'insufficient-data', 'G3': '...est builds of open-source code; says nothing about Windows system files.', 'contract': 'calibration-report/1', ...}, 1)
+damage = 'exit-usage'
+
+    @pytest.mark.parametrize('damage', ['leak', 'unknown-halt', 'missing-halt', 'mismatched-summary', 'gate-status',
+                                         'locked', 'preregistered', 'full-config', 'wrong-origin', 'wrong-key',
+                                         'wrong-report-digest', 'exit-zero', 'exit-usage', 'exit-blocked'])
+    def test_smoke_result_check_never_masks_failure_or_uses_a_stale_report(trained, damage):
+        summary, report, code = copy.deepcopy(trained)
+        if damage in ('leak', 'unknown-halt'):
+            summary['halt'].append('PT-KA-LEAK: authored refusal' if damage == 'leak' else 'unexpected processing failure')
+        elif damage == 'missing-halt':
+            summary.pop('halt')
+        elif damage == 'mismatched-summary':
+            summary['report_sha256'] = 'e' * 64
+        elif damage == 'gate-status':
+            summary['gates']['G1'] = 'pass'
+        elif damage == 'locked':
+            report['prereg_sha256'] = 'f' * 64
+        elif damage == 'preregistered':
+            report['dataset']['preregistered'] = True
+        elif damage == 'full-config':
+            report['dataset']['config'] = train.TrainConfig().as_dict()
+        elif damage == 'wrong-origin':
+            report['dataset']['origin'] = 'rows'
+        elif damage == 'wrong-key':
+            summary['train_key'] = 'f' * 64
+        elif damage.startswith('exit-'):
+            code = {'exit-zero': 0, 'exit-usage': 2, 'exit-blocked': 3}[damage]
+        else:
+            report['tool_git'] = 'unrelated'
+        if damage in ('locked', 'preregistered', 'full-config', 'wrong-origin'):
+            report['report_sha256'] = digest(report, 'report_sha256')
+            summary['report_sha256'] = report['report_sha256']
+        with pytest.raises(transfer().ArtifactError):
+>           transfer().verify_smoke_result(summary, report, code)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'verify_smoke_result'
+
+tests/test_tier_r_training_workflow.py:162: AttributeError
+_ test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[exit-blocked] _
+
+trained = ({'command': 'run', 'gates': {'G0': 'insufficient-data', 'G1': 'insufficient-data', 'G2': 'insufficient-data', 'G3': '...est builds of open-source code; says nothing about Windows system files.', 'contract': 'calibration-report/1', ...}, 1)
+damage = 'exit-blocked'
+
+    @pytest.mark.parametrize('damage', ['leak', 'unknown-halt', 'missing-halt', 'mismatched-summary', 'gate-status',
+                                         'locked', 'preregistered', 'full-config', 'wrong-origin', 'wrong-key',
+                                         'wrong-report-digest', 'exit-zero', 'exit-usage', 'exit-blocked'])
+    def test_smoke_result_check_never_masks_failure_or_uses_a_stale_report(trained, damage):
+        summary, report, code = copy.deepcopy(trained)
+        if damage in ('leak', 'unknown-halt'):
+            summary['halt'].append('PT-KA-LEAK: authored refusal' if damage == 'leak' else 'unexpected processing failure')
+        elif damage == 'missing-halt':
+            summary.pop('halt')
+        elif damage == 'mismatched-summary':
+            summary['report_sha256'] = 'e' * 64
+        elif damage == 'gate-status':
+            summary['gates']['G1'] = 'pass'
+        elif damage == 'locked':
+            report['prereg_sha256'] = 'f' * 64
+        elif damage == 'preregistered':
+            report['dataset']['preregistered'] = True
+        elif damage == 'full-config':
+            report['dataset']['config'] = train.TrainConfig().as_dict()
+        elif damage == 'wrong-origin':
+            report['dataset']['origin'] = 'rows'
+        elif damage == 'wrong-key':
+            summary['train_key'] = 'f' * 64
+        elif damage.startswith('exit-'):
+            code = {'exit-zero': 0, 'exit-usage': 2, 'exit-blocked': 3}[damage]
+        else:
+            report['tool_git'] = 'unrelated'
+        if damage in ('locked', 'preregistered', 'full-config', 'wrong-origin'):
+            report['report_sha256'] = digest(report, 'report_sha256')
+            summary['report_sha256'] = report['report_sha256']
+        with pytest.raises(transfer().ArtifactError):
+>           transfer().verify_smoke_result(summary, report, code)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'verify_smoke_result'
+
+tests/test_tier_r_training_workflow.py:162: AttributeError
+_ test_actual_workflow_shell_reaches_report_or_stops_before_training[complete-smoke] _
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-96/test_actual_workflow_shell_rea0')
+corrupt = False
+
+    @pytest.mark.parametrize('corrupt', [False, True], ids=['complete-smoke', 'missing-managed-marker'])
+    def test_actual_workflow_shell_reaches_report_or_stops_before_training(batch, tmp_path, corrupt):
+        consolidate(batch)
+        work = tmp_path / 'workflow-workspace'
+        verified = work / 'verified'
+        verified.mkdir(parents=True)
+        batch[2].rename(verified / 'training')
+        S.write_merge(batch[3], batch[4], verified)
+        if corrupt:
+            (verified / 'training' / 'outputs' / OS.MANAGED_MARKER).unlink()
+>       verify, run = training_scripts()
+                      ^^^^^^^^^^^^^^^^^^
+
+tests/test_tier_r_training_workflow.py:175: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def training_scripts():
+>       steps = workflow()['jobs']['train']['steps']
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'train'
+
+tests/test_tier_r_training_workflow.py:76: KeyError
+_ test_actual_workflow_shell_reaches_report_or_stops_before_training[missing-managed-marker] _
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-96/test_actual_workflow_shell_rea1')
+corrupt = True
+
+    @pytest.mark.parametrize('corrupt', [False, True], ids=['complete-smoke', 'missing-managed-marker'])
+    def test_actual_workflow_shell_reaches_report_or_stops_before_training(batch, tmp_path, corrupt):
+        consolidate(batch)
+        work = tmp_path / 'workflow-workspace'
+        verified = work / 'verified'
+        verified.mkdir(parents=True)
+        batch[2].rename(verified / 'training')
+        S.write_merge(batch[3], batch[4], verified)
+        if corrupt:
+            (verified / 'training' / 'outputs' / OS.MANAGED_MARKER).unlink()
+>       verify, run = training_scripts()
+                      ^^^^^^^^^^^^^^^^^^
+
+tests/test_tier_r_training_workflow.py:175: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def training_scripts():
+>       steps = workflow()['jobs']['train']['steps']
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'train'
+
+tests/test_tier_r_training_workflow.py:76: KeyError
+=========================== short test summary info ============================
+FAILED tests/test_tier_r_training_workflow.py::test_training_requires_explicit_boolean_dispatch_and_both_successful_jobs
+FAILED tests/test_tier_r_training_workflow.py::test_shard_upload_has_only_the_completed_root_and_keeps_managed_marker
+FAILED tests/test_tier_r_training_workflow.py::test_merge_keeps_shard_roots_and_publishes_only_verified_consolidation
+FAILED tests/test_tier_r_training_workflow.py::test_training_verifies_before_consumption_and_has_no_lock_or_preregistration_input
+FAILED tests/test_tier_r_training_workflow.py::test_existing_training_cli_yields_a_verified_unlocked_insufficient_data_report
+FAILED tests/test_tier_r_training_workflow.py::test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[leak]
+FAILED tests/test_tier_r_training_workflow.py::test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[unknown-halt]
+FAILED tests/test_tier_r_training_workflow.py::test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[missing-halt]
+FAILED tests/test_tier_r_training_workflow.py::test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[mismatched-summary]
+FAILED tests/test_tier_r_training_workflow.py::test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[gate-status]
+FAILED tests/test_tier_r_training_workflow.py::test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[locked]
+FAILED tests/test_tier_r_training_workflow.py::test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[preregistered]
+FAILED tests/test_tier_r_training_workflow.py::test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[full-config]
+FAILED tests/test_tier_r_training_workflow.py::test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[wrong-origin]
+FAILED tests/test_tier_r_training_workflow.py::test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[wrong-key]
+FAILED tests/test_tier_r_training_workflow.py::test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[wrong-report-digest]
+FAILED tests/test_tier_r_training_workflow.py::test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[exit-zero]
+FAILED tests/test_tier_r_training_workflow.py::test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[exit-usage]
+FAILED tests/test_tier_r_training_workflow.py::test_smoke_result_check_never_masks_failure_or_uses_a_stale_report[exit-blocked]
+FAILED tests/test_tier_r_training_workflow.py::test_actual_workflow_shell_reaches_report_or_stops_before_training[complete-smoke]
+FAILED tests/test_tier_r_training_workflow.py::test_actual_workflow_shell_reaches_report_or_stops_before_training[missing-managed-marker]
+21 failed in 2.99s

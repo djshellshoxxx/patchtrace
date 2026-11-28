@@ -1,0 +1,145 @@
+{
+  "$defs": {
+    "ArtifactFile": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "size": {
+          "maximum": 67108864,
+          "minimum": 0,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "path",
+        "size",
+        "sha256"
+      ],
+      "title": "ArtifactFile",
+      "type": "object"
+    },
+    "ShardOwner": {
+      "additionalProperties": false,
+      "properties": {
+        "of": {
+          "maximum": 256,
+          "minimum": 1,
+          "title": "Of",
+          "type": "integer"
+        },
+        "plan_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Plan Sha256",
+          "type": "string"
+        },
+        "reports": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "maxItems": 10000,
+          "minItems": 1,
+          "title": "Reports",
+          "type": "array"
+        },
+        "shard": {
+          "exclusiveMaximum": 256,
+          "minimum": 0,
+          "title": "Shard",
+          "type": "integer"
+        },
+        "shard_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Shard Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "shard",
+        "of",
+        "plan_sha256",
+        "shard_sha256",
+        "reports"
+      ],
+      "title": "ShardOwner",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/tier-r-training-artifacts/1/TrainingArtifacts.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "aggregate_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Aggregate Sha256"
+    },
+    "contract": {
+      "const": "tier-r-training-artifacts/1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "files": {
+      "items": {
+        "$ref": "#/$defs/ArtifactFile"
+      },
+      "maxItems": 10000,
+      "title": "Files",
+      "type": "array"
+    },
+    "manifest_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Manifest Sha256",
+      "type": "string"
+    },
+    "merge_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Merge Sha256"
+    },
+    "shards": {
+      "items": {
+        "$ref": "#/$defs/ShardOwner"
+      },
+      "maxItems": 256,
+      "minItems": 1,
+      "title": "Shards",
+      "type": "array"
+    }
+  },
+  "required": [
+    "contract",
+    "shards",
+    "files",
+    "manifest_sha256"
+  ],
+  "title": "TrainingArtifacts",
+  "type": "object"
+}

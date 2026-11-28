@@ -1,0 +1,785 @@
+FFFFFFFFFFFFFFFFFFFFFF                                                   [100%]
+=================================== FAILURES ===================================
+_ test_exact_evaluator_bytes_and_complete_credit_reach_actual_training_reader __
+
+produced = (PosixPath('/tmp/pytest-of-agent/pytest-77/test_exact_evaluator_bytes_and0/store'), PosixPath('/tmp/pytest-of-agent/py...rd': 0, 'of': 1, 'seed': 1, ...}, PosixPath('/tmp/pytest-of-agent/pytest-77/test_exact_evaluator_bytes_and0/artifact'))
+
+    def test_exact_evaluator_bytes_and_complete_credit_reach_actual_training_reader(produced):
+        store, output, document, destination = produced
+        before = {p.relative_to(store): p.read_bytes() for p in store.rglob('*.json')}
+>       manifest, _ = exported(produced)
+                      ^^^^^^^^^^^^^^^^^^
+
+tests/test_tier_r_training_artifacts.py:50: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_tier_r_training_artifacts.py:43: in exported
+    manifest = transfer().export_training_artifacts(document, store / 'labels', [output], destination)
+               ^^^^^^^^^^
+tests/test_tier_r_training_artifacts.py:20: in transfer
+    return importlib.import_module('tools.calibration.tier_r.training_artifacts')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'tools.calibration.tier_r.training_artifacts'
+import_ = <function _gcd_import at 0x7f2ceae6c0e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'tools.calibration.tier_r.training_artifacts'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+_ test_transfer_cannot_infer_credit_from_a_loose_output_folder[.tier-r-output-run.json] _
+
+produced = (PosixPath('/tmp/pytest-of-agent/pytest-77/test_transfer_cannot_infer_cre0/store'), PosixPath('/tmp/pytest-of-agent/py...rd': 0, 'of': 1, 'seed': 1, ...}, PosixPath('/tmp/pytest-of-agent/pytest-77/test_transfer_cannot_infer_cre0/artifact'))
+missing = '.tier-r-output-run.json'
+
+    @pytest.mark.parametrize('missing', [OS.MANAGED_MARKER, OS.CREDIT_FILE])
+    def test_transfer_cannot_infer_credit_from_a_loose_output_folder(produced, missing):
+        _store, output, _document, destination = produced
+        (output / missing).unlink()
+>       with pytest.raises(transfer().ArtifactError):
+                           ^^^^^^^^^^
+
+tests/test_tier_r_training_artifacts.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_tier_r_training_artifacts.py:20: in transfer
+    return importlib.import_module('tools.calibration.tier_r.training_artifacts')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'tools.calibration.tier_r.training_artifacts'
+import_ = <function _gcd_import at 0x7f2ceae6c0e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'tools.calibration.tier_r.training_artifacts'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+_ test_transfer_cannot_infer_credit_from_a_loose_output_folder[output-credits.json] _
+
+produced = (PosixPath('/tmp/pytest-of-agent/pytest-77/test_transfer_cannot_infer_cre1/store'), PosixPath('/tmp/pytest-of-agent/py...rd': 0, 'of': 1, 'seed': 1, ...}, PosixPath('/tmp/pytest-of-agent/pytest-77/test_transfer_cannot_infer_cre1/artifact'))
+missing = 'output-credits.json'
+
+    @pytest.mark.parametrize('missing', [OS.MANAGED_MARKER, OS.CREDIT_FILE])
+    def test_transfer_cannot_infer_credit_from_a_loose_output_folder(produced, missing):
+        _store, output, _document, destination = produced
+        (output / missing).unlink()
+>       with pytest.raises(transfer().ArtifactError):
+                           ^^^^^^^^^^
+
+tests/test_tier_r_training_artifacts.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_tier_r_training_artifacts.py:20: in transfer
+    return importlib.import_module('tools.calibration.tier_r.training_artifacts')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'tools.calibration.tier_r.training_artifacts'
+import_ = <function _gcd_import at 0x7f2ceae6c0e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'tools.calibration.tier_r.training_artifacts'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+_ test_incomplete_or_failed_run_never_becomes_a_completed_artifact[.tier-r-output-incomplete.json] _
+
+produced = (PosixPath('/tmp/pytest-of-agent/pytest-77/test_incomplete_or_failed_run_0/store'), PosixPath('/tmp/pytest-of-agent/py...rd': 0, 'of': 1, 'seed': 1, ...}, PosixPath('/tmp/pytest-of-agent/pytest-77/test_incomplete_or_failed_run_0/artifact'))
+failure = '.tier-r-output-incomplete.json'
+
+    @pytest.mark.parametrize('failure', [OS.COMPLETION_FILE, OS.FAILURE_FILE, OS.UNCREDITED_REPORT])
+    def test_incomplete_or_failed_run_never_becomes_a_completed_artifact(produced, failure):
+        _store, output, _document, destination = produced
+        (output / failure).write_bytes(b'{}')
+>       with pytest.raises(transfer().ArtifactError):
+                           ^^^^^^^^^^
+
+tests/test_tier_r_training_artifacts.py:77: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_tier_r_training_artifacts.py:20: in transfer
+    return importlib.import_module('tools.calibration.tier_r.training_artifacts')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'tools.calibration.tier_r.training_artifacts'
+import_ = <function _gcd_import at 0x7f2ceae6c0e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'tools.calibration.tier_r.training_artifacts'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+_ test_incomplete_or_failed_run_never_becomes_a_completed_artifact[evaluation-failure.json] _
+
+produced = (PosixPath('/tmp/pytest-of-agent/pytest-77/test_incomplete_or_failed_run_1/store'), PosixPath('/tmp/pytest-of-agent/py...rd': 0, 'of': 1, 'seed': 1, ...}, PosixPath('/tmp/pytest-of-agent/pytest-77/test_incomplete_or_failed_run_1/artifact'))
+failure = 'evaluation-failure.json'
+
+    @pytest.mark.parametrize('failure', [OS.COMPLETION_FILE, OS.FAILURE_FILE, OS.UNCREDITED_REPORT])
+    def test_incomplete_or_failed_run_never_becomes_a_completed_artifact(produced, failure):
+        _store, output, _document, destination = produced
+        (output / failure).write_bytes(b'{}')
+>       with pytest.raises(transfer().ArtifactError):
+                           ^^^^^^^^^^
+
+tests/test_tier_r_training_artifacts.py:77: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_tier_r_training_artifacts.py:20: in transfer
+    return importlib.import_module('tools.calibration.tier_r.training_artifacts')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'tools.calibration.tier_r.training_artifacts'
+import_ = <function _gcd_import at 0x7f2ceae6c0e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'tools.calibration.tier_r.training_artifacts'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+_ test_incomplete_or_failed_run_never_becomes_a_completed_artifact[uncredited-report.json] _
+
+produced = (PosixPath('/tmp/pytest-of-agent/pytest-77/test_incomplete_or_failed_run_2/store'), PosixPath('/tmp/pytest-of-agent/py...rd': 0, 'of': 1, 'seed': 1, ...}, PosixPath('/tmp/pytest-of-agent/pytest-77/test_incomplete_or_failed_run_2/artifact'))
+failure = 'uncredited-report.json'
+
+    @pytest.mark.parametrize('failure', [OS.COMPLETION_FILE, OS.FAILURE_FILE, OS.UNCREDITED_REPORT])
+    def test_incomplete_or_failed_run_never_becomes_a_completed_artifact(produced, failure):
+        _store, output, _document, destination = produced
+        (output / failure).write_bytes(b'{}')
+>       with pytest.raises(transfer().ArtifactError):
+                           ^^^^^^^^^^
+
+tests/test_tier_r_training_artifacts.py:77: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_tier_r_training_artifacts.py:20: in transfer
+    return importlib.import_module('tools.calibration.tier_r.training_artifacts')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'tools.calibration.tier_r.training_artifacts'
+import_ = <function _gcd_import at 0x7f2ceae6c0e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'tools.calibration.tier_r.training_artifacts'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+_ test_changed_report_referenced_bytes_refuse_before_destination_creation[label] _
+
+produced = (PosixPath('/tmp/pytest-of-agent/pytest-77/test_changed_report_referenced0/store'), PosixPath('/tmp/pytest-of-agent/py...rd': 0, 'of': 1, 'seed': 1, ...}, PosixPath('/tmp/pytest-of-agent/pytest-77/test_changed_report_referenced0/artifact'))
+kind = 'label'
+
+    @pytest.mark.parametrize('kind', ['label', 'output', 'credit'])
+    def test_changed_report_referenced_bytes_refuse_before_destination_creation(produced, kind):
+        store, output, _document, destination = produced
+        path = {'label': store / 'labels' / f'{LABELS.pair_id}.json',
+                'output': output / OS.output_file_name(LABELS.pair_id, 'rz-diff'),
+                'credit': output / OS.CREDIT_FILE}[kind]
+        path.write_bytes(b'{}')
+>       with pytest.raises(transfer().ArtifactError):
+                           ^^^^^^^^^^
+
+tests/test_tier_r_training_artifacts.py:89: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_tier_r_training_artifacts.py:20: in transfer
+    return importlib.import_module('tools.calibration.tier_r.training_artifacts')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'tools.calibration.tier_r.training_artifacts'
+import_ = <function _gcd_import at 0x7f2ceae6c0e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'tools.calibration.tier_r.training_artifacts'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+_ test_changed_report_referenced_bytes_refuse_before_destination_creation[output] _
+
+produced = (PosixPath('/tmp/pytest-of-agent/pytest-77/test_changed_report_referenced1/store'), PosixPath('/tmp/pytest-of-agent/py...rd': 0, 'of': 1, 'seed': 1, ...}, PosixPath('/tmp/pytest-of-agent/pytest-77/test_changed_report_referenced1/artifact'))
+kind = 'output'
+
+    @pytest.mark.parametrize('kind', ['label', 'output', 'credit'])
+    def test_changed_report_referenced_bytes_refuse_before_destination_creation(produced, kind):
+        store, output, _document, destination = produced
+        path = {'label': store / 'labels' / f'{LABELS.pair_id}.json',
+                'output': output / OS.output_file_name(LABELS.pair_id, 'rz-diff'),
+                'credit': output / OS.CREDIT_FILE}[kind]
+        path.write_bytes(b'{}')
+>       with pytest.raises(transfer().ArtifactError):
+                           ^^^^^^^^^^
+
+tests/test_tier_r_training_artifacts.py:89: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_tier_r_training_artifacts.py:20: in transfer
+    return importlib.import_module('tools.calibration.tier_r.training_artifacts')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'tools.calibration.tier_r.training_artifacts'
+import_ = <function _gcd_import at 0x7f2ceae6c0e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'tools.calibration.tier_r.training_artifacts'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+_ test_changed_report_referenced_bytes_refuse_before_destination_creation[credit] _
+
+produced = (PosixPath('/tmp/pytest-of-agent/pytest-77/test_changed_report_referenced2/store'), PosixPath('/tmp/pytest-of-agent/py...rd': 0, 'of': 1, 'seed': 1, ...}, PosixPath('/tmp/pytest-of-agent/pytest-77/test_changed_report_referenced2/artifact'))
+kind = 'credit'
+
+    @pytest.mark.parametrize('kind', ['label', 'output', 'credit'])
+    def test_changed_report_referenced_bytes_refuse_before_destination_creation(produced, kind):
+        store, output, _document, destination = produced
+        path = {'label': store / 'labels' / f'{LABELS.pair_id}.json',
+                'output': output / OS.output_file_name(LABELS.pair_id, 'rz-diff'),
+                'credit': output / OS.CREDIT_FILE}[kind]
+        path.write_bytes(b'{}')
+>       with pytest.raises(transfer().ArtifactError):
+                           ^^^^^^^^^^
+
+tests/test_tier_r_training_artifacts.py:89: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_tier_r_training_artifacts.py:20: in transfer
+    return importlib.import_module('tools.calibration.tier_r.training_artifacts')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'tools.calibration.tier_r.training_artifacts'
+import_ = <function _gcd_import at 0x7f2ceae6c0e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'tools.calibration.tier_r.training_artifacts'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+_________ test_existing_destination_is_never_adopted_or_changed[file] __________
+
+produced = (PosixPath('/tmp/pytest-of-agent/pytest-77/test_existing_destination_is_n0/store'), PosixPath('/tmp/pytest-of-agent/py...rd': 0, 'of': 1, 'seed': 1, ...}, PosixPath('/tmp/pytest-of-agent/pytest-77/test_existing_destination_is_n0/artifact'))
+kind = 'file'
+
+    @pytest.mark.parametrize('kind', ['file', 'empty-directory', 'occupied-directory'])
+    def test_existing_destination_is_never_adopted_or_changed(produced, kind):
+        _store, _output, _document, destination = produced
+        if kind == 'file':
+            destination.write_bytes(b'earlier evidence')
+        else:
+            destination.mkdir()
+            if kind == 'occupied-directory':
+                (destination / 'earlier.json').write_bytes(b'earlier evidence')
+>       with pytest.raises(transfer().ArtifactError):
+                           ^^^^^^^^^^
+
+tests/test_tier_r_training_artifacts.py:103: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_tier_r_training_artifacts.py:20: in transfer
+    return importlib.import_module('tools.calibration.tier_r.training_artifacts')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'tools.calibration.tier_r.training_artifacts'
+import_ = <function _gcd_import at 0x7f2ceae6c0e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'tools.calibration.tier_r.training_artifacts'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+____ test_existing_destination_is_never_adopted_or_changed[empty-directory] ____
+
+produced = (PosixPath('/tmp/pytest-of-agent/pytest-77/test_existing_destination_is_n1/store'), PosixPath('/tmp/pytest-of-agent/py...rd': 0, 'of': 1, 'seed': 1, ...}, PosixPath('/tmp/pytest-of-agent/pytest-77/test_existing_destination_is_n1/artifact'))
+kind = 'empty-directory'
+
+    @pytest.mark.parametrize('kind', ['file', 'empty-directory', 'occupied-directory'])
+    def test_existing_destination_is_never_adopted_or_changed(produced, kind):
+        _store, _output, _document, destination = produced
+        if kind == 'file':
+            destination.write_bytes(b'earlier evidence')
+        else:
+            destination.mkdir()
+            if kind == 'occupied-directory':
+                (destination / 'earlier.json').write_bytes(b'earlier evidence')
+>       with pytest.raises(transfer().ArtifactError):
+                           ^^^^^^^^^^
+
+tests/test_tier_r_training_artifacts.py:103: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_tier_r_training_artifacts.py:20: in transfer
+    return importlib.import_module('tools.calibration.tier_r.training_artifacts')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'tools.calibration.tier_r.training_artifacts'
+import_ = <function _gcd_import at 0x7f2ceae6c0e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'tools.calibration.tier_r.training_artifacts'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+__ test_existing_destination_is_never_adopted_or_changed[occupied-directory] ___
+
+produced = (PosixPath('/tmp/pytest-of-agent/pytest-77/test_existing_destination_is_n2/store'), PosixPath('/tmp/pytest-of-agent/py...rd': 0, 'of': 1, 'seed': 1, ...}, PosixPath('/tmp/pytest-of-agent/pytest-77/test_existing_destination_is_n2/artifact'))
+kind = 'occupied-directory'
+
+    @pytest.mark.parametrize('kind', ['file', 'empty-directory', 'occupied-directory'])
+    def test_existing_destination_is_never_adopted_or_changed(produced, kind):
+        _store, _output, _document, destination = produced
+        if kind == 'file':
+            destination.write_bytes(b'earlier evidence')
+        else:
+            destination.mkdir()
+            if kind == 'occupied-directory':
+                (destination / 'earlier.json').write_bytes(b'earlier evidence')
+>       with pytest.raises(transfer().ArtifactError):
+                           ^^^^^^^^^^
+
+tests/test_tier_r_training_artifacts.py:103: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_tier_r_training_artifacts.py:20: in transfer
+    return importlib.import_module('tools.calibration.tier_r.training_artifacts')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'tools.calibration.tier_r.training_artifacts'
+import_ = <function _gcd_import at 0x7f2ceae6c0e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'tools.calibration.tier_r.training_artifacts'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+__________ test_unlisted_artifact_members_are_not_ignored[image.dll] ___________
+
+produced = (PosixPath('/tmp/pytest-of-agent/pytest-77/test_unlisted_artifact_members0/store'), PosixPath('/tmp/pytest-of-agent/py...rd': 0, 'of': 1, 'seed': 1, ...}, PosixPath('/tmp/pytest-of-agent/pytest-77/test_unlisted_artifact_members0/artifact'))
+relative = 'image.dll'
+
+    @pytest.mark.parametrize('relative', ['image.dll', 'extra.json', 'outputs/unowned.json', 'labels/unowned.json'])
+    def test_unlisted_artifact_members_are_not_ignored(produced, relative):
+>       _manifest, destination = exported(produced)
+                                 ^^^^^^^^^^^^^^^^^^
+
+tests/test_tier_r_training_artifacts.py:115: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_tier_r_training_artifacts.py:43: in exported
+    manifest = transfer().export_training_artifacts(document, store / 'labels', [output], destination)
+               ^^^^^^^^^^
+tests/test_tier_r_training_artifacts.py:20: in transfer
+    return importlib.import_module('tools.calibration.tier_r.training_artifacts')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'tools.calibration.tier_r.training_artifacts'
+import_ = <function _gcd_import at 0x7f2ceae6c0e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'tools.calibration.tier_r.training_artifacts'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+__________ test_unlisted_artifact_members_are_not_ignored[extra.json] __________
+
+produced = (PosixPath('/tmp/pytest-of-agent/pytest-77/test_unlisted_artifact_members1/store'), PosixPath('/tmp/pytest-of-agent/py...rd': 0, 'of': 1, 'seed': 1, ...}, PosixPath('/tmp/pytest-of-agent/pytest-77/test_unlisted_artifact_members1/artifact'))
+relative = 'extra.json'
+
+    @pytest.mark.parametrize('relative', ['image.dll', 'extra.json', 'outputs/unowned.json', 'labels/unowned.json'])
+    def test_unlisted_artifact_members_are_not_ignored(produced, relative):
+>       _manifest, destination = exported(produced)
+                                 ^^^^^^^^^^^^^^^^^^
+
+tests/test_tier_r_training_artifacts.py:115: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_tier_r_training_artifacts.py:43: in exported
+    manifest = transfer().export_training_artifacts(document, store / 'labels', [output], destination)
+               ^^^^^^^^^^
+tests/test_tier_r_training_artifacts.py:20: in transfer
+    return importlib.import_module('tools.calibration.tier_r.training_artifacts')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'tools.calibration.tier_r.training_artifacts'
+import_ = <function _gcd_import at 0x7f2ceae6c0e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'tools.calibration.tier_r.training_artifacts'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+_____ test_unlisted_artifact_members_are_not_ignored[outputs/unowned.json] _____
+
+produced = (PosixPath('/tmp/pytest-of-agent/pytest-77/test_unlisted_artifact_members2/store'), PosixPath('/tmp/pytest-of-agent/py...rd': 0, 'of': 1, 'seed': 1, ...}, PosixPath('/tmp/pytest-of-agent/pytest-77/test_unlisted_artifact_members2/artifact'))
+relative = 'outputs/unowned.json'
+
+    @pytest.mark.parametrize('relative', ['image.dll', 'extra.json', 'outputs/unowned.json', 'labels/unowned.json'])
+    def test_unlisted_artifact_members_are_not_ignored(produced, relative):
+>       _manifest, destination = exported(produced)
+                                 ^^^^^^^^^^^^^^^^^^
+
+tests/test_tier_r_training_artifacts.py:115: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_tier_r_training_artifacts.py:43: in exported
+    manifest = transfer().export_training_artifacts(document, store / 'labels', [output], destination)
+               ^^^^^^^^^^
+tests/test_tier_r_training_artifacts.py:20: in transfer
+    return importlib.import_module('tools.calibration.tier_r.training_artifacts')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'tools.calibration.tier_r.training_artifacts'
+import_ = <function _gcd_import at 0x7f2ceae6c0e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'tools.calibration.tier_r.training_artifacts'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+_____ test_unlisted_artifact_members_are_not_ignored[labels/unowned.json] ______
+
+produced = (PosixPath('/tmp/pytest-of-agent/pytest-77/test_unlisted_artifact_members3/store'), PosixPath('/tmp/pytest-of-agent/py...rd': 0, 'of': 1, 'seed': 1, ...}, PosixPath('/tmp/pytest-of-agent/pytest-77/test_unlisted_artifact_members3/artifact'))
+relative = 'labels/unowned.json'
+
+    @pytest.mark.parametrize('relative', ['image.dll', 'extra.json', 'outputs/unowned.json', 'labels/unowned.json'])
+    def test_unlisted_artifact_members_are_not_ignored(produced, relative):
+>       _manifest, destination = exported(produced)
+                                 ^^^^^^^^^^^^^^^^^^
+
+tests/test_tier_r_training_artifacts.py:115: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_tier_r_training_artifacts.py:43: in exported
+    manifest = transfer().export_training_artifacts(document, store / 'labels', [output], destination)
+               ^^^^^^^^^^
+tests/test_tier_r_training_artifacts.py:20: in transfer
+    return importlib.import_module('tools.calibration.tier_r.training_artifacts')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'tools.calibration.tier_r.training_artifacts'
+import_ = <function _gcd_import at 0x7f2ceae6c0e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'tools.calibration.tier_r.training_artifacts'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+_______________ test_foreign_shard_ownership_is_refused[shard-1] _______________
+
+produced = (PosixPath('/tmp/pytest-of-agent/pytest-77/test_foreign_shard_ownership_i0/store'), PosixPath('/tmp/pytest-of-agent/py...rd': 0, 'of': 1, 'seed': 1, ...}, PosixPath('/tmp/pytest-of-agent/pytest-77/test_foreign_shard_ownership_i0/artifact'))
+field = 'shard', value = 1
+
+    @pytest.mark.parametrize('field,value', [('shard', 1), ('of', 2), ('plan_sha256', 'b' * 64)])
+    def test_foreign_shard_ownership_is_refused(produced, field, value):
+>       _manifest, destination = exported(produced)
+                                 ^^^^^^^^^^^^^^^^^^
+
+tests/test_tier_r_training_artifacts.py:123: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_tier_r_training_artifacts.py:43: in exported
+    manifest = transfer().export_training_artifacts(document, store / 'labels', [output], destination)
+               ^^^^^^^^^^
+tests/test_tier_r_training_artifacts.py:20: in transfer
+    return importlib.import_module('tools.calibration.tier_r.training_artifacts')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'tools.calibration.tier_r.training_artifacts'
+import_ = <function _gcd_import at 0x7f2ceae6c0e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'tools.calibration.tier_r.training_artifacts'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+________________ test_foreign_shard_ownership_is_refused[of-2] _________________
+
+produced = (PosixPath('/tmp/pytest-of-agent/pytest-77/test_foreign_shard_ownership_i1/store'), PosixPath('/tmp/pytest-of-agent/py...rd': 0, 'of': 1, 'seed': 1, ...}, PosixPath('/tmp/pytest-of-agent/pytest-77/test_foreign_shard_ownership_i1/artifact'))
+field = 'of', value = 2
+
+    @pytest.mark.parametrize('field,value', [('shard', 1), ('of', 2), ('plan_sha256', 'b' * 64)])
+    def test_foreign_shard_ownership_is_refused(produced, field, value):
+>       _manifest, destination = exported(produced)
+                                 ^^^^^^^^^^^^^^^^^^
+
+tests/test_tier_r_training_artifacts.py:123: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_tier_r_training_artifacts.py:43: in exported
+    manifest = transfer().export_training_artifacts(document, store / 'labels', [output], destination)
+               ^^^^^^^^^^
+tests/test_tier_r_training_artifacts.py:20: in transfer
+    return importlib.import_module('tools.calibration.tier_r.training_artifacts')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'tools.calibration.tier_r.training_artifacts'
+import_ = <function _gcd_import at 0x7f2ceae6c0e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'tools.calibration.tier_r.training_artifacts'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+_ test_foreign_shard_ownership_is_refused[plan_sha256-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb] _
+
+produced = (PosixPath('/tmp/pytest-of-agent/pytest-77/test_foreign_shard_ownership_i2/store'), PosixPath('/tmp/pytest-of-agent/py...rd': 0, 'of': 1, 'seed': 1, ...}, PosixPath('/tmp/pytest-of-agent/pytest-77/test_foreign_shard_ownership_i2/artifact'))
+field = 'plan_sha256'
+value = 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
+
+    @pytest.mark.parametrize('field,value', [('shard', 1), ('of', 2), ('plan_sha256', 'b' * 64)])
+    def test_foreign_shard_ownership_is_refused(produced, field, value):
+>       _manifest, destination = exported(produced)
+                                 ^^^^^^^^^^^^^^^^^^
+
+tests/test_tier_r_training_artifacts.py:123: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_tier_r_training_artifacts.py:43: in exported
+    manifest = transfer().export_training_artifacts(document, store / 'labels', [output], destination)
+               ^^^^^^^^^^
+tests/test_tier_r_training_artifacts.py:20: in transfer
+    return importlib.import_module('tools.calibration.tier_r.training_artifacts')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'tools.calibration.tier_r.training_artifacts'
+import_ = <function _gcd_import at 0x7f2ceae6c0e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'tools.calibration.tier_r.training_artifacts'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+_________ test_aggregate_source_budget_refuses_before_loading_outputs __________
+
+produced = (PosixPath('/tmp/pytest-of-agent/pytest-77/test_aggregate_source_budget_r0/store'), PosixPath('/tmp/pytest-of-agent/py...rd': 0, 'of': 1, 'seed': 1, ...}, PosixPath('/tmp/pytest-of-agent/pytest-77/test_aggregate_source_budget_r0/artifact'))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f2ce429c770>
+
+    def test_aggregate_source_budget_refuses_before_loading_outputs(produced, monkeypatch):
+>       module = transfer()
+                 ^^^^^^^^^^
+
+tests/test_tier_r_training_artifacts.py:131: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_tier_r_training_artifacts.py:20: in transfer
+    return importlib.import_module('tools.calibration.tier_r.training_artifacts')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'tools.calibration.tier_r.training_artifacts'
+import_ = <function _gcd_import at 0x7f2ceae6c0e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'tools.calibration.tier_r.training_artifacts'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+_________ test_manifest_duplicates_are_not_hidden_by_a_matching_digest _________
+
+produced = (PosixPath('/tmp/pytest-of-agent/pytest-77/test_manifest_duplicates_are_n0/store'), PosixPath('/tmp/pytest-of-agent/py...rd': 0, 'of': 1, 'seed': 1, ...}, PosixPath('/tmp/pytest-of-agent/pytest-77/test_manifest_duplicates_are_n0/artifact'))
+
+    def test_manifest_duplicates_are_not_hidden_by_a_matching_digest(produced):
+>       _manifest, destination = exported(produced)
+                                 ^^^^^^^^^^^^^^^^^^
+
+tests/test_tier_r_training_artifacts.py:140: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_tier_r_training_artifacts.py:43: in exported
+    manifest = transfer().export_training_artifacts(document, store / 'labels', [output], destination)
+               ^^^^^^^^^^
+tests/test_tier_r_training_artifacts.py:20: in transfer
+    return importlib.import_module('tools.calibration.tier_r.training_artifacts')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'tools.calibration.tier_r.training_artifacts'
+import_ = <function _gcd_import at 0x7f2ceae6c0e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'tools.calibration.tier_r.training_artifacts'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+______ test_label_licence_is_required_even_when_all_report_digests_match _______
+
+produced = (PosixPath('/tmp/pytest-of-agent/pytest-77/test_label_licence_is_required0/store'), PosixPath('/tmp/pytest-of-agent/py...rd': 0, 'of': 1, 'seed': 1, ...}, PosixPath('/tmp/pytest-of-agent/pytest-77/test_label_licence_is_required0/artifact'))
+
+    def test_label_licence_is_required_even_when_all_report_digests_match(produced):
+        store, output, _document, destination = produced
+        value = LABELS.model_dump(mode='json')
+        for side in ('older', 'newer'):
+            value[side]['source']['license_spdx'] = 'GPL-3.0-only'
+        labels = C.load_labels(canonical_json(C.finalize_labels(value)))
+        (store / 'labels' / f'{labels.pair_id}.json').write_bytes(C.dump_json(labels.model_dump(mode='json')))
+        different = output.with_name('unlicensed-run')
+        report = E.evaluate([labels], [provider()], output_dir=different, b_count=20)
+>       with pytest.raises(transfer().ArtifactError):
+                           ^^^^^^^^^^
+
+tests/test_tier_r_training_artifacts.py:157: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_tier_r_training_artifacts.py:20: in transfer
+    return importlib.import_module('tools.calibration.tier_r.training_artifacts')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'tools.calibration.tier_r.training_artifacts'
+import_ = <function _gcd_import at 0x7f2ceae6c0e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'tools.calibration.tier_r.training_artifacts'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED tests/test_tier_r_training_artifacts.py::test_exact_evaluator_bytes_and_complete_credit_reach_actual_training_reader
+FAILED tests/test_tier_r_training_artifacts.py::test_transfer_cannot_infer_credit_from_a_loose_output_folder[.tier-r-output-run.json]
+FAILED tests/test_tier_r_training_artifacts.py::test_transfer_cannot_infer_credit_from_a_loose_output_folder[output-credits.json]
+FAILED tests/test_tier_r_training_artifacts.py::test_incomplete_or_failed_run_never_becomes_a_completed_artifact[.tier-r-output-incomplete.json]
+FAILED tests/test_tier_r_training_artifacts.py::test_incomplete_or_failed_run_never_becomes_a_completed_artifact[evaluation-failure.json]
+FAILED tests/test_tier_r_training_artifacts.py::test_incomplete_or_failed_run_never_becomes_a_completed_artifact[uncredited-report.json]
+FAILED tests/test_tier_r_training_artifacts.py::test_changed_report_referenced_bytes_refuse_before_destination_creation[label]
+FAILED tests/test_tier_r_training_artifacts.py::test_changed_report_referenced_bytes_refuse_before_destination_creation[output]
+FAILED tests/test_tier_r_training_artifacts.py::test_changed_report_referenced_bytes_refuse_before_destination_creation[credit]
+FAILED tests/test_tier_r_training_artifacts.py::test_existing_destination_is_never_adopted_or_changed[file]
+FAILED tests/test_tier_r_training_artifacts.py::test_existing_destination_is_never_adopted_or_changed[empty-directory]
+FAILED tests/test_tier_r_training_artifacts.py::test_existing_destination_is_never_adopted_or_changed[occupied-directory]
+FAILED tests/test_tier_r_training_artifacts.py::test_unlisted_artifact_members_are_not_ignored[image.dll]
+FAILED tests/test_tier_r_training_artifacts.py::test_unlisted_artifact_members_are_not_ignored[extra.json]
+FAILED tests/test_tier_r_training_artifacts.py::test_unlisted_artifact_members_are_not_ignored[outputs/unowned.json]
+FAILED tests/test_tier_r_training_artifacts.py::test_unlisted_artifact_members_are_not_ignored[labels/unowned.json]
+FAILED tests/test_tier_r_training_artifacts.py::test_foreign_shard_ownership_is_refused[shard-1]
+FAILED tests/test_tier_r_training_artifacts.py::test_foreign_shard_ownership_is_refused[of-2]
+FAILED tests/test_tier_r_training_artifacts.py::test_foreign_shard_ownership_is_refused[plan_sha256-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb]
+FAILED tests/test_tier_r_training_artifacts.py::test_aggregate_source_budget_refuses_before_loading_outputs
+FAILED tests/test_tier_r_training_artifacts.py::test_manifest_duplicates_are_not_hidden_by_a_matching_digest
+FAILED tests/test_tier_r_training_artifacts.py::test_label_licence_is_required_even_when_all_report_digests_match
+22 failed in 1.79s

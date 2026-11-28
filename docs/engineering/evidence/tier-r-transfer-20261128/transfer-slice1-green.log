@@ -1,0 +1,12 @@
+........................................................................ [ 42%]
+........................................................................ [ 84%]
+..........................                                               [100%]
+=============================== warnings summary ===============================
+tests/test_tier_r_credited_replay.py::test_incomparable_effective_keys_rejected_by_actual_reader_before_ranking[keys0]
+tests/test_tier_r_credited_replay.py::test_incomparable_effective_keys_rejected_by_actual_reader_before_ranking[keys1]
+tests/test_tier_r_credited_replay.py::test_incomparable_effective_keys_rejected_by_actual_reader_before_ranking[keys2]
+  /workspace/scratch/e3f205d85f15/patchtrace-transfer/tests/test_tier_r_credited_replay.py:40: LegacyOutputWarning: Legacy output directory is unverified: no successful report credit or transfer ownership
+    train.load_outputs(tmp_path)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+170 passed, 3 warnings in 2.95s

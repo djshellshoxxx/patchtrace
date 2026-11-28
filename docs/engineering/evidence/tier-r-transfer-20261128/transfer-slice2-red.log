@@ -1,0 +1,1025 @@
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFF                                            [100%]
+=================================== FAILURES ===================================
+__ test_complete_set_is_recredited_from_original_reports_and_reaches_training __
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+
+    def test_complete_set_is_recredited_from_original_reports_and_reaches_training(batch):
+        docs, root, destination, report, provenance = batch
+        before = {p.relative_to(root): p.read_bytes() for p in root.rglob('*.json')}
+>       manifest = consolidate(batch)
+                   ^^^^^^^^^^^^^^^^^^
+
+tests/test_tier_r_training_handoff.py:52: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+
+    def consolidate(batch):
+        docs, root, destination, report, provenance = batch
+>       return transfer().merge_training_artifacts(docs, root, destination, report, provenance)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'merge_training_artifacts'. Did you mean: 'verify_training_artifacts'?
+
+tests/test_tier_r_training_handoff.py:46: AttributeError
+____ test_second_merge_is_identical_even_when_input_documents_are_reversed _____
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+
+    def test_second_merge_is_identical_even_when_input_documents_are_reversed(batch):
+        docs, root, destination, report, provenance = batch
+>       first = consolidate(batch)
+                ^^^^^^^^^^^^^^^^^^
+
+tests/test_tier_r_training_handoff.py:69: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+
+    def consolidate(batch):
+        docs, root, destination, report, provenance = batch
+>       return transfer().merge_training_artifacts(docs, root, destination, report, provenance)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'merge_training_artifacts'. Did you mean: 'verify_training_artifacts'?
+
+tests/test_tier_r_training_handoff.py:46: AttributeError
+_______ test_bad_download_set_cannot_create_consolidated_credit[missing] _______
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+damage = 'missing'
+
+    @pytest.mark.parametrize('damage', ['missing', 'extra', 'flat', 'foreign', 'output', 'label-format', 'marker'])
+    def test_bad_download_set_cannot_create_consolidated_credit(batch, damage):
+        docs, root, destination, _report, _provenance = batch
+        second = root / 'tier-r-training-1'
+        if damage == 'missing':
+            second.rename(root.parent / 'withheld')
+        elif damage == 'extra':
+            (root / 'tier-r-training-2').mkdir()
+        elif damage == 'flat':
+            (root / 'tier-r-training-0').rename(root.parent / 'flat-data')
+            for path in (root.parent / 'flat-data').iterdir():
+                path.rename(root / path.name)
+        elif damage == 'foreign':
+            path = second / transfer().MANIFEST
+            document = json.loads(path.read_bytes())
+            document['shards'][0]['plan_sha256'] = 'f' * 64
+            document['manifest_sha256'] = digest(document, 'manifest_sha256')
+            path.write_bytes(canonical_json(document))
+        elif damage == 'output':
+            (second / 'outputs' / OS.output_file_name(LABELS.pair_id, 'ghidriff')).write_bytes(b'{}')
+        elif damage == 'marker':
+            (second / 'outputs' / OS.MANAGED_MARKER).unlink()
+        else:
+            # A valid separately published artifact can still conflict with the exact
+            # label bytes owned by another engine shard, despite the same model digest.
+            path = second / 'labels' / f'{LABELS.pair_id}.json'
+            raw = canonical_json(json.loads(path.read_bytes()))
+            assert raw != path.read_bytes()
+            path.write_bytes(raw)
+            manifest = json.loads((second / transfer().MANIFEST).read_bytes())
+            ref = next(item for item in manifest['files'] if item['path'].startswith('labels/'))
+            ref.update(size=len(raw), sha256=transfer()._hash(raw))
+            manifest['manifest_sha256'] = digest(manifest, 'manifest_sha256')
+            (second / transfer().MANIFEST).write_bytes(canonical_json(manifest))
+            assert transfer().verify_training_artifacts(docs[1], second)
+        with pytest.raises(transfer().ArtifactError):
+>           consolidate(batch)
+
+tests/test_tier_r_training_handoff.py:113: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+
+    def consolidate(batch):
+        docs, root, destination, report, provenance = batch
+>       return transfer().merge_training_artifacts(docs, root, destination, report, provenance)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'merge_training_artifacts'. Did you mean: 'verify_training_artifacts'?
+
+tests/test_tier_r_training_handoff.py:46: AttributeError
+________ test_bad_download_set_cannot_create_consolidated_credit[extra] ________
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+damage = 'extra'
+
+    @pytest.mark.parametrize('damage', ['missing', 'extra', 'flat', 'foreign', 'output', 'label-format', 'marker'])
+    def test_bad_download_set_cannot_create_consolidated_credit(batch, damage):
+        docs, root, destination, _report, _provenance = batch
+        second = root / 'tier-r-training-1'
+        if damage == 'missing':
+            second.rename(root.parent / 'withheld')
+        elif damage == 'extra':
+            (root / 'tier-r-training-2').mkdir()
+        elif damage == 'flat':
+            (root / 'tier-r-training-0').rename(root.parent / 'flat-data')
+            for path in (root.parent / 'flat-data').iterdir():
+                path.rename(root / path.name)
+        elif damage == 'foreign':
+            path = second / transfer().MANIFEST
+            document = json.loads(path.read_bytes())
+            document['shards'][0]['plan_sha256'] = 'f' * 64
+            document['manifest_sha256'] = digest(document, 'manifest_sha256')
+            path.write_bytes(canonical_json(document))
+        elif damage == 'output':
+            (second / 'outputs' / OS.output_file_name(LABELS.pair_id, 'ghidriff')).write_bytes(b'{}')
+        elif damage == 'marker':
+            (second / 'outputs' / OS.MANAGED_MARKER).unlink()
+        else:
+            # A valid separately published artifact can still conflict with the exact
+            # label bytes owned by another engine shard, despite the same model digest.
+            path = second / 'labels' / f'{LABELS.pair_id}.json'
+            raw = canonical_json(json.loads(path.read_bytes()))
+            assert raw != path.read_bytes()
+            path.write_bytes(raw)
+            manifest = json.loads((second / transfer().MANIFEST).read_bytes())
+            ref = next(item for item in manifest['files'] if item['path'].startswith('labels/'))
+            ref.update(size=len(raw), sha256=transfer()._hash(raw))
+            manifest['manifest_sha256'] = digest(manifest, 'manifest_sha256')
+            (second / transfer().MANIFEST).write_bytes(canonical_json(manifest))
+            assert transfer().verify_training_artifacts(docs[1], second)
+        with pytest.raises(transfer().ArtifactError):
+>           consolidate(batch)
+
+tests/test_tier_r_training_handoff.py:113: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+
+    def consolidate(batch):
+        docs, root, destination, report, provenance = batch
+>       return transfer().merge_training_artifacts(docs, root, destination, report, provenance)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'merge_training_artifacts'. Did you mean: 'verify_training_artifacts'?
+
+tests/test_tier_r_training_handoff.py:46: AttributeError
+________ test_bad_download_set_cannot_create_consolidated_credit[flat] _________
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+damage = 'flat'
+
+    @pytest.mark.parametrize('damage', ['missing', 'extra', 'flat', 'foreign', 'output', 'label-format', 'marker'])
+    def test_bad_download_set_cannot_create_consolidated_credit(batch, damage):
+        docs, root, destination, _report, _provenance = batch
+        second = root / 'tier-r-training-1'
+        if damage == 'missing':
+            second.rename(root.parent / 'withheld')
+        elif damage == 'extra':
+            (root / 'tier-r-training-2').mkdir()
+        elif damage == 'flat':
+            (root / 'tier-r-training-0').rename(root.parent / 'flat-data')
+            for path in (root.parent / 'flat-data').iterdir():
+                path.rename(root / path.name)
+        elif damage == 'foreign':
+            path = second / transfer().MANIFEST
+            document = json.loads(path.read_bytes())
+            document['shards'][0]['plan_sha256'] = 'f' * 64
+            document['manifest_sha256'] = digest(document, 'manifest_sha256')
+            path.write_bytes(canonical_json(document))
+        elif damage == 'output':
+            (second / 'outputs' / OS.output_file_name(LABELS.pair_id, 'ghidriff')).write_bytes(b'{}')
+        elif damage == 'marker':
+            (second / 'outputs' / OS.MANAGED_MARKER).unlink()
+        else:
+            # A valid separately published artifact can still conflict with the exact
+            # label bytes owned by another engine shard, despite the same model digest.
+            path = second / 'labels' / f'{LABELS.pair_id}.json'
+            raw = canonical_json(json.loads(path.read_bytes()))
+            assert raw != path.read_bytes()
+            path.write_bytes(raw)
+            manifest = json.loads((second / transfer().MANIFEST).read_bytes())
+            ref = next(item for item in manifest['files'] if item['path'].startswith('labels/'))
+            ref.update(size=len(raw), sha256=transfer()._hash(raw))
+            manifest['manifest_sha256'] = digest(manifest, 'manifest_sha256')
+            (second / transfer().MANIFEST).write_bytes(canonical_json(manifest))
+            assert transfer().verify_training_artifacts(docs[1], second)
+        with pytest.raises(transfer().ArtifactError):
+>           consolidate(batch)
+
+tests/test_tier_r_training_handoff.py:113: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+
+    def consolidate(batch):
+        docs, root, destination, report, provenance = batch
+>       return transfer().merge_training_artifacts(docs, root, destination, report, provenance)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'merge_training_artifacts'. Did you mean: 'verify_training_artifacts'?
+
+tests/test_tier_r_training_handoff.py:46: AttributeError
+_______ test_bad_download_set_cannot_create_consolidated_credit[foreign] _______
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+damage = 'foreign'
+
+    @pytest.mark.parametrize('damage', ['missing', 'extra', 'flat', 'foreign', 'output', 'label-format', 'marker'])
+    def test_bad_download_set_cannot_create_consolidated_credit(batch, damage):
+        docs, root, destination, _report, _provenance = batch
+        second = root / 'tier-r-training-1'
+        if damage == 'missing':
+            second.rename(root.parent / 'withheld')
+        elif damage == 'extra':
+            (root / 'tier-r-training-2').mkdir()
+        elif damage == 'flat':
+            (root / 'tier-r-training-0').rename(root.parent / 'flat-data')
+            for path in (root.parent / 'flat-data').iterdir():
+                path.rename(root / path.name)
+        elif damage == 'foreign':
+            path = second / transfer().MANIFEST
+            document = json.loads(path.read_bytes())
+            document['shards'][0]['plan_sha256'] = 'f' * 64
+            document['manifest_sha256'] = digest(document, 'manifest_sha256')
+            path.write_bytes(canonical_json(document))
+        elif damage == 'output':
+            (second / 'outputs' / OS.output_file_name(LABELS.pair_id, 'ghidriff')).write_bytes(b'{}')
+        elif damage == 'marker':
+            (second / 'outputs' / OS.MANAGED_MARKER).unlink()
+        else:
+            # A valid separately published artifact can still conflict with the exact
+            # label bytes owned by another engine shard, despite the same model digest.
+            path = second / 'labels' / f'{LABELS.pair_id}.json'
+            raw = canonical_json(json.loads(path.read_bytes()))
+            assert raw != path.read_bytes()
+            path.write_bytes(raw)
+            manifest = json.loads((second / transfer().MANIFEST).read_bytes())
+            ref = next(item for item in manifest['files'] if item['path'].startswith('labels/'))
+            ref.update(size=len(raw), sha256=transfer()._hash(raw))
+            manifest['manifest_sha256'] = digest(manifest, 'manifest_sha256')
+            (second / transfer().MANIFEST).write_bytes(canonical_json(manifest))
+            assert transfer().verify_training_artifacts(docs[1], second)
+        with pytest.raises(transfer().ArtifactError):
+>           consolidate(batch)
+
+tests/test_tier_r_training_handoff.py:113: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+
+    def consolidate(batch):
+        docs, root, destination, report, provenance = batch
+>       return transfer().merge_training_artifacts(docs, root, destination, report, provenance)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'merge_training_artifacts'. Did you mean: 'verify_training_artifacts'?
+
+tests/test_tier_r_training_handoff.py:46: AttributeError
+_______ test_bad_download_set_cannot_create_consolidated_credit[output] ________
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+damage = 'output'
+
+    @pytest.mark.parametrize('damage', ['missing', 'extra', 'flat', 'foreign', 'output', 'label-format', 'marker'])
+    def test_bad_download_set_cannot_create_consolidated_credit(batch, damage):
+        docs, root, destination, _report, _provenance = batch
+        second = root / 'tier-r-training-1'
+        if damage == 'missing':
+            second.rename(root.parent / 'withheld')
+        elif damage == 'extra':
+            (root / 'tier-r-training-2').mkdir()
+        elif damage == 'flat':
+            (root / 'tier-r-training-0').rename(root.parent / 'flat-data')
+            for path in (root.parent / 'flat-data').iterdir():
+                path.rename(root / path.name)
+        elif damage == 'foreign':
+            path = second / transfer().MANIFEST
+            document = json.loads(path.read_bytes())
+            document['shards'][0]['plan_sha256'] = 'f' * 64
+            document['manifest_sha256'] = digest(document, 'manifest_sha256')
+            path.write_bytes(canonical_json(document))
+        elif damage == 'output':
+            (second / 'outputs' / OS.output_file_name(LABELS.pair_id, 'ghidriff')).write_bytes(b'{}')
+        elif damage == 'marker':
+            (second / 'outputs' / OS.MANAGED_MARKER).unlink()
+        else:
+            # A valid separately published artifact can still conflict with the exact
+            # label bytes owned by another engine shard, despite the same model digest.
+            path = second / 'labels' / f'{LABELS.pair_id}.json'
+            raw = canonical_json(json.loads(path.read_bytes()))
+            assert raw != path.read_bytes()
+            path.write_bytes(raw)
+            manifest = json.loads((second / transfer().MANIFEST).read_bytes())
+            ref = next(item for item in manifest['files'] if item['path'].startswith('labels/'))
+            ref.update(size=len(raw), sha256=transfer()._hash(raw))
+            manifest['manifest_sha256'] = digest(manifest, 'manifest_sha256')
+            (second / transfer().MANIFEST).write_bytes(canonical_json(manifest))
+            assert transfer().verify_training_artifacts(docs[1], second)
+        with pytest.raises(transfer().ArtifactError):
+>           consolidate(batch)
+
+tests/test_tier_r_training_handoff.py:113: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+
+    def consolidate(batch):
+        docs, root, destination, report, provenance = batch
+>       return transfer().merge_training_artifacts(docs, root, destination, report, provenance)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'merge_training_artifacts'. Did you mean: 'verify_training_artifacts'?
+
+tests/test_tier_r_training_handoff.py:46: AttributeError
+____ test_bad_download_set_cannot_create_consolidated_credit[label-format] _____
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+damage = 'label-format'
+
+    @pytest.mark.parametrize('damage', ['missing', 'extra', 'flat', 'foreign', 'output', 'label-format', 'marker'])
+    def test_bad_download_set_cannot_create_consolidated_credit(batch, damage):
+        docs, root, destination, _report, _provenance = batch
+        second = root / 'tier-r-training-1'
+        if damage == 'missing':
+            second.rename(root.parent / 'withheld')
+        elif damage == 'extra':
+            (root / 'tier-r-training-2').mkdir()
+        elif damage == 'flat':
+            (root / 'tier-r-training-0').rename(root.parent / 'flat-data')
+            for path in (root.parent / 'flat-data').iterdir():
+                path.rename(root / path.name)
+        elif damage == 'foreign':
+            path = second / transfer().MANIFEST
+            document = json.loads(path.read_bytes())
+            document['shards'][0]['plan_sha256'] = 'f' * 64
+            document['manifest_sha256'] = digest(document, 'manifest_sha256')
+            path.write_bytes(canonical_json(document))
+        elif damage == 'output':
+            (second / 'outputs' / OS.output_file_name(LABELS.pair_id, 'ghidriff')).write_bytes(b'{}')
+        elif damage == 'marker':
+            (second / 'outputs' / OS.MANAGED_MARKER).unlink()
+        else:
+            # A valid separately published artifact can still conflict with the exact
+            # label bytes owned by another engine shard, despite the same model digest.
+            path = second / 'labels' / f'{LABELS.pair_id}.json'
+            raw = canonical_json(json.loads(path.read_bytes()))
+            assert raw != path.read_bytes()
+            path.write_bytes(raw)
+            manifest = json.loads((second / transfer().MANIFEST).read_bytes())
+            ref = next(item for item in manifest['files'] if item['path'].startswith('labels/'))
+            ref.update(size=len(raw), sha256=transfer()._hash(raw))
+            manifest['manifest_sha256'] = digest(manifest, 'manifest_sha256')
+            (second / transfer().MANIFEST).write_bytes(canonical_json(manifest))
+            assert transfer().verify_training_artifacts(docs[1], second)
+        with pytest.raises(transfer().ArtifactError):
+>           consolidate(batch)
+
+tests/test_tier_r_training_handoff.py:113: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+
+    def consolidate(batch):
+        docs, root, destination, report, provenance = batch
+>       return transfer().merge_training_artifacts(docs, root, destination, report, provenance)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'merge_training_artifacts'. Did you mean: 'verify_training_artifacts'?
+
+tests/test_tier_r_training_handoff.py:46: AttributeError
+_______ test_bad_download_set_cannot_create_consolidated_credit[marker] ________
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+damage = 'marker'
+
+    @pytest.mark.parametrize('damage', ['missing', 'extra', 'flat', 'foreign', 'output', 'label-format', 'marker'])
+    def test_bad_download_set_cannot_create_consolidated_credit(batch, damage):
+        docs, root, destination, _report, _provenance = batch
+        second = root / 'tier-r-training-1'
+        if damage == 'missing':
+            second.rename(root.parent / 'withheld')
+        elif damage == 'extra':
+            (root / 'tier-r-training-2').mkdir()
+        elif damage == 'flat':
+            (root / 'tier-r-training-0').rename(root.parent / 'flat-data')
+            for path in (root.parent / 'flat-data').iterdir():
+                path.rename(root / path.name)
+        elif damage == 'foreign':
+            path = second / transfer().MANIFEST
+            document = json.loads(path.read_bytes())
+            document['shards'][0]['plan_sha256'] = 'f' * 64
+            document['manifest_sha256'] = digest(document, 'manifest_sha256')
+            path.write_bytes(canonical_json(document))
+        elif damage == 'output':
+            (second / 'outputs' / OS.output_file_name(LABELS.pair_id, 'ghidriff')).write_bytes(b'{}')
+        elif damage == 'marker':
+            (second / 'outputs' / OS.MANAGED_MARKER).unlink()
+        else:
+            # A valid separately published artifact can still conflict with the exact
+            # label bytes owned by another engine shard, despite the same model digest.
+            path = second / 'labels' / f'{LABELS.pair_id}.json'
+            raw = canonical_json(json.loads(path.read_bytes()))
+            assert raw != path.read_bytes()
+            path.write_bytes(raw)
+            manifest = json.loads((second / transfer().MANIFEST).read_bytes())
+            ref = next(item for item in manifest['files'] if item['path'].startswith('labels/'))
+            ref.update(size=len(raw), sha256=transfer()._hash(raw))
+            manifest['manifest_sha256'] = digest(manifest, 'manifest_sha256')
+            (second / transfer().MANIFEST).write_bytes(canonical_json(manifest))
+            assert transfer().verify_training_artifacts(docs[1], second)
+        with pytest.raises(transfer().ArtifactError):
+>           consolidate(batch)
+
+tests/test_tier_r_training_handoff.py:113: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+
+    def consolidate(batch):
+        docs, root, destination, report, provenance = batch
+>       return transfer().merge_training_artifacts(docs, root, destination, report, provenance)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'merge_training_artifacts'. Did you mean: 'verify_training_artifacts'?
+
+tests/test_tier_r_training_handoff.py:46: AttributeError
+_____ test_complete_origin_and_merge_identity_are_required[missing-shard] ______
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+damage = 'missing-shard'
+
+    @pytest.mark.parametrize('damage', ['missing-shard', 'duplicate-shard', 'foreign-plan', 'failed', 'unknown-status',
+                                         'aggregate', 'provenance'])
+    def test_complete_origin_and_merge_identity_are_required(batch, damage):
+        docs, root, destination, report, provenance = batch
+        docs, report, provenance = copy.deepcopy((docs, report, provenance))
+        if damage == 'missing-shard':
+            docs.pop()
+        elif damage == 'duplicate-shard':
+            docs[1] = docs[0]
+        elif damage == 'foreign-plan':
+            docs[1]['plan_sha256'] = 'f' * 64
+            docs[1]['shard_sha256'] = digest(docs[1], 'shard_sha256')
+        elif damage in ('failed', 'unknown-status'):
+            docs[1]['cases'][0]['status'] = 'failed' if damage == 'failed' else 'error'
+            docs[1]['shard_sha256'] = digest(docs[1], 'shard_sha256')
+        elif damage == 'aggregate':
+            report['notes'].append('unrelated aggregate')
+            report['report_sha256'] = digest(report, 'report_sha256')
+        else:
+            provenance['seed'] += 1
+            provenance['merge_sha256'] = digest(provenance, 'merge_sha256')
+        with pytest.raises(transfer().ArtifactError):
+>           transfer().merge_training_artifacts(docs, root, destination, report, provenance)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'merge_training_artifacts'. Did you mean: 'verify_training_artifacts'?
+
+tests/test_tier_r_training_handoff.py:139: AttributeError
+____ test_complete_origin_and_merge_identity_are_required[duplicate-shard] _____
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+damage = 'duplicate-shard'
+
+    @pytest.mark.parametrize('damage', ['missing-shard', 'duplicate-shard', 'foreign-plan', 'failed', 'unknown-status',
+                                         'aggregate', 'provenance'])
+    def test_complete_origin_and_merge_identity_are_required(batch, damage):
+        docs, root, destination, report, provenance = batch
+        docs, report, provenance = copy.deepcopy((docs, report, provenance))
+        if damage == 'missing-shard':
+            docs.pop()
+        elif damage == 'duplicate-shard':
+            docs[1] = docs[0]
+        elif damage == 'foreign-plan':
+            docs[1]['plan_sha256'] = 'f' * 64
+            docs[1]['shard_sha256'] = digest(docs[1], 'shard_sha256')
+        elif damage in ('failed', 'unknown-status'):
+            docs[1]['cases'][0]['status'] = 'failed' if damage == 'failed' else 'error'
+            docs[1]['shard_sha256'] = digest(docs[1], 'shard_sha256')
+        elif damage == 'aggregate':
+            report['notes'].append('unrelated aggregate')
+            report['report_sha256'] = digest(report, 'report_sha256')
+        else:
+            provenance['seed'] += 1
+            provenance['merge_sha256'] = digest(provenance, 'merge_sha256')
+        with pytest.raises(transfer().ArtifactError):
+>           transfer().merge_training_artifacts(docs, root, destination, report, provenance)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'merge_training_artifacts'. Did you mean: 'verify_training_artifacts'?
+
+tests/test_tier_r_training_handoff.py:139: AttributeError
+______ test_complete_origin_and_merge_identity_are_required[foreign-plan] ______
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+damage = 'foreign-plan'
+
+    @pytest.mark.parametrize('damage', ['missing-shard', 'duplicate-shard', 'foreign-plan', 'failed', 'unknown-status',
+                                         'aggregate', 'provenance'])
+    def test_complete_origin_and_merge_identity_are_required(batch, damage):
+        docs, root, destination, report, provenance = batch
+        docs, report, provenance = copy.deepcopy((docs, report, provenance))
+        if damage == 'missing-shard':
+            docs.pop()
+        elif damage == 'duplicate-shard':
+            docs[1] = docs[0]
+        elif damage == 'foreign-plan':
+            docs[1]['plan_sha256'] = 'f' * 64
+            docs[1]['shard_sha256'] = digest(docs[1], 'shard_sha256')
+        elif damage in ('failed', 'unknown-status'):
+            docs[1]['cases'][0]['status'] = 'failed' if damage == 'failed' else 'error'
+            docs[1]['shard_sha256'] = digest(docs[1], 'shard_sha256')
+        elif damage == 'aggregate':
+            report['notes'].append('unrelated aggregate')
+            report['report_sha256'] = digest(report, 'report_sha256')
+        else:
+            provenance['seed'] += 1
+            provenance['merge_sha256'] = digest(provenance, 'merge_sha256')
+        with pytest.raises(transfer().ArtifactError):
+>           transfer().merge_training_artifacts(docs, root, destination, report, provenance)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'merge_training_artifacts'. Did you mean: 'verify_training_artifacts'?
+
+tests/test_tier_r_training_handoff.py:139: AttributeError
+_________ test_complete_origin_and_merge_identity_are_required[failed] _________
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+damage = 'failed'
+
+    @pytest.mark.parametrize('damage', ['missing-shard', 'duplicate-shard', 'foreign-plan', 'failed', 'unknown-status',
+                                         'aggregate', 'provenance'])
+    def test_complete_origin_and_merge_identity_are_required(batch, damage):
+        docs, root, destination, report, provenance = batch
+        docs, report, provenance = copy.deepcopy((docs, report, provenance))
+        if damage == 'missing-shard':
+            docs.pop()
+        elif damage == 'duplicate-shard':
+            docs[1] = docs[0]
+        elif damage == 'foreign-plan':
+            docs[1]['plan_sha256'] = 'f' * 64
+            docs[1]['shard_sha256'] = digest(docs[1], 'shard_sha256')
+        elif damage in ('failed', 'unknown-status'):
+            docs[1]['cases'][0]['status'] = 'failed' if damage == 'failed' else 'error'
+            docs[1]['shard_sha256'] = digest(docs[1], 'shard_sha256')
+        elif damage == 'aggregate':
+            report['notes'].append('unrelated aggregate')
+            report['report_sha256'] = digest(report, 'report_sha256')
+        else:
+            provenance['seed'] += 1
+            provenance['merge_sha256'] = digest(provenance, 'merge_sha256')
+        with pytest.raises(transfer().ArtifactError):
+>           transfer().merge_training_artifacts(docs, root, destination, report, provenance)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'merge_training_artifacts'. Did you mean: 'verify_training_artifacts'?
+
+tests/test_tier_r_training_handoff.py:139: AttributeError
+_____ test_complete_origin_and_merge_identity_are_required[unknown-status] _____
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+damage = 'unknown-status'
+
+    @pytest.mark.parametrize('damage', ['missing-shard', 'duplicate-shard', 'foreign-plan', 'failed', 'unknown-status',
+                                         'aggregate', 'provenance'])
+    def test_complete_origin_and_merge_identity_are_required(batch, damage):
+        docs, root, destination, report, provenance = batch
+        docs, report, provenance = copy.deepcopy((docs, report, provenance))
+        if damage == 'missing-shard':
+            docs.pop()
+        elif damage == 'duplicate-shard':
+            docs[1] = docs[0]
+        elif damage == 'foreign-plan':
+            docs[1]['plan_sha256'] = 'f' * 64
+            docs[1]['shard_sha256'] = digest(docs[1], 'shard_sha256')
+        elif damage in ('failed', 'unknown-status'):
+            docs[1]['cases'][0]['status'] = 'failed' if damage == 'failed' else 'error'
+            docs[1]['shard_sha256'] = digest(docs[1], 'shard_sha256')
+        elif damage == 'aggregate':
+            report['notes'].append('unrelated aggregate')
+            report['report_sha256'] = digest(report, 'report_sha256')
+        else:
+            provenance['seed'] += 1
+            provenance['merge_sha256'] = digest(provenance, 'merge_sha256')
+        with pytest.raises(transfer().ArtifactError):
+>           transfer().merge_training_artifacts(docs, root, destination, report, provenance)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'merge_training_artifacts'. Did you mean: 'verify_training_artifacts'?
+
+tests/test_tier_r_training_handoff.py:139: AttributeError
+_______ test_complete_origin_and_merge_identity_are_required[aggregate] ________
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+damage = 'aggregate'
+
+    @pytest.mark.parametrize('damage', ['missing-shard', 'duplicate-shard', 'foreign-plan', 'failed', 'unknown-status',
+                                         'aggregate', 'provenance'])
+    def test_complete_origin_and_merge_identity_are_required(batch, damage):
+        docs, root, destination, report, provenance = batch
+        docs, report, provenance = copy.deepcopy((docs, report, provenance))
+        if damage == 'missing-shard':
+            docs.pop()
+        elif damage == 'duplicate-shard':
+            docs[1] = docs[0]
+        elif damage == 'foreign-plan':
+            docs[1]['plan_sha256'] = 'f' * 64
+            docs[1]['shard_sha256'] = digest(docs[1], 'shard_sha256')
+        elif damage in ('failed', 'unknown-status'):
+            docs[1]['cases'][0]['status'] = 'failed' if damage == 'failed' else 'error'
+            docs[1]['shard_sha256'] = digest(docs[1], 'shard_sha256')
+        elif damage == 'aggregate':
+            report['notes'].append('unrelated aggregate')
+            report['report_sha256'] = digest(report, 'report_sha256')
+        else:
+            provenance['seed'] += 1
+            provenance['merge_sha256'] = digest(provenance, 'merge_sha256')
+        with pytest.raises(transfer().ArtifactError):
+>           transfer().merge_training_artifacts(docs, root, destination, report, provenance)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'merge_training_artifacts'. Did you mean: 'verify_training_artifacts'?
+
+tests/test_tier_r_training_handoff.py:139: AttributeError
+_______ test_complete_origin_and_merge_identity_are_required[provenance] _______
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+damage = 'provenance'
+
+    @pytest.mark.parametrize('damage', ['missing-shard', 'duplicate-shard', 'foreign-plan', 'failed', 'unknown-status',
+                                         'aggregate', 'provenance'])
+    def test_complete_origin_and_merge_identity_are_required(batch, damage):
+        docs, root, destination, report, provenance = batch
+        docs, report, provenance = copy.deepcopy((docs, report, provenance))
+        if damage == 'missing-shard':
+            docs.pop()
+        elif damage == 'duplicate-shard':
+            docs[1] = docs[0]
+        elif damage == 'foreign-plan':
+            docs[1]['plan_sha256'] = 'f' * 64
+            docs[1]['shard_sha256'] = digest(docs[1], 'shard_sha256')
+        elif damage in ('failed', 'unknown-status'):
+            docs[1]['cases'][0]['status'] = 'failed' if damage == 'failed' else 'error'
+            docs[1]['shard_sha256'] = digest(docs[1], 'shard_sha256')
+        elif damage == 'aggregate':
+            report['notes'].append('unrelated aggregate')
+            report['report_sha256'] = digest(report, 'report_sha256')
+        else:
+            provenance['seed'] += 1
+            provenance['merge_sha256'] = digest(provenance, 'merge_sha256')
+        with pytest.raises(transfer().ArtifactError):
+>           transfer().merge_training_artifacts(docs, root, destination, report, provenance)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'merge_training_artifacts'. Did you mean: 'verify_training_artifacts'?
+
+tests/test_tier_r_training_handoff.py:139: AttributeError
+_____ test_complete_batch_budget_is_checked_before_reading_any_output_body _____
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd0eee92c30>
+
+    def test_complete_batch_budget_is_checked_before_reading_any_output_body(batch, monkeypatch):
+        module = transfer()
+        total = sum(item['size'] for folder in batch[1].iterdir()
+                    for item in json.loads((folder / module.MANIFEST).read_bytes())['files'])
+        monkeypatch.setattr(module, 'MAX_BATCH_BYTES', total - 1)
+        monkeypatch.setattr(OS, 'read_credited_outputs', lambda *_: pytest.fail('output read before complete batch budget'))
+        with pytest.raises(module.ArtifactError):
+>           consolidate(batch)
+
+tests/test_tier_r_training_handoff.py:150: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+
+    def consolidate(batch):
+        docs, root, destination, report, provenance = batch
+>       return transfer().merge_training_artifacts(docs, root, destination, report, provenance)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'merge_training_artifacts'. Did you mean: 'verify_training_artifacts'?
+
+tests/test_tier_r_training_handoff.py:46: AttributeError
+__ test_valid_label_change_between_metadata_and_semantic_admission_is_refused __
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd0eee93560>
+
+    def test_valid_label_change_between_metadata_and_semantic_admission_is_refused(batch, monkeypatch):
+        module = transfer()
+        original = module._admit
+    
+        def change_before_admission(reports, labels, outputs, **kwargs):
+            path = Path(labels) / f'{LABELS.pair_id}.json'
+            raw = path.read_bytes()
+            path.write_bytes(raw + b' ')
+            return original(reports, labels, outputs, **kwargs)
+    
+        monkeypatch.setattr(module, '_admit', change_before_admission)
+        with pytest.raises(module.ArtifactError):
+>           consolidate(batch)
+
+tests/test_tier_r_training_handoff.py:166: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+
+    def consolidate(batch):
+        docs, root, destination, report, provenance = batch
+>       return transfer().merge_training_artifacts(docs, root, destination, report, provenance)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'merge_training_artifacts'. Did you mean: 'verify_training_artifacts'?
+
+tests/test_tier_r_training_handoff.py:46: AttributeError
+_ test_consumer_rechecks_completed_consolidation_before_training[missing-marker] _
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+damage = 'missing-marker'
+
+    @pytest.mark.parametrize('damage', ['missing-marker', 'extra-label', 'foreign-report', 'foreign-provenance',
+                                         'report-ownership', 'aggregate-content'])
+    def test_consumer_rechecks_completed_consolidation_before_training(batch, damage):
+        _docs, _root, destination, report, provenance = batch
+>       consolidate(batch)
+
+tests/test_tier_r_training_handoff.py:174: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+
+    def consolidate(batch):
+        docs, root, destination, report, provenance = batch
+>       return transfer().merge_training_artifacts(docs, root, destination, report, provenance)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'merge_training_artifacts'. Did you mean: 'verify_training_artifacts'?
+
+tests/test_tier_r_training_handoff.py:46: AttributeError
+_ test_consumer_rechecks_completed_consolidation_before_training[extra-label] __
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+damage = 'extra-label'
+
+    @pytest.mark.parametrize('damage', ['missing-marker', 'extra-label', 'foreign-report', 'foreign-provenance',
+                                         'report-ownership', 'aggregate-content'])
+    def test_consumer_rechecks_completed_consolidation_before_training(batch, damage):
+        _docs, _root, destination, report, provenance = batch
+>       consolidate(batch)
+
+tests/test_tier_r_training_handoff.py:174: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+
+    def consolidate(batch):
+        docs, root, destination, report, provenance = batch
+>       return transfer().merge_training_artifacts(docs, root, destination, report, provenance)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'merge_training_artifacts'. Did you mean: 'verify_training_artifacts'?
+
+tests/test_tier_r_training_handoff.py:46: AttributeError
+_ test_consumer_rechecks_completed_consolidation_before_training[foreign-report] _
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+damage = 'foreign-report'
+
+    @pytest.mark.parametrize('damage', ['missing-marker', 'extra-label', 'foreign-report', 'foreign-provenance',
+                                         'report-ownership', 'aggregate-content'])
+    def test_consumer_rechecks_completed_consolidation_before_training(batch, damage):
+        _docs, _root, destination, report, provenance = batch
+>       consolidate(batch)
+
+tests/test_tier_r_training_handoff.py:174: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+
+    def consolidate(batch):
+        docs, root, destination, report, provenance = batch
+>       return transfer().merge_training_artifacts(docs, root, destination, report, provenance)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'merge_training_artifacts'. Did you mean: 'verify_training_artifacts'?
+
+tests/test_tier_r_training_handoff.py:46: AttributeError
+_ test_consumer_rechecks_completed_consolidation_before_training[foreign-provenance] _
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+damage = 'foreign-provenance'
+
+    @pytest.mark.parametrize('damage', ['missing-marker', 'extra-label', 'foreign-report', 'foreign-provenance',
+                                         'report-ownership', 'aggregate-content'])
+    def test_consumer_rechecks_completed_consolidation_before_training(batch, damage):
+        _docs, _root, destination, report, provenance = batch
+>       consolidate(batch)
+
+tests/test_tier_r_training_handoff.py:174: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+
+    def consolidate(batch):
+        docs, root, destination, report, provenance = batch
+>       return transfer().merge_training_artifacts(docs, root, destination, report, provenance)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'merge_training_artifacts'. Did you mean: 'verify_training_artifacts'?
+
+tests/test_tier_r_training_handoff.py:46: AttributeError
+_ test_consumer_rechecks_completed_consolidation_before_training[report-ownership] _
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+damage = 'report-ownership'
+
+    @pytest.mark.parametrize('damage', ['missing-marker', 'extra-label', 'foreign-report', 'foreign-provenance',
+                                         'report-ownership', 'aggregate-content'])
+    def test_consumer_rechecks_completed_consolidation_before_training(batch, damage):
+        _docs, _root, destination, report, provenance = batch
+>       consolidate(batch)
+
+tests/test_tier_r_training_handoff.py:174: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+
+    def consolidate(batch):
+        docs, root, destination, report, provenance = batch
+>       return transfer().merge_training_artifacts(docs, root, destination, report, provenance)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'merge_training_artifacts'. Did you mean: 'verify_training_artifacts'?
+
+tests/test_tier_r_training_handoff.py:46: AttributeError
+_ test_consumer_rechecks_completed_consolidation_before_training[aggregate-content] _
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+damage = 'aggregate-content'
+
+    @pytest.mark.parametrize('damage', ['missing-marker', 'extra-label', 'foreign-report', 'foreign-provenance',
+                                         'report-ownership', 'aggregate-content'])
+    def test_consumer_rechecks_completed_consolidation_before_training(batch, damage):
+        _docs, _root, destination, report, provenance = batch
+>       consolidate(batch)
+
+tests/test_tier_r_training_handoff.py:174: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+
+    def consolidate(batch):
+        docs, root, destination, report, provenance = batch
+>       return transfer().merge_training_artifacts(docs, root, destination, report, provenance)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'tools.calibration.tier_r.training_artifacts' has no attribute 'merge_training_artifacts'. Did you mean: 'verify_training_artifacts'?
+
+tests/test_tier_r_training_handoff.py:46: AttributeError
+__ test_shard_exports_actual_cli_outputs_before_temporary_scratch_is_removed ___
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-90/test_shard_exports_actual_cli_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd0ed08d280>
+
+    def test_shard_exports_actual_cli_outputs_before_temporary_scratch_is_removed(tmp_path, monkeypatch):
+        scopes = set()
+        destination = tmp_path / 'training'
+>       document = S.run_shard(authored_plan(), 0, runner=evaluator_runner(monkeypatch, scopes=scopes),
+                               artifacts_dir=destination)
+E       TypeError: run_shard() got an unexpected keyword argument 'artifacts_dir'
+
+tests/test_tier_r_training_handoff.py:239: TypeError
+_ test_requested_collection_failure_is_a_failed_case_and_cli_exit_one[credit] __
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-90/test_requested_collection_fail0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd0eeee0140>
+damage = 'credit'
+
+    @pytest.mark.parametrize('damage', ['credit', 'reported-output'])
+    def test_requested_collection_failure_is_a_failed_case_and_cli_exit_one(tmp_path, monkeypatch, damage):
+        monkeypatch.setattr(S, 'default_runner', evaluator_runner(monkeypatch, damage=damage))
+        plan_path = tmp_path / 'plan.json'
+        plan_path.write_bytes(canonical_json(authored_plan()))
+        out = tmp_path / 'out'
+>       assert S.main(['run-shard', '--plan', str(plan_path), '--shard', '0', '--out', str(out),
+                       '--collect-artifacts']) == S.FINDINGS
+
+tests/test_tier_r_training_handoff.py:254: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/calibration/tier_r/shard.py:743: in main
+    args = build_parser().parse_args(argv)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/argparse.py:1908: in parse_args
+    self.error(msg)
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/argparse.py:2650: in error
+    self.exit(2, _('%(prog)s: error: %(message)s\n') % args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = ArgumentParser(prog='tier_r.shard', usage=None, description='Deterministic sharding of Tier R work for GitHub Actions (SPEC-32 s13).', formatter_class=<class 'argparse.HelpFormatter'>, conflict_handler='error', add_help=True)
+status = 2
+message = 'tier_r.shard: error: unrecognized arguments: --collect-artifacts\n'
+
+    def exit(self, status=0, message=None):
+        if message:
+            self._print_message(message, _sys.stderr)
+>       _sys.exit(status)
+E       SystemExit: 2
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/argparse.py:2637: SystemExit
+----------------------------- Captured stderr call -----------------------------
+usage: tier_r.shard [-h] {plan,run-shard,merge} ...
+tier_r.shard: error: unrecognized arguments: --collect-artifacts
+_ test_requested_collection_failure_is_a_failed_case_and_cli_exit_one[reported-output] _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-90/test_requested_collection_fail1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd0eeee1d30>
+damage = 'reported-output'
+
+    @pytest.mark.parametrize('damage', ['credit', 'reported-output'])
+    def test_requested_collection_failure_is_a_failed_case_and_cli_exit_one(tmp_path, monkeypatch, damage):
+        monkeypatch.setattr(S, 'default_runner', evaluator_runner(monkeypatch, damage=damage))
+        plan_path = tmp_path / 'plan.json'
+        plan_path.write_bytes(canonical_json(authored_plan()))
+        out = tmp_path / 'out'
+>       assert S.main(['run-shard', '--plan', str(plan_path), '--shard', '0', '--out', str(out),
+                       '--collect-artifacts']) == S.FINDINGS
+
+tests/test_tier_r_training_handoff.py:254: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/calibration/tier_r/shard.py:743: in main
+    args = build_parser().parse_args(argv)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/argparse.py:1908: in parse_args
+    self.error(msg)
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/argparse.py:2650: in error
+    self.exit(2, _('%(prog)s: error: %(message)s\n') % args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = ArgumentParser(prog='tier_r.shard', usage=None, description='Deterministic sharding of Tier R work for GitHub Actions (SPEC-32 s13).', formatter_class=<class 'argparse.HelpFormatter'>, conflict_handler='error', add_help=True)
+status = 2
+message = 'tier_r.shard: error: unrecognized arguments: --collect-artifacts\n'
+
+    def exit(self, status=0, message=None):
+        if message:
+            self._print_message(message, _sys.stderr)
+>       _sys.exit(status)
+E       SystemExit: 2
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/argparse.py:2637: SystemExit
+----------------------------- Captured stderr call -----------------------------
+usage: tier_r.shard [-h] {plan,run-shard,merge} ...
+tier_r.shard: error: unrecognized arguments: --collect-artifacts
+______________ test_blocked_case_stays_blocked_and_cannot_export _______________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-90/test_blocked_case_stays_blocke0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd0ed08dbe0>
+
+    def test_blocked_case_stays_blocked_and_cannot_export(tmp_path, monkeypatch):
+        destination = tmp_path / 'training'
+>       doc = S.run_shard(authored_plan(), 0, runner=evaluator_runner(monkeypatch, case_status='blocked'),
+                          artifacts_dir=destination)
+E       TypeError: run_shard() got an unexpected keyword argument 'artifacts_dir'
+
+tests/test_tier_r_training_handoff.py:266: TypeError
+_ test_merge_cli_refuses_bad_artifact_with_exit_one_and_retains_aggregate_diagnostics _
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-90/test_merge_cli_refuses_bad_art0')
+
+    def test_merge_cli_refuses_bad_artifact_with_exit_one_and_retains_aggregate_diagnostics(batch, tmp_path):
+        docs, root, _destination, _report, _provenance = batch
+        shards = tmp_path / 'shards'
+        for doc in docs:
+            S.write_shard(doc, shards)
+        (root / 'tier-r-training-1' / 'outputs' / OS.MANAGED_MARKER).unlink()
+        out = tmp_path / 'merge-command'
+>       assert S.main(['merge', '--in', str(shards), '--artifacts', str(root), '--out', str(out)]) == S.FINDINGS
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_tier_r_training_handoff.py:280: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/calibration/tier_r/shard.py:743: in main
+    args = build_parser().parse_args(argv)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/argparse.py:1908: in parse_args
+    self.error(msg)
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/argparse.py:2650: in error
+    self.exit(2, _('%(prog)s: error: %(message)s\n') % args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = ArgumentParser(prog='tier_r.shard', usage=None, description='Deterministic sharding of Tier R work for GitHub Actions (SPEC-32 s13).', formatter_class=<class 'argparse.HelpFormatter'>, conflict_handler='error', add_help=True)
+status = 2
+message = 'tier_r.shard: error: unrecognized arguments: --artifacts /tmp/pytest-of-agent/pytest-90/test_merge_cli_refuses_bad_art0/downloaded\n'
+
+    def exit(self, status=0, message=None):
+        if message:
+            self._print_message(message, _sys.stderr)
+>       _sys.exit(status)
+E       SystemExit: 2
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/argparse.py:2637: SystemExit
+----------------------------- Captured stderr call -----------------------------
+usage: tier_r.shard [-h] {plan,run-shard,merge} ...
+tier_r.shard: error: unrecognized arguments: --artifacts /tmp/pytest-of-agent/pytest-90/test_merge_cli_refuses_bad_art0/downloaded
+=========================== short test summary info ============================
+FAILED tests/test_tier_r_training_handoff.py::test_complete_set_is_recredited_from_original_reports_and_reaches_training
+FAILED tests/test_tier_r_training_handoff.py::test_second_merge_is_identical_even_when_input_documents_are_reversed
+FAILED tests/test_tier_r_training_handoff.py::test_bad_download_set_cannot_create_consolidated_credit[missing]
+FAILED tests/test_tier_r_training_handoff.py::test_bad_download_set_cannot_create_consolidated_credit[extra]
+FAILED tests/test_tier_r_training_handoff.py::test_bad_download_set_cannot_create_consolidated_credit[flat]
+FAILED tests/test_tier_r_training_handoff.py::test_bad_download_set_cannot_create_consolidated_credit[foreign]
+FAILED tests/test_tier_r_training_handoff.py::test_bad_download_set_cannot_create_consolidated_credit[output]
+FAILED tests/test_tier_r_training_handoff.py::test_bad_download_set_cannot_create_consolidated_credit[label-format]
+FAILED tests/test_tier_r_training_handoff.py::test_bad_download_set_cannot_create_consolidated_credit[marker]
+FAILED tests/test_tier_r_training_handoff.py::test_complete_origin_and_merge_identity_are_required[missing-shard]
+FAILED tests/test_tier_r_training_handoff.py::test_complete_origin_and_merge_identity_are_required[duplicate-shard]
+FAILED tests/test_tier_r_training_handoff.py::test_complete_origin_and_merge_identity_are_required[foreign-plan]
+FAILED tests/test_tier_r_training_handoff.py::test_complete_origin_and_merge_identity_are_required[failed]
+FAILED tests/test_tier_r_training_handoff.py::test_complete_origin_and_merge_identity_are_required[unknown-status]
+FAILED tests/test_tier_r_training_handoff.py::test_complete_origin_and_merge_identity_are_required[aggregate]
+FAILED tests/test_tier_r_training_handoff.py::test_complete_origin_and_merge_identity_are_required[provenance]
+FAILED tests/test_tier_r_training_handoff.py::test_complete_batch_budget_is_checked_before_reading_any_output_body
+FAILED tests/test_tier_r_training_handoff.py::test_valid_label_change_between_metadata_and_semantic_admission_is_refused
+FAILED tests/test_tier_r_training_handoff.py::test_consumer_rechecks_completed_consolidation_before_training[missing-marker]
+FAILED tests/test_tier_r_training_handoff.py::test_consumer_rechecks_completed_consolidation_before_training[extra-label]
+FAILED tests/test_tier_r_training_handoff.py::test_consumer_rechecks_completed_consolidation_before_training[foreign-report]
+FAILED tests/test_tier_r_training_handoff.py::test_consumer_rechecks_completed_consolidation_before_training[foreign-provenance]
+FAILED tests/test_tier_r_training_handoff.py::test_consumer_rechecks_completed_consolidation_before_training[report-ownership]
+FAILED tests/test_tier_r_training_handoff.py::test_consumer_rechecks_completed_consolidation_before_training[aggregate-content]
+FAILED tests/test_tier_r_training_handoff.py::test_shard_exports_actual_cli_outputs_before_temporary_scratch_is_removed
+FAILED tests/test_tier_r_training_handoff.py::test_requested_collection_failure_is_a_failed_case_and_cli_exit_one[credit]
+FAILED tests/test_tier_r_training_handoff.py::test_requested_collection_failure_is_a_failed_case_and_cli_exit_one[reported-output]
+FAILED tests/test_tier_r_training_handoff.py::test_blocked_case_stays_blocked_and_cannot_export
+FAILED tests/test_tier_r_training_handoff.py::test_merge_cli_refuses_bad_artifact_with_exit_one_and_retains_aggregate_diagnostics
+29 failed in 2.75s

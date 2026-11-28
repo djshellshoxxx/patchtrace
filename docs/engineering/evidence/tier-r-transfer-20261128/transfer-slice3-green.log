@@ -1,0 +1,42 @@
+........................................................................ [ 16%]
+........................................................................ [ 32%]
+........................................................................ [ 48%]
+........................................................................ [ 64%]
+........................................................................ [ 80%]
+.........................................................F.............. [ 96%]
+.................                                                        [100%]
+=================================== FAILURES ===================================
+_________________ test_artifacts_hold_only_labels_and_reports __________________
+
+wf = {'name': 'Corpus Tier R (sharded)', True: {'workflow_dispatch': {'inputs': {'shards': {'description': 'Number of shard....com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.0.4_build/ghidra_12.0.4_PUBLIC_20260303.zip', ...}, ...}
+
+    def test_artifacts_hold_only_labels_and_reports(wf):
+        paths = [s['with']['path'] for j in wf['jobs'].values() for s in j['steps']
+                 if str(s.get('uses', '')).startswith('actions/upload-artifact')]
+        # the MSVC advisory leg uploads its toolchain probe and status files only
+>       assert sorted(paths) == ['merged/', 'msvc-toolchain.json\nmsvc-status/\n', 'plan.json', 'shard-out/shard-*.json',
+                                 'shard-out/shard-*.json']
+E       AssertionError: assert ['merged/tier...-*.json', ...] == ['merged/', '...shard-*.json']
+E         
+E         At index 0 diff: 'merged/tier-r-aggregate.json\nmerged/tier-r-merge.json\nmerged/tier-r-report.md\nmerged/ci-summary.json\nmerged/ci-summary.md\n' != 'merged/'
+E         Left contains 3 more items, first extra item: 'shard-out/shard-*.json'
+E         Use -v to get more diff
+
+tests/test_ci_summary.py:180: AssertionError
+=============================== warnings summary ===============================
+tests/test_tier_r_credited_replay.py::test_incomparable_effective_keys_rejected_by_actual_reader_before_ranking[keys0]
+tests/test_tier_r_credited_replay.py::test_incomparable_effective_keys_rejected_by_actual_reader_before_ranking[keys1]
+tests/test_tier_r_credited_replay.py::test_incomparable_effective_keys_rejected_by_actual_reader_before_ranking[keys2]
+  /workspace/scratch/e3f205d85f15/patchtrace-transfer/tests/test_tier_r_credited_replay.py:40: LegacyOutputWarning: Legacy output directory is unverified: no successful report credit or transfer ownership
+    train.load_outputs(tmp_path)
+
+tests/test_train_lbl26.py::test_identity_shared_across_roles_stops_the_run
+tests/test_train_lbl26.py::test_thirty_lineages_do_not_halt
+tests/test_train_report.py::test_a_synthetic_world_run_never_phrases_itself_as_accuracy
+  /workspace/scratch/e3f205d85f15/patchtrace-transfer/tools/calibration/train.py:374: LegacyOutputWarning: Legacy output directory is unverified: no successful report credit or transfer ownership
+    found = load_outputs(outputs_dir)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_ci_summary.py::test_artifacts_hold_only_labels_and_reports
+1 failed, 448 passed, 6 warnings in 73.46s (0:01:13)

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.833" timestamp="2026-11-27T18:06:57.736790-08:00" hostname="56e89409ebf3"><testcase classname="tests.test_codex5_command_audit_20261121" name="test_actual_workflow_scan_matches_reviewed_source_census" time="0.664"><failure message="AssertionError: assert {'backend-bun...6, 1, 1), ...} == {'backend-bun...6, 1, 1), ...}&#10;  &#10;  Omitting 20 identical items, use -vv to show&#10;  Differing items:&#10;  {'corpus-tier-r.yml': (23, 7, 7)} != {'corpus-tier-r.yml': (19, 6, 6)}&#10;  Use -v to get more diff">def test_actual_workflow_scan_matches_reviewed_source_census() -&gt; None:
+        expected = {
+            "backend-bundle.yml": (26, 3, 2), "codex-cloud.yml": (1, 0, 0),
+            "corpus-tier-r.yml": (19, 6, 6), "diff-and-score.yml": (6, 1, 1),
+            "live-backend.yml": (8, 1, 1), "live-bindiff.yml": (6, 1, 1),
+            "live-capa.yml": (5, 1, 1), "live-intel-tools.yml": (10, 2, 2),
+            "live-kbc.yml": (3, 1, 1), "live-kev.yml": (3, 1, 1),
+            "live-nvd.yml": (3, 1, 1), "live-rizin.yml": (7, 1, 1),
+            "live-unified.yml": (9, 2, 2), "nightly-fuzz.yml": (5, 2, 2),
+            "optional-deps.yml": (2, 1, 1), "pages.yml": (3, 1, 0),
+            "pilot-eval.yml": (5, 2, 1), "qa-windows.yml": (37, 4, 4),
+            "unified-corpus.yml": (17, 3, 3), "unified-live-gates.yml": (26, 7, 7),
+            "winbindex-pairs.yml": (3, 1, 1),
+        }
+        actual = {}
+        protected = []
+        for path in sorted([*WORKFLOWS.glob("*.yml"), *WORKFLOWS.glob("*.yaml")]):
+            source = path.read_text(encoding="utf-8")
+            installs = pip_installs(source)
+            actual[path.name] = (len(list(run_scalars(source))), len(installs), len(unhashed_installs(source)))
+            protected.extend((path.name, item.command) for item in installs if item.has_boundary)
+&gt;       assert actual == expected
+E       AssertionError: assert {'backend-bun...6, 1, 1), ...} == {'backend-bun...6, 1, 1), ...}
+E         
+E         Omitting 20 identical items, use -vv to show
+E         Differing items:
+E         {'corpus-tier-r.yml': (23, 7, 7)} != {'corpus-tier-r.yml': (19, 6, 6)}
+E         Use -v to get more diff
+
+tests/test_codex5_command_audit_20261121.py:231: AssertionError</failure></testcase></testsuite></testsuites>

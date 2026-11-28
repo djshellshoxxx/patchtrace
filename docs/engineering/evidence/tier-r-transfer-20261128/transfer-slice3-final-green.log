@@ -1,0 +1,22 @@
+........................................................................ [ 14%]
+........................................................................ [ 29%]
+........................................................................ [ 43%]
+........................................................................ [ 58%]
+........................................................................ [ 72%]
+........................................................................ [ 87%]
+................................................................         [100%]
+=============================== warnings summary ===============================
+tests/test_tier_r_credited_replay.py::test_incomparable_effective_keys_rejected_by_actual_reader_before_ranking[keys0]
+tests/test_tier_r_credited_replay.py::test_incomparable_effective_keys_rejected_by_actual_reader_before_ranking[keys1]
+tests/test_tier_r_credited_replay.py::test_incomparable_effective_keys_rejected_by_actual_reader_before_ranking[keys2]
+  /workspace/scratch/e3f205d85f15/patchtrace-transfer/tests/test_tier_r_credited_replay.py:40: LegacyOutputWarning: Legacy output directory is unverified: no successful report credit or transfer ownership
+    train.load_outputs(tmp_path)
+
+tests/test_train_lbl26.py::test_identity_shared_across_roles_stops_the_run
+tests/test_train_lbl26.py::test_thirty_lineages_do_not_halt
+tests/test_train_report.py::test_a_synthetic_world_run_never_phrases_itself_as_accuracy
+  /workspace/scratch/e3f205d85f15/patchtrace-transfer/tools/calibration/train.py:374: LegacyOutputWarning: Legacy output directory is unverified: no successful report credit or transfer ownership
+    found = load_outputs(outputs_dir)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+496 passed, 6 warnings in 56.78s

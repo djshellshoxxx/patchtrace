@@ -1,0 +1,106 @@
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+__ test_missing_report_from_one_requested_engine_cannot_be_hidden_by_another ___
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-92/test_missing_report_from_one_r0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f3e6c53fc20>
+
+    def test_missing_report_from_one_requested_engine_cannot_be_hidden_by_another(tmp_path, monkeypatch):
+        plan = authored_plan()
+        plan['engines'] = ['bindiff', 'rz-diff']
+        plan['plan_sha256'] = digest(plan, 'plan_sha256')
+        actual = evaluator_runner(monkeypatch)
+    
+        def runner(argv, timeout, env):
+            if argv[3] == 'evaluate' and argv[5] == 'bindiff':
+                return 0, '', None
+            return actual(argv, timeout, env)
+    
+        destination = tmp_path / 'training'
+        doc = S.run_shard(plan, 0, runner=runner, artifacts_dir=destination)
+>       assert any(case['id'] == 'evaluate:artifact-transfer' and case['status'] == 'failed' for case in doc['cases'])
+E       assert False
+E        +  where False = any(<generator object test_missing_report_from_one_requested_engine_cannot_be_hidden_by_another.<locals>.<genexpr> at 0x7f3e6c2d2cf0>)
+
+tests/test_tier_r_training_handoff.py:286: AssertionError
+_ test_shard_input_admission_refuses_ambiguous_unbounded_or_linked_documents[duplicate-member] _
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-92/test_shard_input_admission_ref0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f3e6c1af3b0>
+damage = 'duplicate-member'
+
+    @pytest.mark.parametrize('damage', ['duplicate-member', 'byte-cap', 'linked-file'])
+    def test_shard_input_admission_refuses_ambiguous_unbounded_or_linked_documents(batch, tmp_path, monkeypatch, damage):
+        shards = tmp_path / 'shards'
+        paths = [S.write_shard(doc, shards) for doc in batch[0]]
+        if damage == 'duplicate-member':
+            raw = canonical_json(batch[0][0]).replace(b'"seed":1', b'"seed":999,"seed":1')
+            paths[0].write_bytes(raw)
+        elif damage == 'byte-cap':
+            monkeypatch.setattr(S, 'MAX_SHARD_BYTES', paths[0].stat().st_size - 1)
+        else:
+            original = tmp_path / 'original.json'
+            paths[0].rename(original)
+            paths[0].symlink_to(original)
+>       with pytest.raises(S.ShardError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ShardError
+
+tests/test_tier_r_training_handoff.py:303: Failed
+_ test_shard_input_admission_refuses_ambiguous_unbounded_or_linked_documents[byte-cap] _
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-92/test_shard_input_admission_ref1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f3e6c1ae060>
+damage = 'byte-cap'
+
+    @pytest.mark.parametrize('damage', ['duplicate-member', 'byte-cap', 'linked-file'])
+    def test_shard_input_admission_refuses_ambiguous_unbounded_or_linked_documents(batch, tmp_path, monkeypatch, damage):
+        shards = tmp_path / 'shards'
+        paths = [S.write_shard(doc, shards) for doc in batch[0]]
+        if damage == 'duplicate-member':
+            raw = canonical_json(batch[0][0]).replace(b'"seed":1', b'"seed":999,"seed":1')
+            paths[0].write_bytes(raw)
+        elif damage == 'byte-cap':
+            monkeypatch.setattr(S, 'MAX_SHARD_BYTES', paths[0].stat().st_size - 1)
+        else:
+            original = tmp_path / 'original.json'
+            paths[0].rename(original)
+            paths[0].symlink_to(original)
+>       with pytest.raises(S.ShardError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ShardError
+
+tests/test_tier_r_training_handoff.py:303: Failed
+_ test_shard_input_admission_refuses_ambiguous_unbounded_or_linked_documents[linked-file] _
+
+batch = ([{'contract': 'tier-r-shard/1', 'shard': 0, 'of': 2, 'seed': 1, ...}, {'contract': 'tier-r-shard/1', 'shard': 1, 'of'... 'plan_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'seed': 1, 'subset': 'smoke', ...})
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-92/test_shard_input_admission_ref2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f3e6c1af0b0>
+damage = 'linked-file'
+
+    @pytest.mark.parametrize('damage', ['duplicate-member', 'byte-cap', 'linked-file'])
+    def test_shard_input_admission_refuses_ambiguous_unbounded_or_linked_documents(batch, tmp_path, monkeypatch, damage):
+        shards = tmp_path / 'shards'
+        paths = [S.write_shard(doc, shards) for doc in batch[0]]
+        if damage == 'duplicate-member':
+            raw = canonical_json(batch[0][0]).replace(b'"seed":1', b'"seed":999,"seed":1')
+            paths[0].write_bytes(raw)
+        elif damage == 'byte-cap':
+            monkeypatch.setattr(S, 'MAX_SHARD_BYTES', paths[0].stat().st_size - 1)
+        else:
+            original = tmp_path / 'original.json'
+            paths[0].rename(original)
+            paths[0].symlink_to(original)
+>       with pytest.raises(S.ShardError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ShardError
+
+tests/test_tier_r_training_handoff.py:303: Failed
+=========================== short test summary info ============================
+FAILED tests/test_tier_r_training_handoff.py::test_missing_report_from_one_requested_engine_cannot_be_hidden_by_another
+FAILED tests/test_tier_r_training_handoff.py::test_shard_input_admission_refuses_ambiguous_unbounded_or_linked_documents[duplicate-member]
+FAILED tests/test_tier_r_training_handoff.py::test_shard_input_admission_refuses_ambiguous_unbounded_or_linked_documents[byte-cap]
+FAILED tests/test_tier_r_training_handoff.py::test_shard_input_admission_refuses_ambiguous_unbounded_or_linked_documents[linked-file]
+4 failed, 29 deselected in 1.19s

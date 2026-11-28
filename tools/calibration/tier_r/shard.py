@@ -31,8 +31,19 @@ from pathlib import Path
 
 from patchtrace.calibration.scope import TIER_R_CLAIM
 
+from ...corpus_check import catalog_paths
 from ..common import canonical_json, digest, r12
-from .contracts import COSMETIC_OPERATORS, PERMISSIVE_SPDX, SEMANTIC_OPERATORS, ContractError, load_report
+from . import training_artifacts as TA
+from .contracts import (
+    COSMETIC_OPERATORS,
+    PERMISSIVE_SPDX,
+    SEMANTIC_OPERATORS,
+    CaseCard,
+    ContractError,
+    load_recipes,
+    load_report,
+)
+from .factory import load_card_files
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 PLAN_CONTRACT = 'tier-r-plan/1'
@@ -82,31 +93,41 @@ def refuse_microsoft(*texts: str) -> None:
 
 # ---- case enumeration ----------------------------------------------------------------------------------------------
 
-def _load_json(path: Path):
-    return json.loads(path.read_text(encoding='utf-8'))
+def _eligible_cards(root: Path) -> tuple[CaseCard, ...]:
+    """One strict catalogue snapshot; duplicate IDs fail before recipe/licence filtering."""
+    book = load_recipes((root / 'tools/calibration/tier_r/catalogue/recipes.json').read_bytes())
+    recipes = {recipe.project: recipe for recipe in book.recipes}
+    cards = load_card_files(catalog_paths(root), root=root)
+    eligible = tuple(sorted((card for card in cards if card.project in recipes and card.license_spdx in PERMISSIVE_SPDX),
+                            key=lambda card: card.id))
+    for card in eligible:
+        recipe = recipes[card.project]
+        refuse_microsoft(card.id, card.project, card.upstream_git, recipe.upstream_git,
+                         card.old.ref, card.new.ref)
+        for dependency in recipe.depends:
+            refuse_microsoft(dependency.project, dependency.ref)
+            if dependency.project in recipes:
+                refuse_microsoft(recipes[dependency.project].upstream_git)
+    return eligible
 
 
-def _cards(root: Path) -> list[str]:
-    """Ids of buildable case cards: recipe exists for the project and the licence is permissive."""
-    try:
-        recipes = {r['project'] for r in _load_json(root / 'tools/calibration/tier_r/catalogue/recipes.json')['recipes']}
-    except (OSError, ValueError, KeyError, TypeError):
-        recipes = set()
-    files = sorted((root / 'tools/calibration/tier_r/catalogue').glob('*.json')) + sorted(
-        (root / 'corpus/catalog').glob('*.json'))
-    found = set()
-    for path in files:
-        if path.name == 'recipes.json':
-            continue
-        try:
-            data = _load_json(path)
-        except (OSError, ValueError):
-            continue
-        for card in data if isinstance(data, list) else ():
-            if (isinstance(card, dict) and card.get('contract') == 'case-card/1' and card.get('project') in recipes
-                    and card.get('license_spdx') in PERMISSIVE_SPDX and isinstance(card.get('id'), str)):
-                found.add(card['id'])
-    return sorted(found)
+def _recipe_probe_cases(cards: Iterable[CaseCard], kind: str) -> set[str]:
+    """One deterministic control per (project, ref); factory output IDs use this source identity."""
+    selected: dict[tuple[str, str], tuple[str, str]] = {}
+    for card in cards:
+        for side in ('old', 'new'):
+            source = getattr(card, side)
+            key = (card.project, source.ref)
+            case_id = f'{kind}-card:{card.id}:{side}'
+            previous = selected.get(key)
+            if previous is not None:
+                commit, representative = previous
+                if commit != source.commit:
+                    raise ShardError(f'conflicting commits for {card.project}@{source.ref}: '
+                                     f'{representative} and {case_id}')
+                case_id = min(case_id, representative)
+            selected[key] = (source.commit, case_id)
+    return {case_id for _, case_id in selected.values()}
 
 
 def _suites(root: Path) -> list[str]:
@@ -119,43 +140,48 @@ def mutation_seeds(seed: int, count: int) -> list[int]:
 
 
 def enumerate_cases(root: Path, *, subset: str, seed: int, seeds_per_op: int = 1) -> list[str]:
-    """Case ids (sorted, unique). Id grammar: card:ID | suite:G/N | mutate:G/N:OP:SEED | aa:G/N | noise:G/N."""
+    """Sorted unique card, suite, mutation and control IDs; recipe controls include card ID and old/new side."""
     if subset not in SUBSETS:
         raise ShardError(f'unknown subset {subset!r}; choose from {", ".join(SUBSETS)}')
-    suites, cards = _suites(root), _cards(root)
+    suites, cards = _suites(root), _eligible_cards(root)
     ops = (*SEMANTIC_OPERATORS, *COSMETIC_OPERATORS)
     cases: set[str] = set()
     if subset == 'smoke':
         if SMOKE_SUITE in suites:
             cases |= {f'suite:{SMOKE_SUITE}', f'aa:{SMOKE_SUITE}', f'noise:{SMOKE_SUITE}',
                       f'mutate:{SMOKE_SUITE}:cmp-flip:{mutation_seeds(seed, 1)[0]}'}
-        cases |= {f'card:{c}' for c in cards if c.startswith('zlib-')}
+        cases |= {f'card:{c.id}' for c in cards if c.id.startswith('zlib-')}
     if subset in ('suites', 'full'):
         cases |= {f'suite:{s}' for s in suites} | {f'aa:{s}' for s in suites}
     if subset in ('cards', 'full'):
-        cases |= {f'card:{c}' for c in cards}
+        cases |= {f'card:{c.id}' for c in cards} | _recipe_probe_cases(cards, 'aa')
     if subset in ('mutations', 'full'):
         cases |= {f'mutate:{s}:{op}:{n}' for s in suites for op in ops for n in mutation_seeds(seed, seeds_per_op)}
     if subset in ('noise', 'full'):
-        cases |= {f'noise:{s}' for s in suites}
+        cases |= {f'noise:{s}' for s in suites} | _recipe_probe_cases(cards, 'noise')
     for case in cases:
         refuse_microsoft(case)
     return sorted(cases)
 
 
-_CASE = re.compile(r'^(card|suite|aa|noise):([A-Za-z0-9._/-]{1,128})$|^(mutate):([A-Za-z0-9._/-]{1,128}):([a-z0-9-]{1,32}):(\d{1,12})$')
+_CASE = re.compile(r'^(card|suite|aa|noise):([A-Za-z0-9._/-]{1,128})$'
+                   r'|^(mutate):([A-Za-z0-9._/-]{1,128}):([a-z0-9-]{1,32}):(\d{1,12})$'
+                   r'|^(aa-card|noise-card):([A-Za-z0-9._/-]{1,128}):(old|new)$')
 
 
 def case_steps(case_id: str) -> list[list[str]]:
     """Subcommand argv (after `python -m tools.calibration.tier_r`) for one case id."""
     refuse_microsoft(case_id)
-    m = _CASE.match(case_id)
+    m = _CASE.fullmatch(case_id)
     if not m or '..' in case_id.replace(':', '/').split('/'):
         raise ShardError(f'malformed case id {case_id!r}')
     if m.group(3) == 'mutate':
         if m.group(5) not in (*SEMANTIC_OPERATORS, *COSMETIC_OPERATORS):
             raise ShardError(f'unknown mutation operator in {case_id!r}')
         return [['mutate', '--suite', f'corpus/ours/{m.group(4)}', '--operator', m.group(5), '--seed', m.group(6)]]
+    if m.group(7):
+        kind, name, side = m.group(7).removesuffix('-card'), m.group(8), m.group(9)
+        return [['fetch', name], [kind, '--card', name, '--side', side]]
     kind, name = m.group(1), m.group(2)
     if kind == 'card':
         return [['fetch', name], ['build-card', name]]
@@ -254,6 +280,8 @@ def failure_reason(rc: int | None, reason: str | None, summary: dict | None, std
             text = '; '.join(f'{k}: {v}' for k, v in sorted(summary['blocked'].items()))
         if not text and summary and summary.get('errors'):
             text = '; '.join(str(e) for e in summary['errors'][:3])
+        if not text and summary and summary.get('not_byte_identical'):
+            text = 'A/A rebuilds not byte-identical'
         if not text:
             tail = stderr_tail(stderr, 1)
             text = tail or 'no diagnostic output'
@@ -349,10 +377,22 @@ def _absorb(summary: dict, labels: list, features: list, reports: list) -> None:
         reports.append(summary['report'])
 
 
-def _classify(rc: int | None, reason: str | None, summary: dict | None = None) -> str:
+def _classify(rc: int | None, reason: str | None, summary: dict | None = None, *, command: str | None = None) -> str:
     if rc is None:
         return 'timeout'
     status = {0: 'ok', 1: 'findings', 3: 'blocked'}.get(rc, 'failed')
+    if status in ('ok', 'findings'):
+        reported = (summary or {}).get('status')
+        if reported in ('failed', 'error'):
+            return 'failed'
+        if command == 'fetch':
+            if rc != OK:
+                return 'failed'
+            if reported == 'blocked':
+                return 'blocked'
+        if command == 'aa' and (rc == FINDINGS or reported == 'findings'
+                                or (summary or {}).get('not_byte_identical')):
+            return 'failed'
     if status == 'ok' and summary and summary.get('status') == 'skipped':
         return 'skipped'
     return status
@@ -369,7 +409,8 @@ def _report_problem(case_id: str, status: str, detail: str | None, stderr: str, 
 
 def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner: Runner | None = None,
               python: str | None = None, scratch: Path | None = None, engines: Sequence[str] | None = None,
-              verify_plan: bool = True, log: Callable[[str], None] | None = None) -> dict:
+              verify_plan: bool = True, log: Callable[[str], None] | None = None,
+              artifacts_dir: Path | None = None) -> dict:
     runner = runner or default_runner       # looked up at call time so tests and callers can substitute it
     log = log or (lambda text: print(text, file=sys.stderr, flush=True))
     entry = next((s for s in plan['shards'] if s['shard'] == shard), None)
@@ -377,21 +418,25 @@ def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner:
         raise ShardError(f'plan has no shard {shard}')
     if verify_plan and digest(plan, 'plan_sha256') != plan.get('plan_sha256'):
         raise ShardError('plan digest mismatch')
+    steps_by_case = [(case_id, case_steps(case_id)) for case_id in entry['cases']]
     py = python or sys.executable
     engines = list(engines or plan['engines'])
+    if artifacts_dir is not None:
+        engines = parse_engines(','.join(engines))
     with tempfile.TemporaryDirectory(prefix=f'tier-r-shard{shard}-') as tmp:
-        scope = Path(scratch or tmp)
+        scope = Path(os.path.abspath(scratch or tmp))
         env = _env(scope)
         labels: list = []
         features: list = []
         reports: list = []
         results = []
-        for case_id in entry['cases']:
+        output_dirs, artifact_errors = [], []
+        for case_id, steps in steps_by_case:
             status, detail, summary = 'ok', None, None
-            for step in case_steps(case_id):
+            for step in steps:
                 rc, out, reason, err = _call(runner, [py, '-m', 'tools.calibration.tier_r', *step], timeout, env)
                 parsed = _summary(out)
-                status = _classify(rc, reason, parsed)
+                status = _classify(rc, reason, parsed, command=step[0])
                 detail = None
                 if parsed is not None:
                     summary = sanitize(parsed)
@@ -414,11 +459,29 @@ def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner:
                 labels.append(meta)
         if not (os.environ.get('PATCHTRACE_TIER_R_NO_EVAL')):
             for engine in engines:
-                rc, out, reason, err = _call(runner, [py, '-m', 'tools.calibration.tier_r', 'evaluate', '--engine',
-                                                      engine, '--symbols', 'hidden'], timeout, env)
+                argv = [py, '-m', 'tools.calibration.tier_r', 'evaluate', '--engine', engine, '--symbols', 'hidden']
+                output_path = scope / 'known-answer' / 'outputs' / f'collected-{engine}'
+                report_path = scope / 'known-answer' / 'reports' / f'collected-{engine}.json'
+                if artifacts_dir is not None:
+                    argv += ['--outputs', str(output_path), '--out', str(report_path)]
+                rc, out, reason, err = _call(runner, argv, timeout, env)
                 parsed = _summary(out)
                 if parsed is not None:
-                    report_doc = _scratch_json(scope, parsed.get('report')) if isinstance(parsed.get('report'), str) else None
+                    report_doc = None
+                    if artifacts_dir is not None:
+                        try:
+                            if parsed.get('outputs') != str(output_path) or parsed.get('report') != str(report_path):
+                                raise TA.ArtifactError('evaluation summary does not identify the requested scratch outputs')
+                            report_doc = TA.read_document(report_path, maximum=MAX_SHARD_BYTES)
+                            load_report(canonical_json(report_doc))
+                            if parsed.get('report_sha256') != report_doc['report_sha256']:
+                                raise TA.ArtifactError('evaluation summary and retained report digests differ')
+                            output_dirs.append(output_path)
+                        except (TA.ArtifactError, ContractError) as exc:
+                            artifact_errors.append(str(exc)[:REASON_CHARS])
+                            report_doc = None
+                    elif isinstance(parsed.get('report'), str):
+                        report_doc = _scratch_json(scope, parsed['report'])
                     parsed = sanitize(parsed)
                     if report_doc is not None:
                         parsed['report'] = sanitize(report_doc)
@@ -430,12 +493,22 @@ def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner:
                     detail = failure_reason(rc, reason, parsed, err)
                     _report_problem(f'evaluate:{engine}', status, detail, err, log)
                 results.append({'id': f'evaluate:{engine}', 'status': status, 'reason': detail, 'digest': None})
-    doc = {'contract': SHARD_CONTRACT, 'shard': shard, 'of': plan['of'], 'seed': plan['seed'],
-           'plan_sha256': plan['plan_sha256'], 'subset': plan['subset'], 'engines': engines,
-           'cases': results, 'labels': sorted(labels, key=canonical_json), 'features': sorted(features, key=canonical_json),
-           'reports': reports}
-    refuse_microsoft(canonical_json(doc).decode())
-    doc['shard_sha256'] = digest(doc, 'shard_sha256')
+        doc = {'contract': SHARD_CONTRACT, 'shard': shard, 'of': plan['of'], 'seed': plan['seed'],
+               'plan_sha256': plan['plan_sha256'], 'subset': plan['subset'], 'engines': engines,
+               'cases': results, 'labels': sorted(labels, key=canonical_json), 'features': sorted(features, key=canonical_json),
+               'reports': reports}
+        refuse_microsoft(canonical_json(doc).decode())
+        doc['shard_sha256'] = digest(doc, 'shard_sha256')
+        if artifacts_dir is not None and all(case['status'] in ('ok', 'findings', 'skipped') for case in results):
+            try:
+                if artifact_errors:
+                    raise TA.ArtifactError('; '.join(artifact_errors)[:REASON_CHARS])
+                TA.export_training_artifacts(doc, scope / 'known-answer' / 'labels', output_dirs, artifacts_dir)
+            except TA.ArtifactError as exc:
+                detail = str(exc)[:REASON_CHARS]
+                results.append({'id': 'evaluate:artifact-transfer', 'status': 'failed', 'reason': detail, 'digest': None})
+                _report_problem('evaluate:artifact-transfer', 'failed', detail, '', log)
+                doc['shard_sha256'] = digest(doc, 'shard_sha256')
     return doc
 
 
@@ -498,10 +571,17 @@ def _engine_status(rows: list[dict]) -> dict:
 
 def load_shards(directory: Path, *, plan: dict | None = None) -> list[dict]:
     """Read shard-*.json; fail loudly on missing, duplicate, foreign or tampered shard files."""
+    paths = []
+    with os.scandir(directory) as entries:
+        for entry in entries:
+            if entry.name.startswith('shard-') and entry.name.endswith('.json'):
+                paths.append(Path(entry.path))
+                if len(paths) > MAX_SHARDS:
+                    raise ShardError(f'shard count exceeds {MAX_SHARDS}')
     docs = []
-    for path in sorted(Path(directory).glob('shard-*.json')):
+    for path in sorted(paths):
         try:
-            doc = json.loads(path.read_text(encoding='utf-8'))
+            doc = TA.read_document(path, maximum=MAX_SHARD_BYTES)
         except (OSError, ValueError) as exc:
             raise ShardError(f'{path.name}: unreadable ({exc})') from None
         if not isinstance(doc, dict) or doc.get('contract') != SHARD_CONTRACT:
@@ -678,10 +758,20 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument('--subset', default='smoke')
     r.add_argument('--timeout', type=int, default=DEFAULT_TIMEOUT, help='seconds per case')
     r.add_argument('--out', type=Path, required=True)
+    r.add_argument('--collect-artifacts', action='store_true', help='retain verified managed training JSON before cleanup')
     m = sub.add_parser('merge', help='fold shard files into one tier-r-report/1')
     m.add_argument('--in', dest='src', type=Path, required=True)
     m.add_argument('--plan', type=Path)
     m.add_argument('--out', type=Path, required=True)
+    m.add_argument('--artifacts', type=Path, help='parent of separate tier-r-training-<index> artifact roots')
+    v = sub.add_parser('verify-training', help='recheck consolidated managed inputs before an unlocked training smoke')
+    v.add_argument('--artifacts', type=Path, required=True)
+    v.add_argument('--report', type=Path, required=True)
+    v.add_argument('--provenance', type=Path, required=True)
+    t = sub.add_parser('verify-training-result', help='verify an unlocked smoke result and its actual process outcome')
+    t.add_argument('--summary', type=Path, required=True)
+    t.add_argument('--report', type=Path, required=True)
+    t.add_argument('--exit-code', type=int, required=True)
     return ap
 
 
@@ -713,19 +803,36 @@ def main(argv: Sequence[str] | None = None) -> int:
             return OK
         if args.cmd == 'run-shard':
             plan = _plan_from_args(args)
-            doc = run_shard(plan, args.shard, timeout=args.timeout, verify_plan=args.plan is not None)
+            doc = run_shard(plan, args.shard, timeout=args.timeout, verify_plan=args.plan is not None,
+                            artifacts_dir=args.out / 'training' if args.collect_artifacts else None)
             path = write_shard(doc, args.out)
             bad = [c['id'] for c in doc['cases'] if c['status'] in ('failed', 'timeout')]
             blocked = [c['id'] for c in doc['cases'] if c['status'] == 'blocked']
             print(json.dumps({'shard': doc['shard'], 'file': path.name, 'cases': len(doc['cases']),
                               'failed': bad, 'blocked': blocked, 'shard_sha256': doc['shard_sha256']}, sort_keys=True))
             return FINDINGS if bad else (BLOCKED if blocked else OK)
+        if args.cmd == 'verify-training':
+            document = TA.verify_merged_artifacts(args.artifacts, TA.read_document(args.report),
+                                                  TA.read_document(args.provenance))
+            print(json.dumps({'manifest_sha256': document['manifest_sha256'],
+                              'report_sha256': document['aggregate_sha256'], 'merge_sha256': document['merge_sha256']},
+                             sort_keys=True))
+            return OK
+        if args.cmd == 'verify-training-result':
+            print(json.dumps(TA.verify_smoke_result_files(args.summary, args.report, args.exit_code), sort_keys=True))
+            return OK
         plan = json.loads(args.plan.read_text(encoding='utf-8')) if args.plan else None
-        report, prov = merge(load_shards(args.src, plan=plan))
+        docs = load_shards(args.src, plan=plan)
+        report, prov = merge(docs)
         write_merge(report, prov, args.out)
+        if args.artifacts is not None:
+            TA.merge_training_artifacts(docs, args.artifacts, args.out / 'training', report, prov)
         print(json.dumps({'report_sha256': report['report_sha256'], 'merge_sha256': prov['merge_sha256'],
                           'shards': len(prov['shards']), 'failing_cases': len(prov['failing_cases'])}, sort_keys=True))
         return FINDINGS if prov['failing_cases'] else OK
+    except TA.ArtifactError as exc:
+        print(f'tier_r.shard: {exc}', file=sys.stderr)
+        return FINDINGS
     except (ShardError, ValueError, OSError) as exc:
         print(f'tier_r.shard: {exc}', file=sys.stderr)
         return USAGE
