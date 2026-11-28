@@ -107,3 +107,4 @@ Listing of every file under `docs/specs/`, 2026-10-14. SPEC number and status co
 | [workbench/README.md](workbench/README.md) | PT-WB (index) | approved | PatchTrace Workbench: Three Reusable Integrations and Easy-Win Addenda |
 
 | [kb-file-inventory-csv.md](kb-file-inventory-csv.md) | PW-01 | implementation | Bounded KB file inventory CSV and support links |
+| [local-package-intake.md](local-package-intake.md) | PW-02 under SPEC-31-D | implementation candidate | Bounded local CAB/CAB-form MSU inventory and full-PE admission; native qualification pending |

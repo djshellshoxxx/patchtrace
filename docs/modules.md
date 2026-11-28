@@ -1,7 +1,13 @@
 # Module index
 
+## PW-02 local-package completion (2026-11-27)
+
+Plan: recover and qualify pure package contracts, logical member names, shared budgets and serial worker receipts from the audited donor, then add native held I/O/FDI supervision and existing KB project admission. This module registration does not advertise a working extractor or native acceptance. Contract: `docs/specs/local-package-intake.md`.
+
 | Module | Responsibility | Verification seam |
 |---|---|---|
+| `jobs.py` transient Windows handle transfer | Bounded named borrowed HANDLEs, same-access owned launch duplicates, exact standard-I/O/duplicate inheritance list, existing Job-before-resume supervision; no persisted handle records | Portable validation/injected Win32 cleanup controls and authored native Windows inheritance/ownership tests; native Linux gate blocked |
+| `acquisition/package_fdi_abi.py`, `tools/check_package_fdi_abi.py`, `tools/native/package_fdi_abi.cpp` | Pinned fixed-width AMD64 FDI declarations and separately supervised installed-SDK layout/signature proof; no decoder load or extraction claim | Portable callback round trips/refusal tests; actual Windows SDK probe is an explicit native gate |
 | `tools/frozen_smoke.py` packaged version acceptance | Reuse the bounded build-record checker after archive extraction or installation; `--version-only` runs with stdlib and `-S`, reads and rechecks the package record, and keeps host Python paths out of the executable environment | `test_frozen_version_smoke.py`, `test_package_buildinfo.py`, `test_windows_downloaded_artifacts.py`; native downloaded Windows/Linux execution remains an exact-source hosted gate |
 | `buildinfo.py`, `version_cli.py`, `cli_commands/version.py` | Bounded read-only source/build observations through the lazy headless `version` verb; unknown provenance remains explicit | `test_buildinfo.py`, `test_buildinfo_git_root.py`, `test_version_cli.py`, `test_version_git_filters.py`; authored local files/Git only |
 | `tools/package_buildinfo.py` | Build-only source observations, exclusive packaged metadata installation and bounded frozen JSON verification before archiving; source identity remains distinct from authenticity | `test_package_buildinfo.py`, builder-order controls; authored filesystem/process fixtures, native package acceptance remains separate |

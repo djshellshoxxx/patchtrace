@@ -1,3 +1,41 @@
+## November 27 PW-02 supervised handle transfer
+
+The 39-case baseline reproduced the missing borrowed-handle API and unrestricted
+Windows startup. The bounded API and exact stdio/duplicate inheritance list now
+preserve caller originals and Job-before-resume. The final supervisor selection
+passes **189 tests / 13 Windows-only skips / 0 failures**, with whole-tree Ruff
+and whitespace clean. Seven skipped cases are new native object/file/concurrent
+process controls; they are explicitly **BLOCKED on Linux**, not qualified by
+portable pointer values or injected Win32 calls. Independent source review and
+actual Windows gates remain open. [Contract, evidence and limitations](engineering/local-package-process-ownership-20261127.md).
+
+## November 27 PW-02 ABI checker output totals
+
+Independent review confirmed pinned ABI declarations but reproduced two accepted
+output-overflow receipts. Final stdout/stderr totals and complete probe byte
+retention are now checked after process completion. The 26-case corrective lane
+passes without skips, with unchanged independent controls retained. Native
+Windows SDK/DLL/extraction qualification remains pending; see the PW-02 recovery
+record for exact portable scope and original failures.
+
+## November 27 PW-02 decoder ABI slice
+
+Pinned Win32 widths/cdecl/AMD64 layout and a separately supervised authored SDK
+probe are implemented. Original 18 missing-module failures are retained; the
+combined portable package lane passes 353 tests without skips. Actual Windows
+SDK compilation, held I/O, system decoder, supervised extraction and KB/frozen
+pair admission remain pending. This is not a working-extractor or native-pass
+claim. See docs/engineering/local-package-recovery-20261127.md.
+
+## November 27 PW-02 foundation recovery
+
+The isolated portable package contracts/name/budget/worker-accounting foundation
+reproduced 171 failures plus four collection errors before recovery, then passed
+335 tests without skips. Schemas, whole-tree Ruff and whitespace pass. This does
+not supply a native extractor or claim a working package intake feature; Windows
+held I/O, supervised FDI, KB admission and native/frozen qualification remain open.
+[Incremental plan and preserved evidence](engineering/local-package-recovery-20261127.md).
+
 ## November 27 retained Winbindex replay completion
 
 Original source retention and offline resolver replay are implemented and
@@ -2575,3 +2613,11 @@ filter cases with zero skips in 3.14 s, plus focused Ruff and the full feature
 whitespace check. The reviewer closed the output-admission finding with no
 remaining consumer-scope blocker. Exact-head hosted/full/package qualification
 remains pending; the retained producer remains a separate scope.
+
+
+### PW-02 process seam independently reviewed — November 27, 2026
+
+Root approved runtime `003d97c0`; five extra ownership/lifetime/refusal controls
+and affected Windows-launch tests passed 108 tests with three native-only skips.
+No source blocker remains. Native Windows/full gates are still pending. See
+`engineering/local-package-process-ownership-20261127.md` and retained receipts.

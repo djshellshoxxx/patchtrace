@@ -1,0 +1,553 @@
+FFFFFFFFFFFFFFFFFF                                                       [100%]
+=================================== FAILURES ===================================
+______________ test_fixed_windows_widths_and_natural_amd64_layout ______________
+
+    def test_fixed_windows_widths_and_natural_amd64_layout():
+>       module = abi()
+                 ^^^^^
+
+tests/test_package_fdi_abi.py:20: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_package_fdi_abi.py:16: in abi
+    return importlib.import_module('patchtrace.acquisition.package_fdi_abi')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'patchtrace.acquisition.package_fdi_abi'
+import_ = <function _gcd_import at 0x7f9fd40000e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'patchtrace.acquisition.package_fdi_abi'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+_____ test_callback_round_trip_keeps_pointer_sized_handles_and_signed_seek _____
+
+    def test_callback_round_trip_keeps_pointer_sized_handles_and_signed_seek():
+>       module = abi()
+                 ^^^^^
+
+tests/test_package_fdi_abi.py:30: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_package_fdi_abi.py:16: in abi
+    return importlib.import_module('patchtrace.acquisition.package_fdi_abi')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'patchtrace.acquisition.package_fdi_abi'
+import_ = <function _gcd_import at 0x7f9fd40000e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'patchtrace.acquisition.package_fdi_abi'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+____ test_read_callback_receives_raw_output_pointer_and_reports_exact_count ____
+
+    def test_read_callback_receives_raw_output_pointer_and_reports_exact_count():
+>       module = abi()
+                 ^^^^^
+
+tests/test_package_fdi_abi.py:52: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_package_fdi_abi.py:16: in abi
+    return importlib.import_module('patchtrace.acquisition.package_fdi_abi')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'patchtrace.acquisition.package_fdi_abi'
+import_ = <function _gcd_import at 0x7f9fd40000e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'patchtrace.acquisition.package_fdi_abi'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+_ test_notification_round_trip_does_not_truncate_handles_or_read_name_pointers _
+
+    def test_notification_round_trip_does_not_truncate_handles_or_read_name_pointers():
+>       module = abi()
+                 ^^^^^
+
+tests/test_package_fdi_abi.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_package_fdi_abi.py:16: in abi
+    return importlib.import_module('patchtrace.acquisition.package_fdi_abi')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'patchtrace.acquisition.package_fdi_abi'
+import_ = <function _gcd_import at 0x7f9fd40000e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'patchtrace.acquisition.package_fdi_abi'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+____________ test_valid_native_layout_receipt_is_exact_and_bounded _____________
+
+    def test_valid_native_layout_receipt_is_exact_and_bounded():
+>       module = abi()
+                 ^^^^^
+
+tests/test_package_fdi_abi.py:84: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_package_fdi_abi.py:16: in abi
+    return importlib.import_module('patchtrace.acquisition.package_fdi_abi')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'patchtrace.acquisition.package_fdi_abi'
+import_ = <function _gcd_import at 0x7f9fd40000e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'patchtrace.acquisition.package_fdi_abi'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+_________ test_invalid_native_receipt_cannot_be_credited[field-offset] _________
+
+damage = 'field-offset'
+
+    @pytest.mark.parametrize('damage', ['field-offset', 'missing', 'extra', 'duplicate', 'boolean', 'float',
+                                        'string', 'list', 'invalid-utf8', 'nonfinite'])
+    def test_invalid_native_receipt_cannot_be_credited(damage):
+>       module = abi()
+                 ^^^^^
+
+tests/test_package_fdi_abi.py:94: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_package_fdi_abi.py:16: in abi
+    return importlib.import_module('patchtrace.acquisition.package_fdi_abi')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'patchtrace.acquisition.package_fdi_abi'
+import_ = <function _gcd_import at 0x7f9fd40000e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'patchtrace.acquisition.package_fdi_abi'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+___________ test_invalid_native_receipt_cannot_be_credited[missing] ____________
+
+damage = 'missing'
+
+    @pytest.mark.parametrize('damage', ['field-offset', 'missing', 'extra', 'duplicate', 'boolean', 'float',
+                                        'string', 'list', 'invalid-utf8', 'nonfinite'])
+    def test_invalid_native_receipt_cannot_be_credited(damage):
+>       module = abi()
+                 ^^^^^
+
+tests/test_package_fdi_abi.py:94: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_package_fdi_abi.py:16: in abi
+    return importlib.import_module('patchtrace.acquisition.package_fdi_abi')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'patchtrace.acquisition.package_fdi_abi'
+import_ = <function _gcd_import at 0x7f9fd40000e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'patchtrace.acquisition.package_fdi_abi'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+____________ test_invalid_native_receipt_cannot_be_credited[extra] _____________
+
+damage = 'extra'
+
+    @pytest.mark.parametrize('damage', ['field-offset', 'missing', 'extra', 'duplicate', 'boolean', 'float',
+                                        'string', 'list', 'invalid-utf8', 'nonfinite'])
+    def test_invalid_native_receipt_cannot_be_credited(damage):
+>       module = abi()
+                 ^^^^^
+
+tests/test_package_fdi_abi.py:94: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_package_fdi_abi.py:16: in abi
+    return importlib.import_module('patchtrace.acquisition.package_fdi_abi')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'patchtrace.acquisition.package_fdi_abi'
+import_ = <function _gcd_import at 0x7f9fd40000e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'patchtrace.acquisition.package_fdi_abi'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+__________ test_invalid_native_receipt_cannot_be_credited[duplicate] ___________
+
+damage = 'duplicate'
+
+    @pytest.mark.parametrize('damage', ['field-offset', 'missing', 'extra', 'duplicate', 'boolean', 'float',
+                                        'string', 'list', 'invalid-utf8', 'nonfinite'])
+    def test_invalid_native_receipt_cannot_be_credited(damage):
+>       module = abi()
+                 ^^^^^
+
+tests/test_package_fdi_abi.py:94: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_package_fdi_abi.py:16: in abi
+    return importlib.import_module('patchtrace.acquisition.package_fdi_abi')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'patchtrace.acquisition.package_fdi_abi'
+import_ = <function _gcd_import at 0x7f9fd40000e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'patchtrace.acquisition.package_fdi_abi'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+___________ test_invalid_native_receipt_cannot_be_credited[boolean] ____________
+
+damage = 'boolean'
+
+    @pytest.mark.parametrize('damage', ['field-offset', 'missing', 'extra', 'duplicate', 'boolean', 'float',
+                                        'string', 'list', 'invalid-utf8', 'nonfinite'])
+    def test_invalid_native_receipt_cannot_be_credited(damage):
+>       module = abi()
+                 ^^^^^
+
+tests/test_package_fdi_abi.py:94: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_package_fdi_abi.py:16: in abi
+    return importlib.import_module('patchtrace.acquisition.package_fdi_abi')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'patchtrace.acquisition.package_fdi_abi'
+import_ = <function _gcd_import at 0x7f9fd40000e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'patchtrace.acquisition.package_fdi_abi'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+____________ test_invalid_native_receipt_cannot_be_credited[float] _____________
+
+damage = 'float'
+
+    @pytest.mark.parametrize('damage', ['field-offset', 'missing', 'extra', 'duplicate', 'boolean', 'float',
+                                        'string', 'list', 'invalid-utf8', 'nonfinite'])
+    def test_invalid_native_receipt_cannot_be_credited(damage):
+>       module = abi()
+                 ^^^^^
+
+tests/test_package_fdi_abi.py:94: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_package_fdi_abi.py:16: in abi
+    return importlib.import_module('patchtrace.acquisition.package_fdi_abi')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'patchtrace.acquisition.package_fdi_abi'
+import_ = <function _gcd_import at 0x7f9fd40000e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'patchtrace.acquisition.package_fdi_abi'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+____________ test_invalid_native_receipt_cannot_be_credited[string] ____________
+
+damage = 'string'
+
+    @pytest.mark.parametrize('damage', ['field-offset', 'missing', 'extra', 'duplicate', 'boolean', 'float',
+                                        'string', 'list', 'invalid-utf8', 'nonfinite'])
+    def test_invalid_native_receipt_cannot_be_credited(damage):
+>       module = abi()
+                 ^^^^^
+
+tests/test_package_fdi_abi.py:94: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_package_fdi_abi.py:16: in abi
+    return importlib.import_module('patchtrace.acquisition.package_fdi_abi')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'patchtrace.acquisition.package_fdi_abi'
+import_ = <function _gcd_import at 0x7f9fd40000e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'patchtrace.acquisition.package_fdi_abi'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+_____________ test_invalid_native_receipt_cannot_be_credited[list] _____________
+
+damage = 'list'
+
+    @pytest.mark.parametrize('damage', ['field-offset', 'missing', 'extra', 'duplicate', 'boolean', 'float',
+                                        'string', 'list', 'invalid-utf8', 'nonfinite'])
+    def test_invalid_native_receipt_cannot_be_credited(damage):
+>       module = abi()
+                 ^^^^^
+
+tests/test_package_fdi_abi.py:94: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_package_fdi_abi.py:16: in abi
+    return importlib.import_module('patchtrace.acquisition.package_fdi_abi')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'patchtrace.acquisition.package_fdi_abi'
+import_ = <function _gcd_import at 0x7f9fd40000e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'patchtrace.acquisition.package_fdi_abi'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+_________ test_invalid_native_receipt_cannot_be_credited[invalid-utf8] _________
+
+damage = 'invalid-utf8'
+
+    @pytest.mark.parametrize('damage', ['field-offset', 'missing', 'extra', 'duplicate', 'boolean', 'float',
+                                        'string', 'list', 'invalid-utf8', 'nonfinite'])
+    def test_invalid_native_receipt_cannot_be_credited(damage):
+>       module = abi()
+                 ^^^^^
+
+tests/test_package_fdi_abi.py:94: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_package_fdi_abi.py:16: in abi
+    return importlib.import_module('patchtrace.acquisition.package_fdi_abi')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'patchtrace.acquisition.package_fdi_abi'
+import_ = <function _gcd_import at 0x7f9fd40000e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'patchtrace.acquisition.package_fdi_abi'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+__________ test_invalid_native_receipt_cannot_be_credited[nonfinite] ___________
+
+damage = 'nonfinite'
+
+    @pytest.mark.parametrize('damage', ['field-offset', 'missing', 'extra', 'duplicate', 'boolean', 'float',
+                                        'string', 'list', 'invalid-utf8', 'nonfinite'])
+    def test_invalid_native_receipt_cannot_be_credited(damage):
+>       module = abi()
+                 ^^^^^
+
+tests/test_package_fdi_abi.py:94: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_package_fdi_abi.py:16: in abi
+    return importlib.import_module('patchtrace.acquisition.package_fdi_abi')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'patchtrace.acquisition.package_fdi_abi'
+import_ = <function _gcd_import at 0x7f9fd40000e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'patchtrace.acquisition.package_fdi_abi'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+_____________ test_binding_checks_platform_before_touching_library _____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9fcc1c1af0>
+
+    def test_binding_checks_platform_before_touching_library(monkeypatch):
+>       module = abi()
+                 ^^^^^
+
+tests/test_package_fdi_abi.py:118: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_package_fdi_abi.py:16: in abi
+    return importlib.import_module('patchtrace.acquisition.package_fdi_abi')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'patchtrace.acquisition.package_fdi_abi'
+import_ = <function _gcd_import at 0x7f9fd40000e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'patchtrace.acquisition.package_fdi_abi'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+____________ test_complete_entry_points_receive_required_signatures ____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9fcc1a0ad0>
+
+    def test_complete_entry_points_receive_required_signatures(monkeypatch):
+>       module = abi()
+                 ^^^^^
+
+tests/test_package_fdi_abi.py:134: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_package_fdi_abi.py:16: in abi
+    return importlib.import_module('patchtrace.acquisition.package_fdi_abi')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'patchtrace.acquisition.package_fdi_abi'
+import_ = <function _gcd_import at 0x7f9fd40000e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'patchtrace.acquisition.package_fdi_abi'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+_____ test_native_check_command_refuses_before_compiler_or_process_access ______
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9fcc1d2900>
+capsys = <_pytest.capture.CaptureFixture object at 0x7f9fcc1d00e0>
+
+    @pytest.mark.skipif(sys.platform == 'win32', reason='explicit unsupported-host control')
+    def test_native_check_command_refuses_before_compiler_or_process_access(monkeypatch, capsys):
+>       module = importlib.import_module('tools.check_package_fdi_abi')
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_package_fdi_abi.py:147: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'tools.check_package_fdi_abi'
+import_ = <function _gcd_import at 0x7f9fd40000e0>
+
+>   ???
+E   ModuleNotFoundError: No module named 'tools.check_package_fdi_abi'
+
+<frozen importlib._bootstrap>:1324: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED tests/test_package_fdi_abi.py::test_fixed_windows_widths_and_natural_amd64_layout
+FAILED tests/test_package_fdi_abi.py::test_callback_round_trip_keeps_pointer_sized_handles_and_signed_seek
+FAILED tests/test_package_fdi_abi.py::test_read_callback_receives_raw_output_pointer_and_reports_exact_count
+FAILED tests/test_package_fdi_abi.py::test_notification_round_trip_does_not_truncate_handles_or_read_name_pointers
+FAILED tests/test_package_fdi_abi.py::test_valid_native_layout_receipt_is_exact_and_bounded
+FAILED tests/test_package_fdi_abi.py::test_invalid_native_receipt_cannot_be_credited[field-offset]
+FAILED tests/test_package_fdi_abi.py::test_invalid_native_receipt_cannot_be_credited[missing]
+FAILED tests/test_package_fdi_abi.py::test_invalid_native_receipt_cannot_be_credited[extra]
+FAILED tests/test_package_fdi_abi.py::test_invalid_native_receipt_cannot_be_credited[duplicate]
+FAILED tests/test_package_fdi_abi.py::test_invalid_native_receipt_cannot_be_credited[boolean]
+FAILED tests/test_package_fdi_abi.py::test_invalid_native_receipt_cannot_be_credited[float]
+FAILED tests/test_package_fdi_abi.py::test_invalid_native_receipt_cannot_be_credited[string]
+FAILED tests/test_package_fdi_abi.py::test_invalid_native_receipt_cannot_be_credited[list]
+FAILED tests/test_package_fdi_abi.py::test_invalid_native_receipt_cannot_be_credited[invalid-utf8]
+FAILED tests/test_package_fdi_abi.py::test_invalid_native_receipt_cannot_be_credited[nonfinite]
+FAILED tests/test_package_fdi_abi.py::test_binding_checks_platform_before_touching_library
+FAILED tests/test_package_fdi_abi.py::test_complete_entry_points_receive_required_signatures
+FAILED tests/test_package_fdi_abi.py::test_native_check_command_refuses_before_compiler_or_process_access
+18 failed in 0.69s

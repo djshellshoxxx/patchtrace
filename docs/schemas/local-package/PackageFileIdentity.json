@@ -1,0 +1,40 @@
+{
+  "$id": "https://patchtrace.local/schemas/local-package/1/PackageFileIdentity.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "file_id": {
+      "maxLength": 32,
+      "minLength": 32,
+      "pattern": "^[0-9a-f]{32}$",
+      "title": "File Id",
+      "type": "string"
+    },
+    "last_write_ticks": {
+      "maximum": 18446744073709551615,
+      "minimum": 0,
+      "title": "Last Write Ticks",
+      "type": "integer"
+    },
+    "size": {
+      "maximum": 2147483647,
+      "minimum": 1,
+      "title": "Size",
+      "type": "integer"
+    },
+    "volume_serial": {
+      "maximum": 18446744073709551615,
+      "minimum": 0,
+      "title": "Volume Serial",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "volume_serial",
+    "file_id",
+    "size",
+    "last_write_ticks"
+  ],
+  "title": "PackageFileIdentity",
+  "type": "object"
+}

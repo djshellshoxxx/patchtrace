@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="6" time="0.262" timestamp="2026-11-27T17:55:22.543551-08:00" hostname="56e89409ebf3"><testcase classname="pw02-abi-independent-review" name="test_completed_process_total_cannot_bypass_native_checker_output_cap[probe]" time="0.016"><failure message="Failed: DID NOT RAISE AcquisitionError">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7ffb21f47c50&gt;
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-145/test_completed_process_total_c0')
+overflow = 'probe'
+
+    @pytest.mark.parametrize('overflow', ['probe', 'compiler'])
+    def test_completed_process_total_cannot_bypass_native_checker_output_cap(monkeypatch, tmp_path, overflow):
+        checker = importlib.import_module('tools.check_package_fdi_abi')
+        monkeypatch.setattr(checker, 'require_supported_platform', lambda: 'windows-amd64')
+        raw = json.dumps(EXPECTED_LAYOUT, sort_keys=True).encode()
+        tail = b' ' * (4096 - len(raw)) + raw
+        calls = []
+    
+        def reported(_argv, **options):
+            calls.append(options)
+            if len(calls) == 1:
+                return SimpleNamespace(returncode=0, reason=None, stderr_total=0,
+                                       stdout_total=1024 * 1024 + 1 if overflow == 'compiler' else 0,
+                                       log_bytes=b'')
+            return SimpleNamespace(returncode=0, reason=None, stderr_total=0,
+                                   stdout_total=8192 if overflow == 'probe' else len(tail), log_bytes=tail)
+    
+        monkeypatch.setattr(checker, 'run_process', reported)
+&gt;       with pytest.raises(AcquisitionError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE AcquisitionError
+
+../pw02-abi-independent-review.py:32: Failed</failure></testcase><testcase classname="pw02-abi-independent-review" name="test_completed_process_total_cannot_bypass_native_checker_output_cap[compiler]" time="0.002"><failure message="Failed: DID NOT RAISE AcquisitionError">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7ffb21ffb4d0&gt;
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-145/test_completed_process_total_c1')
+overflow = 'compiler'
+
+    @pytest.mark.parametrize('overflow', ['probe', 'compiler'])
+    def test_completed_process_total_cannot_bypass_native_checker_output_cap(monkeypatch, tmp_path, overflow):
+        checker = importlib.import_module('tools.check_package_fdi_abi')
+        monkeypatch.setattr(checker, 'require_supported_platform', lambda: 'windows-amd64')
+        raw = json.dumps(EXPECTED_LAYOUT, sort_keys=True).encode()
+        tail = b' ' * (4096 - len(raw)) + raw
+        calls = []
+    
+        def reported(_argv, **options):
+            calls.append(options)
+            if len(calls) == 1:
+                return SimpleNamespace(returncode=0, reason=None, stderr_total=0,
+                                       stdout_total=1024 * 1024 + 1 if overflow == 'compiler' else 0,
+                                       log_bytes=b'')
+            return SimpleNamespace(returncode=0, reason=None, stderr_total=0,
+                                   stdout_total=8192 if overflow == 'probe' else len(tail), log_bytes=tail)
+    
+        monkeypatch.setattr(checker, 'run_process', reported)
+&gt;       with pytest.raises(AcquisitionError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE AcquisitionError
+
+../pw02-abi-independent-review.py:32: Failed</failure></testcase><testcase classname="pw02-abi-independent-review" name="test_native_checker_refuses_failed_phase_before_success_receipt[exit-compiler]" time="0.001" /><testcase classname="pw02-abi-independent-review" name="test_native_checker_refuses_failed_phase_before_success_receipt[exit-probe]" time="0.001" /><testcase classname="pw02-abi-independent-review" name="test_native_checker_refuses_failed_phase_before_success_receipt[reason-compiler]" time="0.001" /><testcase classname="pw02-abi-independent-review" name="test_native_checker_refuses_failed_phase_before_success_receipt[reason-probe]" time="0.001" /></testsuite></testsuites>

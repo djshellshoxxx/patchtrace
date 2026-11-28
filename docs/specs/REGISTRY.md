@@ -210,3 +210,4 @@ These entries describe the separate follow-up candidate and do not establish acc
 | File | Alias | Owner | Scope |
 |---|---|---|---|
 | `docs/specs/kb-file-inventory-csv.md` | PW-01 | KB correlation inventory adapters | Bounded CSV and inert support links, immutable original-source replay, explicit filename selection, CLI and Qt. Synthetic acceptance does not establish live-source or release acceptance. |
+| `docs/specs/local-package-intake.md` | PW-02 under SPEC-31-D | acquisition/package_* | Pure strict records/name/budget/worker accounting first; native FDI, held I/O, service admission and frozen acceptance remain explicit pending gates. |

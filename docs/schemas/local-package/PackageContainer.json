@@ -1,0 +1,50 @@
+{
+  "$id": "https://patchtrace.local/schemas/local-package/1/PackageContainer.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "ancestors": {
+      "default": [],
+      "items": {
+        "maxLength": 64,
+        "minLength": 64,
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 4,
+      "title": "Ancestors",
+      "type": "array"
+    },
+    "complete": {
+      "title": "Complete",
+      "type": "boolean"
+    },
+    "container_sha256": {
+      "maxLength": 64,
+      "minLength": 64,
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Container Sha256",
+      "type": "string"
+    },
+    "entry_count": {
+      "maximum": 50000,
+      "minimum": 0,
+      "title": "Entry Count",
+      "type": "integer"
+    },
+    "size": {
+      "maximum": 2147483647,
+      "minimum": 1,
+      "title": "Size",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "container_sha256",
+    "size",
+    "entry_count",
+    "complete"
+  ],
+  "title": "PackageContainer",
+  "type": "object"
+}

@@ -1,3 +1,43 @@
+## November 27 PW-02 supervised handle transfer
+
+- [x] Add at most 16 transient named borrowed Windows handles; preserve originals,
+  use same-access launch duplicates and an exact stdio/duplicate inheritance list,
+  keep Job-before-resume and all existing supervision.
+- [x] Reproduce 39 baseline failures and pass the final 189-test supervisor lane;
+  whole-tree Ruff and whitespace pass. Thirteen native Windows cases are skipped.
+- [ ] Independently review the exact source and run the seven new native
+  inheritance/ownership/concurrency cases plus existing Windows supervisor gates.
+  Native qualification is BLOCKED on Linux; package extraction remains incomplete.
+
+[Detailed process-seam record](../docs/engineering/local-package-process-ownership-20261127.md).
+
+## November 27 PW-02 ABI checker output totals
+
+Independent review confirmed pinned ABI declarations but reproduced two accepted
+output-overflow receipts. Final stdout/stderr totals and complete probe byte
+retention are now checked after process completion. The 26-case corrective lane
+passes without skips, with unchanged independent controls retained. Native
+Windows SDK/DLL/extraction qualification remains pending; see the PW-02 recovery
+record for exact portable scope and original failures.
+
+## November 27 PW-02 decoder ABI slice
+
+Pinned Win32 widths/cdecl/AMD64 layout and a separately supervised authored SDK
+probe are implemented. Original 18 missing-module failures are retained; the
+combined portable package lane passes 353 tests without skips. Actual Windows
+SDK compilation, held I/O, system decoder, supervised extraction and KB/frozen
+pair admission remain pending. This is not a working-extractor or native-pass
+claim. See docs/engineering/local-package-recovery-20261127.md.
+
+## November 27 PW-02 local package intake
+
+- [x] Recover and qualify strict pure records, logical names and serial accounting.
+- [ ] Implement native held source/output handles and verified system FDI binding.
+- [ ] Complete supervised decoding and current KB full-PE pair admission.
+- [ ] Pass actual native/frozen authored journeys and independent source review.
+
+[Completion plan and honest capability boundary](../docs/engineering/local-package-recovery-20261127.md).
+
 ## November 27 complete retained Winbindex replay
 
 - [x] Bind complete original bytes, resolver arguments and endpoint membership.
@@ -1919,3 +1959,8 @@ Owner/branch: `codex/patchtrace-linux-frozen-cli-smoke-20261121`; handoff
 - [x] Obtain independent re-review of the completed-output repair on
   `806ccc4fbe7b26bd854cf64de96bd03bdde36f64`: 40 focused tests passed, zero skips;
   no remaining consumer-scope blocker. Hosted/full/package qualification remains.
+
+
+- [x] PW-02 process ownership: independently review exact source and retain five
+  extra controls with 108 affected passes / three native-only skips.
+- [ ] Run seven authored native handle/Job tests on Windows at the published head.
