@@ -811,7 +811,7 @@ F4 notes: `prepare_table` takes `columns` because they may change with every tab
 |---|---|---|---|---|
 | graph view | src/patchtrace/gui/graph_view.py | Qt-free `GraphNodeView`, `GraphEdgeView`, `GraphTooLargeError` (PT-GUI-GRAPH-TOO-LARGE), `validate_graph`, `check_ceilings`, zoom clamp, `detail_level`, `nearest_in_direction`, `first_node`, `adjacency` | gui.registry, gui.state, gui.text | tests/test_gui_graph_view.py, tests/test_gui_core_isolation.py |
 | graph canvas | src/patchtrace/gui/qt/canvas.py | `GraphCanvas(QGraphicsView)`: stock items only, scene swap with deleteLater, level of detail by zoom, keyboard, polite announcements, click and double click | graph_view, qt.metrics, qt.theme; PySide6 | tests/test_gui_qt_canvas.py |
-F6b notes: `setMinimumRenderSize` is a `QGraphicsScene` method, set on every new scene. The optional minimap is not built. Edges are straight centre-to-centre lines; the feature supplies the layout and the textual adjacency table. Dangling edges and duplicate keys raise `ValueError`.
+F6b notes: `setMinimumRenderSize` is a `QGraphicsScene` method, set on every new scene. The Calls feature owns its existing minimap. Edges default to straight centre-to-centre lines; optional bounded finite route points use stock path items. `node_dimensions()` exposes the actual font-derived box size for feature scaling. The feature supplies the layout and textual adjacency table. Dangling edges, duplicate keys and malformed routes raise `ValueError`.
 
 ### [F6a:codediff]
 - gui/pair_text.py (pure, Qt-free): PairHunk, PairText (aligned older/newer text, hunks as aligned rows, per-side original-line -> row maps), align_pair(old_lines, new_lines, opcodes) over half-open opcodes (the shape of alignment.diff_hunks and difflib). Home of the `PairText` named in plan 8.4.
@@ -1187,7 +1187,11 @@ Audit of `unified/` and `tools/unified/` (`docs/audits/20261015-unified-audit.md
 `search/panel.py` (pure `PANEL`, factory loads Qt lazily), `search/qt_panel.py` (`SearchController`: query, side/scope/mode/sort, paged rows over `view_model.ResultsBuffer`, detail, Go to code, Other side, Copy, index build, cancel), `search/tooltip_entries.py` (`TooltipEntry` form of `tooltip_data` plus `search.cancel`). Tests: `tests/test_ui_search_panel.py`.
 
 ### [WB2-G5G6:calls-panel]
-Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets and controller), `panel_data.py` (Qt-free worker side), `tooltip_entries.py`. Tests `tests/test_ui_graph_panel.py`. Not built yet: DOT export, call-site reveal, settings persistence, minimap.
+Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets and controller), `panel_data.py` (Qt-free worker side), `tooltip_entries.py`. DOT, call-site reveal and minimap are implemented under `docs/specs/panels/graph-inspection.md`. Tests `tests/test_ui_graph_panel.py`, `tests/test_callgraph_inspection.py` and the inspection UI lane. Settings persistence remains separate.
+
+### [WB2-G6:bounded-layout] 2026-11-27
+
+`callgraph/layout.py` (pure normalized boxes and caller-to-callee routes) and layout budgets in `callgraph/limits.py`; worker integration in `panel_data.py`, font scaling and presentation in `panel_qt.py`. Optional bounded immutable route points extend `gui/graph_view.py` and stock path rendering extends `gui/qt/canvas.py`. Existing minimap, keyboard and export modules retain ownership. Specification: `docs/specs/panels/graph-layout.md`. Tests: `test_callgraph_layout.py`, `test_callgraph_layout_bounds.py`, `test_gui_graph_routes.py`, `test_gui_qt_routes.py`, `test_callgraph_layout_panel.py`, `test_ui_graph_layout.py`. Evidence: `docs/engineering/callgraph-layout-recovery-20261127.md`.
 
 ### [WB3-S7b:strings-panel]
 

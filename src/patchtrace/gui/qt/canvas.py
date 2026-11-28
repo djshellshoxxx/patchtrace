@@ -1,6 +1,6 @@
 """GraphCanvas: a QGraphicsView over immutable node and edge views (GUI plan 8.4, slice F6b).
 
-Every item is a stock Qt item (rectangles, text, lines): no Python ``paint()``, so the 2,000 node and 8,000 edge
+Every item is a stock Qt item (rectangles, text, lines, paths): no Python ``paint()``, so the 2,000 node and 8,000 edge
 maximum stays cheap. A graph is replaced by building a new scene, swapping it in and ``deleteLater`` on the old one
 (``scene.clear()`` is 20 times slower). Level of detail changes only when the zoom crosses a threshold. Scene items
 are invisible to UI Automation, so a focused node is announced and the feature supplies the textual adjacency table.
@@ -11,10 +11,21 @@ from __future__ import annotations
 from typing import Protocol
 
 from PySide6.QtCore import QPointF, QRectF, Qt, Signal
-from PySide6.QtGui import QBrush, QColor, QKeyEvent, QMouseEvent, QPainter, QPen, QTransform, QWheelEvent
+from PySide6.QtGui import (
+    QBrush,
+    QColor,
+    QKeyEvent,
+    QMouseEvent,
+    QPainter,
+    QPainterPath,
+    QPen,
+    QTransform,
+    QWheelEvent,
+)
 from PySide6.QtWidgets import (
     QGraphicsItem,
     QGraphicsLineItem,
+    QGraphicsPathItem,
     QGraphicsRectItem,
     QGraphicsScene,
     QGraphicsSimpleTextItem,
@@ -56,7 +67,7 @@ class GraphCanvas(QGraphicsView):
         self._nodes: dict[str, GraphNodeView] = {}
         self._boxes: dict[str, QGraphicsRectItem] = {}
         self._labels: list[QGraphicsSimpleTextItem] = []
-        self._edges: list[QGraphicsLineItem] = []
+        self._edges: list[QGraphicsLineItem | QGraphicsPathItem] = []
         self._points: dict[str, tuple[float, float]] = {}
         self._connections: dict[str, int] = {}
         self._selected: set[str] = set()
@@ -99,6 +110,11 @@ class GraphCanvas(QGraphicsView):
     def edge_count(self) -> int:
         return len(self._edges)
 
+    def node_dimensions(self) -> tuple[float, float]:
+        """The current font-derived box size, for a feature scaling its normalized layout."""
+        metrics = Metrics.of(self)
+        return float(metrics.em * NODE_WIDTH_EM), float(metrics.row_height)
+
     # -- content --
     def set_graph(self, nodes: list[GraphNodeView], edges: list[GraphEdgeView]) -> None:
         """Replace the graph. Raises `GraphTooLargeError` (PT-GUI-GRAPH-TOO-LARGE) before touching anything, so
@@ -127,7 +143,7 @@ class GraphCanvas(QGraphicsView):
 
     def _build(self, scene: QGraphicsScene, nodes: list[GraphNodeView], edges: list[GraphEdgeView]) -> None:
         metrics = Metrics.of(self)
-        width, height = metrics.em * NODE_WIDTH_EM, metrics.row_height
+        width, height = self.node_dimensions()
         self._nodes = {node.key: node for node in nodes}
         self._points = {node.key: (node.x, node.y) for node in nodes}
         self._connections = gv.adjacency(edges)
@@ -136,8 +152,14 @@ class GraphCanvas(QGraphicsView):
         edge_pen.setCosmetic(True)
         self._edges = []
         for edge in edges:
-            (x1, y1), (x2, y2) = self._points[edge.source], self._points[edge.target]
-            line = QGraphicsLineItem(x1, y1, x2, y2)
+            if edge.points:
+                path = QPainterPath(QPointF(*edge.points[0]))
+                for x, y in edge.points[1:]:
+                    path.lineTo(x, y)
+                line = QGraphicsPathItem(path)
+            else:
+                (x1, y1), (x2, y2) = self._points[edge.source], self._points[edge.target]
+                line = QGraphicsLineItem(x1, y1, x2, y2)
             line.setPen(edge_pen)
             line.setZValue(-1)
             scene.addItem(line)
@@ -150,6 +172,7 @@ class GraphCanvas(QGraphicsView):
             scene.addItem(box)
             self._boxes[node.key] = box
             label = QGraphicsSimpleTextItem(self._elide(node.label, width), box)
+            label.setFont(self.font())
             label.setBrush(QBrush(QColor(chip_text_color(self._tokens, node.chip))))
             label.setPos(node.x - width / 2 + metrics.gap_small, node.y - metrics.line / 2)
             self._labels.append(label)

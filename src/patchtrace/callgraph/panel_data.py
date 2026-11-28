@@ -12,18 +12,17 @@ from .contracts_delta import CallDelta, GraphLead
 from .delta import DeltaContext, compute_deltas, diff_types_by_match
 from .dot import render_dot
 from .export_json import GraphExport, default_name
+from .layout import Layout, layout_view
 from .leads import build_leads
 from .limits import GraphError
 from .project_input import ProjectInput, read_project_input
 from .query import QueryDirection, find_node, neighbourhood, partner
 from .snapshot import CallSnapshot, build_snapshot
-from .text import one_line
 from .view_model import NeighbourRow, neighbour_rows
 
 Cancel = Callable[[], bool]
 NEIGHBOUR_NODES = 500   # normal cap of the spec (the default query is 100)
 NEIGHBOUR_EDGES = 2_000
-LAYER_X, ROW_Y = 240.0, 56.0
 
 
 @dataclass(frozen=True)
@@ -57,6 +56,7 @@ class Neighbourhood:
     focus_id: str
     rows: tuple[NeighbourRow, ...]
     total: int
+    diagram: Layout | Failure
 
 
 def load_graph_data(project: ComparisonProject, root: Path | None, cancel: Cancel) -> GraphData | Failure:
@@ -99,9 +99,20 @@ def query(data: GraphData, spec: QuerySpec, cancel: Cancel) -> Neighbourhood | F
         delta = next((d for d in data.deltas if d.match_id == spec.match_id), None)
         pairings = {n.id: _pairing(data.snapshot, spec.side, n.id) for n in view.nodes}
         rows, total = neighbour_rows(view, focus.id, delta=delta, pairings=pairings)
+        diagram = _diagram(view, focus.id, cancel)
     except GraphError as exc:
         return Failure(exc.code, exc.message)
-    return Neighbourhood(spec, view, focus.id, rows, total)
+    return Neighbourhood(spec, view, focus.id, rows, total, diagram)
+
+
+def _diagram(view: GraphView, focus: str, cancel: Cancel) -> Layout | Failure:
+    """A drawing limit must not discard the complete queried graph or its textual evidence."""
+    try:
+        return layout_view(view, focus, cancel=cancel)
+    except GraphError as exc:
+        if exc.code == 'PT-GRAPH-CANCEL':
+            raise
+        return Failure(exc.code, exc.message)
 
 
 def _pairing(snapshot: CallSnapshot, side: Side, node_id: str) -> Pairing:
@@ -116,28 +127,27 @@ def _without_unresolved(view: GraphView) -> GraphView:
 
 
 def layers(found: Neighbourhood) -> dict[str, int]:
-    """Signed hop layer of each node: callers negative, callees positive, the seed 0. Deterministic."""
-    by_id = {r.node_id: r for r in found.rows}
-    out = {found.focus_id: 0}
-    for node in found.view.nodes:
-        row = by_id.get(node.id)
-        if row is not None:
-            out[node.id] = -row.hops if row.relation == 'Caller' else row.hops
-    return out
+    """Read the completed worker geometry; this never runs layout on a UI caller."""
+    return {n.id: n.layer for n in found.diagram.nodes} if isinstance(found.diagram, Layout) else {}
 
 
 def positions(found: Neighbourhood) -> dict[str, tuple[float, float]]:
-    """Layer columns left to right, rows ordered by (label, id); no randomness, no sweeps needed."""
-    layer_of = layers(found)
-    names = {n.id: one_line(n.label) for n in found.view.nodes}
-    columns: dict[int, list[str]] = {}
-    for node_id, layer in layer_of.items():
-        columns.setdefault(layer, []).append(node_id)
-    out: dict[str, tuple[float, float]] = {}
-    for layer, ids in columns.items():
-        for row, node_id in enumerate(sorted(ids, key=lambda i: (names.get(i, ''), i))):
-            out[node_id] = (layer * LAYER_X, row * ROW_Y)
-    return out
+    """Cached centres in normalized layout units; the GUI applies its actual font metrics."""
+    return ({n.id: (n.x + n.w / 2, n.y + n.h / 2) for n in found.diagram.nodes}
+            if isinstance(found.diagram, Layout) else {})
+
+
+def diagram_notice(found: Neighbourhood) -> str:
+    """Drawing-only limitations, independent of the source graph's truncation and more markers."""
+    diagram = found.diagram
+    if isinstance(diagram, Failure):
+        return f'Diagram unavailable: {diagram.message}. Use the Neighbours table or narrow the depth.'
+    reasons = {'nodes': 'nodes at the drawing limit', 'depth': 'nodes beyond the drawing depth',
+               'disconnected': 'disconnected nodes', 'long-edges': 'long call routes at the drawing limit'}
+    if not diagram.notes:
+        return ''
+    omissions = '; '.join(f'{note.dropped:,} {reasons[note.kind]}' for note in diagram.notes)
+    return f'Diagram omits {omissions}. The Neighbours table and export retain the queried graph.'
 
 
 # ---- DOT export of what is shown (docs/specs/panels/graph-inspection.md section 1) -------------------------------
