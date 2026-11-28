@@ -1,0 +1,81 @@
+{
+  "$defs": {
+    "CsvRecordRef": {
+      "additionalProperties": false,
+      "properties": {
+        "line_end": {
+          "maximum": 16777217,
+          "minimum": 1,
+          "title": "Line End",
+          "type": "integer"
+        },
+        "line_start": {
+          "maximum": 16777217,
+          "minimum": 1,
+          "title": "Line Start",
+          "type": "integer"
+        },
+        "logical_record": {
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Logical Record",
+          "type": "integer"
+        },
+        "raw_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Raw Sha256",
+          "type": "string"
+        },
+        "section_index": {
+          "exclusiveMaximum": 1000,
+          "minimum": 0,
+          "title": "Section Index",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "raw_sha256",
+        "logical_record",
+        "line_start",
+        "line_end",
+        "section_index"
+      ],
+      "title": "CsvRecordRef",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/kbcorrelation/1/InventoryConflictWitness.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "conflict_group": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Conflict Group",
+      "type": "string"
+    },
+    "field": {
+      "enum": [
+        "version_components",
+        "size_bytes",
+        "date_text",
+        "time_text"
+      ],
+      "title": "Field",
+      "type": "string"
+    },
+    "first": {
+      "$ref": "#/$defs/CsvRecordRef"
+    },
+    "second": {
+      "$ref": "#/$defs/CsvRecordRef"
+    }
+  },
+  "required": [
+    "conflict_group",
+    "field",
+    "first",
+    "second"
+  ],
+  "title": "InventoryConflictWitness",
+  "type": "object"
+}

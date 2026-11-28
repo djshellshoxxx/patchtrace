@@ -1,3 +1,7 @@
+## PW-01 feature recovery (2026-11-27)
+
+See `docs/engineering/inventory-recovery-20261127.md` for the concrete incremental plan, retained donor identities, observed failures and current evidence. All four implementation slices are complete; combined KB/inventory verification passed 2,767 tests with four skips, and independent review found no remaining blocker after the fixed-byte metadata correction. Full-suite and current-head hosted/native acceptance remain pending. Do not treat this entry as completion or release approval.
+
 ## Packaged-version gate follow-up (2026-11-27)
 
 The reported stale packaging assertion is repaired and its affected125-test lane passes. Local full-suite execution was terminated by SIGKILL and is not qualified; require fresh current-head Linux/Windows/Qt/package acceptance on PR #369 before guarded merge. See the corresponding docs/qa.md entry.

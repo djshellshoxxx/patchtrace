@@ -105,3 +105,5 @@ Listing of every file under `docs/specs/`, 2026-10-14. SPEC number and status co
 | [workbench/03-floss-strings.md](workbench/03-floss-strings.md) | PT-WB-03 | approved | PT-WB-03: FLOSS Versioned String Extraction and Side-by-Side Investigation |
 | [workbench/04-quickwins.md](workbench/04-quickwins.md) | PT-WB-04 | draft | PT-WB-QW: Additional Very-Low-Effort, High-Value Integrations |
 | [workbench/README.md](workbench/README.md) | PT-WB (index) | approved | PatchTrace Workbench: Three Reusable Integrations and Easy-Win Addenda |
+
+| [kb-file-inventory-csv.md](kb-file-inventory-csv.md) | PW-01 | implementation | Bounded KB file inventory CSV and support links |

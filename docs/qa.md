@@ -1,3 +1,7 @@
+## PW-01 recovery in progress (2026-11-27)
+
+See `docs/engineering/inventory-recovery-20261127.md` for the concrete incremental plan, retained donor identities, observed failures and current evidence. All four implementation slices are complete; combined KB/inventory verification passed 2,767 tests with four skips, and independent review found no remaining blocker after the fixed-byte metadata correction. Full-suite and current-head hosted/native acceptance remain pending. Do not treat this entry as completion or release approval.
+
 ## Packaged-version qualification correction (2026-11-27)
 
 The full local offscreen run at `aa8967e895b88a553df4fb14f7429ed64cca0db6` ended with pytest return code `-9` (SIGKILL) after 681.821 seconds and 5,147 reported cases. Its signal origin is unestablished; this is an incomplete gate, not a full-suite pass. The one reported failure was reproduced in isolation: `test_full_linux_frozen_smoke_preserves_both_qt_modes` expected an obsolete literal call spelling after the CLI acquired `--version-only`.
