@@ -28,3 +28,10 @@ Main already contains cancellation and failed-create retry implementations/tests
 ## Completion boundary
 
 No whole-product completion or release is claimed. Manual accessibility/DPI/keyboard, disconnected runtime installation, signing, live corpus/native compatibility and separate L1/L2/L3 accuracy gates remain. Never score unverified facts. Record/app equality is not authenticity or compiled-bytecode attestation. Preserve historical evidence.
+
+## Packaged-version qualification correction (2026-11-27)
+
+The full local offscreen run at `aa8967e895b88a553df4fb14f7429ed64cca0db6` ended with pytest return code `-9` (SIGKILL) after 681.821 seconds and 5,147 reported cases. Its signal origin is unestablished; this is an incomplete gate, not a full-suite pass. The one reported failure was reproduced in isolation: `test_full_linux_frozen_smoke_preserves_both_qt_modes` expected an obsolete literal call spelling after the CLI acquired `--version-only`.
+
+Commit `88aba929c22b2753851f7c5aa549cde9aa28b8d4` repairs only that test module: both offscreen/Xvfb modes remain required; AST checks cover complete BinExport/intelligence wiring; hermetic dispatch checks cover default full and explicit version-only behavior. The packaging/frozen-version/build-info/unified-packaging lane passed **125** tests. The suspected next evidence-storage test passed alone and its unchanged full module passed **22** cases; neither explains SIGKILL. Earlier extracted-Linux acceptance remains 66 full smoke checks plus separate stdlib-only V1 at exact packaged commit `aa8967e…`; it is not Windows or new-head evidence. Fresh current-head hosted qualification remains required.
+

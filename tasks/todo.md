@@ -1,3 +1,7 @@
+## Packaged-version gate follow-up (2026-11-27)
+
+The reported stale packaging assertion is repaired and its affected125-test lane passes. Local full-suite execution was terminated by SIGKILL and is not qualified; require fresh current-head Linux/Windows/Qt/package acceptance on PR #369 before guarded merge. See the corresponding docs/qa.md entry.
+
 ## November 27 current-source feature continuation
 
 - [x] Verify current main includes #365/#366 and preserve #367 producer ancestry.
