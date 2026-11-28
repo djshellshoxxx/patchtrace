@@ -1,3 +1,34 @@
+## November 27 desktop independent pairing correction
+
+Combined desktop/Pilot/evidence/inspection/graph/Strings verification at `e8692010`
+passed **738 tests without skips**. Independent persisted/reopened review then
+reproduced a valid location belonging to a different pairing changing the display
+before refusal (**1 failed, 1 passed**). The action now requires current pairing
+ownership before the existing shared location validator and presentation changes.
+The corrective signal, independent boundary and actual-window accessibility lane
+passed **27 tests without skips**. Original failures and exact scope remain in
+[the recovery record](engineering/desktop-context-recovery-20261127.md). Independent
+corrective review, current-head hosted and native accessibility gates remain open.
+
+## November 27 desktop accessible names and identifiers
+
+Actual-window regressions reproduced five failures before naming integration;
+the partial fix left two genuine control/identifier gaps. All are repaired in the
+126-pass helper/state/layout/window lane with no skips. Existing explicit names,
+label announcements and dock restoration object names are preserved; generated
+names and automation identifiers distinguish repeated controls within each actual
+Qt window. This is offscreen property acceptance, not native screen-reader proof.
+[Plan, original failures and scope](engineering/desktop-context-recovery-20261127.md).
+
+## November 27 stored signal navigation recovery
+
+Twelve stored/reopened navigation regressions failed before the live validation
+boundary, while three valid controls passed. The repaired action plus current
+enrichment desktop and tooltip lanes pass 37 checks without skips. Unsupported
+representations and stale/foreign locations preserve the current mode/cursor;
+valid address zero still navigates. Final combined/independent/platform gates
+remain pending. [Plan and evidence](engineering/desktop-context-recovery-20261127.md).
+
 ## Pilot final affected qualification (2026-11-27)
 
 Both independently reproduced admission/display-ownership defects are corrected and the implementation is approved at `30ca3f90`. After the common packaging follow-up merge, the complete affected 50-module selection passed **2,070 tests, zero skips**. See `docs/engineering/pilot-recovery-20261127.md` and its retained final command/log. Current-head full application, hosted/native/platform acceptance and guarded merge remain open.
@@ -2623,3 +2654,6 @@ resumes when its model arrives. The focused UI and current-input suites passed
 common-module checks passed. Full commands and raw log names are recorded in
 `engineering/pilot-recovery-20261127.md`. Independent UI re-review and root's
 full/platform gates remain pending; strict JSON has independent approval.
+
+Desktop corrective review at `47465823` is independently approved: 27 tests
+passed without skips in 22.73 seconds. Exact-head hosted/native gates remain open.

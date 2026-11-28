@@ -1,3 +1,12 @@
+## November 27 desktop context completion
+
+- [x] Reproduce and repair stored signal navigation before mode/cursor mutation.
+- [x] Fill registered names, combo/table children and unique repeated-control IDs.
+- [x] Complete independent review and the affected combined-source selection.
+- [ ] Qualify exact publication-head hosted and native accessibility behavior.
+
+[Plan and evidence](../docs/engineering/desktop-context-recovery-20261127.md).
+
 ## Pilot final affected qualification (2026-11-27)
 
 Both independently reproduced admission/display-ownership defects are corrected and the implementation is approved at `30ca3f90`. After the common packaging follow-up merge, the complete affected 50-module selection passed **2,070 tests, zero skips**. See `docs/engineering/pilot-recovery-20261127.md` and its retained final command/log. Current-head full application, hosted/native/platform acceptance and guarded merge remain open.

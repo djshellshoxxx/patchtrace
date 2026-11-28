@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="1" failures="12" skipped="0" tests="16" time="13.134" timestamp="2026-11-27T17:12:19.563029-08:00" hostname="56e89409ebf3"><testcase classname="" name="tests.test_gui_a11y_window" time="0.000"><error message="collection failure">ImportError while importing test module '/workspace/scratch/e3f205d85f15/patchtrace-layout/tests/test_gui_a11y_window.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_gui_a11y_window.py:17: in &lt;module&gt;
+    from patchtrace.gui.access_names import NAMES, popup_name
+E   ModuleNotFoundError: No module named 'patchtrace.gui.access_names'</error></testcase><testcase classname="tests.test_signal_location_navigation" name="test_invalid_stored_location_refuses_before_mode_or_cursor_change[function_id-PT-ENRICH-OWNERSHIP]" time="0.965"><failure message="AssertionError: assert not [('authored-foreign-function', 2, 5)]">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-97/test_invalid_stored_location_r0')
+qtbot = &lt;pytestqt.qtbot.QtBot object at 0x7fe05d44ab70&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fe05d9a53d0&gt;
+field = 'function_id', code = 'PT-ENRICH-OWNERSHIP'
+
+    @pytest.mark.parametrize('field,code', [
+        ('function_id', 'PT-ENRICH-OWNERSHIP'),
+        ('artifact_id', 'PT-ENRICH-OWNERSHIP'),
+        ('run_id', 'PT-ENRICH-OWNERSHIP'),
+        ('side', 'PT-ENRICH-OWNERSHIP'),
+        ('address', 'PT-ENRICH-OWNERSHIP'),
+        ('excerpt_sha256', 'PT-ENRICH-STALE'),
+        ('end_line', 'PT-ENRICH-STALE'),
+    ])
+    def test_invalid_stored_location_refuses_before_mode_or_cursor_change(tmp_path, qtbot, monkeypatch, field, code):
+        window, signal_id, _location, errors, revealed = _window(tmp_path, qtbot, monkeypatch, field)
+        try:
+            window.mode.setCurrentIndex(1)
+            before_project = window.project.model_dump_json()
+            before_ranking = window._ranking_result.model_dump_json()
+            before_rows = _rows(window.service)
+            before_cursors = {side: (pane.textCursor().position(), pane.textCursor().anchor())
+                              for side, pane in window.views.items()}
+            window.jump_signal(_item(window, signal_id))
+&gt;           assert not revealed
+E           AssertionError: assert not [('authored-foreign-function', 2, 5)]
+
+tests/test_signal_location_navigation.py:118: AssertionError</failure></testcase><testcase classname="tests.test_signal_location_navigation" name="test_invalid_stored_location_refuses_before_mode_or_cursor_change[artifact_id-PT-ENRICH-OWNERSHIP]" time="0.374"><failure message="AssertionError: assert not [('d325e840-b388-4c95-831d-1fff520607c3', 2, 5)]">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-97/test_invalid_stored_location_r1')
+qtbot = &lt;pytestqt.qtbot.QtBot object at 0x7fe063f03fe0&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fe05d48c290&gt;
+field = 'artifact_id', code = 'PT-ENRICH-OWNERSHIP'
+
+    @pytest.mark.parametrize('field,code', [
+        ('function_id', 'PT-ENRICH-OWNERSHIP'),
+        ('artifact_id', 'PT-ENRICH-OWNERSHIP'),
+        ('run_id', 'PT-ENRICH-OWNERSHIP'),
+        ('side', 'PT-ENRICH-OWNERSHIP'),
+        ('address', 'PT-ENRICH-OWNERSHIP'),
+        ('excerpt_sha256', 'PT-ENRICH-STALE'),
+        ('end_line', 'PT-ENRICH-STALE'),
+    ])
+    def test_invalid_stored_location_refuses_before_mode_or_cursor_change(tmp_path, qtbot, monkeypatch, field, code):
+        window, signal_id, _location, errors, revealed = _window(tmp_path, qtbot, monkeypatch, field)
+        try:
+            window.mode.setCurrentIndex(1)
+            before_project = window.project.model_dump_json()
+            before_ranking = window._ranking_result.model_dump_json()
+            before_rows = _rows(window.service)
+            before_cursors = {side: (pane.textCursor().position(), pane.textCursor().anchor())
+                              for side, pane in window.views.items()}
+            window.jump_signal(_item(window, signal_id))
+&gt;           assert not revealed
+E           AssertionError: assert not [('d325e840-b388-4c95-831d-1fff520607c3', 2, 5)]
+
+tests/test_signal_location_navigation.py:118: AssertionError</failure></testcase><testcase classname="tests.test_signal_location_navigation" name="test_invalid_stored_location_refuses_before_mode_or_cursor_change[run_id-PT-ENRICH-OWNERSHIP]" time="0.408"><failure message="AssertionError: assert not [('205c284b-271b-46f2-9089-4f2d8661c3af', 2, 5)]">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-97/test_invalid_stored_location_r2')
+qtbot = &lt;pytestqt.qtbot.QtBot object at 0x7fe05cd734d0&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fe05d9a5520&gt;
+field = 'run_id', code = 'PT-ENRICH-OWNERSHIP'
+
+    @pytest.mark.parametrize('field,code', [
+        ('function_id', 'PT-ENRICH-OWNERSHIP'),
+        ('artifact_id', 'PT-ENRICH-OWNERSHIP'),
+        ('run_id', 'PT-ENRICH-OWNERSHIP'),
+        ('side', 'PT-ENRICH-OWNERSHIP'),
+        ('address', 'PT-ENRICH-OWNERSHIP'),
+        ('excerpt_sha256', 'PT-ENRICH-STALE'),
+        ('end_line', 'PT-ENRICH-STALE'),
+    ])
+    def test_invalid_stored_location_refuses_before_mode_or_cursor_change(tmp_path, qtbot, monkeypatch, field, code):
+        window, signal_id, _location, errors, revealed = _window(tmp_path, qtbot, monkeypatch, field)
+        try:
+            window.mode.setCurrentIndex(1)
+            before_project = window.project.model_dump_json()
+            before_ranking = window._ranking_result.model_dump_json()
+            before_rows = _rows(window.service)
+            before_cursors = {side: (pane.textCursor().position(), pane.textCursor().anchor())
+                              for side, pane in window.views.items()}
+            window.jump_signal(_item(window, signal_id))
+&gt;           assert not revealed
+E           AssertionError: assert not [('205c284b-271b-46f2-9089-4f2d8661c3af', 2, 5)]
+
+tests/test_signal_location_navigation.py:118: AssertionError</failure></testcase><testcase classname="tests.test_signal_location_navigation" name="test_invalid_stored_location_refuses_before_mode_or_cursor_change[side-PT-ENRICH-OWNERSHIP]" time="0.453"><failure message="AssertionError: assert not [('b4282a11-c728-48bf-abc8-263eb762ef69', 2, 5)]">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-97/test_invalid_stored_location_r3')
+qtbot = &lt;pytestqt.qtbot.QtBot object at 0x7fe05cd73530&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fe05f2247a0&gt;
+field = 'side', code = 'PT-ENRICH-OWNERSHIP'
+
+    @pytest.mark.parametrize('field,code', [
+        ('function_id', 'PT-ENRICH-OWNERSHIP'),
+        ('artifact_id', 'PT-ENRICH-OWNERSHIP'),
+        ('run_id', 'PT-ENRICH-OWNERSHIP'),
+        ('side', 'PT-ENRICH-OWNERSHIP'),
+        ('address', 'PT-ENRICH-OWNERSHIP'),
+        ('excerpt_sha256', 'PT-ENRICH-STALE'),
+        ('end_line', 'PT-ENRICH-STALE'),
+    ])
+    def test_invalid_stored_location_refuses_before_mode_or_cursor_change(tmp_path, qtbot, monkeypatch, field, code):
+        window, signal_id, _location, errors, revealed = _window(tmp_path, qtbot, monkeypatch, field)
+        try:
+            window.mode.setCurrentIndex(1)
+            before_project = window.project.model_dump_json()
+            before_ranking = window._ranking_result.model_dump_json()
+            before_rows = _rows(window.service)
+            before_cursors = {side: (pane.textCursor().position(), pane.textCursor().anchor())
+                              for side, pane in window.views.items()}
+            window.jump_signal(_item(window, signal_id))
+&gt;           assert not revealed
+E           AssertionError: assert not [('b4282a11-c728-48bf-abc8-263eb762ef69', 2, 5)]
+
+tests/test_signal_location_navigation.py:118: AssertionError</failure></testcase><testcase classname="tests.test_signal_location_navigation" name="test_invalid_stored_location_refuses_before_mode_or_cursor_change[address-PT-ENRICH-OWNERSHIP]" time="0.644"><failure message="AssertionError: assert not [('c0d846e3-c7d3-4698-8ab6-f5e642aa592e', 2, 5)]">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-97/test_invalid_stored_location_r4')
+qtbot = &lt;pytestqt.qtbot.QtBot object at 0x7fe05cd73800&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fe05f224e90&gt;
+field = 'address', code = 'PT-ENRICH-OWNERSHIP'
+
+    @pytest.mark.parametrize('field,code', [
+        ('function_id', 'PT-ENRICH-OWNERSHIP'),
+        ('artifact_id', 'PT-ENRICH-OWNERSHIP'),
+        ('run_id', 'PT-ENRICH-OWNERSHIP'),
+        ('side', 'PT-ENRICH-OWNERSHIP'),
+        ('address', 'PT-ENRICH-OWNERSHIP'),
+        ('excerpt_sha256', 'PT-ENRICH-STALE'),
+        ('end_line', 'PT-ENRICH-STALE'),
+    ])
+    def test_invalid_stored_location_refuses_before_mode_or_cursor_change(tmp_path, qtbot, monkeypatch, field, code):
+        window, signal_id, _location, errors, revealed = _window(tmp_path, qtbot, monkeypatch, field)
+        try:
+            window.mode.setCurrentIndex(1)
+            before_project = window.project.model_dump_json()
+            before_ranking = window._ranking_result.model_dump_json()
+            before_rows = _rows(window.service)
+            before_cursors = {side: (pane.textCursor().position(), pane.textCursor().anchor())
+                              for side, pane in window.views.items()}
+            window.jump_signal(_item(window, signal_id))
+&gt;           assert not revealed
+E           AssertionError: assert not [('c0d846e3-c7d3-4698-8ab6-f5e642aa592e', 2, 5)]
+
+tests/test_signal_location_navigation.py:118: AssertionError</failure></testcase><testcase classname="tests.test_signal_location_navigation" name="test_invalid_stored_location_refuses_before_mode_or_cursor_change[excerpt_sha256-PT-ENRICH-STALE]" time="0.611"><failure message="AssertionError: assert not [('0e58729e-b15f-4adc-bc78-d9d551081aac', 2, 5)]">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-97/test_invalid_stored_location_r5')
+qtbot = &lt;pytestqt.qtbot.QtBot object at 0x7fe05d9a5520&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fe05d44a930&gt;
+field = 'excerpt_sha256', code = 'PT-ENRICH-STALE'
+
+    @pytest.mark.parametrize('field,code', [
+        ('function_id', 'PT-ENRICH-OWNERSHIP'),
+        ('artifact_id', 'PT-ENRICH-OWNERSHIP'),
+        ('run_id', 'PT-ENRICH-OWNERSHIP'),
+        ('side', 'PT-ENRICH-OWNERSHIP'),
+        ('address', 'PT-ENRICH-OWNERSHIP'),
+        ('excerpt_sha256', 'PT-ENRICH-STALE'),
+        ('end_line', 'PT-ENRICH-STALE'),
+    ])
+    def test_invalid_stored_location_refuses_before_mode_or_cursor_change(tmp_path, qtbot, monkeypatch, field, code):
+        window, signal_id, _location, errors, revealed = _window(tmp_path, qtbot, monkeypatch, field)
+        try:
+            window.mode.setCurrentIndex(1)
+            before_project = window.project.model_dump_json()
+            before_ranking = window._ranking_result.model_dump_json()
+            before_rows = _rows(window.service)
+            before_cursors = {side: (pane.textCursor().position(), pane.textCursor().anchor())
+                              for side, pane in window.views.items()}
+            window.jump_signal(_item(window, signal_id))
+&gt;           assert not revealed
+E           AssertionError: assert not [('0e58729e-b15f-4adc-bc78-d9d551081aac', 2, 5)]
+
+tests/test_signal_location_navigation.py:118: AssertionError</failure></testcase><testcase classname="tests.test_signal_location_navigation" name="test_invalid_stored_location_refuses_before_mode_or_cursor_change[end_line-PT-ENRICH-STALE]" time="0.629"><failure message="AssertionError: assert not [('7f2b7145-23f0-4b4b-9063-c572e7e95d00', 2, 20001)]">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-97/test_invalid_stored_location_r6')
+qtbot = &lt;pytestqt.qtbot.QtBot object at 0x7fe05cdbbbc0&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fe05cdb9820&gt;
+field = 'end_line', code = 'PT-ENRICH-STALE'
+
+    @pytest.mark.parametrize('field,code', [
+        ('function_id', 'PT-ENRICH-OWNERSHIP'),
+        ('artifact_id', 'PT-ENRICH-OWNERSHIP'),
+        ('run_id', 'PT-ENRICH-OWNERSHIP'),
+        ('side', 'PT-ENRICH-OWNERSHIP'),
+        ('address', 'PT-ENRICH-OWNERSHIP'),
+        ('excerpt_sha256', 'PT-ENRICH-STALE'),
+        ('end_line', 'PT-ENRICH-STALE'),
+    ])
+    def test_invalid_stored_location_refuses_before_mode_or_cursor_change(tmp_path, qtbot, monkeypatch, field, code):
+        window, signal_id, _location, errors, revealed = _window(tmp_path, qtbot, monkeypatch, field)
+        try:
+            window.mode.setCurrentIndex(1)
+            before_project = window.project.model_dump_json()
+            before_ranking = window._ranking_result.model_dump_json()
+            before_rows = _rows(window.service)
+            before_cursors = {side: (pane.textCursor().position(), pane.textCursor().anchor())
+                              for side, pane in window.views.items()}
+            window.jump_signal(_item(window, signal_id))
+&gt;           assert not revealed
+E           AssertionError: assert not [('7f2b7145-23f0-4b4b-9063-c572e7e95d00', 2, 20001)]
+
+tests/test_signal_location_navigation.py:118: AssertionError</failure></testcase><testcase classname="tests.test_signal_location_navigation" name="test_valid_signal_keeps_actual_navigation_and_zero_address[0-False]" time="0.661" /><testcase classname="tests.test_signal_location_navigation" name="test_valid_signal_keeps_actual_navigation_and_zero_address[1-False]" time="0.950" /><testcase classname="tests.test_signal_location_navigation" name="test_valid_signal_keeps_actual_navigation_and_zero_address[1-True]" time="0.908" /><testcase classname="tests.test_signal_location_navigation" name="test_other_representation_refuses_without_substituting_text[0-assembly]" time="1.046"><failure message="AssertionError: assert not [('cd7ec34b-a704-4d87-8d66-2ba399c6146e', 1, 1)]">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-97/test_other_representation_refu0')
+qtbot = &lt;pytestqt.qtbot.QtBot object at 0x7fe05cdc3dd0&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fe05cdc34d0&gt;
+representation = 'assembly', mode = 0
+
+    @pytest.mark.parametrize('representation', ['assembly', 'metadata'])
+    @pytest.mark.parametrize('mode', [0, 1])
+    def test_other_representation_refuses_without_substituting_text(tmp_path, qtbot, monkeypatch, representation, mode):
+        window, signal_id, location, errors, revealed = _window(
+            tmp_path, qtbot, monkeypatch, representation=representation)
+        try:
+            assert views.validate_location(window.project, location).id == location.function_id
+            window.mode.setCurrentIndex(mode)
+            before_project = window.project.model_dump_json()
+            before_ranking = window._ranking_result.model_dump_json()
+            before_rows = _rows(window.service)
+            before_cursors = {side: (pane.textCursor().position(), pane.textCursor().anchor())
+                              for side, pane in window.views.items()}
+            window.jump_signal(_item(window, signal_id))
+&gt;           assert not revealed
+E           AssertionError: assert not [('cd7ec34b-a704-4d87-8d66-2ba399c6146e', 1, 1)]
+
+tests/test_signal_location_navigation.py:162: AssertionError</failure></testcase><testcase classname="tests.test_signal_location_navigation" name="test_other_representation_refuses_without_substituting_text[0-metadata]" time="0.943"><failure message="AssertionError: assert not [('57db8935-33f7-4783-bd69-8adef9428b9d', 1, 1)]">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-97/test_other_representation_refu1')
+qtbot = &lt;pytestqt.qtbot.QtBot object at 0x7fe05cc6c530&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fe05cdcf200&gt;
+representation = 'metadata', mode = 0
+
+    @pytest.mark.parametrize('representation', ['assembly', 'metadata'])
+    @pytest.mark.parametrize('mode', [0, 1])
+    def test_other_representation_refuses_without_substituting_text(tmp_path, qtbot, monkeypatch, representation, mode):
+        window, signal_id, location, errors, revealed = _window(
+            tmp_path, qtbot, monkeypatch, representation=representation)
+        try:
+            assert views.validate_location(window.project, location).id == location.function_id
+            window.mode.setCurrentIndex(mode)
+            before_project = window.project.model_dump_json()
+            before_ranking = window._ranking_result.model_dump_json()
+            before_rows = _rows(window.service)
+            before_cursors = {side: (pane.textCursor().position(), pane.textCursor().anchor())
+                              for side, pane in window.views.items()}
+            window.jump_signal(_item(window, signal_id))
+&gt;           assert not revealed
+E           AssertionError: assert not [('57db8935-33f7-4783-bd69-8adef9428b9d', 1, 1)]
+
+tests/test_signal_location_navigation.py:162: AssertionError</failure></testcase><testcase classname="tests.test_signal_location_navigation" name="test_other_representation_refuses_without_substituting_text[1-assembly]" time="1.114"><failure message="AssertionError: assert not [('79d0f15e-7faf-48d3-b9a7-70ad856ac4eb', 1, 1)]">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-97/test_other_representation_refu2')
+qtbot = &lt;pytestqt.qtbot.QtBot object at 0x7fe05cdca030&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fe05cdcade0&gt;
+representation = 'assembly', mode = 1
+
+    @pytest.mark.parametrize('representation', ['assembly', 'metadata'])
+    @pytest.mark.parametrize('mode', [0, 1])
+    def test_other_representation_refuses_without_substituting_text(tmp_path, qtbot, monkeypatch, representation, mode):
+        window, signal_id, location, errors, revealed = _window(
+            tmp_path, qtbot, monkeypatch, representation=representation)
+        try:
+            assert views.validate_location(window.project, location).id == location.function_id
+            window.mode.setCurrentIndex(mode)
+            before_project = window.project.model_dump_json()
+            before_ranking = window._ranking_result.model_dump_json()
+            before_rows = _rows(window.service)
+            before_cursors = {side: (pane.textCursor().position(), pane.textCursor().anchor())
+                              for side, pane in window.views.items()}
+            window.jump_signal(_item(window, signal_id))
+&gt;           assert not revealed
+E           AssertionError: assert not [('79d0f15e-7faf-48d3-b9a7-70ad856ac4eb', 1, 1)]
+
+tests/test_signal_location_navigation.py:162: AssertionError</failure></testcase><testcase classname="tests.test_signal_location_navigation" name="test_other_representation_refuses_without_substituting_text[1-metadata]" time="1.016"><failure message="AssertionError: assert not [('2efc34ff-292e-4109-af3e-7d678c20a04e', 1, 1)]">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-97/test_other_representation_refu3')
+qtbot = &lt;pytestqt.qtbot.QtBot object at 0x7fe05cdca9f0&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fe05cdcf8f0&gt;
+representation = 'metadata', mode = 1
+
+    @pytest.mark.parametrize('representation', ['assembly', 'metadata'])
+    @pytest.mark.parametrize('mode', [0, 1])
+    def test_other_representation_refuses_without_substituting_text(tmp_path, qtbot, monkeypatch, representation, mode):
+        window, signal_id, location, errors, revealed = _window(
+            tmp_path, qtbot, monkeypatch, representation=representation)
+        try:
+            assert views.validate_location(window.project, location).id == location.function_id
+            window.mode.setCurrentIndex(mode)
+            before_project = window.project.model_dump_json()
+            before_ranking = window._ranking_result.model_dump_json()
+            before_rows = _rows(window.service)
+            before_cursors = {side: (pane.textCursor().position(), pane.textCursor().anchor())
+                              for side, pane in window.views.items()}
+            window.jump_signal(_item(window, signal_id))
+&gt;           assert not revealed
+E           AssertionError: assert not [('2efc34ff-292e-4109-af3e-7d678c20a04e', 1, 1)]
+
+tests/test_signal_location_navigation.py:162: AssertionError</failure></testcase><testcase classname="tests.test_signal_location_navigation" name="test_repeat_activation_rechecks_live_excerpt_after_project_change" time="1.502"><failure message="AssertionError: assert not [('bca1724a-be14-4710-b1f9-6c68c1dd8476', 2, 5)]">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-97/test_repeat_activation_recheck0')
+qtbot = &lt;pytestqt.qtbot.QtBot object at 0x7fe05cdcf830&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fe05cdcffb0&gt;
+
+    def test_repeat_activation_rechecks_live_excerpt_after_project_change(tmp_path, qtbot, monkeypatch):
+        window, signal_id, location, errors, revealed = _window(tmp_path, qtbot, monkeypatch)
+        try:
+            window.jump_signal(_item(window, signal_id))
+            assert revealed and not errors
+            project = window.project.model_copy(deep=True)
+            matches = []
+            for match in project.matches:
+                newer = [function.model_copy(update={'code': function.code + '\n// appended'})
+                         if function.id == location.function_id else function for function in match.newer]
+                if any(function.id == location.function_id for function in newer):
+                    newer = [function.model_copy(update={'code': function.code.replace('buffer == NULL', 'buffer != NULL')})
+                             if function.id == location.function_id else function for function in newer]
+                matches.append(match.model_copy(update={'newer': newer}))
+            candidate = project.model_copy(update={'matches': matches})
+            window.service._invalidate(candidate)
+            window.service._commit(candidate)
+            revealed.clear()
+            before_rows = _rows(window.service)
+            window.jump_signal(_item(window, signal_id))
+&gt;           assert not revealed
+E           AssertionError: assert not [('bca1724a-be14-4710-b1f9-6c68c1dd8476', 2, 5)]
+
+tests/test_signal_location_navigation.py:195: AssertionError</failure></testcase></testsuite></testsuites>

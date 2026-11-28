@@ -1,0 +1,56 @@
+F.                                                                       [100%]
+=================================== FAILURES ===================================
+____ test_stored_signal_cannot_borrow_a_valid_location_from_another_pairing ____
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-124/test_stored_signal_cannot_borr0')
+qtbot = <pytestqt.qtbot.QtBot object at 0x7f3a1810f770>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f3a1810fa10>
+
+    def test_stored_signal_cannot_borrow_a_valid_location_from_another_pairing(tmp_path, qtbot, monkeypatch):
+        window, signal_id, _location, _errors, _revealed = _window(tmp_path, qtbot, monkeypatch)
+        selected = window.current_match().id
+        result = pipeline.run(window.project)
+        foreign = next(function for match in result.views.matches if match.match_id != selected
+                       for function in match.newer if function.code)
+        location = SourceLocation(side=foreign.side, artifact_id=foreign.artifact_id, run_id=foreign.run_id,
+                                  function_id=foreign.id, representation='decompiled', start_line=1, end_line=1,
+                                  excerpt_sha256=identity.excerpt_sha256(foreign.code[:1]), address=foreign.address)
+        assert views.validate_location(window.project, location).id == foreign.id
+        signal_sets = []
+        for item in result.signal_sets:
+            if item.match_id == selected:
+                item = item.model_copy(update={'signals': tuple(signal.model_copy(update={'locations': (location,)})
+                                                                if signal.signal_id == signal_id else signal
+                                                                for signal in item.signals)})
+            signal_sets.append(item)
+        pipeline.publish(EnrichmentStore(window.service.store), window.project,
+                         replace(result, signal_sets=tuple(signal_sets)))
+        root = window.service.root
+        window.close()
+        reopened = MainWindow(ProjectService.open(root),
+                              QSettings(str(tmp_path / 'independent.ini'), QSettings.Format.IniFormat))
+        qtbot.addWidget(reopened)
+        reopened.show()
+        errors = []
+        monkeypatch.setattr(reopened, 'show_error', errors.append)
+        try:
+            target = next(reopened.navigator.item(index) for index in range(reopened.navigator.count())
+                          if reopened.navigator.item(index).data(Qt.ItemDataRole.UserRole) == selected)
+            reopened.navigator.setCurrentItem(target)
+            assert reopened.current_match().id == selected
+            assert foreign.id not in {function.id for function in reopened.current_match().older + reopened.current_match().newer}
+            reopened.mode.setCurrentIndex(1)
+            before = {side: (pane.textCursor().position(), pane.textCursor().anchor())
+                      for side, pane in reopened.views.items()}
+            reopened.jump_signal(_item(reopened, signal_id))
+>           assert reopened.mode.currentIndex() == 1, 'foreign pairing changed representation before refusal'
+E           AssertionError: foreign pairing changed representation before refusal
+E           assert 0 == 1
+E            +  where 0 = <built-in method currentIndex of PySide6.QtWidgets.QComboBox object at 0x7f3a1792e900>()
+E            +    where <built-in method currentIndex of PySide6.QtWidgets.QComboBox object at 0x7f3a1792e900> = <PySide6.QtWidgets.QComboBox(0x2cf14550, name="viewer.mode") at 0x7f3a1792e900>.currentIndex
+E            +      where <PySide6.QtWidgets.QComboBox(0x2cf14550, name="viewer.mode") at 0x7f3a1792e900> = <patchtrace.ui.MainWindow(0x2cb33df0, name="main") at 0x7f3a181f5340>.mode
+
+../desktop-context-independent-review.py:55: AssertionError
+=========================== short test summary info ============================
+FAILED ../desktop-context-independent-review.py::test_stored_signal_cannot_borrow_a_valid_location_from_another_pairing
+1 failed, 1 passed in 2.03s

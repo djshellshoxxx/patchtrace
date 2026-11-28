@@ -1,5 +1,11 @@
 # Module index
 
+## Desktop context completion (2026-11-27)
+
+- `gui/access_names.py` supplies bounded registered names; `gui/tips.py` preserves explicit names and names combo children without importing Qt. Dock tabs and repeated notice/state/chip/copy controls use unique identifiers within their actual window, preserving dock restoration object names. Contract: SPEC-45.
+- `ui_signal_navigation.py` validates current stored signal ownership, representation and excerpt before the existing desktop mode/cursor action. Contract: SPEC-07 P2-NAV-1.
+- Acceptance uses `test_signal_location_navigation.py`, `test_gui_a11y_window.py` and current tooltip/UI controls. Native assistive technology remains a separate gate.
+
 ## Pilot retained-context recovery (2026-11-28)
 
 Current integration plan and evidence: `engineering/pilot-recovery-20261127.md`.

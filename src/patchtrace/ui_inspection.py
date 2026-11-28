@@ -220,6 +220,8 @@ def rows_view(model: RowsModel, widths_em: tuple[int, ...], tip_id: str, name: s
     view.setModel(model)
     view.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
     view.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+    view.horizontalHeader().setAccessibleName(f'{name} column headers')
+    view.verticalHeader().setAccessibleName(f'{name} row headers')
     view.verticalHeader().hide()  # row headers are exposed to UI Automation as accessibles
     view.horizontalHeader().setStretchLastSection(True)
     em = view.fontMetrics().horizontalAdvance('M')
@@ -414,6 +416,7 @@ class SigningTab(QWidget):
         self.tree = CopyTreeView()
         self.tree.setObjectName('pe.signature.tree')
         self.tree.setAccessibleName('Signature, signer and certificate details')
+        self.tree.header().setAccessibleName('Signature and certificate column headers')
         self.tree.setModel(self.tree_model)
         self.tree.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.tree.setUniformRowHeights(True)

@@ -67,6 +67,25 @@ R-N7 MUST every table and list have a name, and every table have visible headers
 R-N8 MUST every splitter be named "Panel divider" and every tab bar be named (GUI plan 8.7). Unnamed today: `ui.py:986`, `:1288`, `:1598`, `:1599`, `:1741`; `ui_series.py:255`; `ui_evidence.py:728`.
 R-N9 MUST a control's role follow its stock Qt class. A custom-painted item sets `Qt.AccessibleTextRole` (GUI plan 8.7).
 
+### Registry-backed desktop names, 2026-11-27
+
+The shared tooltip application fills an empty accessible name only for the
+registered findings, log and raw-view controls listed in `gui/access_names.py`.
+Existing explicit names take precedence. Named combo boxes also give their
+currently unnamed popup and editable child appropriate names. Existing child
+names are preserved, and repeated application is idempotent. The pure helper
+must not import Qt or replace visible control text, roles, descriptions or IDs.
+Labels keep their existing accessible-name behavior; no fixed name is added to
+status text. Name and popup suffix lengths obey the existing 80-character limit.
+
+Acceptance covers the actual built main window, name/identifier uniqueness,
+editable and noneditable combo children, explicit-name preservation, unnamed
+labels and current tooltip/isolation regressions. Dock tab bars retain the existing
+object name for layout restoration while their names and identifiers are unique
+within the window and stable for each live bar. Reused notice/state controls use
+their owning panel prefix so they do not duplicate the host controls. These offscreen checks qualify
+Qt properties; native Windows assistive technology remains separate acceptance.
+
 ## 4. Keyboard-only operation
 
 K1 MUST every command be reachable from the keyboard, by a menu, toolbar, focusable control or registry shortcut. A mouse-only function is not allowed (evidence panel 1.8).
