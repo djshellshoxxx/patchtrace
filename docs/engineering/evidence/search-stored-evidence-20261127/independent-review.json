@@ -1,0 +1,61 @@
+{
+  "review": "Independent Search exact-source review",
+  "head": "c4898ffb57297cae08eb3fc05afa05f96bb55d1f",
+  "tree": "72df3ad65708cedd6b29dd55584e90f2239d518b",
+  "worktree": "/workspace/scratch/e3f205d85f15/patchtrace-pilot",
+  "clean_before_and_after": true,
+  "decision": "approved; no remaining scoped blocking finding",
+  "receipts": [
+    {
+      "file": "independent-controls.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "13",
+      "time": "2.507",
+      "timestamp": "2026-11-27T17:44:19.137421-08:00",
+      "hostname": "56e89409ebf3",
+      "sha256": "83179c829a01b5ab5a62416db8a8522724dc089e18d3ff468bc6ca55ceb07949"
+    },
+    {
+      "file": "independent-maintained-controls.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "229",
+      "time": "11.745",
+      "timestamp": "2026-11-27T17:45:01.734808-08:00",
+      "hostname": "56e89409ebf3",
+      "sha256": "f3a13b4af552b65c17a09f1e7f707838fac6eb9dc3702fffb62f6107495b410e"
+    }
+  ],
+  "whole_tree_ruff": "passed",
+  "whitespace_check": "passed",
+  "preserved_base": "72de37b0",
+  "base_identical_modules": [
+    "intelligence/tools/admission.py",
+    "intelligence/tools/store.py",
+    "enrichment/storage.py",
+    "owned_publication.py",
+    "persistence.py"
+  ],
+  "controls": [
+    "real top-level CLI stored FLOSS/advisory/CVE hits with no injected source ports and no project mutation",
+    "default no-kind unreadable retained sources produce partial; optional never-produced source behavior retained",
+    "same-configuration replacement output invalidates ordinary CLI segment selection without forced rebuild",
+    "captured tool/advisory/CVE documents usable after owner close on another thread without sidecar reads",
+    "actual MainWindow default build/search/save/rerun, owner-thread SQLite, value-only worker graph",
+    "visible rows retain old receipt during source replacement and refuse stale navigation",
+    "unannounced same-epoch revision drops pending default search completion",
+    "maintained owner/sidecar/budget/cancellation/saved-query/GUI-core-isolation integration suite"
+  ],
+  "prefreeze_finding": "Default no-kind queries omitted known failed retained source coverage; author corrected with required_groups before frozen head; independent controls pass.",
+  "limitations": [
+    "authored data and offscreen Linux Qt only",
+    "no target binary, native extractor or live provider executed",
+    "no native Windows, packaged GUI or assistive technology acceptance",
+    "no repository/source/remote mutations by reviewer"
+  ]
+}

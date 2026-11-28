@@ -2,7 +2,7 @@
 
 Responsibility: let the analyst query the project's local search index, read why a lead matched and go to the code.
 What is said (state copy, rows, detail, clipboard text) lives in the Qt-free `view_model`; this module moves it to
-widgets. The GUI thread captures an immutable request and the project service; workers only run the injected
+widgets. The GUI thread captures an immutable request and independent project/source values; workers run the injected
 `searcher`, `builder` and `coverage` callables. Every result is checked against the project epoch and the query
 generation before it is published, so a late result of a previous project or query is dropped. The panel opens no
 window of its own and no network connection.
@@ -34,6 +34,7 @@ from .errors import SearchError
 from .qt_saved import SavedController
 from .saved_actions import effective_plan
 from .tooltip_entries import TEMPLATES, TIPS
+from .wiring import BoundService, copy_project, same_inputs, snapshot_sources
 
 DEBOUNCE_MS = 250
 PAGE = 200
@@ -70,22 +71,25 @@ def _guarded(call: Callable[[], object]) -> Outcome:
         return Outcome(code=exc.code, message=exc.message)
 
 
-def default_search(service, request: SearchRequest, cancel) -> SearchResult:
+def _search_service(service):
     from .paths import default_cache_root
     from .service import SearchService
-    return SearchService(service, default_cache_root()).search(request, build=False, cancel=cancel)
+    if not isinstance(service, BoundService):
+        raise SearchError('PT-SEARCH-SOURCE', 'desktop search needs captured project inputs')
+    return SearchService(service, default_cache_root(), extra_specs=service.sources.extra_specs,
+                         comparable=service.sources.comparable, required_groups=service.sources.required_groups)
+
+
+def default_search(service, request: SearchRequest, cancel) -> SearchResult:
+    return _search_service(service).search(request, build=False, cancel=cancel)
 
 
 def default_build(service, cancel, progress) -> None:
-    from .paths import default_cache_root
-    from .service import SearchService
-    SearchService(service, default_cache_root()).build(cancel=cancel, progress=progress)
+    _search_service(service).build(cancel=cancel, progress=progress)
 
 
 def default_coverage(service) -> tuple[CoverageEntry, ...]:
-    from .paths import default_cache_root
-    from .service import SearchService
-    return SearchService(service, default_cache_root()).coverage()
+    return _search_service(service).coverage()
 
 
 class SearchWidgets(QWidget):
@@ -130,7 +134,7 @@ class SearchWidgets(QWidget):
         column = QVBoxLayout(self.content)
         column.setContentsMargins(0, 0, 0, 0)
         column.addWidget(self.body, 1)
-        self.state = StateView('search', 'Search', text_limit=vm.QUERY_ECHO * 8)
+        self.state = StateView('search.body', 'Search', text_limit=vm.QUERY_ECHO * 8)
         self.state.set_content(self.content)
         root = QVBoxLayout(self)
         root.setContentsMargins(4, 4, 4, 4)
@@ -174,13 +178,14 @@ class SearchController(ControllerBase):
     """Owns the query, the rows of the current generation and the requests in flight. Hooks run on the GUI thread."""
 
     def __init__(self, ctx: PanelContext, *, searcher: Callable = default_search, builder: Callable = default_build,
-                 coverage: Callable = default_coverage) -> None:
+                 coverage: Callable = default_coverage, sources: Callable = snapshot_sources) -> None:
         register_gui_tips()  # idempotent: the host has done it, a test or a bare embed has not
         register_tips(TIPS, TEMPLATES)
         panel = SearchWidgets()
         super().__init__(panel)
         self.panel, self.ctx, self.port, self.tasks = panel, ctx, ctx.project, ctx.tasks
         self.searcher, self.builder, self.coverage = searcher, builder, coverage
+        self.sources, self.source_snapshot, self.displayed_inputs = sources, None, None
         self.key = None
         self.epoch = 0
         self.generation = 0
@@ -233,6 +238,7 @@ class SearchController(ControllerBase):
         self._cancel_all()
         self.epoch += 1
         self.key = key
+        self.source_snapshot = None
         self.indexed, self.fetching, self.cancelled = True, False, False
         self._reset_results()
         self.saved.project_changed()
@@ -263,6 +269,51 @@ class SearchController(ControllerBase):
 
     def service(self):
         return getattr(self.port, 'service', None)
+
+    def _capture(self) -> BoundService:
+        service = self.service()
+        if service is None:
+            raise SearchError('PT-SEARCH-SOURCE', 'no project is open')
+        project = getattr(service, 'project', None)
+        if project is None:
+            project = self.port.project()
+        copied = copy_project(project)
+        sources = self.sources(service, self.source_snapshot)
+        self.source_snapshot = sources
+        return BoundService(copied, service.root, sources, id(service))
+
+    def _submission(self) -> BoundService | None:
+        try:
+            return self._capture()
+        except SearchError as exc:
+            self.fetching = False
+            self.failure = vm.Failure(exc.code, exc.message)
+            self._render()
+            return None
+
+    def _current(self, captured: BoundService) -> bool:
+        if self.key is None or self.port.key() != self.key:
+            return False
+        try:
+            return same_inputs(captured, self._capture())
+        except SearchError:
+            return False
+
+    def _inputs_changed(self) -> None:
+        self.fetching, self.progress = False, None
+        self.failure = vm.Failure('PT-SEARCH-STALE', 'Search inputs changed. Run the query again.')
+        self._render()
+
+    def _failed_captured(self, epoch, captured, failure, generation=None, *, building=False):
+        if epoch != self.epoch:
+            return
+        if building:
+            self.progress = None
+        if generation is not None and generation != self.generation:
+            return self._render() if building else None
+        if not self._current(captured):
+            return self._inputs_changed()
+        self._failed(failure)
 
     def _plan(self):
         panel = self.panel
@@ -306,15 +357,20 @@ class SearchController(ControllerBase):
             self.fetch_more()
 
     def _run(self, request: SearchRequest) -> None:
-        service, searcher = self.service(), self.searcher
+        service, searcher = self._submission(), self.searcher
+        if service is None:
+            return
         epoch, generation = self.epoch, request.generation
         self.tasks.submit('search.query', lambda token, _report: _guarded(lambda: searcher(service, request, token)),
-                          lambda out: self._arrived(epoch, generation, out), self._failed)
+                          lambda out: self._arrived(epoch, generation, out, service),
+                          lambda failure: self._failed_captured(epoch, service, failure, generation))
         self._render()
 
-    def _arrived(self, epoch: int, generation: int, outcome: Outcome) -> None:
+    def _arrived(self, epoch: int, generation: int, outcome: Outcome, captured: BoundService | None = None) -> None:
         if epoch != self.epoch or generation != self.generation or self.buffer is None:
             return  # a late result of an earlier project or query
+        if captured is not None and not self._current(captured):
+            return self._inputs_changed()
         self.fetching = False
         if outcome.result is None:
             self.failure = vm.Failure(outcome.code, outcome.message)
@@ -322,6 +378,7 @@ class SearchController(ControllerBase):
         self.failure, self.result = None, outcome.result
         if self.buffer.accept(generation, outcome.result) < 0:
             return
+        self.displayed_inputs = captured
         for hit in outcome.result.hits:
             self.hits[hit.hit_id] = hit
         self._fill_table()
@@ -335,19 +392,25 @@ class SearchController(ControllerBase):
     # ---- index ---------------------------------------------------------------------------------------
 
     def _probe_index(self) -> None:
-        service, coverage, epoch = self.service(), self.coverage, self.epoch
+        service, coverage, epoch = self._submission(), self.coverage, self.epoch
+        generation = self.generation
         if service is None:
             return
         self.tasks.submit('search.coverage', lambda _token, _report: coverage(service),
-                          lambda entries: self._probed(epoch, entries), self._failed)
+                          lambda entries: self._probed(epoch, entries, service, generation),
+                          lambda failure: self._failed_captured(epoch, service, failure, generation))
 
-    def _probed(self, epoch: int, entries) -> None:
+    def _probed(self, epoch: int, entries, captured: BoundService | None = None, generation=None) -> None:
         if epoch == self.epoch:
+            if captured is not None and not self._current(captured):
+                if generation is not None and generation != self.generation:
+                    return
+                return self._inputs_changed()
             self.indexed = any(e.status in ('indexed', 'truncated') for e in entries)
             self._render()
 
     def build(self) -> None:
-        service, builder, epoch = self.service(), self.builder, self.epoch
+        service, builder, epoch = self._submission(), self.builder, self.epoch
         generation = self.generation
         if self.key is None or service is None:
             return
@@ -357,20 +420,27 @@ class SearchController(ControllerBase):
         def work(token, report):
             return _guarded(lambda: builder(service, token, lambda group, done, total: report(group, done, total)))
 
-        self.tasks.submit('search.build', work, lambda out: self._built(epoch, generation, out),
-                          self._failed, self._build_progress)
+        self.tasks.submit('search.build', work, lambda out: self._built(epoch, generation, out, service),
+                          lambda failure: self._failed_captured(epoch, service, failure, generation, building=True),
+                          lambda progress: self._build_progress(progress) if epoch == self.epoch else None)
         self._render()
 
     def _build_progress(self, progress: TaskProgress) -> None:
         self.progress = vm.Progress(progress.stage, progress.done, progress.total or 1)
         self._render()
 
-    def _built(self, epoch: int, generation: int, outcome: Outcome) -> None:
+    def _built(self, epoch: int, generation: int, outcome: Outcome, captured: BoundService | None = None) -> None:
         if epoch != self.epoch:
             return
         self.progress = None
+        if captured is not None and not self._current(captured):
+            if generation != self.generation:
+                return self._render()
+            return self._inputs_changed()
         self.indexed = True
         if outcome.code:
+            if generation != self.generation:
+                return self._render()
             self.failure = vm.Failure(outcome.code, outcome.message)
             return self._render()
         self._probe_index()
@@ -407,6 +477,7 @@ class SearchController(ControllerBase):
         self.progress = self.failure = None
         self.invalid = ''
         self.hits = {}
+        self.displayed_inputs = None
         self.generation += 1
         self.panel.table.set_prepared(prepare_table(TABLE_SPEC, COLUMNS, ()))
         self.panel.detail.setPlainText('')
@@ -436,6 +507,10 @@ class SearchController(ControllerBase):
         hit = self._selected_hit()
         if hit is None:
             return None
+        if self.displayed_inputs is not None and not self._current(self.displayed_inputs):
+            result = NavResult.blocked('Search', 'its inputs changed; run the query again')
+            self.ctx.shell.announce(result.message)
+            return result
         anchor = self._anchor(hit, other)
         if isinstance(anchor, NavResult):
             result = anchor

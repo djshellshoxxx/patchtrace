@@ -1,3 +1,24 @@
+## November 27 stored-evidence Search independent approval
+
+Runtime `c4898ffb` is independently approved: 13 independent and 229 maintained
+integration controls passed without skips; author's affected lane passed 1,035.
+Counts overlap. Production stored sources, failed-capture coverage, invalidation
+and displayed-receipt freshness are verified with authored data. Exact-head
+hosted/full/combined and Windows/package/native gates remain pending. See
+`docs/engineering/search-stored-evidence-recovery-20261128.md`.
+
+## Production stored-source Search completion (2026-11-28)
+
+- [x] Capture bounded current tool evidence with the shared value-only source helper.
+- [x] Wire normal CLI queries, saved queries, build, coverage and advisory anchors.
+- [x] Capture desktop inputs on the owner thread and revalidate results and navigation.
+- [x] Preserve partial coverage for failed retained sources in unqualified queries.
+- [x] Pass the affected 1,035-test lane, whole-tree Ruff and GUI/core isolation.
+- [ ] Independently review the final source and qualify combined hosted/native/package gates.
+- [ ] Perform the parent's guarded publication and integration after applicable gates pass.
+
+[Plan and evidence](../docs/engineering/search-stored-evidence-recovery-20261128.md).
+
 ## Pilot final affected qualification (2026-11-27)
 
 Both independently reproduced admission/display-ownership defects are corrected and the implementation is approved at `30ca3f90`. After the common packaging follow-up merge, the complete affected 50-module selection passed **2,070 tests, zero skips**. See `docs/engineering/pilot-recovery-20261127.md` and its retained final command/log. Current-head full application, hosted/native/platform acceptance and guarded merge remain open.

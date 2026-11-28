@@ -1,5 +1,15 @@
 # Module index
 
+## Production stored-source Search recovery (2026-11-28)
+
+Plan and evidence: `engineering/search-stored-evidence-recovery-20261128.md`.
+
+| Module | Responsibility | Verification seam |
+|---|---|---|
+| `intelligence/tools/snapshot.py` | Bounded owner-thread row/sidecar capture, current stored-tool admission and independent source values shared by Search and Strings | Authored real SQLite records; quota, identity, strict JSON, cache-origin and held-file controls |
+| `search/wiring.py` | Bind current tool/advisory/CVE source ports to normal CLI and desktop search without passing stores to workers | CLI/build/coverage and owner-thread Qt integration, unavailable coverage and freshness controls |
+| `search/qt_panel.py` | Capture bounded project/source values before background work and recheck the displayed result's receipt before activation | Actual default controller, pending-input changes, late build/coverage callbacks and visible-row navigation |
+
 ## Pilot retained-context recovery (2026-11-28)
 
 Current integration plan and evidence: `engineering/pilot-recovery-20261127.md`.
