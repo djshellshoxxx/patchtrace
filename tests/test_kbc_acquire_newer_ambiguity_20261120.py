@@ -76,6 +76,8 @@ def test_acquire_preview_refuses_conflicting_newer_source_without_transport_or_p
         return [conflict, *rows]
 
     monkeypatch.setattr(wiring.WorkspaceFileIndex, 'rows_for', conflicting_newer)
+    # Preserve the fallback contract for an adapter which cannot retain original bytes.
+    monkeypatch.setattr(wiring.WorkspaceFileIndex, 'capture', None)
     code, document, _stderr = kb('acquire', investigation, '--project', str(destination), *flags)
     assert code == 2 and 'PT-KBC-INPUT' in document['error']
     assert server.calls == [] and not destination.exists()

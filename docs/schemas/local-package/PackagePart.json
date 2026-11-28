@@ -1,0 +1,187 @@
+{
+  "$id": "https://patchtrace.local/schemas/local-package/1/PackagePart.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "ancestors": {
+      "default": [],
+      "items": {
+        "maxLength": 64,
+        "minLength": 64,
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 4,
+      "title": "Ancestors",
+      "type": "array"
+    },
+    "compressed_size": {
+      "anyOf": [
+        {
+          "maximum": 2147483647,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Compressed Size"
+    },
+    "container_sha256": {
+      "maxLength": 64,
+      "minLength": 64,
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Container Sha256",
+      "type": "string"
+    },
+    "content_state": {
+      "default": "header-only",
+      "enum": [
+        "header-only",
+        "decoded",
+        "reverified"
+      ],
+      "title": "Content State",
+      "type": "string"
+    },
+    "declared_size": {
+      "maximum": 1073741824,
+      "minimum": 0,
+      "title": "Declared Size",
+      "type": "integer"
+    },
+    "kind": {
+      "default": "unknown",
+      "enum": [
+        "cab",
+        "msu",
+        "cat",
+        "mum",
+        "manifest",
+        "delta",
+        "psfx",
+        "fullfile",
+        "unknown"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "kind_basis": {
+      "default": "unknown",
+      "enum": [
+        "unknown",
+        "filename-hint",
+        "content"
+      ],
+      "title": "Kind Basis",
+      "type": "string"
+    },
+    "logical_path": {
+      "maxLength": 1024,
+      "minLength": 1,
+      "title": "Logical Path",
+      "type": "string"
+    },
+    "machine": {
+      "anyOf": [
+        {
+          "maximum": 65535,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Machine"
+    },
+    "member_id": {
+      "maxLength": 64,
+      "minLength": 64,
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Member Id",
+      "type": "string"
+    },
+    "name_utf8": {
+      "title": "Name Utf8",
+      "type": "boolean"
+    },
+    "observed_sha256": {
+      "anyOf": [
+        {
+          "maxLength": 64,
+          "minLength": 64,
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Observed Sha256"
+    },
+    "observed_size": {
+      "anyOf": [
+        {
+          "maximum": 1073741824,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Observed Size"
+    },
+    "ordinal": {
+      "maximum": 50000,
+      "minimum": 1,
+      "title": "Ordinal",
+      "type": "integer"
+    },
+    "raw_name_hex": {
+      "maxLength": 2048,
+      "minLength": 2,
+      "pattern": "^[0-9a-f]+$",
+      "title": "Raw Name Hex",
+      "type": "string"
+    },
+    "rehash_sha256": {
+      "anyOf": [
+        {
+          "maxLength": 64,
+          "minLength": 64,
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Rehash Sha256"
+    },
+    "signature_state": {
+      "const": "signature-unknown",
+      "default": "signature-unknown",
+      "title": "Signature State",
+      "type": "string"
+    }
+  },
+  "required": [
+    "member_id",
+    "container_sha256",
+    "ordinal",
+    "raw_name_hex",
+    "name_utf8",
+    "logical_path",
+    "declared_size"
+  ],
+  "title": "PackagePart",
+  "type": "object"
+}

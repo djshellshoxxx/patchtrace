@@ -1,0 +1,46 @@
+{
+  "head": "003d97c01d15b877136a3576ac83519cc7efbe5f",
+  "tree": "2c15832d1ca2285069bed55b07c40a716d6cba38",
+  "runtime_and_test_sha256": {
+    "src/patchtrace/jobs.py": "60711910c13cdefca837e0976338e718008dd890e02534282a34dab564500571",
+    "tests/test_jobs_windows_handles.py": "bf6771652468e95e918226dd948eea443c1102bd35f418b93b37ebcf875f528b",
+    "tests/test_jobs_windows_handles_native.py": "cf2e0fb5020f1d1c4be6131db187769627787396ea6f0f386eb0e7877a554753",
+    "docs/specs/local-package-intake.md": "2febc7c3a7d17ffe44161d7f2db6fbe940baa6fd6136759186a14c45e790685f"
+  },
+  "native_windows": "BLOCKED: Linux host; seven authored native cases collected and skipped",
+  "suites": {
+    "borrowed-handles-red.xml": {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "39",
+      "skipped": "0",
+      "tests": "39",
+      "time": "0.653",
+      "timestamp": "2026-11-27T18:05:17.053154-08:00",
+      "hostname": "56e89409ebf3"
+    },
+    "borrowed-handles-supervisor-green.xml": {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "13",
+      "tests": "202",
+      "time": "20.434",
+      "timestamp": "2026-11-27T18:09:25.453741-08:00",
+      "hostname": "56e89409ebf3"
+    },
+    "borrowed-handles-first-green.xml": {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "3",
+      "tests": "98",
+      "time": "0.683",
+      "timestamp": "2026-11-27T18:06:33.507952-08:00",
+      "hostname": "56e89409ebf3"
+    }
+  },
+  "ruff": "whole-tree passed",
+  "diff_check": "passed",
+  "target_or_native_helper_execution": false
+}

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="39" skipped="0" tests="39" time="0.653" timestamp="2026-11-27T18:05:17.053154-08:00" hostname="56e89409ebf3"><testcase classname="tests.test_jobs_windows_handles" name="test_invalid_binding_never_reaches_a_launcher[list]" time="0.282"><failure message="TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:43: in test_invalid_binding_never_reaches_a_launcher
+    run(tmp_path, handles)
+tests/test_jobs_windows_handles.py:25: in run
+    return jobs.run_process([PYTHON, '-c', 'pass'], cwd=tmp_path, env=env or {},
+E   TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_invalid_binding_never_reaches_a_launcher[bool]" time="0.001"><failure message="TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:43: in test_invalid_binding_never_reaches_a_launcher
+    run(tmp_path, handles)
+tests/test_jobs_windows_handles.py:25: in run
+    return jobs.run_process([PYTHON, '-c', 'pass'], cwd=tmp_path, env=env or {},
+E   TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_invalid_binding_never_reaches_a_launcher[dict0]" time="0.001"><failure message="TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:43: in test_invalid_binding_never_reaches_a_launcher
+    run(tmp_path, handles)
+tests/test_jobs_windows_handles.py:25: in run
+    return jobs.run_process([PYTHON, '-c', 'pass'], cwd=tmp_path, env=env or {},
+E   TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_invalid_binding_never_reaches_a_launcher[dict1]" time="0.001"><failure message="TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:43: in test_invalid_binding_never_reaches_a_launcher
+    run(tmp_path, handles)
+tests/test_jobs_windows_handles.py:25: in run
+    return jobs.run_process([PYTHON, '-c', 'pass'], cwd=tmp_path, env=env or {},
+E   TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_invalid_binding_never_reaches_a_launcher[dict2]" time="0.001"><failure message="TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:43: in test_invalid_binding_never_reaches_a_launcher
+    run(tmp_path, handles)
+tests/test_jobs_windows_handles.py:25: in run
+    return jobs.run_process([PYTHON, '-c', 'pass'], cwd=tmp_path, env=env or {},
+E   TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_invalid_binding_never_reaches_a_launcher[dict3]" time="0.001"><failure message="TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:43: in test_invalid_binding_never_reaches_a_launcher
+    run(tmp_path, handles)
+tests/test_jobs_windows_handles.py:25: in run
+    return jobs.run_process([PYTHON, '-c', 'pass'], cwd=tmp_path, env=env or {},
+E   TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_invalid_binding_never_reaches_a_launcher[dict4]" time="0.001"><failure message="TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:43: in test_invalid_binding_never_reaches_a_launcher
+    run(tmp_path, handles)
+tests/test_jobs_windows_handles.py:25: in run
+    return jobs.run_process([PYTHON, '-c', 'pass'], cwd=tmp_path, env=env or {},
+E   TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_invalid_binding_never_reaches_a_launcher[dict5]" time="0.001"><failure message="TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:43: in test_invalid_binding_never_reaches_a_launcher
+    run(tmp_path, handles)
+tests/test_jobs_windows_handles.py:25: in run
+    return jobs.run_process([PYTHON, '-c', 'pass'], cwd=tmp_path, env=env or {},
+E   TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_invalid_binding_never_reaches_a_launcher[dict6]" time="0.001"><failure message="TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:43: in test_invalid_binding_never_reaches_a_launcher
+    run(tmp_path, handles)
+tests/test_jobs_windows_handles.py:25: in run
+    return jobs.run_process([PYTHON, '-c', 'pass'], cwd=tmp_path, env=env or {},
+E   TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_invalid_binding_never_reaches_a_launcher[dict7]" time="0.001"><failure message="TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:43: in test_invalid_binding_never_reaches_a_launcher
+    run(tmp_path, handles)
+tests/test_jobs_windows_handles.py:25: in run
+    return jobs.run_process([PYTHON, '-c', 'pass'], cwd=tmp_path, env=env or {},
+E   TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_invalid_binding_never_reaches_a_launcher[dict8]" time="0.001"><failure message="TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:43: in test_invalid_binding_never_reaches_a_launcher
+    run(tmp_path, handles)
+tests/test_jobs_windows_handles.py:25: in run
+    return jobs.run_process([PYTHON, '-c', 'pass'], cwd=tmp_path, env=env or {},
+E   TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_invalid_binding_never_reaches_a_launcher[dict9]" time="0.001"><failure message="TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:43: in test_invalid_binding_never_reaches_a_launcher
+    run(tmp_path, handles)
+tests/test_jobs_windows_handles.py:25: in run
+    return jobs.run_process([PYTHON, '-c', 'pass'], cwd=tmp_path, env=env or {},
+E   TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_invalid_binding_never_reaches_a_launcher[dict10]" time="0.001"><failure message="TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:43: in test_invalid_binding_never_reaches_a_launcher
+    run(tmp_path, handles)
+tests/test_jobs_windows_handles.py:25: in run
+    return jobs.run_process([PYTHON, '-c', 'pass'], cwd=tmp_path, env=env or {},
+E   TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_invalid_binding_never_reaches_a_launcher[dict11]" time="0.001"><failure message="TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:43: in test_invalid_binding_never_reaches_a_launcher
+    run(tmp_path, handles)
+tests/test_jobs_windows_handles.py:25: in run
+    return jobs.run_process([PYTHON, '-c', 'pass'], cwd=tmp_path, env=env or {},
+E   TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_invalid_binding_never_reaches_a_launcher[dict12]" time="0.001"><failure message="TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:43: in test_invalid_binding_never_reaches_a_launcher
+    run(tmp_path, handles)
+tests/test_jobs_windows_handles.py:25: in run
+    return jobs.run_process([PYTHON, '-c', 'pass'], cwd=tmp_path, env=env or {},
+E   TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_invalid_binding_never_reaches_a_launcher[dict13]" time="0.001"><failure message="TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:43: in test_invalid_binding_never_reaches_a_launcher
+    run(tmp_path, handles)
+tests/test_jobs_windows_handles.py:25: in run
+    return jobs.run_process([PYTHON, '-c', 'pass'], cwd=tmp_path, env=env or {},
+E   TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_invalid_binding_never_reaches_a_launcher[dict14]" time="0.001"><failure message="TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:43: in test_invalid_binding_never_reaches_a_launcher
+    run(tmp_path, handles)
+tests/test_jobs_windows_handles.py:25: in run
+    return jobs.run_process([PYTHON, '-c', 'pass'], cwd=tmp_path, env=env or {},
+E   TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_invalid_binding_never_reaches_a_launcher[dict15]" time="0.001"><failure message="TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:43: in test_invalid_binding_never_reaches_a_launcher
+    run(tmp_path, handles)
+tests/test_jobs_windows_handles.py:25: in run
+    return jobs.run_process([PYTHON, '-c', 'pass'], cwd=tmp_path, env=env or {},
+E   TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_invalid_binding_never_reaches_a_launcher[dict16]" time="0.001"><failure message="TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:43: in test_invalid_binding_never_reaches_a_launcher
+    run(tmp_path, handles)
+tests/test_jobs_windows_handles.py:25: in run
+    return jobs.run_process([PYTHON, '-c', 'pass'], cwd=tmp_path, env=env or {},
+E   TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_invalid_binding_never_reaches_a_launcher[dict17]" time="0.001"><failure message="TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:43: in test_invalid_binding_never_reaches_a_launcher
+    run(tmp_path, handles)
+tests/test_jobs_windows_handles.py:25: in run
+    return jobs.run_process([PYTHON, '-c', 'pass'], cwd=tmp_path, env=env or {},
+E   TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_environment_collision_refuses_before_spawn[PATCHTRACE_FDI_SOURCE]" time="0.001"><failure message="TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:51: in test_environment_collision_refuses_before_spawn
+    run(tmp_path, {'PATCHTRACE_FDI_SOURCE': SOURCE}, env={name: 'already present'})
+tests/test_jobs_windows_handles.py:25: in run
+    return jobs.run_process([PYTHON, '-c', 'pass'], cwd=tmp_path, env=env or {},
+E   TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_environment_collision_refuses_before_spawn[patchtrace_fdi_source]" time="0.001"><failure message="TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:51: in test_environment_collision_refuses_before_spawn
+    run(tmp_path, {'PATCHTRACE_FDI_SOURCE': SOURCE}, env={name: 'already present'})
+tests/test_jobs_windows_handles.py:25: in run
+    return jobs.run_process([PYTHON, '-c', 'pass'], cwd=tmp_path, env=env or {},
+E   TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_mapping_is_captured_and_pre_cancelled_request_never_duplicates" time="0.001"><failure message="TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:65: in test_mapping_is_captured_and_pre_cancelled_request_never_duplicates
+    run(tmp_path, handles)
+tests/test_jobs_windows_handles.py:25: in run
+    return jobs.run_process([PYTHON, '-c', 'pass'], cwd=tmp_path, env=env or {},
+E   TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_other_platform_refuses_nonempty_bindings_but_empty_is_ordinary" time="0.001"><failure message="TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:76: in test_other_platform_refuses_nonempty_bindings_but_empty_is_ordinary
+    run(tmp_path, {'PATCHTRACE_FDI_SOURCE': SOURCE})
+tests/test_jobs_windows_handles.py:25: in run
+    return jobs.run_process([PYTHON, '-c', 'pass'], cwd=tmp_path, env=env or {},
+E   TypeError: run_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_ordinary_windows_launch_restricts_inheritance_to_exact_stdio[False]" time="0.004"><failure message="assert None == (103, 102)&#10; +  where (103, 102) = tuple({103: None, 102: None})&#10; +    where {103: None, 102: None} = &lt;built-in method fromkeys of type object at 0x1446100&gt;((103, 102, 102))&#10; +      where &lt;built-in method fromkeys of type object at 0x1446100&gt; = dict.fromkeys">tests/test_jobs_windows_handles.py:223: in test_ordinary_windows_launch_restricts_inheritance_to_exact_stdio
+    assert record['handles'] == tuple(dict.fromkeys(record['stdio']))
+E   assert None == (103, 102)
+E    +  where (103, 102) = tuple({103: None, 102: None})
+E    +    where {103: None, 102: None} = &lt;built-in method fromkeys of type object at 0x1446100&gt;((103, 102, 102))
+E    +      where &lt;built-in method fromkeys of type object at 0x1446100&gt; = dict.fromkeys</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_ordinary_windows_launch_restricts_inheritance_to_exact_stdio[True]" time="0.001"><failure message="assert None == (105, 102, 104)&#10; +  where (105, 102, 104) = tuple({105: None, 102: None, 104: None})&#10; +    where {105: None, 102: None, 104: None} = &lt;built-in method fromkeys of type object at 0x1446100&gt;((105, 102, 104))&#10; +      where &lt;built-in method fromkeys of type object at 0x1446100&gt; = dict.fromkeys">tests/test_jobs_windows_handles.py:223: in test_ordinary_windows_launch_restricts_inheritance_to_exact_stdio
+    assert record['handles'] == tuple(dict.fromkeys(record['stdio']))
+E   assert None == (105, 102, 104)
+E    +  where (105, 102, 104) = tuple({105: None, 102: None, 104: None})
+E    +    where {105: None, 102: None, 104: None} = &lt;built-in method fromkeys of type object at 0x1446100&gt;((105, 102, 104))
+E    +      where &lt;built-in method fromkeys of type object at 0x1446100&gt; = dict.fromkeys</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_borrowed_values_use_only_owned_duplicates_and_transient_child_environment" time="0.001"><failure message="TypeError: _windows_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:238: in test_borrowed_values_use_only_owned_duplicates_and_transient_child_environment
+    child = jobs._windows_process([PYTHON], tmp_path, env, True, 123456,
+E   TypeError: _windows_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_launch_failure_closes_only_owned_handles_and_keeps_originals[CreatePipe]" time="0.001"><failure message="TypeError: _windows_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:262: in test_launch_failure_closes_only_owned_handles_and_keeps_originals
+    jobs._windows_process([PYTHON], tmp_path, {}, True,
+E   TypeError: _windows_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_launch_failure_closes_only_owned_handles_and_keeps_originals[SetHandleInformation]" time="0.001"><failure message="TypeError: _windows_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:262: in test_launch_failure_closes_only_owned_handles_and_keeps_originals
+    jobs._windows_process([PYTHON], tmp_path, {}, True,
+E   TypeError: _windows_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_launch_failure_closes_only_owned_handles_and_keeps_originals[CreateFileW]" time="0.001"><failure message="TypeError: _windows_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:262: in test_launch_failure_closes_only_owned_handles_and_keeps_originals
+    jobs._windows_process([PYTHON], tmp_path, {}, True,
+E   TypeError: _windows_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_launch_failure_closes_only_owned_handles_and_keeps_originals[GetHandleInformation]" time="0.001"><failure message="TypeError: _windows_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:262: in test_launch_failure_closes_only_owned_handles_and_keeps_originals
+    jobs._windows_process([PYTHON], tmp_path, {}, True,
+E   TypeError: _windows_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_launch_failure_closes_only_owned_handles_and_keeps_originals[DuplicateHandle:2]" time="0.001"><failure message="TypeError: _windows_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:262: in test_launch_failure_closes_only_owned_handles_and_keeps_originals
+    jobs._windows_process([PYTHON], tmp_path, {}, True,
+E   TypeError: _windows_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_launch_failure_closes_only_owned_handles_and_keeps_originals[InitializeProcThreadAttributeList:2]" time="0.001"><failure message="TypeError: _windows_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:262: in test_launch_failure_closes_only_owned_handles_and_keeps_originals
+    jobs._windows_process([PYTHON], tmp_path, {}, True,
+E   TypeError: _windows_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_launch_failure_closes_only_owned_handles_and_keeps_originals[UpdateProcThreadAttribute]" time="0.001"><failure message="TypeError: _windows_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:262: in test_launch_failure_closes_only_owned_handles_and_keeps_originals
+    jobs._windows_process([PYTHON], tmp_path, {}, True,
+E   TypeError: _windows_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_launch_failure_closes_only_owned_handles_and_keeps_originals[CreateProcessW]" time="0.001"><failure message="TypeError: _windows_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:262: in test_launch_failure_closes_only_owned_handles_and_keeps_originals
+    jobs._windows_process([PYTHON], tmp_path, {}, True,
+E   TypeError: _windows_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_launch_failure_closes_only_owned_handles_and_keeps_originals[CreateJobObjectW]" time="0.001"><failure message="TypeError: _windows_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:262: in test_launch_failure_closes_only_owned_handles_and_keeps_originals
+    jobs._windows_process([PYTHON], tmp_path, {}, True,
+E   TypeError: _windows_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_launch_failure_closes_only_owned_handles_and_keeps_originals[SetInformationJobObject]" time="0.001"><failure message="TypeError: _windows_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:262: in test_launch_failure_closes_only_owned_handles_and_keeps_originals
+    jobs._windows_process([PYTHON], tmp_path, {}, True,
+E   TypeError: _windows_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_launch_failure_closes_only_owned_handles_and_keeps_originals[AssignProcessToJobObject]" time="0.001"><failure message="TypeError: _windows_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:262: in test_launch_failure_closes_only_owned_handles_and_keeps_originals
+    jobs._windows_process([PYTHON], tmp_path, {}, True,
+E   TypeError: _windows_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase><testcase classname="tests.test_jobs_windows_handles" name="test_launch_failure_closes_only_owned_handles_and_keeps_originals[ResumeThread]" time="0.001"><failure message="TypeError: _windows_process() got an unexpected keyword argument 'windows_borrowed_handles'">tests/test_jobs_windows_handles.py:262: in test_launch_failure_closes_only_owned_handles_and_keeps_originals
+    jobs._windows_process([PYTHON], tmp_path, {}, True,
+E   TypeError: _windows_process() got an unexpected keyword argument 'windows_borrowed_handles'</failure></testcase></testsuite></testsuites>

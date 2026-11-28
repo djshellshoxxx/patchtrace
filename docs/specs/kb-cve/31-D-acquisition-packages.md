@@ -192,6 +192,72 @@ record bytes, destination publication semantics and error code for unrelated
 read failures. The separate Linux forced strings export replacement interval
 remains open; this import admission cannot close it.
 
+### Complete retained index replay (2026-11-27, America/Vancouver)
+
+New acquisitions through the workspace Winbindex adapter retain the **exact
+original bytes** of the selected filename's complete plain or gzip record.
+Capture its bytes, date, encoding, parser losses and normalized rows in one
+held read; resolution and both delivery selections consume that same snapshot.
+Do not reopen the mutable filename between resolution and preview. An explicit
+resolver membership identifies each endpoint by binary SHA, effective version
+key, original source version key, KB/BASE body and canonical entry SHA. Native
+and copied rows keep their actual source membership. Repeated appearances of
+the older binary in other KB bodies no longer require guessing its predecessor.
+Exact membership does not authorize first-match selection between conflicting
+claims: for either endpoint's exact KB/effective key, prefer a native body and
+otherwise require all eligible copied bodies to agree. Conflicting copied
+claims remain a refusal even when the resolver's chosen first row is recorded.
+Adapters which cannot supply original bytes retain the existing conservative
+normalized-only behavior, including their ambiguous-body refusals.
+
+The strict replay manifest records the raw SHA-256/length, basename, data date,
+encoding, named parser/lineage/resolver contract versions, the full selected
+ProductScope, target KB, fixed build, heading-class policy, tier and pair limit.
+It also binds the complete normalized mapping and lineage-input digests/counts,
+separate parser and conversion losses, the complete resolution-result digest,
+selected pair ID and both source memberships. Raw bytes include rejected and
+irrelevant entries, whitespace and gzip headers; a change to any of them changes
+the acquisition consent. Replay covers the selected filename/KB resolver call,
+not other component names or advisory searches performed in the investigation.
+
+Keep the existing 64 MiB original-record and 256 MiB inflated parser budgets.
+Replay admits at most 1,000,000 normalized or potential expanded lineage rows, and at most
+4,096 copied version keys per normalized row. Oversize capture fails explicitly
+before provider planning/staging; never truncate evidence. The manifest and
+complete AcquisitionEvidence remain within their existing 1 MiB JSON budget.
+An acquisition preview involving several filenames also caps its accumulated
+original bytes at 64 MiB and combined normalized/lineage rows at 1,000,000;
+stop before retaining another snapshot beyond that aggregate budget.
+Raw index bytes are separate immutable SHA-keyed objects, never embedded as
+base64 in a plan, journal or enrichment row. Source hashes prove retained-byte
+identity, not origin, Microsoft authorship, signature or vulnerability accuracy.
+
+Preview is read-only. After exact consent and current-owner admission, retain
+the captured bytes in `winbindex-objects/<raw-sha>.bin` before any download.
+Publish through the shared anchored, no-replace owned publisher; existing bytes
+must match exactly. A conflicting, aliased, nonregular, missing-on-recovery or
+over-budget object is an explicit refusal, never a request to replace evidence
+or reload the current mutable record. No automatic eviction is introduced.
+The existing journal binds the manifest through the acquisition evidence ID.
+Before creating or resuming a project, verify its referenced raw object. The
+project's owner-checked acquisition sidecar phase publishes those exact bytes
+at `kb/winbindex/<raw-sha>.bin` before the evidence sidecar and row. Failure keeps
+the existing context-pending/recovery semantics and does not overwrite prior
+evidence. Recovery uses the retained object, never `workspace/winbindex/`.
+The existing `kb/` backup inclusion preserves project-local replay.
+
+`kb acquisition replay --project DIR --evidence SHA` is an offline read-only
+operation. Verify the project's ordered artifacts, the evidence content ID and
+version, the original byte hash/length and every replay binding, then parse the
+retained record and rerun the resolver with the captured arguments. Success
+means the source rows, losses, full resolution and both endpoint memberships
+reproduce exactly. Missing/damaged objects, unsupported versions or different
+results are explicit failures; normalized-only historical evidence is
+`unavailable`, never silently upgraded from today's index. No source, project,
+investigation or historical evidence is rewritten, and no network request or
+target execution is part of replay. Native Windows publication and live
+provider compatibility remain separate acceptance gates.
+
 ## D3. Verification precedence and authenticity states
 
 Mandatory: stream to private non-executable staging, bounded size, SHA-256, final PE parse, supported architecture, filename identity, selected product/build association, chronology check, stable final bytes (no TOCTOU between verification and project copy). Promote only after re-opening/hash verification via existing ingestion path. Use private scratch names chosen by program; reject symlink traversal and path escape.

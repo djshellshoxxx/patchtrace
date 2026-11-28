@@ -44,6 +44,14 @@ from .contracts import (
 from .export import EXTENSIONS, to_json, to_markdown
 from .ids import KbSyntaxError, normalise_cve, normalise_kb_edge
 from .index import Lookup, ReverseIndex
+from .index_replay import (
+    MAX_CAPTURE_BYTES,
+    MAX_REPLAY_ROWS,
+    CapturedIndex,
+    ResolverInputs,
+    capture_replay,
+    verify_replay,
+)
 from .leads import CARD_KEV, ExploitationLookup, NullExploitation, kev_source_of, kev_text
 from .limits import MAX_SEARCH_MONTHS
 from .lineage import IndexRow
@@ -101,6 +109,8 @@ class ProjectAccess(ProjectPort, Protocol):
     def open_project(self, directory: str) -> str: ...
 
     def list_rows(self, project_id: str, kind: str) -> Mapping[str, bytes]: ...
+
+    def replay_acquisition(self, project_id: str, evidence_id: str) -> dict: ...
 
 
 @dataclass(frozen=True)
@@ -176,6 +186,43 @@ class KbService:
         self.root = Path(root).expanduser()
         self.env = env
         self.ports = IndexPorts(advisory=env.advisory, clock=env.clock)
+
+    # PW-01 delegates keep parsing, persistence and network policy outside the facade.
+    def import_inventory(self, path, context, **kwargs) -> Outcome:
+        from .inventory_service import import_inventory
+        return import_inventory(self, path, context, **kwargs)
+
+    def retain_inventory(self, import_id, *, architecture='amd64', page=1, cancel=None) -> Outcome:
+        from .inventory_service import retain_inventory
+        return retain_inventory(self, import_id, architecture=architecture, page=page, cancel=cancel)
+
+    def inventories(self, **kwargs) -> Outcome:
+        from .inventory_service import inventories
+        return inventories(self, **kwargs)
+
+    def inventory_details(self, import_id, **kwargs) -> Outcome:
+        from .inventory_service import inventory_details
+        return inventory_details(self, import_id, **kwargs)
+
+    def support_links(self, path, **kwargs) -> Outcome:
+        from .inventory_service import support_links
+        return support_links(self, path, **kwargs)
+
+    def inventory_plan(self, url, **kwargs) -> Outcome:
+        from .inventory_service import inventory_plan
+        return inventory_plan(self, url, **kwargs)
+
+    def fetch_inventory(self, plan, **kwargs) -> Outcome:
+        from .inventory_service import fetch_inventory
+        return fetch_inventory(self, plan, **kwargs)
+
+    def select_inventory(self, investigation, import_id, entry_id, **kwargs) -> Outcome:
+        from .inventory_service import select_inventory
+        return select_inventory(self, investigation, import_id, entry_id, **kwargs)
+
+    def _inventory_hints(self, ws, rev, scope_id):
+        from .inventory_selection import selected_hints
+        return selected_hints(self, ws, rev, scope_id)
 
     # ------------------------------------------------------------------------------------------ plumbing
 
@@ -299,6 +346,7 @@ class KbService:
         status = 'partial' if full.status in ('partial', 'not_searched') or (
             unreadable and full.status == 'not_observed') else full.status
         result = {'contract': 'kbcorrelation/1', 'investigation_id': rev.investigation_id, 'state': rev.state,
+                  'revision': rev.revision,
                   'lead': {'kind': kind, 'value': value}, 'coverage': {'state': full.coverage.state,
                                                                        'text': full.text, 'detail': full.coverage
                                                                        .model_dump(mode='json')},
@@ -372,10 +420,11 @@ class KbService:
             raise _fail('PT-KBC-INPUT', 'the product mapping is no longer current; repeat the search '
                         'and select the product again before listing products')
         result = {'contract': 'kbcorrelation/1', 'investigation_id': rev.investigation_id,
-                  'selected_scope_id': rev.selected_scope_id, 'products': scopes}
+                  'revision': rev.revision, 'selected_scope_id': rev.selected_scope_id, 'products': scopes}
         if not scopes:
             return Outcome(4, 'unavailable', result, 'The search found no product for this lead.')
-        lines = [f'{s["scope_id"][:12]}  {s["display_name"]}  {s["architecture"]}  ({s["mapping"]} mapping)'
+        lines = [f'Investigation revision: {rev.revision}']
+        lines += [f'{s["scope_id"]}  {s["display_name"]}  {s["architecture"]}  ({s["mapping"]} mapping)'
                  for s in scopes]
         if len(scopes) > 1 and rev.selected_scope_id is None:
             lines.append(TEXT_KB6)
@@ -394,6 +443,10 @@ class KbService:
                 raise _fail('PT-KBC-INPUT', TEXT_KB6)
             if scope_id not in rev.scope_ids:
                 raise _fail('PT-KBC-INPUT', 'that product is not one of the products listed for the lead')
+            # Replay retained inventory evidence before publishing a product
+            # change or newly entered filenames. A corrupt source must leave
+            # the caller's previous decisions and revision unchanged.
+            inventory_hints = self._inventory_hints(ws, rev, scope_id)
             if rev.selected_scope_id != scope_id:
                 rev = self._step(ws, rev, 'product_selected', scope_id=scope_id)
             for name in names:
@@ -403,8 +456,11 @@ class KbService:
                                         if d.op == 'component-name')})
             cards, refs = self._lead_cards(index, rev, ws)
             hints, truncated = comp.hints_for(cards, refs, entered, scope_id)
+            hints, inventory_cut = comp.with_inventory(hints, inventory_hints)
+            truncated = truncated or inventory_cut
             rev = self._step(ws, rev, 'components_ready' if comp.selectable(hints) else 'needs_filename')
         result = {'contract': 'kbcorrelation/1', 'investigation_id': rev.investigation_id, 'state': rev.state,
+                  'revision': rev.revision,
                   'scope_id': scope_id, 'truncated': truncated,
                   'hints': [h.model_dump(mode='json', exclude={'contract'}) for h in hints]}
         lines = [f'{h.tier}  {h.basename}  ({"; ".join(h.reasons)}); changed in this KB: {h.changed_in_kb}'
@@ -442,9 +498,9 @@ class KbService:
 
     @staticmethod
     def _stored_scope(ws: WorkspaceStore, rev: InvestigationRevision,
-                      index: ReverseIndex | None = None) -> SearchScope | None:
+                      index: ReverseIndex | None = None, *, unreadable=()) -> SearchScope | None:
         """Finite recorded selector; advisory coverage is never replaced with the current cache."""
-        return KbService._saved_search(ws, rev, index)[1]
+        return KbService._saved_search(ws, rev, index, unreadable=unreadable)[1]
 
     def _lead_cards(self, index: ReverseIndex, rev: InvestigationRevision,
                     ws: WorkspaceStore) -> tuple[list[CveCard], dict[str, SourceRef]]:
@@ -496,14 +552,16 @@ class KbService:
                   'reason': reason}
         return Outcome(4, 'unavailable', result, text)
 
-    def _resolve_pairs(self, investigation: str, product: str | None, files: Iterable[str]):
+    def _resolve_pairs(self, investigation: str, product: str | None, files: Iterable[str], *,
+                       _file_index=None, _captures: dict | None = None):
         """``(revision, resolutions, skipped_rows, files_without_record)``, or ``(revision, Outcome)`` when the
         offline file index cannot answer. Read-only: the investigation is not advanced."""
         try:
             names = [comp.normalise_name(f) for f in files]
         except ValueError as exc:
             raise _fail('PT-KBC-INPUT', str(exc)) from None
-        file_index = self.env.file_index(self.root) if self.env.file_index else None
+        file_index = _file_index if _file_index is not None else (
+            self.env.file_index(self.root) if self.env.file_index else None)
         with self._open() as ws:
             rev = self._get(ws, investigation)
             index = self._checked_index(ws, rev)
@@ -519,24 +577,46 @@ class KbService:
             if scope is None:
                 raise _fail('PT-KBC-INPUT', 'the selected product mapping is no longer current; repeat the search '
                             'and select the product again before resolving pairs')
+            # Admit bounded inventory decisions before the general decision
+            # reader decodes full bodies for entered component names.
+            inventory_hints = self._inventory_hints(ws, rev, scope_id)
             entered = sorted({*names, *(d.next for d in ws.decisions(rev.investigation_id)
                                         if d.op == 'component-name')})
             cards, refs = self._lead_cards(index, rev, ws)
             hints, _ = comp.hints_for(cards, refs, entered, scope_id)
+            hints, _ = comp.with_inventory(hints, inventory_hints)
             chosen = sorted({h.basename for h in hints if h.tier in comp.SELECTING_TIERS})
             kbs = self._lead_kbs(index, rev, self._stored_scope(ws, rev, index))
         if not chosen:
             return rev, self._unanswered(rev, 'no file name', TEXT_KB7)
         covered = scope.family != 'windows-server' and scope.winbindex_key is not None
         found, skipped, missing = [], 0, []
+        captured_bytes = captured_rows = 0
         for name in chosen:  # the index is consulted only where it can answer; the resolver states why otherwise
-            rows, gap = file_index.rows(name, scope.winbindex_key) if covered else ((), 0)
+            snapshot = None
+            capture = getattr(file_index, 'capture', None)
+            if covered and _captures is not None and callable(capture):
+                snapshot = capture(name)
+                if snapshot is not None and not isinstance(snapshot, CapturedIndex):
+                    raise _fail('PT-KBC-SOURCE', 'the file index returned an invalid original-source snapshot')
+                if snapshot is not None:
+                    captured_bytes += len(snapshot.raw)
+                    captured_rows += len(snapshot.mappings) + len(snapshot.rows)
+                    if captured_bytes > MAX_CAPTURE_BYTES or captured_rows > MAX_REPLAY_ROWS:
+                        raise _fail('PT-KBC-LIMIT', 'the acquisition source captures exceed their aggregate byte/row budget')
+                rows, gap = (snapshot.rows, snapshot.gap) if snapshot is not None else ((), 0)
+            else:
+                rows, gap = file_index.rows(name, scope.winbindex_key) if covered else ((), 0)
             if covered and not rows and not gap:
                 missing.append(name)
                 continue
             skipped = max(skipped, gap)
-            found += [resolver.resolve(rows, kb=kb, scope=scope, file_name=name, fixed_build=fixed,
-                                       skipped_rows=gap) for kb, fixed in kbs.items()]
+            for kb, fixed in kbs.items():
+                resolved = resolver.resolve(rows, kb=kb, scope=scope, file_name=name, fixed_build=fixed,
+                                            skipped_rows=gap)
+                found.append(resolved)
+                if snapshot is not None:
+                    _captures[(name, kb)] = (snapshot, ResolverInputs(scope=scope, kb=kb, fixed_build=fixed), resolved)
         return rev, found, skipped, missing
 
     @staticmethod
@@ -641,7 +721,9 @@ class KbService:
         owner = self._acquire_owner(investigation)
         if expected_revision is not None and owner[0] != expected_revision:
             raise _fail('PT-KBC-STALE', 'the investigation changed after preview; review the acquisition again')
-        got = self._resolve_pairs(investigation, product, files)
+        file_index = self.env.file_index(self.root)
+        captures = {}
+        got = self._resolve_pairs(investigation, product, files, _file_index=file_index, _captures=captures)
         if isinstance(got[1], Outcome):
             return got[1]
         rev, found, _, _ = got
@@ -649,14 +731,27 @@ class KbService:
         if pair is None:
             return Outcome(4, 'unavailable', result, 'There is no pair candidate to acquire; see "kb pairs".')
         result['pair'] = self._pair_dict(pair)
-        # The resolver window names the newer body, not just its binary hash.
-        # Preserve older legacy selection until exact predecessor membership is captured.
-        target = target_row_membership(pair)
-        rows = self.env.file_index(self.root).rows_for(pair.older.basename, '')
-        older_row = row_for(rows, pair.older.sha256, pair.older.basename, require_unique=True)
-        newer_row = row_for(rows, pair.newer.sha256, pair.newer.basename, target=target)
+        selected = [item for item in captures.values() if pair in item[2].pairs]
+        replay, snapshot = None, None
+        if selected:
+            if len(selected) != 1:
+                raise _fail('PT-KBC-SOURCE', 'the selected pair has ambiguous original resolver inputs')
+            snapshot, inputs, resolved = selected[0]
+            try:
+                replay = capture_replay(snapshot, inputs, resolved, pair)
+                verify_replay(snapshot, replay, pair)
+                older_row = snapshot.entry_for(replay.older).model_dump(mode='json')
+                newer_row = snapshot.entry_for(replay.newer).model_dump(mode='json')
+            except ValueError:
+                raise _fail('PT-KBC-INPUT', 'the selected pair has ambiguous or unreproducible source membership') from None
+        else:
+            # Legacy injected adapters have no original source; keep their strict ambiguity refusal.
+            target = target_row_membership(pair)
+            rows = file_index.rows_for(pair.older.basename, '')
+            older_row = row_for(rows, pair.older.sha256, pair.older.basename, require_unique=True)
+            newer_row = row_for(rows, pair.newer.sha256, pair.newer.basename, target=target)
         try:
-            plan = build_plan(pair, older_row, newer_row, self.env.acquirer)
+            plan = build_plan(pair, older_row, newer_row, self.env.acquirer, replay=replay)
             result['plan'] = plan.as_dict()
             verify_consent(plan, consent_hosts=consent_hosts, consent_plan=consent_plan, offline=offline)
         except KbcStoreError as exc:
@@ -685,6 +780,12 @@ class KbService:
                                         _acquired=(rev, plan, downloads))
 
             check_current()
+            if snapshot is not None:
+                retain = getattr(file_index, 'retain', None)
+                if not callable(retain):
+                    raise _fail('PT-KBC-UNSUPPORTED', 'the file index cannot retain its approved original source')
+                retain(snapshot)
+                check_current()
             done = run_acquire(
                 plan, older_row, newer_row, port=self.env.acquirer, directory=directory, consent_hosts=consent_hosts,
                 consent_plan=consent_plan, offline=offline, cancel=cancel, import_pair=import_current,
@@ -701,6 +802,26 @@ class KbService:
                                                                'scope_id': rev.selected_scope_id,
                                                                'downloads': list(done.downloads)}},
                        done.outcome.text, done.outcome.warnings, done.outcome.error)
+
+    def replay_acquisition(self, project_dir: str, evidence_id: str) -> Outcome:
+        """Read only the selected project's retained source; no workspace, advisory or network access."""
+        if not isinstance(evidence_id, str) or len(evidence_id) != 64 or any(
+                char not in '0123456789abcdef' for char in evidence_id):
+            raise _fail('PT-KBC-INPUT', 'an acquisition evidence ID must be the complete lowercase SHA-256')
+        port = self.env.project(None, '')
+        replay = getattr(port, 'replay_acquisition', None)
+        if not callable(replay):
+            raise _fail('PT-KBC-UNSUPPORTED', 'this project adapter cannot replay retained acquisition sources')
+        project_id = port.open_project(project_dir)
+        result = replay(project_id, evidence_id)
+        if result['state'] == 'unavailable':
+            return Outcome(4, 'unavailable', result, result['reason'])
+        text = (f'Retained Winbindex source {result["source_sha256"]} reproduced '
+                f'pair {result["source_pair_id"]}.\n'
+                f'{result["mapping_count"]} normalized rows, {result["lineage_count"]} lineage rows; '
+                f'{result["skipped_rows"]} rejected source units retained in the replay.\n'
+                'This reproduces the recorded index claims and resolver choice; source authenticity is unchanged.')
+        return Outcome(0, 'complete', result, text)
 
     # ------------------------------------------------------------------------------------------ import-pair
 

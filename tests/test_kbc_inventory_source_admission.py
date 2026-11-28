@@ -1,0 +1,216 @@
+"""Authored offline controls for PW-01 source admission races."""
+from __future__ import annotations
+
+import socket
+
+import kbc_helpers as h
+import pytest
+import test_kbc_inventory_selection as s
+from kbc_k3_support import FixedClock
+from kbc_saved_scope_support import refused_without_writes
+
+from patchtrace.kbcorrelation import inventory_selection as selected
+from patchtrace.kbcorrelation import wiring
+from patchtrace.kbcorrelation.sources.importer import import_bytes
+from patchtrace.kbcorrelation.store import KbcStoreError, WorkspaceStore
+from patchtrace.kbcorrelation.workflow import Event
+
+
+@pytest.fixture(autouse=True)
+def refuse_network(monkeypatch):
+    def refused(*args, **kwargs):
+        raise AssertionError('source race probe is offline')
+    for name in ('socket', 'create_connection', 'getaddrinfo'):
+        monkeypatch.setattr(socket, name, refused)
+
+
+def competing_source(svc):
+    raw = h.render_json(s.document(builds=('10.0.26100.9002',), release='2099-Mar'))
+    imported = import_bytes(raw, now=s.NOW)
+    with WorkspaceStore(svc.root) as ws:
+        assert ws.add_document(imported, raw)
+
+
+def must_refuse(call, svc, state, before):
+    try:
+        outcome = call()
+    except KbcStoreError as exc:
+        assert exc.code == 'PT-KBC-STALE'
+    else:
+        after = s.snapshot(svc, state[0])
+        pytest.fail(f'stale selection accepted: exit={outcome.exit}, '
+                    f'revision={before[0].revision}->{after[0].revision}, '
+                    f'decisions={len(before[1])}->{len(after[1])}')
+    assert s.snapshot(svc, state[0]) == before
+
+
+def test_conflicting_source_before_cas_cannot_publish_selection(tmp_path):
+    svc = s.service(tmp_path)
+    state = s.start(svc)
+    identity = s.inventory(svc, tmp_path)
+    before = s.snapshot(svc, state[0])
+    added = []
+
+    def fault(point):
+        if point == 'before_cas' and not added:
+            competing_source(svc)
+            added.append(True)
+
+    racing = wiring.build_service(svc.root, clock=FixedClock(), fault=fault)
+    must_refuse(lambda: s.select(racing, state, identity), svc, state, before)
+    assert added == [True]
+
+
+@pytest.mark.parametrize('repeat', [False, True])
+def test_source_change_during_inventory_replay_refuses_new_and_noop_selection(tmp_path, monkeypatch, repeat):
+    svc = s.service(tmp_path)
+    state = s.start(svc)
+    identity = s.inventory(svc, tmp_path)
+    if repeat:
+        first = s.select(svc, state, identity)
+        state = state[0], state[1], first.result['revision']
+    before = s.snapshot(svc, state[0])
+    original = selected.get_inventory
+    added = []
+
+    def racing_get(*args, **kwargs):
+        record = original(*args, **kwargs)
+        if not added:
+            competing_source(svc)
+            added.append(True)
+        return record
+
+    monkeypatch.setattr(selected, 'get_inventory', racing_get)
+    must_refuse(lambda: s.select(svc, state, identity), svc, state, before)
+    assert added == [True]
+
+
+def test_source_change_during_index_read_cannot_bind_later_snapshot(tmp_path, monkeypatch):
+    svc = s.service(tmp_path)
+    state = s.start(svc)
+    identity = s.inventory(svc, tmp_path)
+    before = s.snapshot(svc, state[0])
+    original = WorkspaceStore.read_object
+    added = []
+
+    def racing_read(ws, digest):
+        if ws.root == svc.root and not added:
+            competing_source(svc)
+            added.append(True)
+        return original(ws, digest)
+
+    monkeypatch.setattr(WorkspaceStore, 'read_object', racing_read)
+    must_refuse(lambda: s.select(svc, state, identity), svc, state, before)
+    assert added == [True]
+
+
+def test_unchanged_source_accepts_and_repeat_is_idempotent(tmp_path):
+    svc = s.service(tmp_path)
+    state = s.start(svc)
+    identity = s.inventory(svc, tmp_path)
+    first = s.select(svc, state, identity)
+    assert first.exit == 0
+    state = state[0], state[1], first.result['revision']
+    before = s.snapshot(svc, state[0])
+    second = s.select(svc, state, identity)
+    assert second.exit == 0
+    assert s.snapshot(svc, state[0]) == before
+
+
+def test_noop_selection_refuses_concurrent_revision_without_discarding_it(tmp_path, monkeypatch):
+    svc = s.service(tmp_path)
+    state = s.start(svc)
+    identity = s.inventory(svc, tmp_path)
+    first = s.select(svc, state, identity)
+    state = state[0], state[1], first.result['revision']
+    original = selected.get_inventory
+    competing = []
+
+    def racing_get(*args, **kwargs):
+        record = original(*args, **kwargs)
+        if not competing:
+            with WorkspaceStore(svc.root) as ws:
+                rev = ws.current_revision(state[0])
+                ws.apply(rev, Event('product_selected', rev.revision, scope_id=state[1]))
+            competing.append(s.snapshot(svc, state[0]))
+        return record
+
+    monkeypatch.setattr(selected, 'get_inventory', racing_get)
+    with pytest.raises(KbcStoreError) as raised:
+        s.select(svc, state, identity)
+    assert raised.value.code == 'PT-KBC-STALE'
+    assert len(competing) == 1
+    assert s.snapshot(svc, state[0]) == competing[0]
+
+
+def test_preexisting_competing_source_is_a_real_eligibility_conflict(tmp_path):
+    svc = s.service(tmp_path)
+    competing_source(svc)
+    state = s.start(svc)
+    identity = s.inventory(svc, tmp_path)
+    before = s.snapshot(svc, state[0])
+    with pytest.raises(KbcStoreError) as raised:
+        s.select(svc, state, identity)
+    assert raised.value.code == 'PT-KBC-INPUT'
+    assert 'advisory builds conflict' in raised.value.message
+    assert s.snapshot(svc, state[0]) == before
+
+
+def test_later_month_does_not_expand_recorded_cached_inventory_scope(tmp_path):
+    svc = s.service(tmp_path)
+    state = s.start(svc)
+    identity = s.inventory(svc, tmp_path)
+    before = s.snapshot(svc, state[0])
+    competing_source(svc)
+    first = s.select(svc, state, identity)
+    assert first.exit == 0
+    state = state[0], state[1], first.result['revision']
+    after = s.snapshot(svc, state[0])
+    assert after[0].coverage_ids == before[0].coverage_ids
+    with WorkspaceStore(svc.root) as store:
+        coverage, = (store.get_coverage(key) for key in after[0].coverage_ids)
+        assert coverage.inspected_ids == ('2099-Feb',)
+        assert len(coverage.scope.doc_ids) == 1 and len(store.sources()) == 2
+    assert s.select(svc, state, identity).exit == 0
+    assert s.snapshot(svc, state[0]) == after
+
+
+@pytest.mark.parametrize('lead', [s.KB, 'CVE-2099-30000'])
+@pytest.mark.parametrize('change', ['month-arrival', 'unreadable-current'])
+def test_inventory_selection_preflights_saved_coverage_before_publication(tmp_path, monkeypatch, lead, change):
+    svc = s.service(tmp_path)
+    options = {'months': '2099-Feb,2099-Mar'} if change == 'month-arrival' else {}
+    state = s.start(svc, lead=lead, **options)
+    identity = s.inventory(svc, tmp_path)
+    value = s.document(release='2099-Mar' if change == 'month-arrival' else '2099-Feb')
+    if change == 'unreadable-current':
+        value['document']['current_release_date'] = '2099-02-16'
+        value['vulnerabilities'] = []
+    raw = h.render_json(value)
+    imported = import_bytes(raw, now=s.NOW)
+    with WorkspaceStore(svc.root) as ws:
+        assert ws.add_document(imported, raw)
+    if change == 'unreadable-current':
+        assert not imported.edges
+        (svc.root / imported.source.object_path).unlink()
+    refused_without_writes(lambda: s.select(svc, state, identity), svc, tmp_path / 'not-created', monkeypatch)
+
+
+def test_partial_saved_month_coverage_remains_usable_without_inspection_change(tmp_path):
+    svc = s.service(tmp_path)
+    state = s.start(svc, months='2099-Feb,2099-Mar')
+    identity = s.inventory(svc, tmp_path)
+    with WorkspaceStore(svc.root) as ws:
+        original = ws.current_revision(state[0])
+        coverage = ws.get_coverage(original.coverage_ids[0])
+        assert coverage.state == 'partial_in_scope' and coverage.inspected_ids == ('2099-Feb',)
+    first = s.select(svc, state, identity)
+    assert first.exit == 0
+    state = state[0], state[1], first.result['revision']
+    before = s.snapshot(svc, state[0])
+    assert s.select(svc, state, identity).exit == 0
+    assert s.snapshot(svc, state[0]) == before
+    with WorkspaceStore(svc.root) as ws:
+        current = ws.current_revision(state[0])
+        assert current.coverage_ids == original.coverage_ids
+        assert ws.get_coverage(current.coverage_ids[0]) == coverage

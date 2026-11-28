@@ -2,7 +2,9 @@
 from __future__ import annotations
 
 import os
+import re
 import signal
+import struct
 import subprocess
 import threading
 import time
@@ -12,10 +14,11 @@ from pathlib import Path
 
 LOG_LIMIT = 2 * 1024 * 1024
 _PROGRESS_TAIL_LIMIT = 16 * 1024
-# Windows: inheritable pipe/NUL handles exist from CreatePipe until the parent closes the child ends after
-# CreateProcessW(bInheritHandles=True). Serialising that window stops a concurrent run_process child from
-# inheriting another run's pipe write end (which would keep that reader from ever seeing EOF).
+# Windows: keep all temporary inheritable handles and their exact per-child allowlist in one spawn window.
+# Originals stay caller-owned; only newly created stdio handles and borrowed duplicates enter the list.
 _WINDOWS_SPAWN_LOCK = threading.Lock()
+WINDOWS_BORROWED_HANDLE_LIMIT = 16
+_WINDOWS_ATTRIBUTE_BYTES = 64 * 1024
 # prlimit()/setrlimit() raise OverflowError (not OSError) beyond the rlim_t range; no real cap is this large.
 MEMORY_LIMIT_CEILING = 1 << 62
 # CreateProcessW runs a .bat/.cmd through cmd.exe, which still parses these after list2cmdline quoting
@@ -72,6 +75,32 @@ def _windows_env_block(env: Mapping[str, str]) -> str:
     return '\0'.join(f'{k}={v}' for k, v in entries) + '\0\0'
 
 
+def _capture_windows_handles(handles: Mapping[str, int] | None, env: Mapping[str, str],
+                             windows: bool) -> tuple[tuple[str, int], ...]:
+    """Capture only explicit, bounded, transient bindings; never echo their names or values in errors."""
+    if handles is None:
+        return ()
+    if not isinstance(handles, Mapping):
+        raise ValueError('PT-BACKEND: Windows borrowed handles must be a mapping')
+    bindings, seen_names, seen_values = [], {name.casefold() for name in env}, set()
+    limit = 1 << (8 * struct.calcsize('P'))
+    for name, handle in handles.items():
+        if len(bindings) == WINDOWS_BORROWED_HANDLE_LIMIT:
+            raise ValueError('PT-BACKEND: too many Windows borrowed handles')
+        if (not isinstance(name, str) or re.fullmatch(r'[A-Z][A-Z0-9_]{0,63}', name) is None
+                or name.casefold() in seen_names):
+            raise ValueError('PT-BACKEND: Windows handle environment names are invalid or collide')
+        # -1/-2 process/thread and -4/-5/-6 token pseudo handles may also arrive as unsigned pointers.
+        if type(handle) is not int or not 0 < handle < limit - 6 or handle in seen_values:
+            raise ValueError('PT-BACKEND: Windows borrowed handles must be distinct real handle values')
+        seen_names.add(name.casefold())
+        seen_values.add(handle)
+        bindings.append((name, handle))
+    if bindings and not windows:
+        raise ValueError('PT-BACKEND: borrowed handles require Windows process supervision')
+    return tuple(bindings)
+
+
 def _job_limit_flags(memory_limit_bytes: int | None) -> int:
     # DIE_ON_UNHANDLED_EXCEPTION: a crashed tool exits instead of waiting in an error-report dialog until the
     # timeout. Breakaway (0x800/0x1000) is never allowed: every descendant stays in the job.
@@ -101,7 +130,8 @@ class ProcessResult:
 
 
 def _windows_process(argv: Sequence[str], cwd: Path, env: Mapping[str, str], separate_streams: bool = False,
-                     memory_limit_bytes: int | None = None):
+                     memory_limit_bytes: int | None = None, *,
+                     windows_borrowed_handles: tuple[tuple[str, int], ...] = ()):
     """Start suspended, contain the child before it can run, then resume it.
 
     Popen discards the primary thread handle, so use CreateProcessW directly.
@@ -121,6 +151,9 @@ def _windows_process(argv: Sequence[str], cwd: Path, env: Mapping[str, str], sep
                     ('ycount', w.DWORD), ('fill', w.DWORD), ('flags', w.DWORD),
                     ('show', w.WORD), ('reserved_size', w.WORD), ('reserved2', c.c_void_p),
                     ('stdin', w.HANDLE), ('stdout', w.HANDLE), ('stderr', w.HANDLE)]
+
+    class StartupEx(c.Structure):
+        _fields_ = [('startup', Startup), ('attributes', c.c_void_p)]
 
     class ProcessInfo(c.Structure):
         _fields_ = [('process', w.HANDLE), ('thread', w.HANDLE), ('pid', w.DWORD), ('tid', w.DWORD)]
@@ -143,9 +176,16 @@ def _windows_process(argv: Sequence[str], cwd: Path, env: Mapping[str, str], sep
     signatures = {
         'CreatePipe': ([c.POINTER(w.HANDLE), c.POINTER(w.HANDLE), c.POINTER(Security), w.DWORD], w.BOOL),
         'SetHandleInformation': ([w.HANDLE, w.DWORD, w.DWORD], w.BOOL),
+        'GetHandleInformation': ([w.HANDLE, c.POINTER(w.DWORD)], w.BOOL),
+        'GetCurrentProcess': ([], w.HANDLE),
+        'DuplicateHandle': ([w.HANDLE, w.HANDLE, w.HANDLE, c.POINTER(w.HANDLE), w.DWORD, w.BOOL, w.DWORD], w.BOOL),
         'CreateFileW': ([w.LPCWSTR, w.DWORD, w.DWORD, c.POINTER(Security), w.DWORD, w.DWORD, w.HANDLE], w.HANDLE),
+        'InitializeProcThreadAttributeList': ([c.c_void_p, w.DWORD, w.DWORD, c.POINTER(c.c_size_t)], w.BOOL),
+        'UpdateProcThreadAttribute': ([c.c_void_p, w.DWORD, c.c_size_t, c.c_void_p, c.c_size_t,
+                                      c.c_void_p, c.POINTER(c.c_size_t)], w.BOOL),
+        'DeleteProcThreadAttributeList': ([c.c_void_p], None),
         'CreateProcessW': ([w.LPCWSTR, w.LPWSTR, c.c_void_p, c.c_void_p, w.BOOL,
-                            w.DWORD, c.c_void_p, w.LPCWSTR, c.POINTER(Startup), c.POINTER(ProcessInfo)], w.BOOL),
+                            w.DWORD, c.c_void_p, w.LPCWSTR, c.POINTER(StartupEx), c.POINTER(ProcessInfo)], w.BOOL),
         'CreateJobObjectW': ([c.c_void_p, w.LPCWSTR], w.HANDLE),
         'SetInformationJobObject': ([w.HANDLE, c.c_int, c.c_void_p, w.DWORD], w.BOOL),
         'AssignProcessToJobObject': ([w.HANDLE, w.HANDLE], w.BOOL),
@@ -166,13 +206,16 @@ def _windows_process(argv: Sequence[str], cwd: Path, env: Mapping[str, str], sep
             raise c.WinError(c.get_last_error())
         return value
 
-    environment = c.create_unicode_buffer(_windows_env_block(env))  # validated before anything is created
+    child_env = dict(env)
+    _windows_env_block(child_env)  # validated before anything is created
     read, write = w.HANDLE(), w.HANDLE()
     err_read, err_write = w.HANDLE(), w.HANDLE()
     security = Security(c.sizeof(Security), None, True)
     info = ProcessInfo()
     job = null = None
     stdout = stderr = None
+    duplicates, attributes = [], None
+    attributes_ready = False
     _WINDOWS_SPAWN_LOCK.acquire()
     try:
         check(kernel.CreatePipe(c.byref(read), c.byref(write), c.byref(security), 0))
@@ -182,14 +225,37 @@ def _windows_process(argv: Sequence[str], cwd: Path, env: Mapping[str, str], sep
             check(kernel.SetHandleInformation(err_read, 1, 0))
         null = kernel.CreateFileW('NUL', 0x80000000, 3, c.byref(security), 3, 0, None)
         if null == c.c_void_p(-1).value:
+            null = None  # INVALID_HANDLE_VALUE is not owned and must never enter cleanup.
             raise c.WinError(c.get_last_error())
-        startup = Startup()
-        startup.cb, startup.flags = c.sizeof(Startup), 0x100
-        startup.stdin, startup.stdout = null, write
-        startup.stderr = err_write if separate_streams else write
+        for name, original in windows_borrowed_handles:
+            flags, duplicate = w.DWORD(), w.HANDLE()
+            check(kernel.GetHandleInformation(w.HANDLE(original), c.byref(flags)))
+            process = kernel.GetCurrentProcess()
+            check(kernel.DuplicateHandle(process, w.HANDLE(original), process, c.byref(duplicate), 0, True, 2))
+            duplicates.append(duplicate)
+            child_env[name] = str(duplicate.value)
+        startup = StartupEx()
+        startup.startup.cb, startup.startup.flags = c.sizeof(StartupEx), 0x100
+        startup.startup.stdin, startup.startup.stdout = null, write
+        startup.startup.stderr = err_write if separate_streams else write
+        inherited = tuple(dict.fromkeys((null, write.value, startup.startup.stderr,
+                                         *(handle.value for handle in duplicates))))
+        # Both the attribute buffer and its handle array live until DeleteProcThreadAttributeList below.
+        handle_array = (w.HANDLE * len(inherited))(*inherited)
+        attribute_size = c.c_size_t()
+        queried = kernel.InitializeProcThreadAttributeList(None, 1, 0, c.byref(attribute_size))
+        if queried or c.get_last_error() != 122 or not 0 < attribute_size.value <= _WINDOWS_ATTRIBUTE_BYTES:
+            raise OSError('PT-BACKEND: Windows process attribute size query failed')
+        attributes = c.create_string_buffer(attribute_size.value)
+        check(kernel.InitializeProcThreadAttributeList(attributes, 1, 0, c.byref(attribute_size)))
+        attributes_ready = True
+        check(kernel.UpdateProcThreadAttribute(attributes, 0, 0x20002, handle_array,
+                                               c.sizeof(handle_array), None, None))
+        startup.attributes = c.cast(attributes, c.c_void_p)
+        environment = c.create_unicode_buffer(_windows_env_block(child_env))
         command = c.create_unicode_buffer(subprocess.list2cmdline(list(argv)))
         check(kernel.CreateProcessW(str(argv[0]), command, None, None, True,
-                                    0x4 | 0x400 | 0x08000000, environment, str(cwd),
+                                    0x4 | 0x400 | 0x08000000 | 0x80000, environment, str(cwd),
                                     c.byref(startup), c.byref(info)))
         job = check(kernel.CreateJobObjectW(None, None))
         limits = ExtendedLimits()
@@ -221,9 +287,13 @@ def _windows_process(argv: Sequence[str], cwd: Path, env: Mapping[str, str], sep
         raise
     finally:
         try:
-            for handle in [write, read, err_write, err_read, null, info.thread]:
-                if handle:
-                    kernel.CloseHandle(handle)
+            try:
+                if attributes_ready:
+                    kernel.DeleteProcThreadAttributeList(attributes)
+            finally:
+                for handle in [*duplicates, write, read, err_write, err_read, null, info.thread]:
+                    if handle:
+                        kernel.CloseHandle(handle)
         finally:
             _WINDOWS_SPAWN_LOCK.release()
 
@@ -294,7 +364,8 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
                 log_limit: int = LOG_LIMIT, separate_streams: bool = False,
                 stderr_limit: int = LOG_LIMIT, memory_limit_bytes: int | None = None,
                 max_output_bytes: int | None = None,
-                on_progress: Callable[[ProcessProgress], None] | None = None) -> ProcessResult:
+                on_progress: Callable[[ProcessProgress], None] | None = None,
+                windows_borrowed_handles: Mapping[str, int] | None = None) -> ProcessResult:
     """Run an argv with a bounded log and terminate descendants on every exit.
 
     By default stdout and stderr are merged into `log_tail`. With `separate_streams`,
@@ -314,6 +385,11 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
     `on_progress` receives at most one bounded snapshot per second and a final snapshot after pipe drain.
     It runs on this supervisor thread without the reader lock and must return promptly. Ordinary observer
     errors are ignored; interrupts still trigger cleanup. Output activity never changes the fixed deadline.
+
+    `windows_borrowed_handles` maps at most 16 explicit environment names to caller-owned live Windows handles.
+    The child receives decimal launch-duplicate values in those names. Originals retain their flags/access and
+    must remain open until this call returns; only owned duplicates are closed here. No binding is persisted.
+    Nonempty bindings on another platform are refused. See local-package-intake.md section 5.3.
     """
     if not argv or not Path(argv[0]).is_absolute():
         raise ValueError('PT-BACKEND: configure an absolute executable path')
@@ -330,6 +406,8 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
     if not _valid_environment(env):
         # The name and the value stay out of the message: either may be a credential or hostile text.
         raise ValueError('PT-BACKEND: child environment has an invalid variable name or value')
+    env = dict(env)
+    borrowed = _capture_windows_handles(windows_borrowed_handles, env, os.name == 'nt')
     if cancel.is_set():
         return ProcessResult(-1, '', 'cancelled')
     peek_exit = os.name != 'nt' and all(hasattr(os, name) for name in
@@ -337,7 +415,11 @@ def run_process(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str],
     if os.name != 'nt' and not peek_exit:
         raise OSError('PT-BACKEND: safe process supervision requires POSIX waitid with WNOWAIT')
     if os.name == 'nt':
-        child = _windows_process(argv, cwd, env, separate_streams, memory_limit_bytes)
+        if borrowed:
+            child = _windows_process(argv, cwd, env, separate_streams, memory_limit_bytes,
+                                     windows_borrowed_handles=borrowed)
+        else:
+            child = _windows_process(argv, cwd, env, separate_streams, memory_limit_bytes)
     else:
         if signal.getsignal(signal.SIGCHLD) == signal.SIG_IGN:
             # The kernel then reaps children itself and Popen reports every exit status (even a crash) as 0.

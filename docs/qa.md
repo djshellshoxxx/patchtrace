@@ -1,3 +1,88 @@
+## PW-02 local cabinet source inspection
+
+The Windows AMD64 `package-source` command checks the selected file's size,
+identity, MSCF prefix and complete SHA-256 before returning. Seven packaged
+smoke controls cover matching output, wrong digests, a missing signature state,
+a wrong basename, warnings, stderr and changed input. Windows QA exercises the
+real source handles, the SDK declarations, Cabinet.dll and the packaged command.
+
+On Linux the expanded regression selection passed 660 tests with 11 skips. The
+source, decoder and packaging smoke selection passed 116 tests with three native
+skips. A stress run completed 256 complete file hashes with eight workers and
+eight sizes, including the chunk boundaries. Each operation checked the digest,
+rewind and byte count. An independent libarchive read decoded the authored
+MSZIP cabinet to its expected 39-byte text. The full suite and actual Windows
+job report separately. A complete package import still needs member staging
+and end-to-end acceptance.
+
+## PW-02 Windows QA follow-up
+
+Windows run [46097542948](https://github.com/djshellshoxxx/patchtrace/actions/runs/46097542948)
+failed in backup-fixture deletion and stalled HTTP response handling. Five of six
+new deterministic timeout controls failed on the previous branch head. After the
+repairs the two affected modules passed all 32 cases. The expanded package,
+handle, network and replay selection passed 512 tests on Linux and skipped
+seven Windows handle tests. The Windows job now runs the authored AMD64 FDI
+signature and layout probe against its installed SDK. Actual native results
+belong to the hosted run; this change does not establish decoder availability.
+
+## November 27 PW-02 supervised handle transfer
+
+The 39-case baseline reproduced the missing borrowed-handle API and unrestricted
+Windows startup. The bounded API and exact stdio/duplicate inheritance list now
+preserve caller originals and Job-before-resume. The final supervisor selection
+passes **189 tests / 13 Windows-only skips / 0 failures**, with whole-tree Ruff
+and whitespace clean. Seven skipped cases are new native object/file/concurrent
+process controls; they are explicitly **BLOCKED on Linux**, not qualified by
+portable pointer values or injected Win32 calls. Independent source review and
+actual Windows gates remain open. [Contract, evidence and limitations](engineering/local-package-process-ownership-20261127.md).
+
+## November 27 PW-02 ABI checker output totals
+
+Independent review confirmed pinned ABI declarations but reproduced two accepted
+output-overflow receipts. Final stdout/stderr totals and complete probe byte
+retention are now checked after process completion. The 26-case corrective lane
+passes without skips, with unchanged independent controls retained. Native
+Windows SDK/DLL/extraction qualification remains pending; see the PW-02 recovery
+record for exact portable scope and original failures.
+
+## November 27 PW-02 decoder ABI slice
+
+Pinned Win32 widths/cdecl/AMD64 layout and a separately supervised authored SDK
+probe are implemented. Original 18 missing-module failures are retained; the
+combined portable package lane passes 353 tests without skips. Actual Windows
+SDK compilation, held I/O, system decoder, supervised extraction and KB/frozen
+pair admission remain pending. This is not a working-extractor or native-pass
+claim. See docs/engineering/local-package-recovery-20261127.md.
+
+## November 27 PW-02 foundation recovery
+
+The isolated portable package contracts/name/budget/worker-accounting foundation
+reproduced 171 failures plus four collection errors before recovery, then passed
+335 tests without skips. Schemas, whole-tree Ruff and whitespace pass. This does
+not supply a native extractor or claim a working package intake feature; Windows
+held I/O, supervised FDI, KB admission and native/frozen qualification remain open.
+[Incremental plan and preserved evidence](engineering/local-package-recovery-20261127.md).
+
+## November 27 retained Winbindex replay completion
+
+Original source retention and offline resolver replay are implemented and
+independently reviewed. Author lane: 616 passed / one native Windows skip; root
+independent lane: 74 passed / zero skipped. These overlap. After normal integration
+with inventory head `f301d54b`, the combined exact source `ea80552e` passed 2,408
+cases / three native Windows skips across 92 modules plus independent controls.
+Schema drift, whole-tree Ruff and whitespace checks passed. No live provider or
+target was executed. Exact-head hosted full/native/package gates remain open.
+[Plan, original failures and evidence](engineering/winbindex-replay-recovery-20261127.md).
+
+## PW-01 full-application gate attempt (2026-11-27)
+
+The clean integrated inventory source reached 41% of full offscreen pytest before SIGKILL (-9), after 930.203 seconds. No failure marker was reported before termination; no final summary exists. The signal origin is unestablished and this gate remains incomplete. The earlier attempt hit ENOSPC in its verification harness. Exact source/command/progress/memory evidence is retained in `docs/engineering/evidence/inventory-recovery-20261127/`; see the full explanation in `docs/engineering/inventory-recovery-20261127.md`. Current-head hosted/native qualification is still required.
+
+## PW-01 recovery in progress (2026-11-27)
+
+See `docs/engineering/inventory-recovery-20261127.md` for the concrete incremental plan, retained donor identities, observed failures and current evidence. All four implementation slices are complete; combined KB/inventory verification passed 2,767 tests with four skips, and independent review found no remaining blocker after the fixed-byte metadata correction. Full-suite and current-head hosted/native acceptance remain pending. Do not treat this entry as completion or release approval.
+
 ## Packaged-version qualification correction (2026-11-27)
 
 The full local offscreen run at `aa8967e895b88a553df4fb14f7429ed64cca0db6` ended with pytest return code `-9` (SIGKILL) after 681.821 seconds and 5,147 reported cases. Its signal origin is unestablished; this is an incomplete gate, not a full-suite pass. The one reported failure was reproduced in isolation: `test_full_linux_frozen_smoke_preserves_both_qt_modes` expected an obsolete literal call spelling after the CLI acquired `--version-only`.
@@ -2556,3 +2641,11 @@ filter cases with zero skips in 3.14 s, plus focused Ruff and the full feature
 whitespace check. The reviewer closed the output-admission finding with no
 remaining consumer-scope blocker. Exact-head hosted/full/package qualification
 remains pending; the retained producer remains a separate scope.
+
+
+### PW-02 process seam independently reviewed — November 27, 2026
+
+Root approved runtime `003d97c0`; five extra ownership/lifetime/refusal controls
+and affected Windows-launch tests passed 108 tests with three native-only skips.
+No source blocker remains. Native Windows/full gates are still pending. See
+`engineering/local-package-process-ownership-20261127.md` and retained receipts.

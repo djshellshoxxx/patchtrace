@@ -1,7 +1,8 @@
 """Bounded acquisition snapshots; source claims and inspected bytes remain separate (SPEC-31-F).
 
 Pure contracts and content identities. A normalized delivery row retains the parser's
-metadata and upstream entry digest; it is not a copy of the raw Winbindex entry.
+metadata and upstream entry digest. Optional versioned replay binds separate original
+index bytes and exact resolver membership without embedding raw data in this record.
 """
 from __future__ import annotations
 
@@ -10,35 +11,32 @@ import re
 from collections.abc import Mapping, Sequence
 from typing import Annotated, Any, Literal
 
-from pydantic import Field, model_validator
+from pydantic import Field, field_validator, model_serializer, model_validator
 
 from .contracts import (
     CONTRACT,
     Contract,
-    HeadingClass,
-    KbId,
     PairProposal,
     Record,
     Sha256,
     Short,
     Timestamp,
     Uuid,
-    Variant,
     domain_id,
     https_host,
 )
+from .index_replay import IndexEntry, IndexReplay, UrlText
 
 MAX_EVIDENCE_BYTES = 1024 * 1024
 MAX_REQUESTS = 514  # existing provider ceiling: 256 HEAD candidates and one GET per side
-MAX_SHARED_VERSIONS = 4096
-UInt32 = Annotated[int, Field(ge=0, le=0xFFFFFFFF)]
-VersionKey = Annotated[str, Field(pattern=r'^[A-Za-z0-9][A-Za-z0-9._-]{0,39}$')]
-DateText = Annotated[str, Field(pattern=r'^[0-9]{4}-[0-9]{2}-[0-9]{2}$')]
-UrlText = Annotated[str, Field(min_length=1, max_length=2048)]
 
 
 class EvidenceLimitError(ValueError):
     """The snapshot cannot be retained without exceeding its explicit budget."""
+
+
+class UnsupportedEvidenceError(ValueError):
+    """The retained record names a contract this version cannot replay."""
 
 
 def canonical(value: Any) -> bytes:
@@ -49,35 +47,19 @@ def canonical(value: Any) -> bytes:
     return data
 
 
-class IndexEntry(Record):
-    """Exactly one normalized Winbindex delivery row, not an asserted resolver endpoint."""
-    file_name: Short
-    sha256: Sha256
-    version_key: VersionKey
-    kb: KbId | None
-    release_date: DateText | None
-    release_version: Annotated[str, Field(max_length=20)] | None
-    heading: Annotated[str, Field(max_length=300)]
-    heading_class: HeadingClass
-    other_versions: Annotated[tuple[VersionKey, ...], Field(max_length=MAX_SHARED_VERSIONS)]
-    variant: Variant
-    download: Literal['direct', 'candidates', 'unavailable']
-    size: UInt32 | None
-    machine_type: Annotated[int, Field(ge=0, le=0xFFFF)] | None
-    timestamp: UInt32 | None
-    virtual_size: UInt32 | None
-    last_section_va: UInt32 | None
-    last_section_raw: UInt32 | None
-    file_version: Annotated[str, Field(max_length=200)] | None
-    record_sha256: Sha256
-    source: Annotated[str, Field(pattern=r'^winbindex@[0-9]{4}-[0-9]{2}-[0-9]{2}$')]
-    download_url: UrlText | None = None
-
-
 class AcquisitionSource(Record):
     proposal: PairProposal
     older: IndexEntry
     newer: IndexEntry
+    replay: IndexReplay | None = None
+
+    @model_serializer(mode='wrap')
+    def _serialize(self, handler):
+        # Historical source digests and evidence IDs predate this optional field.
+        value = handler(self)
+        if self.replay is None:
+            value.pop('replay', None)
+        return value
 
     @model_validator(mode='after')
     def _bindings(self):
@@ -86,11 +68,22 @@ class AcquisitionSource(Record):
         for ref, row in ((self.proposal.older, self.older), (self.proposal.newer, self.newer)):
             if (ref.sha256, ref.basename, ref.size) != (row.sha256, row.file_name, row.size):
                 raise ValueError('a delivery entry differs from its ordered source proposal')
+        if self.replay is not None:
+            replay = self.replay
+            if (replay.selected_pair_id, replay.inputs.scope.scope_id) != (
+                    self.proposal.pair_id, self.proposal.scope_id):
+                raise ValueError('replay belongs to another selected pair or product')
+            if self.proposal.window_id != f'index:{replay.newer.version_key}:{replay.newer.kb or "BASE"}':
+                raise ValueError('replay newer membership differs from the proposal window')
+            for member, row in ((replay.older, self.older), (replay.newer, self.newer)):
+                if not member.matches(row) or (row.file_name, row.source) != (
+                        replay.source.file_name, f'winbindex@{replay.source.data_date}'):
+                    raise ValueError('replay membership differs from the approved delivery entry')
         return self
 
     @property
     def source_sha256(self) -> str:
-        return domain_id('kbc.acquiresource', 1, self.model_dump(mode='json'))
+        return domain_id('kbc.acquiresource', 2 if self.replay is not None else 1, self.model_dump(mode='json'))
 
 
 class AcquisitionRequest(Record):
@@ -119,13 +112,13 @@ class DownloadReceipt(Record):
 
 def plan_digest(source: AcquisitionSource, hosts: Sequence[str], requests: Sequence[tuple[str, str]]) -> str:
     pair = source.proposal
-    return domain_id('kbc.acquireplan', 2, {
+    return domain_id('kbc.acquireplan', 3 if source.replay is not None else 2, {
         'pair_id': pair.pair_id, 'older': pair.older.sha256, 'newer': pair.newer.sha256,
         'source_sha256': source.source_sha256, 'hosts': list(hosts), 'requests': [list(r) for r in requests]})
 
 
 class AcquisitionEvidence(Contract):
-    evidence_version: Literal[1] = 1
+    evidence_version: Literal[1, 2] = 1
     evidence_id: Sha256
     investigation_id: Uuid
     preview_revision: Annotated[int, Field(ge=1)]
@@ -136,8 +129,17 @@ class AcquisitionEvidence(Contract):
     verified_pair: PairProposal
     downloads: Annotated[tuple[DownloadReceipt, ...], Field(min_length=2, max_length=2)]
 
+    @field_validator('evidence_version', mode='before')
+    @classmethod
+    def _version_type(cls, value):
+        if type(value) is not int:
+            raise ValueError('evidence version must be an integer')
+        return value
+
     @model_validator(mode='after')
     def _bindings(self):
+        if self.evidence_version != (2 if self.source.replay is not None else 1):
+            raise ValueError('acquisition evidence version does not match its raw replay capability')
         source, verified = self.source.proposal, self.verified_pair
         if (verified.scope_id, verified.older.sha256, verified.newer.sha256) != (
                 source.scope_id, source.older.sha256, source.newer.sha256):
@@ -164,7 +166,7 @@ class AcquisitionEvidence(Contract):
                 raise ValueError('download receipt URL was not in the approved request plan')
         payload = self.model_dump(mode='json', exclude={'evidence_id'})
         canonical(payload)
-        if self.evidence_id != domain_id('kbc.acquisition', 1, payload):
+        if self.evidence_id != domain_id('kbc.acquisition', self.evidence_version, payload):
             raise ValueError('acquisition evidence content identity does not match')
         return self
 
@@ -183,9 +185,11 @@ class AcquisitionEvidence(Contract):
             raise ValueError('acquisition evidence belongs to another attachment')
 
 
-def capture_source(pair: PairProposal, older: Mapping[str, Any], newer: Mapping[str, Any]) -> AcquisitionSource:
+def capture_source(pair: PairProposal, older: Mapping[str, Any], newer: Mapping[str, Any], *,
+                   replay: IndexReplay | None = None) -> AcquisitionSource:
     """Validate and freeze all source values, including nested caller-owned collections."""
-    data = canonical({'proposal': pair.model_dump(mode='json'), 'older': dict(older), 'newer': dict(newer)})
+    data = canonical({'proposal': pair.model_dump(mode='json'), 'older': dict(older), 'newer': dict(newer),
+                      **({'replay': replay.model_dump(mode='json')} if replay is not None else {})})
     return AcquisitionSource.model_validate_json(data)
 
 
@@ -203,18 +207,37 @@ def read_evidence(data: bytes) -> AcquisitionEvidence:
         raise EvidenceLimitError('acquisition evidence exceeds its 1 MiB byte limit')
     # Pydantic accepts duplicate JSON keys; reject them before validating identity and ownership.
     try:
-        json.loads(data, object_pairs_hook=_unique)
+        decoded = json.loads(data, object_pairs_hook=_unique)
     except RecursionError:
         raise ValueError('acquisition evidence is too deeply nested') from None
+    if isinstance(decoded, dict):
+        version = decoded.get('evidence_version', 1)
+        if type(version) is int and version not in (1, 2):
+            raise UnsupportedEvidenceError('the retained acquisition evidence version is unsupported')
+        source = decoded.get('source')
+        replay = source.get('replay') if isinstance(source, dict) else None
+        if isinstance(replay, dict):
+            version = replay.get('replay_version', 1)
+            if type(version) is int and version != 1:
+                raise UnsupportedEvidenceError('the retained index replay version is unsupported')
+            raw_source = replay.get('source')
+            if isinstance(raw_source, dict):
+                for key, expected in (('parser_version', 'winbindex-rows/1'),
+                                      ('lineage_version', 'kbc-lineage/1'),
+                                      ('resolver_version', 'kbc-resolver/1')):
+                    named = raw_source.get(key, expected)
+                    if isinstance(named, str) and named != expected:
+                        raise UnsupportedEvidenceError('the retained Winbindex processing version is unsupported')
     return AcquisitionEvidence.model_validate_json(data)
 
 
 def make_evidence(*, investigation_id: str, preview_revision: int, plan_sha: str, source: AcquisitionSource,
                   hosts: tuple[str, ...], requests: tuple[tuple[str, str], ...], verified_pair: PairProposal,
                   downloads: tuple[dict, ...]) -> AcquisitionEvidence:
-    payload = {'contract': CONTRACT, 'evidence_version': 1, 'investigation_id': investigation_id,
+    version = 2 if source.replay is not None else 1
+    payload = {'contract': CONTRACT, 'evidence_version': version, 'investigation_id': investigation_id,
                'preview_revision': preview_revision, 'plan_sha': plan_sha, 'source': source.model_dump(mode='json'),
                'hosts': list(hosts), 'requests': [{'method': m, 'target': t} for m, t in requests],
                'verified_pair': verified_pair.model_dump(mode='json'), 'downloads': list(downloads)}
-    payload['evidence_id'] = domain_id('kbc.acquisition', 1, payload)
+    payload['evidence_id'] = domain_id('kbc.acquisition', version, payload)
     return read_evidence(canonical(payload))

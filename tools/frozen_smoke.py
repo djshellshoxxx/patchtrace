@@ -5,6 +5,7 @@ usage: frozen_smoke.py PATH_TO_PatchTrace_EXECUTABLE [--version-only]
 Checks (each prints PASS/FAIL; any FAIL gives exit 1):
   V1  the delivered build record matches bounded `version --json` with no warnings (frozen only).
       --version-only runs just V1 using the standard-library host interpreter and reviewed source checkout.
+  P1  a frozen Windows executable reports the identity and complete hash of an authored cabinet.
   A1  every command answers --help with exit 0 and `usage:` on stdout
   A2  unknown command exits 2 without a traceback
   A3  missing project exits 2 with a message, no traceback, no Qt
@@ -143,6 +144,33 @@ def version_checks(launcher: Sequence[str], *, check: Callable[..., None],
     return True
 
 
+def package_source_check(launcher: Sequence[str], scratch: Path, check: Callable[..., None]) -> None:
+    from patchtrace.acquisition.package_contracts import PackageSource
+
+    if __package__:
+        from .check_package_fdi_decoder import cabinet_fixture
+    else:
+        from check_package_fdi_decoder import cabinet_fixture
+
+    fixture = cabinet_fixture()
+    path = scratch / 'Authored package.msu'
+    path.write_bytes(fixture)
+    child = run(launcher, 'package-source', path, '--json')
+    report = _json_doc(child.stdout)
+    try:
+        result = report['result']
+        source = PackageSource.model_validate_json(json.dumps(result))
+        valid = (child.returncode == 0 and not child.stderr and report['contract'] == 'enrichment-cli/1'
+                 and report['command'] == 'package-source' and report['status'] == 'complete'
+                 and report['warnings'] == [] and result['signature_state'] == 'signature-unknown'
+                 and source.display_name == path.name and source.size == len(fixture)
+                 and source.sha256 == hashlib.sha256(fixture).hexdigest() and path.read_bytes() == fixture)
+    except (KeyError, OSError, TypeError, ValueError):
+        valid = False
+    check('P1 frozen package-source identifies the complete authored cabinet', valid,
+          f'exit {child.returncode}, expected a complete and matching source record')
+
+
 def run_checks(launcher: Sequence[str], *, frozen: bool, emit: Callable[[str], None] = print,
                version_only: bool = False) -> list[str]:
     if version_only and not frozen:
@@ -166,6 +194,8 @@ def run_checks(launcher: Sequence[str], *, frozen: bool, emit: Callable[[str], N
           f'rc={r.returncode} {r.stderr}')
     with tempfile.TemporaryDirectory(prefix='pt-smoke-') as scratch_name:
         scratch = Path(scratch_name)
+        if frozen and sys.platform == 'win32':
+            package_source_check(launcher, scratch, check)
         missing = scratch / 'does' / 'not' / 'exist'
         r = run(launcher, 'rank', missing)
         check('A3 missing project exits 2 with message, no traceback',

@@ -204,3 +204,10 @@ These entries describe the separate follow-up candidate and do not establish acc
 | `docs/specs/ci-pip-command-audit.md` | SPEC-CI-PIP-AUDIT-01 (proposed; cite by path) | `tools/ci_pip_install_audit.py` and its source-only tests | Parse actual workflow steps and audit explicit pip command boundaries; parser uncertainty is a hard failure. Broad CODEX-5 hash closure and hosted/native qualification remain separate. |
 | `docs/specs/pilot-evaluation-tooling-hashes.md` | SPEC-CI-PILOT-HASHES-01 (proposed; cite by path) | `.github/workflows/pilot-eval.yml` and `tools/calibration/pilot/requirements-ci.lock` | Complete seven-wheel tooling closure for Linux CPython 3.12, selected from successful main QA. Separate editable application install, historical pilot acceptance, hosted/native and release gates remain open. |
 | `docs/specs/sigstore-tooling-hashes.md` | SPEC-CI-SIGSTORE-HASHES-01 (proposed; cite by path) | `.github/workflows/backend-bundle.yml` vrfy and `tools/requirements-sigstore-ci.lock` | Same-version 31-wheel Linux CPython 3.12 tooling closure from an actual successful verifier install, with normal dependency and extra resolution. Signature operations, other installers, hosted/native and release gates remain separate. |
+
+## PW-01 recovered implementation contract (2026-11-27)
+
+| File | Alias | Owner | Scope |
+|---|---|---|---|
+| `docs/specs/kb-file-inventory-csv.md` | PW-01 | KB correlation inventory adapters | Bounded CSV and inert support links, immutable original-source replay, explicit filename selection, CLI and Qt. Synthetic acceptance does not establish live-source or release acceptance. |
+| `docs/specs/local-package-intake.md` | PW-02 under SPEC-31-D | acquisition/package_* | Pure strict records/name/budget/worker accounting first; native FDI, held I/O, service admission and frozen acceptance remain explicit pending gates. |

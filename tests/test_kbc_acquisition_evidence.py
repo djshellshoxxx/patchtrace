@@ -249,7 +249,7 @@ def test_unfinished_acquisition_checks_operation_identity_before_interruption_wr
         original = read_evidence(canonical(evidence))
         if replacement_receipt:
             evidence['downloads'][0]['retrieved_at'] = '2099-12-31T00:00:00Z'
-            evidence['evidence_id'] = domain_id('kbc.acquisition', 1,
+            evidence['evidence_id'] = domain_id('kbc.acquisition', evidence['evidence_version'],
                                                {k: v for k, v in evidence.items() if k != 'evidence_id'})
             body['acquisition_id'] = evidence['evidence_id']
             read_evidence(canonical(evidence))  # valid pair, plan and receipt; only the operation binding changed
@@ -290,6 +290,10 @@ def test_repair_refuses_malformed_or_foreign_journal_evidence_before_mutation(re
                     pair['pair_id'] = domain_id('kbc.pair', 1, {
                         'older': pair['older']['sha256'], 'newer': pair['newer']['sha256'],
                         'scope_id': pair['scope_id'], 'window_id': pair['window_id']})
+                if 'replay' in evidence['source']:
+                    replay = evidence['source']['replay']
+                    replay['inputs']['scope']['scope_id'] = 'f' * 64
+                    replay['selected_pair_id'] = evidence['source']['proposal']['pair_id']
             else:
                 evidence['source']['older']['heading'] = 'Internally valid replacement claims'
             if corruption in {'foreign-scope', 'rewritten-source'}:
@@ -297,7 +301,7 @@ def test_repair_refuses_malformed_or_foreign_journal_evidence_before_mutation(re
                 evidence['plan_sha'] = plan_digest(source, evidence['hosts'],
                                                   [(r['method'], r['target']) for r in evidence['requests']])
             payload = {key: value for key, value in evidence.items() if key != 'evidence_id'}
-            evidence['evidence_id'] = domain_id('kbc.acquisition', 1, payload)
+            evidence['evidence_id'] = domain_id('kbc.acquisition', evidence['evidence_version'], payload)
             body['acquisition_id'] = evidence['evidence_id']
             read_evidence(canonical(evidence))  # valid record; only the attachment ownership must reject it
         ws.journal_put(op, state, body)
@@ -327,8 +331,10 @@ def test_unavailable_owned_publication_retains_project_and_captured_journal(read
     kb, _server, inv, _flags, project = ready
     publisher = owned_publication.publish_bytes
 
-    def unavailable(*_args, **_kwargs):
-        raise OwnedPublicationError('authored unavailable ownership primitive')
+    def unavailable(target, *args, **kwargs):
+        if target.is_relative_to(project):
+            raise OwnedPublicationError('authored unavailable project ownership primitive')
+        return publisher(target, *args, **kwargs)
 
     monkeypatch.setattr(owned_publication, 'publish_bytes', unavailable)
     code, doc, _ = _acquire(ready)

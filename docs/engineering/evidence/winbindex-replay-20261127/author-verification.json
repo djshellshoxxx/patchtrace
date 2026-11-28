@@ -1,0 +1,64 @@
+{
+  "feature": "Complete retained Winbindex source replay",
+  "worktree": "/workspace/scratch/e3f205d85f15/patchtrace-winbindex",
+  "branch": "feature/winbindex-source-replay-20261128",
+  "base": "e72dfaf91499403abdec8cdedeaf434ff0619744",
+  "head": "8912e034ed9d15d1fb2daeabab5d3dc1518b4e28",
+  "prose_date": "2026-11-27 America/Vancouver",
+  "commits": [
+    {"sha": "d9dcc72f", "slice": "Specification, immutable raw/index replay records, exact resolver endpoint membership"},
+    {"sha": "26e439b2", "slice": "One-read acquisition, versioned consent/evidence, immutable workspace/project raw objects, pre-create checks"},
+    {"sha": "8912e034ed9d15d1fb2daeabab5d3dc1518b4e28", "slice": "Offline CLI replay, backup acceptance, legacy/future-version handling, pre-resume and conflicting-copy guards"}
+  ],
+  "environment": {"python": "3.12.14", "pytest": "9.2.0", "pydantic": "2.14.2", "editable_binding_changed": false, "pythonpath": "src"},
+  "gap_evidence": [
+    "Base WorkspaceFileIndex discarded original bytes after parsing, and acquire used separate resolver and delivery reads.",
+    "Base AcquisitionEvidence retained normalized rows and entry digests only; it had no raw object or complete resolver arguments/membership.",
+    "Base older-row selection explicitly refused repeated SHA bodies because predecessor membership was unavailable.",
+    "SPEC-31-D and tasks/todo.md explicitly left original raw index retention and resolver-input replay open.",
+    "Relevant unmerged acquire/evidence/resolver/wiring/parser path history and the prior donor missing-file census yielded no reusable raw-replay implementation. No donor merge was performed."
+  ],
+  "acceptance": [
+    "Exact original plain/gzip bytes retained separately from bounded JSON evidence.",
+    "One held source read supplies resolver inputs and both delivery endpoint choices.",
+    "Consent binds raw SHA/length, metadata, complete input/result digests, losses, resolver arguments and actual endpoint membership.",
+    "Repeated older SHA across different KBs uses its actual predecessor; conflicting same-priority copies remain refused and native bodies retain precedence.",
+    "Original and potential-expanded row budgets are enforced before lineage expansion; multi-file preview captures have aggregate byte/row budgets.",
+    "Owned publication refuses foreign, aliased and damaged objects without replacement; failed workspace retention precedes staging.",
+    "Retained source is checked before project creation or journal resume mutation.",
+    "Repair works without mutable index records, and backup replay works after original workspace/project deletion.",
+    "Historical v1 evidence/v2 consent serialization and identities remain unchanged; no raw provenance is invented.",
+    "Offline replay fails explicitly for missing, damaged, foreign-project or nonreproducing data; future processing versions are unsupported."
+  ],
+  "observed_runs": [
+    {"phase": "slice1 missing-module baseline", "collection_errors": 1},
+    {"phase": "slice1 initial implementation", "passed": 89, "failed": 5, "reason": "Incorrect authored fixture expectations: one rejected body and actual predecessor KB5098000; corrected from actual fixture/source."},
+    {"phase": "slice1 qualified", "passed": 98, "failed": 0},
+    {"phase": "slice2 baseline", "failed": 10, "passed": 0},
+    {"phase": "slice2 initial integration", "passed": 31, "failed": 6, "reason": "Existing adversarial fixtures hardcoded evidence v1 IDs or faulted all publication; updated to actual version and original project fault seam."},
+    {"phase": "slice2 architecture integration", "passed": 251, "failed": 1, "reason": "Exact wiring allowlist did not yet permit existing owned read_bytes; added a second exact tuple plus rejection controls."},
+    {"phase": "slice2 added budget test", "passed": 207, "failed": 1, "reason": "Authored test expected exit 2; existing PT-KBC-LIMIT maps to exit 3. Runtime exit contract unchanged."},
+    {"phase": "slice2 qualified", "passed": 304, "failed": 0, "seconds": 5.06},
+    {"phase": "slice3 CLI baseline", "failed": 19, "passed": 0},
+    {"phase": "slice3 first CLI green", "passed": 19, "failed": 0, "seconds": 1.69},
+    {"phase": "resume source admission baseline", "failed": 1, "reason": "Created journal advanced to partial after damaged retained source. Verification moved before resume mutation."},
+    {"phase": "pre-final affected suite", "passed": 614, "skipped": 1, "failed": 0, "seconds": 21.38},
+    {"phase": "conflicting copied-body baseline", "failed": 1, "passed": 1, "reason": "New raw membership path initially admitted first conflicting copied body; fixed to preserve original ambiguity refusal and native precedence."},
+    {"phase": "all new feature suites", "passed": 66, "failed": 0, "seconds": 3.64},
+    {"phase": "final affected suite", "passed": 616, "skipped": 1, "failed": 0, "seconds": 20.97}
+  ],
+  "final_pytest_command": "QT_QPA_PLATFORM=offscreen PYTHONPATH=src /workspace/scratch/e3f205d85f15/.venv/bin/python -m pytest -q -p no:cacheprovider tests/test_kbc_acqui*.py tests/test_kbc_winbindex*.py tests/test_kbc_index_replay.py tests/test_kbc_raw_index_acquisition.py tests/test_kbc_resolver.py tests/test_kbc_lineage.py tests/test_kbc_contracts.py tests/test_kbc_schemas.py tests/test_kbc_cli.py tests/test_kbc_pairs_index.py tests/test_kbc_saved_scope*.py tests/test_kbc_store.py tests/test_kbc_recovery.py --tb=short",
+  "skip": {"node": "tests/test_kbc_acquire_windows_junction_20261120.py::test_real_windows_junction_to_empty_directory_is_refused", "reason": "native NTFS junction support is Windows-only"},
+  "other_checks": [
+    {"command": "/workspace/scratch/e3f205d85f15/.venv/bin/python -m ruff check src tests tools", "exit_code": 0},
+    {"command": "PYTHONPATH=src /workspace/scratch/e3f205d85f15/.venv/bin/python tools/generate_kbc_schemas.py", "exit_code": 0, "note": "Generated AcquisitionEvidence schema changed; schema drift tests passed."},
+    {"command": "git diff --check", "exit_code": 0},
+    {"command": "git status --short", "output": "", "note": "Clean after final commit; frozen for independent review."}
+  ],
+  "limits_and_remaining_gates": [
+    "All exercised provider data and PE inputs were synthetic; transport was injected and sockets denied.",
+    "No target binary execution, live Winbindex/symbol-server fetch, native Windows publication test, remote write or broad donor merge occurred.",
+    "Independent review, exact-source hosted full suite and native/package release qualification belong to the parent integration task.",
+    "Replay establishes retained-byte and resolver consistency, not Microsoft authorship, signature validity, vulnerability attribution or L1/L2/L3 accuracy."
+  ]
+}

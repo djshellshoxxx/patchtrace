@@ -1,5 +1,7 @@
 """Actual-source deadline regressions for a stalled HTTP body read."""
+import http.client
 import http.server
+import socket
 import threading
 import time
 import urllib.request
@@ -94,6 +96,30 @@ def test_completed_read_is_refused_if_deadline_passed_during_call():
     clock_values = iter([0., 0., 10.])
     with pytest.raises(netutil.DeadlineExceeded):
         netutil.read_bounded(Eof(), 1024, deadline=5., clock=lambda: next(clock_values), cancel=None)
+
+
+@pytest.mark.parametrize(('socket_timeout', 'cancel_on_read', 'error'), [
+    (5.0, False, netutil.DeadlineExceeded),
+    (None, False, netutil.DeadlineExceeded),
+    (0.25, False, netutil.DeadlineExceeded),
+    (0.05, False, TimeoutError),
+    (5.0, True, netutil.Cancelled),
+    (0.05, True, netutil.Cancelled),
+])
+def test_http_timeout_keeps_its_owner_before_clock_tick(monkeypatch, socket_timeout, cancel_on_read, error):
+    cancel = threading.Event()
+    with socket.socket() as sock, http.client.HTTPResponse(sock) as response:
+        sock.settimeout(socket_timeout)
+
+        def read(_size):
+            assert sock.gettimeout() == min(socket_timeout or 0.25, 0.25)
+            if cancel_on_read:
+                cancel.set()
+            raise TimeoutError('socket read expired')
+
+        monkeypatch.setattr(response, 'read1', read)
+        with pytest.raises(error):
+            netutil.read_bounded(response, 128, deadline=100.25, clock=lambda: 100.0, cancel=cancel)
 
 
 def test_real_http_stall_does_not_delay_deadline_or_response_close():
