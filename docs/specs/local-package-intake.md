@@ -261,6 +261,10 @@ strict receipt parsing, so a valid truncated tail cannot receive native credit.
 Missing SDK/compiler is an explicit unavailable gate, never a fabricated pass.
 The probe takes no package input and cannot execute a package payload.
 
+Windows CI selects the installed AMD64 Visual C++ tools and SDK, then runs the probe
+before the full test suite. Missing build tools or a mismatched layout fails the
+Windows job. The step prints its measured receipt to the job log.
+
 ### 5.3 Supervised transient Windows handle transfer
 
 `jobs.run_process(..., windows_borrowed_handles=None)` adds an optional in-memory

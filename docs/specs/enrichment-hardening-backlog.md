@@ -175,6 +175,12 @@ Target: cancellation observed within 250 ms of `cancel.set()` for every blocking
 
 ### H9b. Enrichment total-deadline enforcement for stalled I/O (2026-11-21)
 
+When the request deadline supplies the HTTP socket's read timeout, its expiration
+reports `DeadlineExceeded` even if the socket wakes just before the monotonic
+clock reaches the deadline. An earlier independent socket timeout keeps its
+transport error. An explicit cancellation observed at that boundary takes priority.
+
+
 The existing 30-second total transport deadline also applies while an HTTPS connection opens or one response-body read blocks, even with no cancellation event. Checking elapsed time only between operations is insufficient: a peer can stall an operation without reaching its socket idle timeout. Supervise the entire per-attempt open/redirect/read/close lifecycle with a monotonic wall-clock deadline, rather than abandoning an individual read while another thread immediately calls `response.close()` on the same buffered stream. The attempt worker exclusively owns its response and closes it after completing or failing; an abandoned result must never be published to the caller. Bound abandoned work by the existing `MAX_ABANDONED` guard. An explicit caller cancellation remains `PT-ENRICH-CANCEL`; deadline expiry remains recoverable `PT-ENRICH-NETWORK`, with no remote response text included. Preserve injected logical-clock deadline, retry, redirect, byte cap, consent and response ownership behavior. Regressions must block an injected opener or a single read until after the configured deadline and demonstrate timely error return and eventual owned cleanup, with no real external network.
 
 Completion is also an admission boundary: after the owned attempt, including response close, returns, check explicit caller cancellation first, then both the existing injected logical deadline and the monotonic wall deadline before publishing the result. A worker finishing between supervisor polling checks must not publish after either deadline; cancellation at completion remains `PT-ENRICH-CANCEL`, including when a deadline has also expired. Successful completion before both deadlines remains unchanged. Regressions cover EOF and close crossing each deadline, and cancellation at completion with and without simultaneous expiry.

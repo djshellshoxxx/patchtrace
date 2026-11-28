@@ -31,6 +31,16 @@ jobs:
       - run: python -m pip check
       - name: protobuf equals the pin and runs the upb backend (SPEC-10b)
         run: python tools/check_protobuf_runtime.py
+      - name: Verify cabinet ABI against the installed Windows SDK
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
+          $install = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if ($LASTEXITCODE -ne 0 -or !$install) { throw 'AMD64 Visual C++ tools are required for cabinet ABI verification.' }
+          & (Join-Path $install 'Common7\Tools\Launch-VsDevShell.ps1') -SkipAutomaticLocation -Arch amd64 -HostArch amd64
+          python tools/check_package_fdi_abi.py
+          exit $LASTEXITCODE
       - name: Windows project creation retries and loopback SMB
         if: runner.os == 'Windows'
         run: >-

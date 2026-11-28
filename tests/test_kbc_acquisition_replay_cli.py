@@ -63,11 +63,16 @@ def test_backup_is_sufficient_for_offline_raw_source_replay(ready, tmp_path):
     destination = tmp_path / 'backup'
     with ProjectService.open(project, maintenance=False) as service:
         service.store.backup(destination)
+        originals = [project / artifact.relative_path for artifact in service.project.artifacts]
     source = evidence.source.replay.source
     assert (destination / source.relative_path).read_bytes() == (project / source.relative_path).read_bytes()
     calls = tuple(server.calls)
     shutil.rmtree(kb.workspace)
+    # Windows requires the write bit before unlinking immutable fixture artifacts.
+    for artifact in originals:
+        artifact.chmod(0o600)
     shutil.rmtree(project)
+    assert not project.exists()
     code, doc, _ = replay(kb, destination, evidence.evidence_id)
     assert code == 0 and doc['result']['state'] == 'reproduced'
     assert tuple(server.calls) == calls and not kb.workspace.exists()

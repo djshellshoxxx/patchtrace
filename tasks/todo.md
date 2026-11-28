@@ -1,3 +1,11 @@
+## PW-02 Windows QA follow-up
+
+- [x] Correct timeout ownership, reproduce the socket-clock race, and preserve
+  cancellation and earlier independent socket timeouts.
+- [x] Remove the original read-only test artifacts before backup-only replay.
+- [x] Connect the existing FDI signature and layout check to Windows QA.
+- [ ] Verify the hosted Windows run and the complete native package journey.
+
 ## November 27 PW-02 supervised handle transfer
 
 - [x] Add at most 16 transient named borrowed Windows handles; preserve originals,

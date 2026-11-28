@@ -1,3 +1,14 @@
+## PW-02 Windows QA follow-up
+
+Windows run [46097542948](https://github.com/djshellshoxxx/patchtrace/actions/runs/46097542948)
+failed in backup-fixture deletion and stalled HTTP response handling. Five of six
+new deterministic timeout controls failed on the previous branch head. After the
+repairs the two affected modules passed all 32 cases. The expanded package,
+handle, network and replay selection passed 512 tests on Linux and skipped
+seven Windows handle tests. The Windows job now runs the authored AMD64 FDI
+signature and layout probe against its installed SDK. Actual native results
+belong to the hosted run; this change does not establish decoder availability.
+
 ## November 27 PW-02 supervised handle transfer
 
 The 39-case baseline reproduced the missing borrowed-handle API and unrestricted

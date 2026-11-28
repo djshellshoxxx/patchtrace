@@ -90,21 +90,23 @@ def interruptible[T](call: Callable[[], T], cancel: threading.Event | None, *, p
     return value
 
 
-def _shorten_http_socket_timeout(response, remaining: float) -> None:
+def _shorten_http_socket_timeout(response, remaining: float) -> bool:
     """Bound CPython's blocking HTTP read so response.close() need not await a stalled reader.
 
-    Never lengthen an existing per-operation timeout. Unknown response transports still use
+    Return whether the deadline determines the effective timeout. Never lengthen a socket timeout. Unknown response transports still use
     the interruptible deadline watcher below, without assuming private socket attributes.
     """
     if not isinstance(response, http.client.HTTPResponse):
-        return
+        return False
     raw = getattr(getattr(response.fp, 'raw', None), '_sock', None)
     if raw is None:
-        return
+        return False
     current = raw.gettimeout()
     timeout = max(0.001, remaining)
     if current is None or current > timeout:
         raw.settimeout(timeout)
+        return True
+    return current >= remaining
 
 
 def read_bounded(response, cap: int, *, deadline: float, clock: Callable[[], float],
@@ -128,7 +130,7 @@ def read_bounded(response, cap: int, *, deadline: float, clock: Callable[[], flo
         remaining = deadline - clock()
         if remaining <= 0:
             raise DeadlineExceeded()
-        _shorten_http_socket_timeout(response, remaining)
+        deadline_limited = _shorten_http_socket_timeout(response, remaining)
         try:
             piece = interruptible(partial(read, min(chunk, cap + 1 - len(data))), stop)
         except Cancelled:
@@ -136,7 +138,9 @@ def read_bounded(response, cap: int, *, deadline: float, clock: Callable[[], flo
                 raise
             raise DeadlineExceeded() from None
         except TimeoutError:
-            if clock() >= deadline:
+            if cancel is not None and cancel.is_set():
+                raise Cancelled() from None
+            if deadline_limited or clock() >= deadline:
                 raise DeadlineExceeded() from None
             raise
         if cancel is not None and cancel.is_set():
