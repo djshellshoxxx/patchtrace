@@ -113,8 +113,12 @@ replacing the current build, full pytest, Qt repetition or frozen CLI gates.
 After both `qa` legs succeed, a fresh `windows-latest` job checks out this
 workflow's source and downloads the same run's `PatchTrace-windows-x64` artifact
 into `dist` using the existing reviewed Action pins. Checkout precedes download.
-The job installs no Python/application/development dependencies, builds no
-package and installs no NSIS compiler. Its 45-minute timeout bounds the job.
+The job installs no application/development dependencies, builds no package and
+installs no NSIS compiler. After checksum verification it selects Python 3.12
+using the existing pinned setup Action solely for a standard-library acceptance
+checker. The checker runs with `-S` (no site packages) and the checked-out source
+path; it must not depend on an installed PatchTrace or any third-party package.
+Its 45-minute timeout bounds the job.
 
 Before extracting the portable ZIP or executing either package, require these
 four regular files under `dist`:
@@ -141,7 +145,16 @@ data sentinels. Uninstall must remove the installer's HKCU Software\PatchTrace
 InstallDir value and Windows Apps registration, while retaining unrelated
 values and the PatchTrace preferences subkey. The Windows smoke checks both
 a sibling value and a nested preference across uninstall.
-The independent builder-side full frozen CLI smoke remains.
+After each extracted or installed application's existing native smoke, run
+`tools/frozen_smoke.py <absolute executable> --version-only` with the host
+interpreter. Admit the bounded packaged build record before launching the
+application's `version --json`, require an exact strict-JSON match with no
+warnings, and recheck the record after execution. Missing, damaged or
+inconsistent records and detected path/record changes fail acceptance. The child receives the shared restricted
+environment, excluding the host's source path and Python overrides. This checks
+the transported application's agreement with its packaged record; it does not
+establish signing, authenticity or compiled-bytecode identity. The independent
+builder-side full frozen CLI smoke remains and includes the same version check.
 All verification and smoke steps are required, with no failure suppression or
 publication-marker condition. `release` directly needs `windows-validate` in
 addition to every existing dependency, retaining its existing condition and

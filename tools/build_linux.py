@@ -394,17 +394,24 @@ def check_desktop_mark(package: Path, root: Path, platform_key: str) -> None:
 
 
 def main(argv: list[str] | None = None) -> None:
+    if __package__:
+        from . import package_buildinfo
+    else:
+        import package_buildinfo
+
     args = parse_args(argv)
     if not sys.platform.startswith('linux') or platform.machine() not in {'x86_64', 'AMD64'}:
         raise SystemExit('Build on Linux x86-64: PyInstaller does not cross-compile.')
     root = Path(__file__).resolve().parents[1]
     require_upb_protobuf()
+    build_record = package_buildinfo.prepare_record(root)
     argv = [sys.executable, '-m', 'PyInstaller', '--noconfirm', '--clean', '--onedir', '--name', 'PatchTrace',
             '--additional-hooks-dir', str(root / 'tools' / 'pyinstaller_hooks'), '--paths', str(root / 'src')]
     for module in EXCLUDED:
         argv += ['--exclude-module', module]
     subprocess.run([*argv, str(root / 'tools' / 'desktop_entry.py')], cwd=root, check=True)
     package = root / 'dist' / 'PatchTrace'
+    package_buildinfo.install_record(root, package, build_record)
     shutil.copy2(root / 'LICENSE', package / 'LICENSE.txt')
     shutil.copy2(root / 'README.md', package / 'README.md')
     shutil.copytree(root / 'docs', package / 'docs', dirs_exist_ok=True)
@@ -430,7 +437,7 @@ def main(argv: list[str] | None = None) -> None:
                     shutil.copy2(source, target)
     shutil.copy2(python_license(), notices / 'Python-LICENSE.txt')
     (package / 'dependency-versions.json').write_text(json.dumps(versions, indent=2), encoding='utf-8')
-    inventory = sorted(str(p.relative_to(package)) for p in package.rglob('*') if p.is_file())
+    inventory = sorted(p.relative_to(package).as_posix() for p in package.rglob('*') if p.is_file())
     unexpected = [item for item in inventory if Path(item).name.lower().startswith(
         ('libqt6webengine', 'libqt6pdf', 'libqt6quick', 'libqt6qml'))]
     if unexpected:
@@ -455,6 +462,7 @@ def main(argv: list[str] | None = None) -> None:
     cli = subprocess.run([str(executable), 'rank', '--help'], timeout=120, capture_output=True, text=True, env=env)
     if cli.returncode != 0 or 'usage:' not in cli.stdout:
         raise RuntimeError(f'Frozen CLI smoke failed ({cli.returncode}): {cli.stderr[-500:]}')
+    package_buildinfo.check_frozen_record(executable, build_record, cwd=root)
     archive = root / 'dist' / f'PatchTrace-{args.version}-linux-x86_64.tar.gz'
     write_tar_gz(package, archive)  # tar keeps executable bits; ZIP from shutil may not
     Path(f'{archive}.sha256').write_text(f'{sha256_file(archive)}  {archive.name}\n', encoding='ascii')

@@ -1,11 +1,16 @@
-"""Static packaging checks for codex-packaging-1.md; never freeze or run binaries."""
+"""Packaging source and hermetic dispatch checks; never freeze or run binaries."""
 from __future__ import annotations
 
 import ast
 import json
 import re
+import sys
 import tomllib
 from pathlib import Path
+
+import pytest
+
+from tools import frozen_smoke
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -128,10 +133,62 @@ def test_full_linux_frozen_smoke_preserves_both_qt_modes():
     smoke = _linux_smoke_job()
     assert 'QT_QPA_PLATFORM=offscreen PatchTrace/PatchTrace --self-test' in smoke
     assert 'QT_QPA_PLATFORM=xcb xvfb-run -a PatchTrace/PatchTrace --self-test' in smoke
-    frozen = source('tools/frozen_smoke.py')
-    assert 'run_checks([exe], frozen=True)' in frozen
-    assert 'binexport_checks(launcher, frozen=frozen, check=check)' in frozen
-    assert 'intelligence_checks(launcher, frozen=frozen, check=check)' in frozen
+    # Check actual top-level dispatch and its arguments, independently of source
+    # formatting or additional keyword arguments in the CLI's run_checks call.
+    runner = function('tools/frozen_smoke.py', 'run_checks')
+    calls = {node.value.func.id: node.value for node in runner.body
+             if isinstance(node, ast.Expr) and isinstance(node.value, ast.Call)
+             and isinstance(node.value.func, ast.Name)}
+    for name in ('binexport_checks', 'intelligence_checks'):
+        call = calls[name]
+        assert len(call.args) == 1 and isinstance(call.args[0], ast.Name) and call.args[0].id == 'launcher'
+        keywords = {keyword.arg: keyword.value for keyword in call.keywords}
+        for argument in ('frozen', 'check'):
+            assert isinstance(keywords[argument], ast.Name) and keywords[argument].id == argument
+
+
+@pytest.mark.parametrize(('options', 'version_only'), [((), False), (('--version-only',), True)],
+                         ids=['default-full', 'explicit-version-only'])
+def test_frozen_smoke_cli_routes_the_requested_acceptance_mode(tmp_path, monkeypatch, options, version_only):
+    executable = tmp_path / 'Extracted package' / 'PatchTrace'
+    calls = []
+
+    def checks(launcher, *, frozen, version_only=False):
+        calls.append((launcher, frozen, version_only))
+        return []
+
+    monkeypatch.setattr(frozen_smoke, 'run_checks', checks)
+    monkeypatch.setattr(sys, 'argv', ['frozen_smoke.py', str(executable), *options])
+    assert frozen_smoke.main() == 0
+    assert calls == [([str(executable)], True, version_only)]
+
+
+def test_frozen_checks_default_to_full_but_version_only_stops_after_identity(monkeypatch):
+    launcher = ['authored-executable-never-launched']
+    calls = []
+
+    class FullSmokeReached(Exception):
+        pass
+
+    def identity(actual, *, check, emit):
+        assert actual == launcher
+        calls.append('identity')
+        check('authored identity', True)
+        return True
+
+    def stop_before_launch(actual, *args, **kwargs):
+        assert actual == launcher
+        calls.append(('full', args))
+        raise FullSmokeReached
+
+    monkeypatch.setattr(frozen_smoke, 'version_checks', identity)
+    monkeypatch.setattr(frozen_smoke, 'run', stop_before_launch)
+    assert frozen_smoke.run_checks(launcher, frozen=True, version_only=True, emit=lambda line: None) == []
+    assert calls == ['identity']
+    calls.clear()
+    with pytest.raises(FullSmokeReached):
+        frozen_smoke.run_checks(launcher, frozen=True, emit=lambda line: None)
+    assert calls == ['identity', ('full', (frozen_smoke.COMMANDS[0], '--help'))]
 
 
 def test_full_bundle_pin_has_no_other_gpl_components():

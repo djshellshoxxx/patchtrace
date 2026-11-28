@@ -51,8 +51,9 @@ def test_downloaded_artifact_job_uses_a_fresh_windows_runner_and_this_runs_bytes
     assert job["timeout-minutes"] == 45
     assert "if" not in job and "continue-on-error" not in job
     steps = job["steps"]
-    # A same-run named download follows checkout; no setup/build/install Action is added.
-    assert len(steps) == 5
+    # A same-run named download follows checkout. The later checker gets only a
+    # host interpreter; application dependencies must remain absent on this runner.
+    assert len(steps) == 6
     assert steps[0] == {
         "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
         "with": {"persist-credentials": False},
@@ -61,20 +62,44 @@ def test_downloaded_artifact_job_uses_a_fresh_windows_runner_and_this_runs_bytes
         "uses": "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093",
         "with": {"name": "PatchTrace-windows-x64", "path": "dist"},
     }
+    assert steps[3] == {
+        "uses": "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+        "with": {"python-version": "3.12"},
+    }
+    commands = "\n".join(step.get("run", "") for step in steps)
+    assert all(forbidden not in commands for forbidden in (
+        "pip install", "choco install", "build_windows", "package_windows_installer",
+    ))
 
 
 def test_both_downloaded_checksums_precede_required_portable_and_installer_smokes():
     steps = validation_job()["steps"]
     assert steps[2]["id"] == "verify-artifacts"
-    assert all(step["shell"] == "pwsh" for step in steps[2:])
+    assert all(step["shell"] == "pwsh" for step in steps if "run" in step)
     assert all("if" not in step and "continue-on-error" not in step for step in steps)
-    assert steps[3]["run"] == f"./tools/test_windows_portable.ps1 -Archive dist/{ARTIFACTS[0]}"
-    assert steps[4]["run"] == f"./tools/test_windows_installer.ps1 -Installer dist/{ARTIFACTS[1]}"
+    assert steps[4]["run"] == f"./tools/test_windows_portable.ps1 -Archive dist/{ARTIFACTS[0]}"
+    assert steps[5]["run"] == f"./tools/test_windows_installer.ps1 -Installer dist/{ARTIFACTS[1]}"
     verifier = steps[2]["run"]
     assert all(name in verifier for name in ARTIFACTS)
     assert "Get-FileHash -LiteralPath" in verifier and "-Algorithm SHA256" in verifier
     assert "Start-Process" not in verifier and "Expand-Archive" not in verifier
     assert "pip install" not in verifier and "choco install" not in verifier
+
+
+@pytest.mark.parametrize("script", ["test_windows_portable.ps1", "test_windows_installer.ps1"])
+def test_downloaded_smokes_require_isolated_version_check_before_cleanup(script):
+    source = (ROOT / "tools" / script).read_text(encoding="utf-8")
+    command = '& python -S (Join-Path $PSScriptRoot "frozen_smoke.py") $exe --version-only'
+    start = source.index(command)
+    assert source.index('"--self-test"') < start
+    assert source.index('$env:PYTHONHOME = ""') < start
+    assert source.index('$env:PYTHONPATH = Join-Path (Split-Path $PSScriptRoot -Parent) "src"') < start
+    assert 'if ($LASTEXITCODE -ne 0)' in source[start:source.index('finally', start)]
+    assert source.index('$env:PYTHONPATH = $priorPythonPath', start) > start
+    if script == "test_windows_portable.ps1":
+        assert source.index('Remove-Item -LiteralPath $extraction', start) > start
+    else:
+        assert source.index('$remove = Start-Process', start) > start
 
 
 @pytest.fixture
