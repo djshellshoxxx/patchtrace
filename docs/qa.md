@@ -1,3 +1,11 @@
+## PW-01 full-application gate attempt (2026-11-27)
+
+The clean integrated inventory source reached 41% of full offscreen pytest before SIGKILL (-9), after 930.203 seconds. No failure marker was reported before termination; no final summary exists. The signal origin is unestablished and this gate remains incomplete. The earlier attempt hit ENOSPC in its verification harness. Exact source/command/progress/memory evidence is retained in `docs/engineering/evidence/inventory-recovery-20261127/`; see the full explanation in `docs/engineering/inventory-recovery-20261127.md`. Current-head hosted/native qualification is still required.
+
+## PW-01 recovery in progress (2026-11-27)
+
+See `docs/engineering/inventory-recovery-20261127.md` for the concrete incremental plan, retained donor identities, observed failures and current evidence. All four implementation slices are complete; combined KB/inventory verification passed 2,767 tests with four skips, and independent review found no remaining blocker after the fixed-byte metadata correction. Full-suite and current-head hosted/native acceptance remain pending. Do not treat this entry as completion or release approval.
+
 ## Packaged-version qualification correction (2026-11-27)
 
 The full local offscreen run at `aa8967e895b88a553df4fb14f7429ed64cca0db6` ended with pytest return code `-9` (SIGKILL) after 681.821 seconds and 5,147 reported cases. Its signal origin is unestablished; this is an incomplete gate, not a full-suite pass. The one reported failure was reproduced in isolation: `test_full_linux_frozen_smoke_preserves_both_qt_modes` expected an obsolete literal call spelling after the CLI acquired `--version-only`.

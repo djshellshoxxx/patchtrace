@@ -1473,3 +1473,15 @@ extras, with ordinary dependency resolution and wheel hashes. Verification
 commands, identities, artifacts and other builder installs remain separate.
 Source contracts live in `tests/test_sigstore_dependency_lock.py`; this adds no
 application module or signature/native acceptance claim.
+
+## PW-01 inventory recovery (2026-11-27)
+
+Contract: `docs/specs/kb-file-inventory-csv.md`. Current-head acceptance is recorded separately from retained donor history.
+
+| Module | Responsibility | Verification |
+|---|---|---|
+| `kbcorrelation/inventory_contracts.py` | Strict immutable CSV v1 records and separately versioned retained v2 pages; preserve captured budgets and source references | CSV contracts, source-page, capacity and generated-schema controls |
+| `kbcorrelation/inventory_csv.py` | Bounded pure CSV parsing; complete original claims and source-wide conflicts, with explicit context and no I/O | Authored CSV/property controls; no live-format claim |
+| `kbcorrelation/sources/support_links.py`, `inventory_http.py`, `inventory_fetch.py` | Inert saved-HTML extraction, strict URL policy and separately consented source retrieval | Authored link/transport tests; live requests require their own exact consent |
+| `kbcorrelation/inventory_store.py`, `inventory_selection.py` | Immutable raw-source persistence/replay and revision-guarded filename claims using current WorkspaceStore ownership | Store, admission, replay, atomicity and compatibility controls |
+| `kbcorrelation/inventory_service.py`, `cli_inventory.py`, `inventory_qt.py` | Shared operations and CLI/Qt adapters; worker-owned stores, explicit selections, cancellation and stale-result guards | Service, CLI, Qt and adjacent KB integration tests |

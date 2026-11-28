@@ -21,7 +21,7 @@ def generator():
 
 def test_committed_files_equal_a_fresh_regeneration():
     rendered = generator().render()
-    assert len(rendered) == len(generator().CONTRACTS) + 2  # examples and the persisted ContextBundle schema
+    assert len(rendered) == len(generator().schema_models()) + 2  # schemas, legacy and inventory examples
     for path, text in rendered.items():
         assert path.read_text(encoding='utf-8') == text, f'{path.relative_to(ROOT)} is stale; regenerate it'
 
@@ -43,10 +43,15 @@ def test_examples_validate_as_labelled():
 
 
 def test_schema_ids_and_contract_const():
-    for path in OUT.glob('*.json'):
-        if path.name == 'examples.json':
-            continue
+    expected_contracts = {name: 'kbcorrelation/1' for name in (*generator().CONTRACTS, 'ContextBundle')
+                          if name not in {'SourceRef', 'SearchScope'}}
+    expected_contracts.update(CsvInventory='kb-file-inventory/1', CsvInventoryPage='kb-file-inventory/2')
+    expected_contracts.update(InventoryImport='kb-inventory-import/1', SupportImport='kb-support-import/1')
+    for name in generator().schema_models():
+        path = OUT / f'{name}.json'
         schema = json.loads(path.read_text(encoding='utf-8'))
         assert schema['$id'] == f'https://patchtrace.local/schemas/kbcorrelation/1/{path.stem}.json'
-        if path.stem not in {'SourceRef', 'SearchScope'}:
-            assert schema['properties']['contract']['const'] == 'kbcorrelation/1'
+        if name in expected_contracts:
+            assert schema['properties']['contract']['const'] == expected_contracts[name]
+        else:
+            assert 'contract' not in schema['properties']

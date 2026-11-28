@@ -162,10 +162,137 @@ def model_for(name: str):
     return getattr(module, name)
 
 
+INVENTORY_CSV = (b'Example OS 24H2 for x64-based Systems\r\n'
+                 b'File name,File version,File size,Date,Time\r\n'
+                 b'ExampleSvc.dll,10.0.26100.5001,"1,024","2099-03-\r\n01",12:00\r\n'
+                 b'ExampleData.dll,10.0.26100.5001,unknown,2099-03-01,12:00\r\n')
+
+INVENTORY_PAGE_CSV = (b'File name,File version,File size,Architecture\r\n'
+                     b'ExampleSvc.dll,10.0.26100.5001,1024,arm64\r\n'
+                     b'ExampleSvc.dll,10.0.26100.5001,1024,x64\r\n'
+                     b'ExampleData.tsp,10.0.26100.5001,1024,x64\r\n'
+                     b'ExampleSvc.dll,10.0.26100.5002,1024,x64\r\n')
+
+SUPPORT_HTML = (b'<h2>File information</h2><p>Download the file information for the cumulative update '
+                b'<a href="https://go.microsoft.com/fwlink/?linkid=20995099001">'
+                b'Download file information for KB5099001</a></p>')
+
+SUPPORT_URL = 'https://support.microsoft.com/help/5099001'
+
+def inventory_models() -> dict:
+    """PW-01 value records and separately versioned contracts, not kbcorrelation/1 contracts."""
+    from patchtrace.kbcorrelation import inventory_contracts as inventory
+    from patchtrace.kbcorrelation import inventory_store as store
+    from patchtrace.kbcorrelation.contracts import InventoryClaimRef
+    from patchtrace.kbcorrelation.inventory_selection import InventorySelection
+    return {'InventoryClaimRef': InventoryClaimRef,
+            **{name: getattr(inventory, name) for name in
+               ('InventoryLimits', 'InventoryPageLimits', 'InventoryContext', 'CsvRecordRef', 'CsvDiagnostic',
+                'InventorySection', 'InventoryEntry', 'CsvInventory', 'InventoryPageEntry',
+                'InventoryRetention', 'InventoryConflictWitness', 'CsvInventoryPage')},
+            **{name: getattr(store, name) for name in
+               ('InventoryImport', 'SupportImport', 'RetrievalProvenance')},
+            'InventorySelection': InventorySelection}
+
+def valid_inventory_records() -> dict:
+    """Authored examples bind exact raw bytes and context; no I/O or authenticity inference."""
+    from patchtrace.kbcorrelation import inventory_store as store
+    from patchtrace.kbcorrelation.contracts import InventoryClaimRef
+    from patchtrace.kbcorrelation.inventory_contracts import (
+        InventoryContext,
+        InventoryPageLimits,
+        InventoryRetention,
+    )
+    from patchtrace.kbcorrelation.inventory_csv import parse_inventory, parse_inventory_page
+    from patchtrace.kbcorrelation.inventory_selection import InventorySelection
+    from patchtrace.kbcorrelation.sources.inventory_fetch import build_plan
+
+    context = InventoryContext(kb='KB5099001', product_scope_id=C, product='Example OS',
+                               release='24H2', build='26100.5001')
+    parsed = parse_inventory(INVENTORY_CSV, context)
+    source = store._source(INVENTORY_CSV, 'kb-file-csv', 'csv-file-inventory/1', STAMP, None)
+    asserted = 'https://example.invalid/KB5099001.csv'
+    inventory = store.InventoryImport(import_id=store._inventory_id(source, parsed, asserted, None),
+                                       source=source, parsed=parsed, asserted_source=asserted)
+    entry = parsed.entries[0]
+    claim = InventoryClaimRef(import_id=inventory.import_id, entry_id=entry.entry_id,
+                              **entry.reference.model_dump())
+    html_source = store._source(SUPPORT_HTML, 'kb-support-html', 'support-html/1', STAMP, None)
+    extraction = store._extraction_digest(SUPPORT_HTML, SUPPORT_URL, None)
+    support = store.SupportImport(import_id=store._support_id(html_source, SUPPORT_URL, extraction, None),
+                                   source=html_source, page_url=SUPPORT_URL, extraction_sha256=extraction)
+    plan = build_plan('https://go.microsoft.com/fwlink/?linkid=20995099001', redirects=(
+        'https://download.microsoft.com/download/synthetic/KB5099001.csv',))
+    receipt = store.RetrievalProvenance(kind='file-inventory', original_url=plan.urls[0],
+                                       final_url=plan.urls[-1], redirect_chain=plan.urls,
+                                       sha256=parsed.raw_sha256, size=len(INVENTORY_CSV),
+                                       retrieved_at=STAMP, plan_sha=plan.plan_sha)
+    selection = InventorySelection(import_id=inventory.import_id, entry_id=entry.entry_id,
+                                    scope_id=C, coverage_sha256=B, asserted_scope=False)
+    page = parse_inventory_page(INVENTORY_PAGE_CSV, context, InventoryRetention(architecture='amd64'),
+                                limits=InventoryPageLimits(max_entries=2))
+    return {'InventoryClaimRef': claim, 'InventoryLimits': parsed.limits, 'InventoryPageLimits': page.limits,
+            'InventoryContext': context,
+            'CsvRecordRef': entry.reference, 'CsvDiagnostic': parsed.diagnostics[0],
+            'InventorySection': parsed.sections[0], 'InventoryEntry': entry, 'CsvInventory': parsed,
+            'InventoryPageEntry': page.entries[1], 'InventoryRetention': page.retention,
+            'InventoryConflictWitness': page.conflict_witnesses[0], 'CsvInventoryPage': page,
+            'InventoryImport': inventory, 'SupportImport': support, 'RetrievalProvenance': receipt,
+            'InventorySelection': selection}
+
+INVENTORY_INVALID = {
+    'InventoryClaimRef': (({'line_end': 1}, 'a physical line span cannot run backwards'),),
+    'InventoryLimits': (({'max_bytes': 16 * 1024 * 1024 + 1}, 'callers cannot raise the hard byte ceiling'),
+                        ({'max_entries': 50_001}, 'v1 inventories retain at most 50,000 entries'),
+                        ({'max_records': True}, 'integer budgets do not coerce booleans')),
+    'InventoryPageLimits': (({'max_entries': 5_001}, 'v2 pages retain at most 5,000 entries'),
+                            ({'max_entries': True}, 'integer page budgets do not coerce booleans')),
+    'InventoryContext': (({'architecture': 'x64'}, 'context uses the canonical amd64 architecture'),),
+    'CsvRecordRef': (({'logical_record': 0}, 'logical CSV records are one-based'),),
+    'CsvDiagnostic': (({'code': 'ARBITRARY_CODE'}, 'diagnostics use the documented code vocabulary'),),
+    'InventorySection': (({'index': 999}, 'section index must agree with its source reference'),),
+    'InventoryEntry': (({'basename': '../evil.dll'}, 'normalized names cannot be source paths'),
+                       ({'version_components': [10, 0, 26100]}, 'known versions retain exactly four integers')),
+    'CsvInventory': (({'accepted_count': 0}, 'accepted count must match retained entries'),
+                     ({'inventory_id': A}, 'identity binds exact bytes, context and parsing budgets'),
+                     ({'parser_version': True}, 'parser version does not coerce a boolean literal')),
+    'InventoryPageEntry': (({'state': 'descriptive-only'}, 'v2 recognizes the TSP PE suffix'),),
+    'InventoryRetention': (({'page': True}, 'source page numbers do not coerce booleans'),
+                           ({'page': 0}, 'source pages are one-based'),
+                           ({'architecture': 'x64'}, 'retention uses canonical architecture names')),
+    'InventoryConflictWitness': (({'field': 'architecture'}, 'a witness names one known metadata contradiction'),),
+    'CsvInventoryPage': (({'omitted_count': 0}, 'omitted count includes matching rows outside the retained page'),
+                         ({'conflict_witnesses': []}, 'cross-page conflicts retain a source-wide witness'),
+                         ({'scan_complete': False}, 'an incomplete scan must explicitly mark truncation'),
+                         ({'parser_version': True}, 'parser version does not coerce a boolean literal')),
+    'InventoryImport': (({'import_id': A}, 'import identity binds parser identity and source provenance'),),
+    'SupportImport': (({'import_id': A}, 'support identity binds source, explicit page and link digest'),
+                      ({'parser_version': True}, 'parser version does not coerce a boolean literal')),
+    'RetrievalProvenance': (({'plan_sha': A}, 'receipt digest binds the exact ordered request plan'),),
+    'InventorySelection': (({'asserted_scope': 'false'}, 'an explicit scope assertion is a strict boolean'),),
+}
+
+def build_inventory_examples() -> dict:
+    out = {}
+    for name, record in valid_inventory_records().items():
+        valid = json.loads(record.model_dump_json())
+        invalid = [{'example': valid | {'unexpected_field': 1}, 'reason': 'extra fields are forbidden'}]
+        if 'contract' in valid:
+            prefix, version = valid['contract'].rsplit('/', 1)
+            invalid.append({'example': valid | {'contract': f'{prefix}/{int(version) + 1}'},
+                            'reason': 'unsupported future contract version'})
+        invalid.extend({'example': valid | patch, 'reason': reason} for patch, reason in INVENTORY_INVALID[name])
+        out[name] = {'valid': valid, 'invalid': invalid}
+    return out
+
+
+def schema_models() -> dict:
+    return {**{name: model_for(name) for name in (*CONTRACTS, 'ContextBundle')}, **inventory_models()}
+
+
 def render_contract_schemas() -> dict[str, str]:
     out = {}
-    for name in (*CONTRACTS, 'ContextBundle'):
-        model = model_for(name)
+    for name, model in schema_models().items():
         schema = model.model_json_schema()
         schema['$id'] = f'https://patchtrace.local/schemas/kbcorrelation/1/{name}.json'
         schema['$schema'] = 'https://json-schema.org/draft/2020-12/schema'
@@ -177,6 +304,8 @@ def render() -> dict[Path, str]:
     """Every generated file and its exact text (a pure function of the repository contents)."""
     files = {OUT / name: text for name, text in render_contract_schemas().items()}
     files[OUT / 'examples.json'] = json.dumps(build_examples(), indent=2, sort_keys=True, ensure_ascii=False) + '\n'
+    files[OUT / 'inventory-examples.json'] = json.dumps(
+        build_inventory_examples(), indent=2, sort_keys=True, ensure_ascii=False) + '\n'
     return files
 
 

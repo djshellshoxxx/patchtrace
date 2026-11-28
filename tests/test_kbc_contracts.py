@@ -368,8 +368,10 @@ def test_ports_are_protocols_without_default_behaviour():
 FORBIDDEN = {'PySide6', 'PyQt5', 'PyQt6', 'urllib', 'http', 'socket', 'sqlite3', 'requests', 'ssl'}
 SIBLINGS = {'acquisition', 'enrichment', 'intelligence', 'unified', 'secondary', 'ui', 'backend', 'cli', 'jobs'}
 ALLOWED_FORBIDDEN = {'store.py': {'sqlite3'}, 'recovery.py': {'sqlite3'},
+                     'inventory_store.py': {'sqlite3'}, 'inventory_selection.py': {'sqlite3'},
                      'panel_qt.py': {'PySide6'},
-                     'investigation_qt.py': {'PySide6'}}  # Explicit UI adapters; all domain modules stay Qt-free.
+                     'investigation_qt.py': {'PySide6'},
+                     'inventory_qt.py': {'PySide6'}}  # Explicit UI adapters; all domain modules stay Qt-free.
 # context.py reads the reused intelligence contract types (CweProfile, HypothesisSet); wiring.py is the composition root
 # and the only module that binds sibling behaviour (plan section 9).
 ALLOWED_SIBLINGS = {'contracts.py': {'acquisition', 'enrichment', 'intelligence'}, 'context.py': {'intelligence'},
@@ -378,9 +380,20 @@ ALLOWED_SIBLINGS = {'contracts.py': {'acquisition', 'enrichment', 'intelligence'
                     # the Leads dock: PanelSpec, state notices, tooltip entries and the Qt view use the GUI framework
                     'panel.py': {'gui'}, 'panel_state.py': {'gui'}, 'tooltip_entries.py': {'tooltips'},
                     'panel_qt.py': {'gui'}, 'investigation_qt.py': {'gui', 'tooltips'},
+                    'inventory_qt.py': {'gui', 'tooltips'},
                     'investigation_service.py': {'models', 'artifact_bytes'},
                     # `clean_text` applies the one hostile-character rule; that module is stdlib-only and pure
                     'products.py': {'hostile_text'}}
+INVENTORY_SIBLING_SYMBOLS = {
+    'store.py': {'persistence': {'creation_directory_available'},
+                 'owned_publication': {'OwnedPublicationError', 'directory_anchor', 'verify_anchor',
+                                        'publish_bytes', 'read_bytes'}},
+    'inventory_contracts.py': {'acquisition.contracts': {'AcquisitionError', 'validate_file_name'},
+                               'hostile_text': {'replace_hostile'}},
+    'inventory_csv.py': {'hostile_text': {'replace_hostile'}},
+    'inventory_store.py': {'hostile_text': {'replace_hostile'}, 'persistence': {'strict_json'}},
+    'inventory_selection.py': {'intelligence.contracts': {'MAX_POINTER'}},
+}
 
 
 def _imports(path):
@@ -402,7 +415,14 @@ def test_domain_modules_import_no_qt_network_or_database(path):
             assert top not in FORBIDDEN - ALLOWED_FORBIDDEN.get(path.name, set()), f'{path.name} imports {module}'
             assert top != 'patchtrace', f'{path.name} must use relative imports'
         elif level == 2:  # `..x` is a sibling package
-            if path.name in {'investigation_service.py', 'store.py'} and module == 'persistence':
+            if path.name in INVENTORY_SIBLING_SYMBOLS:
+                symbols = INVENTORY_SIBLING_SYMBOLS[path.name].get(module)
+                assert symbols is not None, f'{path.name} imports sibling {module}'
+                nodes = [n for n in ast.walk(ast.parse(path.read_text(encoding='utf-8')))
+                         if isinstance(n, ast.ImportFrom) and n.level == 2 and n.module == module]
+                assert all(a.name in symbols and a.asname is None for n in nodes for a in n.names), (
+                    f'{path.name} imports sibling {module} forbidden symbols')
+            elif path.name in {'investigation_service.py', 'store.py'} and module == 'persistence':
                 nodes = [n for n in ast.walk(ast.parse(path.read_text(encoding='utf-8')))
                          if isinstance(n, ast.ImportFrom) and n.level == 2 and n.module == 'persistence']
                 assert all([(a.name, a.asname) for a in n.names] == [('creation_directory_available', None)]
@@ -500,4 +520,45 @@ def test_workspace_destination_preflight_is_exact_helper_import(tmp_path, source
         test_domain_modules_import_no_qt_network_or_database(path)
     else:
         with pytest.raises(AssertionError):
+            test_domain_modules_import_no_qt_network_or_database(path)
+
+
+@pytest.mark.parametrize('name,module,allowed', [
+    ('inventory_qt.py', 'PySide6.QtWidgets', True),
+    ('inventory_qt.py', 'sqlite3', False),
+    ('inventory_qt.py', 'urllib.request', False),
+    ('inventory_service.py', 'sqlite3', False),
+    ('inventory_selection.py', 'sqlite3', True),
+    ('inventory_selection.py', 'socket', False),
+    ('inventory_store.py', 'sqlite3', True),
+    ('inventory_store.py', 'PySide6.QtWidgets', False),
+    ('inventory_csv.py', 'socket', False),
+    ('inventory_contracts.py', 'sqlite3', False),
+])
+def test_named_inventory_adapter_import_boundaries(tmp_path, name, module, allowed):
+    path = tmp_path / name
+    path.write_text(f'import {module}\n', encoding='utf-8')
+    if allowed:
+        test_domain_modules_import_no_qt_network_or_database(path)
+    else:
+        with pytest.raises(AssertionError, match='imports'):
+            test_domain_modules_import_no_qt_network_or_database(path)
+
+
+@pytest.mark.parametrize('name,module,symbol,allowed', [
+    ('inventory_contracts.py', 'acquisition.contracts', 'validate_file_name', True),
+    ('inventory_contracts.py', 'acquisition.service', 'AcquireService', False),
+    ('inventory_csv.py', 'hostile_text', 'replace_hostile', True),
+    ('inventory_csv.py', 'acquisition.transport', 'Transport', False),
+    ('inventory_store.py', 'persistence', 'strict_json', True),
+    ('inventory_store.py', 'persistence', 'ProjectStore', False),
+    ('inventory_store.py', 'persistence', '*', False),
+])
+def test_inventory_sibling_reuse_is_limited_to_documented_symbols(tmp_path, name, module, symbol, allowed):
+    path = tmp_path / name
+    path.write_text(f'from ..{module} import {symbol}\n', encoding='utf-8')
+    if allowed:
+        test_domain_modules_import_no_qt_network_or_database(path)
+    else:
+        with pytest.raises(AssertionError, match='imports'):
             test_domain_modules_import_no_qt_network_or_database(path)

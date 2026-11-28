@@ -1,0 +1,28 @@
+{
+  "before": {
+    "head": "46423952fcfa536f5eb2b4d3550a39832847a521",
+    "tree": "6520d3711a460f2908330ec83b0c8c4809e0f8fe",
+    "status": ""
+  },
+  "command": [
+    "/workspace/scratch/e3f205d85f15/.venv-inventory/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "-o",
+    "faulthandler_timeout=120",
+    "--junitxml=/workspace/scratch/e3f205d85f15/verification/inventory-full-retry.xml"
+  ],
+  "start_utc": "2026-11-28T00:30:50Z",
+  "memory_events_before": null,
+  "pid": 18,
+  "returncode": -9,
+  "elapsed_seconds": 930.203,
+  "maxrss_kib": 1144840,
+  "after": {
+    "head": "46423952fcfa536f5eb2b4d3550a39832847a521",
+    "tree": "6520d3711a460f2908330ec83b0c8c4809e0f8fe",
+    "status": ""
+  },
+  "memory_events_after": null
+}

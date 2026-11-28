@@ -1,0 +1,23 @@
+{
+  "before": {
+    "head": "46423952fcfa536f5eb2b4d3550a39832847a521",
+    "tree": "6520d3711a460f2908330ec83b0c8c4809e0f8fe",
+    "status": ""
+  },
+  "command": [
+    "/workspace/scratch/e3f205d85f15/.venv-inventory/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "-o",
+    "faulthandler_timeout=120",
+    "--junitxml=/workspace/scratch/e3f205d85f15/verification/inventory-full.xml"
+  ],
+  "start_utc": "2026-11-28T00:24:15Z",
+  "memory_events_before": null,
+  "pid": 18,
+  "status": "incomplete",
+  "harness_error": "OSError ENOSPC writing final receipt; child result was not retained",
+  "last_memory_sample_elapsed_seconds": 60.009,
+  "completed_pytest_summary": false
+}
