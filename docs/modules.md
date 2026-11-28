@@ -1,5 +1,15 @@
 # Module index
 
+## Pilot retained-context recovery (2026-11-28)
+
+Current integration plan and evidence: `engineering/pilot-recovery-20261127.md`.
+
+| Module | Responsibility | Current qualification |
+|---|---|---|
+| `intelligence/storage.py`, `pilot/store.py` | Bounded retained advisory sidecar reads and cleanup only after exclusive staging creation; preserve current cache and project ownership semantics | 84 focused storage/durability checks passed; full/native integration gates pending |
+| `pilot/current_inputs.py` | Immutable owner-thread capture of project revision, checked evidence identities and local rule versions, shared by CLI, desktop and report readers | 257 focused freshness/CLI/desktop/store/report checks and the combined 2,058-case selection passed; retained-context identity is shared with collection |
+| `pilot/sources/kb_context.py` | Bounded retained CVRF context admission and CSAF-first composition, exact field references and shared freshness identity | 152 context/key controls and the combined 2,058-case selection passed; existing KB context/saved-scope contracts remain authoritative; independent/platform gates pending |
+
 | Module | Responsibility | Verification seam |
 |---|---|---|
 | `tools/frozen_smoke.py` packaged version acceptance | Reuse the bounded build-record checker after archive extraction or installation; `--version-only` runs with stdlib and `-S`, reads and rechecks the package record, and keeps host Python paths out of the executable environment | `test_frozen_version_smoke.py`, `test_package_buildinfo.py`, `test_windows_downloaded_artifacts.py`; native downloaded Windows/Linux execution remains an exact-source hosted gate |
