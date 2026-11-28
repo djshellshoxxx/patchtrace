@@ -1,3 +1,7 @@
+## Recipe-control feature qualification (2026-11-27)
+
+The four implementation slices are complete and independently reviewed; the combined Tier R/calibration selection passed **847 tests with 11 skips**. Three optional scikit-learn reference checks subsequently passed in the verified primary runtime; eight native-toolchain checks remain blocked. Whole-tree Ruff passed. See `docs/engineering/recipe-controls-recovery-20261127.md` for the plan, observed red/green controls and exact scope. Full/current-head hosted acceptance and guarded merge remain pending; card planning is not native recipe or accuracy qualification.
+
 ## Packaged-version gate follow-up (2026-11-27)
 
 The reported stale packaging assertion is repaired and its affected125-test lane passes. Local full-suite execution was terminated by SIGKILL and is not qualified; require fresh current-head Linux/Windows/Qt/package acceptance on PR #369 before guarded merge. See the corresponding docs/qa.md entry.

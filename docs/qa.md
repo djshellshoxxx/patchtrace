@@ -1,3 +1,7 @@
+## Recipe controls and truthful shard outcomes (2026-11-27)
+
+The four implementation slices are complete and independently reviewed; the combined Tier R/calibration selection passed **847 tests with 11 skips**. Three optional scikit-learn reference checks subsequently passed in the verified primary runtime; eight native-toolchain checks remain blocked. Whole-tree Ruff passed. See `docs/engineering/recipe-controls-recovery-20261127.md` for the plan, observed red/green controls and exact scope. Full/current-head hosted acceptance and guarded merge remain pending; card planning is not native recipe or accuracy qualification.
+
 ## Packaged-version qualification correction (2026-11-27)
 
 The full local offscreen run at `aa8967e895b88a553df4fb14f7429ed64cca0db6` ended with pytest return code `-9` (SIGKILL) after 681.821 seconds and 5,147 reported cases. Its signal origin is unestablished; this is an incomplete gate, not a full-suite pass. The one reported failure was reproduced in isolation: `test_full_linux_frozen_smoke_preserves_both_qt_modes` expected an obsolete literal call spelling after the CLI acquired `--version-only`.

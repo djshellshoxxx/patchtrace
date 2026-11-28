@@ -50,6 +50,12 @@ both repository-relative paths and record indices for a repeated ID. Commands th
 unambiguous catalogue before use. If clang is unavailable during a later suite check, `corpus_check.py all` prints
 the completed catalogue findings and exits with the existing blocked status (3).
 
+The Tier R shard planner uses the same I2/I3 file list and strict card loader as card selection. It reads the recipe book
+and each card file once per plan, then shares those validated records across case enumeration. Invalid JSON or typed
+fields, unreadable inputs and duplicate card IDs fail planning instead of silently reducing the work list. Duplicate
+IDs are rejected across the entire catalogue before filtering for an available recipe and permissive licence. This
+snapshot is an in-memory view of those reads, not a claim of atomic filesystem reads or verified native builds.
+
 `tier-r-recipe/1` (one entry per project): `project`, `family` (lineage family tag), `upstream_git`, `license_spdx`,
 `license_file`, `kind` (`library`), `sources` (globs relative to the checkout), `exclude`, `include_dirs`, `defines`,
 `copy` (pinned in-tree template -> generated name, e.g. `scripts/pnglibconf.h.prebuilt` -> `pnglibconf.h`), `write`
@@ -327,6 +333,44 @@ Linux (required when it runs; dispatch + path filter): install mingw-w64, LLVM, 
 reproducibility; label round trip (schema, annotation log, calibration-labels); rz-diff evaluation; corpus guard; upload
 reports and label files only (never images). Windows leg (advisory, `continue-on-error`): the runner's LLVM clang/lld-link
 builds the freestanding suites and checks reproducibility; missing tools are recorded as BLOCKED.
+
+### Recipe-card controls in shard plans (LBL-32, 2026-11-27)
+
+`aa-card:<card-id>:<old|new>` and `noise-card:<card-id>:<old|new>` select a recipe card's source side. Existing
+`aa:<suite>` and `noise:<suite>` continue to select authored suites. The planner schedules recipe A/A controls in
+`cards` and `full`, and recipe noise controls in `noise` and `full`; `smoke`, `suites` and `mutations` retain their
+existing membership. Each eligible old/new source pin is represented once per control kind and `(project, ref)`.
+Repeated references must agree on the 40-hex commit; conflicting commits fail planning. The lexicographically smallest
+complete case ID represents a shared pin, independent of catalogue file/record ordering, seed and shard count.
+
+The project, card/recipe upstream URLs, both source refs and each direct build dependency's project/ref/upstream URL
+pass the existing Microsoft/Tier W refusal before a card is scheduled. The complete case ID must match the existing
+name character class and exact `old|new` side, with traversal
+and Microsoft refusal preserved. All selected case IDs are checked before any command runs. Dispatch performs
+`fetch <card-id>` and then `aa|noise --card <card-id> --side <side>`; failed, blocked or timed-out fetches stop the case.
+Fetch exit 1 and failed fetch summaries are failures, and A/A exit 1, a failure/finding summary or nonempty
+`not_byte_identical` is a failed
+reproducibility control. Those failures remain visible in shard results, CLI exit status and merged provenance.
+
+The validated catalogue snapshot is shared within one planning call. Plan and execution must use the same unchanged
+checkout: `tier-r-plan/1` hashes IDs and scheduling options, not catalogue bytes, and the command subprocesses reload
+their catalogue. Hermetic tests establish planning, parsing and runner propagation. Hosted recipe builds, A/A byte
+identity and actual noise results remain separate native acceptance evidence; they are not established by a plan or a
+mocked runner. Recipe-source mutation and LBL-31 artifact transfer/training acceptance remain separate scopes.
+
+### Shard command outcome propagation (2026-11-27)
+
+The shard runner interprets the emitted command status as well as the process exit code. For every command, including
+the evaluation phase, an explicit `status: failed` or `status: error` must remain a nonpassing outcome. With exit 0 or
+1 it is recorded as `failed`; exit 3 remains `blocked`, and a timed-out process remains `timeout`. Other nonzero error
+exits remain failures. This includes evaluator engine failures and `EvaluationRetentionError`, whose CLI exit 1 denotes
+failed output completion rather than ordinary findings. The failure must reach the shard CLI exit status and the
+merged `failing_cases` list and exit status, with the existing bounded diagnostic reason retained.
+
+Ordinary successful results, skipped cases and exit-1 findings keep their existing meanings, subject to the stricter
+fetch and A/A rules above. This correction changes no report fields or persisted contract versions. Constructed
+provider and runner tests establish the outcome propagation; they do not establish native engine compatibility,
+successful output transfer, training acceptance or calibration accuracy.
 
 ## 14. Tests (`tests/test_tier_r_*.py`; synthetic C compiled inside the tests; BLOCKED, never silently skipped, without a compiler)
 Contracts and schema drift; examples valid/invalid; locator on hostile C (comments, strings, K&R, macros, `#if`);

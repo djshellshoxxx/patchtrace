@@ -31,8 +31,18 @@ from pathlib import Path
 
 from patchtrace.calibration.scope import TIER_R_CLAIM
 
+from ...corpus_check import catalog_paths
 from ..common import canonical_json, digest, r12
-from .contracts import COSMETIC_OPERATORS, PERMISSIVE_SPDX, SEMANTIC_OPERATORS, ContractError, load_report
+from .contracts import (
+    COSMETIC_OPERATORS,
+    PERMISSIVE_SPDX,
+    SEMANTIC_OPERATORS,
+    CaseCard,
+    ContractError,
+    load_recipes,
+    load_report,
+)
+from .factory import load_card_files
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 PLAN_CONTRACT = 'tier-r-plan/1'
@@ -82,31 +92,41 @@ def refuse_microsoft(*texts: str) -> None:
 
 # ---- case enumeration ----------------------------------------------------------------------------------------------
 
-def _load_json(path: Path):
-    return json.loads(path.read_text(encoding='utf-8'))
+def _eligible_cards(root: Path) -> tuple[CaseCard, ...]:
+    """One strict catalogue snapshot; duplicate IDs fail before recipe/licence filtering."""
+    book = load_recipes((root / 'tools/calibration/tier_r/catalogue/recipes.json').read_bytes())
+    recipes = {recipe.project: recipe for recipe in book.recipes}
+    cards = load_card_files(catalog_paths(root), root=root)
+    eligible = tuple(sorted((card for card in cards if card.project in recipes and card.license_spdx in PERMISSIVE_SPDX),
+                            key=lambda card: card.id))
+    for card in eligible:
+        recipe = recipes[card.project]
+        refuse_microsoft(card.id, card.project, card.upstream_git, recipe.upstream_git,
+                         card.old.ref, card.new.ref)
+        for dependency in recipe.depends:
+            refuse_microsoft(dependency.project, dependency.ref)
+            if dependency.project in recipes:
+                refuse_microsoft(recipes[dependency.project].upstream_git)
+    return eligible
 
 
-def _cards(root: Path) -> list[str]:
-    """Ids of buildable case cards: recipe exists for the project and the licence is permissive."""
-    try:
-        recipes = {r['project'] for r in _load_json(root / 'tools/calibration/tier_r/catalogue/recipes.json')['recipes']}
-    except (OSError, ValueError, KeyError, TypeError):
-        recipes = set()
-    files = sorted((root / 'tools/calibration/tier_r/catalogue').glob('*.json')) + sorted(
-        (root / 'corpus/catalog').glob('*.json'))
-    found = set()
-    for path in files:
-        if path.name == 'recipes.json':
-            continue
-        try:
-            data = _load_json(path)
-        except (OSError, ValueError):
-            continue
-        for card in data if isinstance(data, list) else ():
-            if (isinstance(card, dict) and card.get('contract') == 'case-card/1' and card.get('project') in recipes
-                    and card.get('license_spdx') in PERMISSIVE_SPDX and isinstance(card.get('id'), str)):
-                found.add(card['id'])
-    return sorted(found)
+def _recipe_probe_cases(cards: Iterable[CaseCard], kind: str) -> set[str]:
+    """One deterministic control per (project, ref); factory output IDs use this source identity."""
+    selected: dict[tuple[str, str], tuple[str, str]] = {}
+    for card in cards:
+        for side in ('old', 'new'):
+            source = getattr(card, side)
+            key = (card.project, source.ref)
+            case_id = f'{kind}-card:{card.id}:{side}'
+            previous = selected.get(key)
+            if previous is not None:
+                commit, representative = previous
+                if commit != source.commit:
+                    raise ShardError(f'conflicting commits for {card.project}@{source.ref}: '
+                                     f'{representative} and {case_id}')
+                case_id = min(case_id, representative)
+            selected[key] = (source.commit, case_id)
+    return {case_id for _, case_id in selected.values()}
 
 
 def _suites(root: Path) -> list[str]:
@@ -119,43 +139,48 @@ def mutation_seeds(seed: int, count: int) -> list[int]:
 
 
 def enumerate_cases(root: Path, *, subset: str, seed: int, seeds_per_op: int = 1) -> list[str]:
-    """Case ids (sorted, unique). Id grammar: card:ID | suite:G/N | mutate:G/N:OP:SEED | aa:G/N | noise:G/N."""
+    """Sorted unique card, suite, mutation and control IDs; recipe controls include card ID and old/new side."""
     if subset not in SUBSETS:
         raise ShardError(f'unknown subset {subset!r}; choose from {", ".join(SUBSETS)}')
-    suites, cards = _suites(root), _cards(root)
+    suites, cards = _suites(root), _eligible_cards(root)
     ops = (*SEMANTIC_OPERATORS, *COSMETIC_OPERATORS)
     cases: set[str] = set()
     if subset == 'smoke':
         if SMOKE_SUITE in suites:
             cases |= {f'suite:{SMOKE_SUITE}', f'aa:{SMOKE_SUITE}', f'noise:{SMOKE_SUITE}',
                       f'mutate:{SMOKE_SUITE}:cmp-flip:{mutation_seeds(seed, 1)[0]}'}
-        cases |= {f'card:{c}' for c in cards if c.startswith('zlib-')}
+        cases |= {f'card:{c.id}' for c in cards if c.id.startswith('zlib-')}
     if subset in ('suites', 'full'):
         cases |= {f'suite:{s}' for s in suites} | {f'aa:{s}' for s in suites}
     if subset in ('cards', 'full'):
-        cases |= {f'card:{c}' for c in cards}
+        cases |= {f'card:{c.id}' for c in cards} | _recipe_probe_cases(cards, 'aa')
     if subset in ('mutations', 'full'):
         cases |= {f'mutate:{s}:{op}:{n}' for s in suites for op in ops for n in mutation_seeds(seed, seeds_per_op)}
     if subset in ('noise', 'full'):
-        cases |= {f'noise:{s}' for s in suites}
+        cases |= {f'noise:{s}' for s in suites} | _recipe_probe_cases(cards, 'noise')
     for case in cases:
         refuse_microsoft(case)
     return sorted(cases)
 
 
-_CASE = re.compile(r'^(card|suite|aa|noise):([A-Za-z0-9._/-]{1,128})$|^(mutate):([A-Za-z0-9._/-]{1,128}):([a-z0-9-]{1,32}):(\d{1,12})$')
+_CASE = re.compile(r'^(card|suite|aa|noise):([A-Za-z0-9._/-]{1,128})$'
+                   r'|^(mutate):([A-Za-z0-9._/-]{1,128}):([a-z0-9-]{1,32}):(\d{1,12})$'
+                   r'|^(aa-card|noise-card):([A-Za-z0-9._/-]{1,128}):(old|new)$')
 
 
 def case_steps(case_id: str) -> list[list[str]]:
     """Subcommand argv (after `python -m tools.calibration.tier_r`) for one case id."""
     refuse_microsoft(case_id)
-    m = _CASE.match(case_id)
+    m = _CASE.fullmatch(case_id)
     if not m or '..' in case_id.replace(':', '/').split('/'):
         raise ShardError(f'malformed case id {case_id!r}')
     if m.group(3) == 'mutate':
         if m.group(5) not in (*SEMANTIC_OPERATORS, *COSMETIC_OPERATORS):
             raise ShardError(f'unknown mutation operator in {case_id!r}')
         return [['mutate', '--suite', f'corpus/ours/{m.group(4)}', '--operator', m.group(5), '--seed', m.group(6)]]
+    if m.group(7):
+        kind, name, side = m.group(7).removesuffix('-card'), m.group(8), m.group(9)
+        return [['fetch', name], [kind, '--card', name, '--side', side]]
     kind, name = m.group(1), m.group(2)
     if kind == 'card':
         return [['fetch', name], ['build-card', name]]
@@ -254,6 +279,8 @@ def failure_reason(rc: int | None, reason: str | None, summary: dict | None, std
             text = '; '.join(f'{k}: {v}' for k, v in sorted(summary['blocked'].items()))
         if not text and summary and summary.get('errors'):
             text = '; '.join(str(e) for e in summary['errors'][:3])
+        if not text and summary and summary.get('not_byte_identical'):
+            text = 'A/A rebuilds not byte-identical'
         if not text:
             tail = stderr_tail(stderr, 1)
             text = tail or 'no diagnostic output'
@@ -349,10 +376,22 @@ def _absorb(summary: dict, labels: list, features: list, reports: list) -> None:
         reports.append(summary['report'])
 
 
-def _classify(rc: int | None, reason: str | None, summary: dict | None = None) -> str:
+def _classify(rc: int | None, reason: str | None, summary: dict | None = None, *, command: str | None = None) -> str:
     if rc is None:
         return 'timeout'
     status = {0: 'ok', 1: 'findings', 3: 'blocked'}.get(rc, 'failed')
+    if status in ('ok', 'findings'):
+        reported = (summary or {}).get('status')
+        if reported in ('failed', 'error'):
+            return 'failed'
+        if command == 'fetch':
+            if rc != OK:
+                return 'failed'
+            if reported == 'blocked':
+                return 'blocked'
+        if command == 'aa' and (rc == FINDINGS or reported == 'findings'
+                                or (summary or {}).get('not_byte_identical')):
+            return 'failed'
     if status == 'ok' and summary and summary.get('status') == 'skipped':
         return 'skipped'
     return status
@@ -377,6 +416,7 @@ def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner:
         raise ShardError(f'plan has no shard {shard}')
     if verify_plan and digest(plan, 'plan_sha256') != plan.get('plan_sha256'):
         raise ShardError('plan digest mismatch')
+    steps_by_case = [(case_id, case_steps(case_id)) for case_id in entry['cases']]
     py = python or sys.executable
     engines = list(engines or plan['engines'])
     with tempfile.TemporaryDirectory(prefix=f'tier-r-shard{shard}-') as tmp:
@@ -386,12 +426,12 @@ def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner:
         features: list = []
         reports: list = []
         results = []
-        for case_id in entry['cases']:
+        for case_id, steps in steps_by_case:
             status, detail, summary = 'ok', None, None
-            for step in case_steps(case_id):
+            for step in steps:
                 rc, out, reason, err = _call(runner, [py, '-m', 'tools.calibration.tier_r', *step], timeout, env)
                 parsed = _summary(out)
-                status = _classify(rc, reason, parsed)
+                status = _classify(rc, reason, parsed, command=step[0])
                 detail = None
                 if parsed is not None:
                     summary = sanitize(parsed)

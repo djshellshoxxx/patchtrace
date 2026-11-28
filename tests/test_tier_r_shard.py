@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from tools.calibration.tier_r import shard as S  # noqa: E402
 from tools.calibration.tier_r.contracts import load_report  # noqa: E402
-from tools.calibration.tier_r.schemas import example_report  # noqa: E402
+from tools.calibration.tier_r.schemas import example_recipes, example_report  # noqa: E402
 
 
 def write_tree(tmp_path: Path) -> Path:
@@ -24,10 +24,17 @@ def write_tree(tmp_path: Path) -> Path:
         (d / 'suite.json').write_text('{}')
     cat = root / 'tools/calibration/tier_r/catalogue'
     cat.mkdir(parents=True)
-    (cat / 'recipes.json').write_text(json.dumps({'recipes': [{'project': 'zlib'}, {'project': 'gpl-thing'}]}))
-    card = {'contract': 'case-card/1', 'id': 'zlib-a-to-b', 'project': 'zlib', 'license_spdx': 'Zlib'}
-    gpl = {'contract': 'case-card/1', 'id': 'gpl-a-to-b', 'project': 'gpl-thing', 'license_spdx': 'GPL-2.0-only'}
-    norec = {'contract': 'case-card/1', 'id': 'x-a-to-b', 'project': 'x', 'license_spdx': 'MIT'}
+    book = example_recipes()
+    book['recipes'][0]['pins'] = [{'ref': ref, 'commit': char * 40, 'license_sha256': char * 64}
+                                 for ref, char in [('v1', 'a'), ('v2', 'b')]]
+    book['recipes'].append({**copy.deepcopy(book['recipes'][0]), 'project': 'gpl-thing'})
+    (cat / 'recipes.json').write_text(json.dumps(book))
+    card = {'contract': 'case-card/1', 'id': 'zlib-a-to-b', 'project': 'zlib', 'license_spdx': 'Zlib',
+            'upstream_git': 'https://github.com/madler/zlib.git', 'license_evidence': 'synthetic fixture',
+            'old': {'ref': 'v1', 'commit': 'a' * 40}, 'new': {'ref': 'v2', 'commit': 'b' * 40},
+            'kind': 'release', 'semantic_change': True}
+    gpl = {**card, 'id': 'gpl-a-to-b', 'project': 'gpl-thing', 'license_spdx': 'GPL-2.0-only'}
+    norec = {**card, 'id': 'x-a-to-b', 'project': 'x', 'license_spdx': 'MIT'}
     (cat / 'releases.json').write_text(json.dumps([card, gpl, norec]))
     return root
 
@@ -117,7 +124,7 @@ def test_plan_rejects_bad_arguments(tree, kwargs):
 
 def test_cards_filtered_by_recipe_and_licence(tree):
     cards = [c for c in S.enumerate_cases(tree, subset='cards', seed=1)]
-    assert cards == ['card:zlib-a-to-b']
+    assert cards == ['aa-card:zlib-a-to-b:new', 'aa-card:zlib-a-to-b:old', 'card:zlib-a-to-b']
 
 
 def test_subset_smoke_contents(tree):
