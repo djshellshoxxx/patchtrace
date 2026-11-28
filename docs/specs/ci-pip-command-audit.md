@@ -107,3 +107,11 @@ without the audited boundary. The Windows QA workflow has 37 run scalars and
 four unprotected installs; the pilot workflow has five run scalars, two installs
 and one unprotected install. Preserve both strict repository-wide CODEX-5
 expected failures and the historical source-specific counts above.
+
+## Cabinet verification on Windows
+
+The installed SDK probe and system decoder check add two PowerShell steps to
+Windows QA. Both use tools already present after the existing setup. The
+reviewed census now covers 21 workflows and 206 run scalars. Windows QA has 39
+run scalars and four explicit pip installs. Across all workflows there are 42
+explicit installs, including three hash-protected and 39 unprotected commands.
