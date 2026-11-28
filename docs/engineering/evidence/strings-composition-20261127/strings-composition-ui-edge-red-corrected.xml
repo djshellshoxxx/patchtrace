@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="3" time="0.746" timestamp="2026-11-27T17:28:19.927059-08:00" hostname="56e89409ebf3"><testcase classname="tests.test_ui_strings_composition" name="test_repeated_project_notification_does_not_clear_changed_input[source]" time="0.175"><failure message="assert (False)&#10; +  where False = &lt;patchtrace.strings.qt_panel.StringsController(0x3e1e1650) at 0x7f6d3f2ea800&gt;.stale">tests/test_ui_strings_composition.py:299: in test_repeated_project_notification_does_not_clear_changed_input
+    assert controller.stale and controller.view.kind == 'stale'
+E   assert (False)
+E    +  where False = &lt;patchtrace.strings.qt_panel.StringsController(0x3e1e1650) at 0x7f6d3f2ea800&gt;.stale
+----------------------------- Captured Qt messages -----------------------------
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()</failure></testcase><testcase classname="tests.test_ui_strings_composition" name="test_repeated_project_notification_does_not_clear_changed_input[anchors]" time="0.055"><failure message="assert (False)&#10; +  where False = &lt;patchtrace.strings.qt_panel.StringsController(0x3e1b8d30) at 0x7f6d3f30a840&gt;.stale">tests/test_ui_strings_composition.py:299: in test_repeated_project_notification_does_not_clear_changed_input
+    assert controller.stale and controller.view.kind == 'stale'
+E   assert (False)
+E    +  where False = &lt;patchtrace.strings.qt_panel.StringsController(0x3e1b8d30) at 0x7f6d3f30a840&gt;.stale
+----------------------------- Captured Qt messages -----------------------------
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()</failure></testcase><testcase classname="tests.test_ui_strings_composition" name="test_revision_changed_during_capture_never_starts_worker" time="0.040" /></testsuite></testsuites>

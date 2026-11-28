@@ -15,8 +15,9 @@ def _entry(values: tuple[str, ...]) -> TooltipEntry:
 
 
 # Only the controls and column headers this panel builds: the host audit checks their actual tooltip roles. The
-# entries of the planned FLOSS, probe, export and further filter controls stay in `tooltip_entries` until built.
-BUILT = ('dock', 'action', 'table', 'detail', 'cancel', 'run.builtin', 'filter.change', 'filter.scope',
+# entries of planned tool execution, probe, export and further filters stay in `tooltip_entries` until built.
+BUILT = ('dock', 'action', 'table', 'detail', 'cancel', 'run.builtin', 'source', 'anchors.browse', 'anchors.clear',
+         'filter.change', 'filter.scope',
          'filter.text', 'filter.noise', 'filter.linked', 'copy.safe', 'open.function', 'open.hex',
          'col.change', 'col.string', 'col.type', 'col.older', 'col.newer', 'col.function', 'col.cues', 'col.source')
 TIPS = {f'strings.{name}': _entry(ENTRIES[f'strings.{name}']) for name in BUILT}

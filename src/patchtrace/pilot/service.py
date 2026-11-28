@@ -95,7 +95,8 @@ class LocalizeInputs(Protocol):
     The ports are the A1 Protocols. `contexts` are the per-CVE contexts as the advisory adapters report them (gate, CWE
     summary, KEV state, window; their counts are zero, localization fills them) and `advisory_observations` the `adv:*`
     ledger entries of every source that repeats the CWE. `advisory` may also offer `status() -> ChannelStatus` (the
-    stored-advisory adapter does); without it the advisory channel is `available` when contexts exist, else `not-run`."""
+    stored-advisory adapter does); without it the advisory channel is `available` when contexts exist, else `not-run`.
+    Its optional `kb_link_digest` identifies retained project context; absent means no KB context was consulted."""
     project_id: str
     revision: int
     older_sha256: str
@@ -381,6 +382,7 @@ def _inputs_record(inputs: LocalizeInputs, config: PilotConfig, contexts: Sequen
             secondary_set_ids=tuple(sorted(set(inputs.pairing.secondary_set_ids()))),
             tool_keys=tuple(sorted(inputs.tools.cache_keys(), key=lambda k: (k.engine, k.side))),
             advisory_facts_ids=tuple(sorted(set(inputs.advisory.facts_ids()))),
+            kb_link_digest=getattr(inputs.advisory, 'kb_link_digest', None),
             kev_snapshot_id=inputs.kev.snapshot_id(),
             asserted_gates=tuple(sorted(c.cve for c in contexts if c.gate == 'asserted')),
             lexicon_digest=lexicon_digest(), rules_digest=rules_digest(), pilot_rules_digest=pilot_rules_digest(),

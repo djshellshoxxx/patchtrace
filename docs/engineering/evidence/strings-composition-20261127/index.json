@@ -1,0 +1,439 @@
+{
+  "reviewed_runtime": "ea40cb5d73bed8035370539b0634a7cbbf73c567",
+  "reviewed_tree": "b5aafc01a51c9ce6fa0866b85eb5678007506f5f",
+  "records": [
+    {
+      "file": "strings-composition-chooser-red.xml",
+      "bytes": 3242,
+      "sha256": "6e43222660993e4919a170d05767118d17ec9e93b2b8d1988ded7eb91ae7e49c",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "2",
+          "skipped": "0",
+          "tests": "4",
+          "time": "1.322",
+          "timestamp": "2026-11-27T17:30:21.186147-08:00",
+          "hostname": "56e89409ebf3"
+        }
+      ]
+    },
+    {
+      "file": "strings-composition-core-green-final.xml",
+      "bytes": 15099,
+      "sha256": "f39d4e1f8dc8b2c77613fb24fbb48b0d43099d38a9f2894deabaa11d84527364",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "116",
+          "time": "5.286",
+          "timestamp": "2026-11-27T17:16:06.237532-08:00",
+          "hostname": "56e89409ebf3"
+        }
+      ]
+    },
+    {
+      "file": "strings-composition-core-green.xml",
+      "bytes": 14221,
+      "sha256": "5fa8d52cd24a0033d9d54203e8810951e66b9934a54a7642e8ada91edc1086c9",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "110",
+          "time": "4.798",
+          "timestamp": "2026-11-27T17:15:23.809484-08:00",
+          "hostname": "56e89409ebf3"
+        }
+      ]
+    },
+    {
+      "file": "strings-composition-core-red-corrected.xml",
+      "bytes": 6593,
+      "sha256": "a9b01543bdbecc5716eb1cd954f710f11df7b1d0c49f728da783ef16bbdd5eab",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "4",
+          "skipped": "0",
+          "tests": "5",
+          "time": "0.658",
+          "timestamp": "2026-11-27T17:13:23.159043-08:00",
+          "hostname": "56e89409ebf3"
+        }
+      ]
+    },
+    {
+      "file": "strings-composition-core-red.xml",
+      "bytes": 6215,
+      "sha256": "7d58f40c8e2224ce7dc588c61ae48d289f5da1913dacd73cd34663b89b73e264",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "4",
+          "skipped": "0",
+          "tests": "5",
+          "time": "0.890",
+          "timestamp": "2026-11-27T17:12:46.816917-08:00",
+          "hostname": "56e89409ebf3"
+        }
+      ]
+    },
+    {
+      "file": "strings-composition-final-corrected.xml",
+      "bytes": 100003,
+      "sha256": "cc323cc27ce64c7157ff4450c65089690caa8b6808599a11ec074c429ae3e226",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "776",
+          "time": "154.768",
+          "timestamp": "2026-11-27T17:32:35.525744-08:00",
+          "hostname": "56e89409ebf3"
+        }
+      ]
+    },
+    {
+      "file": "strings-composition-final.xml",
+      "bytes": 100371,
+      "sha256": "8a9a6455fb7e5f158bd37e50ee700273407f6cdfed573250396ec86d66f05f59",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "1",
+          "skipped": "0",
+          "tests": "773",
+          "time": "52.694",
+          "timestamp": "2026-11-27T17:30:48.350226-08:00",
+          "hostname": "56e89409ebf3"
+        }
+      ]
+    },
+    {
+      "file": "strings-composition-ui-edge-green-corrected.xml",
+      "bytes": 12667,
+      "sha256": "a8fb250accae49fde33fd2e0b0966801374d2604ddbf7eaa3d0557dee3d76593",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "2",
+          "skipped": "0",
+          "tests": "79",
+          "time": "21.847",
+          "timestamp": "2026-11-27T17:29:26.624099-08:00",
+          "hostname": "56e89409ebf3"
+        }
+      ]
+    },
+    {
+      "file": "strings-composition-ui-edge-green.xml",
+      "bytes": 13301,
+      "sha256": "e4784dd835aaf120a6d9682757f9ecc26d9bc9dd67a351e2c08d327e98dabbb6",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "2",
+          "skipped": "0",
+          "tests": "79",
+          "time": "7.295",
+          "timestamp": "2026-11-27T17:28:45.524146-08:00",
+          "hostname": "56e89409ebf3"
+        }
+      ]
+    },
+    {
+      "file": "strings-composition-ui-edge-red-corrected.xml",
+      "bytes": 2422,
+      "sha256": "04c677c7cac35fa99e80ff38ddb830a135d62abebcb8842bd74a046c3ad508ec",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "2",
+          "skipped": "0",
+          "tests": "3",
+          "time": "0.746",
+          "timestamp": "2026-11-27T17:28:19.927059-08:00",
+          "hostname": "56e89409ebf3"
+        }
+      ]
+    },
+    {
+      "file": "strings-composition-ui-edge-red.xml",
+      "bytes": 6403,
+      "sha256": "e810a213bbb0a9d3cef90089a0e21af183a04ea403490b9579e7a53f45873347",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "3",
+          "skipped": "0",
+          "tests": "27",
+          "time": "3.635",
+          "timestamp": "2026-11-27T17:28:06.075920-08:00",
+          "hostname": "56e89409ebf3"
+        }
+      ]
+    },
+    {
+      "file": "strings-composition-ui-green-corrected.xml",
+      "bytes": 22150,
+      "sha256": "1db91f3212d2e1fa51c0beaf4055a68ff8ada3162ed93a3e9073db2935dd320b",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "153",
+          "time": "11.396",
+          "timestamp": "2026-11-27T17:23:59.760122-08:00",
+          "hostname": "56e89409ebf3"
+        }
+      ]
+    },
+    {
+      "file": "strings-composition-ui-green.xml",
+      "bytes": 22902,
+      "sha256": "94c07c2c9da35e6b595262520389cffb493cd59229231d81708967d3830973ed",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "2",
+          "skipped": "0",
+          "tests": "153",
+          "time": "8.594",
+          "timestamp": "2026-11-27T17:23:35.214623-08:00",
+          "hostname": "56e89409ebf3"
+        }
+      ]
+    },
+    {
+      "file": "strings-composition-ui-red.xml",
+      "bytes": 13936,
+      "sha256": "831e9395d099f93eae0bf093528af924af5e4bff3e3702a9835e04686b514531",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "18",
+          "skipped": "0",
+          "tests": "18",
+          "time": "1.868",
+          "timestamp": "2026-11-27T17:21:33.379443-08:00",
+          "hostname": "56e89409ebf3"
+        }
+      ]
+    },
+    {
+      "file": "strings-independent-corrected-2.xml",
+      "bytes": 1883,
+      "sha256": "97f876ab83b9fe08291aa3f181c0b1cbd2111a6065fd6ec0d0330c6509d0f1f4",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "11",
+          "time": "2.216",
+          "timestamp": "2026-11-27T17:58:02.890393-08:00",
+          "hostname": "56e89409ebf3"
+        }
+      ]
+    },
+    {
+      "file": "strings-independent-corrected-existing.xml",
+      "bytes": 16401,
+      "sha256": "8822f4c1531fd4e74e56a0662f706763f81efe1260a3352a92fc020c1aaa8117",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "118",
+          "time": "10.200",
+          "timestamp": "2026-11-27T17:57:56.291274-08:00",
+          "hostname": "56e89409ebf3"
+        }
+      ]
+    },
+    {
+      "file": "strings-independent-corrected.xml",
+      "bytes": 16994,
+      "sha256": "05c7c84507a2772f4cbc29b1181ec4fc53363b362c278d4ac3c3afed00ef2f43",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "4",
+          "skipped": "0",
+          "tests": "11",
+          "time": "2.473",
+          "timestamp": "2026-11-27T17:57:24.062504-08:00",
+          "hostname": "56e89409ebf3"
+        }
+      ]
+    },
+    {
+      "file": "strings-independent-display.xml",
+      "bytes": 1736,
+      "sha256": "36d085621768f1e4650273a987051d4107e7d3bd5c369242208fba245d6df23d",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "10",
+          "time": "1.896",
+          "timestamp": "2026-11-27T17:58:16.796746-08:00",
+          "hostname": "56e89409ebf3"
+        }
+      ]
+    },
+    {
+      "file": "strings-independent-existing.xml",
+      "bytes": 16400,
+      "sha256": "d523e397d2a8b3ef16d9da7df5c5b3ecf14ae4cd3ec9dd00533a17af022aee9a",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "118",
+          "time": "8.320",
+          "timestamp": "2026-11-27T17:46:23.833055-08:00",
+          "hostname": "56e89409ebf3"
+        }
+      ]
+    },
+    {
+      "file": "strings-independent-review.xml",
+      "bytes": 6837,
+      "sha256": "dc6f0062f075b313a0bc17c97c7bd92f8e6067d5c4dc8f047c9b8991f5be253b",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "2",
+          "skipped": "0",
+          "tests": "6",
+          "time": "2.033",
+          "timestamp": "2026-11-27T17:44:57.715070-08:00",
+          "hostname": "56e89409ebf3"
+        }
+      ]
+    },
+    {
+      "file": "strings-independent-review.py",
+      "bytes": 4800,
+      "sha256": "7c6b04fc470780327d3a09ed6507f85826338a38e1f1db681e3c65d200e16bdd"
+    },
+    {
+      "file": "strings-independent-publication-review.py",
+      "bytes": 3059,
+      "sha256": "23787ba800316a0ae7782b37b9553a1779905bbbfeee06ee279de2c8b64ec565"
+    },
+    {
+      "file": "display-ownership-final.xml",
+      "bytes": 13747,
+      "sha256": "688e42dec8585052bbcf882ca4a7180dcf90103c265fbbcfd12b51be45162322",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "97",
+          "time": "9.694",
+          "timestamp": "2026-11-27T17:54:17.831013-08:00",
+          "hostname": "56e89409ebf3"
+        }
+      ]
+    },
+    {
+      "file": "display-ownership-green.xml",
+      "bytes": 13763,
+      "sha256": "0d796f1fa5c5ba671f71055d686fba3f00c514ecc420368b382ab4e959d61971",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "97",
+          "time": "9.254",
+          "timestamp": "2026-11-27T17:52:09.160512-08:00",
+          "hostname": "56e89409ebf3"
+        }
+      ]
+    },
+    {
+      "file": "display-ownership-red-corrected.xml",
+      "bytes": 22118,
+      "sha256": "6a26620df6c6588c751e0ae812044535fa87327370e3fdf3add5e1119f840cfa",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "11",
+          "skipped": "0",
+          "tests": "16",
+          "time": "2.663",
+          "timestamp": "2026-11-27T17:51:01.523749-08:00",
+          "hostname": "56e89409ebf3"
+        }
+      ]
+    },
+    {
+      "file": "display-ownership-red.xml",
+      "bytes": 21922,
+      "sha256": "00584acfe646092d35d992a963c8ca2e5b0665e68cd75fd7661418b0a8e3539c",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "12",
+          "skipped": "0",
+          "tests": "16",
+          "time": "2.960",
+          "timestamp": "2026-11-27T17:50:38.223963-08:00",
+          "hostname": "56e89409ebf3"
+        }
+      ]
+    },
+    {
+      "file": "render-receipt.json",
+      "bytes": 2754,
+      "sha256": "3814f59e68698968ab8c7b327df8ce6ebd3c0c3d58aecbad5f9ddb797962585c"
+    },
+    {
+      "file": "strings-composition-large-font.png",
+      "bytes": 76252,
+      "sha256": "8187035bdbcf21b53f7e1cd07bc52685efa35f727b1603e125de9332de944122"
+    },
+    {
+      "file": "strings-composition-normal.png",
+      "bytes": 59971,
+      "sha256": "0fcdfdba332840d837419ad5a12cb589c8d8309becf30a6282f6454aab148f4e"
+    }
+  ]
+}

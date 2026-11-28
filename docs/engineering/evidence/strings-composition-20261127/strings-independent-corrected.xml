@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="11" time="2.473" timestamp="2026-11-27T17:57:24.062504-08:00" hostname="56e89409ebf3"><testcase classname="strings-independent-review" name="test_displayed_row_cannot_use_replacement_offsets_before_model_arrives[pending]" time="0.063" /><testcase classname="strings-independent-review" name="test_displayed_row_cannot_use_replacement_offsets_before_model_arrives[failed]" time="0.032" /><testcase classname="strings-independent-review" name="test_real_cli_and_default_mainwindow_have_identical_comparison[auto]" time="1.206" /><testcase classname="strings-independent-review" name="test_real_cli_and_default_mainwindow_have_identical_comparison[floss]" time="0.232" /><testcase classname="strings-independent-review" name="test_real_cli_and_default_mainwindow_have_identical_comparison[builtin]" time="0.260" /><testcase classname="strings-independent-review" name="test_captured_tool_values_remain_usable_after_owner_is_closed" time="0.010" /><testcase classname="strings-independent-publication-review" name="test_superseded_prepared_comparison_never_replaces_visible_owner[cancel]" time="0.029"><failure message="AttributeError: 'Event' object has no attribute 'checkpoint'">qtbot = &lt;pytestqt.qtbot.QtBot object at 0x7f2f586ab200&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f2f586abdd0&gt;
+supersede = 'cancel'
+
+    @pytest.mark.parametrize('supersede', ['cancel', 'source', 'revision'])
+    def test_superseded_prepared_comparison_never_replaces_visible_owner(qtbot, monkeypatch, supersede):
+        controller, _nav, project, old, _new, _identity, pending = pending_comparison(qtbot, monkeypatch)
+        assert controller.loaded is old
+        before = controller.current_row()
+        if supersede == 'cancel':
+            controller.cancel()
+        elif supersede == 'source':
+            choose(controller, 'builtin')
+        else:
+            project.current = key(revision=2)
+            controller.project_changed(project.current)
+        fn, accept, _failure = pending
+&gt;       accept(fn(threading.Event(), lambda *_: None))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+../strings-independent-publication-review.py:50: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/patchtrace/strings/qt_panel.py:484: in &lt;lambda&gt;
+    self.tasks.submit('strings-view', lambda token, _report: prepare_rows(rows, flt, token),
+                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/strings/qt_panel.py:150: in prepare_rows
+    return result, prepare_table(SPEC, COLUMNS, result.rows, token)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+spec = TableSpec(row_key=&lt;function &lt;lambda&gt; at 0x7f2f5c2feca0&gt;, search_text=&lt;function &lt;lambda&gt; at 0x7f2f5c2fed40&gt;, default_order=None)
+columns = (ColumnSpec(key='change', title='Change', text=&lt;function &lt;lambda&gt; at 0x7f2f5c2fe7a0&gt;, unit='', width_em=20, sort_key=N...0&gt;, unit='', width_em=34, sort_key=None, chip=None, accessible=None, tooltip=None, tip_id='strings.col.function'), ...)
+rows = (StringRowVM(id='4b4dfb8ac276e960ec7f4ebb642ed4406ee61e1e2b0cae8e0041bc03a1d7b21b', value_sha256='a8be5c11a5d21719008e...ependent publication value', sides=('newer',), pair='', function_cell='No supported function link', open_target=None),)
+token = &lt;threading.Event at 0x7f2f586b1220: unset&gt;
+
+    def prepare_table(spec: TableSpec, columns: Sequence[ColumnSpec], rows: Iterable[Row], token: Any = None) -&gt; PreparedTable:
+        """Strings, keys and order for `rows`. `token` is any object with `checkpoint() -&gt; bool` (a `CancelToken`);
+        a set token raises `Cancelled`. Row keys are expected unique (the first row of a repeated key wins lookups)."""
+        columns = tuple(columns)
+        source = rows if isinstance(rows, tuple) else tuple(rows)
+        if len(source) &gt; MAX_ROWS:
+            return PreparedTable(columns, (), (), (), (), tuple(None for _ in columns), (), len(source), True)
+        texts, keys, searches = [], [], []
+        getters = [column.text for column in columns]
+        for position, row in enumerate(source):
+&gt;           if token is not None and position % CHECKPOINT_EVERY == 0 and token.checkpoint():
+                                                                          ^^^^^^^^^^^^^^^^
+E           AttributeError: 'Event' object has no attribute 'checkpoint'
+
+src/patchtrace/gui/table_spec.py:81: AttributeError
+----------------------------- Captured Qt messages -----------------------------
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()</failure></testcase><testcase classname="strings-independent-publication-review" name="test_superseded_prepared_comparison_never_replaces_visible_owner[source]" time="0.031"><failure message="AttributeError: 'Event' object has no attribute 'checkpoint'">qtbot = &lt;pytestqt.qtbot.QtBot object at 0x7f2f58749a60&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f2f58749a30&gt;
+supersede = 'source'
+
+    @pytest.mark.parametrize('supersede', ['cancel', 'source', 'revision'])
+    def test_superseded_prepared_comparison_never_replaces_visible_owner(qtbot, monkeypatch, supersede):
+        controller, _nav, project, old, _new, _identity, pending = pending_comparison(qtbot, monkeypatch)
+        assert controller.loaded is old
+        before = controller.current_row()
+        if supersede == 'cancel':
+            controller.cancel()
+        elif supersede == 'source':
+            choose(controller, 'builtin')
+        else:
+            project.current = key(revision=2)
+            controller.project_changed(project.current)
+        fn, accept, _failure = pending
+&gt;       accept(fn(threading.Event(), lambda *_: None))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+../strings-independent-publication-review.py:50: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/patchtrace/strings/qt_panel.py:484: in &lt;lambda&gt;
+    self.tasks.submit('strings-view', lambda token, _report: prepare_rows(rows, flt, token),
+                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/strings/qt_panel.py:150: in prepare_rows
+    return result, prepare_table(SPEC, COLUMNS, result.rows, token)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+spec = TableSpec(row_key=&lt;function &lt;lambda&gt; at 0x7f2f5c2feca0&gt;, search_text=&lt;function &lt;lambda&gt; at 0x7f2f5c2fed40&gt;, default_order=None)
+columns = (ColumnSpec(key='change', title='Change', text=&lt;function &lt;lambda&gt; at 0x7f2f5c2fe7a0&gt;, unit='', width_em=20, sort_key=N...0&gt;, unit='', width_em=34, sort_key=None, chip=None, accessible=None, tooltip=None, tip_id='strings.col.function'), ...)
+rows = (StringRowVM(id='4b4dfb8ac276e960ec7f4ebb642ed4406ee61e1e2b0cae8e0041bc03a1d7b21b', value_sha256='a8be5c11a5d21719008e...ependent publication value', sides=('newer',), pair='', function_cell='No supported function link', open_target=None),)
+token = &lt;threading.Event at 0x7f2f5874bf50: unset&gt;
+
+    def prepare_table(spec: TableSpec, columns: Sequence[ColumnSpec], rows: Iterable[Row], token: Any = None) -&gt; PreparedTable:
+        """Strings, keys and order for `rows`. `token` is any object with `checkpoint() -&gt; bool` (a `CancelToken`);
+        a set token raises `Cancelled`. Row keys are expected unique (the first row of a repeated key wins lookups)."""
+        columns = tuple(columns)
+        source = rows if isinstance(rows, tuple) else tuple(rows)
+        if len(source) &gt; MAX_ROWS:
+            return PreparedTable(columns, (), (), (), (), tuple(None for _ in columns), (), len(source), True)
+        texts, keys, searches = [], [], []
+        getters = [column.text for column in columns]
+        for position, row in enumerate(source):
+&gt;           if token is not None and position % CHECKPOINT_EVERY == 0 and token.checkpoint():
+                                                                          ^^^^^^^^^^^^^^^^
+E           AttributeError: 'Event' object has no attribute 'checkpoint'
+
+src/patchtrace/gui/table_spec.py:81: AttributeError
+----------------------------- Captured Qt messages -----------------------------
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()</failure></testcase><testcase classname="strings-independent-publication-review" name="test_superseded_prepared_comparison_never_replaces_visible_owner[revision]" time="0.031"><failure message="AttributeError: 'Event' object has no attribute 'checkpoint'">qtbot = &lt;pytestqt.qtbot.QtBot object at 0x7f2f58748740&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f2f58749fa0&gt;
+supersede = 'revision'
+
+    @pytest.mark.parametrize('supersede', ['cancel', 'source', 'revision'])
+    def test_superseded_prepared_comparison_never_replaces_visible_owner(qtbot, monkeypatch, supersede):
+        controller, _nav, project, old, _new, _identity, pending = pending_comparison(qtbot, monkeypatch)
+        assert controller.loaded is old
+        before = controller.current_row()
+        if supersede == 'cancel':
+            controller.cancel()
+        elif supersede == 'source':
+            choose(controller, 'builtin')
+        else:
+            project.current = key(revision=2)
+            controller.project_changed(project.current)
+        fn, accept, _failure = pending
+&gt;       accept(fn(threading.Event(), lambda *_: None))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+../strings-independent-publication-review.py:50: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/patchtrace/strings/qt_panel.py:484: in &lt;lambda&gt;
+    self.tasks.submit('strings-view', lambda token, _report: prepare_rows(rows, flt, token),
+                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/strings/qt_panel.py:150: in prepare_rows
+    return result, prepare_table(SPEC, COLUMNS, result.rows, token)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+spec = TableSpec(row_key=&lt;function &lt;lambda&gt; at 0x7f2f5c2feca0&gt;, search_text=&lt;function &lt;lambda&gt; at 0x7f2f5c2fed40&gt;, default_order=None)
+columns = (ColumnSpec(key='change', title='Change', text=&lt;function &lt;lambda&gt; at 0x7f2f5c2fe7a0&gt;, unit='', width_em=20, sort_key=N...0&gt;, unit='', width_em=34, sort_key=None, chip=None, accessible=None, tooltip=None, tip_id='strings.col.function'), ...)
+rows = (StringRowVM(id='4b4dfb8ac276e960ec7f4ebb642ed4406ee61e1e2b0cae8e0041bc03a1d7b21b', value_sha256='a8be5c11a5d21719008e...ependent publication value', sides=('newer',), pair='', function_cell='No supported function link', open_target=None),)
+token = &lt;threading.Event at 0x7f2f5874b140: unset&gt;
+
+    def prepare_table(spec: TableSpec, columns: Sequence[ColumnSpec], rows: Iterable[Row], token: Any = None) -&gt; PreparedTable:
+        """Strings, keys and order for `rows`. `token` is any object with `checkpoint() -&gt; bool` (a `CancelToken`);
+        a set token raises `Cancelled`. Row keys are expected unique (the first row of a repeated key wins lookups)."""
+        columns = tuple(columns)
+        source = rows if isinstance(rows, tuple) else tuple(rows)
+        if len(source) &gt; MAX_ROWS:
+            return PreparedTable(columns, (), (), (), (), tuple(None for _ in columns), (), len(source), True)
+        texts, keys, searches = [], [], []
+        getters = [column.text for column in columns]
+        for position, row in enumerate(source):
+&gt;           if token is not None and position % CHECKPOINT_EVERY == 0 and token.checkpoint():
+                                                                          ^^^^^^^^^^^^^^^^
+E           AttributeError: 'Event' object has no attribute 'checkpoint'
+
+src/patchtrace/gui/table_spec.py:81: AttributeError
+----------------------------- Captured Qt messages -----------------------------
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()</failure></testcase><testcase classname="strings-independent-publication-review" name="test_successful_replacement_publishes_row_metadata_and_actions_together" time="0.028"><failure message="AttributeError: 'Event' object has no attribute 'checkpoint'">qtbot = &lt;pytestqt.qtbot.QtBot object at 0x7f2f58748440&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f2f58748830&gt;
+
+    def test_successful_replacement_publishes_row_metadata_and_actions_together(qtbot, monkeypatch):
+        controller, nav, _project, old, new, identity, pending = pending_comparison(qtbot, monkeypatch)
+        assert controller.loaded is old and controller.current_row().newer == '0x640'
+        fn, accept, _failure = pending
+&gt;       accept(fn(threading.Event(), lambda *_: None))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+../strings-independent-publication-review.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/patchtrace/strings/qt_panel.py:484: in &lt;lambda&gt;
+    self.tasks.submit('strings-view', lambda token, _report: prepare_rows(rows, flt, token),
+                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/patchtrace/strings/qt_panel.py:150: in prepare_rows
+    return result, prepare_table(SPEC, COLUMNS, result.rows, token)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+spec = TableSpec(row_key=&lt;function &lt;lambda&gt; at 0x7f2f5c2feca0&gt;, search_text=&lt;function &lt;lambda&gt; at 0x7f2f5c2fed40&gt;, default_order=None)
+columns = (ColumnSpec(key='change', title='Change', text=&lt;function &lt;lambda&gt; at 0x7f2f5c2fe7a0&gt;, unit='', width_em=20, sort_key=N...0&gt;, unit='', width_em=34, sort_key=None, chip=None, accessible=None, tooltip=None, tip_id='strings.col.function'), ...)
+rows = (StringRowVM(id='4b4dfb8ac276e960ec7f4ebb642ed4406ee61e1e2b0cae8e0041bc03a1d7b21b', value_sha256='a8be5c11a5d21719008e...ependent publication value', sides=('newer',), pair='', function_cell='No supported function link', open_target=None),)
+token = &lt;threading.Event at 0x7f2f58749ee0: unset&gt;
+
+    def prepare_table(spec: TableSpec, columns: Sequence[ColumnSpec], rows: Iterable[Row], token: Any = None) -&gt; PreparedTable:
+        """Strings, keys and order for `rows`. `token` is any object with `checkpoint() -&gt; bool` (a `CancelToken`);
+        a set token raises `Cancelled`. Row keys are expected unique (the first row of a repeated key wins lookups)."""
+        columns = tuple(columns)
+        source = rows if isinstance(rows, tuple) else tuple(rows)
+        if len(source) &gt; MAX_ROWS:
+            return PreparedTable(columns, (), (), (), (), tuple(None for _ in columns), (), len(source), True)
+        texts, keys, searches = [], [], []
+        getters = [column.text for column in columns]
+        for position, row in enumerate(source):
+&gt;           if token is not None and position % CHECKPOINT_EVERY == 0 and token.checkpoint():
+                                                                          ^^^^^^^^^^^^^^^^
+E           AttributeError: 'Event' object has no attribute 'checkpoint'
+
+src/patchtrace/gui/table_spec.py:81: AttributeError
+----------------------------- Captured Qt messages -----------------------------
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()</failure></testcase><testcase classname="strings-independent-publication-review" name="test_failed_preparation_preserves_complete_previous_display_receipt" time="0.031" /></testsuite></testsuites>

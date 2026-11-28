@@ -2,7 +2,7 @@
 Qt-free `view_model` and `copy`; this module moves it to widgets. The GUI thread captures an immutable `Request`
 (paths and hashes, never the live project or a connection); the scan and the filtering run on `TaskRunner`
 channels, and a result is applied only when the project key and the request generation still match. Nothing here
-runs a target, opens the network or opens a window of its own.
+runs a target or opens the network. The explicit anchor chooser is the only file dialog.
 """
 from __future__ import annotations
 
@@ -10,11 +10,13 @@ import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QCheckBox,
     QComboBox,
+    QFileDialog,
     QHBoxLayout,
     QLineEdit,
     QPushButton,
@@ -51,6 +53,9 @@ from .view_model import (
     pairing_summary,
 )
 
+if TYPE_CHECKING:
+    from ..intelligence.tools.snapshot import ToolSources
+
 DETAIL_LIMIT = 8_192
 CHANNELS = ('strings-scan', 'strings-view')
 CHANGE_FILTERS = (('changed', 'Differences'), ('all', 'All changes'), ('only-newer', 'Only in newer'),
@@ -72,6 +77,9 @@ class Request:
     min_length: int = 4
     root: Path | None = None       # the project folder and a read-only snapshot of its matches, for function pairing;
     project: object | None = None  # without them every function is unknown, never guessed
+    anchors_path: Path | None = None  # explicit optional advisory hints; parsed on the worker
+    source_choice: str = 'builtin'
+    tool_sources: ToolSources | None = None  # owner-thread capture; no store readers reach the worker
 
 
 @dataclass(frozen=True, slots=True)
@@ -79,43 +87,44 @@ class Loaded:
     delta: StringsDelta
     rows: tuple[StringRowVM, ...]
     changes: dict[str, StringChange]
-    partial: tuple[tuple[str, str], ...] = ()  # (side, row limit) of each scan that stopped early
+    partial: tuple[tuple[str, str], ...] = ()  # (side, retained rows) of each incomplete source
     pairing_reason: str | None = None  # why no function pairing exists (None: it was built, a string may still have none)
 
 
 Loader = Callable[[Request, object, Report], Loaded]
 
 
-def scan_builtin(request: Request, token, report: Report) -> Loaded:
-    """Worker: read both files with the built-in scan (data reads only) and compare. Strings are linked to functions only
-    through `pairing.project_links` (evidence tiers L4 and L5 over the project's matches); with no analysis, no snapshot or
-    an unparsable image every function stays unknown."""
-    from .cli import table_from_source
-    from .delta import compute_delta
-    from .pairing import Image, inspect_image, project_links
-    from .scan import DEFAULT_MAX_ROWS, BuiltinScanSource
+def load_strings(request: Request, token, report: Report) -> Loaded:
+    """Worker: compare captured sources with the same context and anchor rules as the CLI."""
+    from .compose import builtin_source, check_cancelled, compare, load_anchors, stored_sources
+    from .pairing import inspect_image
+    check_cancelled(token)
+    floss = stored_sources(request.source_choice, request.tool_sources)
+    anchors = load_anchors(request.anchors_path)
     sides = (('older', request.older, request.older_sha256), ('newer', request.newer, request.newer_sha256))
-    images: dict[str, Image] = {}
+    images, sources = {}, {}
     for side, path, sha in sides:
-        try:
-            images[side] = inspect_image(path, sha)
-        except StringsError:
-            images[side] = Image()   # the scan below reports the unreadable file; layout-dependent links are unknown
-    tables, partial = {}, []
-    for n, (side, path, sha) in enumerate(sides, 1):
-        report(side, n, 2)
-        pe = images[side].pe
-        source = BuiltinScanSource(path, artifact_sha256=sha, side=side, min_length=request.min_length,
-                                   offset_to_rva=(lambda off, pe=pe: pe.offset_to_rva(off)[0]) if pe else None,
-                                   cancel=token.is_set)
-        tables[side] = table_from_source(source.load())
-        if any(s.state in ('truncated', 'failed') for s in tables[side].basis.stages.values()):
-            partial.append((side, str(DEFAULT_MAX_ROWS)))
-    found = project_links(request.root, request.project, tables, images, [])
-    delta = compute_delta(tables['older'], tables['newer'], pairing=found.pairing, links=found.linked)
-    sources = {'older': 'built-in scan', 'newer': 'built-in scan'}
-    return Loaded(delta, build_rows(delta, sources, unknown_reason=found.reason), {c.id: c for c in delta.changes},
-                  tuple(partial), found.reason)
+        check_cancelled(token)
+        images[side] = inspect_image(path, sha)
+        sources[side] = (floss[side], 'floss') if floss[side] is not None else (
+            builtin_source(path, sha, side, request.min_length, images[side], token), 'builtin-scan')
+    computed = compare(sources, images, request.root, request.project, anchors, token, progress=report)
+    partial = []
+    for side, table in computed.tables.items():
+        if any(s.state in ('truncated', 'failed') for s in table.basis.stages.values()):
+            partial.append((side, str(table.basis.rows_kept)))
+    delta, reason = computed.delta, computed.pairing_reason
+    labels = {side: copy.SOURCE_LABELS[source] for side, source in computed.sources.items()}
+    return Loaded(delta, build_rows(delta, labels, unknown_reason=reason), {c.id: c for c in delta.changes},
+                  tuple(partial), reason)
+
+
+scan_builtin = load_strings  # compatibility name; a default Request still chooses the built-in scan
+
+
+def default_anchor_dialog(parent: QWidget) -> str:
+    return QFileDialog.getOpenFileName(parent, 'Choose advisory anchors', '',
+                                       'JSON files (*.json);;All files (*)')[0]
 
 
 def _cell(value: str, empty: str) -> str:
@@ -148,10 +157,20 @@ class StringsPanel(QWidget):
         super().__init__()
         self.setObjectName('strings.panel')
         self.buttons: dict[str, QPushButton] = {}
+        sources = QHBoxLayout()
+        self.source = self._combo('strings.source', 'Source', tuple(copy.SOURCE_CHOICES.items()))
+        sources.addWidget(self.source)
+        sources.addWidget(self._button('scan', 'Compare strings', 'Compare strings from the chosen sources',
+                                       'strings.run.builtin'))
+        sources.addWidget(self._button('cancel', 'Cancel', 'Cancel the string comparison', 'strings.cancel'))
+        sources.addWidget(self._button('anchors', 'Advisory anchors...', 'Choose an advisory-anchor file',
+                                       'strings.anchors.browse'))
+        self.anchors_label = PlainLabel('No advisory anchors', limit=100)
+        self.anchors_label.setAccessibleName('Advisory anchor file')
+        sources.addWidget(self.anchors_label, 1)
+        sources.addWidget(self._button('clear_anchors', 'Clear anchors', 'Clear the chosen advisory anchors',
+                                       'strings.anchors.clear'))
         top = QHBoxLayout()
-        top.addWidget(self._button('scan', 'Scan both builds', 'Scan both builds with the built-in scan',
-                                   'strings.run.builtin'))
-        top.addWidget(self._button('cancel', 'Cancel', 'Cancel the string scan', 'strings.cancel'))
         self.change = self._combo('strings.filter.change', 'Filter strings by kind of change', CHANGE_FILTERS)
         self.scope = self._combo('strings.filter.scope', 'Choose differences or all strings',
                                  tuple(copy.SCOPES.items()))
@@ -192,6 +211,7 @@ class StringsPanel(QWidget):
         self.pairing.setObjectName('strings.pairing')
         column = QVBoxLayout(self)
         column.setContentsMargins(4, 4, 4, 4)
+        column.addLayout(sources)
         column.addLayout(top)
         column.addWidget(body, 1)
         column.addLayout(actions)
@@ -226,20 +246,25 @@ class StringsPanel(QWidget):
 class StringsController(ControllerBase):
     """Owns the loaded comparison and the requests in flight. Hooks run on the GUI thread."""
 
-    def __init__(self, ctx: PanelContext, *, loader: Loader = scan_builtin,
-                 clock: Callable[[], float] = time.monotonic) -> None:
+    def __init__(self, ctx: PanelContext, *, loader: Loader = load_strings,
+                 clock: Callable[[], float] = time.monotonic,
+                 anchor_dialog: Callable[[QWidget], str] = default_anchor_dialog) -> None:
         register_gui_tips()  # the state buttons use them; the host does this too and it is idempotent
         register_tips(TIPS)
         self.panel = StringsPanel()
-        self.view = StateView('strings', 'Strings', ctx.shell, text_limit=600)
+        self.view = StateView('strings.body', 'Strings', ctx.shell, text_limit=600)
         self.view.set_content(self.panel)
         super().__init__(self.view)
         self.ctx, self.port, self.tasks, self.loader, self.clock = ctx, ctx.project, ctx.tasks, loader, clock
+        self.anchor_dialog, self.anchors_path = anchor_dialog, None
         self.key: ProjectKey | None = None
         self.loaded: Loaded | None = None
         self.loaded_key: ProjectKey | None = None
         self.prepared: FilterResult | None = None
         self.by_id: dict[str, StringRowVM] = {}
+        self._display_table: PreparedTable | None = None
+        self._pending: tuple[Loaded, ProjectKey] | None = None
+        self._view_generation = 0
         self.error: tuple[str, str] | None = None
         self.progress: tuple[str, int] | None = None
         self.started = 0.0
@@ -257,6 +282,9 @@ class StringsController(ControllerBase):
         panel.buttons['copy'].clicked.connect(self.copy_escaped)
         panel.buttons['function'].clicked.connect(self.open_function)
         panel.buttons['hex'].clicked.connect(self.open_hex)
+        panel.buttons['anchors'].clicked.connect(self.choose_anchors)
+        panel.buttons['clear_anchors'].clicked.connect(self.clear_anchors)
+        panel.source.currentIndexChanged.connect(self._inputs_changed)
         for combo in (panel.change, panel.scope):
             combo.currentIndexChanged.connect(lambda _i: self._refilter())
         panel.noise.toggled.connect(lambda _c: self._refilter())
@@ -276,17 +304,21 @@ class StringsController(ControllerBase):
     # ---- host hooks ----------------------------------------------------------------------------------
 
     def project_changed(self, key: ProjectKey | None) -> None:
-        same = (key is not None and self.key is not None and key.identity() == self.key.identity()
-                and self.loaded is not None)
+        same_project = key is not None and self.key is not None and key.identity() == self.key.identity()
+        same = same_project and self.loaded is not None
         self._cancel_all()
+        if not same_project:
+            self.anchors_path = None
+            self.panel.anchors_label.setText('No advisory anchors')
         self.key = key
         self.error, self.progress, self.cancelled = None, None, False
         if same:
-            self.stale = key != self.loaded_key
+            self.stale = self.stale or key != self.loaded_key
         else:
             self.stale = False
             self.loaded = self.loaded_key = self.prepared = None
             self.by_id = {}
+            self._display_table = None
             self.panel.table.set_prepared(prepare_table(SPEC, COLUMNS, ()))
         self._render()
 
@@ -296,6 +328,7 @@ class StringsController(ControllerBase):
 
     def _cancel_all(self) -> None:
         self.generation += 1
+        self._pending = None
         for channel in CHANNELS:
             self.tasks.cancel(channel)
 
@@ -317,20 +350,59 @@ class StringsController(ControllerBase):
 
     # ---- scanning ------------------------------------------------------------------------------------
 
+    def choose_anchors(self) -> None:
+        key = self.key
+        if self.closed or key is None or self.port.key() != key:
+            return
+        path = self.anchor_dialog(self.panel)
+        if path and not self.closed and self.key == key == self.port.key():
+            self.anchors_path = Path(path)
+            self.panel.anchors_label.setText(self.anchors_path.name)
+            self._inputs_changed()
+
+    def clear_anchors(self) -> None:
+        if self.closed or self.anchors_path is None:
+            return
+        self.anchors_path = None
+        self.panel.anchors_label.setText('No advisory anchors')
+        self._inputs_changed()
+
+    def _inputs_changed(self, *_args) -> None:
+        if self.closed:
+            return
+        self._cancel_all()
+        self.progress, self.error, self.cancelled = None, None, False
+        self.stale = self.loaded is not None
+        self._render()
+
     def scan(self) -> None:
         key = self.key
         if key is None or self.closed:
             return
+        self._cancel_all()
+        self.progress = None
+        if self.port.key() != key:
+            self.stale = True
+            return self._render()
         try:
             older, newer, older_sha, newer_sha = self.port.artifact_paths()
         except (OSError, ValueError, LookupError) as exc:
             self.error = ('PT-STR-INPUT', f'the project needs an older and a newer artifact ({type(exc).__name__})')
             return self._render()
+        choice = self.panel.source.currentData()
+        captured = None
+        service = getattr(self.port, 'service', None)
+        if choice != 'builtin' and getattr(service, 'store', None) is not None:
+            from ..intelligence.tools.snapshot import capture_tool_sources
+            captured = capture_tool_sources(service, engines=('floss',))
         request = Request(key, Path(older), Path(newer), older_sha, newer_sha, root=self._root(),
-                          project=self._snapshot())
-        self.generation += 1
+                          project=self._snapshot(), anchors_path=self.anchors_path, source_choice=choice,
+                          tool_sources=captured)
+        if self.port.key() != key:
+            self.stale = True
+            return self._render()
         generation = self.generation
-        self.error, self.cancelled, self.stale = None, False, False
+        self.error, self.cancelled = None, False
         self.progress, self.started = ('older', 1), self.clock()
         self._render()
         loader = self.loader
@@ -350,17 +422,16 @@ class StringsController(ControllerBase):
         reader = getattr(self.port, 'project', None)
         found = reader() if callable(reader) else None
         copier = getattr(found, 'model_copy', None)
-        return copier() if callable(copier) else found
+        return copier(deep=True) if callable(copier) else found
 
     def _root(self) -> Path | None:
         root = getattr(getattr(self.port, 'service', None), 'root', None)
         return Path(root) if root is not None else None
 
     def cancel(self) -> None:
-        if self.progress is None:
+        if self.progress is None and self._pending is None:
             return
-        self.generation += 1
-        self.tasks.cancel('strings-scan')
+        self._cancel_all()
         self.progress, self.cancelled = None, True
         self._render()
 
@@ -381,11 +452,13 @@ class StringsController(ControllerBase):
         if not self._current(generation, request.key):
             return  # a late result of an earlier project, epoch or request never publishes
         self.progress = None
+        if self.port.key() != request.key:
+            self.stale = True
+            return self._render()
         if isinstance(result, tuple):
             self.error = result
             return self._render()
-        self.loaded, self.loaded_key, self.stale = result, request.key, False
-        self.by_id = {row.id: row for row in result.rows}
+        self._pending = (result, request.key)
         self._refilter()
 
     # ---- filtering -----------------------------------------------------------------------------------
@@ -402,28 +475,56 @@ class StringsController(ControllerBase):
     def _refilter(self) -> None:
         if self.closed:
             return
-        loaded = self.loaded
+        loaded, loaded_key = self._pending or (self.loaded, self.loaded_key)
         if loaded is None:
             return self._render()
+        self._view_generation += 1
+        view_generation = self._view_generation
         generation, key, flt, rows = self.generation, self.key, self.current_filter(), loaded.rows
         self.tasks.submit('strings-view', lambda token, _report: prepare_rows(rows, flt, token),
-                          lambda result: self._viewed(generation, key, result),
-                          lambda failure: self._failed(generation, failure))
+                          lambda result: self._viewed(generation, key, view_generation, loaded, loaded_key, result),
+                          lambda failure: self._view_failed(generation, key, view_generation, failure))
+        self._render()
 
-    def _viewed(self, generation: int, key: ProjectKey | None, result: tuple[FilterResult, PreparedTable]) -> None:
-        if not self._current(generation, key):
+    def _view_failed(self, generation, key, view_generation, failure) -> None:
+        if not self._current(generation, key) or view_generation != self._view_generation:
             return
-        self.prepared = result[0]
+        self._pending = None
+        if self.port.key() != key:
+            self.stale = True
+            return self._render()
+        self._failed(generation, failure)
+
+    def _viewed(self, generation: int, key: ProjectKey | None, view_generation: int, loaded: Loaded,
+                loaded_key: ProjectKey | None, result: tuple[FilterResult, PreparedTable]) -> None:
+        if not self._current(generation, key) or view_generation != self._view_generation:
+            return
+        if self.port.key() != key:
+            self._pending = None
+            self.stale = True
+            return self._render()
+        by_id = self.by_id if loaded is self.loaded else {row.id: row for row in loaded.rows}
+        # Model reset signals run synchronously. Until this pointer swap and the matching receipt finish,
+        # _display_current refuses actions instead of pairing a new row with an earlier comparison.
         self.panel.table.set_prepared(result[1])
+        self.loaded, self.loaded_key, self.prepared = loaded, loaded_key, result[0]
+        self.by_id = by_id
+        self._display_table = result[1]
+        if self._pending is not None:
+            self._pending, self.stale = None, False
         self._render()
 
     # ---- selection and actions -----------------------------------------------------------------------
 
     def current_row(self) -> StringRowVM | None:
+        if not self._display_current():
+            return None
         index = self.panel.table.currentIndex()
         return index.data(ROW_ROLE) if index.isValid() else None
 
     def _select(self, row_id: str) -> bool:
+        if not self._display_current():
+            return False
         table = self.panel.table
         view_row = table.table_model.view_row_of(row_id)
         if view_row < 0:
@@ -436,7 +537,7 @@ class StringsController(ControllerBase):
         buttons = self.panel.buttons
         self.panel.detail.setPlainText(self._detail(row) if row else '')
         buttons['copy'].setEnabled(row is not None)
-        buttons['function'].setEnabled(row is not None and row.open_target is not None)
+        buttons['function'].setEnabled(self._current_scan() and row is not None and row.open_target is not None)
         buttons['hex'].setEnabled(self._current_scan() and self._offset(row) is not None)
 
     def _detail(self, row: StringRowVM) -> str:
@@ -458,9 +559,16 @@ class StringsController(ControllerBase):
 
     def _current_scan(self) -> bool:
         """Bytes are opened only for the files that were scanned: the project key must be the one of the scan."""
-        return self.key is not None and self.key == self.loaded_key and not self.stale
+        return (self._display_current() and self.key is not None
+                and self.key == self.loaded_key == self.port.key() and not self.stale)
+
+    def _display_current(self) -> bool:
+        return (not self.closed and self.loaded is not None and self._display_table is not None
+                and self._display_table is self.panel.table.table_model.prepared)
 
     def copy_escaped(self) -> None:
+        if not self._display_current():
+            return
         keys = self.panel.table.selected_keys(CLIPBOARD_ROWS)
         rows = [self.by_id[k] for k in keys if k in self.by_id]
         if rows:
@@ -468,7 +576,7 @@ class StringsController(ControllerBase):
 
     def open_function(self) -> None:
         row = self.current_row()
-        if row is None or row.open_target is None or self.key is None:
+        if row is None or row.open_target is None or not self._current_scan():
             return
         function_id, side = row.open_target
         anchor = AnchorRef('function', function_id, side, label=row.function).pinned(self.key)
@@ -496,6 +604,9 @@ class StringsController(ControllerBase):
             elapsed = f'{max(0, int(self.clock() - self.started))} s'
             found['refreshing' if loaded else 'loading'] = RUNNING.format(side=sanitize_text(side, 20), n=n,
                                                                          elapsed=elapsed)
+        elif self._pending is not None:
+            found['refreshing' if loaded else 'loading'] = (
+                'Preparing the string comparison. Cancel leaves earlier results unchanged.')
         if self.error:
             found['error'] = copy.STATES['failed'].format(code=sanitize_text(self.error[0], 40),
                                                           message=sanitize_text(self.error[1], 200))
@@ -526,10 +637,13 @@ class StringsController(ControllerBase):
         has_content = self.loaded is not None and self.loaded.delta.comparable
         self.view.set_state(StateModel(kind, conditions.get(kind, ''), conditions.get(kind, ''), actions),
                             has_content=has_content)
-        buttons, running = self.panel.buttons, self.progress is not None
-        buttons['scan'].setEnabled(self.key is not None and not running)
-        buttons['scan'].setText('Re-scan both builds' if self.loaded else 'Scan both builds')
+        buttons, running = self.panel.buttons, self.progress is not None or self._pending is not None
+        buttons['scan'].setEnabled(self.key is not None and not running and not self.closed)
+        buttons['scan'].setText('Compare again' if self.loaded else 'Compare strings')
         buttons['cancel'].setEnabled(running)
+        buttons['anchors'].setEnabled(self.key is not None and not self.closed)
+        buttons['clear_anchors'].setEnabled(self.anchors_path is not None and not self.closed)
+        self.panel.source.setEnabled(self.key is not None and not self.closed)
         self.panel.footer.setText(self._footer())
         self.panel.pairing.setText(self._pairing())
         self._selection()

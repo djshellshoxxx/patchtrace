@@ -18,6 +18,8 @@ TYPE_LABELS: dict[str, str] = {'static': 'Static', 'stack': 'Stack', 'tight': 'T
                                'language': 'Language'}
 TYPE_NOUNS: dict[str, str] = {'static': 'Static string', 'stack': 'Stack string', 'tight': 'Tight-loop string',
                               'decoded': 'Decoded string', 'language': 'Language string'}
+SOURCE_CHOICES = {'auto': 'Automatic', 'floss': 'Stored FLOSS', 'builtin': 'Built-in scan'}
+SOURCE_LABELS = {'floss': 'FLOSS', 'builtin-scan': 'built-in scan'}
 CUE_LABELS: dict[str, str] = {
     'message': 'Message', 'format': 'Format specifier', 'path': 'Path', 'registry': 'Registry key', 'url': 'URL',
     'guid': 'GUID', 'api-name': 'API name', 'dynamic-api': 'Dynamic API name', 'dll-name': 'DLL name',
@@ -39,10 +41,11 @@ STATES: dict[str, str] = {
                   'text, compressed or encrypted data) is not covered.',
     'blocked': "These two scans used different settings, so differences would be misleading: {reason}. Re-scan the "
                "older build with the newer build's settings.",
-    'incomplete': "The {side} scan stopped at the {limit} string limit. Added and removed marks are shown as '?' "
+    'incomplete': 'The {side} extraction is incomplete ({limit} rows retained). Differences remain unknown '
                   'because strings may be missing from that side.',
     'failed': 'String extraction stopped: {code}. {message} Earlier results were not changed.',
-    'stale': 'The project changed after these strings were loaded. Reload to see the current results.',
+    'stale': 'The project or comparison inputs changed after these strings were loaded. Compare again to see '
+             'the current results.',
     'floss-missing': 'FLOSS is not set up. You do not need it for plain strings. It is only needed for stack, '
                      'tight and decoded strings.',
     'floss-unsupported': 'This FLOSS build is not supported: {reason}. PatchTrace is tested with FLOSS 3.1.1.',

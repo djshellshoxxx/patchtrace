@@ -1,3 +1,7 @@
+## Pilot final affected qualification (2026-11-27)
+
+Both independently reproduced admission/display-ownership defects are corrected and the implementation is approved at `30ca3f90`. After the common packaging follow-up merge, the complete affected 50-module selection passed **2,070 tests, zero skips**. See `docs/engineering/pilot-recovery-20261127.md` and its retained final command/log. Current-head full application, hosted/native/platform acceptance and guarded merge remain open.
+
 ## Packaged-version gate follow-up (2026-11-27)
 
 The reported stale packaging assertion is repaired and its affected125-test lane passes. Local full-suite execution was terminated by SIGKILL and is not qualified; require fresh current-head Linux/Windows/Qt/package acceptance on PR #369 before guarded merge. See the corresponding docs/qa.md entry.
@@ -1901,3 +1905,54 @@ Owner/branch: `codex/patchtrace-linux-frozen-cli-smoke-20261121`; handoff
 - [x] Obtain independent re-review of the completed-output repair on
   `806ccc4fbe7b26bd854cf64de96bd03bdde36f64`: 40 focused tests passed, zero skips;
   no remaining consumer-scope blocker. Hosted/full/package qualification remains.
+
+## Pilot retained-context continuation — 2026-11-28
+
+- [x] Bound retained advisory sidecar reads and preserve unowned staging entries;
+  red 10 failed/10 passed, green 84 passed.
+- [x] Complete shared current-input freshness across CLI, desktop publication and
+  navigation, and report/2: red 34 failed/10 passed; green 257 passed. Preserve the
+  unsuccessful intermediate source-transfer run and its correction.
+- [x] Complete conservative retained CVRF collection and shared identity with
+  current saved-scope/source admission preserved: red 60 failed/57 passed; focused
+  152 passed; combined affected selection 2,058 passed, no skips; whole-tree Ruff
+  and whitespace clean. Counts overlap.
+- [ ] Obtain independent review and full current-head/native/hosted qualification
+  through the integration owner before a guarded main merge.
+
+Evidence and plan: `docs/engineering/pilot-recovery-20261127.md`.
+
+- [x] Pilot independent-review strict JSON correction: reject duplicate retained
+  object members before semantic interpretation, preserve common storage and
+  evidence; red 6 failed/7 passed, focused green 148 passed.
+- [x] Pilot independent-review desktop correction: bind outgoing navigation to
+  the displayed model/row, refuse missing receipts and pending replacements, and
+  reject late build/row callbacks. Eight failing controls now pass within a
+  130-case focused green selection; whole-tree Ruff and preservation checks pass.
+- [ ] Obtain independent UI re-review and root's full/platform gates before
+  publication. Strict-JSON corrective source has independent approval.
+# Strings composition recovery (2026-11-27, America/Vancouver)
+
+- [x] Share CLI/dock cue, region, pairing and advisory-anchor composition; bounded
+  strict anchor input and cancellation boundaries; 116 focused tests pass.
+- [x] Add explicit dock source/anchor controls using the shared owner-thread tool
+  snapshot, preserving per-side admission and original cache provenance. Keep
+  global capture refusal distinct from per-side fallback; retain empty and
+  incomplete-source semantics. Source changes, repeated project notifications,
+  modal chooser ownership and same-epoch revisions are covered. Final focused
+  lane: 776 passed, no skips; whole-tree Ruff and whitespace clean. Both inspected
+  offscreen font sizes retain unclipped controls. No target/native extractor ran.
+- [x] Repair the independently reproduced displayed-row/backing-comparison
+  mismatch: candidates wait for prepared-table publication, failed/cancelled
+  preparation retains the earlier receipt, and late view/reset actions cannot
+  mix comparisons. Corrected red lane: 11 failed/5 passed; final narrow lane:
+  97 passed, no skips, including the original independent controls unchanged.
+  Whole-tree Ruff and whitespace pass; this overlaps the earlier 776-test lane.
+- [ ] Independently review the completed source; run combined-source, hosted and
+  native Windows/packaged acceptance without treating offscreen controls as native evidence.
+
+
+
+- [x] Strings: independently approve exact display-ownership correction and
+  retain original failures, passing controls and normal/large-font images.
+- [ ] Qualify the published Strings head on full/platform/native gates before merge.

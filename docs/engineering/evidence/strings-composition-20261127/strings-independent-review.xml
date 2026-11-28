@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="6" time="2.033" timestamp="2026-11-27T17:44:57.715070-08:00" hostname="56e89409ebf3"><testcase classname="strings-independent-review" name="test_displayed_row_cannot_use_replacement_offsets_before_model_arrives[pending]" time="0.074"><failure message="AssertionError: ('the displayed 0x640 row navigated using replacement comparison offsets', [('newer', 2384)])&#10;assert [('newer', 2384)] in ([], [('newer', 1600)])&#10; +  where [('newer', 2384)] = &lt;test_ui_strings_panel.FakeNav object at 0x7f4a912b8e00&gt;.offsets">qtbot = &lt;pytestqt.qtbot.QtBot object at 0x7f4a912b8860&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f4a912b8a10&gt;
+completion = 'pending'
+
+    @pytest.mark.parametrize('completion', ['pending', 'failed'])
+    def test_displayed_row_cannot_use_replacement_offsets_before_model_arrives(qtbot, monkeypatch, completion):
+        original = change('independent same value')
+        old = loaded_of(original)
+        replacement = loaded_of(original.model_copy(update={
+            'newer': original.newer.model_copy(update={'offsets': (0x950,)})}))
+        controller, nav, _shell, _port = start(qtbot, loader=lambda *_: old)
+        assert controller._select(original.id)
+        old_row = controller.current_row()
+        assert old_row.newer == '0x640'
+        pending = []
+        submit = controller.tasks.submit
+    
+        def defer(channel, fn, on_result, *args, **kwargs):
+            if channel == 'strings-view':
+                pending.append((fn, on_result, args[0]))
+                return None
+            return submit(channel, fn, on_result, *args, **kwargs)
+    
+        monkeypatch.setattr(controller.tasks, 'submit', defer)
+        choose(controller, 'builtin')  # newly supported explicit input change
+        controller.loader = lambda *_: replacement
+        controller.scan()
+        qtbot.waitUntil(lambda: bool(pending), timeout=5000)
+        if completion == 'failed':
+            pending[0][2](TaskFailure('AuthoredViewFailure'))
+        assert controller.current_row() is old_row
+        controller.open_hex()
+&gt;       assert nav.offsets in ([], [('newer', 0x640)]), (
+            'the displayed 0x640 row navigated using replacement comparison offsets', nav.offsets)
+E       AssertionError: ('the displayed 0x640 row navigated using replacement comparison offsets', [('newer', 2384)])
+E       assert [('newer', 2384)] in ([], [('newer', 1600)])
+E        +  where [('newer', 2384)] = &lt;test_ui_strings_panel.FakeNav object at 0x7f4a912b8e00&gt;.offsets
+
+../strings-independent-review.py:53: AssertionError
+----------------------------- Captured Qt messages -----------------------------
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()</failure></testcase><testcase classname="strings-independent-review" name="test_displayed_row_cannot_use_replacement_offsets_before_model_arrives[failed]" time="0.031"><failure message="AssertionError: ('the displayed 0x640 row navigated using replacement comparison offsets', [('newer', 2384)])&#10;assert [('newer', 2384)] in ([], [('newer', 1600)])&#10; +  where [('newer', 2384)] = &lt;test_ui_strings_panel.FakeNav object at 0x7f4a912a4ef0&gt;.offsets">qtbot = &lt;pytestqt.qtbot.QtBot object at 0x7f4a912bba70&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f4a912bb860&gt;
+completion = 'failed'
+
+    @pytest.mark.parametrize('completion', ['pending', 'failed'])
+    def test_displayed_row_cannot_use_replacement_offsets_before_model_arrives(qtbot, monkeypatch, completion):
+        original = change('independent same value')
+        old = loaded_of(original)
+        replacement = loaded_of(original.model_copy(update={
+            'newer': original.newer.model_copy(update={'offsets': (0x950,)})}))
+        controller, nav, _shell, _port = start(qtbot, loader=lambda *_: old)
+        assert controller._select(original.id)
+        old_row = controller.current_row()
+        assert old_row.newer == '0x640'
+        pending = []
+        submit = controller.tasks.submit
+    
+        def defer(channel, fn, on_result, *args, **kwargs):
+            if channel == 'strings-view':
+                pending.append((fn, on_result, args[0]))
+                return None
+            return submit(channel, fn, on_result, *args, **kwargs)
+    
+        monkeypatch.setattr(controller.tasks, 'submit', defer)
+        choose(controller, 'builtin')  # newly supported explicit input change
+        controller.loader = lambda *_: replacement
+        controller.scan()
+        qtbot.waitUntil(lambda: bool(pending), timeout=5000)
+        if completion == 'failed':
+            pending[0][2](TaskFailure('AuthoredViewFailure'))
+        assert controller.current_row() is old_row
+        controller.open_hex()
+&gt;       assert nav.offsets in ([], [('newer', 0x640)]), (
+            'the displayed 0x640 row navigated using replacement comparison offsets', nav.offsets)
+E       AssertionError: ('the displayed 0x640 row navigated using replacement comparison offsets', [('newer', 2384)])
+E       assert [('newer', 2384)] in ([], [('newer', 1600)])
+E        +  where [('newer', 2384)] = &lt;test_ui_strings_panel.FakeNav object at 0x7f4a912a4ef0&gt;.offsets
+
+../strings-independent-review.py:53: AssertionError
+----------------------------- Captured Qt messages -----------------------------
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()</failure></testcase><testcase classname="strings-independent-review" name="test_real_cli_and_default_mainwindow_have_identical_comparison[auto]" time="0.895" /><testcase classname="strings-independent-review" name="test_real_cli_and_default_mainwindow_have_identical_comparison[floss]" time="0.250" /><testcase classname="strings-independent-review" name="test_real_cli_and_default_mainwindow_have_identical_comparison[builtin]" time="0.222" /><testcase classname="strings-independent-review" name="test_captured_tool_values_remain_usable_after_owner_is_closed" time="0.009" /></testsuite></testsuites>

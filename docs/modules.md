@@ -1,5 +1,24 @@
 # Module index
 
+## Production stored-source Search recovery (2026-11-28)
+
+Plan and evidence: `engineering/search-stored-evidence-recovery-20261128.md`.
+
+| Module | Responsibility | Verification seam |
+|---|---|---|
+| `intelligence/tools/snapshot.py` | Bounded owner-thread row/sidecar capture, current stored-tool admission and independent source values shared by Search and Strings | Authored real SQLite records; quota, identity, strict JSON, cache-origin and held-file controls |
+| `search/wiring.py` | Bind current tool/advisory/CVE source ports to normal CLI and desktop search without passing stores to workers | CLI/build/coverage and owner-thread Qt integration, unavailable coverage and freshness controls |
+
+## Pilot retained-context recovery (2026-11-28)
+
+Current integration plan and evidence: `engineering/pilot-recovery-20261127.md`.
+
+| Module | Responsibility | Current qualification |
+|---|---|---|
+| `intelligence/storage.py`, `pilot/store.py` | Bounded retained advisory sidecar reads and cleanup only after exclusive staging creation; preserve current cache and project ownership semantics | 84 focused storage/durability checks passed; full/native integration gates pending |
+| `pilot/current_inputs.py` | Immutable owner-thread capture of project revision, checked evidence identities and local rule versions, shared by CLI, desktop and report readers | 257 focused freshness/CLI/desktop/store/report checks and the combined 2,058-case selection passed; retained-context identity is shared with collection |
+| `pilot/sources/kb_context.py` | Bounded retained CVRF context admission and CSAF-first composition, exact field references and shared freshness identity | 152 context/key controls and the combined 2,058-case selection passed; existing KB context/saved-scope contracts remain authoritative; independent/platform gates pending |
+
 | Module | Responsibility | Verification seam |
 |---|---|---|
 | `tools/frozen_smoke.py` packaged version acceptance | Reuse the bounded build-record checker after archive extraction or installation; `--version-only` runs with stdlib and `-S`, reads and rechecks the package record, and keeps host Python paths out of the executable environment | `test_frozen_version_smoke.py`, `test_package_buildinfo.py`, `test_windows_downloaded_artifacts.py`; native downloaded Windows/Linux execution remains an exact-source hosted gate |
@@ -1191,7 +1210,25 @@ Calls panel (id graph): `callgraph/panel.py` (PanelSpec), `panel_qt.py` (widgets
 
 ### [WB3-S7b:strings-panel]
 
-`strings/panel.py` declares the Strings `PanelSpec`; `strings/qt_panel.py` is the Qt controller (StateView states, VirtualTable, TaskRunner channels `strings-scan` and `strings-view`, generation and project-key guard). The default loader is the built-in scan with no function pairing; FLOSS, probe, export, rescan and settings are not built yet.
+`strings/panel.py` declares the Strings `PanelSpec`; `strings/qt_panel.py` is the Qt controller (StateView states,
+VirtualTable, TaskRunner channels `strings-scan` and `strings-view`, generation and project-key guard). The built-in
+loader uses the shared CLI comparison and current function-pairing adapter. Stored-source controls are covered by
+the composition amendment below; tool setup/probe, export UI, native tool reruns and settings remain separate
+capabilities.
+
+### [WB3:strings-composition] 2026-11-27
+
+`strings/compose.py` owns the shared Qt-free CLI/dock comparison, source-table conversion and bounded explicit
+anchor-file reader. Current pairing, basis, cues, section regions, redaction and anchor joins keep their existing
+owners. Stored FLOSS selection consumes the shared owner-thread tool snapshot; no competing extractor or store
+reader is introduced. The dock carries captured evidence and a deep project snapshot to the comparison worker.
+Explicit automatic/FLOSS/built-in and local-anchor controls preserve accepted rows and invalidate superseded
+requests; the file chooser, task results and navigation stay bound to the current project key.
+The displayed comparison, row lookup and prepared table publish together after view preparation; a pending or
+failed replacement retains the earlier display receipt for details, copying and navigation.
+Contract and qualification scope: `docs/specs/panels/strings-composition.md`. Focused tests:
+`test_strings_composition.py`, `test_ui_strings_composition.py`, `test_ui_strings_display_ownership.py` and
+existing source-admission/publication lanes.
 
 ### [CAP-6:capabilities-panel]
 | Part | Files | Notes |

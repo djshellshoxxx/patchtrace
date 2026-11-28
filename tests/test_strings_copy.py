@@ -15,6 +15,7 @@ from patchtrace.tooltips import TooltipEntry
 
 EXPECTED_TIPS = (
     ['strings.dock', 'strings.action', 'strings.table', 'strings.export']
+    + ['strings.source', 'strings.anchors.browse', 'strings.anchors.clear']
     + [f'strings.col.{k}' for k in 'change string type older newer function cues source'.split()]
     + [f'strings.filter.{k}' for k in 'change type side cue minlen text linked scope noise'.split()]
     + [f'strings.run.{k}' for k in ('builtin', 'floss', 'emulation')]
@@ -33,7 +34,7 @@ def assert_no_banned(text: str) -> None:
 def all_visible_text() -> list[str]:
     texts = [*copy.CHANGE_LABELS.values(), *copy.TYPE_LABELS.values(), *copy.TYPE_NOUNS.values(),
              *copy.CUE_LABELS.values(), *copy.PAIR_LABELS.values(), *copy.STATES.values(), *copy.ACTIONS.values(),
-             *copy.SCOPES.values()]
+             *copy.SCOPES.values(), *copy.SOURCE_CHOICES.values(), *copy.SOURCE_LABELS.values()]
     texts += [part for pair in copy.TEACH.values() for part in pair]
     texts += [part for entry in ENTRIES.values() for part in entry]
     return texts

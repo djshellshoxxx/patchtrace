@@ -4,9 +4,11 @@ project for the tests that go through the project database. Synthetic data only;
 from __future__ import annotations
 
 import dataclasses
+import threading
 from datetime import UTC, datetime
 from types import SimpleNamespace
 
+from pilot_freshness_support import add_advisory
 from pilot_localize_support import (
     CVE_A,
     CVE_B,
@@ -20,6 +22,7 @@ from pilot_localize_support import (
     sha,
 )
 
+from patchtrace.enrichment.storage import EnrichmentStore
 from patchtrace.gui.anchors import NavResult
 from patchtrace.gui.projection import ProjectKey
 from patchtrace.gui.qt.tasks import TaskRunner
@@ -141,7 +144,11 @@ def no_matches(_root, _snapshot, _token):
 
 
 def real_assessment(service, name: str = 'read_item') -> tuple[c.PilotAssessment, c.PilotConfig]:
-    """A localized assessment of the sample project that its store accepts (its pair, run and raw output)."""
+    """One authored code lead with a real imported advisory, tied to the sample's pair/run/revision."""
+    from patchtrace.pilot.collect import collect
+
+    add_advisory(service, cves=(CVE_A,))
+    collected = collect(service, EnrichmentStore(service.store), cancel=threading.Event())
     sides = {a.side: a.sha256 for a in service.project.artifacts}
     last = service.project.runs[-1]
     cand = c.Candidate(candidate_key=keys.candidate_key(sides['older'], sides['newer'], [0x1000], [0x1080]),
@@ -151,5 +158,7 @@ def real_assessment(service, name: str = 'read_item') -> tuple[c.PilotAssessment
                    cves={CVE_A: (hypothesis('R-MEMORY-READ', 'CWE-125'),)}, entries={CVE_A: (advisory_entry(CVE_A),)})
     inputs = dataclasses.replace(inputs, project_id=service.project.id, revision=service.project.revision,
                                  older_sha256=sides['older'], newer_sha256=sides['newer'],
-                                 ghidriff_run_id=last.id, raw_sha256=last.raw_sha256)
+                                 ghidriff_run_id=last.id, raw_sha256=last.raw_sha256,
+                                 advisory=collected.advisory, contexts=collected.contexts,
+                                 advisory_observations=collected.advisory_observations)
     return run(inputs, clock=lambda: datetime(2099, 1, 1, tzinfo=UTC)), keys.default_config()

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="5" time="0.890" timestamp="2026-11-27T17:12:46.816917-08:00" hostname="56e89409ebf3"><testcase classname="tests.test_strings_composition" name="test_builtin_dock_delta_equals_cli_including_real_imports_and_regions" time="0.400"><failure message="StopIteration">service = &lt;patchtrace.service.ProjectService object at 0x7f309ff19af0&gt;
+
+    def test_builtin_dock_delta_equals_cli_including_real_imports_and_regions(service):
+        from patchtrace.strings.qt_panel import scan_builtin
+        expected = cli_result(service)
+        actual = scan_builtin(request_for(service), threading.Event(), lambda *_: None)
+&gt;       api = next(change for change in expected.delta.changes if change.display == 'OutputDebugStringA')
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       StopIteration
+
+tests/test_strings_composition.py:46: StopIteration</failure></testcase><testcase classname="tests.test_strings_composition" name="test_explicit_anchor_file_has_identical_dock_cues_and_hits" time="0.007"><failure message="TypeError: Request.__init__() got an unexpected keyword argument 'anchors_path'">service = &lt;patchtrace.service.ProjectService object at 0x7f309ff1ee70&gt;
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-98/test_explicit_anchor_file_has_0')
+
+    def test_explicit_anchor_file_has_identical_dock_cues_and_hits(service, tmp_path):
+        from patchtrace.strings.qt_panel import scan_builtin
+        anchor = Anchor(anchor_id=hashlib.sha256(b'anchor').hexdigest(), kind='string', value='exceeds length',
+                        source='csaf-title', quality='explicit', label='authored advisory phrase')
+        path = tmp_path / 'anchors.json'
+        path.write_text(AnchorSet(cve='CVE-2026-0001', anchors=(anchor,)).model_dump_json(), encoding='utf-8')
+        expected = cli_result(service, path)
+&gt;       actual = scan_builtin(request_for(service, anchors_path=path), threading.Event(), lambda *_: None)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_strings_composition.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+service = &lt;patchtrace.service.ProjectService object at 0x7f309ff1ee70&gt;
+kwargs = {'anchors_path': PosixPath('/tmp/pytest-of-agent/pytest-98/test_explicit_anchor_file_has_0/anchors.json')}
+
+    def request_for(service, **kwargs):
+        from patchtrace.strings.qt_panel import Request
+        artifacts = {artifact.side: artifact for artifact in service.project.artifacts}
+        key = ProjectKey(str(service.root), service.project.id, service.project.revision, None,
+                         artifacts['older'].sha256, artifacts['newer'].sha256)
+&gt;       return Request(key, *(service.root / artifacts[side].relative_path for side in ('older', 'newer')),
+                       *(artifacts[side].sha256 for side in ('older', 'newer')),
+                       root=service.root, project=service.project.model_copy(deep=True), **kwargs)
+E       TypeError: Request.__init__() got an unexpected keyword argument 'anchors_path'
+
+tests/test_strings_composition.py:33: TypeError</failure></testcase><testcase classname="tests.test_strings_composition" name="test_pre_cancelled_dock_does_not_inspect_artifacts" time="0.003"><failure message="AssertionError: cancelled comparison opened an artifact">service = &lt;patchtrace.service.ProjectService object at 0x7f309f96ea20&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f309f96f620&gt;
+
+    def test_pre_cancelled_dock_does_not_inspect_artifacts(service, monkeypatch):
+        from patchtrace.strings import pairing
+        from patchtrace.strings.qt_panel import scan_builtin
+    
+        def unexpected(*_args, **_kwargs):
+            raise AssertionError('cancelled comparison opened an artifact')
+    
+        monkeypatch.setattr(pairing, 'inspect_image', unexpected)
+        cancel = threading.Event()
+        cancel.set()
+        with pytest.raises(StringsError) as caught:
+&gt;           scan_builtin(request_for(service), cancel, lambda *_: None)
+
+tests/test_strings_composition.py:78: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/patchtrace/strings/qt_panel.py:101: in scan_builtin
+    images[side] = inspect_image(path, sha)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+_args = (PosixPath('/tmp/pytest-of-agent/pytest-98/test_pre_cancelled_dock_does_n0/case/artifacts/11ba9507b9f0903bdce20302dc4e39950eb83db5d62b505ae75068c4e97c2fe2.bin'), '11ba9507b9f0903bdce20302dc4e39950eb83db5d62b505ae75068c4e97c2fe2')
+_kwargs = {}
+
+    def unexpected(*_args, **_kwargs):
+&gt;       raise AssertionError('cancelled comparison opened an artifact')
+E       AssertionError: cancelled comparison opened an artifact
+
+tests/test_strings_composition.py:72: AssertionError</failure></testcase><testcase classname="tests.test_strings_composition" name="test_anchor_reader_refuses_non_strict_json[duplicate]" time="0.006"><failure message="Failed: DID NOT RAISE StringsError">service = &lt;patchtrace.service.ProjectService object at 0x7f309f96fa10&gt;
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-98/test_anchor_reader_refuses_non0')
+payload = '{"cve":"CVE-2026-0001","cve":"CVE-2026-0002"}'
+
+    @pytest.mark.parametrize('payload', [
+        '{"cve":"CVE-2026-0001","cve":"CVE-2026-0002"}',
+        '{"cve":"CVE-2026-0001","unknown":NaN}',
+    ], ids=['duplicate', 'nonfinite'])
+    def test_anchor_reader_refuses_non_strict_json(service, tmp_path, payload):
+        path = tmp_path / 'anchors.json'
+        path.write_text(payload, encoding='utf-8')
+&gt;       with pytest.raises(StringsError) as caught:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE StringsError
+
+tests/test_strings_composition.py:89: Failed</failure></testcase><testcase classname="tests.test_strings_composition" name="test_anchor_reader_refuses_non_strict_json[nonfinite]" time="0.004" /></testsuite></testsuites>

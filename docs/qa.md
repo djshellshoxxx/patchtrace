@@ -1,3 +1,7 @@
+## Pilot final affected qualification (2026-11-27)
+
+Both independently reproduced admission/display-ownership defects are corrected and the implementation is approved at `30ca3f90`. After the common packaging follow-up merge, the complete affected 50-module selection passed **2,070 tests, zero skips**. See `docs/engineering/pilot-recovery-20261127.md` and its retained final command/log. Current-head full application, hosted/native/platform acceptance and guarded merge remain open.
+
 ## Packaged-version qualification correction (2026-11-27)
 
 The full local offscreen run at `aa8967e895b88a553df4fb14f7429ed64cca0db6` ended with pytest return code `-9` (SIGKILL) after 681.821 seconds and 5,147 reported cases. Its signal origin is unestablished; this is an incomplete gate, not a full-suite pass. The one reported failure was reproduced in isolation: `test_full_linux_frozen_smoke_preserves_both_qt_modes` expected an obsolete literal call spelling after the CLI acquired `--version-only`.
@@ -2556,3 +2560,118 @@ filter cases with zero skips in 3.14 s, plus focused Ruff and the full feature
 whitespace check. The reviewer closed the output-admission finding with no
 remaining consumer-scope blocker. Exact-head hosted/full/package qualification
 remains pending; the retained producer remains a separate scope.
+
+## Pilot storage recovery — 2026-11-28
+
+The isolated Pilot continuation established 10 failed/10 passed authored storage
+controls before code changes, then 84 passing focused/adjacent controls after
+bounded advisory reads and successful-creation staging ownership. See
+`engineering/pilot-recovery-20261127.md` for source, commands and remaining gates.
+No live-provider, native Windows or target-execution claim is made.
+
+## Pilot current-input freshness recovery — 2026-11-28
+
+The new current-store regressions failed 34 cases and passed 10 on storage-slice
+source `c2cb06de23d48ba0c7c9973ed3541b62ada6e7cc`. Shared owner-thread freshness now
+checks production reads/publication, CLI history, desktop action-time navigation
+and report/2 omissions. An incomplete source transfer initially omitted the
+unchanged desktop rendering method (58 failed/199 passed); restoring that method
+exactly resolved the integration failure. The complete focused selection then
+passed 257 cases with no skips in 32.43 s. Ruff and whitespace passed. Logs and
+commands are recorded in `engineering/pilot-recovery-20261127.md`; the failed
+intermediate run is preserved. Retained CVRF integration and full/platform gates
+remain pending.
+
+## Pilot retained CVRF integration — 2026-11-28
+
+Spec-first context/current-input/port controls produced 60 failures and 57 passes
+on `9c187dd9c1fb91ecd5f53e0c969839f644ee62e5`, including the real authored KB route
+returning no advisory and stale retained context remaining current. The final
+reviewed donor bridge was selectively composed with current ownership, saved-scope
+and source-admission seams. The focused retained-context/key selection passed
+152 cases, including all additional metadata-byte and SQLite storage-class guards.
+The complete affected Pilot/Leads/report/advisory/KB contract selection then passed
+2,058 cases, no skips, in 110.45 s. Whole-tree Ruff and whitespace passed. Counts
+overlap earlier slices. Existing shared storage/admission and newer CSAF transport
+remain unchanged. Evidence and commands: `engineering/pilot-recovery-20261127.md`.
+Independent review and full/native/hosted acceptance remain open with the integration
+owner; no live source retrieval, target execution or remote writes were performed.
+
+## Pilot review correction: retained JSON — 2026-11-27 America/Vancouver
+
+Independent review of `f7337f5f5cbb6f27bddbd8d7756f0381d3f526cb` found duplicate
+JSON members accepted by permissive row/model decoding. The unchanged reviewer
+controls plus maintained root/nested/escaped-member controls produced 6 failures
+and 7 passes before the bridge began strict validation of its original bounded
+body. The focused retained-context/current-input/report selection then passed
+148 tests, no skips, in 13.69 s; targeted Ruff and whitespace passed. Existing
+shared enrichment storage is unchanged; refusal preserves original row bytes and
+checksum. Evidence is recorded in `engineering/pilot-recovery-20261127.md`.
+The independent asynchronous desktop model/receipt finding remains open and
+publication is held until its correction and re-review.
+
+## Pilot review correction: displayed model ownership — 2026-11-27 America/Vancouver
+
+The independent deferred-build regression and maintained action/receipt/late-row
+controls failed seven cases on `fe36e09fe5010ac4ac49268f67f511864faa71b8`; a separate
+late-build-after-failed-reload control also failed. The controller now binds
+navigation to the displayed assessment and its loaded receipt, refuses unmatched
+or unavailable ownership, and drops callbacks belonging to earlier views. The
+fresh replacement receipt stays current, copying remains available, and navigation
+resumes when its model arrives. The focused UI and current-input suites passed
+130 tests, no skips, in 17.00 s. Whole-tree Ruff, whitespace and seven preserved
+common-module checks passed. Full commands and raw log names are recorded in
+`engineering/pilot-recovery-20261127.md`. Independent UI re-review and root's
+full/platform gates remain pending; strict JSON has independent approval.
+# Strings composition recovery (2026-11-27, America/Vancouver)
+
+Shared CLI/dock context slice: corrected red baseline 4 failed/1 passed; final
+focused suite 116 passed with no skips, plus focused Ruff and whitespace checks.
+Synthetic PE bytes and in-process scans only. The initial unchanged-import fixture
+assumption and corrected baseline are recorded in
+[`engineering/strings-composition-recovery-20261128.md`](engineering/strings-composition-recovery-20261128.md).
+Stored-source UI integration is complete: explicit automatic/FLOSS/built-in
+selection, bounded owner-thread capture, original cache provenance, strict local
+anchor input and source/anchor supersession guards. Genuine red controls exposed
+same-project notifications clearing input staleness and modal choices returning
+after project switch/shutdown; both are fixed. The first broad lane was 772
+passed/1 stale tooltip-inventory assertion. Its additive correction preserves
+every existing help assertion; the final focused lane passes **776 tests, no
+skips**, in 154.76 seconds. Whole-tree Ruff and whitespace checks pass.
+
+Actual 1100 by 650 offscreen renders at 9-point and 13.5-point fonts show the new
+controls without clipping. The existing non-focusable table-header audit exception
+remains; no new exception was added. The engineering record distinguishes runtime
+regressions from corrected test-authoring errors and retains all raw receipt names.
+Independent exact-source review, combined-source/hosted tests and native Windows,
+packaged GUI, assistive-technology and real FLOSS gates remain separate. No target
+or native extractor was executed; existing tool-run tests use authored fake tools.
+
+### Strings displayed-receipt correction
+
+Independent review of `f8f169f6` reproduced two failures: pending or failed view
+preparation could leave an earlier visible offset backed by a replacement
+comparison. The controller now keeps a candidate separate until its filtered
+table is ready, publishes the displayed receipt together, and rejects stale view
+arrivals or mismatched synchronous reset actions. Earlier details, copy, footer
+and navigation data survive preparation failure/cancellation.
+
+The corrected authored red baseline was 11 failed/5 passed; the engineering
+record distinguishes the initial cancel-token/copy fixture mistakes and the later
+implementation-neutral reset assertion from product findings. The final narrow
+selection, including the original six independent controls unchanged, passes
+**97 tests, no skips** (JUnit 9.694 s). Whole-tree Ruff and whitespace checks pass.
+This overlaps the earlier 776-test selection and does not requalify that complete
+lane at the corrective source. Independent exact-source re-review and root's
+combined-source/hosted/native gates remain pending.
+
+
+
+### Strings corrective source independently approved — November 27, 2026
+
+Exact runtime `ea40cb5d` passed 11 independent publication/cancellation controls,
+10 maintained display controls and 118 adjacent controls. Original failing
+receipts and fixture errors remain retained. The author passed 97 corrective
+tests; its earlier 776-test lane predates the display correction. See
+`engineering/strings-composition-recovery-20261128.md` and its evidence index.
+Required Ruff/whitespace pass; native/full hosted gates remain pending.
