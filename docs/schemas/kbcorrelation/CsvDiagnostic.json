@@ -1,0 +1,104 @@
+{
+  "$defs": {
+    "CsvRecordRef": {
+      "additionalProperties": false,
+      "properties": {
+        "line_end": {
+          "maximum": 16777217,
+          "minimum": 1,
+          "title": "Line End",
+          "type": "integer"
+        },
+        "line_start": {
+          "maximum": 16777217,
+          "minimum": 1,
+          "title": "Line Start",
+          "type": "integer"
+        },
+        "logical_record": {
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Logical Record",
+          "type": "integer"
+        },
+        "raw_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Raw Sha256",
+          "type": "string"
+        },
+        "section_index": {
+          "exclusiveMaximum": 1000,
+          "minimum": 0,
+          "title": "Section Index",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "raw_sha256",
+        "logical_record",
+        "line_start",
+        "line_end",
+        "section_index"
+      ],
+      "title": "CsvRecordRef",
+      "type": "object"
+    }
+  },
+  "$id": "https://patchtrace.local/schemas/kbcorrelation/1/CsvDiagnostic.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "code": {
+      "enum": [
+        "UNKNOWN_ARCHITECTURE",
+        "ARCHITECTURE_CONFLICT",
+        "UNKNOWN_VERSION",
+        "INVALID_SIZE",
+        "INVALID_FILENAME",
+        "COLUMN_COUNT",
+        "PRODUCT_CONFLICT",
+        "RELEASE_CONFLICT",
+        "BUILD_CONFLICT",
+        "INVALID_METADATA",
+        "CONFLICTING_METADATA",
+        "UNKNOWN_SECTION",
+        "RESULT_LIMIT",
+        "RECORD_LIMIT"
+      ],
+      "title": "Code",
+      "type": "string"
+    },
+    "level": {
+      "enum": [
+        "warning",
+        "error"
+      ],
+      "title": "Level",
+      "type": "string"
+    },
+    "message": {
+      "maxLength": 500,
+      "minLength": 1,
+      "title": "Message",
+      "type": "string"
+    },
+    "reference": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CsvRecordRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "code",
+    "message",
+    "level"
+  ],
+  "title": "CsvDiagnostic",
+  "type": "object"
+}

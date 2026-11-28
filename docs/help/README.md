@@ -98,6 +98,7 @@ Every verb is also listed by `patchtrace --help`. Each page gives the verb's sub
 - [`fabric`](65-cli-fabric.md) - read stored anchors
 - [`graph`](66-cli-graph.md) - call-graph explorer over stored call lists
 - [`kb`](67-cli-kb.md) - KB and CVE correlation
+- [KB file inventories](kb-file-inventory.md) - saved CSV, source pages, explicit filename selection and support links
 - [`kev`](68-cli-kev.md) - CISA KEV catalog
 - [`panels`](69-cli-panels.md) - list and check the panel manifest
 - [`pilot`](70-cli-pilot.md) - ordered leads for changed pairs

@@ -48,6 +48,10 @@ class ProjectPort(Protocol):
         """Validate project/pair ownership and exclusively publish bounded acquisition evidence."""
         ...
 
+    def validate_acquisition_source(self, body: bytes, *, project_id: str | None = None) -> None:
+        """Verify retained source and any existing project owner before creating or resuming an acquisition."""
+        ...
+
 
 @runtime_checkable
 class EvidencePort(Protocol):

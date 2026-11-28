@@ -1,3 +1,21 @@
+## November 27 complete retained Winbindex replay
+
+- [x] Bind complete original bytes, resolver arguments and endpoint membership.
+- [x] Retain immutable project/workspace source before project and journal changes.
+- [x] Add offline replay, backup recovery and explicit legacy/future-version handling.
+- [x] Complete independent source review and inventory integration: 2,408 passes.
+- [ ] Qualify the exact publication head with hosted full/native/package gates.
+
+[Source-specific plan and limits](../docs/engineering/winbindex-replay-recovery-20261127.md).
+
+## PW-01 full-application gate attempt (2026-11-27)
+
+The clean integrated inventory source reached 41% of full offscreen pytest before SIGKILL (-9), after 930.203 seconds. No failure marker was reported before termination; no final summary exists. The signal origin is unestablished and this gate remains incomplete. The earlier attempt hit ENOSPC in its verification harness. Exact source/command/progress/memory evidence is retained in `docs/engineering/evidence/inventory-recovery-20261127/`; see the full explanation in `docs/engineering/inventory-recovery-20261127.md`. Current-head hosted/native qualification is still required.
+
+## PW-01 feature recovery (2026-11-27)
+
+See `docs/engineering/inventory-recovery-20261127.md` for the concrete incremental plan, retained donor identities, observed failures and current evidence. All four implementation slices are complete; combined KB/inventory verification passed 2,767 tests with four skips, and independent review found no remaining blocker after the fixed-byte metadata correction. Full-suite and current-head hosted/native acceptance remain pending. Do not treat this entry as completion or release approval.
+
 ## Packaged-version gate follow-up (2026-11-27)
 
 The reported stale packaging assertion is repaired and its affected125-test lane passes. Local full-suite execution was terminated by SIGKILL and is not qualified; require fresh current-head Linux/Windows/Qt/package acceptance on PR #369 before guarded merge. See the corresponding docs/qa.md entry.

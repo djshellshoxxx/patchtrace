@@ -20,6 +20,13 @@ def register(sub) -> None:
                          help='the hosts of the printed plan, exactly')
     acquire.add_argument('--consent-plan', default='', metavar='SHA', help='the plan_sha of the printed plan')
     acquire.add_argument('--offline', action='store_true', help='never fetch (any consent flag is then refused)')
+    acquisition = sub.add_parser('acquisition', help='inspect retained acquisition evidence offline')
+    actions = acquisition.add_subparsers(dest='acquisition_action', required=True)
+    replay = add_common(actions.add_parser('replay', help='reproduce the original Winbindex resolution offline',
+                                          description='Replay a retained acquisition offline from project-local '
+                                          'source bytes; no network or target execution.'))
+    replay.add_argument('--project', required=True, metavar='DIR', help='project containing retained acquisition evidence')
+    replay.add_argument('--evidence', required=True, metavar='SHA', help='complete acquisition evidence ID')
 
 
 def cmd_acquire(args, context, out) -> int:
@@ -29,4 +36,9 @@ def cmd_acquire(args, context, out) -> int:
         consent_hosts=hosts, consent_plan=args.consent_plan, offline=args.offline))
 
 
-HANDLERS = {'acquire': cmd_acquire}
+def cmd_acquisition(args, context, out) -> int:
+    return present(out, 'kb acquisition replay', args,
+                   context.service(args).replay_acquisition(args.project, args.evidence))
+
+
+HANDLERS = {'acquire': cmd_acquire, 'acquisition': cmd_acquisition}

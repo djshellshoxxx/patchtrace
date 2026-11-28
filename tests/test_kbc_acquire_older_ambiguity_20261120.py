@@ -71,6 +71,9 @@ def test_acquire_preview_does_not_plan_or_fetch_when_older_source_ambiguous(read
         return [competing, *rows]
 
     monkeypatch.setattr(wiring.WorkspaceFileIndex, 'rows_for', with_conflicting_old_body)
+    # This port supplies normalized mappings only; raw-backed selection now retains
+    # the actual predecessor and must not reread this independent mapping surface.
+    monkeypatch.setattr(wiring.WorkspaceFileIndex, 'capture', None)
     code, document, _stderr = kb('acquire', investigation, '--project', str(destination), *flags)
     assert code == 2 and 'PT-KBC-INPUT' in document['error']
     assert server.calls == [] and not destination.exists()

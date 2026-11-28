@@ -526,8 +526,10 @@ K4a notes: `kbcorrelation/cli.py` gained `engine=` and `kev=` ports on `main`/`C
 
 | Module | Responsibility | Depends on | Tests |
 |---|---|---|---|
-| `kbcorrelation/acquisition_evidence.py` | Strict, bounded `AcquisitionEvidence` snapshot: full index proposal/window, two normalized delivery rows and entry hashes, v2 consent digest, conservative verified manual pair and download receipts; content identity and attachment ownership validation. No network or file access. | kbcorrelation contracts | `test_kbc_acquisition_evidence.py`, generated schema controls |
-| `kbcorrelation/{acquire,service,store,recovery,ports,wiring}.py` | Freeze approved source metadata before staging; carry optional evidence through existing two-phase attachment, immutable `kb/acquisitions/<id>.json` and `kb-acquisition:<id>` row; repair checks the journal's operation/content identity, backup uses existing `kb/` inclusion. `RealProjectPort.write_acquisition_sidecar` binds the owned publisher and validates project/artifact ownership. Legacy imports and journals remain valid. | acquisition ports, project enrichment port, owned_publication (wiring only) | `test_kbc_acquisition_evidence.py`, acquire CLI, pair binding, recovery |
+| `kbcorrelation/acquisition_evidence.py` | Strict, bounded `AcquisitionEvidence`: full proposal/window, two delivery rows and entry hashes, conservative inspected pair and receipts; v1 normalized evidence/v2 consent stay byte-compatible, while v2 raw-backed evidence/v3 consent also bind complete index replay. Content and attachment ownership validation; no network/file access. | kbcorrelation contracts, index_replay | `test_kbc_acquisition_evidence.py`, `test_kbc_raw_index_acquisition.py`, generated schema controls |
+| `kbcorrelation/index_replay.py` | Strict complete-index reference, immutable captured rows, exact resolver endpoint membership and replay bindings; preserves raw SHA/length, parser losses and full input/result digests independently of normalized acquisition metadata. Pure, no network/filesystem. | contracts, lineage, resolver | `test_kbc_index_replay.py`, raw replay integration controls |
+| `kbcorrelation/cli_acquire.py`, `KbService.replay_acquisition`, `RealProjectPort.replay_acquisition` | `kb acquisition replay --project DIR --evidence SHA`: owner-checked, bounded project-local source replay; reports reproduction, unavailable historical capability, missing/damaged input or unsupported processing versions. No workspace reread, network, target execution or evidence rewrite. | existing CLI/service/project ports, index_replay | `test_kbc_acquisition_replay_cli.py` |
+| `kbcorrelation/{acquire,service,store,recovery,ports,wiring}.py` | Capture one held index for resolution/delivery, retain its approved bytes before staging and recheck before project creation. Carry optional evidence through existing two-phase attachment, immutable `kb/acquisitions/<id>.json`, separate `kb/winbindex/<sha>.bin`, and `kb-acquisition:<id>` row. Repair binds the journal identity and reads retained objects; existing `kb/` backup inclusion preserves replay. Owned publication/reads and project/artifact checks stay in `RealProjectPort`; legacy imports/journals remain valid. | acquisition ports, project enrichment port, owned_publication (wiring only) | `test_kbc_acquisition_evidence.py`, `test_kbc_raw_index_acquisition.py`, acquire CLI, pair binding, recovery |
 
 2026-11-18 certainty update: selected-machine timelines use valid UTC chronology;
 equal instants require stated builds from the same numeric family. Unordered
@@ -1473,3 +1475,15 @@ extras, with ordinary dependency resolution and wheel hashes. Verification
 commands, identities, artifacts and other builder installs remain separate.
 Source contracts live in `tests/test_sigstore_dependency_lock.py`; this adds no
 application module or signature/native acceptance claim.
+
+## PW-01 inventory recovery (2026-11-27)
+
+Contract: `docs/specs/kb-file-inventory-csv.md`. Current-head acceptance is recorded separately from retained donor history.
+
+| Module | Responsibility | Verification |
+|---|---|---|
+| `kbcorrelation/inventory_contracts.py` | Strict immutable CSV v1 records and separately versioned retained v2 pages; preserve captured budgets and source references | CSV contracts, source-page, capacity and generated-schema controls |
+| `kbcorrelation/inventory_csv.py` | Bounded pure CSV parsing; complete original claims and source-wide conflicts, with explicit context and no I/O | Authored CSV/property controls; no live-format claim |
+| `kbcorrelation/sources/support_links.py`, `inventory_http.py`, `inventory_fetch.py` | Inert saved-HTML extraction, strict URL policy and separately consented source retrieval | Authored link/transport tests; live requests require their own exact consent |
+| `kbcorrelation/inventory_store.py`, `inventory_selection.py` | Immutable raw-source persistence/replay and revision-guarded filename claims using current WorkspaceStore ownership | Store, admission, replay, atomicity and compatibility controls |
+| `kbcorrelation/inventory_service.py`, `cli_inventory.py`, `inventory_qt.py` | Shared operations and CLI/Qt adapters; worker-owned stores, explicit selections, cancellation and stale-result guards | Service, CLI, Qt and adjacent KB integration tests |

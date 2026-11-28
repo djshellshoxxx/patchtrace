@@ -199,6 +199,22 @@ receive invented provenance. Advisory `ContextBundle` JSON export stays byte-for
 byte unchanged. UI rendering, full raw-index retention and reconstruction of the
 entire resolver timeline remain outside this bounded persistence slice.
 
+### Versioned raw replay evidence (2026-11-27, America/Vancouver)
+
+SPEC-31-D's complete retained-index path adds an optional strict `replay` member
+to AcquisitionSource. Sources without it preserve their original serialization,
+source identity, version-2 plan digest and version-1 evidence identity byte for
+byte. New raw-backed records use evidence version 2 and acquisition plan version
+3; the replay manifest, its raw-object identity and all resolver arguments are
+part of those identities. A version-1 record cannot claim raw replay, and a
+version-2 record cannot omit it. Existing journals, imported local pairs,
+advisory ContextBundle export and immutable enrichment-row behavior are
+unchanged. The raw object is separately bounded and copied through the existing
+owner-checked sidecar phase; JSON retains only its content identity and metadata,
+from which the fixed relative object name is derived, never a user-supplied
+filesystem path. Do not infer historical
+raw provenance for an old record from a matching current entry hash.
+
 ### Acquisition newer-row membership (2026-11-20, generation 25)
 
 For a resolver-produced `PairProposal` whose `window_id` is
