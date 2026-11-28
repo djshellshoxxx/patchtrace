@@ -18,6 +18,109 @@ Out of scope: Tier W code (LBL-20..25, unchanged), GUI (LBL-18), reports and sta
 - **Tests (first).** `test_evaluate_writes_engine_outputs_matching_report_sha`, `test_shard_carries_outputs_and_merge_checks_their_sha`, `test_merge_rejects_output_file_with_wrong_sha`, `test_train_reads_outputs_written_by_evaluate`, `test_outputs_artifact_contains_only_capped_json`.
 - **Planner (LBL-32).** `case_steps` maps `aa:` and `noise:` ids to `--suite corpus/ours/<name>` and `mutate:` to `--suite`, so recipe lineages get no A/A or noise cases (the CLI `aa` and `noise` accept `--card` and `--side`). Add case ids `aa-card:<card id>:<old|new>` and `noise-card:<card id>:<old|new>`; keep the `_CASE` character classes; test that `refuse_microsoft` still gates them. Recipe-source mutation needs `mutations/engine.py` to accept a recipe base (`factory.BaseSource`); specify that in its own section before building it.
 
+### 2.0 LBL-31 managed artifact handoff recovery (2026-11-28)
+
+The opening verdict is historical. The current evaluator already retains exact
+normalized output bytes, completes managed report credit, and exposes `--outputs`.
+The current training reader validates those credits. Preserve these implementations,
+including their incomplete-run sentinel, diagnostics, no-overwrite publication and
+explicitly unverified legacy compatibility. The missing work is transport from
+shard scratch through verified merge to the existing training consumer.
+
+`tier_r/training_artifacts.py` owns the new transport boundary. A completed artifact
+root contains only `training-artifacts.json`, `labels/<pair>.json`, and a managed
+`outputs/` directory. The latter contains the existing two `MANAGED_FILES` and
+exact successful output JSON files. Full labels remain outside aggregate shard JSON.
+Each label is strict `known-answer-labels/1`, matches the report's pair/stratum and
+label digest, and has permissive source licences on both sides. Each output is
+strict, hidden-symbol, canonical and agrees with the label's ordered image hashes
+and the original successful report reference. Apply the existing Microsoft/Tier W
+refusal to all transferred JSON and source/destination paths. No image, source tree,
+binary, uncredited output or evaluation-failure diagnostic is a training artifact.
+
+The strict `tier-r-training-artifacts/1` manifest binds sorted relative file names,
+exact byte lengths/SHA-256 values (including both managed metadata files), original
+report digests, and each originating shard's index, count, plan digest and shard
+digest. A consolidated artifact additionally binds the aggregate and merge
+provenance digests. Missing, extra, duplicate, conflicting, linked/reparse,
+nonregular, altered or foreign objects refuse transfer. Paths remain lexical while
+the existing owned-file reader checks parent/leaf ownership; never resolve away a
+link before validation. No authenticity/signature or arbitrary concurrent same-user
+filesystem protection is claimed.
+
+Budgets are checked before full-body reads: 64 MiB per label/output/credit document
+(existing 200,000-function label limit retained), 4 MiB per transport manifest,
+10,000 data/managed-metadata files per artifact, 512 MiB combined data/managed
+metadata per shard artifact and 2 GiB across a merge batch. The transport manifest
+has its separate 4 MiB budget. Reject a whole over-budget set; never truncate it.
+Use existing credit-manifest preflight for the complete report/output batch before
+creating a destination. Destinations must not exist; failed work preserves source
+evidence and leaves no completed transport manifest. Publish the manifest last.
+Validate every existing destination ancestor before creating even an empty output
+directory; an existing parent link/reparse point cannot redirect that creation.
+Use `OutputStore.write_raw` and `finalize(original_reports)` to create fresh managed
+credit; never stamp copied legacy folders or infer credit from their contents.
+
+`run-shard --collect-artifacts` exports before its temporary scratch is removed.
+The existing aggregate-only path stays available. `merge --artifacts <parent>`
+expects one separate `tier-r-training-<index>` directory for every exact shard,
+verifies them against that shard and its reports, and creates `--out/training` only
+after complete preflight. Merge preserves the new card-control and failure-status
+semantics; failed/blocked cases cannot authorize training. A training verification
+command rechecks the consolidated artifact against its aggregate/provenance before
+the training CLI reads labels/outputs. It requires managed credit, never legacy
+fallback. Repeated merges into different fresh destinations preserve aggregate and
+transport digests.
+
+The merge preflights every shard root's manifest and file metadata, including the
+combined 2 GiB budget, before reading any label/output body. Consolidation has the
+same 10,000-file limit; duplicate labels across engine shards collapse only when
+their exact original bytes agree. Each original report belongs to exactly one
+shard; each pair/engine output belongs to exactly one original report. Recheck
+manifest byte bindings during semantic/credit admission, so a changed valid JSON
+document cannot be substituted between metadata and body validation. Consolidated
+credit embeds the original reports, not the aggregate. Verification reconstructs
+the aggregate from those original reports and checks its ownership against the
+successful merge provenance before exposing paths to training.
+
+Artifact collection uses explicit fresh evaluator output directories inside the
+shard scratch. Original reports must cover every requested engine; a successful
+process exit with no retained report does not establish that coverage. Imported
+shard JSON uses strict duplicate-member refusal, the existing 8 MiB shard bound,
+at most 256 shard files, and owned regular-file reads before interpreting it.
+A failure to collect requested artifacts is recorded as a failed
+`evaluate:artifact-transfer` case and makes the shard command exit 1; it never
+rewrites an earlier blocked/timeout/failure as success. Failed/blocked shards do not
+export. The merge command retains diagnostic aggregate/provenance files but returns
+1 on artifact refusal and publishes no completed training artifact. General invalid
+shard/plan usage retains its existing exit behavior. The verification command also
+returns 1 for absent, corrupt, foreign or incomplete training evidence.
+
+The pinned workflow uploads each restricted artifact root separately, explicitly
+retains its dot-named managed marker, and downloads without flattening shard roots.
+The merged artifact preserves the verified consolidated directory. A boolean
+`train` dispatch input defaults to false; its job runs only on explicit dispatch,
+after successful shard and verified merge jobs. It invokes unlocked `train run
+--smoke` and verifies the resulting report. It supplies no preregistration or lock
+input, consumes no final evaluation, and never runs training on PR/push/schedule.
+
+The training job creates a fresh result directory, retains the actual training exit
+code and JSON summary, and runs both the strict smoke-result check and `train
+report`. A valid unlocked smoke may exit 1 solely for the existing minimum-natural-
+lineage halt. The result check accepts that outcome only when summary/report
+identities and gate statuses agree, the exact smoke configuration is recorded,
+preregistration is absent, and the only halt is the current lineage guard's reason.
+All gates then remain `insufficient-data`; the completed handoff is not a passing
+accuracy gate. Leakage, blocked/usage errors, unknown halt reasons, missing or stale
+reports and inconsistent exit codes fail the job. Preserve diagnostic reports on
+failure and never grant blanket `continue-on-error` success to training.
+
+Implement in red/green slices: (1) bounded exact export/verification and schemas;
+(2) shard export and complete-set merge with fresh managed consolidation;
+(3) workflow and actual training-reader/report journey. Authored providers establish
+transport and replay only. Hosted smoke must separately establish actual runner
+production and a verified training report with truthful insufficient-data gates.
+
 ### 2.1 LBL-32 planner recovery contract (2026-11-27)
 
 Recover the card-control planning and dispatch behavior from retained PRs #79/#82 onto current source, preserving the

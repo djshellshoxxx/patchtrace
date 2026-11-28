@@ -174,8 +174,22 @@ def test_merge_job_runs_determinism_and_the_never_silent_summary(wf):
 
 
 def test_artifacts_hold_only_labels_and_reports(wf):
-    paths = [s['with']['path'] for j in wf['jobs'].values() for s in j['steps']
-             if str(s.get('uses', '')).startswith('actions/upload-artifact')]
-    # the MSVC advisory leg uploads its toolchain probe and status files only
-    assert sorted(paths) == ['merged/', 'msvc-toolchain.json\nmsvc-status/\n', 'plan.json', 'shard-out/shard-*.json',
-                             'shard-out/shard-*.json']
+    paths = {(name, step['with']['name']): step['with']['path'].split()
+             for name, job in wf['jobs'].items() for step in job['steps']
+             if str(step.get('uses', '')).startswith('actions/upload-artifact')}
+    # Data roots are restricted to the completed transfer writer's JSON; reports
+    # are explicit files, and the MSVC advisory leg retains only probe/status data.
+    assert paths == {
+        ('plan', 'tier-r-plan'): ['plan.json'],
+        ('shard', 'tier-r-shard-${{ matrix.shard }}'): ['shard-out/shard-*.json'],
+        ('shard', 'tier-r-training-${{ matrix.shard }}'): ['shard-out/training/'],
+        ('merge', 'tier-r-aggregate'): ['merged/tier-r-aggregate.json', 'merged/tier-r-merge.json',
+                                       'merged/tier-r-report.md', 'merged/ci-summary.json', 'merged/ci-summary.md'],
+        ('merge', 'tier-r-training-merged'): ['merged/training/', 'merged/tier-r-aggregate.json',
+                                             'merged/tier-r-merge.json'],
+        ('train', 'tier-r-unlocked-training-smoke'): ['train-out/summary.json', 'train-out/exit-code.txt',
+                                                     'train-out/report.json', 'train-out/report.md',
+                                                     'train-out/handoff.json', 'train-out/verified-report.md'],
+        ('windows-advisory', 'tier-r-windows-advisory'): ['shard-out/shard-*.json'],
+        ('msvc-advisory', 'tier-r-msvc-advisory'): ['msvc-toolchain.json', 'msvc-status/'],
+    }

@@ -451,6 +451,26 @@ Inputs: this spec, `docs/plans/spec-decisions-20261014.md` (O1-O6), the phase-C 
 5. **Shift ladder (`calibration-shift/1`).** Grouped CV within one toolchain, leave-one-toolchain-out, leave-one-family-out, Tier W rung `not-run` in the cloud. Each rung reports precision and coverage at the frozen tau with lineage-bootstrap intervals, ECE excess over the null, OOD flag rate, forced accuracy (OOD abstention off) beside the accuracy of the rows the OOD test lets through, and degradation against the headline (the delta interval is conservative interval arithmetic, not a paired bootstrap). A group that contains both held-out and training rows leaves the training side and is counted. Floors (held-out 50 rows and 10 per class, training 100 rows and 20 per class) give `insufficient-data` with the reason. A rung failure is a documented blind spot, never a reason to re-tune.
 6. **Adapter limits.** Engine outputs carry RVAs, a changed flag and an optional similarity: `G.ratio` and `G.unchanged` come from Ghidriff, `R.similarity` from rz-diff, sizes from the labels, callee counts and match-type flags are 0, `X.agree_R` means both engines proposed the pair; BinDiff outputs wait for BinExport pairs. Columns constant over the run are dropped (label-free) and counted. These limits are stated in the module and mean a Tier R result is a pipeline check, not a measurement of the production feature extractor.
 
+### Managed shard transport and unlocked smoke (LBL-31, 2026-11-28)
+
+The original aggregate-only shard rule still applies to shard JSON. Full
+`known-answer-labels/1` and exact successful `tier-r-engine-output/1` bytes travel
+in a separate capped `tier-r-training-artifacts/1` root, retaining managed markers
+and original report ownership. Complete-set merge verifies every root and
+re-credits a fresh output directory; the training consumer reconstructs the
+aggregate and validates the consolidated bytes before calling the existing
+`--labels`/`--outputs` entry point. See LBL-DATA integration plan section 2.0 and
+known-answer corpus section 13 for the precise bounds and refusal contract.
+
+The workflow's `train` input is opt-in dispatch only. It calls `train run --smoke`
+without a protocol or final-lock option and retains both process outcome and
+verified report. Existing exit 1 due solely to too few natural lineages is accepted
+as an insufficient-data handoff, with every gate still `insufficient-data`.
+Leakage, other halt reasons, usage/blocked results and stale/inconsistent reports
+remain failures. This changes neither fitting, grouping, thresholds nor final-look
+authority. A completed transport/training command journey is not calibration or
+native engine qualification.
+
 ### Natural grouping boundary clarification (LBL-26 C-1 / C-3)
 
 The candidates admitted as natural evidence alone determine their CV identity groups, hub threshold counts and grouping diagnostics. Excluded adversarial candidates may be counted in their stress table, but cannot add identity edges, rename natural groups or turn a natural cross-role identity into a hub. Audit natural identity roles using the natural grouping's hub set before fitting. Retain the broader evidence-candidate identity-role audit independently with its own hub set; findings from either audit block fitting. This preserves split-leak checks while preventing excluded stress rows from changing natural folds or headline metrics. Preregistration bytes and frozen analysis parameters are unchanged.

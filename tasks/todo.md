@@ -1,3 +1,27 @@
+## November 27 LBL-31 independent managed-handoff review
+
+Runtime `ee2210bb` was independently reviewed with no blocker. Ten extra consumer,
+exact-credit, linked-path and actual-exit controls plus the affected transport,
+shard, workflow and CI modules passed **198 tests, zero skips**. The existing
+producer, managed output store and training implementation remain unchanged.
+See `docs/engineering/tier-r-transfer-recovery-20261128.md` for original failures,
+retained logs and limits. Exact publication-head hosted/native/full qualification
+and explicit hosted `train=true` smoke acceptance remain open.
+
+## LBL-31 artifact and training handoff (2026-11-28)
+
+- [x] Specify/index bounded transport and implement exact managed export/replay;
+  170 focused/adjacent checks passed after meaningful red admission controls.
+- [x] Carry artifact sets out of shard scratch and verify complete shard/report
+  ownership before fresh managed merge consolidation; 383 focused/adjacent checks
+  passed, including strict shard admission and truthful collection failure.
+- [x] Wire pinned separate artifact roots and dispatch-only unlocked smoke
+  training; verify the actual consumer/report route and failure gates. Affected
+  selection: 496 passed; final destination-ownership lane: 149 passed. Both have
+  zero local skips; authored providers are not native/hosted evidence.
+- [ ] Independent review, combined/full/platform qualification and hosted producer
+  plus smoke-training evidence; no accuracy or final-lock qualification yet.
+
 ## Recipe-control feature qualification (2026-11-27)
 
 The four implementation slices are complete and independently reviewed; the combined Tier R/calibration selection passed **847 tests with 11 skips**. Three optional scikit-learn reference checks subsequently passed in the verified primary runtime; eight native-toolchain checks remain blocked. Whole-tree Ruff passed. See `docs/engineering/recipe-controls-recovery-20261127.md` for the plan, observed red/green controls and exact scope. Full/current-head hosted acceptance and guarded merge remain pending; card planning is not native recipe or accuracy qualification.

@@ -1,6 +1,7 @@
 name: Corpus Tier R (sharded)
 # SPEC-32 s13. Heavy known-answer corpus work (compilers, pinned rizin, optional Ghidra/Ghidriff) runs here, not in agent
-# loops. plan -> matrix of shards -> merge. Artifacts hold labels metadata, feature tables and aggregate metrics only.
+# loops. plan -> matrix of shards -> verified merge -> opt-in unlocked smoke training.
+# Training artifacts hold capped open-source label/output JSON with exact managed report credit.
 # Never uploads images or binaries. Tier W (Microsoft-derived) data is local-only and refused by tools/calibration/tier_r/shard.py.
 on:
   workflow_dispatch:
@@ -17,6 +18,10 @@ on:
       subset:
         description: smoke, suites, cards, mutations, noise or full
         default: smoke
+      train:
+        description: Run unlocked smoke training after a complete verified merge (no final evaluation lock)
+        type: boolean
+        default: false
   schedule:
     # Nightly smoke then noise on the pinned ubuntu-24.04 image; the heavy matrices stay dispatch-only.
     - cron: '17 3 * * *'
@@ -145,7 +150,7 @@ jobs:
         run: >-
           python -m tools.calibration.tier_r.shard run-shard
           --shard "${{ matrix.shard }}" --of "${{ matrix.of }}" --seed "$SEED" --plan-sha256 "${{ matrix.plan }}"
-          --cases "$SHARD_CASES" --engines "$ENGINES" --subset "$SUBSET" --out shard-out --timeout 1800
+          --cases "$SHARD_CASES" --engines "$ENGINES" --subset "$SUBSET" --out shard-out --timeout 1800 --collect-artifacts
       - name: Step summary
         if: always()
         shell: bash
@@ -157,6 +162,13 @@ jobs:
           name: tier-r-shard-${{ matrix.shard }}
           path: shard-out/shard-*.json
           if-no-files-found: warn
+      - name: Upload completed managed training artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: tier-r-training-${{ matrix.shard }}
+          path: shard-out/training/
+          include-hidden-files: true # Required for the validated .tier-r-output-run.json marker.
+          if-no-files-found: error
   merge:
     name: merge
     needs: [plan, shard]
@@ -178,12 +190,19 @@ jobs:
         with:
           name: tier-r-plan
           path: plan
+      - name: Download separate managed shard roots
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          pattern: tier-r-training-*
+          path: training-shards
+          merge-multiple: false
       - name: Merge (fails on missing, duplicate or foreign shards)
-        run: python -m tools.calibration.tier_r.shard merge --in shards --plan plan/plan.json --out merged
+        run: python -m tools.calibration.tier_r.shard merge --in shards --plan plan/plan.json --artifacts training-shards --out merged
       - name: Determinism (second merge of the same shards must give the same report_sha256)
         run: |
-          python -m tools.calibration.tier_r.shard merge --in shards --plan plan/plan.json --out merged-again
+          python -m tools.calibration.tier_r.shard merge --in shards --plan plan/plan.json --artifacts training-shards --out merged-again
           python -m tools.calibration.ci_summary determinism merged merged-again
+          cmp merged/training/training-artifacts.json merged-again/training/training-artifacts.json
       - name: CI status JSON (never silent, even when the shard set is rejected)
         if: always()
         run: |
@@ -200,7 +219,69 @@ jobs:
         if: always()
         with:
           name: tier-r-aggregate
-          path: merged/
+          path: |
+            merged/tier-r-aggregate.json
+            merged/tier-r-merge.json
+            merged/tier-r-report.md
+            merged/ci-summary.json
+            merged/ci-summary.md
+          if-no-files-found: warn
+      - name: Upload verified consolidated training inputs
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: tier-r-training-merged
+          path: |
+            merged/training/
+            merged/tier-r-aggregate.json
+            merged/tier-r-merge.json
+          include-hidden-files: true
+          if-no-files-found: error
+  train:
+    name: unlocked training smoke
+    needs: [shard, merge]
+    if: github.event_name == 'workflow_dispatch' && inputs.train && needs.shard.result == 'success' && needs.merge.result == 'success'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -e .
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: tier-r-training-merged
+          path: verified
+      - name: Verify consolidated managed inputs before training
+        run: >-
+          python -m tools.calibration.tier_r.shard verify-training --artifacts verified/training
+          --report verified/tier-r-aggregate.json --provenance verified/tier-r-merge.json
+      - name: Run unlocked smoke and verify the actual result
+        shell: bash
+        run: |
+          mkdir train-out
+          rc=0
+          python -m tools.calibration.train run --labels verified/training/labels --outputs verified/training/outputs --smoke --tool-git "$GITHUB_SHA" --out train-out > train-out/summary.json || rc=$?
+          printf '%s\n' "$rc" > train-out/exit-code.txt
+          cat train-out/summary.json
+          python -m tools.calibration.tier_r.shard verify-training-result --summary train-out/summary.json --report train-out/report.json --exit-code "$rc" > train-out/handoff.json
+          python -m tools.calibration.train report train-out/report.json --out train-out/verified-report.md
+      - name: Training step summary
+        if: always()
+        shell: bash
+        run: |
+          if [ -f train-out/report.md ]; then cat train-out/report.md >> "$GITHUB_STEP_SUMMARY"; else echo "training produced no report" >> "$GITHUB_STEP_SUMMARY"; fi
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: tier-r-unlocked-training-smoke
+          path: |
+            train-out/summary.json
+            train-out/exit-code.txt
+            train-out/report.json
+            train-out/report.md
+            train-out/handoff.json
+            train-out/verified-report.md
           if-no-files-found: warn
   windows-advisory:
     # Advisory leg: the runner's LLVM clang and lld-link build freestanding suites; missing tools are BLOCKED, not fatal.

@@ -572,6 +572,18 @@ S8 notes: integrator wires `SearchService(extra_specs=lambda req: tool_specs(Too
 |---|---|---|---|---|
 | calibration scope | src/patchtrace/calibration/{scope,ledger,context}.py | closed `ScopeId` vocabulary, fixed copy, `TIER_R_CLAIM`; pure `notice(level, ledger, artifacts)` (untested / tested-synthetic / tested-windows / degraded / expired); strict `validation-ledger/1` loader (<= 64 KiB, <= 64 entries, digest, expiry; any problem degrades to all `unvalidated`, `PT-CALIB-LEDGER`); `context_from_tools` (signature-certain DiE toolchain only, else `unknown`) | calibration.artifact, features | tests/test_calibration_scope.py |
 | calibration domain scope | artifact.py `Domain.{evidence_tiers,windows_system_binaries,scope_ids}`, policy.py | additive fields; a non-`experimental` artifact needs `tier-w`, windows coverage and no `no-windows-system-binaries`; a Tier R-only artifact cannot be promoted and `artifact_display_level` stays `ordinal`; `ValidationLedger.json` schema via `tools/calibration/schemas.py` | - | test_tier_r_only_artifact_cannot_be_promoted, test_scope_copy_sweep |
+### LBL-31 managed training artifact handoff (2026-11-28; hosted qualification pending)
+
+`tools/calibration/tier_r/training_artifacts.py` owns bounded, strict JSON label/output
+transport, shard/report ownership manifests and fresh managed consolidation. It reuses
+`output_store` credit/read/publication contracts; `shard.py` and `corpus-tier-r.yml` wire
+the handoff to opt-in unlocked smoke training. It also verifies the actual unlocked
+smoke result without masking leakage or other failures. Full function tables stay
+outside aggregate shard JSON. Source: LBL-DATA integration plan section 2.0.
+`test_tier_r_training_{artifacts,handoff,workflow}.py` distinguish authored transport,
+actual CLI/report replay and Linux workflow shell behavior from hosted source-specific
+producer and training acceptance.
+
 ### LBL-15 Tier R training run and shift ladder (2026-10-15; synthetic corpus only, dev-only, never ships)
 | module | files | responsibility | depends on | tests |
 |---|---|---|---|---|

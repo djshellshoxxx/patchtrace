@@ -372,6 +372,35 @@ fetch and A/A rules above. This correction changes no report fields or persisted
 provider and runner tests establish the outcome propagation; they do not establish native engine compatibility,
 successful output transfer, training acceptance or calibration accuracy.
 
+### Managed training handoff (LBL-31, 2026-11-28)
+
+`run-shard --collect-artifacts` exports exact full label JSON and completed managed
+output JSON into a separate restricted root before scratch cleanup. Aggregate shard
+documents still contain only metadata. Every requested engine needs an original
+report; collection failure becomes `evaluate:artifact-transfer` and fails the shard.
+Strict shard import also enforces duplicate-member refusal, the 8 MiB per-shard
+bound, 256-shard limit and regular-file ownership.
+
+The transport manifest (`tier-r-training-artifacts/1`) binds exact file bytes,
+original reports and shard/plan identity. Merge verifies the entire separate-root
+set and its budget, then creates fresh managed credit from original reports. It
+never merges loose legacy output folders. Both managed metadata files, including
+the dot-named marker, survive upload/download. The detailed file/count/byte bounds,
+publication order and refusal rules are LBL-DATA integration plan section 2.0.
+Only JSON labels, normalized outputs and managed metadata enter these data roots;
+no images, source-tree files, binaries, PDBs or Tier W data are transported.
+Existing bounded mutation before/after provenance within exact label JSON remains
+part of that label's original digest.
+
+Training is an explicit dispatch boolean, false by default, after successful shard
+and verified merge jobs. Before `train run --smoke`, the consumer checks complete
+managed ownership and reproduces the aggregate from original reports. It supplies
+no preregistration/final-lock input. Preserve the actual process exit and verify
+the resulting report: a minimum-lineage halt is a completed handoff with
+`insufficient-data` gates, while leakage, unknown failures and invalid reports
+fail. Authored round trips prove transport behavior only; hosted source/engine
+production and its smoke report remain separate acceptance evidence.
+
 ## 14. Tests (`tests/test_tier_r_*.py`; synthetic C compiled inside the tests; BLOCKED, never silently skipped, without a compiler)
 Contracts and schema drift; examples valid/invalid; locator on hostile C (comments, strings, K&R, macros, `#if`);
 every mutation operator (applies, compiles, deterministic, records); identity join and decision table; PDB and DWARF

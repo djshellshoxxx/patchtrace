@@ -33,6 +33,7 @@ from patchtrace.calibration.scope import TIER_R_CLAIM
 
 from ...corpus_check import catalog_paths
 from ..common import canonical_json, digest, r12
+from . import training_artifacts as TA
 from .contracts import (
     COSMETIC_OPERATORS,
     PERMISSIVE_SPDX,
@@ -408,7 +409,8 @@ def _report_problem(case_id: str, status: str, detail: str | None, stderr: str, 
 
 def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner: Runner | None = None,
               python: str | None = None, scratch: Path | None = None, engines: Sequence[str] | None = None,
-              verify_plan: bool = True, log: Callable[[str], None] | None = None) -> dict:
+              verify_plan: bool = True, log: Callable[[str], None] | None = None,
+              artifacts_dir: Path | None = None) -> dict:
     runner = runner or default_runner       # looked up at call time so tests and callers can substitute it
     log = log or (lambda text: print(text, file=sys.stderr, flush=True))
     entry = next((s for s in plan['shards'] if s['shard'] == shard), None)
@@ -419,13 +421,16 @@ def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner:
     steps_by_case = [(case_id, case_steps(case_id)) for case_id in entry['cases']]
     py = python or sys.executable
     engines = list(engines or plan['engines'])
+    if artifacts_dir is not None:
+        engines = parse_engines(','.join(engines))
     with tempfile.TemporaryDirectory(prefix=f'tier-r-shard{shard}-') as tmp:
-        scope = Path(scratch or tmp)
+        scope = Path(os.path.abspath(scratch or tmp))
         env = _env(scope)
         labels: list = []
         features: list = []
         reports: list = []
         results = []
+        output_dirs, artifact_errors = [], []
         for case_id, steps in steps_by_case:
             status, detail, summary = 'ok', None, None
             for step in steps:
@@ -454,11 +459,29 @@ def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner:
                 labels.append(meta)
         if not (os.environ.get('PATCHTRACE_TIER_R_NO_EVAL')):
             for engine in engines:
-                rc, out, reason, err = _call(runner, [py, '-m', 'tools.calibration.tier_r', 'evaluate', '--engine',
-                                                      engine, '--symbols', 'hidden'], timeout, env)
+                argv = [py, '-m', 'tools.calibration.tier_r', 'evaluate', '--engine', engine, '--symbols', 'hidden']
+                output_path = scope / 'known-answer' / 'outputs' / f'collected-{engine}'
+                report_path = scope / 'known-answer' / 'reports' / f'collected-{engine}.json'
+                if artifacts_dir is not None:
+                    argv += ['--outputs', str(output_path), '--out', str(report_path)]
+                rc, out, reason, err = _call(runner, argv, timeout, env)
                 parsed = _summary(out)
                 if parsed is not None:
-                    report_doc = _scratch_json(scope, parsed.get('report')) if isinstance(parsed.get('report'), str) else None
+                    report_doc = None
+                    if artifacts_dir is not None:
+                        try:
+                            if parsed.get('outputs') != str(output_path) or parsed.get('report') != str(report_path):
+                                raise TA.ArtifactError('evaluation summary does not identify the requested scratch outputs')
+                            report_doc = TA.read_document(report_path, maximum=MAX_SHARD_BYTES)
+                            load_report(canonical_json(report_doc))
+                            if parsed.get('report_sha256') != report_doc['report_sha256']:
+                                raise TA.ArtifactError('evaluation summary and retained report digests differ')
+                            output_dirs.append(output_path)
+                        except (TA.ArtifactError, ContractError) as exc:
+                            artifact_errors.append(str(exc)[:REASON_CHARS])
+                            report_doc = None
+                    elif isinstance(parsed.get('report'), str):
+                        report_doc = _scratch_json(scope, parsed['report'])
                     parsed = sanitize(parsed)
                     if report_doc is not None:
                         parsed['report'] = sanitize(report_doc)
@@ -470,12 +493,22 @@ def run_shard(plan: dict, shard: int, *, timeout: int = DEFAULT_TIMEOUT, runner:
                     detail = failure_reason(rc, reason, parsed, err)
                     _report_problem(f'evaluate:{engine}', status, detail, err, log)
                 results.append({'id': f'evaluate:{engine}', 'status': status, 'reason': detail, 'digest': None})
-    doc = {'contract': SHARD_CONTRACT, 'shard': shard, 'of': plan['of'], 'seed': plan['seed'],
-           'plan_sha256': plan['plan_sha256'], 'subset': plan['subset'], 'engines': engines,
-           'cases': results, 'labels': sorted(labels, key=canonical_json), 'features': sorted(features, key=canonical_json),
-           'reports': reports}
-    refuse_microsoft(canonical_json(doc).decode())
-    doc['shard_sha256'] = digest(doc, 'shard_sha256')
+        doc = {'contract': SHARD_CONTRACT, 'shard': shard, 'of': plan['of'], 'seed': plan['seed'],
+               'plan_sha256': plan['plan_sha256'], 'subset': plan['subset'], 'engines': engines,
+               'cases': results, 'labels': sorted(labels, key=canonical_json), 'features': sorted(features, key=canonical_json),
+               'reports': reports}
+        refuse_microsoft(canonical_json(doc).decode())
+        doc['shard_sha256'] = digest(doc, 'shard_sha256')
+        if artifacts_dir is not None and all(case['status'] in ('ok', 'findings', 'skipped') for case in results):
+            try:
+                if artifact_errors:
+                    raise TA.ArtifactError('; '.join(artifact_errors)[:REASON_CHARS])
+                TA.export_training_artifacts(doc, scope / 'known-answer' / 'labels', output_dirs, artifacts_dir)
+            except TA.ArtifactError as exc:
+                detail = str(exc)[:REASON_CHARS]
+                results.append({'id': 'evaluate:artifact-transfer', 'status': 'failed', 'reason': detail, 'digest': None})
+                _report_problem('evaluate:artifact-transfer', 'failed', detail, '', log)
+                doc['shard_sha256'] = digest(doc, 'shard_sha256')
     return doc
 
 
@@ -538,10 +571,17 @@ def _engine_status(rows: list[dict]) -> dict:
 
 def load_shards(directory: Path, *, plan: dict | None = None) -> list[dict]:
     """Read shard-*.json; fail loudly on missing, duplicate, foreign or tampered shard files."""
+    paths = []
+    with os.scandir(directory) as entries:
+        for entry in entries:
+            if entry.name.startswith('shard-') and entry.name.endswith('.json'):
+                paths.append(Path(entry.path))
+                if len(paths) > MAX_SHARDS:
+                    raise ShardError(f'shard count exceeds {MAX_SHARDS}')
     docs = []
-    for path in sorted(Path(directory).glob('shard-*.json')):
+    for path in sorted(paths):
         try:
-            doc = json.loads(path.read_text(encoding='utf-8'))
+            doc = TA.read_document(path, maximum=MAX_SHARD_BYTES)
         except (OSError, ValueError) as exc:
             raise ShardError(f'{path.name}: unreadable ({exc})') from None
         if not isinstance(doc, dict) or doc.get('contract') != SHARD_CONTRACT:
@@ -718,10 +758,20 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument('--subset', default='smoke')
     r.add_argument('--timeout', type=int, default=DEFAULT_TIMEOUT, help='seconds per case')
     r.add_argument('--out', type=Path, required=True)
+    r.add_argument('--collect-artifacts', action='store_true', help='retain verified managed training JSON before cleanup')
     m = sub.add_parser('merge', help='fold shard files into one tier-r-report/1')
     m.add_argument('--in', dest='src', type=Path, required=True)
     m.add_argument('--plan', type=Path)
     m.add_argument('--out', type=Path, required=True)
+    m.add_argument('--artifacts', type=Path, help='parent of separate tier-r-training-<index> artifact roots')
+    v = sub.add_parser('verify-training', help='recheck consolidated managed inputs before an unlocked training smoke')
+    v.add_argument('--artifacts', type=Path, required=True)
+    v.add_argument('--report', type=Path, required=True)
+    v.add_argument('--provenance', type=Path, required=True)
+    t = sub.add_parser('verify-training-result', help='verify an unlocked smoke result and its actual process outcome')
+    t.add_argument('--summary', type=Path, required=True)
+    t.add_argument('--report', type=Path, required=True)
+    t.add_argument('--exit-code', type=int, required=True)
     return ap
 
 
@@ -753,19 +803,36 @@ def main(argv: Sequence[str] | None = None) -> int:
             return OK
         if args.cmd == 'run-shard':
             plan = _plan_from_args(args)
-            doc = run_shard(plan, args.shard, timeout=args.timeout, verify_plan=args.plan is not None)
+            doc = run_shard(plan, args.shard, timeout=args.timeout, verify_plan=args.plan is not None,
+                            artifacts_dir=args.out / 'training' if args.collect_artifacts else None)
             path = write_shard(doc, args.out)
             bad = [c['id'] for c in doc['cases'] if c['status'] in ('failed', 'timeout')]
             blocked = [c['id'] for c in doc['cases'] if c['status'] == 'blocked']
             print(json.dumps({'shard': doc['shard'], 'file': path.name, 'cases': len(doc['cases']),
                               'failed': bad, 'blocked': blocked, 'shard_sha256': doc['shard_sha256']}, sort_keys=True))
             return FINDINGS if bad else (BLOCKED if blocked else OK)
+        if args.cmd == 'verify-training':
+            document = TA.verify_merged_artifacts(args.artifacts, TA.read_document(args.report),
+                                                  TA.read_document(args.provenance))
+            print(json.dumps({'manifest_sha256': document['manifest_sha256'],
+                              'report_sha256': document['aggregate_sha256'], 'merge_sha256': document['merge_sha256']},
+                             sort_keys=True))
+            return OK
+        if args.cmd == 'verify-training-result':
+            print(json.dumps(TA.verify_smoke_result_files(args.summary, args.report, args.exit_code), sort_keys=True))
+            return OK
         plan = json.loads(args.plan.read_text(encoding='utf-8')) if args.plan else None
-        report, prov = merge(load_shards(args.src, plan=plan))
+        docs = load_shards(args.src, plan=plan)
+        report, prov = merge(docs)
         write_merge(report, prov, args.out)
+        if args.artifacts is not None:
+            TA.merge_training_artifacts(docs, args.artifacts, args.out / 'training', report, prov)
         print(json.dumps({'report_sha256': report['report_sha256'], 'merge_sha256': prov['merge_sha256'],
                           'shards': len(prov['shards']), 'failing_cases': len(prov['failing_cases'])}, sort_keys=True))
         return FINDINGS if prov['failing_cases'] else OK
+    except TA.ArtifactError as exc:
+        print(f'tier_r.shard: {exc}', file=sys.stderr)
+        return FINDINGS
     except (ShardError, ValueError, OSError) as exc:
         print(f'tier_r.shard: {exc}', file=sys.stderr)
         return USAGE

@@ -1,0 +1,25 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_____ test_linked_destination_parent_is_refused_before_creating_any_child ______
+
+produced = (PosixPath('/tmp/pytest-of-agent/pytest-114/test_linked_destination_parent0/store'), PosixPath('/tmp/pytest-of-agent/p...d': 0, 'of': 1, 'seed': 1, ...}, PosixPath('/tmp/pytest-of-agent/pytest-114/test_linked_destination_parent0/artifact'))
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-114/test_linked_destination_parent0')
+
+    def test_linked_destination_parent_is_refused_before_creating_any_child(produced, tmp_path):
+        store, output, document, _destination = produced
+        foreign = tmp_path / 'foreign-parent'
+        foreign.mkdir()
+        link = tmp_path / 'linked-parent'
+        link.symlink_to(foreign, target_is_directory=True)
+        with pytest.raises(transfer().ArtifactError):
+            transfer().export_training_artifacts(document, store / 'labels', [output], link / 'nested' / 'training')
+>       assert not list(foreign.iterdir())
+E       AssertionError: assert not [PosixPath('/tmp/pytest-of-agent/pytest-114/test_linked_destination_parent0/foreign-parent/nested')]
+E        +  where [PosixPath('/tmp/pytest-of-agent/pytest-114/test_linked_destination_parent0/foreign-parent/nested')] = list(<generator object Path.iterdir at 0x7fb55d8cbed0>)
+E        +    where <generator object Path.iterdir at 0x7fb55d8cbed0> = iterdir()
+E        +      where iterdir = PosixPath('/tmp/pytest-of-agent/pytest-114/test_linked_destination_parent0/foreign-parent').iterdir
+
+tests/test_tier_r_training_artifacts.py:221: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_tier_r_training_artifacts.py::test_linked_destination_parent_is_refused_before_creating_any_child
+1 failed, 31 deselected in 0.91s

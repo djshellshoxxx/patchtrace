@@ -14,9 +14,12 @@ from pathlib import Path
 
 from ..common import digest
 from . import contracts as C
+from .training_artifacts import CONTRACT as ARTIFACT_CONTRACT
+from .training_artifacts import TrainingArtifacts
 
 SCHEMAS = ((C.KnownAnswerLabels, 'known-answer-labels/1'), (C.RecipeBook, 'tier-r-recipes/1'),
-           (C.Recipe, 'tier-r-recipe/1'), (C.MutationCase, 'mutation-case/1'), (C.TierRReport, 'tier-r-report/1'))
+           (C.Recipe, 'tier-r-recipe/1'), (C.MutationCase, 'mutation-case/1'), (C.TierRReport, 'tier-r-report/1'),
+           (TrainingArtifacts, ARTIFACT_CONTRACT))
 OUT = Path('docs/schemas/corpus')
 _H = {k: hashlib.sha256(f'example-{k}'.encode()).hexdigest() for k in 'abcdefr'}
 
