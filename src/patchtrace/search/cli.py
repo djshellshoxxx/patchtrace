@@ -241,7 +241,14 @@ def _run(args, out, err, opener: Opener, extra_specs, anchors=None) -> int:
             plan = rerun_plan(find_saved(project_store(handle), args.saved_run))
         cache = (paths.validate_cache_root(args.cache_dir.resolve(), Path(handle.root)) if args.cache_dir
                  else paths.default_cache_root())
-        service = SearchService(handle, cache, attention=attention, extra_specs=extra_specs)
+        if extra_specs is None:
+            from .wiring import BoundService, snapshot_sources
+            sources = snapshot_sources(handle)
+            service = SearchService(BoundService(handle.project, handle.root, sources), cache, attention=attention,
+                                    extra_specs=sources.extra_specs, comparable=sources.comparable,
+                                    required_groups=sources.required_groups)
+        else:
+            service = SearchService(handle, cache, attention=attention, extra_specs=extra_specs)
         return _status(args, out, service) if args.status else _search(args, out, err, service, anchors, plan)
     finally:
         close = getattr(handle, 'close', None)

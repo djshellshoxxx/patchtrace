@@ -1,3 +1,28 @@
+## November 27 stored-evidence Search independent approval
+
+Runtime `c4898ffb` is independently approved: 13 independent and 229 maintained
+integration controls passed without skips; author's affected lane passed 1,035.
+Counts overlap. Production stored sources, failed-capture coverage, invalidation
+and displayed-receipt freshness are verified with authored data. Exact-head
+hosted/full/combined and Windows/package/native gates remain pending. See
+`docs/engineering/search-stored-evidence-recovery-20261128.md`.
+
+## Production stored-source Search completion (2026-11-28)
+
+- [x] Capture bounded current tool evidence with the shared value-only source helper.
+- [x] Wire normal CLI queries, saved queries, build, coverage and advisory anchors.
+- [x] Capture desktop inputs on the owner thread and revalidate results and navigation.
+- [x] Preserve partial coverage for failed retained sources in unqualified queries.
+- [x] Pass the affected 1,035-test lane, whole-tree Ruff and GUI/core isolation.
+- [ ] Independently review the final source and qualify combined hosted/native/package gates.
+- [ ] Perform the parent's guarded publication and integration after applicable gates pass.
+
+[Plan and evidence](../docs/engineering/search-stored-evidence-recovery-20261128.md).
+
+## Pilot final affected qualification (2026-11-27)
+
+Both independently reproduced admission/display-ownership defects are corrected and the implementation is approved at `30ca3f90`. After the common packaging follow-up merge, the complete affected 50-module selection passed **2,070 tests, zero skips**. See `docs/engineering/pilot-recovery-20261127.md` and its retained final command/log. Current-head full application, hosted/native/platform acceptance and guarded merge remain open.
+
 ## Packaged-version gate follow-up (2026-11-27)
 
 The reported stale packaging assertion is repaired and its affected125-test lane passes. Local full-suite execution was terminated by SIGKILL and is not qualified; require fresh current-head Linux/Windows/Qt/package acceptance on PR #369 before guarded merge. See the corresponding docs/qa.md entry.
@@ -1901,3 +1926,29 @@ Owner/branch: `codex/patchtrace-linux-frozen-cli-smoke-20261121`; handoff
 - [x] Obtain independent re-review of the completed-output repair on
   `806ccc4fbe7b26bd854cf64de96bd03bdde36f64`: 40 focused tests passed, zero skips;
   no remaining consumer-scope blocker. Hosted/full/package qualification remains.
+
+## Pilot retained-context continuation — 2026-11-28
+
+- [x] Bound retained advisory sidecar reads and preserve unowned staging entries;
+  red 10 failed/10 passed, green 84 passed.
+- [x] Complete shared current-input freshness across CLI, desktop publication and
+  navigation, and report/2: red 34 failed/10 passed; green 257 passed. Preserve the
+  unsuccessful intermediate source-transfer run and its correction.
+- [x] Complete conservative retained CVRF collection and shared identity with
+  current saved-scope/source admission preserved: red 60 failed/57 passed; focused
+  152 passed; combined affected selection 2,058 passed, no skips; whole-tree Ruff
+  and whitespace clean. Counts overlap.
+- [ ] Obtain independent review and full current-head/native/hosted qualification
+  through the integration owner before a guarded main merge.
+
+Evidence and plan: `docs/engineering/pilot-recovery-20261127.md`.
+
+- [x] Pilot independent-review strict JSON correction: reject duplicate retained
+  object members before semantic interpretation, preserve common storage and
+  evidence; red 6 failed/7 passed, focused green 148 passed.
+- [x] Pilot independent-review desktop correction: bind outgoing navigation to
+  the displayed model/row, refuse missing receipts and pending replacements, and
+  reject late build/row callbacks. Eight failing controls now pass within a
+  130-case focused green selection; whole-tree Ruff and preservation checks pass.
+- [ ] Obtain independent UI re-review and root's full/platform gates before
+  publication. Strict-JSON corrective source has independent approval.

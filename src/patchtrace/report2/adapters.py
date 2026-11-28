@@ -214,14 +214,6 @@ def _build_facts(service, unknowns: _Unknowns) -> _Rows | None:
     return _Rows(tuple(records))
 
 
-def _known(project) -> dict[str, object]:
-    from ..pilot import store
-    sides = {a.side: a.sha256 for a in project.artifacts}
-    run = store.completed_run(project)
-    return {'older_sha256': sides.get('older'), 'newer_sha256': sides.get('newer'),
-            'ghidriff_run_id': run.id if run else None, 'raw_sha256': run.raw_sha256 if run else None}
-
-
 def _lead_record(lead, channels_of: dict[str, str]) -> LeadRecord | None:
     channels = tuple(sorted({channels_of[i] for i in lead.support_ids if i in channels_of}))
     if not channels:
@@ -244,10 +236,11 @@ def _has_enrichment(service) -> bool:
 
 def _leads(service, unknowns: _Unknowns) -> _Rows | None:
     from ..enrichment.storage import EnrichmentStore
-    from ..pilot import store
+    from ..pilot import current_inputs, store
     if not _has_enrichment(service):
         return None
-    loaded = store.load(EnrichmentStore(service.store), _known(service.project))
+    enrichment = EnrichmentStore(service.store)
+    loaded = store.load(enrichment, check_current=current_inputs.capture(service, enrichment).changed)
     if loaded.state == 'none':
         return None
     if loaded.state != 'current':

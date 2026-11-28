@@ -16,11 +16,13 @@ CVE_HINT = 'the CVE must look like CVE-YYYY-NNNN'
 
 def stored_anchors(service, cve: str) -> tuple[object | None, list[str]]:
     """The anchors of the current stored advisories that list ``cve``; ``None`` when no advisory lists it."""
-    from patchtrace.enrichment.storage import EnrichmentStore
     from patchtrace.intelligence.anchors import anchors_for
-    from patchtrace.intelligence.storage import AdvisoryStore
-    store = AdvisoryStore(service.root, EnrichmentStore(service.store), service.project.id, service.project.revision)
-    advisories, warnings = store.for_cve(cve)
+    from patchtrace.search.wiring import snapshot_sources
+    sources = getattr(service, 'sources', None) or snapshot_sources(service)
+    if sources.advisories is None:
+        raise SearchError('PT-SEARCH-SOURCE', 'the stored advisories are unavailable; their absence is not known')
+    items, warnings = sources.advisories.advisories()
+    advisories = [item for item in items if item.facts.vulnerability(cve) is not None]
     if not advisories:
         return None, list(warnings)
     current = [a for a in advisories if not a.superseded] or advisories

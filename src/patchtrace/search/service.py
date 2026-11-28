@@ -341,13 +341,16 @@ class SearchService:
     def __init__(self, service, cache_root: Path, *, limits: SearchLimits = DEFAULT_LIMITS,
                  capability: SearchCapability | None = None, attention: AttentionPort | None = None,
                  comparable: Callable[[str], bool] = lambda engine: False, extra_specs: ExtraSpecs | None = None,
+                 required_groups: tuple[str, ...] = (),
                  clock: Callable[[], float] = time.monotonic):
         """`service` has `.project` and `.root` (a `ProjectService`). `attention` is `lambda p: load_default(store, p)`;
         `comparable(engine)` says whether the older and newer runs of a tool are comparable; `extra_specs` adds
-        source groups (tool, advisory, unified IR) to the build request."""
+        source groups (tool, advisory, unified IR) to the build request. `required_groups` keeps known retained
+        source failures in overall coverage even when the query has no explicit kind filter."""
         self.service, self.cache_root, self.limits = service, Path(cache_root), limits
         self._capability, self._attention, self._comparable = capability, attention, comparable
         self._extra, self._clock = extra_specs, clock
+        self._required_groups = frozenset(required_groups)
         self._memo: tuple[tuple, builds.BuildRequest] | None = None
 
     # -- build and coverage
@@ -415,7 +418,9 @@ class SearchService:
         more = offset + request.limit < len(ordered)
         if broad:
             warnings.append(BROAD_WARNING.format(n=len(ordered)))
-        status = self._status(plan, len(ordered), broad, [state[g] for g in wanted], suggestions or hints, warnings)
+        statuses = [state[s.group] for s in plan_request.specs
+                    if _relevant(s, plan) and (s.buildable or plan.kinds or s.group in self._required_groups)]
+        status = self._status(plan, len(ordered), broad, statuses, suggestions or hints, warnings)
         return SearchResult(
             status=status, coverage=coverage, hits=hits,
             total=None if broad else len(ordered), total_capped=broad,
@@ -507,6 +512,8 @@ class SearchService:
             return 'unsupported'
         if broad:
             return 'too-broad'
+        if any(s in ('unavailable', 'not-applicable') for s in states):
+            return 'partial'  # requested or known retained source coverage cannot establish absence
         incomplete = any(s in PENDING for s in states)
         if total or extras:
             return 'partial' if incomplete else 'ok'
