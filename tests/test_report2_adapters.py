@@ -6,6 +6,7 @@ import re
 from pathlib import Path
 
 import pytest
+from pilot_freshness_support import add_advisory, put_current
 from test_pilot_store import put as put_pilot_result
 from test_secondary_store import _set
 
@@ -118,7 +119,8 @@ def test_unreadable_artifact_is_unknown_not_fatal(service):
 
 
 def test_leads_come_from_a_current_stored_pilot_result(service):
-    put_pilot_result(service, EnrichmentStore(service.store))
+    add_advisory(service)
+    put_current(service)
     sections = collect_from_service(service)
     assert sections.leads
     for lead in sections.leads:

@@ -65,6 +65,7 @@ Listing of every file under `docs/specs/`, 2026-10-14. SPEC number and status co
 | [program-e/LBL-integration-plan.md](program-e/LBL-integration-plan.md) | unregistered | - | LBL integration plan: label training (Tier R completion, evaluation harness, training run, honest scope, Tier  |
 | [program-e/OUTSTANDING-specs-ledger.md](program-e/OUTSTANDING-specs-ledger.md) | unregistered | 2026-10-14 | Outstanding specs ledger (program E) |
 | [program-e/PIL-integration-plan.md](program-e/PIL-integration-plan.md) | unregistered | - | PIL integration plan: patch-intent localization (SPEC-30 a-d), CSAF remainders and the Leads panel |
+| [program-e/pilot-retained-cvrf-context.md](program-e/pilot-retained-cvrf-context.md) | SPEC-30 amendment | approved; local checks passed, final gates pending | Retained CVRF context, bounded admission, CSAF precedence and shared current-input identity |
 | [program-e/README.md](program-e/README.md) | unregistered | - | Program E integration plans |
 | [program-e/RPT2-report-export-contract-v2.md](program-e/RPT2-report-export-contract-v2.md) | unregistered | draft for build | RPT2: Report and export contract v2 |
 | [program-e/WB1-integration-plan.md](program-e/WB1-integration-plan.md) | unregistered | - | WB1 integration plan: unified indexed search ("find anything": SQLite FTS5 + RapidFuzz + QCompleter) |

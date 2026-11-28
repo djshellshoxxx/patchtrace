@@ -156,3 +156,16 @@ Tests: goldens (JSON, MD, HTML) for the synergy fixture; hypothesis properties o
 
 ### A-3: advisory uncertainty precision
 A failed CSAF producer omits only its records; KB records may still appear. Missing pair identity is reported as unrecorded, separately from a mismatching pair. KB cards do not carry a named KEV snapshot, so their exported `kev_listed` is always unknown (`null`), including legacy non-default values.
+
+### A-4: current PIL evidence at export (2026-11-18)
+
+The stored PIL leads adapter uses `pilot.current_inputs` on the existing project
+connection, just as the CLI and desktop loaders do. Project revision, changed or
+unavailable advisory/KEV inputs, and the shared identity checks cannot be skipped
+by a report-specific partial input map. A stale assessment contributes no lead
+records or lead navigation to the report; `unknowns` explicitly says that the
+stored PIL result is stale and its leads were omitted. A current assessment still
+exports through the existing section builder and layout. This freshness read does
+not recompute, rewrite or erase the historical assessment or source evidence.
+Checking the local KEV identity of a PIL assessment does not add KEV claims to the
+separate KB advisory records in A-3. No report schema or layout changes.
