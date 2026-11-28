@@ -1,0 +1,124 @@
+{
+  "source": "authored PE bytes, no target or native extractor execution",
+  "state": "ready",
+  "rows": 7,
+  "a11y_issues": [
+    "QHeaderView#?: not keyboard focusable"
+  ],
+  "renders": [
+    {
+      "file": "/workspace/scratch/e3f205d85f15/strings-evidence/strings-composition-normal.png",
+      "width": 1100,
+      "height": 650,
+      "point_size": 9.0,
+      "controls": {
+        "scan": {
+          "x": 118,
+          "right": 215,
+          "width": 98,
+          "text_width": 84,
+          "visible": true
+        },
+        "cancel": {
+          "x": 222,
+          "right": 301,
+          "width": 80,
+          "text_width": 38,
+          "visible": true
+        },
+        "anchors": {
+          "x": 308,
+          "right": 425,
+          "width": 118,
+          "text_width": 103,
+          "visible": true
+        },
+        "clear_anchors": {
+          "x": 1006,
+          "right": 1095,
+          "width": 90,
+          "text_width": 76,
+          "visible": true
+        },
+        "copy": {
+          "x": 4,
+          "right": 95,
+          "width": 92,
+          "text_width": 78,
+          "visible": true
+        },
+        "function": {
+          "x": 102,
+          "right": 194,
+          "width": 93,
+          "text_width": 78,
+          "visible": true
+        },
+        "hex": {
+          "x": 201,
+          "right": 280,
+          "width": 80,
+          "text_width": 65,
+          "visible": true
+        }
+      }
+    },
+    {
+      "file": "/workspace/scratch/e3f205d85f15/strings-evidence/strings-composition-large-font.png",
+      "width": 1100,
+      "height": 650,
+      "point_size": 13.5,
+      "controls": {
+        "scan": {
+          "x": 157,
+          "right": 296,
+          "width": 140,
+          "text_width": 126,
+          "visible": true
+        },
+        "cancel": {
+          "x": 303,
+          "right": 382,
+          "width": 80,
+          "text_width": 57,
+          "visible": true
+        },
+        "anchors": {
+          "x": 389,
+          "right": 557,
+          "width": 169,
+          "text_width": 155,
+          "visible": true
+        },
+        "clear_anchors": {
+          "x": 968,
+          "right": 1095,
+          "width": 128,
+          "text_width": 113,
+          "visible": true
+        },
+        "copy": {
+          "x": 4,
+          "right": 134,
+          "width": 131,
+          "text_width": 116,
+          "visible": true
+        },
+        "function": {
+          "x": 141,
+          "right": 272,
+          "width": 132,
+          "text_width": 117,
+          "visible": true
+        },
+        "hex": {
+          "x": 279,
+          "right": 390,
+          "width": 112,
+          "text_width": 97,
+          "visible": true
+        }
+      }
+    }
+  ]
+}

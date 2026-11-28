@@ -4,6 +4,13 @@ Status: E-1 research plan; WB3-S1 to S5, S7a and S8/S9 service and tests (view-m
 Status: E-1 research plan; WB3-S1 to S6 built (strings sources, regions/cues/look-alike, built-in scan, links L1/L4/L5, basis/delta/edits/rank, anchors/search rows/export/CLI dispatcher). Date 2026-10-14. Base `prep/program-e` d972125 (this worktree was fast-forwarded from the stale 1560531; nothing else changed). Read: AGENTS.md, CLAUDE.md, roadmap s3, modules.md, todo.md, `workbench/03-floss-strings.md`, `three-tool-evidence-adapters.md` T1-T10, `intelligence/tools/{floss,common,process,normalize,delta}.py` with tests and goldens, `normalization.py`, `models.py`, `evidence.py`, `jobs.py`, `cli.py`, `ui_evidence.py`, `tooltips.py`, `intelligence/anchors.py`, SPEC-31 IR docs. `F1..F22` are the facts of section 2.
 
 ## 1. Verdict and scope
+
+**Composition amendment, 2026-11-27:**
+[`panels/strings-composition.md`](../panels/strings-composition.md) defines the shared
+CLI/dock comparison, explicit stored-source and anchor choices, owner-thread
+capture and current publication guards. Existing extraction, comparability,
+redaction, ranking and export-publication contracts remain authoritative.
+
 - Build a pure `patchtrace.strings` layer on the **already built** FLOSS adapter (the workbench spec's "not landed" is stale): compact per-side `StringTable`, settings-aware comparability, per-type delta, function links in tiers (L1, L4, L5 usable now; L2, L3, L6 when SPEC-31 IR or capa deliver), content cues and ordinal review tiers (no scores), advisory-anchor join, WB1 search rows, read-only CLI, one Strings tab in the single window.
 - The value is the join, not the extraction (F4, F11): string <-> matched function pair, string <-> advisory/CVE text, imports (dynamic-API cue), build facts, rule seeds, series. FLOSS alone cannot say which function uses a static string (F5).
 - FLOSS runs only through the shared `intel-tools` runner (one execution path), never automatically. Static strings need no emulation; stack/tight/decoded stay consent-gated emulation (F6) with time and memory caps. The target is never executed: it is data, copied read-only as `artifact.bin`.

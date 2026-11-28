@@ -1,5 +1,61 @@
 # WB1 integration plan: unified indexed search ("find anything": SQLite FTS5 + RapidFuzz + QCompleter)
 
+## Production stored-source completion (2026-11-28)
+
+The normal CLI and desktop Search paths must supply the existing S8 tool,
+advisory and CVE adapters. A missing provider is not equivalent to a successful
+empty source. The public query, ranking, locator and stored schemas stay the same.
+
+`intelligence/tools/snapshot.py` provides shared, Qt-free owner-thread capture
+for Search and Strings. `capture_tool_sources(service, engines=...)` returns
+independent frozen source values: `latest(engine, side)` supplies the existing
+run/evidence pair, and `admitted(engine, side)` also supplies the retained
+producing run used for cache-hit provenance. Missing produced output returns
+None; malformed, foreign, stale or over-budget output raises `ToolError` when
+that source is requested. Classifiable selected-side failures preserve an
+independently valid opposite side. No store, SQLite connection, live service or
+open file handle survives capture. No tool, provider or analyzed artifact executes.
+`ToolSources.capture_error` and `require_capture()` distinguish a global
+bounded/integrity capture failure from classifiable per-side refusals, so a
+consumer can refuse a whole request without changing its existing per-side policy.
+
+Capture bounds SQLite metadata before projection into Python, then at most
+1,000 rows and 16 MiB of original UTF-8 bodies across the selected kinds. Body
+storage must be TEXT; revision/stale fields must be INTEGER with valid values.
+Original duplicate-member or non-finite JSON and changed metadata/body identity
+refuse capture. Foreign project ownership, staleness and future revisions refuse
+selected-source admission. Metadata and bodies are read from one SQLite read
+snapshot without committing the owner's transaction. The current
+`latest_admitted` ownership, newest-produced selection, evidence identity and
+cache-origin checks remain authoritative. The bounded adapter additionally
+checks producer configuration digests, supported output, raw-path/digest
+identity, and evidence quotas before typed evidence allocation.
+
+All normalized tool and advisory sidecar reads share a 64 MiB aggregate budget.
+They use the existing held-parent/held-file reader with the selected project
+directory identity, strict original JSON, exact pointer identities and declared
+sizes where present. Failed reads consume their reserved allowance; retries
+cannot bypass the aggregate budget. Per-set evidence caps are 200,000 strings,
+20,000 capabilities and 512 environment items. Existing legacy ToolStore and
+EnrichmentStore readers remain unchanged.
+
+`search/wiring.py` binds copied project state and captured sources before a
+worker starts. Ordinary CLI search, build, coverage and saved-query execution
+use this wiring; explicit injected source ports remain supported. The desktop
+captures on the store-owning thread before submitting search/build/coverage.
+Workers receive copied project/root/source values only. Project, orientation,
+row and filesystem changes invalidate reusable captures; a sidecar-dependent
+capture is revalidated before reuse even when no database row changed.
+Late callbacks cannot replace newer state or activate a stale locator.
+
+Unavailable or incomplete sources carry explicit group coverage. An unreadable
+advisory/CVE row cannot become a partial searchable set that implies missing
+text; tool absence claims still require comparable admitted runs and complete
+group coverage. Secret redaction and source-specific segment identities remain
+in force. Verification uses authored stored records and synthetic PE bytes,
+including real SQLite and offscreen Qt journeys; native Windows and packaged
+acceptance are separate qualification gates.
+
 Recent-query ingress amendment (2026-11-18 UTC): reject settings text longer than
 65,536 characters before JSON decoding. Invalid or excessively nested JSON reads
 as an empty recent list. This limit admits every serialized 20-query list under

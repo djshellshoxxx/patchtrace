@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="4" time="1.322" timestamp="2026-11-27T17:30:21.186147-08:00" hostname="56e89409ebf3"><testcase classname="tests.test_ui_strings_composition" name="test_incompatible_stored_emulation_keeps_static_comparison[executable]" time="0.347" /><testcase classname="tests.test_ui_strings_composition" name="test_incompatible_stored_emulation_keeps_static_comparison[consent]" time="0.075" /><testcase classname="tests.test_ui_strings_composition" name="test_anchor_chooser_discards_result_after_owner_changes[project]" time="0.061"><failure message="AssertionError: assert (PosixPath('/tmp/pytest-of-agent/pytest-125/test_anchor_chooser_discards_r0/anchors.json') is None)&#10; +  where PosixPath('/tmp/pytest-of-agent/pytest-125/test_anchor_chooser_discards_r0/anchors.json') = &lt;patchtrace.strings.qt_panel.StringsController(0x22ffa6a0) at 0x7ff29328d000&gt;.anchors_path">tests/test_ui_strings_composition.py:342: in test_anchor_chooser_discards_result_after_owner_changes
+    assert controller.anchors_path is None and not controller.tasks.busy()
+E   AssertionError: assert (PosixPath('/tmp/pytest-of-agent/pytest-125/test_anchor_chooser_discards_r0/anchors.json') is None)
+E    +  where PosixPath('/tmp/pytest-of-agent/pytest-125/test_anchor_chooser_discards_r0/anchors.json') = &lt;patchtrace.strings.qt_panel.StringsController(0x22ffa6a0) at 0x7ff29328d000&gt;.anchors_path
+----------------------------- Captured Qt messages -----------------------------
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()</failure></testcase><testcase classname="tests.test_ui_strings_composition" name="test_anchor_chooser_discards_result_after_owner_changes[shutdown]" time="0.050"><failure message="AssertionError: assert (PosixPath('/tmp/pytest-of-agent/pytest-125/test_anchor_chooser_discards_r1/anchors.json') is None)&#10; +  where PosixPath('/tmp/pytest-of-agent/pytest-125/test_anchor_chooser_discards_r1/anchors.json') = &lt;patchtrace.strings.qt_panel.StringsController(0x22fcbab0) at 0x7ff2932366c0&gt;.anchors_path">tests/test_ui_strings_composition.py:342: in test_anchor_chooser_discards_result_after_owner_changes
+    assert controller.anchors_path is None and not controller.tasks.busy()
+E   AssertionError: assert (PosixPath('/tmp/pytest-of-agent/pytest-125/test_anchor_chooser_discards_r1/anchors.json') is None)
+E    +  where PosixPath('/tmp/pytest-of-agent/pytest-125/test_anchor_chooser_discards_r1/anchors.json') = &lt;patchtrace.strings.qt_panel.StringsController(0x22fcbab0) at 0x7ff2932366c0&gt;.anchors_path
+----------------------------- Captured Qt messages -----------------------------
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()
+QtWarningMsg: This plugin does not support propagateSizeHints()</failure></testcase></testsuite></testsuites>

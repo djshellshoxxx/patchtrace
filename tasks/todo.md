@@ -1931,3 +1931,28 @@ Evidence and plan: `docs/engineering/pilot-recovery-20261127.md`.
   130-case focused green selection; whole-tree Ruff and preservation checks pass.
 - [ ] Obtain independent UI re-review and root's full/platform gates before
   publication. Strict-JSON corrective source has independent approval.
+# Strings composition recovery (2026-11-27, America/Vancouver)
+
+- [x] Share CLI/dock cue, region, pairing and advisory-anchor composition; bounded
+  strict anchor input and cancellation boundaries; 116 focused tests pass.
+- [x] Add explicit dock source/anchor controls using the shared owner-thread tool
+  snapshot, preserving per-side admission and original cache provenance. Keep
+  global capture refusal distinct from per-side fallback; retain empty and
+  incomplete-source semantics. Source changes, repeated project notifications,
+  modal chooser ownership and same-epoch revisions are covered. Final focused
+  lane: 776 passed, no skips; whole-tree Ruff and whitespace clean. Both inspected
+  offscreen font sizes retain unclipped controls. No target/native extractor ran.
+- [x] Repair the independently reproduced displayed-row/backing-comparison
+  mismatch: candidates wait for prepared-table publication, failed/cancelled
+  preparation retains the earlier receipt, and late view/reset actions cannot
+  mix comparisons. Corrected red lane: 11 failed/5 passed; final narrow lane:
+  97 passed, no skips, including the original independent controls unchanged.
+  Whole-tree Ruff and whitespace pass; this overlaps the earlier 776-test lane.
+- [ ] Independently review the completed source; run combined-source, hosted and
+  native Windows/packaged acceptance without treating offscreen controls as native evidence.
+
+
+
+- [x] Strings: independently approve exact display-ownership correction and
+  retain original failures, passing controls and normal/large-font images.
+- [ ] Qualify the published Strings head on full/platform/native gates before merge.
