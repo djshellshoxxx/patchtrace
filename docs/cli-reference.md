@@ -519,3 +519,10 @@ None of these exist in the parser today; each will arrive as a `cli_commands/<ve
 |---|---|
 | `patch`, `pe-meta`, `calibration` | planned verbs listed in SPEC-44 section 9 (GUI plan 8.12) |
 | `doctor`, `export`, `import`, `show`, `project` | proposals in SPEC-44 section 7 |
+
+### Inspect a local cabinet source
+
+On Windows AMD64, run `patchtrace package-source "C:\Updates\update.msu" --json`
+to read the file size, SHA-256, basename and native file identity for a local CAB
+or CAB-form MSU. The command reads the complete file and reports the signature
+state as unknown. Member inventory and extraction are separate operations.

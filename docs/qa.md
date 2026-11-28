@@ -1,3 +1,20 @@
+## PW-02 local cabinet source inspection
+
+The Windows AMD64 `package-source` command checks the selected file's size,
+identity, MSCF prefix and complete SHA-256 before returning. Seven packaged
+smoke controls cover matching output, wrong digests, a missing signature state,
+a wrong basename, warnings, stderr and changed input. Windows QA exercises the
+real source handles, the SDK declarations, Cabinet.dll and the packaged command.
+
+On Linux the expanded regression selection passed 660 tests with 11 skips. The
+source, decoder and packaging smoke selection passed 116 tests with three native
+skips. A stress run completed 256 complete file hashes with eight workers and
+eight sizes, including the chunk boundaries. Each operation checked the digest,
+rewind and byte count. An independent libarchive read decoded the authored
+MSZIP cabinet to its expected 39-byte text. The full suite and actual Windows
+job report separately. A complete package import still needs member staging
+and end-to-end acceptance.
+
 ## PW-02 Windows QA follow-up
 
 Windows run [46097542948](https://github.com/djshellshoxxx/patchtrace/actions/runs/46097542948)

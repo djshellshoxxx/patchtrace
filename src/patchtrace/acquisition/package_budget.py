@@ -239,6 +239,14 @@ class PackageBudget:
         del self._allocations[token]
         self._live -= size
 
+    def fail_source(self, error: AcquisitionError) -> None:
+        """A refused source ends this operation without resetting its consumed work."""
+        if self._error is None:
+            if error.code not in ('PT-ACQ-INPUT', 'PT-ACQ-LIMIT', 'PT-ACQ-CANCEL', 'PT-ACQ-VERIFY'):
+                error = AcquisitionError('PT-ACQ-VERIFY', 'package source observation failed')
+            self._error = error
+        raise self._error from None
+
     def charge_hash(self, size: int) -> None:
         self._local()
         self._count(size)

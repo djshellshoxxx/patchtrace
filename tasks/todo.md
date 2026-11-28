@@ -1,3 +1,12 @@
+## PW-02 source inspection and native cabinet checks
+
+- [x] Add the read-only Windows CLI, hold and recheck source identity, test
+  ownership transfer and exercise the packaged command with an authored cabinet.
+- [x] Add a supervised Windows decoder check for one known text file and a
+  rejected malformed header. Verify the authored fixture with an independent reader.
+- [ ] Obtain native results for this revision and complete end-to-end staging
+  and import before claiming package intake acceptance.
+
 ## PW-02 Windows QA follow-up
 
 - [x] Correct timeout ownership, reproduce the socket-clock race, and preserve

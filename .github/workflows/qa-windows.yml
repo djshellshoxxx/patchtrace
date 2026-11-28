@@ -41,6 +41,14 @@ jobs:
           & (Join-Path $install 'Common7\Tools\Launch-VsDevShell.ps1') -SkipAutomaticLocation -Arch amd64 -HostArch amd64
           python tools/check_package_fdi_abi.py
           exit $LASTEXITCODE
+      - name: Verify local cabinet source ownership and system decoder
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          python tools/check_package_fdi_decoder.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python -m pytest -q tests/test_cabinet_source.py tests/test_netutil_read_deadline.py tests/test_kbc_acquisition_replay_cli.py
+          exit $LASTEXITCODE
       - name: Windows project creation retries and loopback SMB
         if: runner.os == 'Windows'
         run: >-

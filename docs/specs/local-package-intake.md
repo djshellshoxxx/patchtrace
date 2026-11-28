@@ -23,6 +23,25 @@ needs-base/unsupported; extraction cannot turn it into a reconstructed PE.
 Signature state remains `signature-unknown`; a CAT entry or index digest does
 not authenticate source, product, build, applicability or chronology.
 
+### Read-only source inspection
+
+`patchtrace package-source FILE [--json]` captures the existing PackageSource
+record for an explicitly selected file on a local Windows AMD64 drive. The CLI
+returns the ordinary enrichment envelope. Its success covers the full byte hash,
+native file identity, basename, and presence of the MSCF prefix in a file large
+enough for the fixed cabinet header. It does not certify cabinet structure,
+membership, signing or eligibility for import.
+
+Resolve an ordinary local path and open its ancestors one at a time relative to
+held directories. Reject UNC, devices, alternate streams, drive-relative paths,
+traversal and reparse points before reading. The selected disk file denies
+write/delete sharing throughout the operation. Capture FILE_ID_INFO (including
+all 128 identifier bits), size and last-write FILETIME. Stream the complete file
+within the original operation budget, verify EOF and return the file offset to
+zero. Recheck the held parent, the leaf name and the native identity before
+returning. Cancellation and elapsed time are checked between file reads. A refused
+source ends its operation while retaining work already charged. Only the basename enters the result. This operation creates no files.
+
 ## 2. Strict versioned records and identities
 
 `local-package/1` records are frozen, reject additional fields and coercion, and
@@ -264,6 +283,18 @@ The probe takes no package input and cannot execute a package payload.
 Windows CI selects the installed AMD64 Visual C++ tools and SDK, then runs the probe
 before the full test suite. Missing build tools or a mismatched layout fails the
 Windows job. The step prints its measured receipt to the job log.
+
+### 5.2 System decoder known-answer check
+
+The Windows qualification command starts a supervised worker with a fixed,
+authored cabinet containing one compressed text file. It loads Cabinet.dll from
+the Windows system directory, binds the production ctypes declarations, checks
+FDIIsCabinet's header and compares FDICopy's output with the expected text in
+memory. Read callbacks serve only the fixture; the worker accepts no archive
+path. Its receipt records the DLL path basename, platform, header fields and
+verified fixture digests. A separate malformed-header control must be rejected.
+This qualifies the tested system library and callbacks for the authored fixture.
+It does not qualify arbitrary package extraction, staging or project import.
 
 ### 5.3 Supervised transient Windows handle transfer
 
